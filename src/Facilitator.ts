@@ -9,15 +9,18 @@ export default class Facilitator {
 
   private chainId: string;
 
+  private dbConnection;
+
   /**
    * Facilitator class constructor.
    *
-   * @param {string} mosaicConfigPath MosaicConfig path.
-   * @param {string} facilitatorConfigPath Facilitator config path.
+   * @param {string} config Config class object.
+   * @param {object} dbConnection DB connection object.
    * @param {string} chainId Chain identifier to subscribe.
    */
-  public constructor(mosaicConfigPath, facilitatorConfigPath, chainId) {
-    this.config = new Config(mosaicConfigPath, facilitatorConfigPath);
+  public constructor(config, dbConnection , chainId) {
+    this.config = config;
+    this.dbConnection = dbConnection;
     this.chainId = chainId;
   }
 
@@ -30,7 +33,7 @@ export default class Facilitator {
 
   /**
    * Stops the facilitator and unsubscribe to graph node.
-   * This function should be called on signint or control-C
+   * This function should be called on signint or control-c.
    */
   public async stop() {
 
