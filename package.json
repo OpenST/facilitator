@@ -1,0 +1,39 @@
+{
+  "name": "@openst/facilitator",
+  "description": "Facilitator is an executable to process stake & mint and redeem & unstake operations.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenST/facilitator.git"
+  },
+  "keywords": [
+    "Facilitator",
+    "OpenST",
+    "OST",
+    "Mosaic",
+    "Simple Token",
+    "Token Economy",
+    "web3",
+    "Ethereum",
+    "EIP20"
+  ],
+  "homepage": "https://openst.org",
+  "author": "OpenST Ltd.",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/openst/mosaic.js/issues"
+  },
+  "scripts": {
+    "lint": "eslint src -c .eslintrc.json --ext ts"
+  },
+  "dependencies": {
+    "typescript": "^3.3.3333"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.5.0",
+    "@typescript-eslint/parser": "^1.4.2",
+    "eslint": "5.16.0",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-json": "1.4.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "module": "commonjs",
+        "outDir": "./lib",
+        "sourceMap": true,
+        "target": "es5",
+        "types": [
+            "chai",
+            "fs-extra",
+            "node",
+            "mocha",
+            "web3"
+        ]
+    },
+    "include": [
+        "index.ts",
+        "src/**/*.ts"
+    ]
+}

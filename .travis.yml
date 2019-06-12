@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "11"
+notifications:
+  email:
+    recipients:
+      - ci.report@ost.com
+    on_success: always
+    on_failure: always
