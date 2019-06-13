@@ -1,5 +1,7 @@
+import Logger from './Logger';
+import * as path from 'path';
+
 const sqlite = require('sqlite3');
-const path = require('path');
 const fs = require('fs-extra');
 
 /**
@@ -23,15 +25,20 @@ export class DBConnection {
       const sqlite3 = sqlite.verbose();
       fs.ensureDirSync(path.join(this.dbPath, 'facilitator'));
       this.connection = new sqlite3.Database(path.join(this.dbPath, 'facilitator', this.DBName + '.db'));
+      Logger.info('created database file');
     }
     return this.connection;
   }
 
   /**
-   * It is used to return the database file path.
-   * @returns {string}
+   * @returns {string} It is used to return the database file path.
    */
   public static get dbFilePath(): string {
-    return path.join(this.dbPath, this.DBName + '.db');
+    if(this.dbPath === undefined || this.dbPath === null) {
+      Logger.error('database path is not set');
+      return;
+    }
+    return path.join(this.dbPath,'facilitator', this.DBName + '.db');
   }
 }
+

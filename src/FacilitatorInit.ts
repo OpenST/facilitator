@@ -16,7 +16,7 @@ export class FacilitatorInit {
   public facilitatorConfigFileName = 'facilitator-config.json';
 
   /**
-   * Construtor
+   * Constructor
    * @param options Object containing values which are persisted in the facilitator config.
    */
   constructor(options) {
@@ -59,8 +59,7 @@ export class FacilitatorInit {
   }
 
   /**
-   * It returns the default directory path for mosaic.
-   * @returns {string}
+   * @returns {string} It returns the default directory path for mosaic.
    */
   public get defaultDirPath(): string {
     return path.join('.mosaic');
@@ -68,7 +67,6 @@ export class FacilitatorInit {
 
   /**
    * It returns the default directory path for mosaic.
-   * @returns {string}
    */
   public setFacilitatorConfigPath(): void {
     this.facilitatorConfigPath = path.join(os.homedir(), this.defaultDirPath, this.options.chainId, this.facilitatorConfigFileName);
@@ -92,3 +90,4 @@ export class FacilitatorInit {
     }
   }
 }
+

@@ -4,10 +4,10 @@ import {Account} from "../Account";
 import Logger from '../Logger';
 import * as os from 'os';
 import * as path from 'path';
-
-const Web3 = require('web3');
 import {DBConnection} from '../DBConnection';
 import {FacilitatorInit} from "../FacilitatorInit";
+
+const Web3 = require('web3');
 
 commander
   .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -35,13 +35,15 @@ commander
       encryptedAccount: originEncryptedAccount,
     } = Account.create(new Web3(), options.originPassword);
 
+    let dbHost:string = options.dbHost;
     if (options.dbHost === undefined || options.dbHost === null) {
       Logger.info('database host is not provided');
       DBConnection.getConnection(path.join(os.homedir(), facilitatorInit.defaultDirPath, options.chainId));
+      dbHost = DBConnection.dbFilePath;
     }
 
     facilitatorInit.generateFacilitatorConfig(
-      DBConnection.dbFilePath,
+      dbHost,
       auxiliaryAccount,
       originAccount,
       auxiliaryEncryptedAccount,

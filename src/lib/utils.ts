@@ -8,9 +8,9 @@ export class Utils {
 
   /**
    * It returns origin chainid by searching through the mosaic config.
-   * @param {number} auxChainId
-   * @param {string} mosaicConfigPath
-   * @returns {number}
+   * @param {number} auxChainId Chain id of the auxiliary chain.
+   * @param {string} mosaicConfigPath Location where the mosaic config is present.
+   * @returns {number} returns chainid of the origin chain.
    */
   public static getOriginChainId(auxChainId: number, mosaicConfigPath: string): number {
 
@@ -46,3 +46,4 @@ export class Utils {
     }
   }
 }
+
