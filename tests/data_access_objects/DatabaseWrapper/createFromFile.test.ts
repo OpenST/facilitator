@@ -16,7 +16,7 @@
 
 import 'mocha';
 import { assert } from 'chai';
-import DatabaseWrapper from '../../../src/data_access_objects/DatabaseWrapper';
+// import DatabaseWrapper from '../../../src/data_access_objects/DatabaseWrapper';
 
 describe('DatabaseWrapper::createFromFile', (): void => {
   it('.', (): void => {

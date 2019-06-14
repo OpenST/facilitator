@@ -16,7 +16,7 @@
 
 import 'mocha';
 import { assert } from 'chai';
-import StakeRequestRepository from '../../../src/data_access_objects/StakeRequestRepository';
+// import StakeRequestRepository from '../../../src/data_access_objects/StakeRequestRepository';
 
 describe('StakeRequestRepository::create', (): void => {
   it('.', (): void => {
