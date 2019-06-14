@@ -1,7 +1,7 @@
 {
   "name": "@openst/facilitator",
   "version": "0.1.0-alpha.1",
-  "description": "Facilitator is an executable to facilitate stake and mint.",
+  "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
   "scripts": {
     "lint": "eslint src -c .eslintrc.json --ext ts"
   },

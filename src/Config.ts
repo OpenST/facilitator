@@ -1,9 +1,9 @@
-import * as fs from 'fs-extra';
 import { Account } from './Account';
 import { MosaicConfig } from './MosaicConfig';
+import Utils from './Utils';
 
 // Database password key to read from env.
-const DB_PASSWORD = 'MOSAIC_FACILITATOR_DB_PASSWORD';
+const ENV_DB_PASSWORD = 'MOSAIC_FACILITATOR_DB_PASSWORD';
 
 // Database type
 enum DBType {
@@ -32,7 +32,7 @@ export class Config {
   ) {
     this.mosaic = MosaicConfig.fromPath(mosaicConfigPath);
 
-    const facilitatorConfig = this.getConfigJsonFromPath(
+    const facilitatorConfig = Utils.getJsonDataFromPath(
       facilitatorConfigPath,
     );
 
@@ -52,21 +52,6 @@ export class Config {
       chains.push(new Chain(key, facilitatorConfig));
     }
     return chains;
-  }
-
-  /**
-   * Get config json data from the given file path.
-   * @param filePath Facilitator config file path.
-   * @returns JSON data for facilitator config.
-   */
-  private getConfigJsonFromPath(filePath: string): Record<string, any> {
-    if (fs.existsSync(filePath)) {
-      const config = fs.readFileSync(filePath).toString();
-      if (config && config.length > 0) {
-        return JSON.parse(config);
-      }
-    }
-    return null;
   }
 }
 
@@ -105,7 +90,7 @@ export class DBConfig {
    * Get the password for the database.
    */
   get password(): string {
-    return process.env.MOSAIC_FACILITATOR_DB_PASSWORD || this._password;
+    return process.env[ENV_DB_PASSWORD] || this._password;
   }
 }
 
