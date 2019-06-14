@@ -1,0 +1,21 @@
+dist: trusty
+language: node_js
+cache: npm
+sudo: required
+branches:
+  only:
+  - master
+  - develop
+  - /^feature\/.*/
+  - /^release-.*/
+  - /^hotfix-.*/
+notifications:
+  email:
+    recipients:
+      - ci.report@ost.com
+    on_success: always
+    on_failure: always
+node_js:
+  - "10"
+script:
+  - npm run test

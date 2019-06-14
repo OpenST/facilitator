@@ -1,22 +1,33 @@
 {
-  "name": "facilitator-fork-1",
-  "version": "1.0.0",
-  "description": "",
-  "main": "truffle.js",
+  "name": "@openst/facilitator",
+  "version": "0.0.1",
+  "description": "Facilitates stack & mint process between origin and auxiliary chains.",
+  "keywords": [
+    "Mosaic",
+    "Gateway",
+    "Anchor",
+    "OSTComposer",
+    "OpenST",
+    "OST",
+    "Simple Token",
+    "Token Economy",
+    "web3",
+    "Ethereum",
+    "EIP20"
+  ],
+  "homepage": "https://openst.org/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenST/facilitator"
+  },
+  "author": "OpenST Foundation Ltd.",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/OpenST/facilitator/issues"
+  },
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/**/*.test.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pgev/facilitator.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pgev/facilitator/issues"
-  },
-  "homepage": "https://github.com/pgev/facilitator#readme",
   "devDependencies": {
     "@types/chai": "4.1.7",
     "@types/chai-as-promised": "7.1.0",
@@ -25,7 +36,6 @@
     "@typescript-eslint/eslint-plugin": "1.10.2",
     "@typescript-eslint/parser": "1.10.2",
     "@typescript-eslint/typescript-estree": "1.10.2",
-    "assert": "2.0.0",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "eslint": "5.16.0",
