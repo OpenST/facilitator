@@ -30,13 +30,12 @@ export default class DatabaseWrapper {
   /* Public Functions */
 
   /**
-   * Creates a DatabaseWrapper object from a file.
+   * Creates a database on the filesystem.
    *
-   * Creates an empty database object on the filesystem if database does
-   * not exist by the specified path.
-   * Opens a database in read/write mode.
+   * If database does not exist, creates on open.
+   * Opens a database in a read/write mode.
    *
-   * @param dbFilePath File path to store database.
+   * @param dbFilePath Database's file path.
    */
   public static createFromFile(dbFilePath: string): DatabaseWrapper {
     assert.notStrictEqual(
@@ -58,6 +57,13 @@ export default class DatabaseWrapper {
     return new DatabaseWrapper(db);
   }
 
+  /**
+   * Creates a in memory database object.
+   *
+   * Opens a database in a read/write mode.
+   *
+   * Also see https://github.com/mapbox/node-sqlite3/wiki/API#new-sqlite3databasefilename-mode-callback
+   */
   public static createInMemory(): DatabaseWrapper {
     const db = new sqlite3.Database(
       ':memory:',
@@ -73,6 +79,14 @@ export default class DatabaseWrapper {
     return new DatabaseWrapper(db);
   }
 
+  /**
+   * Runs the SQL query with the specified parameters.
+   *
+   * @param sql The SQL query to run.
+   * @param params When the SQL statement contains placeholder, one can pass them here.
+   *
+   * Also see https://github.com/mapbox/node-sqlite3/wiki/API#databaserunsql-param--callback
+   */
   public async run(sql: string, params?: any): Promise<void> {
     return new Promise(
       (resolve, reject): Database => this.db.run(
@@ -87,6 +101,14 @@ export default class DatabaseWrapper {
     );
   }
 
+  /**
+   * Runs the SQL query with the specified parameters and returns the first result raw.
+   *
+   * @param sql The SQL query to run.
+   * @param params When the SQL statement contains placeholder, one can pass them here.
+   *
+   * Also see https://github.com/mapbox/node-sqlite3/wiki/API#databasegetsql-param--callback
+   */
   public async get(sql: string, params?: any): Promise<any> {
     return new Promise(
       (resolve, reject): Database => this.db.get(
@@ -101,6 +123,14 @@ export default class DatabaseWrapper {
     );
   }
 
+  /**
+   * Runs the SQL query with the specified parameters and returns all result raws.
+   *
+   * @param sql The SQL query to run.
+   * @param params When the SQL statement contains placeholder, one can pass them here.
+   *
+   * Also see https://github.com/mapbox/node-sqlite3/wiki/API#databaseallsql-param--callback
+   */
   public async all(sql: string, params?: any): Promise<any> {
     return new Promise(
       (resolve, reject): Database => this.db.all(
@@ -115,14 +145,29 @@ export default class DatabaseWrapper {
     );
   }
 
+  /**
+   * Registers a listener for the 'trace' event of the database.
+   *
+   * Also see https://github.com/mapbox/node-sqlite3/wiki/Debugging#databaseontrace-callback
+   */
   public trace(listener: (sql: string) => void): void {
     this.db.on('trace', listener);
   }
 
+  /**
+   * Registers a listener for the 'profile' event of the database.
+   *
+   * Also see https://github.com/mapbox/node-sqlite3/wiki/Debugging#databaseonprofile-callback
+   */
   public profile(listener: (sql: string, time: number) => void): void {
     this.db.on('profile', listener);
   }
 
+  /**
+   * Closes the database.
+   *
+   * Also see https://github.com/mapbox/node-sqlite3/wiki/API#databaseclosecallback
+   */
   public close(): void {
     this.db.close(
       (err: Error | null): void => {
@@ -132,6 +177,7 @@ export default class DatabaseWrapper {
       },
     );
   }
+
 
   /* Private Functions */
 

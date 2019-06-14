@@ -94,16 +94,7 @@ export default class StakeRequestRepository {
   }
 
   public async get(stakeRequestHash: string): Promise<StakeRequest | undefined> {
-    const getQuery = 'SELECT '
-      + `${StakeRequestRepository.stakeRequestHashColumnName}, `
-      + `${StakeRequestRepository.messageHashColumnName}, `
-      + `${StakeRequestRepository.amountColumnName}, `
-      + `${StakeRequestRepository.beneficiaryColumnName}, `
-      + `${StakeRequestRepository.gasPriceColumnName}, `
-      + `${StakeRequestRepository.gasLimitColumnName}, `
-      + `${StakeRequestRepository.nonceColumnName}, `
-      + `${StakeRequestRepository.gatewayColumnName}, `
-      + `${StakeRequestRepository.stakerProxyColumnName} `
+    const getQuery = 'SELECT * '
       + `FROM ${StakeRequestRepository.tableName} `
       + `WHERE ${StakeRequestRepository.stakeRequestHashColumnName} = '${stakeRequestHash}'; `;
 
