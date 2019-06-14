@@ -59,7 +59,7 @@ export default class StakeRequestRepository {
   }
 
   public async createTable(): Promise<void> {
-    const createTableStmt = `CREATE TABLE IF NOT EXISTS ${StakeRequestRepository.tableName} `
+    const createTableQuery = `CREATE TABLE IF NOT EXISTS ${StakeRequestRepository.tableName} `
       + '( '
       + `${StakeRequestRepository.stakeRequestHashColumnName} TEXT PRIMARY KEY, `
       + `${StakeRequestRepository.messageHashColumnName} TEXT, `
@@ -72,11 +72,11 @@ export default class StakeRequestRepository {
       + `${StakeRequestRepository.stakerProxyColumnName} TEXT `
       + '); ';
 
-    return this.db.run(createTableStmt);
+    return this.db.run(createTableQuery);
   }
 
   public async create(stakeRequest: StakeRequest): Promise<void> {
-    const insertStmt = `INSERT INTO ${StakeRequestRepository.tableName} `
+    const insertQuery = `INSERT INTO ${StakeRequestRepository.tableName} `
       + '( '
       + `${StakeRequestRepository.stakeRequestHashColumnName}, `
       + `${StakeRequestRepository.messageHashColumnName}, `
@@ -90,22 +90,22 @@ export default class StakeRequestRepository {
       + ') '
       + 'VALUES '
       + '( '
-      + `${stakeRequest.stakeRequestHash}, `
-      + `${stakeRequest.messageHash}, `
+      + `'${stakeRequest.stakeRequestHash}', `
+      + `'${stakeRequest.messageHash}', `
       + `${stakeRequest.amount}, `
-      + `${stakeRequest.beneficiary}, `
+      + `'${stakeRequest.beneficiary}', `
       + `${stakeRequest.gasPrice}, `
       + `${stakeRequest.gasLimit}, `
       + `${stakeRequest.nonce}, `
-      + `${stakeRequest.gateway}, `
-      + `${stakeRequest.stakerProxy} `
+      + `'${stakeRequest.gateway}', `
+      + `'${stakeRequest.stakerProxy}' `
       + '); ';
 
-    return this.db.run(insertStmt);
+    return this.db.run(insertQuery);
   }
 
   public async get(stakeRequestHash: string): Promise<StakeRequest | undefined> {
-    const getStmt = 'SELECT '
+    const getQuery = 'SELECT '
       + `${StakeRequestRepository.stakeRequestHashColumnName}, `
       + `${StakeRequestRepository.messageHashColumnName}, `
       + `${StakeRequestRepository.amountColumnName}, `
@@ -118,7 +118,7 @@ export default class StakeRequestRepository {
       + `FROM ${StakeRequestRepository.tableName} `
       + `WHERE ${StakeRequestRepository.stakeRequestHashColumnName} = '${stakeRequestHash}'; `;
 
-    const raw = await this.db.get(getStmt);
+    const raw = await this.db.get(getQuery);
     if (raw === undefined) {
       return raw;
     }

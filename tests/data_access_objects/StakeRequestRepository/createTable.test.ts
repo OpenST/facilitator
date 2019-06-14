@@ -42,10 +42,10 @@ describe('StakeRequestRepository::createTable', (): void => {
 
     const stakeRequestRepository = new StakeRequestRepository(dbWrapper);
 
+    await stakeRequestRepository.createTable();
+
     const query = 'SELECT * FROM sqlite_master '
     + `WHERE tbl_name = '${StakeRequestRepository.tableName}'`;
-
-    await stakeRequestRepository.createTable();
 
     const raw = await dbWrapper.get(query);
     assert.notStrictEqual(raw, undefined);

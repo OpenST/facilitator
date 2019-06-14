@@ -15,12 +15,125 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
-import { assert } from 'chai';
-// import StakeRequestRepository from '../../../src/data_access_objects/StakeRequestRepository';
-// import DatabaseWrapper from '../../../src/data_access_objects/DatabaseWrapper';
+import StakeRequestRepository from '../../../src/data_access_objects/StakeRequestRepository';
+import DatabaseWrapper from '../../../src/data_access_objects/DatabaseWrapper';
+
+import chai = require('chai');
+import chaiAsPromised = require('chai-as-promised');
+
+chai.use(chaiAsPromised);
+
+const { assert } = chai;
 
 describe('StakeRequestRepository::create', (): void => {
-  it('', async (): Promise<void> => {
-    assert(true);
+  it('Creates an entry.', async (): Promise<void> => {
+    const dbWrapper: DatabaseWrapper = DatabaseWrapper.createInMemory();
+    const stakeRequestRepository = new StakeRequestRepository(dbWrapper);
+    await stakeRequestRepository.createTable();
+
+    const stakeRequest = {
+      stakeRequestHash: 'stakeRequestHashA',
+      messageHash: 'messageHashA',
+      amount: 2,
+      beneficiary: 'beneficiaryA',
+      gasPrice: 3,
+      gasLimit: 4,
+      nonce: 5,
+      gateway: 'gatewayA',
+      stakerProxy: 'stakerProxyA',
+    };
+
+    await stakeRequestRepository.create(stakeRequest);
+
+    const query = `SELECT * FROM ${StakeRequestRepository.tableName} `
+    + `WHERE ${StakeRequestRepository.stakeRequestHashColumnName} = '${stakeRequest.stakeRequestHash}'`;
+
+    const raw = await dbWrapper.get(query);
+
+    assert.notStrictEqual(
+      raw,
+      undefined,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.stakeRequestHashColumnName],
+      stakeRequest.stakeRequestHash,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.messageHashColumnName],
+      stakeRequest.messageHash,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.amountColumnName],
+      stakeRequest.amount,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.beneficiaryColumnName],
+      stakeRequest.beneficiary,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.gasPriceColumnName],
+      stakeRequest.gasPrice,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.gasLimitColumnName],
+      stakeRequest.gasLimit,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.nonceColumnName],
+      stakeRequest.nonce,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.gatewayColumnName],
+      stakeRequest.gateway,
+    );
+
+    assert.strictEqual(
+      raw[StakeRequestRepository.stakerProxyColumnName],
+      stakeRequest.stakerProxy,
+    );
+  });
+
+  it('Fails to create if exists.', async (): Promise<void> => {
+    const dbWrapper: DatabaseWrapper = DatabaseWrapper.createInMemory();
+    const stakeRequestRepository = new StakeRequestRepository(dbWrapper);
+    await stakeRequestRepository.createTable();
+
+    const stakeRequestA = {
+      stakeRequestHash: 'stakeRequestHash',
+      messageHash: 'messageHashA',
+      amount: 2,
+      beneficiary: 'beneficiaryA',
+      gasPrice: 3,
+      gasLimit: 4,
+      nonce: 5,
+      gateway: 'gatewayA',
+      stakerProxy: 'stakerProxyA',
+    };
+
+    await stakeRequestRepository.create(stakeRequestA);
+
+    const stakeRequestB = {
+      stakeRequestHash: 'stakeRequestHash',
+      messageHash: 'messageHashB',
+      amount: 3,
+      beneficiary: 'beneficiaryB',
+      gasPrice: 4,
+      gasLimit: 5,
+      nonce: 6,
+      gateway: 'gatewayB',
+      stakerProxy: 'stakerProxyB',
+    };
+
+    assert.isRejected(
+      stakeRequestRepository.create(stakeRequestB),
+    );
   });
 });
