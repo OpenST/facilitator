@@ -21,7 +21,7 @@ import { Database } from 'sqlite3';
 import sqlite3 = require('sqlite3');
 import assert = require('assert');
 
-export default class DataAccessObject {
+export default class DatabaseWrapper {
   /* Storage */
 
   private db: Database;
@@ -29,7 +29,7 @@ export default class DataAccessObject {
 
   /* Public Functions */
 
-  public static createFromFile(dbFilePath: string): DataAccessObject {
+  public static createFromFile(dbFilePath: string): DatabaseWrapper {
     assert.notStrictEqual(dbFilePath, '');
 
     const db = new sqlite3.Database(
@@ -42,10 +42,10 @@ export default class DataAccessObject {
         }
       },
     );
-    return new DataAccessObject(db);
+    return new DatabaseWrapper(db);
   }
 
-  public static createInMemory(): DataAccessObject {
+  public static createInMemory(): DatabaseWrapper {
     const db = new sqlite3.Database(
       ':memory:',
       // eslint-disable-next-line no-bitwise
@@ -57,7 +57,7 @@ export default class DataAccessObject {
       },
     );
 
-    return new DataAccessObject(db);
+    return new DatabaseWrapper(db);
   }
 
   public async run(sql: string, params?: any): Promise<void> {

@@ -14,7 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
-import DataAccessObject from './DataAccessObject';
+import DatabaseWrapper from './DatabaseWrapper';
 
 export interface StakeRequest {
   stakeRequestHash: string;
@@ -29,7 +29,7 @@ export interface StakeRequest {
 }
 
 export class StakeRequestRepository {
-  private dao: DataAccessObject;
+  private db: DatabaseWrapper;
 
   public static readonly tableName: string = 'stake_request';
 
@@ -54,8 +54,8 @@ export class StakeRequestRepository {
 
   /* Public Functions */
 
-  public constructor(_dao: DataAccessObject) {
-    this.dao = _dao;
+  public constructor(dbWrapper: DatabaseWrapper) {
+    this.db = dbWrapper;
   }
 
   public async createTable(): Promise<void> {
@@ -72,7 +72,7 @@ export class StakeRequestRepository {
       + `${StakeRequestRepository.stakerProxyColumnName} TEXT `
       + '); ';
 
-    return this.dao.run(createTableStmt);
+    return this.db.run(createTableStmt);
   }
 
   public async create(stakeRequest: StakeRequest): Promise<void> {
@@ -101,7 +101,7 @@ export class StakeRequestRepository {
       + `${stakeRequest.stakerProxy} `
       + '); ';
 
-    return this.dao.run(insertStmt);
+    return this.db.run(insertStmt);
   }
 
   public async get(stakeRequestHash: string): Promise<StakeRequest | undefined> {
@@ -118,7 +118,7 @@ export class StakeRequestRepository {
       + `FROM ${StakeRequestRepository.tableName} `
       + `WHERE ${StakeRequestRepository.stakeRequestHashColumnName} = '${stakeRequestHash}'; `;
 
-    const raw = await this.dao.get(getStmt);
+    const raw = await this.db.get(getStmt);
     if (raw === undefined) {
       return raw;
     }
