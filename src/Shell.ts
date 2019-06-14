@@ -13,3 +13,4 @@ export default class Shell {
     return execSync(command);
   }
 }
+
