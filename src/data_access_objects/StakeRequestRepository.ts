@@ -28,7 +28,7 @@ export interface StakeRequest {
   stakerProxy: string;
 }
 
-export class StakeRequestRepository {
+export default class StakeRequestRepository {
   private db: DatabaseWrapper;
 
   public static readonly tableName: string = 'stake_request';
@@ -59,9 +59,9 @@ export class StakeRequestRepository {
   }
 
   public async createTable(): Promise<void> {
-    const createTableStmt = `CREATE TABLE [IF NOT EXISTS] ${StakeRequestRepository.tableName} `
-      + `${StakeRequestRepository.stakeRequestHashColumnName} TEXT PRIMARY KEY `
+    const createTableStmt = `CREATE TABLE IF NOT EXISTS ${StakeRequestRepository.tableName} `
       + '( '
+      + `${StakeRequestRepository.stakeRequestHashColumnName} TEXT PRIMARY KEY, `
       + `${StakeRequestRepository.messageHashColumnName} TEXT, `
       + `${StakeRequestRepository.amountColumnName} INTEGER, `
       + `${StakeRequestRepository.beneficiaryColumnName} TEXT, `

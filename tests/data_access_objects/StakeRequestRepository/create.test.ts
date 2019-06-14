@@ -17,9 +17,10 @@
 import 'mocha';
 import { assert } from 'chai';
 // import StakeRequestRepository from '../../../src/data_access_objects/StakeRequestRepository';
+// import DatabaseWrapper from '../../../src/data_access_objects/DatabaseWrapper';
 
 describe('StakeRequestRepository::create', (): void => {
-  it('.', (): void => {
+  it('', async (): Promise<void> => {
     assert(true);
   });
 });

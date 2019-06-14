@@ -16,10 +16,40 @@
 
 import 'mocha';
 import { assert } from 'chai';
-// import StakeRequestRepository from '../../../src/data_access_objects/StakeRequestRepository';
+import StakeRequestRepository from '../../../src/data_access_objects/StakeRequestRepository';
+import DatabaseWrapper from '../../../src/data_access_objects/DatabaseWrapper';
 
 describe('StakeRequestRepository::createTable', (): void => {
-  it('.', (): void => {
-    assert(true);
+  it('Creates table.', async (): Promise<void> => {
+    const dbWrapper: DatabaseWrapper = DatabaseWrapper.createInMemory();
+
+    const stakeRequestRepository = new StakeRequestRepository(dbWrapper);
+
+    const query = 'SELECT * FROM sqlite_master '
+    + `WHERE tbl_name = '${StakeRequestRepository.tableName}'`;
+
+    let raw = await dbWrapper.get(query);
+    assert.strictEqual(raw, undefined);
+
+    await stakeRequestRepository.createTable();
+
+    raw = await dbWrapper.get(query);
+    assert.notStrictEqual(raw, undefined);
+  });
+
+  it('Does not fail if table already exists.', async (): Promise<void> => {
+    const dbWrapper: DatabaseWrapper = DatabaseWrapper.createInMemory();
+
+    const stakeRequestRepository = new StakeRequestRepository(dbWrapper);
+
+    const query = 'SELECT * FROM sqlite_master '
+    + `WHERE tbl_name = '${StakeRequestRepository.tableName}'`;
+
+    await stakeRequestRepository.createTable();
+
+    const raw = await dbWrapper.get(query);
+    assert.notStrictEqual(raw, undefined);
+
+    await stakeRequestRepository.createTable();
   });
 });

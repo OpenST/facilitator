@@ -29,14 +29,27 @@ export default class DatabaseWrapper {
 
   /* Public Functions */
 
+  /**
+   * Creates a DatabaseWrapper object from a file.
+   *
+   * Creates an empty database object on the filesystem if database does
+   * not exist by the specified path.
+   * Opens a database in read/write mode.
+   *
+   * @param dbFilePath File path to store database.
+   */
   public static createFromFile(dbFilePath: string): DatabaseWrapper {
-    assert.notStrictEqual(dbFilePath, '');
+    assert.notStrictEqual(
+      dbFilePath,
+      '',
+      'Specified database file path is an empty string.',
+    );
 
     const db = new sqlite3.Database(
       dbFilePath,
       // eslint-disable-next-line no-bitwise
       sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
-      (err: Error): void => {
+      (err: Error | null): void => {
         if (err !== null) {
           throw err;
         }
@@ -50,7 +63,7 @@ export default class DatabaseWrapper {
       ':memory:',
       // eslint-disable-next-line no-bitwise
       sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
-      (err: Error): void => {
+      (err: Error | null): void => {
         if (err !== null) {
           throw err;
         }
@@ -102,16 +115,23 @@ export default class DatabaseWrapper {
     );
   }
 
+  public trace(listener: (sql: string) => void): void {
+    this.db.on('trace', listener);
+  }
+
+  public profile(listener: (sql: string, time: number) => void): void {
+    this.db.on('profile', listener);
+  }
+
   public close(): void {
     this.db.close(
-      (err: Error): void => {
+      (err: Error | null): void => {
         if (err !== null) {
           throw err;
         }
       },
     );
   }
-
 
   /* Private Functions */
 
