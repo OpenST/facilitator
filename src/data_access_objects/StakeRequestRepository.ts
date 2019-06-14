@@ -15,18 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import DatabaseWrapper from './DatabaseWrapper';
-
-export interface StakeRequest {
-  stakeRequestHash: string;
-  messageHash: string;
-  amount: number;
-  beneficiary: string;
-  gasPrice: number;
-  gasLimit: number;
-  nonce: number;
-  gateway: string;
-  stakerProxy: string;
-}
+import StakeRequest from './StakeRequestInterface';
 
 export default class StakeRequestRepository {
   private db: DatabaseWrapper;
