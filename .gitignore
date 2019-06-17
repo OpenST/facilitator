@@ -1,0 +1,8 @@
+# IDEs
+.idea/
+.vscode/
+*.swp
+tags
+
+# Dependency directories
+node_modules/
