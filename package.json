@@ -9,8 +9,19 @@
     "type": "git",
     "url": "git+https://github.com/OpenST/facilitator.git"
   },
+  "keywords": [
+    "Facilitator",
+    "OpenST",
+    "OST",
+    "Mosaic",
+    "Simple Token",
+    "Token Economy",
+    "web3",
+    "Ethereum",
+    "EIP20"
+  ],
   "author": "OpenST Ltd.",
-  "license": "Apache-2.0",
+  "license": "Apache v2.0",
   "bugs": {
     "url": "https://github.com/OpenST/facilitator/issues"
   },
