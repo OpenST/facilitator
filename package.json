@@ -1,6 +1,10 @@
 {
   "name": "@openst/facilitator",
-  "description": "Facilitator is an executable to process stake & mint and redeem & unstake operations.",
+  "version": "0.1.0-alpha.1",
+  "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
+  "scripts": {
+    "lint": "eslint src -c .eslintrc.json --ext ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OpenST/facilitator.git"
@@ -16,21 +20,23 @@
     "Ethereum",
     "EIP20"
   ],
-  "homepage": "https://openst.org",
   "author": "OpenST Ltd.",
-  "license": "LGPL-3.0-only",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/openst/mosaic.js/issues"
+    "url": "https://github.com/OpenST/facilitator/issues"
   },
-  "scripts": {
-    "lint": "eslint src -c .eslintrc.json --ext ts"
-  },
+  "homepage": "https://github.com/OpenST/facilitator#readme",
   "dependencies": {
-    "typescript": "^3.3.3333"
+    "ts-node": "8.0.3",
+    "typescript": "3.3.3333",
+    "web3": "1.0.0-beta.52",
+    "fs-extra": "7.0.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^1.5.0",
-    "@typescript-eslint/parser": "^1.4.2",
+    "@types/node": "11.11.3",
+    "@types/web3": "1.0.18",
+    "@typescript-eslint/eslint-plugin": "1.5.0",
+    "@typescript-eslint/parser": "1.4.2",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
