@@ -5,9 +5,10 @@ export default class DBConnection {
   private static connection: any;
 
   /**
-   * @param {string} dbPath Sqlite local db path.
-   *
    * Creates and returns db connection object.
+   *
+   * @param {string} dbPath Sqlite local db path.
+   * @returns `any` Database connection object.
    */
   public static getConnection(dbPath: string) {
     // Create connection object here using npm client.
