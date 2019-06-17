@@ -1,5 +1,6 @@
 import Logger from './Logger';
 import * as path from 'path';
+import {Directory} from './Directory';
 
 const sqlite = require('sqlite3');
 const fs = require('fs-extra');
@@ -9,36 +10,30 @@ const fs = require('fs-extra');
  */
 export class DBConnection {
 
-  static DBName: string = 'OSTFacilitator';
+  private static DBName: string = 'OSTFacilitator';
 
-  private static connection;
+  private static connection: any;
 
-  static dbPath: string;
+  public static dbFilePath: string;
 
   /**
-   * It is used to return the database connection object.
+   * It is used to return the database connection object and path of the db file.
    * @param dbPath Database file path for sqlite.
+
+   * @returns {any} Db connection object.
    */
-  public static getConnection(dbPath) {
-    this.dbPath = dbPath;
+  public static getConnection(dbPath: string): any {
+    this.dbFilePath = dbPath;
+
+    if (this.dbFilePath === null || this.dbFilePath === undefined) {  // TODO: where to extract
+      this.dbFilePath = path.join(Directory.getFacilitatorDirectoryPath());
+    }
     if (this.connection === undefined || this.connection === null) {
-      const sqlite3 = sqlite.verbose();
-      fs.ensureDirSync(path.join(this.dbPath, 'facilitator'));
-      this.connection = new sqlite3.Database(path.join(this.dbPath, 'facilitator', this.DBName + '.db'));
+      fs.ensureDirSync(dbPath);
+      this.connection = new sqlite.Database(path.join(dbPath, `${this.DBName + '.db'}`));
       Logger.info('created database file');
     }
     return this.connection;
-  }
-
-  /**
-   * @returns {string} It is used to return the database file path.
-   */
-  public static get dbFilePath(): string {
-    if(this.dbPath === undefined || this.dbPath === null) {
-      Logger.error('database path is not set');
-      return;
-    }
-    return path.join(this.dbPath,'facilitator', this.DBName + '.db');
   }
 }
 

@@ -1,11 +1,11 @@
 import * as commander from 'commander';
-import {Utils} from '../lib/utils';
 import {Account} from "../Account";
 import Logger from '../Logger';
-import * as os from 'os';
 import * as path from 'path';
 import {DBConnection} from '../DBConnection';
-import {FacilitatorInit} from "../FacilitatorInit";
+import {FacilitatorConfig} from "../Config";
+import {Directory} from "../Directory";
+import {Chain} from '../Config';
 
 const Web3 = require('web3');
 
@@ -16,15 +16,13 @@ commander
   .option('-ap, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
   .option('-or, --origin-rpc <origin-rpc>', 'origin chain rpc')
   .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
-  .option('-h, --db-host <db-host>', 'path where db path is present')
+  .option('-h, --db-path <db-path>', 'path where db path is present')
+  .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
 
-    const facilitatorInit = new FacilitatorInit(options);
+    const facilitatorConfig = FacilitatorConfig.from(options.chainId);
 
-    facilitatorInit.isFacilitatorConfigPreset();
-
-    let originChainId: number = Utils.getOriginChainId(options.chainId, options.mosaicConfig);
-
+    let originChainId: number = FacilitatorConfig.getOriginChainId(options.chainId, options.mosaicConfig);
     const {
       account: auxiliaryAccount,
       encryptedAccount: auxiliaryEncryptedAccount,
@@ -35,21 +33,27 @@ commander
       encryptedAccount: originEncryptedAccount,
     } = Account.create(new Web3(), options.originPassword);
 
-    let dbHost:string = options.dbHost;
-    if (options.dbHost === undefined || options.dbHost === null) {
+    let dbPath: string = options.dbPath;
+    if (options.dbPath === undefined || options.dbPath === null) {
       Logger.info('database host is not provided');
-      DBConnection.getConnection(path.join(os.homedir(), facilitatorInit.defaultDirPath, options.chainId));
-      dbHost = DBConnection.dbFilePath;
+      DBConnection.getConnection(path.join(Directory.getMosaicDirectoryPath()));
+      dbPath = DBConnection.dbFilePath;
     }
 
-    facilitatorInit.generateFacilitatorConfig(
-      dbHost,
-      auxiliaryAccount,
-      originAccount,
-      auxiliaryEncryptedAccount,
-      originEncryptedAccount,
-      originChainId
-    );
+    facilitatorConfig.chains[originChainId] = new Chain();
+    facilitatorConfig.chains[originChainId].worker = originAccount.address;
+    facilitatorConfig.chains[originChainId].rpc = options.originRpc;
+
+    facilitatorConfig.chains[options.chainId] = new Chain();
+    facilitatorConfig.chains[options.chainId].worker = auxiliaryAccount.address;
+    facilitatorConfig.chains[options.chainId].rpc = options.auxiliaryRpc;
+
+    facilitatorConfig.encryptedAccounts[originAccount.address] = originEncryptedAccount;
+    facilitatorConfig.encryptedAccounts[auxiliaryAccount.address] = auxiliaryEncryptedAccount;
+
+    facilitatorConfig.database.host = dbPath;
+
+    facilitatorConfig.writeToFacilitatorConfig(options.chainId, options.force);
   })
   .parse(process.argv);
 

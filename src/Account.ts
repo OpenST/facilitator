@@ -18,15 +18,15 @@ export class Account {
     readonly address: string,
     readonly encryptedKeyStore: EncryptedKeystoreV3Json,
   ) { }
-  
+
   /**
    * @param {Web3} web3 The web3 instance.
    * @param password The password required to unlock the account.
    * @returns {{account: Account; encryptedAccount: PrivateKey}}
    */
-  static create(web3: Web3, password: string) {
-    const account = Account._newWeb3Account(web3);
-    const encryptedAccount = Account._encrypt(account, web3, password);
+  static create(web3: Web3, password: string) : any {
+    const account = Account.newWeb3Account(web3);
+    const encryptedAccount = Account.encrypt(account, web3, password);
 
     return { account, encryptedAccount };
     Logger.info(`created account ${account.address}`);
