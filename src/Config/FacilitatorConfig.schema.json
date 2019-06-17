@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "definitions": {
+    "Address": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$"
+    },
+    "Facilitator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "db": {
+          "$ref": "#/definitions/DB"
+        },
+        "chains": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9a-zA-Z]+$": {
+              "$ref": "#/definitions/Chain"
+            }
+          }
+        },
+        "encrypted_accounts": {
+          "$ref": "#/definitions/EncryptedAccounts"
+        }
+      },
+      "required": [
+        "chains",
+        "db",
+        "encrypted_accounts"
+      ],
+      "title": "Facilitator"
+    },
+    "Chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workers"
+      ],
+      "title": "Chain",
+      "properties": {
+        "workers": {
+          "type": "string"
+        }
+      }
+    },
+    "DB": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "db_host": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "db_host"
+      ],
+      "title": "DB"
+    },
+    "EncryptedAccounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "EncryptedAccounts",
+      "minProperties": 2,
+      "maxProperties": 2,
+      "patternProperties": {
+        "^0x[a-fA-F0-9]{40}$": {
+          "$ref": "#/definitions/Account"
+        }
+      }
+    },
+    "Account": {
+      "type": "object",
+      "title": "Web3 encrypted account"
+    }
+  },
+  "$ref": "#/definitions/Facilitator"
+}

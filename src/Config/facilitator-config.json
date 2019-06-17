@@ -1,0 +1,57 @@
+{
+  "db": {
+    "db_host": "https://localhost:8545"
+  },
+  "chains": {
+    "301": {
+      "workers": "0x4c593DdFaeB00cFF9413B24CABbc39EF4e35BE69"
+    },
+    "12346": {
+      "workers": "0x72c9960ef6cbA9054e6f79937Fcdbb36F9e64db5"
+    }
+  },
+  "encrypted_accounts": {
+    "0x4c593DdFaeB00cFF9413B24CABbc39EF4e35BE69": {
+      "version": 3,
+      "id": "077cd89c-3c7b-4cba-9e19-abce8966a6b4",
+      "address": "4c593ddfaeb00cff9413b24cabbc39ef4e35be69",
+      "crypto": {
+        "ciphertext": "c844a17c993d9c4687e724c21e10f50f02a3e89bde3d17047eb5f307cea3a6d5",
+        "cipherparams": {
+          "iv": "25a78ff611884b8c9a76a4d23b77a730"
+        },
+        "cipher": "aes-128-ctr",
+        "kdf": "scrypt",
+        "kdfparams": {
+          "dklen": 32,
+          "salt": "155962c631b0ea5a5a176efacfc47cb2ad47fae41453c9e4ee316e020770c6c9",
+          "n": 8192,
+          "r": 8,
+          "p": 1
+        },
+        "mac": "d4c216ba64c3c417d22538c7e87f45ab6c321d7b3fa191a13ba85ff1df6532bb"
+      }
+    },
+    "0x72c9960ef6cbA9054e6f79937Fcdbb36F9e64db5": {
+      "version": 3,
+      "id": "2e266532-65ea-40d0-b5fc-538a525bda30",
+      "address": "72c9960ef6cba9054e6f79937fcdbb36f9e64db5",
+      "crypto": {
+        "ciphertext": "decb3b689a67a2689061a19678aa8b0a81f0c8c83315da480b4802876fc330fe",
+        "cipherparams": {
+          "iv": "7ac8d41dd31eb3bd7c4e8959da9aef5a"
+        },
+        "cipher": "aes-128-ctr",
+        "kdf": "scrypt",
+        "kdfparams": {
+          "dklen": 32,
+          "salt": "441ac30a9edf920501a607bdfbdb246527e72a6d7659551300a173f9cf966cbe",
+          "n": 8192,
+          "r": 8,
+          "p": 1
+        },
+        "mac": "c729e4c8515812a8b2bdfc236d3d41de057f9a65260137d35c6a9a74883d47a6"
+      }
+    }
+  }
+}
