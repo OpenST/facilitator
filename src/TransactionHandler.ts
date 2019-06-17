@@ -10,7 +10,7 @@ export default class TransactionHandler {
     this.handle = this.handle.bind(this);
   }
 
-  public handle(events: any[]): void{
-    events.map(event => this.handlers[event.data.__type].parse(event.data).handle());
+  public handle(transactions: any[]): void{
+    transactions.map(transaction => this.handlers[transaction.data.__type].parse(transaction.data).handle());
   }
 }
