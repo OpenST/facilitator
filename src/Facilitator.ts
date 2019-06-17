@@ -6,7 +6,7 @@ import { Config } from './Config';
 export default class Facilitator {
   private config: Config;
 
-  private dbConnection: Record<string, any>;
+  private dbConnection: any;
 
   /**
    * Facilitator class constructor.
@@ -14,7 +14,7 @@ export default class Facilitator {
    * @param {string} config Config class object.
    * @param {object} dbConnection DB connection object.
    */
-  public constructor(config: Config, dbConnection: Record<string, any>) {
+  public constructor(config: Config, dbConnection: any) {
     this.config = config;
     this.dbConnection = dbConnection;
   }

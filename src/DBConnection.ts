@@ -2,7 +2,7 @@
  * The class creates db connection object using npm client.
  */
 export default class DBConnection {
-  private static connection: Record<string, any>;
+  private static connection: any;
 
   /**
    * @param {string} dbPath Sqlite local db path.
