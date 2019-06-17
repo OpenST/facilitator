@@ -1,4 +1,7 @@
+import Model from '../models/Model';
+
 export default interface ContractEntityHandler {
 
-  handle(): void;
+  handle(any): void;
+  parse(any): Model;
 }
