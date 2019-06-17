@@ -1,4 +1,4 @@
-import StakeRequestedHandler from './contract-entities/StakeRequestedHandler';
+import StakeRequestedHandler from './handlers/StakeRequestedHandler';
 
 export default class TransactionHandler {
   private handlers: Record<string, any>;
