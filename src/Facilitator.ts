@@ -6,21 +6,17 @@ import { Config } from './Config';
 export default class Facilitator {
   private config: Config;
 
-  private chainId: string;
-
-  private dbConnection;
+  private dbConnection: Record<string, any>;
 
   /**
    * Facilitator class constructor.
    *
    * @param {string} config Config class object.
    * @param {object} dbConnection DB connection object.
-   * @param {string} chainId Chain identifier to subscribe.
    */
-  public constructor(config, dbConnection, chainId) {
+  public constructor(config: Config, dbConnection: Record<string, any>) {
     this.config = config;
     this.dbConnection = dbConnection;
-    this.chainId = chainId;
   }
 
   /**
