@@ -1,7 +1,7 @@
-import Config from './Config';
+import { Config } from './Config';
 
 /**
- * The class defines properties and behaviour of facilitator.
+ * The class defines properties and behaviour of a facilitator.
  */
 export default class Facilitator {
   private config: Config;
