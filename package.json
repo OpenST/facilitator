@@ -2,6 +2,16 @@
   "name": "@openst/facilitator",
   "version": "0.1.0-alpha.1",
   "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
+  "scripts": {
+    "test": "npm run test:unit",
+    "lint:ts": "eslint src -c .eslintrc.json --ext ts",
+    "test:unit": "mocha -r ts-node/register tests/**/*.test.ts tests/*.test.ts",
+    "coverage": "nyc npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenST/facilitator.git"
+  },
   "keywords": [
     "Facilitator",
     "OpenST",
@@ -13,20 +23,12 @@
     "Ethereum",
     "EIP20"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/OpenST/facilitator.git"
-  },
   "author": "OpenST Ltd.",
   "license": "Apache v2.0",
   "bugs": {
     "url": "https://github.com/OpenST/facilitator/issues"
   },
   "homepage": "https://github.com/OpenST/facilitator#readme",
-  "scripts": {
-    "lint:ts": "eslint src/**/*.ts -c .eslintrc.json --ext ts",
-    "test": "mocha -r ts-node/register tests/**/**/*.test.ts"
-  },
   "dependencies": {
     "ts-node": "8.0.3",
     "typescript": "3.5.1",
@@ -47,9 +49,11 @@
     "chai-as-promised": "7.1.1",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "13.1.0",
-    "eslint-plugin-import": "2.17.3",
     "eslint-plugin-json": "1.4.0",
+    "eslint-plugin-import": "2.17.3",
     "mocha": "6.1.4",
+    "nyc": "14.1.1",
+    "sinon": "7.3.2",
     "sqlite3": "4.0.8"
   }
 }
