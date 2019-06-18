@@ -5,7 +5,7 @@ import { assert } from 'chai';
 /**
  * This class includes the utitity functions to assert spy data.
  */
-class SpyAssert {
+export default class SpyAssert {
   /**
    * @function assertSpy
    *
@@ -62,5 +62,3 @@ class SpyAssert {
     );
   }
 }
-
-module.exports = SpyAssert;

@@ -2,11 +2,10 @@
 
 import { assert } from 'chai';
 
-
 /**
  * This class includes the utitity assert function
  */
-class AssertAsync {
+export default class AssertAsync {
   public static async reject(promise: Promise<any>, message: string) {
     try {
       await promise;
@@ -22,5 +21,3 @@ class AssertAsync {
     }
   }
 }
-
-module.exports = AssertAsync;
