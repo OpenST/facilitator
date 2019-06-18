@@ -17,21 +17,15 @@ export class Directory {
   }
 
   /**
-   * @returns {string} It returns facilitator directory path. // TODO: check only returning string.
-   */
-  public static getFacilitatorDirectoryPath(): string {
-    return path.join(
-      'facilitator'
-    );
-  }
-
-  /**
+   * It returns default db file path.
+   * @param chain Chain id of the aux chain.
    * @returns {string} It returns file path where db is present.
    */
-  public static getDBFilePath(): string {
+  public static getDBFilePath(chain: string): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
-      Directory.getFacilitatorDirectoryPath()
+      chain,
+      'facilitator'
     );
   }
 

@@ -23,17 +23,38 @@ export class DBConnection {
    * @returns {any} Db connection object.
    */
   public static getConnection(dbPath: string): any {
-    this.dbFilePath = dbPath;
 
-    if (this.dbFilePath === null || this.dbFilePath === undefined) {  // TODO: where to extract
-      this.dbFilePath = path.join(Directory.getFacilitatorDirectoryPath());
+    if (DBConnection.connection === undefined || DBConnection.connection === null) {
+      DBConnection.verify(dbPath);
+      DBConnection.connection = new sqlite.Database(dbPath);
     }
-    if (this.connection === undefined || this.connection === null) {
-      fs.ensureDirSync(dbPath);
-      this.connection = new sqlite.Database(path.join(dbPath, `${this.DBName + '.db'}`));
-      Logger.info('created database file');
+
+    return DBConnection.connection;
+  }
+
+  /**
+   * It verifies whether the file path is valid.
+   * @param {string} filePath Database file path.
+   */
+  public static verify(filePath: string): void {
+    if ((fs.existsSync(filePath) && (path.extname(filePath) === '.db'))) {
+      Logger.info('db file verified');
     }
-    return this.connection;
+    else {
+      Logger.error('either file doesn\'t or file extension is incorrect');
+      process.exit(1);
+    }
+  }
+
+  /**
+   * It creates database and returns the file path.
+   * @returns {string} Database file path.
+   */
+  public static create(chain: string): string {
+    const dbPath = Directory.getDBFilePath(chain);
+    fs.ensureDirSync(dbPath);
+    DBConnection.connection = new sqlite.Database(path.join(dbPath, `${DBConnection.DBName + '.db'}`));
+    return path.join(dbPath, `${DBConnection.DBName + '.db'}`);
   }
 }
 

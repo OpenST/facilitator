@@ -20,8 +20,12 @@ commander
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
 
-    const facilitatorConfig = FacilitatorConfig.from(options.chainId);
+    let facilitatorConfig;
+    if (!options.force) {
+      FacilitatorConfig.assertNotExists(options.chainId);
+    }
 
+    facilitatorConfig = FacilitatorConfig.new();
     let originChainId: number = FacilitatorConfig.getOriginChainId(options.chainId, options.mosaicConfig);
     const {
       account: auxiliaryAccount,
@@ -36,8 +40,9 @@ commander
     let dbPath: string = options.dbPath;
     if (options.dbPath === undefined || options.dbPath === null) {
       Logger.info('database host is not provided');
-      DBConnection.getConnection(path.join(Directory.getMosaicDirectoryPath()));
-      dbPath = DBConnection.dbFilePath;
+      dbPath = DBConnection.create(options.chainId);
+    } else {
+      DBConnection.verify(dbPath);
     }
 
     facilitatorConfig.chains[originChainId] = new Chain();
@@ -53,7 +58,7 @@ commander
 
     facilitatorConfig.database.host = dbPath;
 
-    facilitatorConfig.writeToFacilitatorConfig(options.chainId, options.force);
+    facilitatorConfig.writeToFacilitatorConfig(options.chainId);
   })
   .parse(process.argv);
 

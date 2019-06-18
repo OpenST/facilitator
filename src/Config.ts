@@ -108,13 +108,9 @@ export class FacilitatorConfig {
   /**
    * It writes facilitator config object.
    * @param {string} chain Auxiliary chain id.
-   * @param {boolean} forcefulOveride If true it overrides existing facilitator config.
    */
-  public writeToFacilitatorConfig(chain: string, forcefulOveride: boolean): void {
+  public writeToFacilitatorConfig(chain: string): void {
 
-    if (forcefulOveride === undefined || forcefulOveride === null) {
-      FacilitatorConfig.isFacilitatorConfigPresent(chain);
-    }
     const mosaicConfigDir = Directory.getMosaicDirectoryPath();
     const configPath = path.join(
       mosaicConfigDir,
@@ -147,14 +143,21 @@ export class FacilitatorConfig {
         return new FacilitatorConfig(jsonObject);
       }
     }
-    return new FacilitatorConfig("");
+    return new FacilitatorConfig({});
+  }
+
+  /**
+   * @returns {FacilitatorConfig} FacilitatorConfig object.
+   */
+  public static new(): FacilitatorConfig {
+    return new FacilitatorConfig({});
   }
 
   /**
    * It verifies if facilitator config is present for a auxiliary chainid. If already present then it exits.
    * @param {string} chain Auxiliary chain id.
    */
-  private static isFacilitatorConfigPresent(chain: string): void {
+  public static assertNotExists(chain: string): void {
     try {
       let statOutput = fs.statSync(
         path.join(Directory.getMosaicDirectoryPath(), chain, this.fileName)
@@ -202,3 +205,4 @@ export class FacilitatorConfig {
     }
   }
 }
+
