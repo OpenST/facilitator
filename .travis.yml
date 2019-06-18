@@ -1,0 +1,21 @@
+dist: trusty
+language: node_js
+sudo: required
+node_js:
+  - "11"
+branches:
+  only:
+  - master
+  - develop
+notifications:
+  email:
+    recipients:
+      - ci.report@ost.com
+    on_success: always
+    on_failure: always
+
+install:
+  - npm ci
+script:
+  - npm run coverage
+
