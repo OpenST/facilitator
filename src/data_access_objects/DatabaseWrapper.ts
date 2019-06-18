@@ -32,7 +32,7 @@ export default class DatabaseWrapper {
   /**
    * Creates a database on the filesystem.
    *
-   * If database does not exist, creates on open.
+   * If a database does not exist, creates on open.
    * Opens a database in a read/write mode.
    *
    * @param dbFilePath Database's file path.
@@ -58,7 +58,7 @@ export default class DatabaseWrapper {
   }
 
   /**
-   * Creates a in memory database object.
+   * Creates an in memory database object.
    *
    * Opens a database in a read/write mode.
    *

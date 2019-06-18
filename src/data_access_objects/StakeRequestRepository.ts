@@ -47,6 +47,7 @@ export default class StakeRequestRepository {
     this.db = dbWrapper;
   }
 
+  /** Creates stake_request database table if does not exist. */
   public async createTable(): Promise<void> {
     const createTableQuery = `CREATE TABLE IF NOT EXISTS ${StakeRequestRepository.tableName} `
       + '( '
@@ -64,6 +65,11 @@ export default class StakeRequestRepository {
     return this.db.run(createTableQuery);
   }
 
+  /**
+   * Creates a stake request.
+   *
+   * Fails if a stake request with the same stake request's hash exists.
+   */
   public async create(stakeRequest: StakeRequest): Promise<void> {
     const insertQuery = `INSERT INTO ${StakeRequestRepository.tableName} `
       + '( '
@@ -93,6 +99,10 @@ export default class StakeRequestRepository {
     return this.db.run(insertQuery);
   }
 
+  /**
+   * Returns a stake request object with the specified stake request's hash
+   * or undefined if there is no stake request with that hash.
+   */
   public async get(stakeRequestHash: string): Promise<StakeRequest | undefined> {
     const getQuery = 'SELECT * '
       + `FROM ${StakeRequestRepository.tableName} `
