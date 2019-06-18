@@ -3,7 +3,7 @@ import ContractEntityHandler from './handlers/ContractEntityHandler';
 import { HandlerNotFoundException } from './Exception';
 
 export default class TransactionHandler {
-  private handlers: Record<string, ContractEntityHandler>;
+  private handlers: Record<string, ContractEntityHandler<any>>;
 
   public constructor() {
     this.handlers = {
@@ -23,8 +23,7 @@ export default class TransactionHandler {
       if (typeof handler === 'undefined') {
         throw new HandlerNotFoundException(`Handler implementation not found for ${handlerType}`);
       }
-      const model = handler.parse(transaction.data);
-      handler.handle(model);
+      handler.process(transaction.data);
     });
   }
 }

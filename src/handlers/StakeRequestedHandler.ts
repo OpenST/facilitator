@@ -1,10 +1,9 @@
 import ContractEntityHandler from './ContractEntityHandler';
 import StakeRequest from '../models/StakeRequest';
 
-export default class StakeRequestedHandler implements ContractEntityHandler {
-
+export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequest> {
   /**
-   * This method parse specific type of transaction and returns model object.
+   * This method parse stakeRequest transaction and returns stakeRequest model object.
    * @param transaction Transaction object.
    */
   public parse = (transaction: any): StakeRequest => {
@@ -31,9 +30,10 @@ export default class StakeRequestedHandler implements ContractEntityHandler {
       stakeRequestHash,
     );
   };
+
   /**
-   * This method defines action on receiving specific type of model.
-   * @param stakeRequest instance of StakeRequestModel .
+   * This method defines action on receiving stake request model.
+   * @param stakeRequest instance of StakeRequest model .
    */
   public handle = (stakeRequest: StakeRequest): void => {
 
