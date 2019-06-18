@@ -4,15 +4,14 @@ import * as os from 'os';
 /**
  * Directory provides operations on strings representing directories.
  */
-export class Directory {
-
+export default class Directory {
   /**
    * @returns {string} It returns mosaic directory path.
    */
   public static getMosaicDirectoryPath(): string {
     return path.join(
       os.homedir(),
-      '.mosaic'
+      '.mosaic',
     );
   }
 
@@ -25,8 +24,7 @@ export class Directory {
     return path.join(
       Directory.getMosaicDirectoryPath(),
       chain,
-      'facilitator'
+      'facilitator',
     );
   }
-
 }

@@ -1,13 +1,9 @@
 import * as commander from 'commander';
-import {Account} from "../Account";
+import * as Web3 from 'web3';
+import Account from '../Account';
 import Logger from '../Logger';
-import * as path from 'path';
-import {DBConnection} from '../DBConnection';
-import {FacilitatorConfig} from "../Config";
-import {Directory} from "../Directory";
-import {Chain} from '../Config';
-
-const Web3 = require('web3');
+import DBConnection from '../DBConnection';
+import { FacilitatorConfig, Chain } from '../Config';
 
 commander
   .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -19,14 +15,15 @@ commander
   .option('-h, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
-
-    let facilitatorConfig;
     if (!options.force) {
       FacilitatorConfig.assertNotExists(options.chainId);
     }
 
-    facilitatorConfig = FacilitatorConfig.new();
-    let originChainId: number = FacilitatorConfig.getOriginChainId(options.chainId, options.mosaicConfig);
+    const facilitatorConfig = FacilitatorConfig.new();
+    const originChainId: number = FacilitatorConfig.getOriginChainId(
+      options.chainId,
+      options.mosaicConfig,
+    );
     const {
       account: auxiliaryAccount,
       encryptedAccount: auxiliaryEncryptedAccount,
@@ -37,7 +34,7 @@ commander
       encryptedAccount: originEncryptedAccount,
     } = Account.create(new Web3(), options.originPassword);
 
-    let dbPath: string = options.dbPath;
+    let { dbPath } = options;
     if (options.dbPath === undefined || options.dbPath === null) {
       Logger.info('database host is not provided');
       dbPath = DBConnection.create(options.chainId);
@@ -61,4 +58,3 @@ commander
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
   })
   .parse(process.argv);
-

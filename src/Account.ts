@@ -1,14 +1,12 @@
 'use strict';
 
-import Logger from './Logger';
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
-import Web3 from 'web3';
+import Logger from './Logger';
 
 /**
  * Manages encrypted Web3 accounts.
  */
-export class Account {
-
+export default class Account {
   /**
    * Constructor
    * @param address Public address of the account.
@@ -24,12 +22,11 @@ export class Account {
    * @param password The password required to unlock the account.
    * @returns {{account: Account; encryptedAccount: PrivateKey}}
    */
-  static create(web3: Web3, password: string) : any {
+  public static create(web3: Web3, password: string): any {
     const account = Account.newWeb3Account(web3);
     const encryptedAccount = Account.encrypt(account, web3, password);
-
-    return { account, encryptedAccount };
     Logger.info(`created account ${account.address}`);
+    return { account, encryptedAccount };
   }
 
   /**
