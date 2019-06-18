@@ -1,14 +1,12 @@
 {
   "name": "@openst/facilitator",
-  "version": "0.0.1",
-  "description": "Facilitates stack & mint process between origin and auxiliary chains.",
+  "version": "0.1.0-alpha.1",
+  "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
   "keywords": [
-    "Mosaic",
-    "Gateway",
-    "Anchor",
-    "OSTComposer",
+    "Facilitator",
     "OpenST",
     "OST",
+    "Mosaic",
     "Simple Token",
     "Token Economy",
     "web3",
@@ -18,21 +16,31 @@
   "homepage": "https://openst.org/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OpenST/facilitator"
+    "url": "git+https://github.com/OpenST/facilitator.git"
   },
-  "author": "OpenST Foundation Ltd.",
-  "license": "Apache-2.0",
+  "author": "OpenST Ltd.",
+  "license": "Apache v2.0",
   "bugs": {
     "url": "https://github.com/OpenST/facilitator/issues"
   },
+  "homepage": "https://github.com/OpenST/facilitator#readme",
   "scripts": {
+	"lint:ts": "eslint src -c .eslintrc.json --ext ts"
     "test": "mocha -r ts-node/register tests/**/**/*.test.ts"
+  },
+  "dependencies": {
+    "ts-node": "8.0.3",
+    "typescript": "3.5.1",
+    "web3": "1.0.0-beta.52",
+    "fs-extra": "7.0.1"
   },
   "devDependencies": {
     "@types/chai": "4.1.7",
     "@types/chai-as-promised": "7.1.0",
     "@types/mocha": "5.2.7",
     "@types/sqlite3": "3.1.5",
+    "@types/node": "11.11.3",
+    "@types/web3": "1.0.18",
     "@typescript-eslint/eslint-plugin": "1.10.2",
     "@typescript-eslint/parser": "1.10.2",
     "@typescript-eslint/typescript-estree": "1.10.2",
@@ -43,8 +51,6 @@
     "eslint-plugin-import": "2.17.3",
     "eslint-plugin-json": "1.4.0",
     "mocha": "6.1.4",
-    "sqlite3": "4.0.8",
-    "ts-node": "8.2.0",
-    "typescript": "3.5.1"
+    "sqlite3": "4.0.8"
   }
 }

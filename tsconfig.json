@@ -23,7 +23,8 @@
         "resolveJsonModule": true
     },
     "include": [
-        "tools/fuzzy_proof_generator_tool/src/*.ts"
+        "index.ts",
+        "src/**/*.ts"
     ],
     "exclude": [
         "node_modules"

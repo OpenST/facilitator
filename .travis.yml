@@ -1,5 +1,7 @@
 dist: trusty
 language: node_js
+node_js:
+  - "11"
 cache: npm
 sudo: required
 branches:
@@ -15,7 +17,5 @@ notifications:
       - ci.report@ost.com
     on_success: always
     on_failure: always
-node_js:
-  - "10"
 script:
   - npm run test
