@@ -22,4 +22,4 @@ install:
   - npm ci
 script:
   - npm run test
-  - npm run coverage
+
