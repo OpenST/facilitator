@@ -26,7 +26,7 @@ export default class GraphClient {
    * to observer i.e. TransactionHandler.
    * Documentation: https://www.apollographql.com/docs/react/advanced/subscriptions/
    *
-   * @param Subscription Subscription query object.
+   * @param subscriptionQry Subscription query object.
    * @return `Subscription` Query subscription object
    */
   public subscribe(subscriptionQry: string) {
@@ -35,6 +35,7 @@ export default class GraphClient {
     // Subscription handling
     const querySubscriber = this.getClient().subscribe({
       query: gqlSubscriptionQry,
+      fetchPolicy: 'network-only',
       variables: {},
     }).subscribe({
       next(response) {
@@ -55,25 +56,17 @@ export default class GraphClient {
    * @return {ApolloClient<NormalizedCacheObject>}
    */
   private getClient() {
-    // Creates a WebSocket link.
-    const wsLink = new WebSocketLink(this.getSubscriptionClient());
+    // Creates subscription client
+    const subscriptionClient = new SubscriptionClient(this.subgraphEndPoint, {
+        reconnect: true,
+      },
+      WebSocket
+    );
+    // Creates WebSocket link.
+    const wsLink = new WebSocketLink(subscriptionClient);
     // Instantiate in memory cache object.
     const cache = new InMemoryCache();
     // Instantiate apollo client
     return new ApolloClient({ link: wsLink, cache });
-  }
-
-  /**
-   * Creates and returns SubscriptionClient.
-   *
-   * @return {SubscriptionClient}
-   */
-  private getSubscriptionClient() {
-    // Creates subscription client
-    const subscriptionClient = new SubscriptionClient(this.subgraphEndPoint, {
-      reconnect: true,
-    },
-    WebSocket);
-    return subscriptionClient;
   }
 }

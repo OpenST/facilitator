@@ -57,8 +57,9 @@ export default class Facilitator {
 
   /**
    * List of all queries to subscribe.
+   * Add GQL queries needed for the model/services.
    *
-   * @return {string[]} List of subscription queries
+   * @return {string[]} List of subscription queries.
    */
   private getSubscriptionQueries() {
     return ['subscription{stakeRequesteds{id}}'];
