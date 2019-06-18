@@ -3,7 +3,10 @@
   "version": "0.1.0-alpha.1",
   "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
   "scripts": {
-    "lint": "eslint src -c .eslintrc.json --ext ts"
+    "lint": "eslint src -c .eslintrc.json --ext ts",
+    "test": "npm run test:unit",
+    "test:unit": "mocha -r ts-node/register tests/**/*.test.ts tests/*.test.ts ",
+    "coverage": "nyc npm run test"
   },
   "repository": {
     "type": "git",
@@ -40,13 +43,18 @@
     "ws": "7.0.0"
   },
   "devDependencies": {
+    "@types/mocha": "5.2.6",
     "@types/node": "11.11.3",
     "@types/web3": "1.0.18",
     "@typescript-eslint/eslint-plugin": "1.5.0",
     "@typescript-eslint/parser": "1.4.2",
+    "chai": "4.2.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
-    "eslint-plugin-json": "1.4.0"
+    "eslint-plugin-json": "1.4.0",
+    "mocha": "6.1.4",
+    "nyc": "14.1.1",
+    "sinon": "7.3.2"
   }
 }
