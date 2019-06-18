@@ -6,3 +6,6 @@ tags
 
 # Dependency directories
 node_modules/
+
+# coverage report
+.nyc_output/

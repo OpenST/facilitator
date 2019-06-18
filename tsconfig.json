@@ -1,13 +1,13 @@
 {
-  "compilerOptions": {
-    "declaration": true,
-    "module": "commonjs",
-    "outDir": "./lib",
-    "sourceMap": true,
-    "target": "es5"
-  },
-  "include": [
-    "index.ts",
-    "src/**/*.ts"
-  ]
+    "compilerOptions": {
+        "declaration": true,
+        "module": "commonjs",
+        "outDir": "./lib",
+        "sourceMap": true,
+        "target": "es5"
+    },
+    "include": [
+        "index.ts",
+        "src/**/*.ts"
+    ]
 }
