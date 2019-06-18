@@ -13,7 +13,6 @@
     "Ethereum",
     "EIP20"
   ],
-  "homepage": "https://openst.org/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OpenST/facilitator.git"
@@ -25,7 +24,7 @@
   },
   "homepage": "https://github.com/OpenST/facilitator#readme",
   "scripts": {
-	"lint:ts": "eslint src -c .eslintrc.json --ext ts"
+    "lint:ts": "eslint src/**/*.ts -c .eslintrc.json --ext ts",
     "test": "mocha -r ts-node/register tests/**/**/*.test.ts"
   },
   "dependencies": {

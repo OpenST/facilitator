@@ -24,4 +24,4 @@ export default interface StakeRequest {
   nonce: number;
   gateway: string;
   stakerProxy: string;
-};
+}
