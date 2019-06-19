@@ -118,7 +118,7 @@ export class StakeRequestRepository {
     return StakeRequestModel.build(stakeRequest);
   }
 
-  /** Creates a stake request instance in the model and syncs with database. */
+  /** Creates a stake request model in the repository and syncs with database. */
   public async create(stakeRequest: StakeRequestAttributes): Promise<StakeRequestModel> {
     return StakeRequestModel.create(stakeRequest);
   }

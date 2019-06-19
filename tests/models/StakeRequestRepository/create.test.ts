@@ -25,6 +25,7 @@ import {
 
 import Database from '../../../src/models/Database';
 
+import checkAttributesAgainstModel from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -32,66 +33,6 @@ import chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
 const { assert } = chai;
-
-function checkAttributesAgainstModel(
-  stakeRequestAttributes: StakeRequestAttributes,
-  stakeRequestInstance: StakeRequestModel,
-): void {
-  assert.strictEqual(
-    stakeRequestAttributes.stakeRequestHash,
-    stakeRequestInstance.stakeRequestHash,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.messageHash,
-    stakeRequestInstance.messageHash,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.amount,
-    stakeRequestInstance.amount,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.beneficiary,
-    stakeRequestInstance.beneficiary,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gasPrice,
-    stakeRequestInstance.gasPrice,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gasLimit,
-    stakeRequestInstance.gasLimit,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.nonce,
-    stakeRequestInstance.nonce,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gateway,
-    stakeRequestInstance.gateway,
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.stakerProxy,
-    stakeRequestInstance.stakerProxy,
-  );
-
-  assert.notStrictEqual(
-    undefined,
-    stakeRequestInstance.createdAt,
-  );
-
-  assert.notStrictEqual(
-    undefined,
-    stakeRequestInstance.updatedAt,
-  );
-}
 
 function checkAttributesAgainstRaw(
   stakeRequestAttributes: StakeRequestAttributes,
@@ -145,7 +86,7 @@ function checkAttributesAgainstRaw(
 }
 
 describe('StakeRequestRepository::create', (): void => {
-  it('Checks creation of stake request instance.', async (): Promise<void> => {
+  it('Checks creation of stake request model.', async (): Promise<void> => {
     const db = Database.createInMemory();
     await db.sync();
 
@@ -161,11 +102,11 @@ describe('StakeRequestRepository::create', (): void => {
       stakerProxy: 'stakerProxyA',
     };
 
-    const stakeRequestInstance = await db.stakeRequestRepository.create(
+    const stakeRequestModel = await db.stakeRequestRepository.create(
       stakeRequestAttributes,
     );
 
-    checkAttributesAgainstModel(stakeRequestAttributes, stakeRequestInstance);
+    checkAttributesAgainstModel(stakeRequestAttributes, stakeRequestModel);
 
     const stakeRequests = await db.sequelize.query(
       `SELECT * FROM ${StakeRequestModel.getTableName()} `

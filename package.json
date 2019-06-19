@@ -39,8 +39,8 @@
     "@types/chai": "4.1.7",
     "@types/chai-as-promised": "7.1.0",
     "@types/mocha": "5.2.7",
-    "@types/sqlite3": "3.1.5",
     "@types/node": "11.11.3",
+    "@types/sqlite3": "3.1.5",
     "@types/web3": "1.0.18",
     "@typescript-eslint/eslint-plugin": "1.10.2",
     "@typescript-eslint/parser": "1.10.2",
@@ -49,10 +49,11 @@
     "chai-as-promised": "7.1.1",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "13.1.0",
-    "eslint-plugin-json": "1.4.0",
     "eslint-plugin-import": "2.17.3",
+    "eslint-plugin-json": "1.4.0",
     "mocha": "6.1.4",
     "nyc": "14.1.1",
+    "sequelize": "5.8.10",
     "sinon": "7.3.2",
     "sqlite3": "4.0.8"
   }
