@@ -16,7 +16,7 @@
 
 import { Sequelize } from 'sequelize';
 
-import StakeRequestRepository from './StakeRequestRepository';
+import { StakeRequestRepository } from './StakeRequestRepository';
 
 export default class Database {
   /* Storage */
@@ -32,6 +32,7 @@ export default class Database {
     const sequelize = new Sequelize({
       dialect: 'sqlite',
       storage: ':memory:',
+      logging: false,
     });
 
     return new Database(sequelize);
@@ -41,6 +42,7 @@ export default class Database {
     const sequelize = new Sequelize({
       dialect: 'sqlite',
       storage: dbFilePath,
+      logging: false,
     });
 
     return new Database(sequelize);

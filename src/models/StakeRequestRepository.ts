@@ -56,7 +56,7 @@ export class StakeRequestModel extends Model {
   public updatedAt!: Date;
 }
 
-export default class StakeRequestRepository {
+export class StakeRequestRepository {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -70,19 +70,31 @@ export default class StakeRequestRepository {
           type: DataTypes.STRING,
         },
         amount: {
-          type: DataTypes.INTEGER.UNSIGNED,
+          type: DataTypes.INTEGER,
+          validate: {
+            min: 0,
+          },
         },
         beneficiary: {
           type: DataTypes.STRING,
         },
         gasPrice: {
-          type: DataTypes.INTEGER.UNSIGNED,
+          type: DataTypes.INTEGER,
+          validate: {
+            min: 0,
+          },
         },
         gasLimit: {
-          type: DataTypes.INTEGER.UNSIGNED,
+          type: DataTypes.INTEGER,
+          validate: {
+            min: 0,
+          },
         },
         nonce: {
-          type: DataTypes.INTEGER.UNSIGNED,
+          type: DataTypes.INTEGER,
+          validate: {
+            min: 0,
+          },
         },
         gateway: {
           type: DataTypes.STRING,
@@ -106,6 +118,7 @@ export default class StakeRequestRepository {
     return StakeRequestModel.build(stakeRequest);
   }
 
+  /** Creates a stake request instance in the model and syncs with database. */
   public async create(stakeRequest: StakeRequestAttributes): Promise<StakeRequestModel> {
     return StakeRequestModel.create(stakeRequest);
   }
