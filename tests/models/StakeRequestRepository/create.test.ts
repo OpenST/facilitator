@@ -16,19 +16,14 @@
 
 import 'mocha';
 
-import { QueryTypes } from 'sequelize';
-
 import {
   StakeRequestAttributes,
-  StakeRequestModel,
+  StakeRequest,
 } from '../../../src/models/StakeRequestRepository';
 
 import Database from '../../../src/models/Database';
 
-import {
-  checkAttributesAgainstModel,
-  checkAttributesAgainstRaw,
-} from './util';
+import Util from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -53,25 +48,25 @@ describe('StakeRequestRepository::create', (): void => {
       stakerProxy: 'stakerProxyA',
     };
 
-    const stakeRequestModel = await db.stakeRequestRepository.create(
+    const stakeRequestResponse = await db.stakeRequestRepository.create(
       stakeRequestAttributes,
     );
 
-    checkAttributesAgainstModel(stakeRequestAttributes, stakeRequestModel);
+    Util.checkStakeRequestAgainstAttributes(stakeRequestResponse, stakeRequestAttributes);
 
-    const stakeRequests = await db.sequelize.query(
-      `SELECT * FROM ${StakeRequestModel.getTableName()} `
-    + `WHERE ${StakeRequestModel.rawAttributes.stakeRequestHash.field} = `
-    + `'${stakeRequestAttributes.stakeRequestHash}'`,
-      { type: QueryTypes.SELECT },
+    const stakeRequest = await db.stakeRequestRepository.get(
+      stakeRequestAttributes.stakeRequestHash,
     );
 
-    assert.strictEqual(
-      stakeRequests.length,
-      1,
+    assert.notStrictEqual(
+      stakeRequest,
+      null,
     );
 
-    checkAttributesAgainstRaw(stakeRequestAttributes, stakeRequests[0]);
+    Util.checkStakeRequestAgainstAttributes(
+      stakeRequest as StakeRequest,
+      stakeRequestAttributes,
+    );
   });
 
   it('Throws if a stake request already exists.', async (): Promise<void> => {

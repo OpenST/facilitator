@@ -16,108 +16,62 @@
 
 import {
   StakeRequestAttributes,
-  StakeRequestModel,
+  StakeRequest,
 } from '../../../src/models/StakeRequestRepository';
 
 import assert = require('assert');
 
-export function checkAttributesAgainstModel(
-  stakeRequestAttributes: StakeRequestAttributes,
-  stakeRequestModel: StakeRequestModel,
-): void {
-  assert.strictEqual(
-    stakeRequestAttributes.stakeRequestHash,
-    stakeRequestModel.stakeRequestHash,
-  );
+const Util = {
+  checkStakeRequestAgainstAttributes(
+    stakeRequest: StakeRequest,
+    stakeRequestAttributes: StakeRequestAttributes,
+  ): void {
+    assert.strictEqual(
+      stakeRequest.stakeRequestHash,
+      stakeRequestAttributes.stakeRequestHash,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.messageHash,
-    stakeRequestModel.messageHash,
-  );
+    assert.strictEqual(
+      stakeRequest.messageHash,
+      stakeRequestAttributes.messageHash,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.amount,
-    stakeRequestModel.amount,
-  );
+    assert.strictEqual(
+      stakeRequest.amount,
+      stakeRequestAttributes.amount,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.beneficiary,
-    stakeRequestModel.beneficiary,
-  );
+    assert.strictEqual(
+      stakeRequest.beneficiary,
+      stakeRequestAttributes.beneficiary,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.gasPrice,
-    stakeRequestModel.gasPrice,
-  );
+    assert.strictEqual(
+      stakeRequest.gasPrice,
+      stakeRequestAttributes.gasPrice,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.gasLimit,
-    stakeRequestModel.gasLimit,
-  );
+    assert.strictEqual(
+      stakeRequest.gasLimit,
+      stakeRequestAttributes.gasLimit,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.nonce,
-    stakeRequestModel.nonce,
-  );
+    assert.strictEqual(
+      stakeRequest.nonce,
+      stakeRequestAttributes.nonce,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.gateway,
-    stakeRequestModel.gateway,
-  );
+    assert.strictEqual(
+      stakeRequest.gateway,
+      stakeRequestAttributes.gateway,
+    );
 
-  assert.strictEqual(
-    stakeRequestAttributes.stakerProxy,
-    stakeRequestModel.stakerProxy,
-  );
-}
+    assert.strictEqual(
+      stakeRequest.stakerProxy,
+      stakeRequestAttributes.stakerProxy,
+    );
+  },
 
-export function checkAttributesAgainstRaw(
-  stakeRequestAttributes: StakeRequestAttributes,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stakeRequestRaw: any,
-): void {
-  assert.strictEqual(
-    stakeRequestAttributes.stakeRequestHash,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.stakeRequestHash.field}`],
-  );
+};
 
-  assert.strictEqual(
-    stakeRequestAttributes.messageHash,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.messageHash.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.amount,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.amount.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.beneficiary,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.beneficiary.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gasPrice,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.gasPrice.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gasLimit,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.gasLimit.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.nonce,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.nonce.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gateway,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.gateway.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.stakerProxy,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.stakerProxy.field}`],
-  );
-}
+export default Util;

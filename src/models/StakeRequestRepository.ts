@@ -20,6 +20,7 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 
+class StakeRequestModel extends Model {}
 export interface StakeRequestAttributes {
   stakeRequestHash: string;
   messageHash: string;
@@ -32,28 +33,18 @@ export interface StakeRequestAttributes {
   stakerProxy: string;
 }
 
-export class StakeRequestModel extends Model {
-  public stakeRequestHash!: string;
-
-  public messageHash!: string;
-
-  public amount!: number;
-
-  public beneficiary!: string;
-
-  public gasPrice!: number;
-
-  public gasLimit!: number;
-
-  public nonce!: number;
-
-  public gateway!: string;
-
-  public stakerProxy!: string;
-
-  public createdAt!: Date;
-
-  public updatedAt!: Date;
+export interface StakeRequest {
+  stakeRequestHash: string;
+  messageHash: string;
+  amount: number;
+  beneficiary: string;
+  gasPrice: number;
+  gasLimit: number;
+  nonce: number;
+  gateway: string;
+  stakerProxy: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class StakeRequestRepository {
@@ -105,7 +96,8 @@ export class StakeRequestRepository {
       },
       {
         ...initOptions,
-        modelName: 'stake_request',
+        modelName: 'stakeRequest',
+        tableName: 'stake_request',
       },
     );
   }
@@ -114,20 +106,22 @@ export class StakeRequestRepository {
     await StakeRequestModel.sync();
   }
 
-  public async build(stakeRequest: StakeRequestAttributes): Promise<StakeRequestModel> {
-    return StakeRequestModel.build(stakeRequest);
-  }
-
   /** Creates a stake request model in the repository and syncs with database. */
-  public async create(stakeRequest: StakeRequestAttributes): Promise<StakeRequestModel> {
-    return StakeRequestModel.create(stakeRequest);
+  public async create(stakeRequest: StakeRequestAttributes): Promise<StakeRequest> {
+    return await StakeRequestModel.create(stakeRequest) as StakeRequest;
   }
 
-  public async get(stakeRequestHash: string): Promise<StakeRequestModel | null> {
-    return StakeRequestModel.findOne({
+  public async get(stakeRequestHash: string): Promise<StakeRequest | null> {
+    const stakeRequestModel = await StakeRequestModel.findOne({
       where: {
         stakeRequestHash,
       },
     });
+
+    if (stakeRequestModel === null) {
+      return null;
+    }
+
+    return stakeRequestModel as StakeRequest;
   }
 }

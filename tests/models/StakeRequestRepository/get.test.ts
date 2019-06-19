@@ -16,12 +16,13 @@
 
 import 'mocha';
 
-import { StakeRequestAttributes, StakeRequestModel } from '../../../src/models/StakeRequestRepository';
+import {
+  StakeRequestAttributes,
+  StakeRequest,
+} from '../../../src/models/StakeRequestRepository';
 import Database from '../../../src/models/Database';
 
-import {
-  checkAttributesAgainstModel,
-} from './util';
+import Util from './util';
 
 import assert = require('assert');
 
@@ -46,18 +47,20 @@ describe('StakeRequestRepository::get', (): void => {
       stakeRequestAttributes,
     );
 
-    const stakeRequestModel = await db.stakeRequestRepository.get(
+    const stakeRequest = await db.stakeRequestRepository.get(
       stakeRequestAttributes.stakeRequestHash,
     );
 
+    console.log((stakeRequest as StakeRequest).stakeRequestHash);
+
     assert.notStrictEqual(
-      stakeRequestModel,
+      stakeRequest,
       null,
     );
 
-    checkAttributesAgainstModel(
+    Util.checkStakeRequestAgainstAttributes(
+      stakeRequest as StakeRequest,
       stakeRequestAttributes,
-      stakeRequestModel as StakeRequestModel,
     );
   });
 
@@ -81,12 +84,12 @@ describe('StakeRequestRepository::get', (): void => {
       stakeRequestAttributes,
     );
 
-    const stakeRequestModel = await db.stakeRequestRepository.get(
+    const stakeRequest = await db.stakeRequestRepository.get(
       'nonExistinghash',
     );
 
     assert.strictEqual(
-      stakeRequestModel,
+      stakeRequest,
       null,
     );
   });
