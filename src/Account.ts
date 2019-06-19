@@ -4,6 +4,8 @@ import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import Logger from './Logger';
 import Web3 from 'web3';
 
+const Web3 = require('web');
+
 /**
  * Manages encrypted Web3 accounts.
  */
