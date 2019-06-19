@@ -7,37 +7,38 @@ import Directory from './Directory';
 /**
  * It is used to manage the database connection.
  */
-export default class DBConnection {
+export default class Database {
   private static DBName: string = 'OSTFacilitator';
 
   private static connection: any;
 
   /**
-   * It is used to return the database connection object and path of the db file.
+   * This method returns DBConnection if provided path is correct otherwise returns null.
    * @param dbPath Database file path for sqlite.
 
    * @returns {any} Db connection object.
    */
   public static getConnection(dbPath: string): any {
-    if (DBConnection.connection === undefined || DBConnection.connection === null) {
-      DBConnection.verify(dbPath);
-      DBConnection.connection = new sqlite.Database(dbPath);
+    if (Database.connection === undefined || Database.connection === null) {
+      if (!(Database.verify(dbPath))) {
+        throw new Error('database file path is invalid');
+      }
+      Database.connection = new sqlite.Database(dbPath);
     }
 
-    return DBConnection.connection;
+    return Database.connection;
   }
 
   /**
    * It verifies whether the file path is valid.
    * @param {string} filePath Database file path.
    */
-  public static verify(filePath: string): void {
+  public static verify(filePath: string): boolean {
     if ((fs.existsSync(filePath) && (path.extname(filePath) === '.db'))) {
       Logger.info('db file verified');
-    } else {
-      Logger.error('either file doesn\'t or file extension is incorrect');
-      process.exit(1);
+      return true;
     }
+    return false;
   }
 
   /**
@@ -47,9 +48,8 @@ export default class DBConnection {
   public static create(chain: string): string {
     const dbPath = Directory.getDBFilePath(chain);
     fs.ensureDirSync(dbPath);
-    const facilitatorConfigDB = path.join(path.join(dbPath, `${`${DBConnection.DBName}.db`}`));
-    DBConnection.connection = new sqlite.Database(facilitatorConfigDB);
+    const facilitatorConfigDB = path.join(path.join(dbPath, `${`${Database.DBName}.db`}`));
+    Database.connection = new sqlite.Database(facilitatorConfigDB);
     return facilitatorConfigDB;
   }
 }
-
