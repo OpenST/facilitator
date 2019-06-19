@@ -6,15 +6,15 @@
 export default abstract class ContractEntityHandler<T> {
   /**
    * This method defines handler of a transaction.
-   * @param T Model object.
+   * @param models Model object array.
    */
-  abstract handle(T): void;
+  abstract handle(models: T[]): void;
 
   /**
    * This method parse a transaction and returns a model
    * @param any Transaction from the subscriber.
    */
-  abstract parse(any): T;
+  abstract parse(any: any[]): T[];
 
   /**
    * This is a template method, this method shouldn't be override by implementer.

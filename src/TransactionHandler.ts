@@ -1,29 +1,28 @@
-import StakeRequestedHandler from './handlers/StakeRequestedHandler';
 import ContractEntityHandler from './handlers/ContractEntityHandler';
 import { HandlerNotFoundException } from './Exception';
 
 export default class TransactionHandler {
-  private handlers: Record<string, ContractEntityHandler<any>>;
+  private readonly handlers: Record<string, ContractEntityHandler<any>>;
 
-  public constructor() {
-    this.handlers = {
-      StakeRequested: new StakeRequestedHandler(),
-    };
+  public constructor(handlers: Record<string, ContractEntityHandler<any>>) {
+    this.handlers = handlers;
     this.handle = this.handle.bind(this);
   }
 
   /**
-   * This method accept transactions and handles them with specific handlers.
-   * @param transactions List of transactions.
+   * This method accept bulkTransactions and handles them with specific handlers.
+   * @param bulkTransactions List of bulkTransactions.
    */
-  public handle(transactions: any[]): void{
-    transactions.forEach((transaction) => {
-      const handlerType = transaction.data.__type;
-      const handler = this.handlers[handlerType];
+  public handle(bulkTransactions: any): void {
+    Object.keys(bulkTransactions).forEach((transactionKind) => {
+      const handler = this.handlers[transactionKind];
       if (typeof handler === 'undefined') {
-        throw new HandlerNotFoundException(`Handler implementation not found for ${handlerType}`);
+        throw new HandlerNotFoundException(
+          `Handler implementation not found for ${transactionKind}`,
+        );
       }
-      handler.process(transaction.data);
+      const transactions = bulkTransactions[transactionKind];
+      handler.process(transactions);
     });
   }
 }
