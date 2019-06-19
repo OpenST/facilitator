@@ -21,7 +21,7 @@ import StakeRequestRepository from './StakeRequestRepository';
 export default class Database {
   /* Storage */
 
-  private sequelize: Sequelize;
+  public sequelize: Sequelize;
 
   public stakeRequestRepository: StakeRequestRepository;
 
