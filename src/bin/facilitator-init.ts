@@ -1,5 +1,5 @@
 import * as commander from 'commander';
-import * as Web3 from 'web3';
+const Web3 = require('web3');
 import Account from '../Account';
 import Logger from '../Logger';
 import DBConnection from '../DBConnection';
