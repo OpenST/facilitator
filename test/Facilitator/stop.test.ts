@@ -6,14 +6,15 @@ const sinon = require('sinon');
 import { Config } from './../../src/Config'
 import Facilitator from './../../src/Facilitator'
 
-describe('Facilitator.constructor()', () => {
+describe('Facilitator.stop()', () => {
+  let facilitator;
 
-  it('should construct with correct parameters', async () => {
+  it('should stop facilitator gracefully', async () => {
     const configStub = sinon.createStubInstance(Config);
     const dbConnection = sinon.spy();
-    const facilitator = new Facilitator(configStub, dbConnection);
+    facilitator = new Facilitator(configStub, dbConnection);
+    await facilitator.stop();
 
-    assert(facilitator);
     sinon.restore();
   });
 

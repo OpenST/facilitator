@@ -5,8 +5,7 @@
   "scripts": {
     "lint": "eslint src -c .eslintrc.json --ext ts",
     "test": "npm run test:unit",
-    "test:unit": "mocha -r ts-node/register test/**/*.test.ts test/*.test.ts ",
-    "coverage": "nyc npm run test"
+    "test:unit": "mocha -r ts-node/register test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts "
   },
   "repository": {
     "type": "git",

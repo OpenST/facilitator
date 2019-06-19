@@ -25,17 +25,20 @@ export default class Facilitator {
   }
 
   /**
-   * Starts the facilitator and subscribes to subgraphs.
+   * Starts the facilitator, creates graph client object and subscribes to subscription queries.
    *
    * @return Promise<void>
    */
   public async start() {
-
     const subGraphDetails = this.getSubGraphDetails();
-    for (var chainType in subGraphDetails) {
+    for (let chainType in subGraphDetails) {
       const subGraphInfo = subGraphDetails[chainType];
       const graphClient = new GraphClient(subGraphInfo.subGraphEndPoint);
-      this.subscribeToSubscriptionQueries(graphClient, subGraphInfo.subscriptionQueries);
+      const subscriptionQueries = subGraphInfo.subscriptionQueries;
+      // Subscribe to all subscription queries for a facilitator
+      for (let i = 0; i < subscriptionQueries.length; i++) {
+        this.querySubscriptions[i] = await graphClient.subscribe(subscriptionQueries[i]);
+      }
     }
   }
 
@@ -53,19 +56,6 @@ export default class Facilitator {
   }
 
   /**
-   * Subscribes to all subscription queries for a deployed subgraph.
-   *
-   * @param graphClient Graph client object.
-   * @param subscriptionQueries List fo subscription queries
-   * @return {Promise<void>}
-   */
-  private async subscribeToSubscriptionQueries(graphClient, subscriptionQueries) {
-    for (let i = 0; i < subscriptionQueries.length; i++) {
-      this.querySubscriptions[i] = await graphClient.subscribe(subscriptionQueries[i]);
-    }
-  }
-
-  /**
    * List of all queries to subscribe.
    * Add GQL queries needed for the model/services.
    * Replace it with subgraph endpoint from config after it's populated.
@@ -77,7 +67,8 @@ export default class Facilitator {
     return {
       origin: {
         subGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
-        subscriptionQueries: ['subscription{stakeRequesteds{id}}'],
+        subscriptionQueries: ['subscription{stakeRequesteds{id amount beneficiary gasLimit' +
+        ' gasPrice gateway nonce staker stakeRequestHash }}'],
       },
       auxiliary: {
         subGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/auxiliary',

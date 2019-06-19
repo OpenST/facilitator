@@ -31,7 +31,8 @@ export default class GraphClient {
    */
   public subscribe(subscriptionQry: string) {
     if( !subscriptionQry ) {
-      throw TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
+      const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
+      return Promise.reject(err);
     }
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;

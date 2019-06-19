@@ -36,7 +36,8 @@ describe('GraphClient.subscribe()', () => {
 
   it('should throw an error when subscriptionQry is undefined object', async () => {
     const errorMessage = "Mandatory Parameter 'subscriptionQry' is missing or invalid.";
-    await AssertAsync.reject(await graphClient.subscribe(subscriptionQry), errorMessage);
+    await AssertAsync.reject(graphClient.subscribe(undefined), errorMessage);
+    //assert.throws(await graphClient.subscribe(undefined), new TypeError(errorMessage));
   });
 
 });
