@@ -1,6 +1,5 @@
 import { Subscription } from 'apollo-client/util/Observable';
 import { Config } from './Config';
-import GraphClient from './GraphClient';
 
 /**
  * The class defines properties and behaviour of a facilitator.
@@ -25,21 +24,24 @@ export default class Facilitator {
   }
 
   /**
-   * Starts the facilitator, creates graph client object and subscribes to subscription queries.
+   * Starts the facilitator by subscribing to subscription queries.
    *
+   * @param originSubGraphClient GraphClient Origin chain graph client.
+   * @param auxiliarySubGraphClient GraphClient Auxiliary chain graph client.
    * @return Promise<void>
    */
-  public async start() {
-    const subGraphDetails = this.getSubGraphDetails();
-    for (let chainType in subGraphDetails) {
-      const subGraphInfo = subGraphDetails[chainType];
-      const graphClient = new GraphClient(subGraphInfo.subGraphEndPoint);
-      const subscriptionQueries = subGraphInfo.subscriptionQueries;
+  public async start(originSubGraphClient, auxiliarySubGraphClient) {
+    const subGraphDetails = this.getSubscriptionQueries();
 
-      // Subscribe to all subscription queries for a facilitator
-      for (let i = 0; i < subscriptionQueries.length; i++) {
-        this.querySubscriptions[i] = await graphClient.subscribe(subscriptionQueries[i]);
-      }
+    // Subscription to origin queries
+    let subscriptionQueries = subGraphDetails.origin.subscriptionQueries;
+    for (let i = 0; i < subscriptionQueries.length; i++) {
+      this.querySubscriptions[i] = await originSubGraphClient.subscribe(subscriptionQueries[i]);
+    }
+
+    subscriptionQueries = subGraphDetails.auxiliary.subscriptionQueries;
+    for (let i = 0; i < subscriptionQueries.length; i++) {
+      this.querySubscriptions[i] = await auxiliarySubGraphClient.subscribe(subscriptionQueries[i]);
     }
   }
 
@@ -57,22 +59,18 @@ export default class Facilitator {
   }
 
   /**
-   * List of all queries to subscribe.
-   * Add GQL queries needed for the model/services.
-   * Replace it with subgraph endpoint from config after it's populated.
-   * Populate subscription queries
+   * Subgraph details object which contains chain based subscriptionQueries.
+   * Feel free to add subscription queries
    *
-   * @return {string[]} List of subscription queries.
+   * @return <any> Object containing chain based subscriptionQueries.
    */
-  private getSubGraphDetails() {
+  private getSubscriptionQueries() {
     return {
       origin: {
-        subGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
         subscriptionQueries: ['subscription{stakeRequesteds{id amount beneficiary gasLimit' +
         ' gasPrice gateway nonce staker stakeRequestHash }}'],
       },
       auxiliary: {
-        subGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/auxiliary',
         subscriptionQueries: ['subscription{stakeRequesteds{id}}'],
       }
     };

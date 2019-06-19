@@ -1,6 +1,6 @@
 import ApolloClient from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import gql from 'graphql-tag';
 
@@ -10,15 +10,15 @@ import WebSocket = require('ws');
  * The class interacts with graph node server for subscription and query.
  */
 export default class GraphClient {
-  private subgraphEndPoint: string;
+  private apolloClient: ApolloClient<NormalizedCacheObject>;
 
   /**
    * GraphClient constructor.
    *
-   * @param {string} subgraphEndPoint Subgraph http/ws end point.
+   * @param apolloClient Apollo client for subscription.
    */
-  public constructor(subgraphEndPoint: string) {
-    this.subgraphEndPoint = subgraphEndPoint;
+  public constructor(apolloClient: ApolloClient<NormalizedCacheObject>) {
+    this.apolloClient = apolloClient;
   }
 
   /**
@@ -26,7 +26,7 @@ export default class GraphClient {
    * to observer i.e. TransactionHandler.
    * Documentation: https://www.apollographql.com/docs/react/advanced/subscriptions/
    *
-   * @param subscriptionQry Subscription query object.
+   * @param {string} subscriptionQry Subscription query object.
    * @return `Subscription` Query subscription object
    */
   public subscribe(subscriptionQry: string) {
@@ -37,7 +37,7 @@ export default class GraphClient {
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;
     // Subscription handling
-    const querySubscriber = this.getClient().subscribe({
+    const querySubscriber = this.apolloClient.subscribe({
       query: gqlSubscriptionQry,
       variables: {},
     }).subscribe({
@@ -54,13 +54,14 @@ export default class GraphClient {
   }
 
   /**
-   * Creates an apollo client.
+   * Creates and returns apollo client. Apollo Client is a fully-featured caching GraphQL client.
    *
+   * @param {string} subgraphEndPoint Subgraph endpoint.
    * @return {ApolloClient<NormalizedCacheObject>}
    */
-  public getClient() {
+  public static getApolloClient(subgraphEndPoint: string) {
     // Creates subscription client
-    const subscriptionClient = new SubscriptionClient(this.subgraphEndPoint, {
+    const subscriptionClient = new SubscriptionClient(subgraphEndPoint, {
         reconnect: true,
       },
       WebSocket
@@ -70,6 +71,6 @@ export default class GraphClient {
     // Instantiate in memory cache object.
     const cache = new InMemoryCache();
     // Instantiate apollo client
-    return new ApolloClient({ link: wsLink, cache });
+    return new ApolloClient({ link: wsLink, cache: cache });
   }
 }
