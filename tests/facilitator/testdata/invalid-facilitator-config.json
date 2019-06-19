@@ -1,0 +1,57 @@
+{
+  "db": {
+    "host": "/Users/gulshanvasnani/.mosaic/301/facilitator/OSTFacilitator.db"
+  },
+  "chains": {
+    "301": {
+      "worker": "0x81Df1244dEd6EF44a90a67526E4Ec4497d807F96"
+    },
+    "12346": {
+      "worker": "0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7"
+    }
+  },
+  "encryptedAccounts": {
+    "0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7": {
+      "version": 3,
+      "id": "b4c08520-2478-495f-a73e-12582c9629aa",
+      "address": "ac7e36b3cddb14bf1c67dc21ffb24c73d03d8ff7",
+      "crypto": {
+        "ciphertext": "246dc793922c46974839ec62325c5f1f19233eacfcd6f5ab840a7cb6b715ccee",
+        "cipherparams": {
+          "iv": "144f7dcec03658a3a59695b9d547df26"
+        },
+        "cipher": "aes-128-ctr",
+        "kdf": "scrypt",
+        "kdfparams": {
+          "dklen": 32,
+          "salt": "0996b6398b2dd5fbabce76ce28437a916abe91b1c99ad342039abd3f9d3ca0ae",
+          "n": 8192,
+          "r": 8,
+          "p": 1
+        },
+        "mac": "15863e0239f101fe60f830115044bd8ae1d15124f0d6f4982dd353cf9d9df13e"
+      }
+    },
+    "0x81Df1244dEd6EF44a90a67526E4Ec4497d807F96": {
+      "version": 3,
+      "id": "992bd18b-7aa7-461e-9e6e-97efc6f6f0df",
+      "address": "81df1244ded6ef44a90a67526e4ec4497d807f96",
+      "crypto": {
+        "ciphertext": "6715634336d9584c8ad56c9f6f1d8f327393a259a2db46e33fe0421a98df6961",
+        "cipherparams": {
+          "iv": "f1e0ec89b38fdf2f1c37e776af298372"
+        },
+        "cipher": "aes-128-ctr",
+        "kdf": "scrypt",
+        "kdfparams": {
+          "dklen": 32,
+          "salt": "de7ec3ce7852e76de6f279713cd7f2252511b99cd3326aa9b1d6d40ead6c3915",
+          "n": 8192,
+          "r": 8,
+          "p": 1
+        },
+        "mac": "900646627149dfcba31bccb2ac05191b695adf6ced7df0a115d001ad2d303940"
+      }
+    }
+  }
+}
