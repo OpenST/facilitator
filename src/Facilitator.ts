@@ -35,6 +35,7 @@ export default class Facilitator {
       const subGraphInfo = subGraphDetails[chainType];
       const graphClient = new GraphClient(subGraphInfo.subGraphEndPoint);
       const subscriptionQueries = subGraphInfo.subscriptionQueries;
+
       // Subscribe to all subscription queries for a facilitator
       for (let i = 0; i < subscriptionQueries.length; i++) {
         this.querySubscriptions[i] = await graphClient.subscribe(subscriptionQueries[i]);

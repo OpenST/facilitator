@@ -58,7 +58,7 @@ export default class GraphClient {
    *
    * @return {ApolloClient<NormalizedCacheObject>}
    */
-  private getClient() {
+  public getClient() {
     // Creates subscription client
     const subscriptionClient = new SubscriptionClient(this.subgraphEndPoint, {
         reconnect: true,
