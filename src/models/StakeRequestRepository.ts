@@ -14,9 +14,11 @@
 //
 // ----------------------------------------------------------------------------
 
-import { DataTypes, Model, Sequelize } from 'sequelize';
-
 /* eslint-disable class-methods-use-this */
+
+import {
+  DataTypes, Model, InitOptions,
+} from 'sequelize';
 
 export interface StakeRequestAttributes {
   stakeRequestHash: string;
@@ -57,53 +59,51 @@ export class StakeRequestModel extends Model {
 export default class StakeRequestRepository {
   /* Public Functions */
 
-  public constructor(sequelize: Sequelize) {
+  public constructor(initOptions: InitOptions) {
     StakeRequestModel.init(
       {
         stakeRequestHash: {
           type: DataTypes.STRING,
-          field: 'stake_request_hash',
+          primaryKey: true,
         },
         messageHash: {
           type: DataTypes.STRING,
-          field: 'message_hash',
         },
         amount: {
-          type: DataTypes.INTEGER,
-          field: 'amount',
+          type: DataTypes.INTEGER.UNSIGNED,
         },
         beneficiary: {
           type: DataTypes.STRING,
-          field: 'beneficiary',
         },
         gasPrice: {
-          type: DataTypes.INTEGER,
-          field: 'gas_price',
+          type: DataTypes.INTEGER.UNSIGNED,
         },
         gasLimit: {
-          type: DataTypes.INTEGER,
-          field: 'gas_limit',
+          type: DataTypes.INTEGER.UNSIGNED,
         },
         nonce: {
-          type: DataTypes.INTEGER,
-          field: 'nonce',
+          type: DataTypes.INTEGER.UNSIGNED,
         },
         gateway: {
           type: DataTypes.STRING,
-          field: 'gateway',
         },
         stakerProxy: {
           type: DataTypes.STRING,
-          field: 'staker_proxy',
         },
       },
       {
-        sequelize,
+        ...initOptions,
         modelName: 'stake_request',
       },
     );
+  }
 
-    StakeRequestModel.sync();
+  public async sync(): Promise<void> {
+    await StakeRequestModel.sync();
+  }
+
+  public async build(stakeRequest: StakeRequestAttributes): Promise<StakeRequestModel> {
+    return StakeRequestModel.build(stakeRequest);
   }
 
   public async create(stakeRequest: StakeRequestAttributes): Promise<StakeRequestModel> {
@@ -111,12 +111,10 @@ export default class StakeRequestRepository {
   }
 
   public async get(stakeRequestHash: string): Promise<StakeRequestModel | null> {
-    const stakeRequestInstance = StakeRequestModel.findOne({
+    return StakeRequestModel.findOne({
       where: {
         stakeRequestHash,
       },
     });
-
-    return stakeRequestInstance;
   }
 }

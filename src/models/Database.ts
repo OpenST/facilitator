@@ -15,10 +15,13 @@
 // ----------------------------------------------------------------------------
 
 import { Sequelize } from 'sequelize';
+
 import StakeRequestRepository from './StakeRequestRepository';
 
 export default class Database {
   /* Storage */
+
+  private sequelize: Sequelize;
 
   public stakeRequestRepository: StakeRequestRepository;
 
@@ -43,10 +46,21 @@ export default class Database {
     return new Database(sequelize);
   }
 
+  public async sync(): Promise<void> {
+    await this.sequelize.sync();
+  }
+
 
   /* Private Functions */
 
   public constructor(sequelize: Sequelize) {
-    this.stakeRequestRepository = new StakeRequestRepository(sequelize);
+    this.sequelize = sequelize;
+
+    this.stakeRequestRepository = new StakeRequestRepository({
+      sequelize,
+      underscored: true,
+      timestamps: true,
+      freezeTableName: true,
+    });
   }
 }
