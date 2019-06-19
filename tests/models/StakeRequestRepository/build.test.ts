@@ -25,7 +25,7 @@ import {
 
 import Database from '../../../src/models/Database';
 
-import checkAttributesAgainstModel from './util';
+import { checkAttributesAgainstModel } from './util';
 
 import assert = require('assert');
 

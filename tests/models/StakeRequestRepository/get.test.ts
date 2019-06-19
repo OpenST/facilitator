@@ -16,18 +16,78 @@
 
 import 'mocha';
 
-// import StakeRequestRepository from '../../../src/models/StakeRequestRepository';
-// import Database from '../../../src/models/Database';
+import { StakeRequestAttributes, StakeRequestModel } from '../../../src/models/StakeRequestRepository';
+import Database from '../../../src/models/Database';
 
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
+import {
+  checkAttributesAgainstModel,
+} from './util';
 
-chai.use(chaiAsPromised);
-
-const { assert } = chai;
+import assert = require('assert');
 
 describe('StakeRequestRepository::get', (): void => {
-  it('.', async (): Promise<void> => {
-    assert(true);
+  it('Checks retrieval of an existing model.', async (): Promise<void> => {
+    const db = Database.createInMemory();
+    await db.sync();
+
+    const stakeRequestAttributes: StakeRequestAttributes = {
+      stakeRequestHash: 'stakeRequestHashA',
+      messageHash: 'messageHashA',
+      amount: 1,
+      beneficiary: 'beneficiaryA',
+      gasPrice: 2,
+      gasLimit: 3,
+      nonce: 4,
+      gateway: 'gatewayA',
+      stakerProxy: 'stakerProxyA',
+    };
+
+    await db.stakeRequestRepository.create(
+      stakeRequestAttributes,
+    );
+
+    const stakeRequestModel = await db.stakeRequestRepository.get(
+      stakeRequestAttributes.stakeRequestHash,
+    );
+
+    assert.notStrictEqual(
+      stakeRequestModel,
+      null,
+    );
+
+    checkAttributesAgainstModel(
+      stakeRequestAttributes,
+      stakeRequestModel as StakeRequestModel,
+    );
+  });
+
+  it('Checks retrieval of non-existing model.', async (): Promise<void> => {
+    const db = Database.createInMemory();
+    await db.sync();
+
+    const stakeRequestAttributes: StakeRequestAttributes = {
+      stakeRequestHash: 'stakeRequestHashA',
+      messageHash: 'messageHashA',
+      amount: 1,
+      beneficiary: 'beneficiaryA',
+      gasPrice: 2,
+      gasLimit: 3,
+      nonce: 4,
+      gateway: 'gatewayA',
+      stakerProxy: 'stakerProxyA',
+    };
+
+    await db.stakeRequestRepository.create(
+      stakeRequestAttributes,
+    );
+
+    const stakeRequestModel = await db.stakeRequestRepository.get(
+      'nonExistinghash',
+    );
+
+    assert.strictEqual(
+      stakeRequestModel,
+      null,
+    );
   });
 });

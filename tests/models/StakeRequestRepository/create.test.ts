@@ -25,64 +25,15 @@ import {
 
 import Database from '../../../src/models/Database';
 
-import checkAttributesAgainstModel from './util';
+import {
+  checkAttributesAgainstModel,
+  checkAttributesAgainstRaw,
+} from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const { assert } = chai;
-
-
-function checkAttributesAgainstRaw(
-  stakeRequestAttributes: StakeRequestAttributes,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stakeRequestRaw: any,
-): void {
-  assert.strictEqual(
-    stakeRequestAttributes.stakeRequestHash,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.stakeRequestHash.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.messageHash,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.messageHash.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.amount,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.amount.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.beneficiary,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.beneficiary.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gasPrice,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.gasPrice.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gasLimit,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.gasLimit.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.nonce,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.nonce.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.gateway,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.gateway.field}`],
-  );
-
-  assert.strictEqual(
-    stakeRequestAttributes.stakerProxy,
-    stakeRequestRaw[`${StakeRequestModel.rawAttributes.stakerProxy.field}`],
-  );
-}
 
 
 describe('StakeRequestRepository::create', (): void => {
