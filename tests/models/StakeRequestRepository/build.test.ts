@@ -56,6 +56,15 @@ describe('StakeRequestRepository::build', (): void => {
       nonPersistenStakeRequestModel,
     );
 
+    const stakeRequestModel = await db.stakeRequestRepository.get(
+      stakeRequestAttributes.stakeRequestHash,
+    );
+
+    assert.strictEqual(
+      stakeRequestModel,
+      null,
+    );
+
     const stakeRequests = await db.sequelize.query(
       `SELECT * FROM ${StakeRequestModel.getTableName()} `
     + `WHERE ${StakeRequestModel.rawAttributes.stakeRequestHash.field} = `

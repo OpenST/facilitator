@@ -29,10 +29,9 @@ import checkAttributesAgainstModel from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-
 chai.use(chaiAsPromised);
-
 const { assert } = chai;
+
 
 function checkAttributesAgainstRaw(
   stakeRequestAttributes: StakeRequestAttributes,
@@ -84,6 +83,7 @@ function checkAttributesAgainstRaw(
     stakeRequestRaw[`${StakeRequestModel.rawAttributes.stakerProxy.field}`],
   );
 }
+
 
 describe('StakeRequestRepository::create', (): void => {
   it('Checks creation of stake request model.', async (): Promise<void> => {
