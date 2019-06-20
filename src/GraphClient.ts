@@ -1,6 +1,6 @@
 import ApolloClient from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
-import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import gql from 'graphql-tag';
 
@@ -13,7 +13,8 @@ export default class GraphClient {
   private apolloClient: ApolloClient<NormalizedCacheObject>;
 
   /**
-   * GraphClient constructor.
+   * GraphClient constructor. It expects apollo client as input. Apollo Client is a fully-featured,
+   * production ready caching GraphQL client for every UI framework and GraphQL server.
    *
    * @param apolloClient Apollo client for subscription.
    */
@@ -27,10 +28,10 @@ export default class GraphClient {
    * Documentation: https://www.apollographql.com/docs/react/advanced/subscriptions/
    *
    * @param {string} subscriptionQry Subscription query object.
-   * @return `Subscription` Query subscription object
+   * @return {Subscription} Query subscription object.
    */
   public subscribe(subscriptionQry: string) {
-    if( !subscriptionQry ) {
+    if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
       return Promise.reject(err);
     }
@@ -54,16 +55,16 @@ export default class GraphClient {
   }
 
   /**
-   * Creates and returns apollo client. Apollo Client is a fully-featured caching GraphQL client.
+   * Creates and returns graph client.
    *
    * @param {string} subgraphEndPoint Subgraph endpoint.
    * @return {ApolloClient<NormalizedCacheObject>}
    */
-  public static getApolloClient(subgraphEndPoint: string) {
+  public static getClient(subgraphEndPoint: string) {
     // Creates subscription client
     const subscriptionClient = new SubscriptionClient(subgraphEndPoint, {
-        reconnect: true,
-      },
+      reconnect: true,
+    },
       WebSocket
     );
     // Creates WebSocket link.
@@ -71,6 +72,8 @@ export default class GraphClient {
     // Instantiate in memory cache object.
     const cache = new InMemoryCache();
     // Instantiate apollo client
-    return new ApolloClient({ link: wsLink, cache: cache });
+    const apolloClient = new ApolloClient({ link: wsLink, cache });
+    // Creates and returns graph client
+    return new GraphClient(apolloClient);
   }
 }

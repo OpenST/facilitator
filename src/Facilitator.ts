@@ -1,5 +1,6 @@
-import { Subscription } from 'apollo-client/util/Observable';
 import { Config } from './Config';
+import Subscriber from './Subscriber';
+import GraphClient from './GraphClient';
 
 /**
  * The class defines properties and behaviour of a facilitator.
@@ -9,7 +10,9 @@ export default class Facilitator {
 
   private dbConnection: any;
 
-  private querySubscriptions: Subscription[];
+  private originSubscriber: Subscriber;
+
+  private auxiliarySubscriber: Subscriber;
 
   /**
    * Facilitator class constructor.
@@ -20,29 +23,29 @@ export default class Facilitator {
   public constructor(config: Config, dbConnection: any) {
     this.config = config;
     this.dbConnection = dbConnection;
-    this.querySubscriptions = [];
   }
 
   /**
    * Starts the facilitator by subscribing to subscription queries.
    *
-   * @param originSubGraphClient GraphClient Origin chain graph client.
-   * @param auxiliarySubGraphClient GraphClient Auxiliary chain graph client.
    * @return Promise<void>
    */
-  public async start(originSubGraphClient, auxiliarySubGraphClient) {
-    const subGraphDetails = this.getSubscriptionQueries();
+  public async start() {
+    const subGraphDetails = Facilitator.getSubscriptionDetails();
 
-    // Subscription to origin queries
-    let subscriptionQueries = subGraphDetails.origin.subscriptionQueries;
-    for (let i = 0; i < subscriptionQueries.length; i++) {
-      this.querySubscriptions[i] = await originSubGraphClient.subscribe(subscriptionQueries[i]);
-    }
+    // Subscription to origin subgraph queries
+    this.originSubscriber = new Subscriber(
+      GraphClient.getClient(subGraphDetails.origin.subGraphEndPoint),
+      Object.values(subGraphDetails.origin.subscriptionQueries),
+    );
+    await this.originSubscriber.subscribe();
 
-    subscriptionQueries = subGraphDetails.auxiliary.subscriptionQueries;
-    for (let i = 0; i < subscriptionQueries.length; i++) {
-      this.querySubscriptions[i] = await auxiliarySubGraphClient.subscribe(subscriptionQueries[i]);
-    }
+    // Subscription to auxiliary subgraph queries
+    this.auxiliarySubscriber = new Subscriber(
+      GraphClient.getClient(subGraphDetails.auxiliary.subGraphEndPoint),
+      Object.values(subGraphDetails.auxiliary.subscriptionQueries),
+    );
+    await this.auxiliarySubscriber.subscribe();
   }
 
   /**
@@ -52,27 +55,30 @@ export default class Facilitator {
    * @return Promise<void>
    */
   public async stop() {
-    for (let i = 0; i < this.querySubscriptions.length; i++) {
-      const querySubscription = this.querySubscriptions[i];
-      await querySubscription.unsubscribe();
-    }
+    await this.originSubscriber.unsubscribe();
+    await this.auxiliarySubscriber.unsubscribe();
   }
 
   /**
-   * Subgraph details object which contains chain based subscriptionQueries.
-   * Feel free to add subscription queries
+   * Subgraph details object which contains chain based subGraphEndPoitn & subscriptionQueries.
+   * Note: Replace subGraphEndPoint from Config.ts. It should come from Config:Chain class.
+   * Feel free to add subscription queries.
    *
    * @return <any> Object containing chain based subscriptionQueries.
    */
-  private getSubscriptionQueries() {
+  public static getSubscriptionDetails() {
     return {
       origin: {
-        subscriptionQueries: ['subscription{stakeRequesteds{id amount beneficiary gasLimit' +
-        ' gasPrice gateway nonce staker stakeRequestHash }}'],
+        subGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
+        subscriptionQueries: {
+          stakeRequested: 'subscription{stakeRequesteds{id amount'
+          + ' beneficiary gasLimit gasPrice gateway nonce staker stakeRequestHash }}',
+        },
       },
       auxiliary: {
-        subscriptionQueries: ['subscription{stakeRequesteds{id}}'],
-      }
+        subGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
+        subscriptionQueries: { stakeRequested: 'subscription{stakeRequesteds{id}}' },
+      },
     };
   }
 }
