@@ -102,10 +102,6 @@ export class StakeRequestRepository {
     );
   }
 
-  public async sync(): Promise<void> {
-    await StakeRequestModel.sync();
-  }
-
   /** Creates a stake request model in the repository and syncs with database. */
   public async create(stakeRequest: StakeRequestAttributes): Promise<StakeRequest> {
     return await StakeRequestModel.create(stakeRequest) as StakeRequest;

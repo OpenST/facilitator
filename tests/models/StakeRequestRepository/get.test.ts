@@ -28,8 +28,7 @@ import assert = require('assert');
 
 describe('StakeRequestRepository::get', (): void => {
   it('Checks retrieval of an existing model.', async (): Promise<void> => {
-    const db = Database.createInMemory();
-    await db.sync();
+    const db = await Database.createInMemory();
 
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHashA',
@@ -65,8 +64,7 @@ describe('StakeRequestRepository::get', (): void => {
   });
 
   it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const db = Database.createInMemory();
-    await db.sync();
+    const db = await Database.createInMemory();
 
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHashA',

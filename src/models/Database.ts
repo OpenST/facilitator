@@ -21,43 +21,44 @@ import { StakeRequestRepository } from './StakeRequestRepository';
 export default class Database {
   /* Storage */
 
-  private sequelize: Sequelize;
-
   public stakeRequestRepository: StakeRequestRepository;
 
 
   /* Public Functions */
 
-  public static createInMemory(): Database {
+  /** Creates in memory database. */
+  public static async createInMemory(): Promise<Database> {
     const sequelize = new Sequelize({
       dialect: 'sqlite',
       storage: ':memory:',
       logging: false,
     });
 
-    return new Database(sequelize);
+    const db = new Database(sequelize);
+    await sequelize.sync();
+
+    return db;
   }
 
-  public static createFromFile(dbFilePath: string): Database {
+  /** Creates a database from a file. */
+  public static async createFromFile(dbFilePath: string): Promise<Database> {
     const sequelize = new Sequelize({
       dialect: 'sqlite',
       storage: dbFilePath,
       logging: false,
     });
 
-    return new Database(sequelize);
-  }
+    const db = new Database(sequelize);
 
-  public async sync(): Promise<void> {
-    await this.sequelize.sync();
+    await sequelize.sync();
+
+    return db;
   }
 
 
   /* Private Functions */
 
   public constructor(sequelize: Sequelize) {
-    this.sequelize = sequelize;
-
     this.stakeRequestRepository = new StakeRequestRepository({
       sequelize,
       underscored: true,
