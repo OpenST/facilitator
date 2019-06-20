@@ -1,8 +1,8 @@
 'use strict';
 
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
-import Logger from './Logger';
 import Web3 from 'web3';
+import Logger from './Logger';
 
 /**
  * Manages encrypted Web3 accounts.
@@ -61,7 +61,13 @@ export default class Account {
   public unlock(web3: Web3, password: string): boolean {
     // Unlocking the account and adding it to the local web3 instance so that everything is signed
     // locally when using web3.eth.send
-    return false;
+    try {
+      const web3Account = web3.eth.accounts.decrypt(this.encryptedKeyStore, password);
+      web3.eth.accounts.wallet.add(web3Account);
+      return true;
+    } catch (e) {
+      Logger.error(`unlock account failed: ${e.message}`);
+      return false;
+    }
   }
 }
-
