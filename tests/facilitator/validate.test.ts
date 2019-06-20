@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as assert from 'assert';
 
-describe('Facilitator.from()', () => {
+describe('Facilitator.validate()', () => {
 
   let facilitatorConfig, invalidFacilitatorConfig;
 

@@ -4,11 +4,8 @@ import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import { Validator } from 'jsonschema';
 import { MosaicConfig } from './MosaicConfig';
 import Directory from './Directory';
-import Logger from './Logger';
 import { InvalidFacilitatorConfigException } from './Exception';
-
 import * as schema from './Config/FacilitatorConfig.schema.json';
-// const schema = require('./FacilitatorConfig.schema.json');
 import Utils from './Utils';
 
 // Database password key to read from env.
