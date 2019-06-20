@@ -1,10 +1,9 @@
 'use strict';
 
-import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
+import { EncryptedKeystoreV3Json, Account as Web3Account } from 'web3-eth-accounts';
+import Web3 from 'web3';
 import Logger from './Logger';
 import Web3 from 'web3';
-
-const Web3 = require('web');
 
 /**
  * Manages encrypted Web3 accounts.
@@ -18,40 +17,25 @@ export default class Account {
   constructor(
     readonly address: string,
     readonly encryptedKeyStore: EncryptedKeystoreV3Json,
-  ) { }
+  ) {}
 
   /**
+   * It creates new account and encrypts it with input password.
    * @param {Web3} web3 The web3 instance.
    * @param password The password required to unlock the account.
-   * @returns {{account: Account; encryptedAccount: PrivateKey}}
+   * @returns {Account} Account object.
    */
-  public static create(web3: Web3, password: string): any {
-    const account = Account.newWeb3Account(web3);
-    const encryptedAccount = Account.encrypt(account, web3, password);
-    Logger.info(`created account ${account.address}`);
-    return { account, encryptedAccount };
-  }
+  public static create(web3: Web3, password: string): Account {
+    const web3Account: Web3Account = web3.eth.accounts.create();
+    const encryptedAccount: EncryptedKeystoreV3Json = web3.eth.accounts.encrypt(
+      web3Account.privateKey.toString(),
+      password,
+    );
 
-  /**
-   * Creates a new account using Web3.
-   * @private
-   * @returns {Object} A Web3 account object.
-   */
-  private static newWeb3Account(web3) {
-    const account = web3.eth.accounts.create();
+    const account: Account = new Account(web3Account.address, encryptedAccount);
 
+    Logger.info(`created account ${web3Account.address}`);
     return account;
-  }
-
-  /**
-   * Encrypts the given account with a password.
-   * @private
-   * @param {Object} account A Web3 account object.
-   * @returns {Object} A Web3 keyStore object.
-   */
-  private static encrypt(account, web3, password) {
-    const encrypted = web3.eth.accounts.encrypt(account.privateKey.toString(), password);
-    return encrypted;
   }
 
   /**
@@ -66,4 +50,3 @@ export default class Account {
     return false;
   }
 }
-

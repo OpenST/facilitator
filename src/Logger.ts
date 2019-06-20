@@ -10,4 +10,3 @@ export default winston.createLogger({
   transports: [new winston.transports.Console()],
   exceptionHandlers: [new winston.transports.Console()],
 });
-

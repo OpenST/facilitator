@@ -1,9 +1,11 @@
 import * as commander from 'commander';
-const Web3 = require('web3');
 import Account from '../Account';
 import Logger from '../Logger';
-import DBConnection from '../DBConnection';
+import Database from '../Database';
 import { FacilitatorConfig, Chain } from '../Config';
+import Utils from '../Utils';
+
+const Web3 = require('web3');
 
 commander
   .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -16,43 +18,54 @@ commander
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
     if (!options.force) {
-      FacilitatorConfig.assertNotExists(options.chainId);
+      let present: boolean;
+      try {
+        present = FacilitatorConfig.isFacilitatorConfigPresent(options.chainId);
+      } catch (e) {
+        Logger.info('creating facilitator config as it is not present');
+      }
+      if (present) {
+        Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
+        process.exit(1);
+      }
     }
 
     const facilitatorConfig = FacilitatorConfig.new();
-    const originChainId: number = FacilitatorConfig.getOriginChainId(
-      options.chainId,
-      options.mosaicConfig,
-    );
-    const {
-      account: auxiliaryAccount,
-      encryptedAccount: auxiliaryEncryptedAccount,
-    } = Account.create(new Web3(), options.auxiliaryPassword);
 
-    const {
-      account: originAccount,
-      encryptedAccount: originEncryptedAccount,
-    } = Account.create(new Web3(), options.originPassword);
+    // Get origin chain id.
+    const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
+    const auxChain = mosaicConfig.auxiliaryChains[options.chainId];
+    let originChainId;
+    if (auxChain === null || auxChain === undefined) {
+      Logger.error('aux chain id is not present in the mosaic config');
+      process.exit(1);
+    } else {
+      originChainId = mosaicConfig.originChain.chain;
+    }
 
     let { dbPath } = options;
     if (options.dbPath === undefined || options.dbPath === null) {
-      Logger.info('database host is not provided');
-      dbPath = DBConnection.create(options.chainId);
+      Logger.info('database path is not provided');
+      dbPath = Database.create(options.chainId);
+    } else if (Database.verify(dbPath)) {
+      Logger.info('db file verified');
     } else {
-      DBConnection.verify(dbPath);
+      Logger.error('DB file doesn\'t or file extension is incorrect');
+      process.exit(1);
     }
 
-    facilitatorConfig.chains[originChainId] = new Chain();
-    facilitatorConfig.chains[originChainId].worker = originAccount.address;
-    facilitatorConfig.chains[originChainId].rpc = options.originRpc;
+    const setFacilitator = (chainid, rpc, password) => {
+      const account: Account = Account.create(new Web3(), password);
 
-    facilitatorConfig.chains[options.chainId] = new Chain();
-    facilitatorConfig.chains[options.chainId].worker = auxiliaryAccount.address;
-    facilitatorConfig.chains[options.chainId].rpc = options.auxiliaryRpc;
+      facilitatorConfig.chains[chainid] = new Chain();
+      facilitatorConfig.chains[chainid].worker = account.address;
+      facilitatorConfig.chains[chainid].rpc = rpc;
 
-    facilitatorConfig.encryptedAccounts[originAccount.address] = originEncryptedAccount;
-    facilitatorConfig.encryptedAccounts[auxiliaryAccount.address] = auxiliaryEncryptedAccount;
+      facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
+    };
 
+    setFacilitator(originChainId, options.originRpc, options.originPassword);
+    setFacilitator(options.chainId, options.auxiliaryRpc, options.auxiliaryPassword);
     facilitatorConfig.database.host = dbPath;
 
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
