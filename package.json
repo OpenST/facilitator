@@ -33,7 +33,9 @@
     "ts-node": "8.0.3",
     "typescript": "3.5.1",
     "web3": "1.0.0-beta.52",
-    "fs-extra": "7.0.1"
+    "fs-extra": "7.0.1",
+    "sequelize": "5.8.10",
+    "sqlite3": "4.0.8"
   },
   "devDependencies": {
     "@types/chai": "4.1.7",
@@ -52,8 +54,6 @@
     "eslint-plugin-json": "1.4.0",
     "mocha": "6.1.4",
     "nyc": "14.1.1",
-    "sequelize": "5.8.10",
-    "sinon": "7.3.2",
-    "sqlite3": "4.0.8"
+    "sinon": "7.3.2"
   }
 }
