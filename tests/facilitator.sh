@@ -21,7 +21,7 @@ function facilitator_init {
 
 # creates the facilitator-config.json forcefully
 function facilitator_init_force {
- ./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com' -f
+ sh ./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com' -f
 }
 
 function facilitator_config_present {
