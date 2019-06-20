@@ -14,6 +14,7 @@ describe('Facilitator.constructor()', () => {
     const facilitator = new Facilitator(configStub, dbConnection);
 
     assert(facilitator);
+    assert.strictEqual(facilitator.config, configStub, "Config mismatch!!!");
     sinon.restore();
   });
 

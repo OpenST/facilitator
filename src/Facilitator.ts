@@ -6,7 +6,7 @@ import GraphClient from './GraphClient';
  * The class defines properties and behaviour of a facilitator.
  */
 export default class Facilitator {
-  private config: Config;
+  readonly config: Config;
 
   private dbConnection: any;
 

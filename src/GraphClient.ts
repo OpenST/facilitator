@@ -16,7 +16,7 @@ export default class GraphClient {
    * GraphClient constructor. It expects apollo client as input. Apollo Client is a fully-featured,
    * production ready caching GraphQL client for every UI framework and GraphQL server.
    *
-   * @param apolloClient Apollo client for subscription.
+   * @param {ApolloClient<NormalizedCacheObject>} apolloClient Apollo client for subscription.
    */
   public constructor(apolloClient: ApolloClient<NormalizedCacheObject>) {
     this.apolloClient = apolloClient;

@@ -14,7 +14,7 @@ export default class Subscriber {
   /**
    * Constructor
    *
-   * @params {string} subGraphEndPoint Sub graph endpoint.
+   * @params {GraphClient} graphClient graph client instance.
    * @param {string[]} subscriptionQueries Array of subscription queries.
    */
   public constructor(graphClient: GraphClient, subscriptionQueries: string[]) {
@@ -37,8 +37,7 @@ export default class Subscriber {
   }
 
   /**
-   * Unsubscribes the query subscribers and deletes the query subscribers
-   * object.
+   * Unsubscribes the query subscribers and deletes the query subscribers object.
    *
    * @return {Promise<void>}
    */
