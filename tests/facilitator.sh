@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -i auxChainId="301"
+auxChainId="301"
 homedir=$HOME
 facilitatorConfigPath="${homedir}/.mosaic/${auxChainId}/facilitator-config.json"
 
