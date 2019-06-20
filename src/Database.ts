@@ -36,6 +36,6 @@ export default class Database {
     fs.ensureDirSync(dbPath);
     const facilitatorConfigDB = path.join(dbPath, `${`${Database.DBName}.db`}`);
     new sqlite.Database(facilitatorConfigDB);
-    return dbPath;
+    return facilitatorConfigDB;
   }
 }
