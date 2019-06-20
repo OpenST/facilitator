@@ -15,13 +15,18 @@ function fail_silent {
 }
 
 # creates the facilitator-config.json
-function facilitator_init {
- ./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'
+function facilitator_init_pass {
+ try_silent "./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'"
+}
+
+# fails silently if the command executes succesfully
+function facilitator_init_fail {
+ fail_silent "./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'"
 }
 
 # creates the facilitator-config.json forcefully
-function facilitator_init_force {
- sh ./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com' -f
+function facilitator_init_force_pass {
+ try_silent "./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com' -f"
 }
 
 function facilitator_config_present {
@@ -35,18 +40,17 @@ function facilitator_config_present {
 
 echo 'creating facilitator config'
 # facilitator init
-try_silent facilitator_init
+facilitator_init_pass
 
 facilitator_config_present
 
 # Above command has already generated facilitator config. So below command should silently fail as it is already present.
-fail_silent facilitator_init
-
+facilitator_init_fail
 echo "removing facilitator-config"
 rm $facilitatorConfigPath
 
 facilitator_config_present
 
-try_silent facilitator_init_force
+facilitator_init_force_pass
 
 facilitator_config_present

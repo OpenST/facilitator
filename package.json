@@ -6,7 +6,7 @@
     "lint": "eslint src -c .eslintrc.json --ext ts",
     "test": "npm run test:unit && npm run test:facilitator",
     "test:unit": "mocha -r ts-node/register tests/**/*.test.ts tests/*.test.ts",
-    "test:facilitator": "sh ./tests/facilitator.sh",
+    "test:facilitator": "./tests/facilitator.sh",
     "coverage": "nyc npm run test"
   },
   "repository": {
