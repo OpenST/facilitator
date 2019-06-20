@@ -28,7 +28,7 @@ import assert = require('assert');
 
 describe('StakeRequestRepository::get', (): void => {
   it('Checks retrieval of an existing model.', async (): Promise<void> => {
-    const db = await Database.createInMemory();
+    const db = await Database.create();
 
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHashA',
@@ -50,8 +50,6 @@ describe('StakeRequestRepository::get', (): void => {
       stakeRequestAttributes.stakeRequestHash,
     );
 
-    console.log((stakeRequest as StakeRequest).stakeRequestHash);
-
     assert.notStrictEqual(
       stakeRequest,
       null,
@@ -64,7 +62,7 @@ describe('StakeRequestRepository::get', (): void => {
   });
 
   it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const db = await Database.createInMemory();
+    const db = await Database.create();
 
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHashA',

@@ -26,30 +26,23 @@ export default class Database {
 
   /* Public Functions */
 
-  /** Creates in memory database. */
-  public static async createInMemory(): Promise<Database> {
+  /**
+   * Creates a database object.
+   *
+   * Creates an empty database if a database does not exist.
+   * Opens a database in read/write mode.
+   *
+   * @param storage A database file path or ':memory' in case of in
+   *                memory database.
+   */
+  public static async create(storage = ':memory:'): Promise<Database> {
     const sequelize = new Sequelize({
       dialect: 'sqlite',
-      storage: ':memory:',
+      storage,
       logging: false,
     });
 
     const db = new Database(sequelize);
-    await sequelize.sync();
-
-    return db;
-  }
-
-  /** Creates a database from a file. */
-  public static async createFromFile(dbFilePath: string): Promise<Database> {
-    const sequelize = new Sequelize({
-      dialect: 'sqlite',
-      storage: dbFilePath,
-      logging: false,
-    });
-
-    const db = new Database(sequelize);
-
     await sequelize.sync();
 
     return db;

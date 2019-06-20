@@ -33,7 +33,7 @@ const { assert } = chai;
 
 describe('StakeRequestRepository::create', (): void => {
   it('Checks creation of stake request model.', async (): Promise<void> => {
-    const db = await Database.createInMemory();
+    const db = await Database.create();
 
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHashA',
@@ -69,7 +69,7 @@ describe('StakeRequestRepository::create', (): void => {
   });
 
   it('Throws if a stake request already exists.', async (): Promise<void> => {
-    const db = await Database.createInMemory();
+    const db = await Database.create();
 
     const stakeRequestAttributesA: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
