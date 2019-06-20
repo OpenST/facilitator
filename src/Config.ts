@@ -132,7 +132,6 @@ export class FacilitatorConfig {
   }
 }
 
-
 /**
  * Holds mosaic config, database config and facilitator config.
  */

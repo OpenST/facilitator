@@ -1,5 +1,4 @@
 import SpyAssert from "../SpyAssert";
-import * as sqlite from 'sqlite3';
 import * as fs from 'fs-extra';
 import Directory from "../../src/Directory";
 import Database from "../../src/Database";
@@ -22,30 +21,18 @@ describe('Database.create()', function () {
     const dbPath = 'tests/Database/';
     const dbFileName = 'OSTFacilitator.db';
 
-    const spyDirectory = sinon.replace(
-      Directory,
-      'getDBFilePath',
-      sinon.fake.returns(dbPath),
-    );
+    const spyDirectory = sinon.stub(Directory, 'getDBFilePath').callsFake(() => {
+      return dbPath
+    });
 
-    const fsSpy = sinon.replace(
-      fs,
-      'ensureDirSync',
-      sinon.fake.returns(''),
-    );
-
-    const sqliteSpy = sinon.replace(
-      sqlite,
-      'Database',
-      sinon.fake.returns('sqlite db is created')
-    );
+    const fsSpy = sinon.spy(fs, 'ensureDirSync');
 
     Database.create(chainId);
-
-    SpyAssert.assert(sqliteSpy, 1, [[`${dbPath + dbFileName}`]]);
     SpyAssert.assert(spyDirectory, 1, [[chainId]]);
     SpyAssert.assert(fsSpy, 1, [[dbPath]]);
 
+    fsSpy.restore();
+    spyDirectory.restore();
     sinon.restore();
   });
 });

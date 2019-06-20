@@ -5,28 +5,10 @@ import Logger from './Logger';
 import Directory from './Directory';
 
 /**
- * It is used to manage the database connection.
+ * It creates db file at the path.
  */
 export default class Database {
   private static DBName: string = 'OSTFacilitator';
-
-  private static connection: sqlite.Database;
-
-  /**
-   * This method provides database connection if the path is correct.
-   * @param dbPath Database file path for sqlite.
-   * @returns {sqlite.Database} Db connection object.
-   */
-  public static getConnection(dbPath: string): sqlite.Database {
-    if (Database.connection === undefined || Database.connection === null) {
-      if (!(Database.verify(dbPath))) {
-        throw new Error('database file path is invalid');
-      }
-      Database.connection = new sqlite.Database(dbPath);
-    }
-
-    return Database.connection;
-  }
 
   /**
    * It verifies whether the file path is valid.
@@ -42,7 +24,7 @@ export default class Database {
   }
 
   /**
-   * It creates database and returns the file path.
+   * It creates database and returns the database file path.
    * @param chain chain id of the aux chain.
    * @returns {string} Database file path.
    */
@@ -53,7 +35,7 @@ export default class Database {
     const dbPath: string = Directory.getDBFilePath(chain);
     fs.ensureDirSync(dbPath);
     const facilitatorConfigDB = path.join(dbPath, `${`${Database.DBName}.db`}`);
-    Database.connection = new sqlite.Database(facilitatorConfigDB);
+    new sqlite.Database(facilitatorConfigDB);
     return dbPath;
   }
 }

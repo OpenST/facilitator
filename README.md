@@ -2,7 +2,7 @@
 
 ## Facilitator init
 
-Facilitator init command will create facilitator config for an auxiliary chain. It would fail if the facilitator config is already generated for an auxiliary chain. 
+Facilitator init command will create facilitator config for an auxiliary chain. 
 
 A simple run would be the following:
 
@@ -17,5 +17,5 @@ A simple run would be the following:
 * Replace `<origin-rpc>` with origin chain's rpc url.
 * Replace `<auxiliary-rpc>` with auxiliary chain's rpc url.
 * Replace `<db-path>` with the database path. It is the path for `sqlite` database. If not provided,it would create it.
-* --force option is used to forcefully override facilitator config.
+* `--force` option is used to forcefully override facilitator config. It is optional parameter.
 	

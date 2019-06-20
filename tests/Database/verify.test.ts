@@ -25,8 +25,6 @@ describe('Database.verify()', function () {
       expectedStatus,
       message
     );
-
-    sinon.restore();
   }
 
   const dbFilePath = 'tests/Database/OSTFacilitator.db';
@@ -35,6 +33,7 @@ describe('Database.verify()', function () {
     const fsSpy = spyFsModule(true);
 
     assertion(1, dbFilePath, true, 'DB file is invalid', fsSpy);
+    sinon.restore();
   });
 
   it('should fail when file extension is invalid', function () {
@@ -42,11 +41,13 @@ describe('Database.verify()', function () {
     const fsSpy = spyFsModule(true);
 
     assertion(1, dbFilePath, false, 'Db file extension is valid', fsSpy);
+    sinon.restore();
   });
 
   it('should fail when db file path doesn\'t exists', function () {
     const fsSpy = spyFsModule(false);
 
     assertion(1, dbFilePath, false, 'Db file path exists', fsSpy);
+    sinon.restore();
   });
 });
