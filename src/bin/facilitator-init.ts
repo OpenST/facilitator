@@ -43,7 +43,6 @@ commander
       originChainId = mosaicConfig.originChain.chain;
     }
 
-
     let { dbPath } = options;
     if (options.dbPath === undefined || options.dbPath === null) {
       Logger.info('database path is not provided');

@@ -10,15 +10,14 @@ import Directory from './Directory';
 export default class Database {
   private static DBName: string = 'OSTFacilitator';
 
-  private static connection: any;
+  private static connection: sqlite.Database;
 
   /**
-   * This method returns DBConnection if provided path is correct otherwise returns null.
+   * This method provides database connection if the path is correct.
    * @param dbPath Database file path for sqlite.
-
-   * @returns {any} Db connection object.
+   * @returns {sqlite.Database} Db connection object.
    */
-  public static getConnection(dbPath: string): any {
+  public static getConnection(dbPath: string): sqlite.Database {
     if (Database.connection === undefined || Database.connection === null) {
       if (!(Database.verify(dbPath))) {
         throw new Error('database file path is invalid');
@@ -32,6 +31,7 @@ export default class Database {
   /**
    * It verifies whether the file path is valid.
    * @param {string} filePath Database file path.
+   * @returns {boolean} `true` if file path is valid.
    */
   public static verify(filePath: string): boolean {
     if ((fs.existsSync(filePath) && (path.extname(filePath) === '.db'))) {
@@ -43,13 +43,17 @@ export default class Database {
 
   /**
    * It creates database and returns the file path.
+   * @param chain chain id of the aux chain.
    * @returns {string} Database file path.
    */
   public static create(chain: string): string {
-    const dbPath = Directory.getDBFilePath(chain);
+    if (chain === null || chain.length === 0) {
+      throw new Error('invalid chain id');
+    }
+    const dbPath: string = Directory.getDBFilePath(chain);
     fs.ensureDirSync(dbPath);
-    const facilitatorConfigDB = path.join(path.join(dbPath, `${`${Database.DBName}.db`}`));
+    const facilitatorConfigDB = path.join(dbPath, `${`${Database.DBName}.db`}`);
     Database.connection = new sqlite.Database(facilitatorConfigDB);
-    return facilitatorConfigDB;
+    return dbPath;
   }
 }

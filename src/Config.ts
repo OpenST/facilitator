@@ -153,7 +153,7 @@ export class Config {
     chainId: string,
   ) {
     this.mosaic = MosaicConfig.fromPath(mosaicConfigPath);
-    const facilitatorConfig = FacilitatorConfig.from(chainId);
+    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.from(chainId);
 
     this.database = facilitatorConfig.database;
     this.chains = facilitatorConfig.chains;
