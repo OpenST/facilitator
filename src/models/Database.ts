@@ -53,7 +53,22 @@ export default class Database {
 
   /* Private Functions */
 
-  public constructor(sequelize: Sequelize) {
+  /**
+   * Creates a database object.
+   *
+   * Function instantiates all repository classes by passing the following
+   * configuration options:
+   *    - underscored: true -- Sets field option for all attributes of all models
+   *                           to snake cased name.
+   *    - timestamps: true -- Adds timestamps attributes (createdAt and updatedAt) to all
+   *                          objects (StakeRequest, etc) of all repositories.
+   *    - freezeTableName: true -- Disables the modification of table names; by default
+   *                               sequelize will automatically transform all passed model names
+   *                               (first parameter of define) into plural.
+   *
+   * @param sequelize Sequelize instance.
+   */
+  private constructor(sequelize: Sequelize) {
     this.stakeRequestRepository = new StakeRequestRepository({
       sequelize,
       underscored: true,
