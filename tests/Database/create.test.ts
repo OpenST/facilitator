@@ -1,4 +1,5 @@
 import SpyAssert from "../SpyAssert";
+import * as sqlite from 'sqlite3';
 import * as fs from 'fs-extra';
 import Directory from "../../src/Directory";
 import Database from "../../src/Database";
@@ -25,11 +26,28 @@ describe('Database.create()', function () {
       return dbPath
     });
 
-    const fsSpy = sinon.spy(fs, 'ensureDirSync');
+    const sqliteSpy = sinon.replace(
+      sqlite,
+      'Database',
+      sinon.fake.returns('sqlite db is created')
+    );
 
-    Database.create(chainId);
+    const fsSpy = sinon.stub(fs, 'ensureDirSync').callsFake(() => {
+      return true
+    });
+
+
+    const actualFacilitatorConfigPath = Database.create(chainId);
+    const expectedFacilitatorConfigPath = `${dbPath + dbFileName}`;
+
     SpyAssert.assert(spyDirectory, 1, [[chainId]]);
     SpyAssert.assert(fsSpy, 1, [[dbPath]]);
+    SpyAssert.assert(sqliteSpy,1, [[expectedFacilitatorConfigPath]]);
+    assert.strictEqual(
+      actualFacilitatorConfigPath,
+      expectedFacilitatorConfigPath,
+      'Facilitator config path is incorrect'
+    );
 
     fsSpy.restore();
     spyDirectory.restore();
