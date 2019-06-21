@@ -16,10 +16,16 @@ describe('Database.verify()', function () {
     return fsSpy;
   }
 
-  function assertion(callCount: number, dbFilePath: string, expectedStatus: boolean, message: string, fsSpy) {
+  function assertion(
+    callCount: number,
+    dbFilePath: string,
+    expectedStatus: boolean,
+    message: string,
+    fsSpy
+  ) {
     const verificationStatus: boolean = Database.verify(dbFilePath);
 
-    SpyAssert.assert(fsSpy, 1, [[dbFilePath]]);
+    SpyAssert.assert(fsSpy, callCount, [[dbFilePath]]);
     assert.strictEqual(
       verificationStatus,
       expectedStatus,

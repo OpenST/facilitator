@@ -5,7 +5,7 @@ import Web3 from 'web3';
 import Logger from './Logger';
 
 /**
- * Manages encrypted Web3 accounts.
+ * It provides methods to create, encrypt and unlock accounts.
  */
 export default class Account {
   /**

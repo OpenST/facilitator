@@ -36,7 +36,6 @@ describe('Database.create()', function () {
       return true
     });
 
-
     const actualFacilitatorConfigPath = Database.create(chainId);
     const expectedFacilitatorConfigPath = `${dbPath + dbFileName}`;
 

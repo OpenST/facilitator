@@ -6,6 +6,7 @@ import * as os from 'os';
  */
 export default class Directory {
   /**
+   * Provides path to mosaic directory
    * @returns {string} It returns mosaic directory path.
    */
   public static getMosaicDirectoryPath(): string {

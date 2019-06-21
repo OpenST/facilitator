@@ -13,6 +13,9 @@ enum DBType {
   SQLITE = 'SQLITE',
 }
 
+// Facilitator config file name.
+const MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
+
 /**
  * Holds database configurations.
  */
@@ -46,7 +49,7 @@ export class Chain {
   /** Chain RPC endpoint. */
   public rpc: string;
 
-  /** Worker account object. */
+  /** Worker address. */
   public worker: string;
 }
 
@@ -60,13 +63,11 @@ export class FacilitatorConfig {
 
   public encryptedAccounts: Record<string, EncryptedKeystoreV3Json>;
 
-  private static fileName: string = 'facilitator-config.json';
-
   /**
    * Constructor.
    * @param config Facilitator config object.
    */
-  private constructor(config: any) {
+  public constructor(config: any) {
     this.database = config.database || new DBConfig();
     this.chains = config.chains || {};
     this.encryptedAccounts = config.encryptedAccounts || {};
@@ -85,7 +86,7 @@ export class FacilitatorConfig {
     fs.ensureDirSync(configPath);
 
     fs.writeFileSync(
-      path.join(configPath, FacilitatorConfig.fileName),
+      path.join(configPath, MOSAIC_FACILITATOR_CONFIG),
       JSON.stringify(this, null, '    '),
     );
   }
@@ -99,7 +100,7 @@ export class FacilitatorConfig {
     const facilitatorConfigPath = path.join(
       Directory.getMosaicDirectoryPath(),
       chain,
-      FacilitatorConfig.fileName,
+      MOSAIC_FACILITATOR_CONFIG,
     );
 
     if (fs.existsSync(facilitatorConfigPath)) {
@@ -110,25 +111,15 @@ export class FacilitatorConfig {
   }
 
   /**
-   * @returns {FacilitatorConfig} FacilitatorConfig object.
-   */
-  public static new(): FacilitatorConfig {
-    return new FacilitatorConfig({});
-  }
-
-  /**
-   * It verifies if facilitator config is present for a auxiliary chainid.
+   * It checks if facilitator config is present for given chain id.
    * @param {string} chain Auxiliary chain id.
+   * @returns `true` if file is present.
    */
   public static isFacilitatorConfigPresent(chain: string): boolean {
     const statOutput = fs.statSync(
-      path.join(Directory.getMosaicDirectoryPath(), chain, this.fileName),
+      path.join(Directory.getMosaicDirectoryPath(), chain, MOSAIC_FACILITATOR_CONFIG),
     );
-
-    if (statOutput.size > 0) {
-      return true;
-    }
-    return false;
+    return (statOutput.size > 0);
   }
 }
 
@@ -136,10 +127,9 @@ export class FacilitatorConfig {
  * Holds mosaic config, database config and facilitator config.
  */
 export class Config {
-  public database: DBConfig;
 
-  public chains: Record<string, Chain>;
-
+  public facilitator: FacilitatorConfig;
+  
   public mosaic: MosaicConfig;
 
   /**
@@ -152,9 +142,6 @@ export class Config {
     chainId: string,
   ) {
     this.mosaic = MosaicConfig.fromPath(mosaicConfigPath);
-    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.from(chainId);
-
-    this.database = facilitatorConfig.database;
-    this.chains = facilitatorConfig.chains;
+    this.facilitator = FacilitatorConfig.from(chainId);
   }
 }
