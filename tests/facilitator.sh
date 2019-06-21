@@ -3,13 +3,11 @@
 auxChainId="301"
 homedir=$HOME
 facilitatorConfigPath="${homedir}/.mosaic/${auxChainId}/facilitator-config.json"
-
-./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'
+mosaicConfigPath="./tests/facilitator/testdata/mosaic-config.json"
 
 # Tries a command without output. Errors if the command does not execute successfully.
 function try_silent {
-	echo $1
-    eval $1 2>&1 || error "$2"
+    eval $1 1>/dev/null 2>&1 || error "$2"
 }
 
 # Tries a command without output. Errors if the command *executes successfully.*
@@ -19,17 +17,17 @@ function fail_silent {
 
 # creates the facilitator-config.json
 function facilitator_init_pass {
- try_silent "./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'"
+ try_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'"
 }
 
 # fails silently if the command executes succesfully
 function facilitator_init_fail {
- fail_silent "./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'"
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'"
 }
 
 # creates the facilitator-config.json forcefully
 function facilitator_init_force_pass {
- try_silent "./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com' -f"
+ try_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com' -f"
 }
 
 function facilitator_config_present {
