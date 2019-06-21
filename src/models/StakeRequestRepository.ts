@@ -21,6 +21,7 @@ import {
 } from 'sequelize';
 
 class StakeRequestModel extends Model {}
+
 export interface StakeRequestAttributes {
   stakeRequestHash: string;
   messageHash: string;
@@ -33,16 +34,7 @@ export interface StakeRequestAttributes {
   stakerProxy: string;
 }
 
-export interface StakeRequest {
-  stakeRequestHash: string;
-  messageHash: string;
-  amount: number;
-  beneficiary: string;
-  gasPrice: number;
-  gasLimit: number;
-  nonce: number;
-  gateway: string;
-  stakerProxy: string;
+export interface StakeRequest extends StakeRequestAttributes {
   createdAt: Date;
   updatedAt: Date;
 }
