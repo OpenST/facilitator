@@ -10,7 +10,6 @@ describe('Facilitator.constructor()', () => {
 
   it('should construct with correct parameters', async () => {
     const configStub = sinon.createStubInstance(Config);
-    const dbConnection = sinon.spy();
     const facilitator = new Facilitator(configStub);
 
     assert(facilitator);

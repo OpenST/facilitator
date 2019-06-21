@@ -1,5 +1,7 @@
 'use strict';
 
+import {Config} from "../../src/Config";
+
 const sinon = require('sinon');
 import { assert } from 'chai'
 import { createMockClient } from 'mock-apollo-client';
