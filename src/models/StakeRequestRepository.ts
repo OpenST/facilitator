@@ -50,9 +50,19 @@ export interface StakeRequest extends StakeRequestAttributes {
   updatedAt: Date;
 }
 
+/**
+ * Stores instances of StakeRequest.
+ *
+ * Class enables creation, update and retrieval of StakeRequest objects.
+ * On construction it initializes underlying database model.
+ */
 export class StakeRequestRepository {
   /* Public Functions */
 
+  /**
+   * Initializes an underlying model and a database table.
+   * Creates database table if it does not exist.
+   */
   public constructor(initOptions: InitOptions) {
     StakeRequestModel.init(
       {
