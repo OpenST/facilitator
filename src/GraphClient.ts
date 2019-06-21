@@ -2,6 +2,7 @@ import ApolloClient from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { Subscription } from 'apollo-client/util/Observable';
 import gql from 'graphql-tag';
 
 import WebSocket = require('ws');
@@ -27,13 +28,13 @@ export default class GraphClient {
    * to observer i.e. TransactionHandler.
    * Documentation: https://www.apollographql.com/docs/react/advanced/subscriptions/
    *
-   * @param {string} subscriptionQry Subscription query object.
+   * @param {string} subscriptionQry Subscription query.
    * @return {Subscription} Query subscription object.
    */
-  public subscribe(subscriptionQry: string) {
+  public subscribe(subscriptionQry: string): Subscription {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
-      return Promise.reject(err);
+      throw(err);
     }
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;
@@ -44,10 +45,9 @@ export default class GraphClient {
     }).subscribe({
       next(response) {
         // Replace it with TransactionHandler
-        console.log(response.data);
       },
       error(err) {
-        console.error('error', err);
+        // Log error using logger
       },
     });
 
@@ -60,7 +60,7 @@ export default class GraphClient {
    * @param {string} subgraphEndPoint Subgraph endpoint.
    * @return {ApolloClient<NormalizedCacheObject>}
    */
-  public static getClient(subgraphEndPoint: string) {
+  public static getClient(subgraphEndPoint: string): GraphClient {
     // Creates subscription client
     const subscriptionClient = new SubscriptionClient(subgraphEndPoint, {
       reconnect: true,

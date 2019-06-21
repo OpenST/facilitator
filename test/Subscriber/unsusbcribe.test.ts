@@ -11,36 +11,36 @@ import SpyUnsubscribe from './utils/SpyUnsubscribe'
 describe('Subscriber.unsubscribe()', () => {
   let apolloClient;
   let graphClient;
-  let subscriptionQry;
+  let subscriptionQueries;
   let subscriber;
 
   beforeEach(() => {
     apolloClient = createMockClient();
     graphClient = new GraphClient(apolloClient);
-    subscriptionQry = 'subscription{stakeRequesteds{id}}';
-  });
-
-  it('should work with correct parameters', async () => {
+    subscriptionQueries = {stakeRequested: 'subscription{stakeRequesteds{id}}'};
     sinon.replace(
       graphClient,
       'subscribe',
       sinon.fake.resolves(new SpyUnsubscribe()),
     );
-    subscriber = new Subscriber(graphClient, [subscriptionQry]);
-    await subscriber.subscribe();
+    subscriber = new Subscriber(graphClient, subscriptionQueries);
+  });
+
+  it('should work with correct parameters', async () => {
+    const querySubscription = await subscriber.subscribe();
     assert.strictEqual(
-      subscriber.querySubscriptions.length,
+      Object.keys(subscriber.querySubscriptions).length,
       1,
       "Subscription failed!!!"
     );
     sinon.replace(
-      subscriber.querySubscriptions[0],
+      subscriber.querySubscriptions.stakeRequested,
       'unsubscribe',
       sinon.fake.resolves(true)
     );
     await subscriber.unsubscribe();
     assert.strictEqual(
-      subscriber.querySubscriptions.length,
+      Object.keys(subscriber.querySubscriptions).length,
       0,
       "UnSubscription failed!!!"
     );

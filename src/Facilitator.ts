@@ -8,8 +8,6 @@ import GraphClient from './GraphClient';
 export default class Facilitator {
   readonly config: Config;
 
-  private dbConnection: any;
-
   private originSubscriber: Subscriber;
 
   private auxiliarySubscriber: Subscriber;
@@ -18,11 +16,9 @@ export default class Facilitator {
    * Facilitator class constructor.
    *
    * @param {string} config Config class object.
-   * @param {object} dbConnection DB connection object.
    */
-  public constructor(config: Config, dbConnection: any) {
+  public constructor(config: Config) {
     this.config = config;
-    this.dbConnection = dbConnection;
   }
 
   /**
@@ -30,20 +26,20 @@ export default class Facilitator {
    *
    * @return Promise<void>
    */
-  public async start() {
+  public async start(): Promise<void> {
     const subGraphDetails = Facilitator.getSubscriptionDetails();
 
     // Subscription to origin subgraph queries
     this.originSubscriber = new Subscriber(
       GraphClient.getClient(subGraphDetails.origin.subGraphEndPoint),
-      Object.values(subGraphDetails.origin.subscriptionQueries),
+      subGraphDetails.origin.subscriptionQueries,
     );
     await this.originSubscriber.subscribe();
 
     // Subscription to auxiliary subgraph queries
     this.auxiliarySubscriber = new Subscriber(
       GraphClient.getClient(subGraphDetails.auxiliary.subGraphEndPoint),
-      Object.values(subGraphDetails.auxiliary.subscriptionQueries),
+      subGraphDetails.auxiliary.subscriptionQueries,
     );
     await this.auxiliarySubscriber.subscribe();
   }
@@ -54,7 +50,7 @@ export default class Facilitator {
    *
    * @return Promise<void>
    */
-  public async stop() {
+  public async stop(): Promise<void> {
     await this.originSubscriber.unsubscribe();
     await this.auxiliarySubscriber.unsubscribe();
   }
@@ -66,13 +62,13 @@ export default class Facilitator {
    *
    * @return <any> Object containing chain based subscriptionQueries.
    */
-  public static getSubscriptionDetails() {
+  public static getSubscriptionDetails(): any {
     return {
       origin: {
         subGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
         subscriptionQueries: {
           stakeRequested: 'subscription{stakeRequesteds{id amount'
-          + ' beneficiary gasLimit gasPrice gateway nonce staker stakeRequestHash }}',
+          + ' beneficiary gasLimit gasPrice gateway nonce staker stakeRequestHash}}',
         },
       },
       auxiliary: {

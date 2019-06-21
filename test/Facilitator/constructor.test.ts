@@ -11,10 +11,14 @@ describe('Facilitator.constructor()', () => {
   it('should construct with correct parameters', async () => {
     const configStub = sinon.createStubInstance(Config);
     const dbConnection = sinon.spy();
-    const facilitator = new Facilitator(configStub, dbConnection);
+    const facilitator = new Facilitator(configStub);
 
     assert(facilitator);
-    assert.strictEqual(facilitator.config, configStub, "Config mismatch!!!");
+    assert.strictEqual(
+      facilitator.config,
+      configStub,
+      "Config mismatch!!!"
+    );
     sinon.restore();
   });
 

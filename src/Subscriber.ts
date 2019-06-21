@@ -5,20 +5,20 @@ import GraphClient from './GraphClient';
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
  */
 export default class Subscriber {
-  public querySubscriptions: Subscription[];
+  public querySubscriptions: Record<string, Subscription>;
 
-  private subscriptionQueries: string[];
+  private subscriptionQueries: Record<string, string>;
 
   private graphClient: GraphClient;
 
   /**
    * Constructor
    *
-   * @params {GraphClient} graphClient graph client instance.
-   * @param {string[]} subscriptionQueries Array of subscription queries.
+   * @params {GraphClient} graphClient Graph client instance.
+   * @param {Record<string, string>} subscriptionQueries Object of subscription queries.
    */
-  public constructor(graphClient: GraphClient, subscriptionQueries: string[]) {
-    this.querySubscriptions = [];
+  public constructor(graphClient: GraphClient, subscriptionQueries: Record<string, string>) {
+    this.querySubscriptions = {};
     this.subscriptionQueries = subscriptionQueries;
     this.graphClient = graphClient;
   }
@@ -29,9 +29,9 @@ export default class Subscriber {
    * @return {Promise<void>}
    */
   public async subscribe() {
-    for (let i = 0; i < this.subscriptionQueries.length; i++) {
-      this.querySubscriptions[i] = await this.graphClient.subscribe(
-        this.subscriptionQueries[i],
+    for (let key in this.subscriptionQueries) {
+      this.querySubscriptions[key] = await this.graphClient.subscribe(
+        this.subscriptionQueries[key],
       );
     }
   }
@@ -42,11 +42,11 @@ export default class Subscriber {
    * @return {Promise<void>}
    */
   public async unsubscribe() {
-    for (let i = 0; i < this.querySubscriptions.length; i++) {
-      const querySubscription = this.querySubscriptions[i];
+    for (let key in this.subscriptionQueries) {
+      const querySubscription = this.querySubscriptions[key];
       await querySubscription.unsubscribe();
     }
     // Deletes all query susbcribers as they are non useful
-    this.querySubscriptions.splice!(0, this.querySubscriptions.length);
+    this.querySubscriptions = {};
   }
 }
