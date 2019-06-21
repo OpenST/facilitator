@@ -17,7 +17,7 @@
 /* eslint-disable class-methods-use-this */
 
 import {
-  DataTypes, Model, InitOptions, Op
+  DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 
 class AuxiliaryChainModel extends Model {}
@@ -59,35 +59,35 @@ export class AuxiliaryChainRepository {
           type: DataTypes.STRING,
           validate: {
             isAlphanumeric: true,
-            len: [3,50],
+            len: [3, 50],
           },
         },
         ostGatewayAddress: {
           type: DataTypes.STRING,
           validate: {
             isAlphanumeric: true,
-            len: [42,42],
+            len: [42, 42],
           },
         },
         ostCoGatewayAddress: {
           type: DataTypes.STRING,
           validate: {
             isAlphanumeric: true,
-            len: [42,42],
+            len: [42, 42],
           },
         },
         anchorAddress: {
           type: DataTypes.STRING,
           validate: {
             isAlphanumeric: true,
-            len: [42,42],
+            len: [42, 42],
           },
         },
         coAnchorAddress: {
           type: DataTypes.STRING,
           validate: {
             isAlphanumeric: true,
-            len: [42,42],
+            len: [42, 42],
           },
         },
         lastProcessedBlockNumber: {
@@ -158,14 +158,13 @@ export class AuxiliaryChainRepository {
    * @param {AuxiliaryChainAttributes} auxiliaryChainAttributes
    * @return {Promise<Number>}
    */
-  public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<Number> {
+  public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number> {
     return await AuxiliaryChainModel.update(auxiliaryChainAttributes, {
       where: {
         chainId: {
-          [Op.eq]: auxiliaryChainAttributes.chainId
-        }
-      }
+          [Op.eq]: auxiliaryChainAttributes.chainId,
+        },
+      },
     });
   }
-
 }
