@@ -22,6 +22,11 @@ import {
 
 class StakeRequestModel extends Model {}
 
+/**
+ * An interface for input to create a StakeRequest object in the StakeRequestRepository.
+ *
+ * @see StakeRequestRepository::create()
+ */
 export interface StakeRequestAttributes {
   stakeRequestHash: string;
   messageHash: string;
@@ -34,6 +39,12 @@ export interface StakeRequestAttributes {
   stakerProxy: string;
 }
 
+/**
+ * An interface for an object created and stored within StakeRequestRepository.
+ *
+ * @see StakeRequestRepository::create()
+ * @see StakeRequestRepository::get()
+ */
 export interface StakeRequest extends StakeRequestAttributes {
   createdAt: Date;
   updatedAt: Date;
