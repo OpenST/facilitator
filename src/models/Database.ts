@@ -17,12 +17,14 @@
 import { Sequelize } from 'sequelize';
 
 import { StakeRequestRepository } from './StakeRequestRepository';
+import { AuxiliaryChainRepository } from "./AuxiliaryChainRepository";
 
 export default class Database {
   /* Storage */
 
   public stakeRequestRepository: StakeRequestRepository;
 
+  public auxiliaryChainRepository: AuxiliaryChainRepository;
 
   /* Public Functions */
 
@@ -58,5 +60,13 @@ export default class Database {
       timestamps: true,
       freezeTableName: true,
     });
+
+    this.auxiliaryChainRepository = new AuxiliaryChainRepository({
+      sequelize,
+      underscored: true,
+      timestamps: true,
+      freezeTableName: true,
+    });
+
   }
 }
