@@ -30,36 +30,45 @@ import chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const { assert } = chai;
 
+interface TestConfigInterface {
+  db: Database;
+}
+let config: TestConfigInterface;
 
 describe('StakeRequestRepository::create', (): void => {
-  it('Checks creation of stake request model.', async (): Promise<void> => {
-    const db = await Database.create();
+  beforeEach(async (): Promise<void> => {
+    config = {
+      db: await Database.create(),
+    };
+  });
 
+  it('Checks creation of stake request model.', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes = {
-      stakeRequestHash: 'stakeRequestHashA',
-      messageHash: 'messageHashA',
+      stakeRequestHash: 'stakeRequestHash',
+      messageHash: 'messageHash',
       amount: 1,
-      beneficiary: 'beneficiaryA',
+      beneficiary: 'beneficiary',
       gasPrice: 2,
       gasLimit: 3,
       nonce: 4,
-      gateway: 'gatewayA',
-      stakerProxy: 'stakerProxyA',
+      gateway: 'gateway',
+      stakerProxy: 'stakerProxy',
     };
 
-    const stakeRequestResponse = await db.stakeRequestRepository.create(
+    const stakeRequestResponse = await config.db.stakeRequestRepository.create(
       stakeRequestAttributes,
     );
 
     Util.checkStakeRequestAgainstAttributes(stakeRequestResponse, stakeRequestAttributes);
 
-    const stakeRequest = await db.stakeRequestRepository.get(
+    const stakeRequest = await config.db.stakeRequestRepository.get(
       stakeRequestAttributes.stakeRequestHash,
     );
 
     assert.notStrictEqual(
       stakeRequest,
       null,
+      'Newly created stake request does not exist.',
     );
 
     Util.checkStakeRequestAgainstAttributes(
@@ -68,9 +77,8 @@ describe('StakeRequestRepository::create', (): void => {
     );
   });
 
-  it('Throws if a stake request already exists.', async (): Promise<void> => {
-    const db = await Database.create();
-
+  it('Throws if a stake request '
+  + 'with the same stake request\'s hash already exists.', async (): Promise<void> => {
     const stakeRequestAttributesA: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
       messageHash: 'messageHashA',
@@ -83,6 +91,7 @@ describe('StakeRequestRepository::create', (): void => {
       stakerProxy: 'stakerProxyA',
     };
 
+    // All members, except stakeRequestHash differs from stakeRequestAttributesA.
     const stakeRequestAttributesB: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
       messageHash: 'messageHashB',
@@ -95,14 +104,16 @@ describe('StakeRequestRepository::create', (): void => {
       stakerProxy: 'stakerProxyB',
     };
 
-    await db.stakeRequestRepository.create(
+    await config.db.stakeRequestRepository.create(
       stakeRequestAttributesA,
     );
 
-    assert.isRejected(
-      db.stakeRequestRepository.create(
+    return assert.isRejected(
+      config.db.stakeRequestRepository.create(
         stakeRequestAttributesB,
       ),
+      /^Failed to create a stake request*/,
+      'Creation should fail as a stake request with the same hash already exists.',
     );
   });
 });

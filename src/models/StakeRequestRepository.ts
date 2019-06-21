@@ -102,11 +102,37 @@ export class StakeRequestRepository {
     );
   }
 
-  /** Creates a stake request model in the repository and syncs with database. */
-  public async create(stakeRequest: StakeRequestAttributes): Promise<StakeRequest> {
-    return await StakeRequestModel.create(stakeRequest) as StakeRequest;
+  /**
+   * Creates a stake request model in the repository.
+   *
+   * Function throws if a stake request with the same stake request's hash
+   * already exists.
+   *
+   * @param stakeRequestAttributes Attributes of a newly created stake request.
+   *
+   * @return Newly created stake request object.
+   */
+  public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
+    try {
+      return await StakeRequestModel.create(stakeRequestAttributes) as StakeRequest;
+    } catch (e) {
+      const errorContext = {
+        attributes: stakeRequestAttributes,
+        reason: e.message,
+      };
+
+      throw Error(`Failed to create a stake request: ${JSON.stringify(errorContext)}`);
+    }
   }
 
+  /**
+   * Returns a stake request with the specified stake request's hash or
+   * null if there is no.
+   *
+   * @param stakeRequestHash Stake request's hash to retrieve.
+   *
+   * @return Stake request object if exists, otherwise null.
+   */
   public async get(stakeRequestHash: string): Promise<StakeRequest | null> {
     const stakeRequestModel = await StakeRequestModel.findOne({
       where: {

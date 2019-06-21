@@ -26,33 +26,43 @@ import Util from './util';
 
 import assert = require('assert');
 
-describe('StakeRequestRepository::get', (): void => {
-  it('Checks retrieval of an existing model.', async (): Promise<void> => {
-    const db = await Database.create();
+interface TestConfigInterface {
+  db: Database;
+}
+let config: TestConfigInterface;
 
+describe('StakeRequestRepository::get', (): void => {
+  beforeEach(async (): Promise<void> => {
+    config = {
+      db: await Database.create(),
+    };
+  });
+
+  it('Checks retrieval of an existing stake request.', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes = {
-      stakeRequestHash: 'stakeRequestHashA',
-      messageHash: 'messageHashA',
+      stakeRequestHash: 'stakeRequestHash',
+      messageHash: 'messageHash',
       amount: 1,
-      beneficiary: 'beneficiaryA',
+      beneficiary: 'beneficiary',
       gasPrice: 2,
       gasLimit: 3,
       nonce: 4,
-      gateway: 'gatewayA',
-      stakerProxy: 'stakerProxyA',
+      gateway: 'gateway',
+      stakerProxy: 'stakerProxy',
     };
 
-    await db.stakeRequestRepository.create(
+    await config.db.stakeRequestRepository.create(
       stakeRequestAttributes,
     );
 
-    const stakeRequest = await db.stakeRequestRepository.get(
+    const stakeRequest = await config.db.stakeRequestRepository.get(
       stakeRequestAttributes.stakeRequestHash,
     );
 
     assert.notStrictEqual(
       stakeRequest,
       null,
+      'Stake request should exists as it has been just created.',
     );
 
     Util.checkStakeRequestAgainstAttributes(
@@ -62,31 +72,14 @@ describe('StakeRequestRepository::get', (): void => {
   });
 
   it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const db = await Database.create();
-
-    const stakeRequestAttributes: StakeRequestAttributes = {
-      stakeRequestHash: 'stakeRequestHashA',
-      messageHash: 'messageHashA',
-      amount: 1,
-      beneficiary: 'beneficiaryA',
-      gasPrice: 2,
-      gasLimit: 3,
-      nonce: 4,
-      gateway: 'gatewayA',
-      stakerProxy: 'stakerProxyA',
-    };
-
-    await db.stakeRequestRepository.create(
-      stakeRequestAttributes,
-    );
-
-    const stakeRequest = await db.stakeRequestRepository.get(
-      'nonExistinghash',
+    const stakeRequest = await config.db.stakeRequestRepository.get(
+      'nonExistingHash',
     );
 
     assert.strictEqual(
       stakeRequest,
       null,
+      'Stake request with \'nonExistingHash\' does not exist.',
     );
   });
 });
