@@ -4,9 +4,12 @@ auxChainId="301"
 homedir=$HOME
 facilitatorConfigPath="${homedir}/.mosaic/${auxChainId}/facilitator-config.json"
 
+./facilitator init --mosaic-config ./mosaic-config.json --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://originrpc.com' --auxiliary-rpc 'https://auxiliary.com'
+
 # Tries a command without output. Errors if the command does not execute successfully.
 function try_silent {
-    eval $1 1>/dev/null 2>&1 || error "$2"
+	echo $1
+    eval $1 2>&1 || error "$2"
 }
 
 # Tries a command without output. Errors if the command *executes successfully.*
