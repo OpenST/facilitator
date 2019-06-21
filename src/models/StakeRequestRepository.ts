@@ -109,7 +109,9 @@ export class StakeRequestRepository {
       return await StakeRequestModel.create(stakeRequestAttributes) as StakeRequest;
     } catch (e) {
       const errorContext = {
-        attributes: stakeRequestAttributes,
+        input: {
+          stakeRequestAttributes,
+        },
         reason: e.message,
       };
 
@@ -137,5 +139,46 @@ export class StakeRequestRepository {
     }
 
     return stakeRequestModel as StakeRequest;
+  }
+
+  /**
+   * Updates a message hash for the specified stake request's hash.
+   *
+   * Function fails if stake request's hash does not exist.
+   *
+   * @param stakeRequestHash Stake request's hash to update message hash.
+   * @param messageHash New message hash to update.
+   */
+  public async updateMessageHash(stakeRequestHash: string, messageHash: string): Promise<void> {
+    const stakeRequestModel: StakeRequestModel = await StakeRequestModel.findOne({
+      where: {
+        stakeRequestHash,
+      },
+    });
+
+    if (stakeRequestModel === null) {
+      const errorContext = {
+        input: {
+          stakeRequestHash,
+          messageHash,
+        },
+        reason: 'The specified stake request hash does not exist.',
+      };
+      throw new Error(`Failed to update a stake request: ${JSON.stringify(errorContext)}`);
+    }
+
+    try {
+      await stakeRequestModel.update({ messageHash });
+    } catch (e) {
+      const errorContext = {
+        input: {
+          stakeRequestHash,
+          messageHash,
+        },
+        reason: e.message,
+      };
+
+      throw Error(`Failed to update a stake request: ${JSON.stringify(errorContext)}`);
+    }
   }
 }
