@@ -1,4 +1,4 @@
-///<reference path="util.ts"/>
+// /<reference path="util.ts"/>
 // Copyright 2019 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,7 +70,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
     assert.strictEqual(
       updateResponse[0],
       0,
-      'Should return [0] as no records were updated in DB'
+      'Should return [0] as no records were updated in DB',
     );
 
     const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(objectForUpdate.chainId);
@@ -82,7 +82,6 @@ describe('AuxiliaryChainRepository::update', (): void => {
   });
 
   it('Updation should fail for a non existing auxiliary chain ', async (): Promise<void> => {
-
     const auxiliaryChainAttributes: AuxiliaryChainAttributes = {
       chainId: 10002,
       originChainName: '10003',
@@ -103,5 +102,4 @@ describe('AuxiliaryChainRepository::update', (): void => {
       null,
     );
   });
-
 });
