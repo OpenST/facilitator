@@ -57,6 +57,7 @@ export class AuxiliaryChainRepository {
         },
         originChainName: {
           type: DataTypes.STRING,
+          allowNull: false,
           validate: {
             isAlphanumeric: true,
             len: [3, 50],
@@ -64,6 +65,7 @@ export class AuxiliaryChainRepository {
         },
         ostGatewayAddress: {
           type: DataTypes.STRING,
+          allowNull: false,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -71,6 +73,7 @@ export class AuxiliaryChainRepository {
         },
         ostCoGatewayAddress: {
           type: DataTypes.STRING,
+          allowNull: false,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -78,6 +81,7 @@ export class AuxiliaryChainRepository {
         },
         anchorAddress: {
           type: DataTypes.STRING,
+          allowNull: false,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -85,6 +89,7 @@ export class AuxiliaryChainRepository {
         },
         coAnchorAddress: {
           type: DataTypes.STRING,
+          allowNull: false,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -92,18 +97,24 @@ export class AuxiliaryChainRepository {
         },
         lastProcessedBlockNumber: {
           type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: null,
           validate: {
             min: 0,
           },
         },
         lastOriginBlockHeight: {
           type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: null,
           validate: {
             min: 0,
           },
         },
         lastAuxiliaryBlockHeight: {
           type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: null,
           validate: {
             min: 0,
           },
