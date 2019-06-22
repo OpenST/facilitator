@@ -31,10 +31,12 @@ const Util = {
       stakeRequestAttributes.stakeRequestHash,
     );
 
-    assert.strictEqual(
-      stakeRequest.messageHash,
-      stakeRequestAttributes.messageHash,
-    );
+    if (stakeRequestAttributes.hasOwnProperty('messageHash')) {
+      assert.strictEqual(
+        stakeRequest.messageHash,
+        stakeRequestAttributes.messageHash,
+      );
+    }
 
     assert.strictEqual(
       stakeRequest.amount,

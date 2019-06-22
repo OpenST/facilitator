@@ -1,4 +1,4 @@
-///<reference path="util.ts"/>
+// /<reference path="util.ts"/>
 // Copyright 2019 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -123,5 +123,4 @@ describe('MessageRepository::create', (): void => {
       'Creation should fail as a message with the same message hash already exists.',
     );
   });
-
 });
