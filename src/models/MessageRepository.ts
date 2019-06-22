@@ -75,9 +75,11 @@ export class MessageRepository {
           type: DataTypes.ENUM({
             values: ['stakeAndMint', 'redeemAndUnstake'],
           }),
+          allowNull: false,
         },
         gatewayAddress: {
           type: DataTypes.STRING,
+          allowNull: false,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -87,32 +89,38 @@ export class MessageRepository {
           type: DataTypes.ENUM({
             values: statusesArray,
           }),
+          allowNull: false,
         },
         targetStatus: {
           type: DataTypes.ENUM({
             values: statusesArray,
           }),
+          allowNull: false,
         },
         gasPrice: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         nonce: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         sender: {
           type: DataTypes.STRING,
+          allowNull: false,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -122,9 +130,11 @@ export class MessageRepository {
           type: DataTypes.ENUM({
             values: ['o2a', 'a2o'],
           }),
+          allowNull: false,
         },
         sourceDeclarationBlockHeight: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
