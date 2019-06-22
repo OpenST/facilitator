@@ -1,4 +1,4 @@
-///<reference path="util.ts"/>
+// /<reference path="util.ts"/>
 // Copyright 2019 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,7 +80,6 @@ describe('MessageRepository::update', (): void => {
   });
 
   it('Updation should fail for a non existing message ', async (): Promise<void> => {
-
     const messageAttributes: MessageAttributes = {
       messageHash: 'nonExistingMessageHash',
       type: 'redeemAndUnstake',
@@ -102,7 +101,7 @@ describe('MessageRepository::update', (): void => {
     assert.strictEqual(
       messageUpdateResponse[0],
       0,
-      'Should return 0 as no rows were updated'
+      'Should return 0 as no rows were updated',
     );
 
     const updatedAuxiliaryChain = await config.db.messageRepository.get(messageAttributes.messageHash);
@@ -112,5 +111,4 @@ describe('MessageRepository::update', (): void => {
       null,
     );
   });
-
 });

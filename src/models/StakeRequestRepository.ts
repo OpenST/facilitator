@@ -20,6 +20,11 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 
+import {
+  MessageModel,
+  Message,
+} from './MessageRepository';
+
 class StakeRequestModel extends Model {}
 
 /**
@@ -29,7 +34,7 @@ class StakeRequestModel extends Model {}
  */
 export interface StakeRequestAttributes {
   stakeRequestHash: string;
-  messageHash: string;
+  messageHash?: string;
   amount: number;
   beneficiary: string;
   gasPrice: number;
@@ -46,6 +51,7 @@ export interface StakeRequestAttributes {
  * @see StakeRequestRepository::get()
  */
 export interface StakeRequest extends StakeRequestAttributes {
+  message: Message;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -72,39 +78,48 @@ export class StakeRequestRepository {
         },
         messageHash: {
           type: DataTypes.STRING,
+          allowNull: true,
+          unique: true,
         },
         amount: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         beneficiary: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
         gasPrice: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         nonce: {
           type: DataTypes.INTEGER,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         gateway: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
         stakerProxy: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
       },
       {
@@ -113,6 +128,7 @@ export class StakeRequestRepository {
         tableName: 'stake_request',
       },
     );
+    StakeRequestModel.belongsTo(MessageModel, { foreignKey: 'messageHash' });
   }
 
   /**
@@ -153,6 +169,9 @@ export class StakeRequestRepository {
       where: {
         stakeRequestHash,
       },
+      include: [
+        MessageModel,
+      ],
     });
 
     if (stakeRequestModel === null) {

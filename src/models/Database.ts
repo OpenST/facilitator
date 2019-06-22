@@ -72,13 +72,6 @@ export default class Database {
    * @param sequelize Sequelize instance.
    */
   private constructor(sequelize: Sequelize) {
-    this.stakeRequestRepository = new StakeRequestRepository({
-      sequelize,
-      underscored: true,
-      timestamps: true,
-      freezeTableName: true,
-    });
-
     this.auxiliaryChainRepository = new AuxiliaryChainRepository({
       sequelize,
       underscored: true,
@@ -87,6 +80,13 @@ export default class Database {
     });
 
     this.messageRepository = new MessageRepository({
+      sequelize,
+      underscored: true,
+      timestamps: true,
+      freezeTableName: true,
+    });
+
+    this.stakeRequestRepository = new StakeRequestRepository({
       sequelize,
       underscored: true,
       timestamps: true,
