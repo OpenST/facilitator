@@ -130,7 +130,7 @@ export class AuxiliaryChainRepository {
         attributes: auxiliaryChainAttributes,
         reason: e.message,
       };
-      throw Error(`Failed to create an auxiliary chain: ${JSON.stringify(errorContext)}`);
+      return Promise.reject(`Failed to create an auxiliary chain: ${JSON.stringify(errorContext)}`);
     }
   }
 
@@ -156,9 +156,9 @@ export class AuxiliaryChainRepository {
   /**
    * Updates auxiliary chain data in database and does not return the updated state.
    * @param {AuxiliaryChainAttributes} auxiliaryChainAttributes
-   * @return {Promise<Number>}
+   * @return {Promise<number[]>>}
    */
-  public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number> {
+  public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number[]> {
     return await AuxiliaryChainModel.update(auxiliaryChainAttributes, {
       where: {
         chainId: {

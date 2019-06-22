@@ -63,8 +63,14 @@ describe('AuxiliaryChainRepository::update', (): void => {
     objectForUpdate.lastAuxiliaryBlockHeight = 2;
     objectForUpdate.lastOriginBlockHeight = 3;
 
-    await config.db.auxiliaryChainRepository.update(
+    const updateResponse = await config.db.auxiliaryChainRepository.update(
       objectForUpdate,
+    );
+
+    assert.strictEqual(
+      updateResponse[0],
+      0,
+      'Should return [0] as no records were updated in DB'
     );
 
     const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(objectForUpdate.chainId);
