@@ -19,6 +19,7 @@ import 'mocha';
 import {
   MessageAttributes,
   Message,
+  MessageConstant,
 } from '../../../src/models/MessageRepository';
 import Database from '../../../src/models/Database';
 
@@ -38,19 +39,19 @@ describe('MessageRepository::get', (): void => {
     };
   });
 
-  it('Checks retrieval of an existing auxiliary chain.', async (): Promise<void> => {
+  it('Checks retrieval of an existing message.', async (): Promise<void> => {
     const messageAttributes: MessageAttributes = {
       messageHash: '0x497A49648885f7aaC3d761817F191ee1AFAF399CFHKHFKDHKSDK343DDFDFD',
-      type: 'redeemAndUnstake',
-      gatewayAddress: '0x477A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: 'Declared',
-      targetStatus: 'Progressed',
+      type: MessageConstant.stakeAndMintType,
+      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
+      sourceStatus: MessageConstant.declaredStatus,
+      targetStatus: MessageConstant.unDeclaredStatus,
       gasPrice: 1,
       gasLimit: 1,
-      nonce: 2,
-      sender: '0x397B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: 'a2o',
-      sourceDeclarationBlockHeight: 2,
+      nonce: 1,
+      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
+      direction: MessageConstant.originToAuxiliaryDirection,
+      sourceDeclarationBlockHeight: 2
     };
 
     await config.db.messageRepository.create(
@@ -64,7 +65,7 @@ describe('MessageRepository::get', (): void => {
     assert.notStrictEqual(
       message,
       null,
-      'Auxiliary chain should exist as it has been just created.',
+      'Message should exist as it has been just created.',
     );
 
     Util.checkMessageAgainstAttributes(
@@ -73,7 +74,7 @@ describe('MessageRepository::get', (): void => {
     );
   });
 
-  it('Checks retrieval of non-existing chain.', async (): Promise<void> => {
+  it('Checks retrieval of non-existing message.', async (): Promise<void> => {
     const nonExistingMessageHash = 'nonExistingMessageHash';
     const message = await config.db.messageRepository.get(
       nonExistingMessageHash,

@@ -20,6 +20,7 @@ import 'mocha';
 import {
   MessageAttributes,
   Message,
+  MessageConstant,
 } from '../../../src/models/MessageRepository';
 
 import Database from '../../../src/models/Database';
@@ -46,15 +47,15 @@ describe('MessageRepository::create', (): void => {
   it('Checks creation of message model.', async (): Promise<void> => {
     const messageAttributes: MessageAttributes = {
       messageHash: '0x497A49648885f7aaC3d761817F191ee1AFAF399CFHKHFKDHKSDK343DDFDFD',
-      type: 'stakeAndMint',
+      type: MessageConstant.stakeAndMintType,
       gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: 'Undeclared',
-      targetStatus: 'Undeclared',
+      sourceStatus: MessageConstant.declaredStatus,
+      targetStatus: MessageConstant.unDeclaredStatus,
       gasPrice: 1,
       gasLimit: 1,
       nonce: 1,
       sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: 'o2a',
+      direction: MessageConstant.originToAuxiliaryDirection,
       sourceDeclarationBlockHeight: 1,
     };
 
@@ -84,30 +85,30 @@ describe('MessageRepository::create', (): void => {
     + 'with the same message hash already exists.', async (): Promise<void> => {
     const messageAttributesA: MessageAttributes = {
       messageHash: '0x497A49648885f7aaC3d761817F191ee1AFAF399CFHKHFKDHKSDK343DDFDFD',
-      type: 'stakeAndMint',
+      type: MessageConstant.stakeAndMintType,
       gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: 'Undeclared',
-      targetStatus: 'Undeclared',
+      sourceStatus: MessageConstant.declaredStatus,
+      targetStatus: MessageConstant.unDeclaredStatus,
       gasPrice: 1,
       gasLimit: 1,
       nonce: 1,
       sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: 'o2a',
+      direction: MessageConstant.originToAuxiliaryDirection,
       sourceDeclarationBlockHeight: 1,
     };
 
-    // All members, except chainId from auxiliaryChainAttributesA.
+    // All members, except messageHash are different from messageAttributesA.
     const messageAttributesB: MessageAttributes = {
       messageHash: '0x497A49648885f7aaC3d761817F191ee1AFAF399CFHKHFKDHKSDK343DDFDFD',
-      type: 'redeemAndUnstake',
-      gatewayAddress: '0x477A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: 'Declared',
-      targetStatus: 'Progressed',
+      type: MessageConstant.redeemAndUnstakeType,
+      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
+      sourceStatus: MessageConstant.unDeclaredStatus,
+      targetStatus: MessageConstant.declaredStatus,
       gasPrice: 1,
       gasLimit: 1,
       nonce: 2,
       sender: '0x397B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: 'a2o',
+      direction: MessageConstant.auxiliaryToOriginDirection,
       sourceDeclarationBlockHeight: 2,
     };
 

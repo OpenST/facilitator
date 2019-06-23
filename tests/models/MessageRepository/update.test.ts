@@ -20,6 +20,7 @@ import 'mocha';
 import {
   MessageAttributes,
   Message,
+  MessageConstant,
 } from '../../../src/models/MessageRepository';
 
 import Database from '../../../src/models/Database';
@@ -43,18 +44,18 @@ describe('MessageRepository::update', (): void => {
     };
   });
 
-  it('Checks updation of auxiliary message.', async (): Promise<void> => {
+  it('Checks updation of message.', async (): Promise<void> => {
     const createMessageAttributes: MessageAttributes = {
       messageHash: 'messageHash',
-      type: 'redeemAndUnstake',
-      gatewayAddress: '0x477A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: 'Declared',
-      targetStatus: 'Progressed',
+      type: MessageConstant.stakeAndMintType,
+      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
+      sourceStatus: MessageConstant.declaredStatus,
+      targetStatus: MessageConstant.unDeclaredStatus,
       gasPrice: 1,
       gasLimit: 1,
-      nonce: 2,
-      sender: '0x397B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: 'a2o',
+      nonce: 1,
+      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
+      direction: MessageConstant.originToAuxiliaryDirection,
       sourceDeclarationBlockHeight: 2,
     };
 
@@ -82,15 +83,15 @@ describe('MessageRepository::update', (): void => {
   it('Updation should fail for a non existing message ', async (): Promise<void> => {
     const messageAttributes: MessageAttributes = {
       messageHash: 'nonExistingMessageHash',
-      type: 'redeemAndUnstake',
-      gatewayAddress: '0x477A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: 'Declared',
-      targetStatus: 'Progressed',
+      type: MessageConstant.stakeAndMintType,
+      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
+      sourceStatus: MessageConstant.declaredStatus,
+      targetStatus: MessageConstant.unDeclaredStatus,
       gasPrice: 1,
       gasLimit: 1,
-      nonce: 2,
-      sender: '0x397B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: 'a2o',
+      nonce: 1,
+      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
+      direction: MessageConstant.originToAuxiliaryDirection,
       sourceDeclarationBlockHeight: 2,
     };
 
@@ -104,10 +105,10 @@ describe('MessageRepository::update', (): void => {
       'Should return 0 as no rows were updated',
     );
 
-    const updatedAuxiliaryChain = await config.db.messageRepository.get(messageAttributes.messageHash);
+    const updatedMessage = await config.db.messageRepository.get(messageAttributes.messageHash);
 
     return assert.strictEqual(
-      updatedAuxiliaryChain,
+      updatedMessage,
       null,
     );
   });

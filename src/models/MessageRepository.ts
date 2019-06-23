@@ -49,17 +49,43 @@ export interface Message extends MessageAttributes{
   updatedAt: Date;
 }
 
-/**
- * Returns statuses which are used for sourceStatus & targetStatus
- * @return {Array<String>}
- */
-export const statusesArray = [
-  'Undeclared',
-  'Declared',
-  'Progressed',
-  'RevocationDeclared',
-  'Revoked',
-];
+export class MessageConstant {
+  /* Stake and mint type. */
+  public static stakeAndMintType: string = 'stakeAndMint';
+
+  /* Redeem and unstake type. */
+  public static redeemAndUnstakeType: string = 'redeemAndUnstake';
+
+  /* Undeclared status. */
+  public static unDeclaredStatus: string = 'Undeclared';
+
+  /* Declared status. */
+  public static declaredStatus: string = 'Declared';
+
+  /* Progressed status. */
+  public static progressedStatus: string = 'Progressed';
+
+  /* RevocationDeclared status. */
+  public static revocationDeclaredStatus: string = 'RevocationDeclared';
+
+  /* Revoked status. */
+  public static revokedStatus: string = 'Revoked';
+
+  /* Statuses which are used for sourceStatus & targetStatus. */
+  public static statusesArray: string[] = [
+    MessageConstant.declaredStatus,
+    MessageConstant.unDeclaredStatus,
+    MessageConstant.progressedStatus,
+    MessageConstant.revocationDeclaredStatus,
+    MessageConstant.revokedStatus,
+  ];
+
+  /* Origin to auxiliary direction. */
+  public static originToAuxiliaryDirection: string = 'o2a';
+
+  /* Auxiliary to origin direction. */
+  public static auxiliaryToOriginDirection: string = 'a2o';
+}
 
 export class MessageRepository {
   /* Public Functions */
@@ -73,7 +99,7 @@ export class MessageRepository {
         },
         type: {
           type: DataTypes.ENUM({
-            values: ['stakeAndMint', 'redeemAndUnstake'],
+            values: [MessageConstant.stakeAndMintType, MessageConstant.redeemAndUnstakeType],
           }),
           allowNull: false,
         },
@@ -87,13 +113,13 @@ export class MessageRepository {
         },
         sourceStatus: {
           type: DataTypes.ENUM({
-            values: statusesArray,
+            values: MessageConstant.statusesArray,
           }),
           allowNull: false,
         },
         targetStatus: {
           type: DataTypes.ENUM({
-            values: statusesArray,
+            values: MessageConstant.statusesArray,
           }),
           allowNull: false,
         },
@@ -128,7 +154,7 @@ export class MessageRepository {
         },
         direction: {
           type: DataTypes.ENUM({
-            values: ['o2a', 'a2o'],
+            values: [MessageConstant.originToAuxiliaryDirection, MessageConstant.auxiliaryToOriginDirection],
           }),
           allowNull: false,
         },
