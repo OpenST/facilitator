@@ -1,15 +1,34 @@
 {
     "compilerOptions": {
-        "declaration": true,
+        "target": "es6",
         "module": "commonjs",
-        "outDir": "./lib",
+        "alwaysStrict": true,
+        "strictNullChecks": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noErrorTruncation": true,
         "sourceMap": true,
-        "target": "es5",
+        "types": [
+            "chai",
+            "node",
+            "mocha"
+        ],
         "resolveJsonModule": true,
         "esModuleInterop": true
     },
     "include": [
         "index.ts",
+        "src/*.ts",
         "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

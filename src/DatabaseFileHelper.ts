@@ -7,8 +7,8 @@ import Directory from './Directory';
 /**
  * It creates db file at the path.
  */
-export default class Database {
-  private static DBName: string = 'OSTFacilitator';
+export default class DatabaseFileHelper {
+  private static DBName: string = 'mosaic_facilitator';
 
   /**
    * It verifies whether the file path is valid.
@@ -34,7 +34,7 @@ export default class Database {
     }
     const dbPath: string = Directory.getDBFilePath(chain);
     fs.ensureDirSync(dbPath);
-    const facilitatorConfigDB = path.join(dbPath, `${`${Database.DBName}.db`}`);
+    const facilitatorConfigDB = path.join(dbPath, `${`${DatabaseFileHelper.DBName}.db`}`);
     new sqlite.Database(facilitatorConfigDB);
     return facilitatorConfigDB;
   }

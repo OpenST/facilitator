@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import SpyAssert from "../SpyAssert";
-import Database from "../../src/Database";
+import DBFileHelper from "../../src/DatabaseFileHelper";
 import {assert} from 'chai';
 
 const sinon = require('sinon');
@@ -16,10 +16,16 @@ describe('Database.verify()', function () {
     return fsSpy;
   }
 
-  function assertion(callCount: number, dbFilePath: string, expectedStatus: boolean, message: string, fsSpy) {
-    const verificationStatus: boolean = Database.verify(dbFilePath);
+  function assertion(
+    callCount: number,
+    dbFilePath: string,
+    expectedStatus: boolean,
+    message: string,
+    fsSpy: any
+  ) {
+    const verificationStatus: boolean = DBFileHelper.verify(dbFilePath);
 
-    SpyAssert.assert(fsSpy, 1, [[dbFilePath]]);
+    SpyAssert.assert(fsSpy, callCount, [[dbFilePath]]);
     assert.strictEqual(
       verificationStatus,
       expectedStatus,
