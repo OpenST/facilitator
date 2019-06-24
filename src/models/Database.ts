@@ -17,12 +17,14 @@
 import { Sequelize } from 'sequelize';
 
 import { StakeRequestRepository } from './StakeRequestRepository';
+import { MessageRepository } from './MessageRepository';
 
 export default class Database {
   /* Storage */
 
   public stakeRequestRepository: StakeRequestRepository;
 
+  public messageRepository: MessageRepository;
 
   /* Public Functions */
 
@@ -67,6 +69,13 @@ export default class Database {
    * @param sequelize Sequelize instance.
    */
   private constructor(sequelize: Sequelize) {
+    this.messageRepository = new MessageRepository({
+      sequelize,
+      underscored: true,
+      timestamps: true,
+      freezeTableName: true,
+    });
+
     this.stakeRequestRepository = new StakeRequestRepository({
       sequelize,
       underscored: true,

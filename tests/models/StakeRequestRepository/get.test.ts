@@ -41,7 +41,6 @@ describe('StakeRequestRepository::get', (): void => {
   it('Checks retrieval of an existing stake request.', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: 'messageHash',
       amount: 1,
       beneficiary: 'beneficiary',
       gasPrice: 2,
