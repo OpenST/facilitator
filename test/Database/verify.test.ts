@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import SpyAssert from "../SpyAssert";
+import SpyAssert from "./../utils/SpyAssert";
 import DBFileHelper from "../../src/DatabaseFileHelper";
 import {assert} from 'chai';
 

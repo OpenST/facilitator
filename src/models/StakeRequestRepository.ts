@@ -19,6 +19,7 @@
 import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
+import BigNumber from 'bignumber.js';
 
 import {
   MessageModel,
@@ -35,11 +36,11 @@ class StakeRequestModel extends Model {}
 export interface StakeRequestAttributes {
   stakeRequestHash: string;
   messageHash?: string;
-  amount: number;
+  amount: BigNumber;
   beneficiary: string;
-  gasPrice: number;
-  gasLimit: number;
-  nonce: number;
+  gasPrice: BigNumber;
+  gasLimit: BigNumber;
+  nonce: BigNumber;
   gateway: string;
   stakerProxy: string;
 }
@@ -143,7 +144,9 @@ export class StakeRequestRepository {
    */
   public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
     try {
-      return await StakeRequestModel.create(stakeRequestAttributes) as StakeRequest;
+      const stakeRequest: StakeRequest = await StakeRequestModel.create(stakeRequestAttributes);
+      this.format(stakeRequest);
+      return stakeRequest;
     } catch (e) {
       const errorContext = {
         input: {
@@ -177,8 +180,9 @@ export class StakeRequestRepository {
     if (stakeRequestModel === null) {
       return null;
     }
-
-    return stakeRequestModel as StakeRequest;
+    const stakeRequest: StakeRequest = stakeRequestModel;
+    this.format(stakeRequest);
+    return stakeRequest;
   }
 
   /**
@@ -220,5 +224,16 @@ export class StakeRequestRepository {
 
       throw Error(`Failed to update a stake request: ${JSON.stringify(errorContext)}`);
     }
+  }
+
+  /**
+   * Modifies the message object by typecasting required properties.
+   * @param {StakeRequest} stakeRequest
+   */
+  private format(stakeRequest: StakeRequest): void {
+    stakeRequest.amount = new BigNumber(stakeRequest.amount);
+    stakeRequest.nonce = new BigNumber(stakeRequest.nonce);
+    stakeRequest.gasLimit = new BigNumber(stakeRequest.gasLimit);
+    stakeRequest.gasPrice = new BigNumber(stakeRequest.gasPrice);
   }
 }

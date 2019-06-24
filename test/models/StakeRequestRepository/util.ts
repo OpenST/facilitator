@@ -38,7 +38,7 @@ const Util = {
       );
     }
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.amount,
       stakeRequestAttributes.amount,
     );
@@ -48,17 +48,17 @@ const Util = {
       stakeRequestAttributes.beneficiary,
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.gasPrice,
       stakeRequestAttributes.gasPrice,
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.gasLimit,
       stakeRequestAttributes.gasLimit,
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.nonce,
       stakeRequestAttributes.nonce,
     );

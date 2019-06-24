@@ -56,19 +56,19 @@ const Util = {
       'targetStatus should match',
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       message.gasPrice,
       messageAttributes.gasPrice,
       'gasPrice should match',
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       message.gasLimit,
       messageAttributes.gasLimit,
       'gasLimit should match',
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       message.nonce,
       messageAttributes.nonce,
       'nonce should match',
@@ -92,7 +92,7 @@ const Util = {
       'sourceDeclarationBlockHeight should match',
     );
 
-    if (messageAttributes.hasOwnProperty('hashLock')) {
+    if (messageAttributes.hashLock) {
       assert.strictEqual(
         message.hashLock,
         messageAttributes.hashLock,
@@ -100,14 +100,13 @@ const Util = {
       );
     }
 
-    if (messageAttributes.hasOwnProperty('secret')) {
-      assert.notStrictEqual(
+    if (messageAttributes.secret) {
+      assert.strictEqual(
         message.secret,
         messageAttributes.secret,
         'secret should match',
       );
     }
-
   },
 
 };
