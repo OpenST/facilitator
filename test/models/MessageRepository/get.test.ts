@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   MessageAttributes,
@@ -48,12 +49,12 @@ describe('MessageRepository::get', (): void => {
       gatewayAddress: '0x0000000000000000000000000000000000000001',
       sourceStatus: MessageStatus.Declared,
       targetStatus: MessageStatus.Undeclared,
-      gasPrice: 1,
-      gasLimit: 1,
-      nonce: 1,
+      gasPrice: new BigNumber('1'),
+      gasLimit: new BigNumber('1'),
+      nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: 2
+      sourceDeclarationBlockHeight: 2,
     };
 
     await config.db.messageRepository.create(

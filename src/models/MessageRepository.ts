@@ -19,6 +19,7 @@
 import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
+import BigNumber from 'bignumber.js';
 
 export class MessageModel extends Model {}
 
@@ -31,9 +32,9 @@ export interface MessageAttributes {
   gatewayAddress: string;
   sourceStatus: string;
   targetStatus: string;
-  gasPrice: number;
-  gasLimit: number;
-  nonce: number;
+  gasPrice: BigNumber;
+  gasLimit: BigNumber;
+  nonce: BigNumber;
   sender: string;
   direction: string;
   sourceDeclarationBlockHeight: number;
@@ -184,7 +185,9 @@ export class MessageRepository {
    */
   public async create(messageAttributes: MessageAttributes): Promise<Message> {
     try {
-      return await MessageModel.create(messageAttributes) as Message;
+      const message: Message = await MessageModel.create(messageAttributes);
+      this.format(message);
+      return message;
     } catch (e) {
       const errorContext = {
         attributes: messageAttributes,
@@ -200,17 +203,17 @@ export class MessageRepository {
    * @return {Promise<Message | null>}
    */
   public async get(messageHash: string): Promise<Message | null> {
-    const message = await MessageModel.findOne({
+    const messageModel = await MessageModel.findOne({
       where: {
         messageHash,
       },
     });
-
-    if (message === null) {
+    if (messageModel === null) {
       return null;
     }
-
-    return message as Message;
+    const message: Message = messageModel;
+    this.format(message);
+    return message;
   }
 
   /**
@@ -219,12 +222,25 @@ export class MessageRepository {
    * @return {Promise<Array<Number>>}
    */
   public async update(messageAttributes: MessageAttributes): Promise<number[]> {
-    return await MessageModel.update(messageAttributes, {
+    return await MessageModel.update({
+      secret: messageAttributes.secret,
+      hashLock: messageAttributes.hashLock,
+    }, {
       where: {
         messageHash: {
           [Op.eq]: messageAttributes.messageHash,
         },
       },
     });
+  }
+
+  /**
+   * Modifies the message object by typecasting required properties.
+   * @param {Message} message
+   */
+  private format(message: Message): void {
+    message.gasPrice = new BigNumber(message.gasPrice);
+    message.gasLimit = new BigNumber(message.gasLimit);
+    message.nonce = new BigNumber(message.nonce);
   }
 }
