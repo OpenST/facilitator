@@ -1,4 +1,4 @@
-import {FacilitatorConfig} from "../../src/Config";
+import { FacilitatorConfig } from "../../src/Config";
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as assert from 'assert';

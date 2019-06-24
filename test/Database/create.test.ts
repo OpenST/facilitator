@@ -15,7 +15,7 @@ describe('Database.create()', function () {
   });
 
   it('should pass with valid arguments', function () {
-    const dbPath = 'tests/Database/';
+    const dbPath = 'test/Database/';
     const dbFileName = 'mosaic_facilitator.db';
 
     const spyDirectory = sinon.stub(Directory, 'getDBFilePath').callsFake(() => {

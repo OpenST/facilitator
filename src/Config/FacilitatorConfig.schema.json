@@ -40,10 +40,14 @@
       "properties": {
         "worker": {
           "type": "string"
+        },
+        "rpc": {
+          "type": "string"
         }
       },
       "required": [
-        "worker"
+        "worker",
+        "rpc"
       ],
       "title": "Chain"
     },
@@ -51,12 +55,12 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "host": {
+        "path": {
           "type": "string"
         }
       },
       "required": [
-        "host"
+        "path"
       ],
       "title": "Database"
     },
