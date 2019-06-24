@@ -96,7 +96,7 @@ export class AuxiliaryChainRepository {
           },
         },
         lastProcessedBlockNumber: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: true,
           defaultValue: null,
           validate: {
@@ -104,7 +104,7 @@ export class AuxiliaryChainRepository {
           },
         },
         lastOriginBlockHeight: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: true,
           defaultValue: null,
           validate: {
@@ -112,7 +112,7 @@ export class AuxiliaryChainRepository {
           },
         },
         lastAuxiliaryBlockHeight: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: true,
           defaultValue: null,
           validate: {

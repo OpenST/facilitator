@@ -29,7 +29,7 @@ const Util = {
     assert.strictEqual(
       auxiliaryChain.chainId,
       auxiliaryChainAttributes.chainId,
-      // 'chainId should match',
+      'chainId should match',
     );
 
     assert.strictEqual(

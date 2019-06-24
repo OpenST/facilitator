@@ -42,10 +42,10 @@ describe('AuxiliaryChainRepository::get', (): void => {
     const auxiliaryChainAttributes: AuxiliaryChainAttributes = {
       chainId: 10001,
       originChainName: '10001',
-      ostGatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      ostCoGatewayAddress: '0x497A49648885f7aaB3d761817F191ee1AFAF399C',
-      anchorAddress: '0x3F45616cFb992988943ff3bA00e8c0aA46B4540a',
-      coAnchorAddress: '0xD1008015aA0Cf2a61493Bd19dE6C9ca88E934FCe',
+      ostGatewayAddress: '0x0000000000000000000000000000000000000001',
+      ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
+      anchorAddress: '0x0000000000000000000000000000000000000003',
+      coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
     await config.db.auxiliaryChainRepository.create(

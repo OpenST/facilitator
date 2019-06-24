@@ -47,10 +47,10 @@ describe('AuxiliaryChainRepository::create', (): void => {
     const auxiliaryChainAttributes: AuxiliaryChainAttributes = {
       chainId: 10001,
       originChainName: '10001',
-      ostGatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      ostCoGatewayAddress: '0x497A49648885f7aaB3d761817F191ee1AFAF399C',
-      anchorAddress: '0x3F45616cFb992988943ff3bA00e8c0aA46B4540a',
-      coAnchorAddress: '0xD1008015aA0Cf2a61493Bd19dE6C9ca88E934FCe',
+      ostGatewayAddress: '0x0000000000000000000000000000000000000001',
+      ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
+      anchorAddress: '0x0000000000000000000000000000000000000003',
+      coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
     const createResponse = await config.db.auxiliaryChainRepository.create(
@@ -80,20 +80,20 @@ describe('AuxiliaryChainRepository::create', (): void => {
     const auxiliaryChainAttributesA: AuxiliaryChainAttributes = {
       chainId: 10002,
       originChainName: '10002',
-      ostGatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      ostCoGatewayAddress: '0x497A49648885f7aaC3d761817E191ee1AFAF399C',
-      anchorAddress: '0x3F45616cFb992988943ff3bA00e8c0aA46B4540a',
-      coAnchorAddress: '0xD1008015aA0Cf2a61493Bd19dE6C9ca88E934FCe',
+      ostGatewayAddress: '0x0000000000000000000000000000000000000001',
+      ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
+      anchorAddress: '0x0000000000000000000000000000000000000003',
+      coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
     // All members, except chainId from auxiliaryChainAttributesA.
     const auxiliaryChainAttributesB: AuxiliaryChainAttributes = {
       chainId: 10002,
       originChainName: '10003',
-      ostGatewayAddress: '0x197A49648885f7aaC3d761817F191ee1AFAF399C',
-      ostCoGatewayAddress: '0x497A49648885f7aaC3d761817E191ee1AFBF399C',
-      anchorAddress: '0x3F43616cFb992988943ff3bA00e8c0aA46B4540a',
-      coAnchorAddress: '0xD1108015aA0Cf2a61493Bd19dE6C9ca88E934FCe',
+      ostGatewayAddress: '0x0000000000000000000000000000000000000005',
+      ostCoGatewayAddress: '0x0000000000000000000000000000000000000006',
+      anchorAddress: '0x0000000000000000000000000000000000000007',
+      coAnchorAddress: '0x0000000000000000000000000000000000000008',
     };
 
     await config.db.auxiliaryChainRepository.create(
