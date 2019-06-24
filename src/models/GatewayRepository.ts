@@ -19,6 +19,7 @@
 import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
+import BigNumber from 'bignumber.js';
 
 export class GatewayModel extends Model {}
 
@@ -32,9 +33,9 @@ export interface GatewayAttributes {
   remoteGatewayAddress: string;
   tokenAddress: string;
   anchorAddress: string;
-  bounty: number;
+  bounty: BigNumber;
   activation: boolean;
-  lastRemoteGatewayProvenBlockHeight?: number;
+  lastRemoteGatewayProvenBlockHeight?: BigNumber;
 }
 
 /**
@@ -138,7 +139,9 @@ export class GatewayRepository {
    */
   public async create(gatewayAttributes: GatewayAttributes): Promise<Gateway> {
     try {
-      return await GatewayModel.create(gatewayAttributes) as Gateway;
+      const gateway: Gateway = await GatewayModel.create(gatewayAttributes) as Gateway;
+      this.format(gateway);
+      return gateway;
     } catch (e) {
       const errorContext = {
         attributes: gatewayAttributes,
@@ -154,17 +157,18 @@ export class GatewayRepository {
    * @return {Promise<Gateway | null>}
    */
   public async get(gatewayAddress: string): Promise<Gateway | null> {
-    const gateway = await GatewayModel.findOne({
+    const gatewayModel = await GatewayModel.findOne({
       where: {
         gatewayAddress,
       },
     });
 
-    if (gateway === null) {
+    if (gatewayModel === null) {
       return null;
     }
-
-    return gateway as Gateway;
+    const gateway: Gateway = gatewayModel;
+    this.format(gateway);
+    return gateway;
   }
 
   /**
@@ -180,5 +184,16 @@ export class GatewayRepository {
         },
       },
     });
+  }
+
+  /**
+   * Modifies the message object by typecasting required properties.
+   * @param {Gateway} gateway
+   */
+  private format(gateway: Gateway): void {
+    gateway.bounty = new BigNumber(gateway.bounty);
+    if (gateway.lastRemoteGatewayProvenBlockHeight) {
+      gateway.lastRemoteGatewayProvenBlockHeight = new BigNumber(gateway.lastRemoteGatewayProvenBlockHeight);
+    }
   }
 }

@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   GatewayAttributes,
@@ -47,7 +48,7 @@ describe('GatewayRepository::get', (): void => {
       remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
       anchorAddress: '0x0000000000000000000000000000000000000003',
       tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: 1,
+      bounty: new BigNumber('1'),
       activation: true,
     };
 

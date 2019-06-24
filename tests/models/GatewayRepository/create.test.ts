@@ -16,6 +16,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   GatewayAttributes,
@@ -52,7 +53,7 @@ describe('GatewayRepository::create', (): void => {
       remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
       anchorAddress: '0x0000000000000000000000000000000000000003',
       tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: 1,
+      bounty: new BigNumber('1'),
       activation: true,
     };
 
@@ -87,7 +88,7 @@ describe('GatewayRepository::create', (): void => {
       remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
       anchorAddress: '0x0000000000000000000000000000000000000003',
       tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: 1,
+      bounty: new BigNumber('1'),
       activation: true,
     };
 
@@ -99,8 +100,8 @@ describe('GatewayRepository::create', (): void => {
       remoteGatewayAddress: '0x0000000000000000000000000000000000000005',
       anchorAddress: '0x0000000000000000000000000000000000000006',
       tokenAddress: '0x0000000000000000000000000000000000000007',
-      bounty: 1,
-      activation: true,
+      bounty: new BigNumber('2'),
+      activation: false,
     };
 
     await config.db.gatewayRepository.create(

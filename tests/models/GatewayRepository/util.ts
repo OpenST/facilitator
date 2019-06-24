@@ -62,7 +62,7 @@ const Util = {
       'anchorAddress should match',
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       gateway.bounty,
       gatewayAttributes.bounty,
       'bounty should match',
@@ -74,7 +74,7 @@ const Util = {
       'activation should match',
     );
 
-    if (gatewayAttributes.hasOwnProperty('lastRemoteGatewayProvenBlockHeight')) {
+    if (gatewayAttributes.lastRemoteGatewayProvenBlockHeight) {
       assert.notStrictEqual(
         gateway.lastRemoteGatewayProvenBlockHeight,
         gatewayAttributes.lastRemoteGatewayProvenBlockHeight,

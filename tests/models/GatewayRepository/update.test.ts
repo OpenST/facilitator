@@ -16,6 +16,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   GatewayAttributes,
@@ -52,7 +53,7 @@ describe('GatewayRepository::update', (): void => {
       remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
       anchorAddress: '0x0000000000000000000000000000000000000003',
       tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: 1,
+      bounty: new BigNumber('1'),
       activation: true,
     };
 
@@ -62,7 +63,7 @@ describe('GatewayRepository::update', (): void => {
 
     Util.checkGatewayAgainstAttributes(objectForUpdate, createGatewayAttributes);
 
-    objectForUpdate.lastRemoteGatewayProvenBlockHeight = 1;
+    objectForUpdate.lastRemoteGatewayProvenBlockHeight = new BigNumber('12121212121212');
 
     await config.db.gatewayRepository.update(
       objectForUpdate,
@@ -84,9 +85,8 @@ describe('GatewayRepository::update', (): void => {
       remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
       anchorAddress: '0x0000000000000000000000000000000000000003',
       tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: 1,
+      bounty: new BigNumber('1'),
       activation: true,
-      lastRemoteGatewayProvenBlockHeight: 2
     };
 
     const gatewayUpdateResponse = await config.db.gatewayRepository.update(
