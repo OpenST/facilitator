@@ -62,7 +62,7 @@ const Util = {
       'coAnchorAddress should match',
     );
 
-    if (auxiliaryChainAttributes.hasOwnProperty('lastProcessedBlockNumber')) {
+    if (auxiliaryChainAttributes.lastProcessedBlockNumber) {
       assert.notStrictEqual(
         auxiliaryChain.lastProcessedBlockNumber,
         auxiliaryChainAttributes.lastProcessedBlockNumber,
@@ -70,7 +70,7 @@ const Util = {
       );
     }
 
-    if (auxiliaryChainAttributes.hasOwnProperty('lastOriginBlockHeight')) {
+    if (auxiliaryChainAttributes.lastOriginBlockHeight) {
       assert.notStrictEqual(
         auxiliaryChain.lastOriginBlockHeight,
         auxiliaryChainAttributes.lastOriginBlockHeight,
@@ -78,7 +78,7 @@ const Util = {
       );
     }
 
-    if (auxiliaryChainAttributes.hasOwnProperty('lastAuxiliaryBlockHeight')) {
+    if (auxiliaryChainAttributes.lastAuxiliaryBlockHeight) {
       assert.notStrictEqual(
         auxiliaryChain.lastAuxiliaryBlockHeight,
         auxiliaryChainAttributes.lastAuxiliaryBlockHeight,

@@ -19,6 +19,7 @@
 import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
+import BigNumber from 'bignumber.js';
 
 class AuxiliaryChainModel extends Model {}
 
@@ -32,15 +33,15 @@ export interface AuxiliaryChainAttributes {
   ostCoGatewayAddress: string;
   anchorAddress: string;
   coAnchorAddress: string;
-  lastProcessedBlockNumber?: number;
-  lastOriginBlockHeight?: number;
-  lastAuxiliaryBlockHeight?: number;
+  lastProcessedBlockNumber?: BigNumber;
+  lastOriginBlockHeight?: BigNumber;
+  lastAuxiliaryBlockHeight?: BigNumber;
 }
 
 /**
  * Repository would always return database rows after typecasting to this
  */
-export interface AuxiliaryChain extends AuxiliaryChainAttributes{
+export interface AuxiliaryChain extends AuxiliaryChainAttributes {
   createdAt: Date;
   updatedAt: Date;
 }
@@ -135,7 +136,9 @@ export class AuxiliaryChainRepository {
    */
   public async create(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<AuxiliaryChain> {
     try {
-      return await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
+      const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
+      this.format(auxiliaryChain);
+      return auxiliaryChain;
     } catch (e) {
       const errorContext = {
         attributes: auxiliaryChainAttributes,
@@ -151,17 +154,16 @@ export class AuxiliaryChainRepository {
    * @return {Promise<AuxiliaryChain | null>}
    */
   public async get(chainId: number): Promise<AuxiliaryChain | null> {
-    const auxiliaryChain = await AuxiliaryChainModel.findOne({
+    const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.findOne({
       where: {
         chainId,
       },
     });
-
     if (auxiliaryChain === null) {
       return null;
     }
-
-    return auxiliaryChain as AuxiliaryChain;
+    this.format(auxiliaryChain);
+    return auxiliaryChain;
   }
 
   /**
@@ -170,12 +172,32 @@ export class AuxiliaryChainRepository {
    * @return {Promise<number[]>>}
    */
   public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number[]> {
-    return await AuxiliaryChainModel.update(auxiliaryChainAttributes, {
+    return await AuxiliaryChainModel.update({
+      lastProcessedBlockNumber: auxiliaryChainAttributes.lastProcessedBlockNumber,
+      lastOriginBlockHeight: auxiliaryChainAttributes.lastOriginBlockHeight,
+      lastAuxiliaryBlockHeight: auxiliaryChainAttributes.lastAuxiliaryBlockHeight,
+    }, {
       where: {
         chainId: {
           [Op.eq]: auxiliaryChainAttributes.chainId,
         },
       },
     });
+  }
+
+  /**
+   * Modifies the auxiliaryChain object by typecasting required properties.
+   * @param {AuxiliaryChain} auxiliaryChain
+   */
+  private format(auxiliaryChain: AuxiliaryChain): void {
+    if (auxiliaryChain.lastProcessedBlockNumber) {
+      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastProcessedBlockNumber);
+    }
+    if (auxiliaryChain.lastOriginBlockHeight) {
+      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastOriginBlockHeight);
+    }
+    if (auxiliaryChain.lastAuxiliaryBlockHeight) {
+      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastAuxiliaryBlockHeight);
+    }
   }
 }

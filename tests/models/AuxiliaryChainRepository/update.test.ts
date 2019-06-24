@@ -16,6 +16,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   AuxiliaryChainAttributes,
@@ -59,18 +60,12 @@ describe('AuxiliaryChainRepository::update', (): void => {
 
     Util.checkAuxiliaryChainAgainstAttributes(objectForUpdate, createAuxiliaryChainAttributes);
 
-    objectForUpdate.lastProcessedBlockNumber = 1;
-    objectForUpdate.lastAuxiliaryBlockHeight = 2;
-    objectForUpdate.lastOriginBlockHeight = 3;
+    objectForUpdate.lastProcessedBlockNumber = new BigNumber('214748364474');
+    objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364475');
+    objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364476');
 
-    const updateResponse = await config.db.auxiliaryChainRepository.update(
+    await config.db.auxiliaryChainRepository.update(
       objectForUpdate,
-    );
-
-    assert.strictEqual(
-      updateResponse[0],
-      0,
-      'Should return [0] as no records were updated in DB',
     );
 
     const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(objectForUpdate.chainId);
@@ -91,8 +86,14 @@ describe('AuxiliaryChainRepository::update', (): void => {
       coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
-    await config.db.auxiliaryChainRepository.update(
+    const updateResponse = await config.db.auxiliaryChainRepository.update(
       auxiliaryChainAttributes,
+    );
+
+    assert.strictEqual(
+      updateResponse[0],
+      0,
+      'Should return [0] as no records were updated in DB',
     );
 
     const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(auxiliaryChainAttributes.chainId);

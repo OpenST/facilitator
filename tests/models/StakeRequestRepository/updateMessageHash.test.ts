@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   StakeRequestAttributes,
@@ -67,9 +68,9 @@ describe('StakeRequestRepository::update', (): void => {
       gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
       sourceStatus: 'Undeclared',
       targetStatus: 'Undeclared',
-      gasPrice: 1,
-      gasLimit: 1,
-      nonce: 1,
+      gasPrice: new BigNumber('1'),
+      gasLimit: new BigNumber('1'),
+      nonce: new BigNumber('1'),
       sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
       direction: 'o2a',
       sourceDeclarationBlockHeight: 1,

@@ -16,6 +16,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   MessageAttributes,
@@ -53,9 +54,9 @@ describe('MessageRepository::create', (): void => {
       gatewayAddress: '0x0000000000000000000000000000000000000001',
       sourceStatus: MessageStatus.Declared,
       targetStatus: MessageStatus.Undeclared,
-      gasPrice: 1,
-      gasLimit: 1,
-      nonce: 1,
+      gasPrice: new BigNumber('1'),
+      gasLimit: new BigNumber('1'),
+      nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight: 1,
@@ -91,9 +92,9 @@ describe('MessageRepository::create', (): void => {
       gatewayAddress: '0x0000000000000000000000000000000000000001',
       sourceStatus: MessageStatus.Declared,
       targetStatus: MessageStatus.Undeclared,
-      gasPrice: 1,
-      gasLimit: 1,
-      nonce: 1,
+      gasPrice: new BigNumber('1'),
+      gasLimit: new BigNumber('1'),
+      nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight: 1,
@@ -106,9 +107,9 @@ describe('MessageRepository::create', (): void => {
       gatewayAddress: '0x0000000000000000000000000000000000000003',
       sourceStatus: MessageStatus.Undeclared,
       targetStatus: MessageStatus.Declared,
-      gasPrice: 2,
-      gasLimit: 2,
-      nonce: 2,
+      gasPrice: new BigNumber('2'),
+      gasLimit: new BigNumber('2'),
+      nonce: new BigNumber('2'),
       sender: '0x0000000000000000000000000000000000000004',
       direction: MessageDirection.AuxiliaryToOrigin,
       sourceDeclarationBlockHeight: 2,
