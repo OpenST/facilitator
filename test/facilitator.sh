@@ -18,12 +18,12 @@ function info {
 
 # Tries a command without output. Errors if the command does not execute successfully.
 function try_silent {
-    eval $1 1>/dev/null 2>&1 || error "$2"
+    eval $1 2>&1 || error "$2"
 }
 
 # Tries a command without output. Errors if the command *executes successfully.
 function fail_silent {
-    eval $1 1>/dev/null 2>&1 && error "$2"
+    eval $1 2>&1 && error "$2"
 }
 
 # Creates the facilitator-config.json.
