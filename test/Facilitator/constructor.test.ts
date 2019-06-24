@@ -12,12 +12,17 @@ describe('Facilitator.constructor()', () => {
     const configStub = sinon.createStubInstance(Config);
     const facilitator = new Facilitator(configStub);
 
-    assert(facilitator);
+    assert(
+      facilitator,
+      "Invalid Facilitator object!!!"
+    );
+
     assert.strictEqual(
       facilitator.config,
       configStub,
       "Config mismatch!!!"
     );
+
     sinon.restore();
   });
 

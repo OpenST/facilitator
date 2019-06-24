@@ -1,15 +1,21 @@
 'use strict';
 
 import { assert } from  'chai'
+const sinon = require('sinon');
 import GraphClient from './../../src/GraphClient'
-import { createMockClient } from 'mock-apollo-client';
 
 describe('GraphClient.constructor()', () => {
 
   it('should construct with correct parameters', async () => {
-    const apolloClient = createMockClient();
-    const graphClient = new GraphClient(apolloClient);
-    assert(graphClient);
+    const mockApolloClient = sinon.stub;
+    const graphClient = new GraphClient(mockApolloClient);
+
+    assert(
+      graphClient,
+      "Invalid graph client object!!!"
+    );
+
+    sinon.restore();
   });
 
 });
