@@ -49,42 +49,22 @@ export interface Message extends MessageAttributes{
   updatedAt: Date;
 }
 
-export class MessageConstant {
-  /* Stake and mint type. */
-  public static stakeAndMintType: string = 'stakeAndMint';
+export enum MessageType {
+  Stake = 'stake',
+  Redeem = 'redeem',
+}
 
-  /* Redeem and unstake type. */
-  public static redeemAndUnstakeType: string = 'redeemAndUnstake';
+export enum MessageStatus {
+  Undeclared = 'undeclared',
+  Declared = 'declared',
+  Progressed = 'progressed',
+  RevocationDeclared = 'revocation_declared',
+  Revoked = 'revoked',
+}
 
-  /* Undeclared status. */
-  public static unDeclaredStatus: string = 'Undeclared';
-
-  /* Declared status. */
-  public static declaredStatus: string = 'Declared';
-
-  /* Progressed status. */
-  public static progressedStatus: string = 'Progressed';
-
-  /* RevocationDeclared status. */
-  public static revocationDeclaredStatus: string = 'RevocationDeclared';
-
-  /* Revoked status. */
-  public static revokedStatus: string = 'Revoked';
-
-  /* Statuses which are used for sourceStatus & targetStatus. */
-  public static statusesArray: string[] = [
-    MessageConstant.declaredStatus,
-    MessageConstant.unDeclaredStatus,
-    MessageConstant.progressedStatus,
-    MessageConstant.revocationDeclaredStatus,
-    MessageConstant.revokedStatus,
-  ];
-
-  /* Origin to auxiliary direction. */
-  public static originToAuxiliaryDirection: string = 'o2a';
-
-  /* Auxiliary to origin direction. */
-  public static auxiliaryToOriginDirection: string = 'a2o';
+export enum MessageDirection {
+  OriginToAuxiliary = 'o2a',
+  AuxiliaryToOrigin = 'a2o',
 }
 
 export class MessageRepository {
@@ -99,7 +79,7 @@ export class MessageRepository {
         },
         type: {
           type: DataTypes.ENUM({
-            values: [MessageConstant.stakeAndMintType, MessageConstant.redeemAndUnstakeType],
+            values: [MessageType.Stake, MessageType.Redeem],
           }),
           allowNull: false,
         },
@@ -113,32 +93,43 @@ export class MessageRepository {
         },
         sourceStatus: {
           type: DataTypes.ENUM({
-            values: MessageConstant.statusesArray,
+            values: [
+              MessageStatus.Declared,
+              MessageStatus.Progressed,
+              MessageStatus.RevocationDeclared,
+              MessageStatus.Revoked,
+              MessageStatus.Undeclared,
+            ],
           }),
           allowNull: false,
         },
         targetStatus: {
           type: DataTypes.ENUM({
-            values: MessageConstant.statusesArray,
+            values: [
+              MessageStatus.Declared,
+              MessageStatus.Progressed,
+              MessageStatus.Revoked,
+              MessageStatus.Undeclared,
+            ],
           }),
           allowNull: false,
         },
         gasPrice: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
           },
         },
         nonce: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
@@ -154,12 +145,12 @@ export class MessageRepository {
         },
         direction: {
           type: DataTypes.ENUM({
-            values: [MessageConstant.originToAuxiliaryDirection, MessageConstant.auxiliaryToOriginDirection],
+            values: [MessageDirection.OriginToAuxiliary, MessageDirection.AuxiliaryToOrigin],
           }),
           allowNull: false,
         },
         sourceDeclarationBlockHeight: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,

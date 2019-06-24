@@ -20,7 +20,9 @@ import 'mocha';
 import {
   MessageAttributes,
   Message,
-  MessageConstant,
+  MessageDirection,
+  MessageStatus,
+  MessageType,
 } from '../../../src/models/MessageRepository';
 
 import Database from '../../../src/models/Database';
@@ -47,15 +49,15 @@ describe('MessageRepository::update', (): void => {
   it('Checks updation of message.', async (): Promise<void> => {
     const createMessageAttributes: MessageAttributes = {
       messageHash: 'messageHash',
-      type: MessageConstant.stakeAndMintType,
-      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: MessageConstant.declaredStatus,
-      targetStatus: MessageConstant.unDeclaredStatus,
+      type: MessageType.Stake,
+      gatewayAddress: '0x0000000000000000000000000000000000000001',
+      sourceStatus: MessageStatus.Declared,
+      targetStatus: MessageStatus.Undeclared,
       gasPrice: 1,
       gasLimit: 1,
       nonce: 1,
-      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: MessageConstant.originToAuxiliaryDirection,
+      sender: '0x0000000000000000000000000000000000000002',
+      direction: MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight: 2,
     };
 
@@ -83,15 +85,15 @@ describe('MessageRepository::update', (): void => {
   it('Updation should fail for a non existing message ', async (): Promise<void> => {
     const messageAttributes: MessageAttributes = {
       messageHash: 'nonExistingMessageHash',
-      type: MessageConstant.stakeAndMintType,
-      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: MessageConstant.declaredStatus,
-      targetStatus: MessageConstant.unDeclaredStatus,
+      type: MessageType.Stake,
+      gatewayAddress: '0x0000000000000000000000000000000000000001',
+      sourceStatus: MessageStatus.Declared,
+      targetStatus: MessageStatus.Undeclared,
       gasPrice: 1,
       gasLimit: 1,
       nonce: 1,
-      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: MessageConstant.originToAuxiliaryDirection,
+      sender: '0x0000000000000000000000000000000000000002',
+      direction: MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight: 2,
     };
 

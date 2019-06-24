@@ -20,7 +20,9 @@ import 'mocha';
 import {
   MessageAttributes,
   Message,
-  MessageConstant,
+  MessageDirection,
+  MessageStatus,
+  MessageType,
 } from '../../../src/models/MessageRepository';
 
 import Database from '../../../src/models/Database';
@@ -46,16 +48,16 @@ describe('MessageRepository::create', (): void => {
 
   it('Checks creation of message model.', async (): Promise<void> => {
     const messageAttributes: MessageAttributes = {
-      messageHash: '0x497A49648885f7aaC3d761817F191ee1AFAF399CFHKHFKDHKSDK343DDFDFD',
-      type: MessageConstant.stakeAndMintType,
-      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: MessageConstant.declaredStatus,
-      targetStatus: MessageConstant.unDeclaredStatus,
+      messageHash: '0x00000000000000000000000000000000000000000000000000001',
+      type: MessageType.Stake,
+      gatewayAddress: '0x0000000000000000000000000000000000000001',
+      sourceStatus: MessageStatus.Declared,
+      targetStatus: MessageStatus.Undeclared,
       gasPrice: 1,
       gasLimit: 1,
       nonce: 1,
-      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: MessageConstant.originToAuxiliaryDirection,
+      sender: '0x0000000000000000000000000000000000000002',
+      direction: MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight: 1,
     };
 
@@ -84,31 +86,31 @@ describe('MessageRepository::create', (): void => {
   it('Throws if a message '
     + 'with the same message hash already exists.', async (): Promise<void> => {
     const messageAttributesA: MessageAttributes = {
-      messageHash: '0x497A49648885f7aaC3d761817F191ee1AFAF399CFHKHFKDHKSDK343DDFDFD',
-      type: MessageConstant.stakeAndMintType,
-      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: MessageConstant.declaredStatus,
-      targetStatus: MessageConstant.unDeclaredStatus,
+      messageHash: '0x000000000000000000000000000000000000000000000000000001',
+      type: MessageType.Stake,
+      gatewayAddress: '0x0000000000000000000000000000000000000001',
+      sourceStatus: MessageStatus.Declared,
+      targetStatus: MessageStatus.Undeclared,
       gasPrice: 1,
       gasLimit: 1,
       nonce: 1,
-      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: MessageConstant.originToAuxiliaryDirection,
+      sender: '0x0000000000000000000000000000000000000002',
+      direction: MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight: 1,
     };
 
     // All members, except messageHash are different from messageAttributesA.
     const messageAttributesB: MessageAttributes = {
-      messageHash: '0x497A49648885f7aaC3d761817F191ee1AFAF399CFHKHFKDHKSDK343DDFDFD',
-      type: MessageConstant.redeemAndUnstakeType,
-      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
-      sourceStatus: MessageConstant.unDeclaredStatus,
-      targetStatus: MessageConstant.declaredStatus,
-      gasPrice: 1,
-      gasLimit: 1,
+      messageHash: '0x000000000000000000000000000000000000000000000000000001',
+      type: MessageType.Redeem,
+      gatewayAddress: '0x0000000000000000000000000000000000000003',
+      sourceStatus: MessageStatus.Undeclared,
+      targetStatus: MessageStatus.Declared,
+      gasPrice: 2,
+      gasLimit: 2,
       nonce: 2,
-      sender: '0x397B49648885f7aaC3d761817F191ee1AFAF399C',
-      direction: MessageConstant.auxiliaryToOriginDirection,
+      sender: '0x0000000000000000000000000000000000000004',
+      direction: MessageDirection.AuxiliaryToOrigin,
       sourceDeclarationBlockHeight: 2,
     };
 

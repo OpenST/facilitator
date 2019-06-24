@@ -82,7 +82,7 @@ export class StakeRequestRepository {
           unique: true,
         },
         amount: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
@@ -93,21 +93,21 @@ export class StakeRequestRepository {
           allowNull: false,
         },
         gasPrice: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
           },
         },
         nonce: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
