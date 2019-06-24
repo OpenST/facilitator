@@ -1,12 +1,16 @@
 dist: trusty
 language: node_js
-sudo: required
 node_js:
   - "11"
+cache: npm
+sudo: required
 branches:
   only:
   - master
   - develop
+  - /^feature\/.*/
+  - /^release-.*/
+  - /^hotfix-.*/
 notifications:
   email:
     recipients:
