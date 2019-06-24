@@ -4,8 +4,10 @@ import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { Subscription } from 'apollo-client/util/Observable';
 import gql from 'graphql-tag';
+import * as WebSocket from 'ws'
 
-import WebSocket = require('ws');
+import Logger from './Logger';
+//import WebSocket = require('ws');
 
 /**
  * The class interacts with graph node server for subscription and query.
@@ -45,9 +47,11 @@ export default class GraphClient {
     }).subscribe({
       next(response) {
         // Replace it with TransactionHandler
+        Logger.info(response);
       },
       error(err) {
         // Log error using logger
+        Logger.error(err);
       },
     });
 

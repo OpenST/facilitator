@@ -8,9 +8,9 @@ import GraphClient from './GraphClient';
 export default class Facilitator {
   public readonly config: Config;
 
-  private originSubscriber: Subscriber;
+  private originSubscriber?: Subscriber;
 
-  private auxiliarySubscriber: Subscriber;
+  private auxiliarySubscriber?: Subscriber;
 
   /**
    * Facilitator class constructor.
@@ -51,8 +51,8 @@ export default class Facilitator {
    * @return Promise<void>
    */
   public async stop(): Promise<void> {
-    await this.originSubscriber.unsubscribe();
-    await this.auxiliarySubscriber.unsubscribe();
+    await this.originSubscriber!.unsubscribe();
+    await this.auxiliarySubscriber!.unsubscribe();
   }
 
   /**

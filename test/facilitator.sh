@@ -3,7 +3,7 @@
 auxChainId="301"
 homedir=$HOME
 facilitatorConfigPath="${homedir}/.mosaic/${auxChainId}/facilitator-config.json"
-mosaicConfigPath="./tests/facilitator/testdata/mosaic-config.json"
+mosaicConfigPath="./test/facilitator/testdata/mosaic-config.json"
 
 # Prints an error string to stdout.
 function error {

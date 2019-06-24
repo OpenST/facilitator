@@ -6,10 +6,10 @@ import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../utils/SpyAssert';
 
 describe('Subscriber.subscribe()', () => {
-  let mockApolloClient;
-  let graphClient;
-  let subscriptionQueries;
-  let subscriber;
+  let mockApolloClient: any;
+  let graphClient: GraphClient;
+  let subscriptionQueries: Record<string, string>;
+  let subscriber: Subscriber;
 
   beforeEach(() => {
     mockApolloClient = sinon.stub;
@@ -18,7 +18,7 @@ describe('Subscriber.subscribe()', () => {
   });
 
   it('should work with correct parameters', async () => {
-    const mockQuerySubscriber = sinon.spy;
+    const mockQuerySubscriber = sinon.spy as any;
     const spyGraphClientSubscribe = sinon.replace(
       graphClient,
       'subscribe',

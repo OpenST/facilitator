@@ -5,11 +5,11 @@ import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
 
 describe('Subscriber.unsubscribe()', () => {
-  let mockApolloClient;
-  let graphClient;
-  let subscriptionQueries;
-  let subscriber;
-  let mockUnsubscribe;
+  let mockApolloClient: any;
+  let graphClient: GraphClient;
+  let subscriptionQueries: Record<string, string>;
+  let subscriber: Subscriber;
+  let mockUnsubscribe: any;
 
   beforeEach(() => {
     mockApolloClient = sinon.stub;

@@ -4,8 +4,10 @@ import * as sinon from 'sinon';
 import GraphClient from '../../src/GraphClient';
 
 describe('GraphClient.constructor()', () => {
+  let mockApolloClient;
+
   it('should construct with correct parameters', async () => {
-    const mockApolloClient = sinon.stub;
+    mockApolloClient = sinon.stub as any;
     const graphClient = new GraphClient(mockApolloClient);
 
     assert(
