@@ -21,7 +21,7 @@ describe('Database.verify()', function () {
     dbFilePath: string,
     expectedStatus: boolean,
     message: string,
-    fsSpy
+    fsSpy: any
   ) {
     const verificationStatus: boolean = Database.verify(dbFilePath);
 

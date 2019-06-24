@@ -17,9 +17,8 @@ commander
   .option('-dbp, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
-    try{
     // Validating mandatory parameters
-    let mandatoryOptionMissing: boolean;
+    let mandatoryOptionMissing: boolean = false;
 
     if(options.mosaicConfig === undefined) {
       Logger.error('required --mosaicConfig <mosaic-config>');
@@ -91,7 +90,7 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
-    const setFacilitator = (chainid, rpc, password) => {
+    const setFacilitator = (chainid:string, rpc:string, password:string) => {
       const account: Account = Account.create(new Web3(), password);
 
       facilitatorConfig.chains[chainid] = new Chain();
@@ -106,9 +105,5 @@ commander
 
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
     Logger.info('facilitator config file is generated');
-    }
-    catch (e) {
-      console.log(e);
-    }
   })
   .parse(process.argv);

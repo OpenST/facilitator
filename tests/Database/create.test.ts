@@ -10,10 +10,6 @@ const sinon = require('sinon');
 describe('Database.create()', function () {
   const chainId = '1';
 
-  it('should fail when chain id is null', function () {
-    assert.throws(() => Database.create(null), 'invalid chain id');
-  });
-
   it('should fail when chain id is blank', function () {
     assert.throws(() => Database.create(''), 'invalid chain id');
   });

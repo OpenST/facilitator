@@ -102,7 +102,7 @@ remove_facilitator_config
 facilitator_config_present
 
 info "now facilitator init should fail because all mandatory options are not provided"
-info "Refer readme for all mandatory options"
+info "refer readme for all mandatory options"
 
 info "trying facilitator init by not providing mosaic config option"
 facilitator_init_no_mosaicconfig_fail
