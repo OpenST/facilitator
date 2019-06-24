@@ -2,10 +2,10 @@ import * as fs from 'fs-extra';
 
 export default class Utils {
   /**
-     * Get config json data from the given file path.
-     * @param filePath Config file path.
-     * @returns JSON data from config file.
-     */
+   * Get config json data from the given file path.
+   * @param filePath Config file path.
+   * @returns JSON data from config file.
+   */
   public static getJsonDataFromPath(filePath: string): Record<string, any> {
     if (fs.existsSync(filePath)) {
       const config = fs.readFileSync(filePath).toString();
