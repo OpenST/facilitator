@@ -19,7 +19,8 @@ import 'mocha';
 
 import {
   GatewayAttributes,
-  Gateway, GatewayConstant
+  Gateway,
+  GatewayType,
 } from '../../../src/models/GatewayRepository';
 
 import Database from '../../../src/models/Database';
@@ -45,12 +46,12 @@ describe('GatewayRepository::update', (): void => {
 
   it('Checks updation of gateway.', async (): Promise<void> => {
     const createGatewayAttributes: GatewayAttributes = {
-      gatewayAddress: '0xe429143ac1bbe667473dfd060c7eee4c1e5ca96e',
+      gatewayAddress: '0x0000000000000000000000000000000000000001',
       chainId: 1234,
-      gatewayType: GatewayConstant.originGatewayType,
-      remoteGatewayAddress: '0xd229143ac1bbe667473dfd060c7eee4c1e5ca96e',
-      anchorAddress: '0xd419143ac1bbe667473dfd060c7eee4c1e5ca96e',
-      tokenAddress: '0xd429043ac1bbe667473dfd060c7eee4c1e5ca96e',
+      gatewayType: GatewayType.Origin,
+      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
+      anchorAddress: '0x0000000000000000000000000000000000000003',
+      tokenAddress: '0x0000000000000000000000000000000000000004',
       bounty: 1,
       activation: true,
     };
@@ -79,10 +80,10 @@ describe('GatewayRepository::update', (): void => {
     const gatewayAttributes: GatewayAttributes = {
       gatewayAddress: '0xd619143ac1bbe667473dfd060c7eee4c1e5ca96e',
       chainId: 1234,
-      gatewayType: GatewayConstant.originGatewayType,
-      remoteGatewayAddress: '0xd229143ac1bbe667473dfd060c7eee4c1e5ca96e',
-      anchorAddress: '0xd419143ac1bbe667473dfd060c7eee4c1e5ca96e',
-      tokenAddress: '0xd429043ac1bbe667473dfd060c7eee4c1e5ca96e',
+      gatewayType: GatewayType.Origin,
+      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
+      anchorAddress: '0x0000000000000000000000000000000000000003',
+      tokenAddress: '0x0000000000000000000000000000000000000004',
       bounty: 1,
       activation: true,
       lastRemoteGatewayProvenBlockHeight: 2

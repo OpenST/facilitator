@@ -45,12 +45,9 @@ export interface Gateway extends GatewayAttributes{
   updatedAt: Date;
 }
 
-export class GatewayConstant {
-  /* Origin gateway type. */
-  public static originGatewayType: string = 'origin';
-
-  /* Auxiliary gateway type. */
-  public static auxiliaryGatewayType: string = 'auxiliary';
+export enum GatewayType {
+  Origin = 'origin',
+  Auxiliary = 'auxiliary',
 }
 
 export class GatewayRepository {
@@ -76,7 +73,7 @@ export class GatewayRepository {
         },
         gatewayType: {
           type: DataTypes.ENUM({
-            values: [GatewayConstant.originGatewayType, GatewayConstant.auxiliaryGatewayType],
+            values: [GatewayType.Origin, GatewayType.Auxiliary],
           }),
           allowNull: false,
         },
@@ -105,7 +102,7 @@ export class GatewayRepository {
           },
         },
         bounty: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: false,
           validate: {
             min: 0,
