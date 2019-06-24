@@ -121,15 +121,14 @@ facilitator_init_no_originrpc_fail
 # facilitator init will create facilitator-config.json file.
 facilitator_init_pass
 
-#try_silent facilitator_config_exists
-try_silent facilitator_config_exists
+facilitator_config_exists
 
 # Facilitator config is already present. So below command should silently fail.
 facilitator_init_fail
 
 # Removing facilitator and verifying it.
 remove_facilitator_config
-fail_silent facilitator_config_doestnot_exists
+facilitator_config_doestnot_exists
 
 facilitator_init_pass
 # Below command would override the facilitator-config as it is run with -f option.
