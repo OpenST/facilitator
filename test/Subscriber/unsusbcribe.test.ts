@@ -1,10 +1,8 @@
-'use strict';
+import { assert } from 'chai';
+import * as sinon from 'sinon';
 
-const sinon = require('sinon');
-import { assert } from 'chai'
-
-import Subscriber from './../../src/Subscriber'
-import GraphClient from './../../src/GraphClient'
+import Subscriber from '../../src/Subscriber';
+import GraphClient from '../../src/GraphClient';
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient;
@@ -16,7 +14,7 @@ describe('Subscriber.unsubscribe()', () => {
   beforeEach(() => {
     mockApolloClient = sinon.stub;
     graphClient = new GraphClient(mockApolloClient);
-    subscriptionQueries = {stakeRequested: 'subscription{stakeRequesteds{id}}'};
+    subscriptionQueries = { stakeRequested: 'subscription{stakeRequesteds{id}}' };
     mockUnsubscribe = {
       unsubscribe: sinon.spy,
     };
@@ -34,24 +32,23 @@ describe('Subscriber.unsubscribe()', () => {
     assert.strictEqual(
       Object.keys(subscriber.querySubscriptions).length,
       1,
-      "Subscription failed!!!"
+      'Subscription failed.',
     );
 
     const mockQuerySubscription = sinon.spy;
     sinon.replace(
       subscriber.querySubscriptions.stakeRequested,
       'unsubscribe',
-      sinon.fake.resolves(mockQuerySubscription)
+      sinon.fake.resolves(mockQuerySubscription),
     );
 
     await subscriber.unsubscribe();
     assert.strictEqual(
       Object.keys(subscriber.querySubscriptions).length,
       0,
-      "UnSubscription failed!!!"
+      'UnSubscription failed.',
     );
 
     sinon.restore();
   });
-
 });

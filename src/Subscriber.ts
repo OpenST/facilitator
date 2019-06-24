@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop, guard-for-in, no-restricted-syntax */
+
 import { Subscription } from 'apollo-client/util/Observable';
 import GraphClient from './GraphClient';
 
@@ -29,7 +31,7 @@ export default class Subscriber {
    * @return {Promise<void>}
    */
   public async subscribe() {
-    for (let key in this.subscriptionQueries) {
+    for (const key in this.subscriptionQueries) {
       this.querySubscriptions[key] = await this.graphClient.subscribe(
         this.subscriptionQueries[key],
       );
@@ -42,7 +44,7 @@ export default class Subscriber {
    * @return {Promise<void>}
    */
   public async unsubscribe() {
-    for (let key in this.subscriptionQueries) {
+    for (const key in this.subscriptionQueries) {
       const querySubscription = this.querySubscriptions[key];
       await querySubscription.unsubscribe();
     }

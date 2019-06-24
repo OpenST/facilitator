@@ -1,12 +1,9 @@
-'use strict';
+import gql from 'graphql-tag';
+import { assert } from 'chai';
+import * as sinon from 'sinon';
 
-import gql from "graphql-tag";
-
-const sinon = require('sinon');
-import { assert } from 'chai'
-
-import GraphClient from './../../src/GraphClient'
-import SpyAssert from './../utils/SpyAssert'
+import GraphClient from '../../src/GraphClient';
+import SpyAssert from '../utils/SpyAssert';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient;
@@ -23,7 +20,7 @@ describe('GraphClient.subscribe()', () => {
     options = {
       query: gql`${subscriptionQry}`,
       variables: {},
-    }
+    };
   });
 
   it('should work with correct parameters', async () => {
@@ -32,26 +29,26 @@ describe('GraphClient.subscribe()', () => {
       mockApolloClient,
       'subscribe',
       sinon.fake.returns({
-        subscribe: () => Promise.resolve(mockQuerySubscriber)
+        subscribe: () => Promise.resolve(mockQuerySubscriber),
       }),
     );
     const querySubscriber = await graphClient.subscribe(subscriptionQry);
 
     assert(
       querySubscriber,
-      "Invalid query subscription object!!!"
+      'Invalid query subscription object.',
     );
 
     assert.strictEqual(
       querySubscriber,
       mockQuerySubscriber,
-       "Invalid querySubscriber!!!"
+      'Invalid querySubscriber.',
     );
 
     SpyAssert.assert(
       spyMethod,
       1,
-      [[options]]
+      [[options]],
     );
 
     sinon.restore();
@@ -62,5 +59,4 @@ describe('GraphClient.subscribe()', () => {
       graphClient.subscribe(undefined);
     }, /Mandatory Parameter 'subscriptionQry' is missing or invalid./);
   });
-
 });

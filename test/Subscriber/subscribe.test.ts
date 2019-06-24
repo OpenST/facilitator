@@ -1,11 +1,9 @@
-'use strict';
+import { assert } from 'chai';
+import * as sinon from 'sinon';
 
-const sinon = require('sinon');
-import { assert } from 'chai'
-
-import Subscriber from './../../src/Subscriber'
-import GraphClient from './../../src/GraphClient'
-import SpyAssert from './../utils/SpyAssert'
+import Subscriber from '../../src/Subscriber';
+import GraphClient from '../../src/GraphClient';
+import SpyAssert from '../utils/SpyAssert';
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient;
@@ -16,7 +14,7 @@ describe('Subscriber.subscribe()', () => {
   beforeEach(() => {
     mockApolloClient = sinon.stub;
     graphClient = new GraphClient(mockApolloClient);
-    subscriptionQueries = {stakeRequested: 'subscription{stakeRequesteds{id}}'};
+    subscriptionQueries = { stakeRequested: 'subscription{stakeRequesteds{id}}' };
   });
 
   it('should work with correct parameters', async () => {
@@ -32,22 +30,21 @@ describe('Subscriber.subscribe()', () => {
     assert.strictEqual(
       Object.keys(subscriber.querySubscriptions).length,
       1,
-      "Subscription failed!!!"
+      'Subscription failed.',
     );
 
     assert.strictEqual(
       subscriber.querySubscriptions.stakeRequested,
       mockQuerySubscriber,
-      "Invalid query subscription object!!!"
+      'Invalid query subscription object.',
     );
 
     SpyAssert.assert(
       spyGraphClientSubscribe,
       1,
-      [[subscriptionQueries.stakeRequested]]
+      [[subscriptionQueries.stakeRequested]],
     );
 
     sinon.restore();
   });
-
 });

@@ -1,29 +1,25 @@
-'use strict';
+import { assert } from 'chai';
+import * as sinon from 'sinon';
 
-import { assert } from  'chai'
-const sinon = require('sinon');
-
-import { Config } from './../../src/Config'
-import Facilitator from './../../src/Facilitator'
+import { Config } from '../../src/Config';
+import Facilitator from '../../src/Facilitator';
 
 describe('Facilitator.constructor()', () => {
-
   it('should construct with correct parameters', async () => {
     const configStub = sinon.createStubInstance(Config);
     const facilitator = new Facilitator(configStub);
 
     assert(
       facilitator,
-      "Invalid Facilitator object!!!"
+      'Invalid Facilitator object.',
     );
 
     assert.strictEqual(
       facilitator.config,
       configStub,
-      "Config mismatch!!!"
+      'Config mismatch.',
     );
 
     sinon.restore();
   });
-
 });

@@ -34,7 +34,7 @@ export default class GraphClient {
   public subscribe(subscriptionQry: string): Subscription {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
-      throw(err);
+      throw (err);
     }
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;
@@ -65,8 +65,7 @@ export default class GraphClient {
     const subscriptionClient = new SubscriptionClient(subgraphEndPoint, {
       reconnect: true,
     },
-      WebSocket
-    );
+    WebSocket);
     // Creates WebSocket link.
     const wsLink = new WebSocketLink(subscriptionClient);
     // Instantiate in memory cache object.
