@@ -31,12 +31,14 @@ const Util = {
       stakeRequestAttributes.stakeRequestHash,
     );
 
-    assert.strictEqual(
-      stakeRequest.messageHash,
-      stakeRequestAttributes.messageHash,
-    );
+    if (stakeRequestAttributes.hasOwnProperty('messageHash')) {
+      assert.strictEqual(
+        stakeRequest.messageHash,
+        stakeRequestAttributes.messageHash,
+      );
+    }
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.amount,
       stakeRequestAttributes.amount,
     );
@@ -46,17 +48,17 @@ const Util = {
       stakeRequestAttributes.beneficiary,
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.gasPrice,
       stakeRequestAttributes.gasPrice,
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.gasLimit,
       stakeRequestAttributes.gasLimit,
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       stakeRequest.nonce,
       stakeRequestAttributes.nonce,
     );
