@@ -45,7 +45,6 @@ describe('StakeRequestRepository::create', (): void => {
   it('Checks creation of stake request model.', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: 'messageHash',
       amount: 1,
       beneficiary: 'beneficiary',
       gasPrice: 2,
@@ -81,7 +80,6 @@ describe('StakeRequestRepository::create', (): void => {
   + 'with the same stake request\'s hash already exists.', async (): Promise<void> => {
     const stakeRequestAttributesA: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: 'messageHashA',
       amount: 1,
       beneficiary: 'beneficiaryA',
       gasPrice: 2,
@@ -94,7 +92,6 @@ describe('StakeRequestRepository::create', (): void => {
     // All members, except stakeRequestHash differs from stakeRequestAttributesA.
     const stakeRequestAttributesB: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: 'messageHashB',
       amount: 5,
       beneficiary: 'beneficiaryB',
       gasPrice: 6,
