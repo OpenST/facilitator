@@ -54,7 +54,7 @@ describe('MessageRepository::get', (): void => {
       nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: 2,
+      sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
     await config.db.messageRepository.create(

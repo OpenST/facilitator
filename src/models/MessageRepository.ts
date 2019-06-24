@@ -37,7 +37,7 @@ export interface MessageAttributes {
   nonce: BigNumber;
   sender: string;
   direction: string;
-  sourceDeclarationBlockHeight: number;
+  sourceDeclarationBlockHeight: BigNumber;
   secret?: string;
   hashLock?: string;
 }
@@ -242,5 +242,6 @@ export class MessageRepository {
     message.gasPrice = new BigNumber(message.gasPrice);
     message.gasLimit = new BigNumber(message.gasLimit);
     message.nonce = new BigNumber(message.nonce);
+    message.sourceDeclarationBlockHeight = new BigNumber(message.sourceDeclarationBlockHeight);
   }
 }

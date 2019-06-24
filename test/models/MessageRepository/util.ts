@@ -86,7 +86,7 @@ const Util = {
       'direction should match',
     );
 
-    assert.strictEqual(
+    assert.notStrictEqual(
       message.sourceDeclarationBlockHeight,
       messageAttributes.sourceDeclarationBlockHeight,
       'sourceDeclarationBlockHeight should match',

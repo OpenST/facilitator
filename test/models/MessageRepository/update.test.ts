@@ -59,7 +59,7 @@ describe('MessageRepository::update', (): void => {
       nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: 2,
+      sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
     const objectForUpdate = await config.db.messageRepository.create(
@@ -95,7 +95,7 @@ describe('MessageRepository::update', (): void => {
       nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: 2,
+      sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
     const messageUpdateResponse = await config.db.messageRepository.update(

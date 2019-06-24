@@ -73,7 +73,7 @@ describe('StakeRequestRepository::update', (): void => {
       nonce: new BigNumber('1'),
       sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
       direction: 'o2a',
-      sourceDeclarationBlockHeight: 1,
+      sourceDeclarationBlockHeight: new BigNumber('1'),
     };
     await config.db.messageRepository.create(
       messageAttributes,

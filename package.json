@@ -5,7 +5,7 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:facilitator",
     "lint:ts": "eslint src -c .eslintrc.json --ext ts",
-    "test:unit": "mocha -r ts-node/register test/**/*.test.ts test/*.test.ts",
+    "test:unit": "mocha -r ts-node/register test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
     "test:facilitator": "./test/facilitator.sh",
     "coverage": "nyc npm run test"
   },
@@ -62,6 +62,7 @@
     "@typescript-eslint/parser": "1.10.2",
     "@typescript-eslint/typescript-estree": "1.10.2",
     "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.17.3",
