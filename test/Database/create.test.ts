@@ -1,4 +1,4 @@
-import SpyAssert from "../SpyAssert";
+import SpyAssert from "./../utils/SpyAssert";
 import * as sqlite from 'sqlite3';
 import * as fs from 'fs-extra';
 import Directory from "../../src/Directory";
