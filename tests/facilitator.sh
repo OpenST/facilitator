@@ -91,7 +91,7 @@ function facilitator_config_exists {
 }
 
 # If facilitator-config exists, it will exit.
-function facilitator_config_doestnot_exists {
+function facilitator_config_does_not_exist {
  if [ -s $facilitatorConfigPath ]
  then
  	error "facilitator-config should not be already present"
@@ -106,32 +106,32 @@ function remove_facilitator_config {
 info "facilitator init should fail because all mandatory options are not provided"
 info "refer readme for all mandatory options"
 
+# Following tests is to test the fail conditions when the mandatory params are
+# not provided in the facilitator init command
 facilitator_init_no_mosaicconfig_fail
-
 facilitator_init_no_chainid_fail
-
 facilitator_init_no_originpassword_fail
-
 facilitator_init_no_auxiliarypassword_fail
-
 facilitator_init_no_auxiliaryrpc_fail
-
 facilitator_init_no_originrpc_fail
 
-# facilitator init will create facilitator-config.json file.
-facilitator_init_pass
 
+# Facilitator init will create facilitator-config.json file.
+# All mandatory params are provided.
+facilitator_init_pass
 facilitator_config_exists
 
-# Facilitator config is already present. So below command should silently fail.
+# Facilitator config already exists, so facilitator init command should fail.
 facilitator_init_fail
 
-# Removing facilitator and verifying it.
+# Removing facilitator config
 remove_facilitator_config
-facilitator_config_doestnot_exists
+facilitator_config_does_not_exist
 
+
+# Facilitator init with force option.
 facilitator_init_pass
-# Below command would override the facilitator-config as it is run with -f option.
 facilitator_init_force_pass
 
+# Clean up the created facilitator config.
 remove_facilitator_config
