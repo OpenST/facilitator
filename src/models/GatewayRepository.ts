@@ -117,7 +117,7 @@ export class GatewayRepository {
           },
         },
         lastRemoteGatewayProvenBlockHeight: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
           allowNull: true,
           validate: {
             min: 0,

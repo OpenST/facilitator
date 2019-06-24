@@ -59,7 +59,7 @@ describe('MessageRepository::create', (): void => {
       nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: 1,
+      sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
     const createResponse = await config.db.messageRepository.create(
@@ -97,7 +97,7 @@ describe('MessageRepository::create', (): void => {
       nonce: new BigNumber('1'),
       sender: '0x0000000000000000000000000000000000000002',
       direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: 1,
+      sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
     // All members, except messageHash are different from messageAttributesA.
@@ -112,7 +112,7 @@ describe('MessageRepository::create', (): void => {
       nonce: new BigNumber('2'),
       sender: '0x0000000000000000000000000000000000000004',
       direction: MessageDirection.AuxiliaryToOrigin,
-      sourceDeclarationBlockHeight: 2,
+      sourceDeclarationBlockHeight: new BigNumber('2'),
     };
 
     await config.db.messageRepository.create(
