@@ -203,14 +203,15 @@ export class MessageRepository {
    * @return {Promise<Message | null>}
    */
   public async get(messageHash: string): Promise<Message | null> {
-    const message: Message = await MessageModel.findOne({
+    const messageModel = await MessageModel.findOne({
       where: {
         messageHash,
       },
     });
-    if (message === null) {
+    if (messageModel === null) {
       return null;
     }
+    const message: Message = messageModel;
     this.format(message);
     return message;
   }

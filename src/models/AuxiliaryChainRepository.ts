@@ -154,14 +154,15 @@ export class AuxiliaryChainRepository {
    * @return {Promise<AuxiliaryChain | null>}
    */
   public async get(chainId: number): Promise<AuxiliaryChain | null> {
-    const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.findOne({
+    const auxiliaryChainModel = await AuxiliaryChainModel.findOne({
       where: {
         chainId,
       },
     });
-    if (auxiliaryChain === null) {
+    if (auxiliaryChainModel === null) {
       return null;
     }
+    const auxiliaryChain: AuxiliaryChain = auxiliaryChainModel;
     this.format(auxiliaryChain);
     return auxiliaryChain;
   }

@@ -48,11 +48,11 @@ describe('StakeRequestRepository::update', (): void => {
   it('Updates existing existing stake request.', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      amount: 1,
+      amount: new BigNumber('1'),
       beneficiary: 'beneficiary',
-      gasPrice: 2,
-      gasLimit: 3,
-      nonce: 4,
+      gasPrice: new BigNumber('2'),
+      gasLimit: new BigNumber('3'),
+      nonce: new BigNumber('4'),
       gateway: 'gateway',
       stakerProxy: 'stakerProxy',
     };
