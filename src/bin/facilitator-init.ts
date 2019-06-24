@@ -1,7 +1,7 @@
 import * as commander from 'commander';
 import Account from '../Account';
 import Logger from '../Logger';
-import Database from '../Database';
+import DatabaseFileHelper from '../DatabaseFileHelper';
 import { FacilitatorConfig, Chain } from '../Config';
 import Utils from '../Utils';
 
@@ -81,8 +81,8 @@ commander
     let {dbPath} = options;
     if (dbPath === undefined || dbPath === null) {
       Logger.info('database path is not provided');
-      dbPath = Database.create(options.chainId);
-    } else if (Database.verify(dbPath)) {
+      dbPath = DatabaseFileHelper.create(options.chainId);
+    } else if (DatabaseFileHelper.verify(dbPath)) {
       Logger.info('DB file verified');
     } else {
       Logger.error('DB file doesn\'t exists or file extension is incorrect');

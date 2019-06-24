@@ -2,7 +2,7 @@ import SpyAssert from "../SpyAssert";
 import * as sqlite from 'sqlite3';
 import * as fs from 'fs-extra';
 import Directory from "../../src/Directory";
-import Database from "../../src/Database";
+import DBFileHelper from "../../src/DatabaseFileHelper";
 import {assert} from 'chai';
 
 const sinon = require('sinon');
@@ -11,12 +11,12 @@ describe('Database.create()', function () {
   const chainId = '1';
 
   it('should fail when chain id is blank', function () {
-    assert.throws(() => Database.create(''), 'invalid chain id');
+    assert.throws(() => DBFileHelper.create(''), 'invalid chain id');
   });
 
   it('should pass with valid arguments', function () {
     const dbPath = 'tests/Database/';
-    const dbFileName = 'OSTFacilitator.db';
+    const dbFileName = 'mosaic_facilitator.db';
 
     const spyDirectory = sinon.stub(Directory, 'getDBFilePath').callsFake(() => {
       return dbPath
@@ -32,7 +32,7 @@ describe('Database.create()', function () {
       return true
     });
 
-    const actualFacilitatorConfigPath = Database.create(chainId);
+    const actualFacilitatorConfigPath = DBFileHelper.create(chainId);
     const expectedFacilitatorConfigPath = `${dbPath + dbFileName}`;
 
     SpyAssert.assert(spyDirectory, 1, [[chainId]]);

@@ -20,24 +20,24 @@ const MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
  * Holds database configurations.
  */
 export class DBConfig {
-  public type: DBType = DBType.SQLITE;
+  public type?: DBType;
 
   /** Database path */
-  public path: string = '';
+  public path?: string;
 
   /** Database host */
-  public host: string = '';
+  public host?: string;
 
   /** Database user name */
-  public userName: string = '';
+  public userName?: string;
 
   /** Database password */
-  private _password: string = '';
+  private _password?: string;
 
   /**
    * Get the password for the database.
    */
-  get password(): string {
+  get password(): string | undefined {
     return process.env[ENV_DB_PASSWORD] || this._password;
   }
 }
@@ -47,10 +47,10 @@ export class DBConfig {
  */
 export class Chain {
   /** Chain RPC endpoint. */
-  public rpc: string = '';
+  public rpc?: string;
 
   /** Worker address. */
-  public worker: string = '';
+  public worker?: string;
 }
 
 /**
