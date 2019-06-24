@@ -3,7 +3,6 @@
 import { EncryptedKeystoreV3Json, Account as Web3Account } from 'web3-eth-accounts';
 import Web3 from 'web3';
 import Logger from './Logger';
-import Web3 from 'web3';
 
 /**
  * It provides methods to create, encrypt and unlock accounts.

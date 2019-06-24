@@ -5,7 +5,7 @@ import * as assert from 'assert';
 
 describe('Facilitator.validate()', () => {
 
-  let facilitatorConfig, invalidFacilitatorConfig;
+  let facilitatorConfig, invalidFacilitatorConfig:any;
 
   it('should pass when facilitator config is valid', async () => {
     facilitatorConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'testdata', 'facilitator-config.json')).toString());
