@@ -145,7 +145,7 @@ export class StakeRequestRepository {
   public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
     try {
       const stakeRequest: StakeRequest = await StakeRequestModel.create(stakeRequestAttributes);
-      this.format(stakeRequest);
+      StakeRequestRepository.format(stakeRequest);
       return stakeRequest;
     } catch (e) {
       const errorContext = {
@@ -156,6 +156,29 @@ export class StakeRequestRepository {
       };
 
       throw Error(`Failed to create a stake request: ${JSON.stringify(errorContext)}`);
+    }
+  }
+
+  /**
+   *  Creates stake request model in bulk fashion.
+   *
+   *  This function throws if same object already exists.
+   *
+   * @param stakeRequestsAttributes Array of stake request attributes.
+   *
+   * @return Array of stake request object.
+   */
+  public async bulkCreate(stakeRequestsAttributes:
+  StakeRequestAttributes[]): Promise<StakeRequest []> {
+    try {
+      const stakeRequests: StakeRequest [] = await StakeRequestModel.bulkCreate(
+        stakeRequestsAttributes,
+        { ignoreDuplicates: true },
+      );
+      stakeRequests.forEach(stakeRequest => StakeRequestRepository.format(stakeRequest));
+      return stakeRequests;
+    } catch (error) {
+      throw new Error(`Failed to create bulk stake request: ${error.message}`);
     }
   }
 
@@ -181,7 +204,7 @@ export class StakeRequestRepository {
       return null;
     }
     const stakeRequest: StakeRequest = stakeRequestModel;
-    this.format(stakeRequest);
+    StakeRequestRepository.format(stakeRequest);
     return stakeRequest;
   }
 
@@ -230,7 +253,7 @@ export class StakeRequestRepository {
    * Modifies the message object by typecasting required properties.
    * @param {StakeRequest} stakeRequest
    */
-  private format(stakeRequest: StakeRequest): void {
+  private static format(stakeRequest: StakeRequest): void {
     stakeRequest.amount = new BigNumber(stakeRequest.amount);
     stakeRequest.nonce = new BigNumber(stakeRequest.nonce);
     stakeRequest.gasLimit = new BigNumber(stakeRequest.gasLimit);
