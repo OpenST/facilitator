@@ -7,7 +7,7 @@ import {assert} from 'chai';
 
 const sinon = require('sinon');
 
-describe('Database.create()', function () {
+describe('DatabaseFileHelper.create()', function () {
   const chainId = '1';
 
   it('should fail when chain id is blank', function () {
