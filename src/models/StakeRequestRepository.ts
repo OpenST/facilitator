@@ -16,17 +16,34 @@
 
 /* eslint-disable class-methods-use-this */
 
-import {
-  DataTypes, Model, InitOptions,
-} from 'sequelize';
+import { DataTypes, Model, InitOptions } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import { MessageModel } from './MessageRepository';
+import Subject from '../observer/Subject';
 
-import {
-  MessageModel,
-  Message,
-} from './MessageRepository';
+class StakeRequestModel extends Model {
+  public readonly stakeRequestHash!: string;
 
-class StakeRequestModel extends Model {}
+  public readonly messageHash!: string;
+
+  public readonly amount!: BigNumber;
+
+  public readonly beneficiary!: string;
+
+  public readonly gasPrice!: BigNumber;
+
+  public readonly gasLimit!: BigNumber;
+
+  public readonly nonce!: BigNumber;
+
+  public readonly gateway!: string;
+
+  public readonly stakerProxy!: string;
+
+  public readonly createdAt!: Date;
+
+  public readonly updatedAt!: Date;
+}
 
 /**
  * An interface for input to create a StakeRequest object in the StakeRequestRepository.
@@ -52,7 +69,6 @@ export interface StakeRequestAttributes {
  * @see StakeRequestRepository::get()
  */
 export interface StakeRequest extends StakeRequestAttributes {
-  message: Message;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -63,7 +79,7 @@ export interface StakeRequest extends StakeRequestAttributes {
  * Class enables creation, update and retrieval of StakeRequest objects.
  * On construction it initializes underlying database model.
  */
-export class StakeRequestRepository {
+export class StakeRequestRepository extends Subject {
   /* Public Functions */
 
   /**
@@ -71,6 +87,8 @@ export class StakeRequestRepository {
    * Creates database table if it does not exist.
    */
   public constructor(initOptions: InitOptions) {
+    super();
+
     StakeRequestModel.init(
       {
         stakeRequestHash: {
@@ -129,6 +147,7 @@ export class StakeRequestRepository {
         tableName: 'stake_request',
       },
     );
+
     StakeRequestModel.belongsTo(MessageModel, { foreignKey: 'messageHash' });
   }
 
@@ -144,9 +163,8 @@ export class StakeRequestRepository {
    */
   public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
     try {
-      const stakeRequest: StakeRequest = await StakeRequestModel.create(stakeRequestAttributes);
-      this.format(stakeRequest);
-      return stakeRequest;
+      const stakeRequestModel = await StakeRequestModel.create(stakeRequestAttributes);
+      return this.convertToStakeRequest(stakeRequestModel);
     } catch (e) {
       const errorContext = {
         input: {
@@ -180,9 +198,21 @@ export class StakeRequestRepository {
     if (stakeRequestModel === null) {
       return null;
     }
-    const stakeRequest: StakeRequest = stakeRequestModel;
-    this.format(stakeRequest);
-    return stakeRequest;
+
+    return this.convertToStakeRequest(stakeRequestModel);
+  }
+
+  /**
+   * Gets all stake requests with a null message hash.
+   */
+  public async getStakeRequestsWithNullMessageHash(): Promise<StakeRequest[]> {
+    const stakeRequestModels: StakeRequestModel[] = await StakeRequestModel.findAll({
+      where: {
+        messageHash: null,
+      },
+    });
+
+    return this.convertToStakeRequests(stakeRequestModels);
   }
 
   /**
@@ -226,14 +256,26 @@ export class StakeRequestRepository {
     }
   }
 
-  /**
-   * Modifies the message object by typecasting required properties.
-   * @param {StakeRequest} stakeRequest
-   */
-  private format(stakeRequest: StakeRequest): void {
+
+  /* Private Functions */
+
+  private convertToStakeRequest(stakeRequestModel: StakeRequestModel): StakeRequest {
+    const stakeRequest: StakeRequest = stakeRequestModel;
+
     stakeRequest.amount = new BigNumber(stakeRequest.amount);
     stakeRequest.nonce = new BigNumber(stakeRequest.nonce);
     stakeRequest.gasLimit = new BigNumber(stakeRequest.gasLimit);
     stakeRequest.gasPrice = new BigNumber(stakeRequest.gasPrice);
+
+    return stakeRequest;
+  }
+
+  private convertToStakeRequests(stakeRequestModels: StakeRequestModel[]): StakeRequest[] {
+    const stakeRequests: StakeRequest[] = [];
+    for (let i = 0; i < stakeRequestModels.length; i += 1) {
+      stakeRequests.push(this.convertToStakeRequest(stakeRequestModels[i]));
+    }
+
+    return stakeRequests;
   }
 }

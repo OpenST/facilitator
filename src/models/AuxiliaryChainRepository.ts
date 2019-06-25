@@ -20,6 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import Subject from '../observer/Subject';
 
 class AuxiliaryChainModel extends Model {}
 
@@ -46,10 +47,12 @@ export interface AuxiliaryChain extends AuxiliaryChainAttributes {
   updatedAt: Date;
 }
 
-export class AuxiliaryChainRepository {
+export class AuxiliaryChainRepository extends Subject {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
+    super();
+
     AuxiliaryChainModel.init(
       {
         chainId: {

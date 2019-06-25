@@ -20,6 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import Subject from '../observer/Subject';
 
 export class MessageModel extends Model {}
 
@@ -68,10 +69,12 @@ export enum MessageDirection {
   AuxiliaryToOrigin = 'a2o',
 }
 
-export class MessageRepository {
+export class MessageRepository extends Subject {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
+    super();
+
     MessageModel.init(
       {
         messageHash: {

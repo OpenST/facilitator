@@ -14,7 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
-import { Sequelize } from 'sequelize';
+import { Sequelize, InitOptions } from 'sequelize';
 
 import { StakeRequestRepository } from './StakeRequestRepository';
 import { AuxiliaryChainRepository } from './AuxiliaryChainRepository';
@@ -56,6 +56,13 @@ export default class Database {
     return db;
   }
 
+  public notify(): void {
+    this.messageRepository.notify();
+    this.stakeRequestRepository.notify();
+    this.auxiliaryChainRepository.notify();
+    this.gatewayRepository.notify();
+  }
+
 
   /* Private Functions */
 
@@ -75,32 +82,19 @@ export default class Database {
    * @param sequelize Sequelize instance.
    */
   private constructor(sequelize: Sequelize) {
-    this.messageRepository = new MessageRepository({
+    const initOptions: InitOptions = {
       sequelize,
       underscored: true,
       timestamps: true,
       freezeTableName: true,
-    });
+    };
 
-    this.stakeRequestRepository = new StakeRequestRepository({
-      sequelize,
-      underscored: true,
-      timestamps: true,
-      freezeTableName: true,
-    });
+    this.messageRepository = new MessageRepository(initOptions);
 
-    this.auxiliaryChainRepository = new AuxiliaryChainRepository({
-      sequelize,
-      underscored: true,
-      timestamps: true,
-      freezeTableName: true,
-    });
+    this.stakeRequestRepository = new StakeRequestRepository(initOptions);
 
-    this.gatewayRepository = new GatewayRepository({
-      sequelize,
-      underscored: true,
-      timestamps: true,
-      freezeTableName: true,
-    });
+    this.auxiliaryChainRepository = new AuxiliaryChainRepository(initOptions);
+
+    this.gatewayRepository = new GatewayRepository(initOptions);
   }
 }

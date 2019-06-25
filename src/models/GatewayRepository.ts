@@ -20,6 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import Subject from '../observer/Subject';
 
 export class GatewayModel extends Model {}
 
@@ -51,10 +52,12 @@ export enum GatewayType {
   Auxiliary = 'auxiliary',
 }
 
-export class GatewayRepository {
+export class GatewayRepository extends Subject {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
+    super();
+
     GatewayModel.init(
       {
         gatewayAddress: {
