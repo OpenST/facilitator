@@ -1,44 +1,52 @@
+import BigNumber from 'bignumber.js';
 import ContractEntityHandler from './ContractEntityHandler';
-import StakeRequest from '../models/StakeRequest';
+import {
+  StakeRequestAttributes,
+  StakeRequestRepository,
+} from '../models/StakeRequestRepository';
 
-export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequest> {
+export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequestAttributes> {
+  private readonly stakeRequestRepository: StakeRequestRepository;
+
+  public constructor(stakeRequestRepository: StakeRequestRepository) {
+    super();
+    this.stakeRequestRepository = stakeRequestRepository;
+  }
+
   /**
    * This method parse stakeRequest transaction and returns stakeRequest model object.
    * @param transactions Transaction objects.
    */
-  public parse = (transactions: any[]): StakeRequest[] => transactions.map((transaction) => {
+  public parse =
+  (transactions: any[]): StakeRequestAttributes[] => transactions.map((transaction) => {
     const {
       gasLimit,
       gateway,
-      staker,
       gasPrice,
-      id,
       nonce,
       beneficiary,
       amount,
       stakeRequestHash,
+      stakerProxy,
     } = transaction;
-    return new StakeRequest(
-      id,
-      amount,
-      beneficiary,
-      gasPrice,
-      gasLimit,
-      nonce,
-      staker,
-      gateway,
+    return {
       stakeRequestHash,
-    );
+      amount: new BigNumber(amount),
+      beneficiary,
+      gasPrice: new BigNumber(gasPrice),
+      gasLimit: new BigNumber(gasLimit),
+      nonce: new BigNumber(nonce),
+      gateway,
+      stakerProxy,
+    };
   });
 
   /**
    * This method defines action on receiving stake request model.
    * @param stakeRequest instance of StakeRequest model .
    */
-  public handle = (stakeRequest: StakeRequest[]): void => {
-
-    console.log(stakeRequest);
-    // stakeRequestRepository.save(stakeRequest);
+  public handle = (stakeRequest: StakeRequestAttributes[]): void => {
+    this.stakeRequestRepository.bulkCreate(stakeRequest);
     // stakeRequestService.reactTo(stakeRequest);
   };
 }

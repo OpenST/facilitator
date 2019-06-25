@@ -2,7 +2,8 @@ import { Config } from './Config';
 import Subscriber from './Subscriber';
 import GraphClient from './GraphClient';
 import TransactionHandler from './TransactionHandler';
-import handlers from './handlers/HandlerFactory';
+import HandlerFactory from './handlers/HandlerFactory';
+import Database from './models/Database';
 
 /**
  * The class defines properties and behaviour of a facilitator.
@@ -30,8 +31,10 @@ export default class Facilitator {
    */
   public async start(): Promise<void> {
     const subGraphDetails = Facilitator.getSubscriptionDetails();
-
-    const transactionalHandler: TransactionHandler = new TransactionHandler(handlers);
+    const database = await Database.create(this.config.facilitator.database.path);
+    const transactionalHandler: TransactionHandler = new TransactionHandler(
+      HandlerFactory.get(database),
+    );
     // Subscription to origin subgraph queries
     this.originSubscriber = new Subscriber(
       GraphClient.getClient(subGraphDetails.origin.subGraphEndPoint),
