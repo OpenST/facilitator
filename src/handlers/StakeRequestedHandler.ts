@@ -15,7 +15,10 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
 
   /**
    * This method parse stakeRequest transaction and returns stakeRequest model object.
+   *
    * @param transactions Transaction objects.
+   *
+   * @return Array of instances of StakeRequestAttributes object.
    */
   public parse =
   (transactions: any[]): StakeRequestAttributes[] => transactions.map((transaction) => {
@@ -43,7 +46,11 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
 
   /**
    * This method defines action on receiving stake request model.
-   * @param stakeRequest instance of StakeRequest model .
+   *
+   * @param stakeRequest array of instances of StakeRequestAttributes object.
+   *
+   * @return void
+
    */
   public handle = (stakeRequest: StakeRequestAttributes[]): void => {
     this.stakeRequestRepository.bulkCreate(stakeRequest);
