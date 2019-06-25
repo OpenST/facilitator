@@ -24,7 +24,10 @@ describe('Facilitator.start()', () => {
     SpyAssert.assert(
       graphClientSpy,
       2,
-      [[subGraphDetails.origin.subGraphEndPoint], [subGraphDetails.auxiliary.subGraphEndPoint]],
+      [
+        [subGraphDetails.origin.subGraphEndPoint],
+        [subGraphDetails.auxiliary.subGraphEndPoint]
+      ],
     );
 
     SpyAssert.assert(
