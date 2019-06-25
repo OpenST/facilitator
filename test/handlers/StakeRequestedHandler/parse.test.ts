@@ -1,8 +1,14 @@
 import * as Utils from 'web3-utils';
 import { assert } from 'chai';
-import StakeRequest from '../../../src/models/StakeRequest';
+import * as sinon from 'sinon';
+
+import BigNumber from 'bignumber.js';
 import StakeRequestedHandler
   from '../../../src/handlers/StakeRequestedHandler';
+import {
+  StakeRequestAttributes,
+  StakeRequestRepository,
+} from '../../../src/models/StakeRequestRepository';
 
 describe('StakeRequestedHandler.parse()', () => {
   it('should parse successfully', () => {
@@ -15,23 +21,23 @@ describe('StakeRequestedHandler.parse()', () => {
       nonce: '1',
       staker: '0xd328C7bE0D524aa33b8118163C431dCd0d46EE82',
       gateway: '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294',
+      stakerProxy: '0xE1e701FbE4288a38FfFEa3084C826B810c5d5294',
       stakeRequestHash: Utils.sha3('1'),
     }];
 
-    const handler = new StakeRequestedHandler();
+    const handler = new StakeRequestedHandler(sinon.mock(StakeRequestRepository) as any);
     const models = handler.parse(transactions);
-    const stakeRequest = new StakeRequest(
-      transactions[0].id,
-      transactions[0].amount,
-      transactions[0].beneficiary,
-      transactions[0].gasPrice,
-      transactions[0].gasLimit,
-      transactions[0].nonce,
-      transactions[0].staker,
-      transactions[0].gateway,
-      transactions[0].stakeRequestHash,
-    );
+    const stakeRequestAttributes: StakeRequestAttributes = {
+      stakeRequestHash: transactions[0].stakeRequestHash,
+      amount: new BigNumber(transactions[0].amount),
+      beneficiary: transactions[0].beneficiary,
+      gasPrice: new BigNumber(transactions[0].gasPrice),
+      gasLimit: new BigNumber(transactions[0].gasLimit),
+      nonce: new BigNumber(transactions[0].nonce),
+      gateway: transactions[0].gateway,
+      stakerProxy: transactions[0].stakerProxy,
+    };
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
-    assert.deepStrictEqual(models[0], stakeRequest);
+    assert.deepStrictEqual(models[0], stakeRequestAttributes);
   });
 });
