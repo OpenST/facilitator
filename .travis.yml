@@ -1,21 +1,26 @@
 dist: trusty
 language: node_js
-sudo: required
 node_js:
   - "11"
+cache: npm
+sudo: required
 branches:
   only:
   - master
   - develop
+  - /^feature\/.*/
+  - /^release-.*/
+  - /^hotfix-.*/
 notifications:
   email:
     recipients:
       - ci.report@ost.com
     on_success: always
     on_failure: always
-
 install:
   - npm ci
 script:
   - npm run test
+after_failure:
+  - cat /home/travis/.npm/_logs/*-debug.log
 

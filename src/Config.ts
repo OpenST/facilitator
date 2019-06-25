@@ -1,5 +1,8 @@
-import { Account } from './Account';
+import * as path from 'path';
+import * as fs from 'fs-extra';
+import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import { MosaicConfig } from './MosaicConfig';
+import Directory from './Directory';
 import Utils from './Utils';
 
 // Database password key to read from env.
@@ -10,86 +13,31 @@ enum DBType {
   SQLITE = 'SQLITE',
 }
 
-
-/**
- * Holds mosaic config, database config and facilitator config.
- */
-export class Config {
-  public database: DBConfig;
-
-  public chains: Record<string, any>;
-
-  public mosaic: MosaicConfig;
-
-  /**
-   * Constructor.
-   * @param mosaicConfigPath Mosaic config path.
-   * @param facilitatorConfigPath Facilitator config path.
-   */
-  public constructor(
-    mosaicConfigPath: string,
-    facilitatorConfigPath: string,
-  ) {
-    this.mosaic = MosaicConfig.fromPath(mosaicConfigPath);
-
-    const facilitatorConfig = Utils.getJsonDataFromPath(
-      facilitatorConfigPath,
-    );
-
-    this.database = new DBConfig(facilitatorConfig);
-    this.chains = this.getChains(facilitatorConfig);
-  }
-
-  /**
-   * Get chain objects from given facilitator config.
-   * @param facilitatorConfig Facilitator config json data.
-   * @returns Array containing chain object.
-   */
-  private getChains(facilitatorConfig: Record<string, any>): Chain[] {
-    const chainsJson: Record<string, any> = facilitatorConfig.chains;
-    const chains: Chain[] = [];
-    for (const key in chainsJson) {
-      chains.push(new Chain(key, facilitatorConfig));
-    }
-    return chains;
-  }
-}
+// Facilitator config file name.
+const MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
 
 /**
  * Holds database configurations.
  */
 export class DBConfig {
-  public type: DBType;
+  public type?: DBType;
 
   /** Database path */
-  public path: string;
+  public path?: string;
 
   /** Database host */
-  public host: string;
+  public host?: string;
 
   /** Database user name */
-  public userName: string;
+  public userName?: string;
 
   /** Database password */
-  private _password: string;
-
-  /**
-   * Constructor.
-   * @param facilitatorConfig Facilitator config json data.
-   */
-  public constructor(facilitatorConfig: Record<string, any>) {
-    const dbJson: Record<string, any> = facilitatorConfig.database;
-    this.type = dbJson.type;
-    this.path = dbJson.path;
-    this.host = dbJson.host;
-    this.userName = dbJson.user_name;
-    this._password = dbJson.password;
-  }
+  private _password?: string;
 
   /**
    * Get the password for the database.
    */
-  get password(): string {
+  get password(): string | undefined {
     return process.env[ENV_DB_PASSWORD] || this._password;
   }
 }
@@ -99,22 +47,101 @@ export class DBConfig {
  */
 export class Chain {
   /** Chain RPC endpoint. */
-  public rpc: string;
+  public rpc?: string;
 
-  /** Worker account object. */
-  public worker: Account;
+  /** Worker address. */
+  public worker?: string;
+}
+
+/**
+ * It holds contents of the facilitator config.
+ */
+export class FacilitatorConfig {
+  public database: DBConfig;
+
+  public chains: Record<string, Chain>;
+
+  public encryptedAccounts: Record<string, EncryptedKeystoreV3Json>;
 
   /**
    * Constructor.
-   * @param chainId Chain id.
-   * @param facilitatorConfig Facilitator config json data.
+   * @param config Facilitator config object.
    */
-  public constructor(readonly chainId: string, facilitatorConfig: Record<string, any>) {
-    const chainData = facilitatorConfig.chains[chainId];
-    this.rpc = chainData.rpc;
-    this.worker = new Account(
-      chainData.worker,
-      facilitatorConfig.encrypted_accounts[chainData.worker],
+  public constructor(config: any) {
+    this.database = config.database || new DBConfig();
+    this.chains = config.chains || {};
+    this.encryptedAccounts = config.encryptedAccounts || {};
+  }
+
+  /**
+   * It writes facilitator config object.
+   * @param {string} chain Auxiliary chain id.
+   */
+  public writeToFacilitatorConfig(chain: string): void {
+    const mosaicConfigDir = Directory.getMosaicDirectoryPath();
+    const configPath = path.join(
+      mosaicConfigDir,
+      chain,
     );
+    fs.ensureDirSync(configPath);
+
+    fs.writeFileSync(
+      path.join(configPath, MOSAIC_FACILITATOR_CONFIG),
+      JSON.stringify(this, null, '    '),
+    );
+  }
+
+  /**
+   * This reads facilitator config from the json file and creates FacilitatorConfig object.
+   * @param {string} chain Auxiliary chain id.
+   * @returns {FacilitatorConfig} Facilitator config object.
+   */
+  public static from(chain: string): FacilitatorConfig {
+    const facilitatorConfigPath = path.join(
+      Directory.getMosaicDirectoryPath(),
+      chain,
+      MOSAIC_FACILITATOR_CONFIG,
+    );
+
+    if (fs.existsSync(facilitatorConfigPath)) {
+      const config = Utils.getJsonDataFromPath(facilitatorConfigPath);
+      return new FacilitatorConfig(config);
+    }
+    return new FacilitatorConfig({});
+  }
+
+  /**
+   * It checks if facilitator config is present for given chain id.
+   * @param {string} chain Auxiliary chain id.
+   * @returns `true` if file is present.
+   */
+  public static isFacilitatorConfigPresent(chain: string): boolean {
+    const statOutput = fs.statSync(
+      path.join(Directory.getMosaicDirectoryPath(), chain, MOSAIC_FACILITATOR_CONFIG),
+    );
+    return (statOutput.size > 0);
+  }
+}
+
+/**
+ * Holds mosaic config, database config and facilitator config.
+ */
+export class Config {
+
+  public facilitator: FacilitatorConfig;
+  
+  public mosaic: MosaicConfig;
+
+  /**
+   * Constructor.
+   * @param mosaicConfigPath Mosaic config path.
+   * @param chainId Auxiliary chain id.
+   */
+  public constructor(
+    mosaicConfigPath: string,
+    chainId: string,
+  ) {
+    this.mosaic = MosaicConfig.fromPath(mosaicConfigPath);
+    this.facilitator = FacilitatorConfig.from(chainId);
   }
 }
