@@ -32,7 +32,8 @@
         "database",
         "encryptedAccounts"
       ],
-      "title": "Facilitator"
+      "title": "Facilitator",
+      "description":"Object encapsulating details about facilitator config"
     },
     "Chain": {
       "type": "object",
@@ -49,7 +50,8 @@
         "worker",
         "rpc"
       ],
-      "title": "Chain"
+      "title": "Chain",
+      "description": "It encapsulates chain specific information"
     },
     "Database": {
       "type": "object",
@@ -62,7 +64,8 @@
       "required": [
         "path"
       ],
-      "title": "Database"
+      "title": "Database",
+      "description":"It represents database config details"
     },
     "EncryptedAccounts": {
       "type": "object",
@@ -72,13 +75,16 @@
       "maxProperties": 2,
       "patternProperties": {
         "^0x[a-fA-F0-9]{40}$": {
-          "$ref": "#/definitions/Account"
+          "$ref": "#/definitions/Account",
+          "description":"Represents encrypted account for an address"
         }
-      }
+      },
+      "description": "List of encrypted accounts"
     },
     "Account": {
       "type": "object",
-      "title": "Web3 encrypted account"
+      "title": "Web3 encrypted account",
+      "description":"Object represents encrypted web3 account"
     }
   }
 }
