@@ -19,6 +19,12 @@
 import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
+import BigNumber from 'bignumber.js';
+
+import {
+  MessageModel,
+  Message,
+} from './MessageRepository';
 
 class StakeRequestModel extends Model {}
 
@@ -29,12 +35,12 @@ class StakeRequestModel extends Model {}
  */
 export interface StakeRequestAttributes {
   stakeRequestHash: string;
-  messageHash: string;
-  amount: number;
+  messageHash?: string;
+  amount: BigNumber;
   beneficiary: string;
-  gasPrice: number;
-  gasLimit: number;
-  nonce: number;
+  gasPrice: BigNumber;
+  gasLimit: BigNumber;
+  nonce: BigNumber;
   gateway: string;
   stakerProxy: string;
 }
@@ -46,6 +52,7 @@ export interface StakeRequestAttributes {
  * @see StakeRequestRepository::get()
  */
 export interface StakeRequest extends StakeRequestAttributes {
+  message: Message;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -72,39 +79,48 @@ export class StakeRequestRepository {
         },
         messageHash: {
           type: DataTypes.STRING,
+          allowNull: true,
+          unique: true,
         },
         amount: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         beneficiary: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
         gasPrice: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         nonce: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BIGINT,
+          allowNull: false,
           validate: {
             min: 0,
           },
         },
         gateway: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
         stakerProxy: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
       },
       {
@@ -113,6 +129,7 @@ export class StakeRequestRepository {
         tableName: 'stake_request',
       },
     );
+    StakeRequestModel.belongsTo(MessageModel, { foreignKey: 'messageHash' });
   }
 
   /**
@@ -127,7 +144,9 @@ export class StakeRequestRepository {
    */
   public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
     try {
-      return await StakeRequestModel.create(stakeRequestAttributes) as StakeRequest;
+      const stakeRequest: StakeRequest = await StakeRequestModel.create(stakeRequestAttributes);
+      this.format(stakeRequest);
+      return stakeRequest;
     } catch (e) {
       const errorContext = {
         input: {
@@ -153,13 +172,17 @@ export class StakeRequestRepository {
       where: {
         stakeRequestHash,
       },
+      include: [
+        MessageModel,
+      ],
     });
 
     if (stakeRequestModel === null) {
       return null;
     }
-
-    return stakeRequestModel as StakeRequest;
+    const stakeRequest: StakeRequest = stakeRequestModel;
+    this.format(stakeRequest);
+    return stakeRequest;
   }
 
   /**
@@ -201,5 +224,16 @@ export class StakeRequestRepository {
 
       throw Error(`Failed to update a stake request: ${JSON.stringify(errorContext)}`);
     }
+  }
+
+  /**
+   * Modifies the message object by typecasting required properties.
+   * @param {StakeRequest} stakeRequest
+   */
+  private format(stakeRequest: StakeRequest): void {
+    stakeRequest.amount = new BigNumber(stakeRequest.amount);
+    stakeRequest.nonce = new BigNumber(stakeRequest.nonce);
+    stakeRequest.gasLimit = new BigNumber(stakeRequest.gasLimit);
+    stakeRequest.gasPrice = new BigNumber(stakeRequest.gasPrice);
   }
 }

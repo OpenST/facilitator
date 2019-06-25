@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   StakeRequestAttributes,
@@ -45,12 +46,11 @@ describe('StakeRequestRepository::create', (): void => {
   it('Checks creation of stake request model.', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: 'messageHash',
-      amount: 1,
+      amount: new BigNumber('1'),
       beneficiary: 'beneficiary',
-      gasPrice: 2,
-      gasLimit: 3,
-      nonce: 4,
+      gasPrice: new BigNumber('2'),
+      gasLimit: new BigNumber('3'),
+      nonce: new BigNumber('4'),
       gateway: 'gateway',
       stakerProxy: 'stakerProxy',
     };
@@ -81,12 +81,11 @@ describe('StakeRequestRepository::create', (): void => {
   + 'with the same stake request\'s hash already exists.', async (): Promise<void> => {
     const stakeRequestAttributesA: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: 'messageHashA',
-      amount: 1,
+      amount: new BigNumber('1'),
       beneficiary: 'beneficiaryA',
-      gasPrice: 2,
-      gasLimit: 3,
-      nonce: 4,
+      gasPrice: new BigNumber('2'),
+      gasLimit: new BigNumber('3'),
+      nonce: new BigNumber('4'),
       gateway: 'gatewayA',
       stakerProxy: 'stakerProxyA',
     };
@@ -94,12 +93,11 @@ describe('StakeRequestRepository::create', (): void => {
     // All members, except stakeRequestHash differs from stakeRequestAttributesA.
     const stakeRequestAttributesB: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: 'messageHashB',
-      amount: 5,
+      amount: new BigNumber('5'),
       beneficiary: 'beneficiaryB',
-      gasPrice: 6,
-      gasLimit: 7,
-      nonce: 8,
+      gasPrice: new BigNumber('6'),
+      gasLimit: new BigNumber('7'),
+      nonce: new BigNumber('8'),
       gateway: 'gatewayB',
       stakerProxy: 'stakerProxyB',
     };

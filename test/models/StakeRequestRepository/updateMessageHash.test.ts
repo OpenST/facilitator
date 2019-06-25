@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
+import BigNumber from 'bignumber.js';
 
 import {
   StakeRequestAttributes,
@@ -23,7 +24,9 @@ import {
 
 import Database from '../../../src/models/Database';
 
-import Util from './util';
+import StakeRequestUtil from './util';
+import MessageUtil from '../MessageRepository/util';
+import { MessageAttributes } from '../../../src/models/MessageRepository';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -35,7 +38,7 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('StakeRequestRepository::create', (): void => {
+describe('StakeRequestRepository::update', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       db: await Database.create(),
@@ -45,12 +48,11 @@ describe('StakeRequestRepository::create', (): void => {
   it('Updates existing existing stake request.', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: 'stakeRequestHash',
-      messageHash: '',
-      amount: 1,
+      amount: new BigNumber('1'),
       beneficiary: 'beneficiary',
-      gasPrice: 2,
-      gasLimit: 3,
-      nonce: 4,
+      gasPrice: new BigNumber('2'),
+      gasLimit: new BigNumber('3'),
+      nonce: new BigNumber('4'),
       gateway: 'gateway',
       stakerProxy: 'stakerProxy',
     };
@@ -60,6 +62,22 @@ describe('StakeRequestRepository::create', (): void => {
     );
 
     const updatedMessageHash = 'updatedMessageHash';
+    const messageAttributes: MessageAttributes = {
+      messageHash: updatedMessageHash,
+      type: 'stakeAndMint',
+      gatewayAddress: '0x497A49648885f7aaC3d761817F191ee1AFAF399C',
+      sourceStatus: 'Undeclared',
+      targetStatus: 'Undeclared',
+      gasPrice: new BigNumber('1'),
+      gasLimit: new BigNumber('1'),
+      nonce: new BigNumber('1'),
+      sender: '0x497B49648885f7aaC3d761817F191ee1AFAF399C',
+      direction: 'o2a',
+      sourceDeclarationBlockHeight: new BigNumber('1'),
+    };
+    await config.db.messageRepository.create(
+      messageAttributes,
+    );
 
     await config.db.stakeRequestRepository.updateMessageHash(
       stakeRequestAttributes.stakeRequestHash,
@@ -73,17 +91,20 @@ describe('StakeRequestRepository::create', (): void => {
     assert.notStrictEqual(
       stakeRequest,
       null,
-      'Newly created stake request does not exist.',
+      'Newly updated stake request does not exist.',
     );
 
     const updatedStakeRequestAttributes = stakeRequestAttributes;
     updatedStakeRequestAttributes.messageHash = updatedMessageHash;
 
     // Checking that the retrieved stake request matches with the updated one.
-    Util.checkStakeRequestAgainstAttributes(
+    StakeRequestUtil.checkStakeRequestAgainstAttributes(
       stakeRequest as StakeRequest,
       updatedStakeRequestAttributes,
     );
+    if (stakeRequest) {
+      MessageUtil.checkMessageAgainstAttributes(stakeRequest.message, messageAttributes);
+    }
   });
 
   it('Fails to updates a stake request that does not exist.',
