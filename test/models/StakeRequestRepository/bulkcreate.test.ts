@@ -15,7 +15,6 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
-import BigNumber from 'bignumber.js';
 
 import {
   StakeRequest,
@@ -25,7 +24,7 @@ import {
 import Database from '../../../src/models/Database';
 
 import Util from './util';
-
+import StubData from '../../utils/StubData';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 
@@ -37,17 +36,6 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-const getAStakeRequest = (stakeRequestHash: string): StakeRequestAttributes => ({
-  stakeRequestHash,
-  amount: new BigNumber('1'),
-  beneficiary: 'beneficiary',
-  gasPrice: new BigNumber('2'),
-  gasLimit: new BigNumber('3'),
-  nonce: new BigNumber('4'),
-  gateway: 'gateway',
-  stakerProxy: 'stakerProxy',
-});
-
 describe('StakeRequestRepository::bulkCreate', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
@@ -58,9 +46,9 @@ describe('StakeRequestRepository::bulkCreate', (): void => {
 
   it('should create stake request in bulk', async (): Promise<void> => {
     const stakeRequestAttributes: StakeRequestAttributes [] = [
-      getAStakeRequest('stakeRequestHash1'),
-      getAStakeRequest('stakeRequestHash2'),
-      getAStakeRequest('stakeRequestHash3'),
+      StubData.getAStakeRequest('stakeRequestHash1'),
+      StubData.getAStakeRequest('stakeRequestHash2'),
+      StubData.getAStakeRequest('stakeRequestHash3'),
     ];
 
     const stakeRequestResponse = await config.db.stakeRequestRepository.bulkCreate(
@@ -99,9 +87,9 @@ describe('StakeRequestRepository::bulkCreate', (): void => {
 
   it('Should not fail to create remaining records if some of them already exists during bulk create', async (): Promise<void> => {
     let stakeRequestAttributes: StakeRequestAttributes [] = [
-      getAStakeRequest('stakeRequestHash1'),
-      getAStakeRequest('stakeRequestHash2'),
-      getAStakeRequest('stakeRequestHash3'),
+      StubData.getAStakeRequest('stakeRequestHash1'),
+      StubData.getAStakeRequest('stakeRequestHash2'),
+      StubData.getAStakeRequest('stakeRequestHash3'),
     ];
 
     await config.db.stakeRequestRepository.bulkCreate(
@@ -110,7 +98,7 @@ describe('StakeRequestRepository::bulkCreate', (): void => {
 
     stakeRequestAttributes = [
       ...stakeRequestAttributes,
-      getAStakeRequest('stakeRequestHash4'),
+      StubData.getAStakeRequest('stakeRequestHash4'),
     ];
 
     const stakeRequestResponse = await config.db.stakeRequestRepository.bulkCreate(

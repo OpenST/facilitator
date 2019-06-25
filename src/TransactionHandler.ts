@@ -11,6 +11,9 @@ export default class TransactionHandler {
 
   /**
    * This method accept bulkTransactions and handles them with specific handlers.
+   *
+   * New handler can be registered in HandlerFactory class.
+   *
    * @param bulkTransactions List of bulkTransactions.
    */
   public handle(bulkTransactions: any): void {

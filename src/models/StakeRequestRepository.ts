@@ -160,9 +160,8 @@ export class StakeRequestRepository {
   }
 
   /**
-   *  Creates stake request model in bulk fashion.
-   *
-   *  This function throws if same object already exists.
+   *  Creates stake request models in bulk. This function gracefully
+   *  handles if few records already exists, it only creates new records.
    *
    * @param stakeRequestsAttributes Array of stake request attributes.
    *
