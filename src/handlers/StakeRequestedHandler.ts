@@ -37,6 +37,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    */
   public handle = (stakeRequest: StakeRequest[]): void => {
 
+    console.log(stakeRequest);
     // stakeRequestRepository.save(stakeRequest);
     // stakeRequestService.reactTo(stakeRequest);
   };

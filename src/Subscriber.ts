@@ -2,6 +2,7 @@
 
 import { Subscription } from 'apollo-client/util/Observable';
 import GraphClient from './GraphClient';
+import TransactionHandler from './TransactionHandler';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -30,10 +31,11 @@ export default class Subscriber {
    *
    * @return {Promise<void>}
    */
-  public async subscribe() {
+  public async subscribe(handler: TransactionHandler) {
     for (const key in this.subscriptionQueries) {
       this.querySubscriptions[key] = await this.graphClient.subscribe(
         this.subscriptionQueries[key],
+        handler,
       );
     }
   }

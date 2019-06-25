@@ -18,9 +18,9 @@ export default abstract class ContractEntityHandler<T> {
 
   /**
    * This is a template method, this method shouldn't be override by implementer.
-   * @param any Transaction from the subscriber.
+   * @param requests Transaction from the subscriber.
    */
-  public process(any): void {
-    this.handle(this.parse(any));
+  public process(requests: any): void {
+    this.handle(this.parse(requests));
   }
 }

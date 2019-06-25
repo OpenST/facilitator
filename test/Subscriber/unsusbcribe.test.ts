@@ -3,6 +3,7 @@ import * as sinon from 'sinon';
 
 import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
+import TransactionHandler from '../../src/TransactionHandler';
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient: any;
@@ -27,7 +28,8 @@ describe('Subscriber.unsubscribe()', () => {
   });
 
   it('should work with correct parameters', async () => {
-    await subscriber.subscribe();
+    const handler = sinon.mock(TransactionHandler);
+    await subscriber.subscribe(handler as any);
 
     assert.strictEqual(
       Object.keys(subscriber.querySubscriptions).length,

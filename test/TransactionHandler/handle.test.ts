@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import TransactionHandler from '../../src/TransactionHandler';
 import StakeRequestedHandler from '../../src/handlers/StakeRequestedHandler';
-import SpyAssert from '../SpyAssert';
+import SpyAssert from '../utils/SpyAssert';
 
 import sinon = require('sinon');
 
