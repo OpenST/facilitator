@@ -33,7 +33,7 @@
   "dependencies": {
     "commander": "2.20.0",
     "fs-extra": "7.0.1",
-    "sequelize": "5.8.10",
+    "sequelize": "6.0.0",
     "sqlite3": "4.0.8",
     "ts-node": "8.0.3",
     "typescript": "3.5.1",
