@@ -1,10 +1,10 @@
 import * as sinon from 'sinon';
 
 import Facilitator from '../../src/Facilitator';
-import GraphClient from '../../src/GraphClient'
-import Subscriber from '../../src/Subscriber'
-import {Config} from "../../src/Config";
-import SpyAssert from "../utils/SpyAssert";
+import GraphClient from '../../src/GraphClient';
+import Subscriber from '../../src/Subscriber';
+import { Config } from '../../src/Config';
+import SpyAssert from '../utils/SpyAssert';
 
 describe('Facilitator.start()', () => {
   it('should work with correct parameters', async () => {
@@ -14,7 +14,7 @@ describe('Facilitator.start()', () => {
       'getClient',
       sinon.fake.returns(mockGraphClient),
     );
-    const subscriberStub = sinon.stub(Subscriber.prototype, "subscribe");
+    const subscriberStub = sinon.stub(Subscriber.prototype, 'subscribe');
 
     const subGraphDetails = Facilitator.getSubscriptionDetails();
     const configStub = sinon.createStubInstance(Config);
@@ -26,7 +26,7 @@ describe('Facilitator.start()', () => {
       2,
       [
         [subGraphDetails.origin.subGraphEndPoint],
-        [subGraphDetails.auxiliary.subGraphEndPoint]
+        [subGraphDetails.auxiliary.subGraphEndPoint],
       ],
     );
 
