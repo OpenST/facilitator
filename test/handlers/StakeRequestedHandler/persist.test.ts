@@ -9,9 +9,10 @@ import {
   StakeRequestAttributes,
   StakeRequestRepository,
 } from '../../../src/models/StakeRequestRepository';
+import SpyAssert from '../../utils/SpyAssert';
 
-describe('StakeRequestedHandler.parse()', () => {
-  it('should parse successfully', () => {
+describe('StakeRequestedHandler.persist()', () => {
+  it('should persist successfully', async () => {
     const transactions = [{
       id: '1',
       amount: '10',
@@ -25,8 +26,14 @@ describe('StakeRequestedHandler.parse()', () => {
       stakeRequestHash: Utils.sha3('1'),
     }];
 
-    const handler = new StakeRequestedHandler(sinon.mock(StakeRequestRepository) as any);
-    const models = handler.parse(transactions);
+    const bulkCreateStub = sinon.stub();
+    const sinonMock = sinon.createStubInstance(StakeRequestRepository,
+      {
+        bulkCreate: bulkCreateStub as any,
+      });
+    const handler = new StakeRequestedHandler(sinonMock as any);
+
+    const models = await handler.persist(transactions);
     const stakeRequestAttributes: StakeRequestAttributes = {
       stakeRequestHash: transactions[0].stakeRequestHash,
       amount: new BigNumber(transactions[0].amount),
@@ -39,5 +46,6 @@ describe('StakeRequestedHandler.parse()', () => {
     };
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
     assert.deepStrictEqual(models[0], stakeRequestAttributes);
+    SpyAssert.assert(bulkCreateStub, 1, [[[stakeRequestAttributes]]]);
   });
 });

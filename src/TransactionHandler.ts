@@ -16,8 +16,10 @@ export default class TransactionHandler {
    *
    * @param bulkTransactions List of bulkTransactions.
    */
-  public handle(bulkTransactions: any): void {
-    Object.keys(bulkTransactions).forEach((transactionKind) => {
+  public async handle(bulkTransactions: any): Promise<void> {
+    const models: Record<string, any> = {};
+
+    const persistPromises = Object.keys(bulkTransactions).map(async (transactionKind) => {
       const handler = this.handlers[transactionKind];
       if (typeof handler === 'undefined') {
         throw new HandlerNotFoundException(
@@ -25,7 +27,14 @@ export default class TransactionHandler {
         );
       }
       const transactions = bulkTransactions[transactionKind];
-      handler.process(transactions);
+      models[transactionKind] = await handler.persist(transactions);
+    });
+
+    await Promise.all(persistPromises);
+
+    Object.keys(models).forEach((transactionKind) => {
+      const handler = this.handlers[transactionKind];
+      handler.handle(models[transactionKind]);
     });
   }
 }

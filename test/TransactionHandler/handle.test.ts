@@ -1,7 +1,12 @@
-import { assert } from 'chai';
 import TransactionHandler from '../../src/TransactionHandler';
 import StakeRequestedHandler from '../../src/handlers/StakeRequestedHandler';
 import SpyAssert from '../utils/SpyAssert';
+import StubData from '../utils/StubData';
+
+import chai = require('chai');
+import chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+const { assert } = chai;
 
 import sinon = require('sinon');
 
@@ -23,24 +28,38 @@ describe('TransactionHandler.handle()', () => {
     ],
   };
 
-  it('should handle stake request transactions if handler is available', () => {
-    const handlerStub = sinon.createStubInstance(StakeRequestedHandler);
+  it('should handle stake request transactions if handler is available', async () => {
+    const aStakeRequest = StubData.getAStakeRequest('123');
+    const stakeRequestedHandler = new StakeRequestedHandler(sinon.fake() as any);
 
+    const persistSpy = sinon.replace(
+      stakeRequestedHandler,
+      'persist',
+      sinon.fake.resolves([aStakeRequest]),
+    );
+    const handleSpy = sinon.replace(
+      stakeRequestedHandler,
+      'handle',
+      sinon.fake.returns(Promise.resolve()),
+    );
     const handlers = {
-      stakeRequesteds: handlerStub,
+      stakeRequesteds: stakeRequestedHandler,
     };
-    const transactionHandler = new TransactionHandler(handlers);
-    transactionHandler.handle(bulkTransactions);
 
-    SpyAssert.assert(handlerStub.process, 1, [[bulkTransactions.stakeRequesteds]]);
+    const transactionHandler = new TransactionHandler(handlers as any);
+    await transactionHandler.handle(bulkTransactions);
+
+    SpyAssert.assert(persistSpy, 1, [[bulkTransactions.stakeRequesteds]]);
+    SpyAssert.assert(handleSpy, 1, [[[aStakeRequest]]]);
   });
 
   it('should fail if handler is not available', () => {
     const transactionHandler = new TransactionHandler({});
 
-    assert.throws(
-      () => transactionHandler.handle(bulkTransactions),
+    assert.isRejected(
+      transactionHandler.handle(bulkTransactions),
       'Handler implementation not found for stakeRequesteds',
+      'Handler implementation must exists',
     );
   });
 });

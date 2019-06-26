@@ -11,6 +11,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
   public constructor(stakeRequestRepository: StakeRequestRepository) {
     super();
     this.stakeRequestRepository = stakeRequestRepository;
+    this.persist = this.persist.bind(this);
   }
 
   /**
@@ -20,29 +21,33 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    *
    * @return Array of instances of StakeRequestAttributes object.
    */
-  public parse =
-  (transactions: any[]): StakeRequestAttributes[] => transactions.map((transaction) => {
-    const {
-      gasLimit,
-      gateway,
-      gasPrice,
-      nonce,
-      beneficiary,
-      amount,
-      stakeRequestHash,
-      stakerProxy,
-    } = transaction;
-    return {
-      stakeRequestHash,
-      amount: new BigNumber(amount),
-      beneficiary,
-      gasPrice: new BigNumber(gasPrice),
-      gasLimit: new BigNumber(gasLimit),
-      nonce: new BigNumber(nonce),
-      gateway,
-      stakerProxy,
-    };
-  });
+  public persist =
+  async (transactions: any[]): Promise<StakeRequestAttributes[]> => {
+    const models = transactions.map((transaction) => {
+      const {
+        gasLimit,
+        gateway,
+        gasPrice,
+        nonce,
+        beneficiary,
+        amount,
+        stakeRequestHash,
+        stakerProxy,
+      } = transaction;
+      return {
+        stakeRequestHash,
+        amount: new BigNumber(amount),
+        beneficiary,
+        gasPrice: new BigNumber(gasPrice),
+        gasLimit: new BigNumber(gasLimit),
+        nonce: new BigNumber(nonce),
+        gateway,
+        stakerProxy,
+      };
+    });
+    this.stakeRequestRepository.bulkCreate(models);
+    return models;
+  };
 
   /**
    * This method defines action on receiving stake request model.
@@ -52,8 +57,9 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    * @return void
 
    */
-  public handle = (stakeRequest: StakeRequestAttributes[]): void => {
-    this.stakeRequestRepository.bulkCreate(stakeRequest);
+  public handle = async (stakeRequest: StakeRequestAttributes[]): Promise<void> => {
+    console.log(stakeRequest);
+    return Promise.resolve();
     // stakeRequestService.reactTo(stakeRequest);
   };
 }
