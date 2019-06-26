@@ -20,7 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import Subject from '../observer/Subject';
+import RepositoryBase from './RepositoryBase';
 
 export class MessageModel extends Model {}
 
@@ -69,7 +69,7 @@ export enum MessageDirection {
   AuxiliaryToOrigin = 'a2o',
 }
 
-export class MessageRepository extends Subject {
+export class MessageRepository extends RepositoryBase {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -190,6 +190,7 @@ export class MessageRepository extends Subject {
     try {
       const message: Message = await MessageModel.create(messageAttributes);
       this.format(message);
+      this.markDirty();
       return message;
     } catch (e) {
       const errorContext = {
@@ -225,7 +226,7 @@ export class MessageRepository extends Subject {
    * @return {Promise<Array<Number>>}
    */
   public async update(messageAttributes: MessageAttributes): Promise<number[]> {
-    return await MessageModel.update({
+    const results = await MessageModel.update({
       secret: messageAttributes.secret,
       hashLock: messageAttributes.hashLock,
     }, {
@@ -235,6 +236,10 @@ export class MessageRepository extends Subject {
         },
       },
     });
+
+    this.markDirty();
+
+    return results;
   }
 
   /**

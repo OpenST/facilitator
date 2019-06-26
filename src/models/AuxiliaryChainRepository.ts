@@ -20,7 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import Subject from '../observer/Subject';
+import RepositoryBase from './RepositoryBase';
 
 class AuxiliaryChainModel extends Model {}
 
@@ -47,7 +47,7 @@ export interface AuxiliaryChain extends AuxiliaryChainAttributes {
   updatedAt: Date;
 }
 
-export class AuxiliaryChainRepository extends Subject {
+export class AuxiliaryChainRepository extends RepositoryBase {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -141,6 +141,7 @@ export class AuxiliaryChainRepository extends Subject {
     try {
       const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
       this.format(auxiliaryChain);
+      this.markDirty();
       return auxiliaryChain;
     } catch (e) {
       const errorContext = {
@@ -176,7 +177,7 @@ export class AuxiliaryChainRepository extends Subject {
    * @return {Promise<number[]>>}
    */
   public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number[]> {
-    return await AuxiliaryChainModel.update({
+    const results = await AuxiliaryChainModel.update({
       lastProcessedBlockNumber: auxiliaryChainAttributes.lastProcessedBlockNumber,
       lastOriginBlockHeight: auxiliaryChainAttributes.lastOriginBlockHeight,
       lastAuxiliaryBlockHeight: auxiliaryChainAttributes.lastAuxiliaryBlockHeight,
@@ -187,6 +188,10 @@ export class AuxiliaryChainRepository extends Subject {
         },
       },
     });
+
+    this.markDirty();
+
+    return results;
   }
 
   /**

@@ -19,8 +19,14 @@
 import { DataTypes, Model, InitOptions } from 'sequelize';
 import BigNumber from 'bignumber.js';
 import { MessageModel } from './MessageRepository';
-import Subject from '../observer/Subject';
+import RepositoryBase from './RepositoryBase';
 
+
+/**
+ * An interface, that represents a raw from a stake request table.
+ *
+ * See: http://docs.sequelizejs.com/manual/typescript.html#usage
+ */
 class StakeRequestModel extends Model {
   public readonly stakeRequestHash!: string;
 
@@ -79,7 +85,7 @@ export interface StakeRequest extends StakeRequestAttributes {
  * Class enables creation, update and retrieval of StakeRequest objects.
  * On construction it initializes underlying database model.
  */
-export class StakeRequestRepository extends Subject {
+export class StakeRequestRepository extends RepositoryBase {
   /* Public Functions */
 
   /**
@@ -164,6 +170,7 @@ export class StakeRequestRepository extends Subject {
   public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
     try {
       const stakeRequestModel = await StakeRequestModel.create(stakeRequestAttributes);
+      this.markDirty();
       return this.convertToStakeRequest(stakeRequestModel);
     } catch (e) {
       const errorContext = {
@@ -243,6 +250,7 @@ export class StakeRequestRepository extends Subject {
 
     try {
       await stakeRequestModel.update({ messageHash });
+      this.markDirty();
     } catch (e) {
       const errorContext = {
         input: {
