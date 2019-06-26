@@ -4,13 +4,21 @@ import {
   StakeRequestAttributes,
   StakeRequestRepository,
 } from '../models/StakeRequestRepository';
+import StakeRequestService from '../services/StakeRequestService';
 
 export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequestAttributes> {
   private readonly stakeRequestRepository: StakeRequestRepository;
 
-  public constructor(stakeRequestRepository: StakeRequestRepository) {
+  // @ts-ignore
+  private readonly stakeRequestService: StakeRequestService;
+
+  public constructor(
+    stakeRequestRepository: StakeRequestRepository,
+    stakeRequestService: StakeRequestService,
+  ) {
     super();
     this.stakeRequestRepository = stakeRequestRepository;
+    this.stakeRequestService = stakeRequestService;
     this.persist = this.persist.bind(this);
   }
 

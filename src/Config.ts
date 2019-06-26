@@ -127,9 +127,8 @@ export class FacilitatorConfig {
  * Holds mosaic config, database config and facilitator config.
  */
 export class Config {
-
   public facilitator: FacilitatorConfig;
-  
+
   public mosaic: MosaicConfig;
 
   /**

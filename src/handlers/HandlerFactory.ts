@@ -1,5 +1,7 @@
 import StakeRequestedHandler from './StakeRequestedHandler';
 import Database from '../models/Database';
+import { Factory as ServiceFactory } from '../services/Factory';
+import { Config } from '../Config';
 
 export default class HandlerFactory {
   /**
@@ -9,10 +11,14 @@ export default class HandlerFactory {
    * @param db Database connection.
    * @return Different kinds of transaction handlers.
    */
-  public static get(db: Database): {stakeRequesteds: StakeRequestedHandler} {
+  public static get(db: Database, config: Config): {stakeRequesteds: StakeRequestedHandler} {
+    const serviceFactory = new ServiceFactory(db, config);
+
+    const { stakeRequestService } = serviceFactory;
     return {
       stakeRequesteds: new StakeRequestedHandler(
         db.stakeRequestRepository,
+        stakeRequestService,
       ),
     };
   }
