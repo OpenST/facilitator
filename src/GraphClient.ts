@@ -7,7 +7,6 @@ import gql from 'graphql-tag';
 import * as WebSocket from 'ws'
 
 import Logger from './Logger';
-//import WebSocket = require('ws');
 
 /**
  * The class interacts with graph node server for subscription and query.
