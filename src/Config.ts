@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
-import { MosaicConfig } from './MosaicConfig';
+import MosaicConfig  from './MosaicConfig';
 import Directory from './Directory';
 import Utils from './Utils';
 
@@ -57,6 +57,8 @@ export class Chain {
  * It holds contents of the facilitator config.
  */
 export class FacilitatorConfig {
+  public originChainId: string;
+
   public database: DBConfig;
 
   public chains: Record<string, Chain>;
@@ -68,6 +70,7 @@ export class FacilitatorConfig {
    * @param config Facilitator config object.
    */
   public constructor(config: any) {
+    this.originChainId = config.originChainId;
     this.database = config.database || new DBConfig();
     this.chains = config.chains || {};
     this.encryptedAccounts = config.encryptedAccounts || {};
@@ -96,7 +99,7 @@ export class FacilitatorConfig {
    * @param {string} chain Auxiliary chain id.
    * @returns {FacilitatorConfig} Facilitator config object.
    */
-  public static from(chain: string): FacilitatorConfig {
+  public static from(chain: string): FacilitatorConfig { // TODO: change it to fromChain
     const facilitatorConfigPath = path.join(
       Directory.getMosaicDirectoryPath(),
       chain,
@@ -105,6 +108,14 @@ export class FacilitatorConfig {
 
     if (fs.existsSync(facilitatorConfigPath)) {
       const config = Utils.getJsonDataFromPath(facilitatorConfigPath);
+      return new FacilitatorConfig(config);
+    }
+    return new FacilitatorConfig({});
+  }
+
+  public static fromPath(filePath: string): FacilitatorConfig {
+    if (fs.existsSync(filePath)) {
+      const config = Utils.getJsonDataFromPath(filePath);
       return new FacilitatorConfig(config);
     }
     return new FacilitatorConfig({});
@@ -129,19 +140,50 @@ export class FacilitatorConfig {
 export class Config {
 
   public facilitator: FacilitatorConfig;
-  
+
   public mosaic: MosaicConfig;
 
   /**
    * Constructor.
-   * @param mosaicConfigPath Mosaic config path.
-   * @param chainId Auxiliary chain id.
+   * @param mosaicConfig Mosaic config object.
+   * @param facilitatorConfig Facilitator config object.
    */
   public constructor(
-    mosaicConfigPath: string,
-    chainId: string,
+    mosaicConfig: MosaicConfig,
+    facilitatorConfig: FacilitatorConfig,
   ) {
-    this.mosaic = MosaicConfig.fromPath(mosaicConfigPath);
-    this.facilitator = FacilitatorConfig.from(chainId);
+    this.facilitator = facilitatorConfig;
+    this.mosaic = mosaicConfig;
+  }
+
+  /**
+   * It provides config object from the path specified.
+   * @param {string} mosaicConfigPath Path to mosaic config file path.
+   * @param {string} facilitatorConfigPath Path to facilitator config file path/
+   * @returns {Config} Config object consisting of mosaic and facilitator configurations.
+   */
+  public static getConfigFromPath(
+    mosaicConfigPath: string,
+    facilitatorConfigPath: string
+  ): Config {
+    const mosaic: MosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
+    const facilitator: FacilitatorConfig = FacilitatorConfig.fromPath(facilitatorConfigPath);
+
+    return new Config(mosaic, facilitator);
+  }
+
+  /**
+   * It provides config object from default paths.
+   * @param {string} originChain Origin chain id.
+   * @param {string} auxiliaryChain Auxiliary chain id.
+   * @returns {Config} Config object consisting of mosaic and facilitator configurations.
+   */
+  public static getConfig(
+    originChain: string,
+    auxiliaryChain: string
+  ): Config {
+    const mosaic: MosaicConfig = MosaicConfig.fromChain(originChain);
+    const facilitator: FacilitatorConfig = FacilitatorConfig.from(auxiliaryChain);
+    return new Config(mosaic, facilitator);
   }
 }
