@@ -7,14 +7,14 @@ import { Config } from '../../src/Config';
 import SpyAssert from '../utils/SpyAssert';
 
 describe('Facilitator.start()', () => {
-  it('should work with correct parameters', async () => {
+  it('should start facilitation', async () => {
     const mockGraphClient = sinon.createStubInstance(GraphClient);
     const graphClientSpy = sinon.replace(
       GraphClient,
       'getClient',
       sinon.fake.returns(mockGraphClient),
     );
-    const subscriberStub = sinon.stub(Subscriber.prototype, 'subscribe');
+    const subscribeStub = sinon.stub(Subscriber.prototype, 'subscribe');
 
     const subGraphDetails = Facilitator.getSubscriptionDetails();
     const configStub = sinon.createStubInstance(Config);
@@ -31,12 +31,12 @@ describe('Facilitator.start()', () => {
     );
 
     SpyAssert.assert(
-      subscriberStub,
+      subscribeStub,
       2,
       [[], []],
     );
 
-    subscriberStub.restore();
+    subscribeStub.restore();
     sinon.restore();
   });
 });
