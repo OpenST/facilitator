@@ -25,7 +25,6 @@ import {
 import Database from '../../../src/models/Database';
 
 import StakeRequestUtil from './util';
-import MessageUtil from '../MessageRepository/util';
 import { MessageAttributes } from '../../../src/models/MessageRepository';
 
 import chai = require('chai');
@@ -102,9 +101,6 @@ describe('StakeRequestRepository::update', (): void => {
       stakeRequest as StakeRequest,
       updatedStakeRequestAttributes,
     );
-    if (stakeRequest) {
-      MessageUtil.checkMessageAgainstAttributes(stakeRequest.message, messageAttributes);
-    }
   });
 
   it('Fails to updates a stake request that does not exist.',

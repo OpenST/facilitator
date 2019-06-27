@@ -76,6 +76,18 @@ export default class AcceptStakeRequestService extends Observer {
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
+    // await this.sendAcceptStakeRequestTransaction(stakeRequest, hashLock);
+
+    await this.createMessageInRepository(stakeRequest, secret, hashLock);
+  }
+
+  // private async sendAcceptStakeRequestTransaction(
+  //   stakeRequest: StakeRequest, hashLock: string,
+  // ): Promise<void>;
+
+  private async createMessageInRepository(
+    stakeRequest: StakeRequest, secret: string, hashLock: string,
+  ): Promise<void> {
     const messageHash = this.calculateMessageHash(stakeRequest, hashLock);
 
     const messageAttributes: MessageAttributes = {
