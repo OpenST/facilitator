@@ -18,7 +18,7 @@ commander
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
     // Validating mandatory parameters
-    let mandatoryOptionMissing = false;
+    let mandatoryOptionMissing:boolean = false;
 
     if (options.mosaicConfig === undefined) {
       Logger.error('required --mosaicConfig <mosaic-config>');
