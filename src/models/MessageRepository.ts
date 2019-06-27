@@ -20,7 +20,9 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import RepositoryBase from './RepositoryBase';
+import Subject from '../observer/Subject';
+
+import assert = require('assert');
 
 export class MessageModel extends Model {}
 
@@ -69,7 +71,7 @@ export enum MessageDirection {
   AuxiliaryToOrigin = 'a2o',
 }
 
-export class MessageRepository extends RepositoryBase {
+export class MessageRepository extends Subject<Message> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -190,7 +192,7 @@ export class MessageRepository extends RepositoryBase {
     try {
       const message: Message = await MessageModel.create(messageAttributes);
       this.format(message);
-      this.markDirty();
+      this.newSubject(message);
       return message;
     } catch (e) {
       const errorContext = {
@@ -222,11 +224,9 @@ export class MessageRepository extends RepositoryBase {
 
   /**
    * Updates message data in database and does not return the updated state.
-   * @param {MessageAttributes} messageAttributes
-   * @return {Promise<Array<Number>>}
    */
-  public async update(messageAttributes: MessageAttributes): Promise<number[]> {
-    const results = await MessageModel.update({
+  public async update(messageAttributes: MessageAttributes): Promise<boolean> {
+    const [updatedRowCount] = await MessageModel.update({
       secret: messageAttributes.secret,
       hashLock: messageAttributes.hashLock,
     }, {
@@ -237,9 +237,20 @@ export class MessageRepository extends RepositoryBase {
       },
     });
 
-    this.markDirty();
+    assert(
+      updatedRowCount <= 1,
+      'As a message hash is a primary key, one or no entry should be affected.',
+    );
 
-    return results;
+    if (updatedRowCount === 1) {
+      const message = await this.get(messageAttributes.messageHash);
+      assert(message !== null);
+      this.newSubject(message as Message);
+
+      return true;
+    }
+
+    return false;
   }
 
   /**

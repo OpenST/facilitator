@@ -20,7 +20,9 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import RepositoryBase from './RepositoryBase';
+import Subject from '../observer/Subject';
+
+import assert = require('assert');
 
 class AuxiliaryChainModel extends Model {}
 
@@ -47,7 +49,7 @@ export interface AuxiliaryChain extends AuxiliaryChainAttributes {
   updatedAt: Date;
 }
 
-export class AuxiliaryChainRepository extends RepositoryBase {
+export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -141,7 +143,7 @@ export class AuxiliaryChainRepository extends RepositoryBase {
     try {
       const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
       this.format(auxiliaryChain);
-      this.markDirty();
+      this.newSubject(auxiliaryChain);
       return auxiliaryChain;
     } catch (e) {
       const errorContext = {
@@ -171,13 +173,9 @@ export class AuxiliaryChainRepository extends RepositoryBase {
     return auxiliaryChain;
   }
 
-  /**
-   * Updates auxiliary chain data in database and does not return the updated state.
-   * @param {AuxiliaryChainAttributes} auxiliaryChainAttributes
-   * @return {Promise<number[]>>}
-   */
-  public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number[]> {
-    const results = await AuxiliaryChainModel.update({
+  /** Updates auxiliary chain data in database and does not return the updated state. */
+  public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<boolean> {
+    const [updatedRowCount] = await AuxiliaryChainModel.update({
       lastProcessedBlockNumber: auxiliaryChainAttributes.lastProcessedBlockNumber,
       lastOriginBlockHeight: auxiliaryChainAttributes.lastOriginBlockHeight,
       lastAuxiliaryBlockHeight: auxiliaryChainAttributes.lastAuxiliaryBlockHeight,
@@ -189,9 +187,20 @@ export class AuxiliaryChainRepository extends RepositoryBase {
       },
     });
 
-    this.markDirty();
+    assert(
+      updatedRowCount <= 1,
+      'As a chain id is a primary key, one or no entry should be affected.',
+    );
 
-    return results;
+    if (updatedRowCount === 1) {
+      const auxiliaryChain = await this.get(auxiliaryChainAttributes.chainId);
+      assert(auxiliaryChain !== null);
+      this.newSubject(auxiliaryChain as AuxiliaryChain);
+
+      return true;
+    }
+
+    return false;
   }
 
   /**

@@ -45,7 +45,7 @@ describe('GatewayRepository::update', (): void => {
     };
   });
 
-  it('Checks updation of gateway.', async (): Promise<void> => {
+  it('Checks update of gateway.', async (): Promise<void> => {
     const createGatewayAttributes: GatewayAttributes = {
       gatewayAddress: '0x0000000000000000000000000000000000000001',
       chainId: 1234,
@@ -63,10 +63,13 @@ describe('GatewayRepository::update', (): void => {
 
     Util.checkGatewayAgainstAttributes(objectForUpdate, createGatewayAttributes);
 
-    objectForUpdate.lastRemoteGatewayProvenBlockHeight = new BigNumber('12121212121212');
-
-    await config.db.gatewayRepository.update(
+    const updated = await config.db.gatewayRepository.update(
       objectForUpdate,
+    );
+
+    assert.isOk(
+      updated,
+      'An entry should be updated, as the gateway address in the attributes exists.',
     );
 
     const updatedGateway = await config.db.gatewayRepository.get(objectForUpdate.gatewayAddress);
@@ -77,7 +80,7 @@ describe('GatewayRepository::update', (): void => {
     );
   });
 
-  it('Updation should fail for a non existing gateway ', async (): Promise<void> => {
+  it('Update should fail for a non existing gateway ', async (): Promise<void> => {
     const gatewayAttributes: GatewayAttributes = {
       gatewayAddress: '0xd619143ac1bbe667473dfd060c7eee4c1e5ca96e',
       chainId: 1234,
@@ -89,14 +92,13 @@ describe('GatewayRepository::update', (): void => {
       activation: true,
     };
 
-    const gatewayUpdateResponse = await config.db.gatewayRepository.update(
+    const updated = await config.db.gatewayRepository.update(
       gatewayAttributes,
     );
 
-    assert.strictEqual(
-      gatewayUpdateResponse[0],
-      0,
-      'Should return 0 as no rows were updated',
+    assert.isNotOk(
+      updated,
+      'The gateway address in the passed attributes does not exist, hence no update.',
     );
 
     const updatedGateway = await config.db.gatewayRepository.get(gatewayAttributes.gatewayAddress);

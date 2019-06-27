@@ -20,7 +20,9 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import RepositoryBase from './RepositoryBase';
+import Subject from '../observer/Subject';
+
+import assert = require('assert');
 
 export class GatewayModel extends Model {}
 
@@ -52,7 +54,7 @@ export enum GatewayType {
   Auxiliary = 'auxiliary',
 }
 
-export class GatewayRepository extends RepositoryBase {
+export class GatewayRepository extends Subject<Gateway> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -144,7 +146,7 @@ export class GatewayRepository extends RepositoryBase {
     try {
       const gateway: Gateway = await GatewayModel.create(gatewayAttributes) as Gateway;
       this.format(gateway);
-      this.markDirty();
+      this.newSubject(gateway);
       return gateway;
     } catch (e) {
       const errorContext = {
@@ -175,13 +177,20 @@ export class GatewayRepository extends RepositoryBase {
     return gateway;
   }
 
-  /**
-   * Updates gateway data in database and does not return the updated state.
-   * @param {GatewayAttributes} gatewayAttributes
-   * @return {Promise<Array<Number>>}
-   */
-  public async update(gatewayAttributes: GatewayAttributes): Promise<number[]> {
-    const results = await GatewayModel.update(gatewayAttributes, {
+
+  /** Updates gateway data in database and does not return the updated state. */
+  public async update(gatewayAttributes: GatewayAttributes): Promise<boolean> {
+    const [updatedRowCount] = await GatewayModel.update({
+      gatewayAddress: gatewayAttributes.gatewayAddress,
+      chainId: gatewayAttributes.chainId,
+      gatewayType: gatewayAttributes.gatewayType,
+      remoteGatewayAddress: gatewayAttributes.remoteGatewayAddress,
+      tokenAddress: gatewayAttributes.tokenAddress,
+      anchorAddress: gatewayAttributes.anchorAddress,
+      bounty: gatewayAttributes.bounty,
+      activation: gatewayAttributes.activation,
+      lastRemoteGatewayProvenBlockHeight: gatewayAttributes.lastRemoteGatewayProvenBlockHeight,
+    }, {
       where: {
         gatewayAddress: {
           [Op.eq]: gatewayAttributes.gatewayAddress,
@@ -189,9 +198,20 @@ export class GatewayRepository extends RepositoryBase {
       },
     });
 
-    this.markDirty();
+    assert(
+      updatedRowCount <= 1,
+      'As a gateway address is a primary key, one or no entry should be affected.',
+    );
 
-    return results;
+    if (updatedRowCount === 1) {
+      const gateway = await this.get(gatewayAttributes.gatewayAddress);
+      assert(gateway !== null);
+      this.newSubject(gateway as Gateway);
+
+      return true;
+    }
+
+    return false;
   }
 
   /**

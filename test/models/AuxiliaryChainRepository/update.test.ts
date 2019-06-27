@@ -44,7 +44,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
     };
   });
 
-  it('Checks updation of auxiliary chain model.', async (): Promise<void> => {
+  it('Checks update of an auxiliary chain model.', async (): Promise<void> => {
     const createAuxiliaryChainAttributes: AuxiliaryChainAttributes = {
       chainId: 10001,
       originChainName: '10001',
@@ -64,11 +64,18 @@ describe('AuxiliaryChainRepository::update', (): void => {
     objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364475');
     objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364476');
 
-    await config.db.auxiliaryChainRepository.update(
+    const updated = await config.db.auxiliaryChainRepository.update(
       objectForUpdate,
     );
 
-    const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(objectForUpdate.chainId);
+    assert.isOk(
+      updated,
+      'Entry should be updated, as chain id in chain attributes exists.',
+    );
+
+    const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(
+      objectForUpdate.chainId,
+    );
 
     Util.checkAuxiliaryChainAgainstAttributes(
       updatedAuxiliaryChain as AuxiliaryChain,
@@ -76,7 +83,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
     );
   });
 
-  it('Updation should fail for a non existing auxiliary chain ', async (): Promise<void> => {
+  it('Update should fail for a non existing auxiliary chain ', async (): Promise<void> => {
     const auxiliaryChainAttributes: AuxiliaryChainAttributes = {
       chainId: 10002,
       originChainName: '10003',
@@ -86,17 +93,18 @@ describe('AuxiliaryChainRepository::update', (): void => {
       coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
-    const updateResponse = await config.db.auxiliaryChainRepository.update(
+    const updated = await config.db.auxiliaryChainRepository.update(
       auxiliaryChainAttributes,
     );
 
-    assert.strictEqual(
-      updateResponse[0],
-      0,
-      'Should return [0] as no records were updated in DB',
+    assert.isNotOk(
+      updated,
+      'The chain id in the passed chain attributes does not exist, hence no update.',
     );
 
-    const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(auxiliaryChainAttributes.chainId);
+    const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(
+      auxiliaryChainAttributes.chainId,
+    );
 
     return assert.strictEqual(
       updatedAuxiliaryChain,

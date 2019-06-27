@@ -19,7 +19,7 @@
 import { DataTypes, Model, InitOptions } from 'sequelize';
 import BigNumber from 'bignumber.js';
 import { MessageModel } from './MessageRepository';
-import RepositoryBase from './RepositoryBase';
+import Subject from '../observer/Subject';
 
 
 /**
@@ -85,7 +85,7 @@ export interface StakeRequest extends StakeRequestAttributes {
  * Class enables creation, update and retrieval of StakeRequest objects.
  * On construction it initializes underlying database model.
  */
-export class StakeRequestRepository extends RepositoryBase {
+export class StakeRequestRepository extends Subject<StakeRequest> {
   /* Public Functions */
 
   /**
@@ -163,8 +163,6 @@ export class StakeRequestRepository extends RepositoryBase {
    * Function throws if a stake request with the same stake request's hash
    * already exists.
    *
-   * Marks the repository as dirty.
-   *
    * @param stakeRequestAttributes Attributes of a newly created stake request.
    *
    * @return Newly created stake request object.
@@ -172,8 +170,10 @@ export class StakeRequestRepository extends RepositoryBase {
   public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
     try {
       const stakeRequestModel = await StakeRequestModel.create(stakeRequestAttributes);
-      this.markDirty();
-      return this.convertToStakeRequest(stakeRequestModel);
+      const stakeRequest = this.convertToStakeRequest(stakeRequestModel);
+      this.newSubject(stakeRequest);
+
+      return stakeRequest;
     } catch (e) {
       const errorContext = {
         input: {
@@ -227,8 +227,6 @@ export class StakeRequestRepository extends RepositoryBase {
   /**
    * Updates a message hash for the specified stake request's hash.
    *
-   * Marks the repository as dirty.
-   *
    * Function fails if stake request's hash does not exist.
    *
    * @param stakeRequestHash Stake request's hash to update message hash.
@@ -254,7 +252,8 @@ export class StakeRequestRepository extends RepositoryBase {
 
     try {
       await stakeRequestModel.update({ messageHash });
-      this.markDirty();
+      const stakeRequest = this.convertToStakeRequest(stakeRequestModel);
+      this.newSubject(stakeRequest);
     } catch (e) {
       const errorContext = {
         input: {

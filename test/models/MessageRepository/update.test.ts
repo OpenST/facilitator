@@ -71,8 +71,13 @@ describe('MessageRepository::update', (): void => {
     objectForUpdate.secret = 'secret';
     objectForUpdate.hashLock = 'hashLock';
 
-    await config.db.messageRepository.update(
+    const updated = await config.db.messageRepository.update(
       objectForUpdate,
+    );
+
+    assert.isOk(
+      updated,
+      'An entry should be updated, as the message hash in the attributes exists.',
     );
 
     const updatedMessage = await config.db.messageRepository.get(objectForUpdate.messageHash);
@@ -98,14 +103,13 @@ describe('MessageRepository::update', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
-    const messageUpdateResponse = await config.db.messageRepository.update(
+    const updated = await config.db.messageRepository.update(
       messageAttributes,
     );
 
-    assert.strictEqual(
-      messageUpdateResponse[0],
-      0,
-      'Should return 0 as no rows were updated',
+    assert.isNotOk(
+      updated,
+      'The message hash in the passed attributes does not exist, hence no update.',
     );
 
     const updatedMessage = await config.db.messageRepository.get(messageAttributes.messageHash);

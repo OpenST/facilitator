@@ -14,6 +14,6 @@
 //
 // ----------------------------------------------------------------------------
 
-export default abstract class Observer {
-  public abstract async update(): Promise<void>;
+export default abstract class Observer<T> {
+  public abstract async update(updates: T[]): Promise<void>;
 }
