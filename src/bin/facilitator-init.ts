@@ -18,39 +18,39 @@ commander
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
     // Validating mandatory parameters
-    let mandatoryOptionMissing: boolean = false;
+    let mandatoryOptionMissing = false;
 
-    if(options.mosaicConfig === undefined) {
+    if (options.mosaicConfig === undefined) {
       Logger.error('required --mosaicConfig <mosaic-config>');
       mandatoryOptionMissing = true;
     }
 
-    if(options.chainId === undefined) {
+    if (options.chainId === undefined) {
       Logger.error('required --chainId <chain-id>');
       mandatoryOptionMissing = true;
     }
 
-    if(options.originRpc === undefined) {
+    if (options.originRpc === undefined) {
       Logger.error('required --originRpc <origin-rpc>');
       mandatoryOptionMissing = true;
     }
 
-    if(options.auxiliaryRpc === undefined) {
+    if (options.auxiliaryRpc === undefined) {
       Logger.error('required --auxiliaryRpc <auxiliary-rpc>');
       mandatoryOptionMissing = true;
     }
 
-    if(options.originPassword === undefined) {
+    if (options.originPassword === undefined) {
       Logger.error('required --originPassword <origin-password>');
       mandatoryOptionMissing = true;
     }
 
-    if(options.auxiliaryPassword === undefined) {
+    if (options.auxiliaryPassword === undefined) {
       Logger.error('required --auxiliaryPassword <auxiliary-password>');
       mandatoryOptionMissing = true;
     }
 
-    if(mandatoryOptionMissing === true) {
+    if (mandatoryOptionMissing === true) {
       process.exit(1);
     }
 
@@ -70,15 +70,14 @@ commander
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
     const auxChain = mosaicConfig.auxiliaryChains[options.chainId];
-    let originChainId;
     if (auxChain === null || auxChain === undefined) {
       Logger.error('aux chain id is not present in the mosaic config');
       process.exit(1);
     }
 
-    originChainId = mosaicConfig.originChain.chain;
+    const originChainId = mosaicConfig.originChain.chain;
 
-    let {dbPath} = options;
+    let { dbPath } = options;
     if (dbPath === undefined || dbPath === null) {
       Logger.info('database path is not provided');
       dbPath = DatabaseFileHelper.create(options.chainId);
@@ -90,7 +89,7 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
-    const setFacilitator = (chainid:string, rpc:string, password:string) => {
+    const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
 
       facilitatorConfig.chains[chainid] = new Chain();

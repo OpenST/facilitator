@@ -1,19 +1,28 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Utils from '../../src/Utils';
-import SpyAssert from "./../utils/SpyAssert";
+import SpyAssert from "../utils/SpyAssert";
 import { FacilitatorConfig } from "../../src/Config";
 import {assert} from 'chai';
 
 const sinon = require('sinon');
 
-describe('Facilitator.from()', function () {
+describe('FacilitatorConfig.from()', function () {
   const chain = '301';
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const facilitatorDBPath = 'test/database/mosaic_facilitator.db';
   const config = `{"database":{"path":"${facilitatorDBPath}"}}`;
 
   let pathSpy:any;
+
+  function spyUtils(): any {
+    const utilsSpy = sinon.replace(
+      Utils,
+      'getJsonDataFromPath',
+      sinon.fake.returns(JSON.parse(config))
+    );
+    return utilsSpy;
+  }
 
   function spyFsModule(status: boolean) {
     const fsSpy = sinon.replace(
@@ -71,14 +80,10 @@ describe('Facilitator.from()', function () {
 
   it('should pass with valid arguments', function () {
     const fsSpy = spyFsModule(true);
-    const utilsSpy = sinon.replace(
-      Utils,
-      'getJsonDataFromPath',
-      sinon.fake.returns(JSON.parse(config))
-    );
+    const utilsSpy = spyUtils();
     const facilitatorSpy = sinon.replace(
       FacilitatorConfig,
-      'validateSchema',
+      'verifySchema',
       sinon.fake.returns(true)
     );
 
@@ -108,6 +113,23 @@ describe('Facilitator.from()', function () {
       undefined,
       'Facilitator DB path is incorrect'
     );
+
+    sinon.restore();
+  });
+
+  it('should fail when verifySchema throws exception', function () {
+    const fsSpy = spyFsModule(true);
+    const utilsSpy = spyUtils();
+    const facilitatorSpy = sinon.replace(
+      FacilitatorConfig,
+      'verifySchema',
+      sinon.fake.throws('invalid facilitator config')
+    );
+
+    assert.throws(() => FacilitatorConfig.from(chain), 'invalid facilitator config');
+    SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
+    SpyAssert.assert(facilitatorSpy,1, [[JSON.parse(config)]]);
+    SpyAssert.assert(utilsSpy, 1, [[facilitatorConfigPath]]);
 
     sinon.restore();
   });

@@ -3,13 +3,13 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as assert from 'assert';
 
-describe('Facilitator.validate()', () => {
+describe('FacilitatorConfig.verifySchema()', () => {
 
   let facilitatorConfig, invalidFacilitatorConfig:any;
 
   it('should pass when facilitator config is valid', async () => {
     facilitatorConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'testdata', 'facilitator-config.json')).toString());
-    FacilitatorConfig.validateSchema(facilitatorConfig);
+    FacilitatorConfig.verifySchema(facilitatorConfig);
   });
 
   it('should fail when facilitator config is invalid', async () => {
@@ -22,7 +22,7 @@ describe('Facilitator.validate()', () => {
     );
 
     assert.throws(
-      () => FacilitatorConfig.validateSchema(invalidFacilitatorConfig),
+      () => FacilitatorConfig.verifySchema(invalidFacilitatorConfig),
       'Invalid facilitator-schema',
     );
   });
