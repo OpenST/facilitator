@@ -15,5 +15,5 @@
 // ----------------------------------------------------------------------------
 
 export default abstract class Observer {
-  public abstract async notify(): Promise<void>;
+  public abstract async update(): Promise<void>;
 }

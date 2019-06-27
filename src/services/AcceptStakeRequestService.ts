@@ -50,7 +50,7 @@ export default class AcceptStakeRequestService extends Observer {
     this.messageRepository = db.messageRepository;
   }
 
-  public async notify(): Promise<void> {
+  public async update(): Promise<void> {
     const nonAcceptedStakeRequests = await this.collectNonAcceptedStakeRequests();
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }

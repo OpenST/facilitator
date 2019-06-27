@@ -27,7 +27,7 @@ export default class Subject {
   public async notify(): Promise<void[]> {
     const observerNotifyPromises = [];
     for (let i = 0; i < this.observers.length; i += 1) {
-      observerNotifyPromises.push(this.observers[i].notify());
+      observerNotifyPromises.push(this.observers[i].update());
     }
 
     return Promise.all(observerNotifyPromises);
