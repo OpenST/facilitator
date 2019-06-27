@@ -2,7 +2,7 @@ import * as commander from 'commander';
 import Logger from '../Logger';
 import Facilitator from '../Facilitator';
 import {Config} from '../Config';
-import FacilitatorCommand from "./FacilitatorCommand";
+import FacilitatorStart from "./FacilitatorStart";
 
 
 // TODO: readme.
@@ -16,7 +16,7 @@ facilitator
     let configObj: Config;
 
     try {
-    configObj = FacilitatorCommand.getConfig(origin_chain, aux_chain_id, options);
+    configObj = FacilitatorStart.getConfig(origin_chain, aux_chain_id, options);
 
     const facilitator: Facilitator = new Facilitator(configObj);
     await facilitator.start();
