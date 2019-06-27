@@ -1,25 +1,25 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { assert } from 'chai';
+import * as sinon from 'sinon';
 import Utils from '../../src/Utils';
-import SpyAssert from "../utils/SpyAssert";
-import { FacilitatorConfig } from "../../src/Config";
-import {assert} from 'chai';
+import SpyAssert from '../utils/SpyAssert';
+import { FacilitatorConfig } from '../../src/Config';
 
-const sinon = require('sinon');
 
-describe('FacilitatorConfig.from()', function () {
+describe('FacilitatorConfig.from()', () => {
   const chain = '301';
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const facilitatorDBPath = 'test/database/mosaic_facilitator.db';
   const config = `{"database":{"path":"${facilitatorDBPath}"}}`;
 
-  let pathSpy:any;
+  let pathSpy: any;
 
   function spyUtils(): any {
     const utilsSpy = sinon.replace(
       Utils,
       'getJsonDataFromPath',
-      sinon.fake.returns(JSON.parse(config))
+      sinon.fake.returns(JSON.parse(config)),
     );
     return utilsSpy;
   }
@@ -34,43 +34,43 @@ describe('FacilitatorConfig.from()', function () {
   }
 
   function assertPathSpy(
-    pathSpy: any
+    pathSpy: any,
   ) {
     assert.strictEqual(
       pathSpy.callCount,
       2,
-      `Expected call count is 2 but got ${pathSpy.callCount}`
+      `Expected call count is 2 but got ${pathSpy.callCount}`,
     );
 
     // validating input parameters on first call of path.join
     assert.strictEqual(
       pathSpy.args[0][1],
       '.mosaic',
-      'Base path is incorrect'
+      'Base path is incorrect',
     );
 
-    //validating input parameters on second call of path.join
+    // validating input parameters on second call of path.join
     assert.strictEqual(
       pathSpy.args[1][0],
       facilitatorConfigPath,
-      'Path is incorrect'
+      'Path is incorrect',
     );
     assert.strictEqual(
       pathSpy.args[1][1],
       chain,
-      'Chain name is incorrect'
+      'Chain name is incorrect',
     );
     assert.strictEqual(
       pathSpy.args[1][2],
       'facilitator-config.json',
-      'Facilitator config file name is incorrect'
+      'Facilitator config file name is incorrect',
     );
   }
 
   beforeEach(async () => {
     pathSpy = sinon.stub(
       path,
-      'join'
+      'join',
     ).callsFake(sinon.fake.returns(facilitatorConfigPath));
   });
 
@@ -78,30 +78,30 @@ describe('FacilitatorConfig.from()', function () {
     assertPathSpy(pathSpy);
   });
 
-  it('should pass with valid arguments', function () {
+  it('should pass with valid arguments', () => {
     const fsSpy = spyFsModule(true);
     const utilsSpy = spyUtils();
     const facilitatorSpy = sinon.replace(
       FacilitatorConfig,
       'verifySchema',
-      sinon.fake.returns(true)
+      sinon.fake.returns(true),
     );
 
     const facilitatorConfig = FacilitatorConfig.from(chain);
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(facilitatorSpy,1, [[JSON.parse(config)]]);
+    SpyAssert.assert(facilitatorSpy, 1, [[JSON.parse(config)]]);
     SpyAssert.assert(utilsSpy, 1, [[facilitatorConfigPath]]);
     assert.strictEqual(
       facilitatorConfig.database.path,
       facilitatorDBPath,
-      'Facilitator DB path is incorrect'
+      'Facilitator DB path is incorrect',
     );
 
     sinon.restore();
   });
 
-  it('should fail when facilitator file path doesn\'t exists', function () {
+  it('should fail when facilitator file path doesn\'t exists', () => {
     const fsSpy = spyFsModule(false);
 
     const facilitatorConfig = FacilitatorConfig.from(chain);
@@ -111,24 +111,24 @@ describe('FacilitatorConfig.from()', function () {
     assert.strictEqual(
       facilitatorConfig.database.path,
       undefined,
-      'Facilitator DB path is incorrect'
+      'Facilitator DB path is incorrect',
     );
 
     sinon.restore();
   });
 
-  it('should fail when verifySchema throws exception', function () {
+  it('should fail when verifySchema throws exception', () => {
     const fsSpy = spyFsModule(true);
     const utilsSpy = spyUtils();
     const facilitatorSpy = sinon.replace(
       FacilitatorConfig,
       'verifySchema',
-      sinon.fake.throws('invalid facilitator config')
+      sinon.fake.throws('invalid facilitator config'),
     );
 
     assert.throws(() => FacilitatorConfig.from(chain), 'invalid facilitator config');
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(facilitatorSpy,1, [[JSON.parse(config)]]);
+    SpyAssert.assert(facilitatorSpy, 1, [[JSON.parse(config)]]);
     SpyAssert.assert(utilsSpy, 1, [[facilitatorConfigPath]]);
 
     sinon.restore();
