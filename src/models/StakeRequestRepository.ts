@@ -163,6 +163,8 @@ export class StakeRequestRepository extends RepositoryBase {
    * Function throws if a stake request with the same stake request's hash
    * already exists.
    *
+   * Marks the repository as dirty.
+   *
    * @param stakeRequestAttributes Attributes of a newly created stake request.
    *
    * @return Newly created stake request object.
@@ -224,6 +226,8 @@ export class StakeRequestRepository extends RepositoryBase {
 
   /**
    * Updates a message hash for the specified stake request's hash.
+   *
+   * Marks the repository as dirty.
    *
    * Function fails if stake request's hash does not exist.
    *

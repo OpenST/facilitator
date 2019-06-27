@@ -16,6 +16,11 @@
 
 import Observer from './Observer';
 
+/**
+ * The class enables one-to-many dependency between objects, so that
+ * when object (subject) changes state, all its dependents (observers) are
+ * notified and updated.
+ */
 export default class Subject {
   /* Storage */
 
@@ -24,6 +29,7 @@ export default class Subject {
 
   /* Public Functions */
 
+  /** Notifies all observers about change in the subject. */
   public async notify(): Promise<void[]> {
     const observerNotifyPromises = [];
     for (let i = 0; i < this.observers.length; i += 1) {
@@ -33,10 +39,12 @@ export default class Subject {
     return Promise.all(observerNotifyPromises);
   }
 
+  /** Attaches a new observer to the subject. */
   public attach(observer: Observer): void {
     this.observers.push(observer);
   }
 
+  /** Detaches an observer from the subject. */
   public detach(observer: Observer): void {
     const observerIndex = this.observers.indexOf(observer);
     this.observers.splice(observerIndex, 1);
