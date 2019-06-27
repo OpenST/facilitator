@@ -33,6 +33,16 @@ describe('FacilitatorConfig.from()', () => {
     return fsSpy;
   }
 
+  /**
+   * Path.join is called twice in `from` method. Args variable of spy for path.join method contains parameters of both calls.
+   * Args is 2-dimensional array. We can access args of both the calls above.
+   * Examples:-
+   *  - path.join('a')
+   *  - path.join('d','e')
+   * 1. args[0][0] refers to first call of path.join and its value is 'a'.
+   * 2. args[1][0] refers to first parameter of second call for path.join. It would return 'd'.
+   * 3. args[1][1] refers to second parameter of second call for path.join. It would return 'e'.
+   */
   function assertPathSpy(
     pathSpy: any,
   ) {

@@ -70,7 +70,7 @@ export class FacilitatorConfig {
    * Constructor.
    * @param config Facilitator config object.
    */
-  public constructor(config: any) {
+  private constructor(config: any) {
     this.database = config.database || new DBConfig();
     this.chains = config.chains || {};
     this.encryptedAccounts = config.encryptedAccounts || {};
