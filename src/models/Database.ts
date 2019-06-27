@@ -56,11 +56,16 @@ export default class Database {
     return db;
   }
 
-  public notify(): void {
-    this.messageRepository.notify();
-    this.stakeRequestRepository.notify();
-    this.auxiliaryChainRepository.notify();
-    this.gatewayRepository.notify();
+  /** Notifies all repositories' observers about changes. */
+  public async notify(): Promise<void[][]> {
+    const promises = [];
+
+    promises.push(this.messageRepository.notify());
+    promises.push(this.stakeRequestRepository.notify());
+    promises.push(this.auxiliaryChainRepository.notify());
+    promises.push(this.gatewayRepository.notify());
+
+    return Promise.all(promises);
   }
 
 
