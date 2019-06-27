@@ -18,7 +18,8 @@
         "types": [
             "chai",
             "node",
-            "mocha"
+            "mocha",
+            "web3"
         ],
         "resolveJsonModule": true
     },

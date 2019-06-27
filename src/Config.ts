@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import { MosaicConfig } from './MosaicConfig';
 import Directory from './Directory';
 import Utils from './Utils';
@@ -61,7 +60,7 @@ export class FacilitatorConfig {
 
   public chains: Record<string, Chain>;
 
-  public encryptedAccounts: Record<string, EncryptedKeystoreV3Json>;
+  public encryptedAccounts: Record<string, object>;
 
   /**
    * Constructor.
@@ -127,9 +126,8 @@ export class FacilitatorConfig {
  * Holds mosaic config, database config and facilitator config.
  */
 export class Config {
-
   public facilitator: FacilitatorConfig;
-  
+
   public mosaic: MosaicConfig;
 
   /**
