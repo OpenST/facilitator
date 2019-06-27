@@ -1,18 +1,19 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { assert } from 'chai';
+import * as sinon from 'sinon';
 import Directory from '../../src/Directory';
 import SpyAssert from '../utils/SpyAssert';
 import { FacilitatorConfig } from '../../src/Config';
 
-import * as sinon from 'sinon';
 
 describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
   const chain = '301';
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
-  let pathSpy: any; let directorySpy: any; let
-    fsSpy: any;
+  let pathSpy: any;
+  let directorySpy: any;
+  let fsSpy: any;
 
   function spyFsModule(fileSize: number): any {
     const fsSpy: any = sinon.replace(
@@ -56,7 +57,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
 
   it('should fail when file is empty', () => {
     const fileSize = 0;
-    const fsSpy: any = spyFsModule(fileSize);
+    fsSpy = spyFsModule(fileSize);
 
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
 

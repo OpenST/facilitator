@@ -1,10 +1,10 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as sinon from 'sinon';
 import Directory from '../../src/Directory';
 import SpyAssert from '../utils/SpyAssert';
 import { FacilitatorConfig } from '../../src/Config';
 
-import * as sinon from 'sinon';
 
 describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
   const chain = '301';
@@ -47,11 +47,11 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
 
   it('should pass with valid arguments', () => {
     const fsEnsureDirSyncSpy = spyFsEnsureDirSync();
-    const pathSpy = spyPath();
-    const directorySpy = spyDirectory();
     const fsWriteFileSyncSpy = spyFsWriteFileSync();
+    const fsConfig: FacilitatorConfig = FacilitatorConfig.from('');
+    const directorySpy = spyDirectory();
+    const pathSpy = spyPath();
 
-    const fsConfig: FacilitatorConfig = new FacilitatorConfig('');
     fsConfig.writeToFacilitatorConfig(chain);
 
     const data = {
