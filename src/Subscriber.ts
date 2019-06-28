@@ -29,6 +29,8 @@ export default class Subscriber {
   /**
    * Subscribes to subscription queries.
    *
+   * @param handler Instance of transaction handler.
+   *
    * @return {Promise<void>}
    */
   public async subscribe(handler: TransactionHandler) {

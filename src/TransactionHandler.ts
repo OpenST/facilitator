@@ -1,5 +1,6 @@
 import ContractEntityHandler from './handlers/ContractEntityHandler';
 import { HandlerNotFoundException } from './Exception';
+import Logger from './Logger';
 
 /**
  * This class knows about different kinds of handlers and it makes decision
@@ -15,6 +16,9 @@ export default class TransactionHandler {
    */
   public constructor(handlers: Record<string, ContractEntityHandler<any>>) {
     this.handlers = handlers;
+    // Suppressing lint error
+    // Refer: https://github.com/typescript-eslint/typescript-eslint/issues/636
+    /* eslint-disable @typescript-eslint/unbound-method */
     this.handle = this.handle.bind(this);
   }
 
@@ -29,6 +33,8 @@ export default class TransactionHandler {
     const models: Record<string, any> = {};
 
     const persistPromises = Object.keys(bulkTransactions).map(async (transactionKind) => {
+      Logger.info(`Handling records of kind ${transactionKind}`);
+      Logger.info(`Records: ${bulkTransactions}`);
       const handler = this.handlers[transactionKind];
       if (typeof handler === 'undefined') {
         throw new HandlerNotFoundException(

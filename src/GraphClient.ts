@@ -48,7 +48,6 @@ export default class GraphClient {
     }).subscribe({
       next(response) {
         handler.handle(response);
-        Logger.info(response);
       },
       error(err) {
         // Log error using logger

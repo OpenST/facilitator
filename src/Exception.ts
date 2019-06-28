@@ -28,4 +28,3 @@ export default class InvalidFacilitatorConfigException extends Error {
     this.message = message;
   }
 }
-
