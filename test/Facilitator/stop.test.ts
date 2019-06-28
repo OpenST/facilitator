@@ -6,9 +6,15 @@ import Subscriber from '../../src/Subscriber';
 import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
 import SpyAssert from '../utils/SpyAssert';
 import Database from '../../src/models/Database';
+import HandlerFactory from '../../src/handlers/HandlerFactory';
 
 describe('Facilitator.stop()', () => {
   it('should stop facilitation', async () => {
+    sinon.replace(
+      HandlerFactory,
+      'get',
+      sinon.fake.resolves(true),
+    );
     const mockGraphClient = sinon.createStubInstance(GraphClient);
     sinon.replace(
       GraphClient,

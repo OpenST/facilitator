@@ -7,14 +7,21 @@ import Subscriber from '../../src/Subscriber';
 import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
 import SpyAssert from '../utils/SpyAssert';
 import Database from '../../src/models/Database';
+import HandlerFactory from '../../src/handlers/HandlerFactory';
 
 describe('Facilitator.start()', () => {
   it('should start facilitation', async () => {
+    const handlerFactoryStub = sinon.replace(
+      HandlerFactory,
+      'get',
+      sinon.fake.resolves(true),
+    );
     const mockGraphClient = sinon.createStubInstance(GraphClient);
+    const fakeDatabase = 'fakeDataBase';
     const databaseSpy = sinon.replace(
       Database,
       'create',
-      sinon.fake.resolves(true),
+      sinon.fake.resolves(fakeDatabase),
     );
     const graphClientSpy = sinon.replace(
       GraphClient,
@@ -34,6 +41,12 @@ describe('Facilitator.start()', () => {
 
     const facilitator = new Facilitator(configStub);
     await facilitator.start();
+
+    SpyAssert.assert(
+      handlerFactoryStub,
+      1,
+      [[fakeDatabase]],
+    );
 
     SpyAssert.assert(databaseSpy, 1, [[fakePath]]);
 
