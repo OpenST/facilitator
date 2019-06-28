@@ -11,7 +11,7 @@ describe('Facilitator.start()', () => {
     const mockGraphClient = sinon.createStubInstance(GraphClient);
     const graphClientSpy = sinon.replace(
       GraphClient,
-      'getClient',
+      'getClientWithWsLink',
       sinon.fake.returns(mockGraphClient),
     );
     const subscribeStub = sinon.stub(Subscriber.prototype, 'subscribe');

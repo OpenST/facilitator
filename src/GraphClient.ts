@@ -1,10 +1,12 @@
 import ApolloClient from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
+import { createHttpLink } from "apollo-link-http";
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { Subscription } from 'apollo-client/util/Observable';
 import gql from 'graphql-tag';
 import * as WebSocket from 'ws'
+import fetch from 'node-fetch';
 
 import Logger from './Logger';
 
@@ -58,14 +60,27 @@ export default class GraphClient {
   }
 
   /**
+   * Query the graph node.
+   *
+   * @param query Graph query.
+   * @return Promise<{data: object}>
+   */
+  public async query(query: string):Promise<{data: object}> {
+    const gqlQuery = gql`${query}`;
+    const queryResult = await this.apolloClient.query({query: gqlQuery});
+
+    return queryResult;
+  }
+
+  /**
    * Creates and returns graph client.
    *
-   * @param {string} subgraphEndPoint Subgraph endpoint.
-   * @return {ApolloClient<NormalizedCacheObject>}
+   * @param {string} wsSubgraphEndPoint Subgraph endpoint.
+   * @return {GraphClient}
    */
-  public static getClient(subgraphEndPoint: string): GraphClient {
+  public static getClientWithWsLink(wsSubgraphEndPoint: string): GraphClient {
     // Creates subscription client
-    const subscriptionClient = new SubscriptionClient(subgraphEndPoint, {
+    const subscriptionClient = new SubscriptionClient(wsSubgraphEndPoint, {
       reconnect: true,
     },
     WebSocket);
@@ -76,6 +91,19 @@ export default class GraphClient {
     // Instantiate apollo client
     const apolloClient = new ApolloClient({ link: wsLink, cache });
     // Creates and returns graph client
+    return new GraphClient(apolloClient);
+  }
+
+  /**
+   * Returns Graph client with http link. Queries are done on http connection.
+   *
+   * @param httpSubGraphEndPoint subgraph end point.
+   * @return {GraphClient}
+   */
+  public static getClientWithHttpLink(httpSubGraphEndPoint): GraphClient {
+    const link = createHttpLink({ uri: httpSubGraphEndPoint, fetch: fetch });
+    const apolloClient = new ApolloClient({link: link, cache: new InMemoryCache()});
+
     return new GraphClient(apolloClient);
   }
 }

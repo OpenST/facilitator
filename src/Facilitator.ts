@@ -31,14 +31,14 @@ export default class Facilitator {
 
     // Subscription to origin subgraph queries
     this.originSubscriber = new Subscriber(
-      GraphClient.getClient(subGraphDetails.origin.subGraphEndPoint),
+      GraphClient.getClientWithWsLink(subGraphDetails.origin.subGraphEndPoint),
       subGraphDetails.origin.subscriptionQueries,
     );
     await this.originSubscriber.subscribe();
 
     // Subscription to auxiliary subgraph queries
     this.auxiliarySubscriber = new Subscriber(
-      GraphClient.getClient(subGraphDetails.auxiliary.subGraphEndPoint),
+      GraphClient.getClientWithWsLink(subGraphDetails.auxiliary.subGraphEndPoint),
       subGraphDetails.auxiliary.subscriptionQueries,
     );
     await this.auxiliarySubscriber.subscribe();
