@@ -117,6 +117,11 @@ export class FacilitatorConfig {
     return new FacilitatorConfig({});
   }
 
+  /**
+   * It provides facilitator config object if facilitator config file is present at the path.
+   * @param {string} filePath Path to facilitator config file.
+   * @returns {FacilitatorConfig}
+   */
   public static fromPath(filePath: string): FacilitatorConfig {
     if (fs.existsSync(filePath)) {
       const config = Utils.getJsonDataFromPath(filePath);
@@ -181,7 +186,7 @@ export class Config {
    */
   public static getConfigFromPath(
     mosaicConfigPath: string,
-    facilitatorConfigPath: string
+    facilitatorConfigPath: string,
   ): Config {
     const mosaic: MosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromPath(facilitatorConfigPath);
@@ -197,7 +202,7 @@ export class Config {
    */
   public static getConfig(
     originChain: string,
-    auxiliaryChain: string
+    auxiliaryChain: string,
   ): Config {
     const mosaic: MosaicConfig = MosaicConfig.fromChain(originChain);
     const facilitator: FacilitatorConfig = FacilitatorConfig.from(auxiliaryChain);
