@@ -258,8 +258,6 @@ describe('Facilitator.getConfig()', function () {
     sinon.restore();
     facilitatorSpy.restore();
     mosaicSpy.restore();
-    // spy.restore();
   });
-
-
 });
+
