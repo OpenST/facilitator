@@ -1,8 +1,11 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
-import MosaicConfig  from './MosaicConfig';
+import { Validator as JsonSchemaVerifier } from 'jsonschema';
+import { MosaicConfig } from './MosaicConfig';
 import Directory from './Directory';
+import InvalidFacilitatorConfigException from './Exception';
+import * as schema from './Config/FacilitatorConfig.schema.json';
 import Utils from './Utils';
 
 // Database password key to read from env.
@@ -69,7 +72,7 @@ export class FacilitatorConfig {
    * Constructor.
    * @param config Facilitator config object.
    */
-  public constructor(config: any) {
+  private constructor(config: any) {
     this.originChainId = config.originChainId;
     this.database = config.database || new DBConfig();
     this.chains = config.chains || {};
@@ -108,6 +111,7 @@ export class FacilitatorConfig {
 
     if (fs.existsSync(facilitatorConfigPath)) {
       const config = Utils.getJsonDataFromPath(facilitatorConfigPath);
+      FacilitatorConfig.verifySchema(config);
       return new FacilitatorConfig(config);
     }
     return new FacilitatorConfig({});
@@ -119,6 +123,20 @@ export class FacilitatorConfig {
       return new FacilitatorConfig(config);
     }
     return new FacilitatorConfig({});
+  }
+
+  /**
+   * This method verifies json object against facilitator config schema and throws
+   * an exception on failure.
+   * @param jsonObject JSON object to be validated against schema.
+   */
+  public static verifySchema(jsonObject: any): void {
+    const jsonSchemaVerifier = new JsonSchemaVerifier();
+    try {
+      jsonSchemaVerifier.validate(jsonObject, schema, { throwError: true });
+    } catch (error) {
+      throw new InvalidFacilitatorConfigException(error.message);
+    }
   }
 
   /**
@@ -138,7 +156,6 @@ export class FacilitatorConfig {
  * Holds mosaic config, database config and facilitator config.
  */
 export class Config {
-
   public facilitator: FacilitatorConfig;
 
   public mosaic: MosaicConfig;
