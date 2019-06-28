@@ -146,7 +146,7 @@ export class GatewayRepository extends Subject<Gateway> {
     try {
       const gateway: Gateway = await GatewayModel.create(gatewayAttributes) as Gateway;
       this.format(gateway);
-      this.newSubject(gateway);
+      this.newUpdate(gateway);
       return gateway;
     } catch (e) {
       const errorContext = {
@@ -206,7 +206,7 @@ export class GatewayRepository extends Subject<Gateway> {
     if (updatedRowCount === 1) {
       const gateway = await this.get(gatewayAttributes.gatewayAddress);
       assert(gateway !== null);
-      this.newSubject(gateway as Gateway);
+      this.newUpdate(gateway as Gateway);
 
       return true;
     }

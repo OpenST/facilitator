@@ -143,7 +143,7 @@ export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     try {
       const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
       this.format(auxiliaryChain);
-      this.newSubject(auxiliaryChain);
+      this.newUpdate(auxiliaryChain);
       return auxiliaryChain;
     } catch (e) {
       const errorContext = {
@@ -195,7 +195,7 @@ export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     if (updatedRowCount === 1) {
       const auxiliaryChain = await this.get(auxiliaryChainAttributes.chainId);
       assert(auxiliaryChain !== null);
-      this.newSubject(auxiliaryChain as AuxiliaryChain);
+      this.newUpdate(auxiliaryChain as AuxiliaryChain);
 
       return true;
     }

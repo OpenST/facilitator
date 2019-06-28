@@ -192,7 +192,7 @@ export class MessageRepository extends Subject<Message> {
     try {
       const message: Message = await MessageModel.create(messageAttributes);
       this.format(message);
-      this.newSubject(message);
+      this.newUpdate(message);
       return message;
     } catch (e) {
       const errorContext = {
@@ -245,7 +245,7 @@ export class MessageRepository extends Subject<Message> {
     if (updatedRowCount === 1) {
       const message = await this.get(messageAttributes.messageHash);
       assert(message !== null);
-      this.newSubject(message as Message);
+      this.newUpdate(message as Message);
 
       return true;
     }

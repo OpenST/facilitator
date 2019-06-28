@@ -180,7 +180,7 @@ export class StakeRequestRepository extends Subject<StakeRequest> {
     try {
       const stakeRequestModel = await StakeRequestModel.create(stakeRequestAttributes);
       const stakeRequest = this.convertToStakeRequest(stakeRequestModel);
-      this.newSubject(stakeRequest);
+      this.newUpdate(stakeRequest);
 
       return stakeRequest;
     } catch (e) {
@@ -262,7 +262,7 @@ export class StakeRequestRepository extends Subject<StakeRequest> {
     try {
       await stakeRequestModel.update({ messageHash });
       const stakeRequest = this.convertToStakeRequest(stakeRequestModel);
-      this.newSubject(stakeRequest);
+      this.newUpdate(stakeRequest);
     } catch (e) {
       const errorContext = {
         input: {

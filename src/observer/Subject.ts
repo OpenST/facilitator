@@ -48,7 +48,7 @@ export default class Subject<T> {
     return Promise.all(observerNotifyPromises);
   }
 
-  public newSubject(t: T): void {
+  public newUpdate(t: T): void {
     this._updates.push(t);
   }
 
