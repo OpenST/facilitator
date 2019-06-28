@@ -7,9 +7,17 @@ import {
 
 import Logger from '../Logger';
 
+/**
+ * This class handels stake request transactions.
+ */
 export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequestAttributes> {
   private readonly stakeRequestRepository: StakeRequestRepository;
 
+  /**
+   * Constructor
+   *
+   * @param stakeRequestRepository Instance of stake request repository.
+   */
   public constructor(stakeRequestRepository: StakeRequestRepository) {
     super();
     this.stakeRequestRepository = stakeRequestRepository;
