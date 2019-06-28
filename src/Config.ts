@@ -73,7 +73,7 @@ export class FacilitatorConfig {
    * @param config Facilitator config object.
    */
   private constructor(config: any) {
-    this.originChainId = config.originChainId;
+    this.originChainId = config.originChainId || '';
     this.database = config.database || new DBConfig();
     this.chains = config.chains || {};
     this.encryptedAccounts = config.encryptedAccounts || {};
@@ -102,7 +102,7 @@ export class FacilitatorConfig {
    * @param {string} chain Auxiliary chain id.
    * @returns {FacilitatorConfig} Facilitator config object.
    */
-  public static from(chain: string): FacilitatorConfig { // TODO: change it to fromChain
+  public static from(chain: string): FacilitatorConfig {
     const facilitatorConfigPath = path.join(
       Directory.getMosaicDirectoryPath(),
       chain,
