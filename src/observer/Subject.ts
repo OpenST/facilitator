@@ -21,12 +21,12 @@ import Observer from './Observer';
  * when object (subject) changes state, all its dependents (observers) are
  * notified and updated.
  */
-export default class Subject<T> {
+export default class Subject<UpdateType> {
   /* Storage */
 
-  private _observers: Observer<T>[] = [];
+  private _observers: Observer<UpdateType>[] = [];
 
-  private _updates: T[] = [];
+  private _updates: UpdateType[] = [];
 
 
   /* Public Functions */
@@ -48,7 +48,10 @@ export default class Subject<T> {
     return Promise.all(observerNotifyPromises);
   }
 
-  public newUpdate(t: T): void {
+  /**
+   * @TODO Think about do we need to do de-duplication of updates.
+   */
+  public newUpdate(t: UpdateType): void {
     this._updates.push(t);
   }
 
@@ -56,7 +59,7 @@ export default class Subject<T> {
    * Attaches a new observer to the subject.
    * Throws an error if the specified observer already exists within the class.
    */
-  public attach(observer: Observer<T>): void {
+  public attach(observer: Observer<UpdateType>): void {
     const observerIndex = this._observers.indexOf(observer);
     if (observerIndex !== -1) {
       throw new Error('The specified observer is already attached.');
@@ -68,18 +71,18 @@ export default class Subject<T> {
    * Detaches an observer from the subject.
    * Silently ignores if the specified observer does not exist.
    */
-  public detach(observer: Observer<T>): void {
+  public detach(observer: Observer<UpdateType>): void {
     const observerIndex = this._observers.indexOf(observer);
     this._observers.splice(observerIndex, 1);
   }
 
   /* Getter for registered observers. */
-  public get observers(): Observer<T>[] {
+  public get observers(): Observer<UpdateType>[] {
     return this._observers;
   }
 
   /* Getter for collected updates. */
-  public get updates(): T[] {
+  public get updates(): UpdateType[] {
     return this._updates;
   }
 }

@@ -32,7 +32,25 @@ describe('Subject::newUpdate', (): void => {
     };
   });
 
-  it('', async (): Promise<void> => {
-    assert(config.subject !== undefined);
+  it('Checks newly added update exists.', async (): Promise<void> => {
+    const update1 = 1;
+
+    config.subject.newUpdate(update1);
+
+    assert.notStrictEqual(
+      config.subject.updates.indexOf(update1),
+      -1,
+      'Newly added update exists.',
+    );
+
+    const update2 = 2;
+
+    config.subject.newUpdate(update2);
+
+    assert.notStrictEqual(
+      config.subject.updates.indexOf(update2),
+      -1,
+      'Newly added update exists.',
+    );
   });
 });
