@@ -8,7 +8,6 @@ import * as WebSocket from 'ws';
 
 import Logger from './Logger';
 import TransactionHandler from './TransactionHandler';
-// import WebSocket = require('ws');
 
 /**
  * The class interacts with graph node server for subscription and query.

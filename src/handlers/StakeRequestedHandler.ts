@@ -5,6 +5,8 @@ import {
   StakeRequestRepository,
 } from '../models/StakeRequestRepository';
 
+import Logger from '../Logger';
+
 export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequestAttributes> {
   private readonly stakeRequestRepository: StakeRequestRepository;
 
@@ -53,12 +55,9 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    * This method defines action on receiving stake request model.
    *
    * @param stakeRequest array of instances of StakeRequestAttributes object.
-   *
-   * @return void
-
    */
   public handle = async (stakeRequest: StakeRequestAttributes[]): Promise<void> => {
-    console.log(stakeRequest);
+    Logger.info(`Stake requests  : ${stakeRequest}`);
     return Promise.resolve();
     // stakeRequestService.reactTo(stakeRequest);
   };

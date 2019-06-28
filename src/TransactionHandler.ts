@@ -1,9 +1,18 @@
 import ContractEntityHandler from './handlers/ContractEntityHandler';
 import { HandlerNotFoundException } from './Exception';
 
+/**
+ * This class knows about different kinds of handlers and it makes decision
+ * on which handler to invoke when bulk transactions arrive.
+ */
 export default class TransactionHandler {
   private readonly handlers: Record<string, ContractEntityHandler<any>>;
 
+  /**
+   * Constructor
+   *
+   * @param handlers This is mapping of handler kind with specific handler instance.
+   */
   public constructor(handlers: Record<string, ContractEntityHandler<any>>) {
     this.handlers = handlers;
     this.handle = this.handle.bind(this);

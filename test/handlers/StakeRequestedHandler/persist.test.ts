@@ -1,4 +1,4 @@
-import * as Utils from 'web3-utils';
+const Utils = require('web3-utils');
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 
