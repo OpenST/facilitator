@@ -19,12 +19,15 @@ import Observer from '../../src/observer/Observer';
 export default class ObserverSpy extends Observer<number> {
   /* Storage */
 
+  public wasCalled: boolean = false;
+
   public spyUpdates: number[] = [];
 
 
   /* Public Functions */
 
   public async update(updates: number[]): Promise<void> {
+    this.wasCalled = true;
     this.spyUpdates = updates;
   }
 }
