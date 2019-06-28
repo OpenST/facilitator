@@ -17,6 +17,7 @@
 import 'mocha';
 
 import Subject from '../../../src/observer/Subject';
+import ObserverSpy from '../ObserverSpy';
 
 import assert = require('assert');
 
@@ -32,7 +33,28 @@ describe('Subject::observers', (): void => {
     };
   });
 
-  it('', async (): Promise<void> => {
-    assert(config.subject !== undefined);
+  it('Checks that initially observers collection is empty.', async (): Promise<void> => {
+    assert.strictEqual(
+      config.subject.observers.length,
+      0,
+      'Registered observers collection is not empty.',
+    );
+  });
+
+  it('Checks that registered observer is within a collection.', async (): Promise<void> => {
+    const observer = new ObserverSpy();
+    config.subject.attach(observer);
+
+    assert.strictEqual(
+      config.subject.observers.length,
+      1,
+      'Registered observers collection length is not 1.',
+    );
+
+    assert.strictEqual(
+      config.subject.observers[0],
+      observer,
+      'Registered observer is not in the subject\'s observers list.',
+    );
   });
 });

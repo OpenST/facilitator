@@ -19,7 +19,7 @@ import Observer from '../../src/observer/Observer';
 export default class ObserverSpy extends Observer<number> {
   /* Storage */
 
-  public spyUpdates: number[];
+  public spyUpdates: number[] = [];
 
 
   /* Public Functions */
