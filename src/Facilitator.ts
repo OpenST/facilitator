@@ -39,15 +39,17 @@ export default class Facilitator {
     this.originSubscriber = new Subscriber(
       GraphClient.getClient(subGraphDetails.origin.subGraphEndPoint),
       subGraphDetails.origin.subscriptionQueries,
+      transactionalHandler,
     );
-    await this.originSubscriber.subscribe(transactionalHandler);
+    await this.originSubscriber.subscribe();
 
     // Subscription to auxiliary subgraph queries
     this.auxiliarySubscriber = new Subscriber(
       GraphClient.getClient(subGraphDetails.auxiliary.subGraphEndPoint),
       subGraphDetails.auxiliary.subscriptionQueries,
+      transactionalHandler,
     );
-    await this.auxiliarySubscriber.subscribe(transactionalHandler);
+    await this.auxiliarySubscriber.subscribe();
   }
 
   /**

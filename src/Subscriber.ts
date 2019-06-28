@@ -14,30 +14,36 @@ export default class Subscriber {
 
   private graphClient: GraphClient;
 
+  private handler: TransactionHandler;
+
   /**
    * Constructor
    *
    * @params {GraphClient} graphClient Graph client instance.
    * @param {Record<string, string>} subscriptionQueries Object of subscription queries.
+   * @param handler Instance of transaction handler.
    */
-  public constructor(graphClient: GraphClient, subscriptionQueries: Record<string, string>) {
+  public constructor(
+    graphClient: GraphClient,
+    subscriptionQueries: Record<string, string>,
+    handler: TransactionHandler,
+  ) {
     this.querySubscriptions = {};
     this.subscriptionQueries = subscriptionQueries;
     this.graphClient = graphClient;
+    this.handler = handler;
   }
 
   /**
    * Subscribes to subscription queries.
    *
-   * @param handler Instance of transaction handler.
-   *
    * @return {Promise<void>}
    */
-  public async subscribe(handler: TransactionHandler) {
+  public async subscribe() {
     for (const key in this.subscriptionQueries) {
       this.querySubscriptions[key] = await this.graphClient.subscribe(
         this.subscriptionQueries[key],
-        handler,
+        this.handler,
       );
     }
   }

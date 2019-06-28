@@ -24,12 +24,12 @@ describe('Subscriber.unsubscribe()', () => {
       'subscribe',
       sinon.fake.resolves(mockUnsubscribe),
     );
-    subscriber = new Subscriber(graphClient, subscriptionQueries);
+    const handler = sinon.mock(TransactionHandler);
+    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any);
   });
 
   it('should work with correct parameters', async () => {
-    const handler = sinon.mock(TransactionHandler);
-    await subscriber.subscribe(handler as any);
+    await subscriber.subscribe();
 
     assert.strictEqual(
       Object.keys(subscriber.querySubscriptions).length,

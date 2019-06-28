@@ -26,8 +26,8 @@ describe('Subscriber.subscribe()', () => {
       sinon.fake.resolves(mockQuerySubscriber),
     );
     const handler = sinon.mock(TransactionHandler);
-    subscriber = new Subscriber(graphClient, subscriptionQueries);
-    await subscriber.subscribe(handler as any);
+    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any);
+    await subscriber.subscribe();
 
     assert.strictEqual(
       Object.keys(subscriber.querySubscriptions).length,
