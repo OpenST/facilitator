@@ -23,7 +23,7 @@ import Subject from '../observer/Subject';
 
 
 /**
- * An interface, that represents a raw from a stake request table.
+ * An interface, that represents a row from a stake request table.
  *
  * See: http://docs.sequelizejs.com/manual/typescript.html#usage
  */
@@ -74,7 +74,16 @@ export interface StakeRequestAttributes {
  * @see StakeRequestRepository::create()
  * @see StakeRequestRepository::get()
  */
-export interface StakeRequest extends StakeRequestAttributes {
+export interface StakeRequest {
+  stakeRequestHash: string;
+  messageHash?: string;
+  amount: BigNumber;
+  beneficiary: string;
+  gasPrice: BigNumber;
+  gasLimit: BigNumber;
+  nonce: BigNumber;
+  gateway: string;
+  stakerProxy: string;
   createdAt: Date;
   updatedAt: Date;
 }

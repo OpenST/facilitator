@@ -56,7 +56,10 @@ export default class Database {
     return db;
   }
 
-  /** Notifies all repositories' observers about changes. */
+  /**
+   * Notifies all repositories' observers about changes in each
+   * corresponding repository.
+   */
   public async notify(): Promise<void[][]> {
     const promises = [];
 

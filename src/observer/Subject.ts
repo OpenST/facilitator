@@ -24,42 +24,52 @@ import Observer from './Observer';
 export default class Subject<T> {
   /* Storage */
 
-  private observers: Observer<T>[] = [];
+  private _observers: Observer<T>[] = [];
 
-  private updates: T[] = [];
+  private _updates: T[] = [];
 
 
   /* Public Functions */
 
   /** Notifies all observers about change in the subject. */
   public async notify(): Promise<void[]> {
-    if (this.updates.length === 0) {
+    if (this._updates.length === 0) {
       return [];
     }
 
-    const updates = [...this.updates];
-    this.updates.length = 0;
+    const updates = [...this._updates];
+    this._updates.length = 0;
 
     const observerNotifyPromises = [];
-    for (let i = 0; i < this.observers.length; i += 1) {
-      observerNotifyPromises.push(this.observers[i].update(updates));
+    for (let i = 0; i < this._observers.length; i += 1) {
+      observerNotifyPromises.push(this._observers[i].update(updates));
     }
 
     return Promise.all(observerNotifyPromises);
   }
 
   public newSubject(t: T): void {
-    this.updates.push(t);
+    this._updates.push(t);
   }
 
   /** Attaches a new observer to the subject. */
   public attach(observer: Observer<T>): void {
-    this.observers.push(observer);
+    this._observers.push(observer);
   }
 
   /** Detaches an observer from the subject. */
   public detach(observer: Observer<T>): void {
-    const observerIndex = this.observers.indexOf(observer);
-    this.observers.splice(observerIndex, 1);
+    const observerIndex = this._observers.indexOf(observer);
+    this._observers.splice(observerIndex, 1);
+  }
+
+  /* Getter for registered observers. */
+  public get observers(): Observer<T>[] {
+    return this._observers;
+  }
+
+  /* Getter for collected updates. */
+  public get updates(): T[] {
+    return this._updates;
   }
 }

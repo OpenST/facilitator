@@ -30,7 +30,7 @@ const hash = crypto.createHash('sha256');
  * Class collects all non accepted stake requests on a trigger and accepts
  * those stake requests in parallel.
  */
-export default class AcceptStakeRequestService extends Observer {
+export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   /* Storage */
 
   private web3: Web3;
