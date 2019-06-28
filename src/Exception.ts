@@ -18,6 +18,10 @@ export class FacilitatorStartException extends Error {
   public constructor(message: string) {
     super(message);
     this.name = 'FacilitatorStartException';
+    this.message = message;
+  }
+}
+
 /**
  * Defines error for facilitator config.
  */

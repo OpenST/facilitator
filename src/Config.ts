@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import { MosaicConfig } from './MosaicConfig';
+import MosaicConfig from './MosaicConfig';
 import Directory from './Directory';
 import InvalidFacilitatorConfigException from './Exception';
 import * as schema from './Config/FacilitatorConfig.schema.json';
