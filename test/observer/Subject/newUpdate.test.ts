@@ -25,7 +25,7 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('Subject::newSubject', (): void => {
+describe('Subject::newUpdate', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       subject: new Subject<number>(),

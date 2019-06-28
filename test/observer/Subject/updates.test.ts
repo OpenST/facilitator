@@ -25,6 +25,7 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
+
 describe('Subject::updates', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
@@ -32,7 +33,28 @@ describe('Subject::updates', (): void => {
     };
   });
 
-  it('', async (): Promise<void> => {
-    assert(config.subject !== undefined);
+  it('Checks that initially updates collection is empty.', async (): Promise<void> => {
+    assert.strictEqual(
+      config.subject.updates.length,
+      0,
+      'Updates are not empty.',
+    );
+  });
+
+  it('Checks that registered observer is within a collection.', async (): Promise<void> => {
+    const update1 = 1;
+    config.subject.newUpdate(update1);
+
+    assert.strictEqual(
+      config.subject.updates.length,
+      1,
+      'Updates count is not 1.',
+    );
+
+    assert.strictEqual(
+      config.subject.updates[0],
+      update1,
+      'Newly added update was not found.',
+    );
   });
 });
