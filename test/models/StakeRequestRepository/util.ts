@@ -19,7 +19,7 @@ import {
   StakeRequest,
 } from '../../../src/models/StakeRequestRepository';
 
-import assert = require('assert');
+import assert from '../../utils/assert';
 
 const Util = {
   checkStakeRequestAgainstAttributes(

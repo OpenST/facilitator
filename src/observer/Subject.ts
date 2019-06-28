@@ -52,12 +52,22 @@ export default class Subject<T> {
     this._updates.push(t);
   }
 
-  /** Attaches a new observer to the subject. */
+  /**
+   * Attaches a new observer to the subject.
+   * Throws an error if the specified observer already exists within the class.
+   */
   public attach(observer: Observer<T>): void {
+    const observerIndex = this._observers.indexOf(observer);
+    if (observerIndex !== -1) {
+      throw new Error('The specified observer is already attached.');
+    }
     this._observers.push(observer);
   }
 
-  /** Detaches an observer from the subject. */
+  /**
+   * Detaches an observer from the subject.
+   * Silently ignores if the specified observer does not exist.
+   */
   public detach(observer: Observer<T>): void {
     const observerIndex = this._observers.indexOf(observer);
     this._observers.splice(observerIndex, 1);

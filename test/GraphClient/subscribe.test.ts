@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
-import { assert } from 'chai';
 import * as sinon from 'sinon';
+import assert from '../utils/assert';
 
 import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../utils/SpyAssert';
@@ -9,7 +9,7 @@ describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;
   let subscriptionQry: string;
   let mockApolloClient: any;
-  let options: Object;
+  let options: Record<string, any>;
 
   beforeEach(() => {
     mockApolloClient = {

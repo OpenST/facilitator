@@ -19,7 +19,7 @@ import {
   Gateway,
 } from '../../../src/models/GatewayRepository';
 
-import assert = require('assert');
+import assert from '../../utils/assert';
 
 const Util = {
   checkGatewayAgainstAttributes(
@@ -81,7 +81,6 @@ const Util = {
         'lastRemoteGatewayProvenBlockHeight should match',
       );
     }
-
   },
 
 };

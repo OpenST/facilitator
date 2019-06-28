@@ -14,25 +14,9 @@
 //
 // ----------------------------------------------------------------------------
 
-import 'mocha';
+import chai = require('chai');
+import chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+const { assert } = chai;
 
-import Subject from '../../../src/observer/Subject';
-
-import assert from '../../utils/assert';
-
-interface TestConfigInterface {
-  subject: Subject<number>;
-}
-let config: TestConfigInterface;
-
-describe('Subject::newUpdate', (): void => {
-  beforeEach(async (): Promise<void> => {
-    config = {
-      subject: new Subject<number>(),
-    };
-  });
-
-  it('', async (): Promise<void> => {
-    assert(config.subject !== undefined);
-  });
-});
+export default assert;

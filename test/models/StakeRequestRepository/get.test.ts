@@ -25,7 +25,7 @@ import Database from '../../../src/models/Database';
 
 import Util from './util';
 
-import assert = require('assert');
+import assert from '../../utils/assert';
 
 interface TestConfigInterface {
   db: Database;

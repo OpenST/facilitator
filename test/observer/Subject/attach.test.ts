@@ -17,8 +17,9 @@
 import 'mocha';
 
 import Subject from '../../../src/observer/Subject';
+import ObserverSpy from '../ObserverSpy';
 
-import assert = require('assert');
+import assert from '../../utils/assert';
 
 interface TestConfigInterface {
   subject: Subject<number>;
@@ -32,7 +33,36 @@ describe('Subject::attach', (): void => {
     };
   });
 
-  it('', async (): Promise<void> => {
-    assert(config.subject !== undefined);
+  it('Checks newly added observer exists.', async (): Promise<void> => {
+    const observer1 = new ObserverSpy();
+
+    config.subject.attach(observer1);
+
+    assert.notStrictEqual(
+      config.subject.observers.indexOf(observer1),
+      -1,
+      'Newly attached observer does not exist.',
+    );
+
+    const observer2 = new ObserverSpy();
+
+    config.subject.attach(observer2);
+
+    assert.notStrictEqual(
+      config.subject.observers.indexOf(observer2),
+      -1,
+      'Newly attached observer does not exist.',
+    );
+  });
+
+  it('Fails if the specified observer is already attached.', async (): Promise<void> => {
+    const observer = new ObserverSpy();
+
+    config.subject.attach(observer);
+
+    assert.throws(
+      (): void => config.subject.attach(observer),
+      'The specified observer is already attached.',
+    );
   });
 });

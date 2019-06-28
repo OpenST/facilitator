@@ -1,5 +1,5 @@
-import { assert } from 'chai';
 import * as sinon from 'sinon';
+import assert from '../utils/assert';
 
 import { Config } from '../../src/Config';
 import Facilitator from '../../src/Facilitator';

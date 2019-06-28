@@ -18,7 +18,7 @@ import 'mocha';
 
 import Subject from '../../../src/observer/Subject';
 
-import assert = require('assert');
+import assert from '../../utils/assert';
 
 interface TestConfigInterface {
   subject: Subject<number>;

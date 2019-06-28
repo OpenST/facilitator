@@ -28,10 +28,7 @@ import Database from '../../../src/models/Database';
 
 import Util from './util';
 
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
-const { assert } = chai;
+import assert from '../../utils/assert';
 
 interface TestConfigInterface {
   db: Database;
