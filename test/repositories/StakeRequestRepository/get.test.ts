@@ -19,9 +19,11 @@ import BigNumber from 'bignumber.js';
 
 import {
   StakeRequestAttributes,
-  StakeRequest,
-} from '../../../src/models/StakeRequestRepository';
-import Database from '../../../src/models/Database';
+} from '../../../src/repositories/StakeRequestRepository';
+
+import StakeRequest from '../../../src/models/StakeRequest';
+
+import Database from '../../../src/repositories/Database';
 
 import Util from './util';
 

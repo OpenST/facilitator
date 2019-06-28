@@ -16,8 +16,9 @@
 
 import {
   StakeRequestAttributes,
-  StakeRequest,
-} from '../../../src/models/StakeRequestRepository';
+} from '../../../src/repositories/StakeRequestRepository';
+
+import StakeRequest from '../../../src/models/StakeRequest';
 
 import assert from '../../utils/assert';
 

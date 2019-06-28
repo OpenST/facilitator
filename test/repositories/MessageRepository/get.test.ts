@@ -23,8 +23,8 @@ import {
   MessageDirection,
   MessageStatus,
   MessageType,
-} from '../../../src/models/MessageRepository';
-import Database from '../../../src/models/Database';
+} from '../../../src/repositories/MessageRepository';
+import Database from '../../../src/repositories/Database';
 
 import Util from './util';
 

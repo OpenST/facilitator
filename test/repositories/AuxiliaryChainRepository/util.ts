@@ -17,7 +17,7 @@
 import {
   AuxiliaryChainAttributes,
   AuxiliaryChain,
-} from '../../../src/models/AuxiliaryChainRepository';
+} from '../../../src/repositories/AuxiliaryChainRepository';
 
 import assert from '../../utils/assert';
 

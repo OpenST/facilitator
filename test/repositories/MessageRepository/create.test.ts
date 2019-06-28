@@ -24,9 +24,9 @@ import {
   MessageDirection,
   MessageStatus,
   MessageType,
-} from '../../../src/models/MessageRepository';
+} from '../../../src/repositories/MessageRepository';
 
-import Database from '../../../src/models/Database';
+import Database from '../../../src/repositories/Database';
 
 import Util from './util';
 
@@ -37,57 +37,16 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('MessageRepository::update', (): void => {
+describe('MessageRepository::create', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       db: await Database.create(),
     };
   });
 
-  it('Checks updation of message.', async (): Promise<void> => {
-    const createMessageAttributes: MessageAttributes = {
-      messageHash: 'messageHash',
-      type: MessageType.Stake,
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      sourceStatus: MessageStatus.Declared,
-      targetStatus: MessageStatus.Undeclared,
-      gasPrice: new BigNumber('1'),
-      gasLimit: new BigNumber('1'),
-      nonce: new BigNumber('1'),
-      sender: '0x0000000000000000000000000000000000000002',
-      direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: new BigNumber('1'),
-    };
-
-    const objectForUpdate = await config.db.messageRepository.create(
-      createMessageAttributes,
-    );
-
-    Util.checkMessageAgainstAttributes(objectForUpdate, createMessageAttributes);
-
-    objectForUpdate.secret = 'secret';
-    objectForUpdate.hashLock = 'hashLock';
-
-    const updated = await config.db.messageRepository.update(
-      objectForUpdate,
-    );
-
-    assert.isOk(
-      updated,
-      'An entry should be updated, as the message hash in the attributes exists.',
-    );
-
-    const updatedMessage = await config.db.messageRepository.get(objectForUpdate.messageHash);
-
-    Util.checkMessageAgainstAttributes(
-      updatedMessage as Message,
-      objectForUpdate,
-    );
-  });
-
-  it('Updation should fail for a non existing message ', async (): Promise<void> => {
+  it('Checks creation of message model.', async (): Promise<void> => {
     const messageAttributes: MessageAttributes = {
-      messageHash: 'nonExistingMessageHash',
+      messageHash: '0x00000000000000000000000000000000000000000000000000001',
       type: MessageType.Stake,
       gatewayAddress: '0x0000000000000000000000000000000000000001',
       sourceStatus: MessageStatus.Declared,
@@ -100,20 +59,69 @@ describe('MessageRepository::update', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
-    const updated = await config.db.messageRepository.update(
+    const createResponse = await config.db.messageRepository.create(
       messageAttributes,
     );
 
-    assert.isNotOk(
-      updated,
-      'The message hash in the passed attributes does not exist, hence no update.',
+    Util.checkMessageAgainstAttributes(createResponse, messageAttributes);
+
+    const message = await config.db.messageRepository.get(
+      messageAttributes.messageHash,
     );
 
-    const updatedMessage = await config.db.messageRepository.get(messageAttributes.messageHash);
-
-    return assert.strictEqual(
-      updatedMessage,
+    assert.notStrictEqual(
+      message,
       null,
+      'Newly created message does not exist.',
+    );
+
+    Util.checkMessageAgainstAttributes(
+      message as Message,
+      messageAttributes,
+    );
+  });
+
+  it('Throws if a message '
+    + 'with the same message hash already exists.', async (): Promise<void> => {
+    const messageAttributesA: MessageAttributes = {
+      messageHash: '0x000000000000000000000000000000000000000000000000000001',
+      type: MessageType.Stake,
+      gatewayAddress: '0x0000000000000000000000000000000000000001',
+      sourceStatus: MessageStatus.Declared,
+      targetStatus: MessageStatus.Undeclared,
+      gasPrice: new BigNumber('1'),
+      gasLimit: new BigNumber('1'),
+      nonce: new BigNumber('1'),
+      sender: '0x0000000000000000000000000000000000000002',
+      direction: MessageDirection.OriginToAuxiliary,
+      sourceDeclarationBlockHeight: new BigNumber('1'),
+    };
+
+    // All members, except messageHash are different from messageAttributesA.
+    const messageAttributesB: MessageAttributes = {
+      messageHash: '0x000000000000000000000000000000000000000000000000000001',
+      type: MessageType.Redeem,
+      gatewayAddress: '0x0000000000000000000000000000000000000003',
+      sourceStatus: MessageStatus.Undeclared,
+      targetStatus: MessageStatus.Declared,
+      gasPrice: new BigNumber('2'),
+      gasLimit: new BigNumber('2'),
+      nonce: new BigNumber('2'),
+      sender: '0x0000000000000000000000000000000000000004',
+      direction: MessageDirection.AuxiliaryToOrigin,
+      sourceDeclarationBlockHeight: new BigNumber('2'),
+    };
+
+    await config.db.messageRepository.create(
+      messageAttributesA,
+    );
+
+    return assert.isRejected(
+      config.db.messageRepository.create(
+        messageAttributesB,
+      ),
+      /^Failed to create a message*/,
+      'Creation should fail as a message with the same message hash already exists.',
     );
   });
 });

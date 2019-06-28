@@ -17,7 +17,7 @@
 import {
   GatewayAttributes,
   Gateway,
-} from '../../../src/models/GatewayRepository';
+} from '../../../src/repositories/GatewayRepository';
 
 import assert from '../../utils/assert';
 

@@ -17,7 +17,7 @@
 import {
   MessageAttributes,
   Message,
-} from '../../../src/models/MessageRepository';
+} from '../../../src/repositories/MessageRepository';
 
 import assert from '../../utils/assert';
 

@@ -22,9 +22,9 @@ import {
   GatewayAttributes,
   Gateway,
   GatewayType,
-} from '../../../src/models/GatewayRepository';
+} from '../../../src/repositories/GatewayRepository';
 
-import Database from '../../../src/models/Database';
+import Database from '../../../src/repositories/Database';
 
 import Util from './util';
 

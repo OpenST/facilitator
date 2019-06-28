@@ -20,9 +20,9 @@ import 'mocha';
 import {
   AuxiliaryChainAttributes,
   AuxiliaryChain,
-} from '../../../src/models/AuxiliaryChainRepository';
+} from '../../../src/repositories/AuxiliaryChainRepository';
 
-import Database from '../../../src/models/Database';
+import Database from '../../../src/repositories/Database';
 
 import Util from './util';
 

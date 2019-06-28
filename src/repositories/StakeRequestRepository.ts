@@ -20,6 +20,7 @@ import { DataTypes, Model, InitOptions } from 'sequelize';
 import BigNumber from 'bignumber.js';
 import { MessageModel } from './MessageRepository';
 import Subject from '../observer/Subject';
+import StakeRequest from '../models/StakeRequest';
 
 
 /**
@@ -68,25 +69,6 @@ export interface StakeRequestAttributes {
   stakerProxy: string;
 }
 
-/**
- * An interface for an object created and stored within StakeRequestRepository.
- *
- * @see StakeRequestRepository::create()
- * @see StakeRequestRepository::get()
- */
-export interface StakeRequest {
-  stakeRequestHash: string;
-  messageHash?: string;
-  amount: BigNumber;
-  beneficiary: string;
-  gasPrice: BigNumber;
-  gasLimit: BigNumber;
-  nonce: BigNumber;
-  gateway: string;
-  stakerProxy: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 /**
  * Stores instances of StakeRequest.

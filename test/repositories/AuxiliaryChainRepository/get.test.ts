@@ -19,8 +19,8 @@ import 'mocha';
 import {
   AuxiliaryChainAttributes,
   AuxiliaryChain,
-} from '../../../src/models/AuxiliaryChainRepository';
-import Database from '../../../src/models/Database';
+} from '../../../src/repositories/AuxiliaryChainRepository';
+import Database from '../../../src/repositories/Database';
 
 import Util from './util';
 

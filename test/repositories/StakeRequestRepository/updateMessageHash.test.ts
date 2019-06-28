@@ -19,13 +19,14 @@ import BigNumber from 'bignumber.js';
 
 import {
   StakeRequestAttributes,
-  StakeRequest,
-} from '../../../src/models/StakeRequestRepository';
+} from '../../../src/repositories/StakeRequestRepository';
 
-import Database from '../../../src/models/Database';
+import StakeRequest from '../../../src/models/StakeRequest';
+
+import Database from '../../../src/repositories/Database';
 
 import StakeRequestUtil from './util';
-import { MessageAttributes } from '../../../src/models/MessageRepository';
+import { MessageAttributes } from '../../../src/repositories/MessageRepository';
 
 import assert from '../../utils/assert';
 
