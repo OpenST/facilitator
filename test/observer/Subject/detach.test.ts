@@ -17,6 +17,7 @@
 import 'mocha';
 
 import Subject from '../../../src/observer/Subject';
+import ObserverSpy from '../ObserverSpy';
 
 import assert from '../../utils/assert';
 
@@ -32,7 +33,36 @@ describe('Subject::detach', (): void => {
     };
   });
 
-  it('', async (): Promise<void> => {
-    assert(config.subject !== undefined);
+  it('Checks successful removal of an attached observer.', async (): Promise<void> => {
+    const observer1 = new ObserverSpy();
+    config.subject.attach(observer1);
+
+    const observer2 = new ObserverSpy();
+    config.subject.attach(observer2);
+
+    config.subject.detach(observer1);
+    assert.strictEqual(
+      config.subject.observers.indexOf(observer1),
+      -1,
+      'Detached observer does not exist.',
+    );
+
+    config.subject.detach(observer2);
+    assert.strictEqual(
+      config.subject.observers.indexOf(observer2),
+      -1,
+      'Detached observer does not exist.',
+    );
+  });
+
+  it('Checks silent ignoring of non-attached observer.', async (): Promise<void> => {
+    const observer1 = new ObserverSpy();
+    config.subject.attach(observer1);
+
+    const observer2 = new ObserverSpy();
+
+    assert.doesNotThrow(
+      (): void => config.subject.detach(observer2),
+    );
   });
 });
