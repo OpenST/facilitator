@@ -9,6 +9,7 @@ import * as WebSocket from 'ws'
 import fetch from 'node-fetch';
 
 import Logger from './Logger';
+import TransactionHandler from './TransactionHandler';
 
 /**
  * The class interacts with graph node server for subscription and query.
@@ -32,9 +33,10 @@ export default class GraphClient {
    * Documentation: https://www.apollographql.com/docs/react/advanced/subscriptions/
    *
    * @param {string} subscriptionQry Subscription query.
+   * @param {TransactionHandler} handler Transaction handler object.
    * @return {Subscription} Query subscription object.
    */
-  public subscribe(subscriptionQry: string): Subscription {
+  public subscribe(subscriptionQry: string, handler: TransactionHandler): Subscription {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
       throw (err);
@@ -47,8 +49,7 @@ export default class GraphClient {
       variables: {},
     }).subscribe({
       next(response) {
-        // Replace it with TransactionHandler
-        Logger.info(response);
+        handler.handle(response);
       },
       error(err) {
         // Log error using logger
@@ -100,7 +101,7 @@ export default class GraphClient {
    * @param httpSubGraphEndPoint subgraph end point.
    * @return {GraphClient}
    */
-  public static getClientWithHttpLink(httpSubGraphEndPoint): GraphClient {
+  public static getClientWithHttpLink(httpSubGraphEndPoint: string): GraphClient {
     const link = createHttpLink({ uri: httpSubGraphEndPoint, fetch: fetch });
     const apolloClient = new ApolloClient({link: link, cache: new InMemoryCache()});
 

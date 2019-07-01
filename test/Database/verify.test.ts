@@ -5,7 +5,7 @@ import {assert} from 'chai';
 
 const sinon = require('sinon');
 
-describe('Database.verify()', function () {
+describe('DatabaseFileHelper.verify()', function () {
 
   function spyFsModule(status: boolean) {
     const fsSpy = sinon.replace(
