@@ -1,16 +1,15 @@
 import ApolloClient from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
-import { createHttpLink } from "apollo-link-http";
+import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { Subscription } from 'apollo-client/util/Observable';
 import gql from 'graphql-tag';
-import * as WebSocket from 'ws'
-import fetch from 'node-fetch';
+import * as WebSocket from 'ws';
 
 import Logger from './Logger';
 import TransactionHandler from './TransactionHandler';
-import TransactionFetcher from "./TransactionFetcher";
+import TransactionFetcher from './TransactionFetcher';
 /**
  * The class interacts with graph node server for subscription and query.
  */
@@ -34,15 +33,15 @@ export default class GraphClient {
    * to observer i.e. TransactionHandler.
    * Documentation: https://www.apollographql.com/docs/react/advanced/subscriptions/
    *
-   * @param {string} subscriptionQry Subscription query.
-   * @param {TransactionHandler} handler Transaction handler object.
-   * @param {TransactionFetcher} fetcher Transaction fetcher object.
-   * @return {Subscription} Query subscription object.
+   * @param subscriptionQry Subscription query.
+   * @param handler Transaction handler object.
+   * @param fetcher Transaction fetcher object.
+   * @return Query subscription object.
    */
   public subscribe(
     subscriptionQry: string,
     handler: TransactionHandler,
-    fetcher: TransactionFetcher
+    fetcher: TransactionFetcher,
   ): Subscription {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
@@ -51,7 +50,7 @@ export default class GraphClient {
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;
     // Subscription handling
-    const querySubscriber = this.apolloClient.subscribe( {
+    const querySubscriber = this.apolloClient.subscribe({
       query: gqlSubscriptionQry,
       variables: {},
     }).subscribe({
@@ -72,13 +71,13 @@ export default class GraphClient {
    * Query the graph node.
    *
    * @param query Graph query.
-   * @return Promise<{data: object}>
+   * @return Response from graph node.
    */
-  public async query(query: string, variables: Record<string,any>):Promise<{data: object}> {
+  public async query(query: string, variables: Record<string, any>): Promise<{data: object}> {
     const gqlQuery = gql`${query}`;
     const queryResult = await this.apolloClient.query({
       query: gqlQuery,
-      variables: variables,
+      variables,
     });
 
     return queryResult;
@@ -87,28 +86,28 @@ export default class GraphClient {
   /**
    * Creates and returns graph client.
    *
-   * @param {string} linkType LinkType ws/http.
-   * @param {string} subgraphEndPoint Subgraph endpoint.
-   * @return {GraphClient}
+   * @param linkType LinkType ws/http.
+   * @param subgraphEndPoint Subgraph endpoint.
+   * @return Graph client object.
    */
   public static getClient(linkType: string, subgraphEndPoint: string): GraphClient {
     let link;
     if (linkType === 'ws') {
       // Creates subscription client
       const subscriptionClient = new SubscriptionClient(subgraphEndPoint, {
-          reconnect: true,
-        },
-        WebSocket);
+        reconnect: true,
+      },
+      WebSocket);
       // Creates WebSocket link.
       link = new WebSocketLink(subscriptionClient);
     } else {
       // Creates http link
-      link = createHttpLink({uri: subgraphEndPoint, fetch: fetch});
+      link = createHttpLink({ uri: subgraphEndPoint });
     }
     // Instantiate in memory cache object.
     const cache = new InMemoryCache();
     // Instantiate apollo client
-    const apolloClient = new ApolloClient({ link: link, cache });
+    const apolloClient = new ApolloClient({ link, cache });
     // Creates and returns graph client
     return new GraphClient(apolloClient);
   }

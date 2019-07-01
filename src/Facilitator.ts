@@ -4,7 +4,8 @@ import GraphClient from './GraphClient';
 import TransactionHandler from './TransactionHandler';
 import HandlerFactory from './handlers/HandlerFactory';
 import Database from './models/Database';
-import TransactionFetcher from "./TransactionFetcher";
+import TransactionFetcher from './TransactionFetcher';
+import {SubscriptionInfo} from './types';
 
 /**
  * The class defines properties and behaviour of a facilitator.
@@ -37,7 +38,7 @@ export default class Facilitator {
       HandlerFactory.get(database),
     );
     const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
-      GraphClient.getClient('http', subGraphDetails.origin.httpSubGraphEndPoint)
+      GraphClient.getClient('http', subGraphDetails.origin.httpSubGraphEndPoint),
     );
     // Subscription to origin subgraph queries
     this.originSubscriber = new Subscriber(
@@ -50,7 +51,7 @@ export default class Facilitator {
 
     // Subscription to auxiliary subgraph queries
     const auxiliaryTransactionFetcher: TransactionFetcher = new TransactionFetcher(
-      GraphClient.getClient('http', subGraphDetails.auxiliary.httpSubGraphEndPoint)
+      GraphClient.getClient('http', subGraphDetails.auxiliary.httpSubGraphEndPoint),
     );
     this.auxiliarySubscriber = new Subscriber(
       GraphClient.getClient('ws', subGraphDetails.auxiliary.wsSubGraphEndPoint),
@@ -79,7 +80,7 @@ export default class Facilitator {
    *
    * @return <any> Object containing chain based subscriptionQueries.
    */
-  public static getSubscriptionDetails(): any {
+  public static getSubscriptionDetails(): SubscriptionInfo {
     return {
       origin: {
         wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
@@ -96,22 +97,22 @@ export default class Facilitator {
         },
       },
       fetchQueries: {
-        stakeRequested: 'query ($uts: BigInt!) {\n' +
-        '  stakeRequesteds(where: {uts_gt: $uts}, orderDirection: asc, limit: 100) {\n' +
-        '    id\n' +
-        '    amount\n' +
-        '    gasPrice\n' +
-        '    gasLimit\n' +
-        '    staker\n' +
-        '    gateway\n' +
-        '    stakeRequestHash\n' +
-        '    nonce\n' +
-        '    beneficiary\n' +
-        '    blockNumber\n' +
-        '    uts\n' +
-        '  }\n' +
-        '}',
-      }
+        stakeRequested: 'query ($uts: BigInt!) {\n'
+        + '  stakeRequesteds(where: {uts_gt: $uts}, orderDirection: asc, limit: 100) {\n'
+        + '    id\n'
+        + '    amount\n'
+        + '    gasPrice\n'
+        + '    gasLimit\n'
+        + '    staker\n'
+        + '    gateway\n'
+        + '    stakeRequestHash\n'
+        + '    nonce\n'
+        + '    beneficiary\n'
+        + '    blockNumber\n'
+        + '    uts\n'
+        + '  }\n'
+        + '}',
+      },
     };
   }
 }

@@ -1,9 +1,7 @@
-/* eslint-disable no-await-in-loop, guard-for-in, no-restricted-syntax */
-
 import { Subscription } from 'apollo-client/util/Observable';
 import GraphClient from './GraphClient';
 import TransactionHandler from './TransactionHandler';
-import TransactionFetcher from "./TransactionFetcher";
+import TransactionFetcher from './TransactionFetcher';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -31,7 +29,7 @@ export default class Subscriber {
     graphClient: GraphClient,
     subscriptionQueries: Record<string, string>,
     handler: TransactionHandler,
-    fetcher: TransactionFetcher
+    fetcher: TransactionFetcher,
   ) {
     this.querySubscriptions = {};
     this.subscriptionQueries = subscriptionQueries;

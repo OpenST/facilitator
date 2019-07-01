@@ -1,11 +1,10 @@
-import Facilitator from "./Facilitator";
-import GraphClient from "./GraphClient";
+import Facilitator from './Facilitator';
+import GraphClient from './GraphClient';
 
 /**
  * The class fetches the transactions based on uts.
  */
 export default class TransactionFetcher {
-
   private readonly graphClient: GraphClient;
 
   /**
@@ -20,7 +19,7 @@ export default class TransactionFetcher {
    * Queries graph node.
    *
    * @param data Data received from subscription.
-   * @return {Promise<{data: object}>}
+   * @return Graph query response from graph node.
    */
   public async fetch(data: Record<string, object>): Promise<{data: object}> {
     const entity = Object.keys(data)[0];

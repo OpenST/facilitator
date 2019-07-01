@@ -4,6 +4,7 @@ import * as sinon from 'sinon';
 import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
 import TransactionHandler from '../../src/TransactionHandler';
+import TransactionFetcher from "../../src/TransactionFetcher";
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient: any;
@@ -25,7 +26,8 @@ describe('Subscriber.unsubscribe()', () => {
       sinon.fake.resolves(mockUnsubscribe),
     );
     const handler = sinon.mock(TransactionHandler);
-    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any);
+    const fetcher = sinon.mock(TransactionFetcher);
+    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any, fetcher as any);
   });
 
   it('should work with correct parameters', async () => {
