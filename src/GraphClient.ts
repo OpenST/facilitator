@@ -23,7 +23,9 @@ export default class GraphClient {
    *
    * @param {ApolloClient<NormalizedCacheObject>} apolloClient Apollo client for subscription.
    */
-  public constructor(apolloClient: ApolloClient<NormalizedCacheObject>) {
+  public constructor(
+    apolloClient: ApolloClient<NormalizedCacheObject>,
+  ) {
     this.apolloClient = apolloClient;
   }
 
@@ -49,6 +51,7 @@ export default class GraphClient {
       variables: {},
     }).subscribe({
       next(response) {
+        // const filteredData = this.transactionFilter.filter(response.data);
         handler.handle(response);
       },
       error(err) {
@@ -66,9 +69,12 @@ export default class GraphClient {
    * @param query Graph query.
    * @return Promise<{data: object}>
    */
-  public async query(query: string):Promise<{data: object}> {
+  public async query(query: string, variables: Record<string,string>):Promise<{data: object}> {
     const gqlQuery = gql`${query}`;
-    const queryResult = await this.apolloClient.query({query: gqlQuery});
+    const queryResult = await this.apolloClient.query({
+      query: gqlQuery,
+      variables: variables,
+    });
 
     return queryResult;
   }
@@ -98,7 +104,7 @@ export default class GraphClient {
   /**
    * Returns Graph client with http link. Queries are done on http connection.
    *
-   * @param httpSubGraphEndPoint subgraph end point.
+   * @param httpSubGraphEndPoint Subgraph end point.
    * @return {GraphClient}
    */
   public static getClientWithHttpLink(httpSubGraphEndPoint: string): GraphClient {

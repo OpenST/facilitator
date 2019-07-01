@@ -52,14 +52,15 @@
     "web3-utils": "1.0.0-beta.55"
   },
   "devDependencies": {
-    "@types/fs-extra": "5.0.5",
-    "@types/sqlite3": "3.1.5",
     "@types/chai": "4.1.7",
     "@types/chai-as-promised": "7.1.0",
+    "@types/fs-extra": "5.0.5",
     "@types/mocha": "5.2.7",
     "@types/node": "11.11.3",
-    "@types/web3": "1.0.18",
+    "@types/node-fetch": "^2.3.7",
     "@types/sinon": "7.0.13",
+    "@types/sqlite3": "3.1.5",
+    "@types/web3": "1.0.18",
     "@types/ws": "6.0.1",
     "@typescript-eslint/eslint-plugin": "1.10.2",
     "@typescript-eslint/parser": "1.10.2",
