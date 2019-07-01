@@ -34,11 +34,7 @@ export default class Subscriber {
     this.handler = handler;
   }
 
-  /**
-   * Subscribes to subscription queries.
-   *
-   * @return {Promise<void>}
-   */
+  /** Subscribes to subscription queries. */
   public async subscribe() {
     for (const key in this.subscriptionQueries) {
       this.querySubscriptions[key] = await this.graphClient.subscribe(

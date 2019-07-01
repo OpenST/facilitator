@@ -16,7 +16,7 @@ export default class SpyAssert {
    * @param {Array} inputArgs Input arguments
    *
    */
-  public static assert(spy: any, callCount: number, inputArgs: any[]) {
+  public static assert(spy: any, callCount: number, inputArgs: any[]): void {
     assert.strictEqual(
       spy.callCount,
       callCount,

@@ -1,9 +1,9 @@
 
 import BigNumber from 'bignumber.js';
-import { StakeRequestAttributes } from '../../src/models/StakeRequestRepository';
+import StakeRequest from '../../src/models/StakeRequest';
 
 export default class StubData {
-  public static getAStakeRequest = (stakeRequestHash: string): StakeRequestAttributes => ({
+  public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => ({
     stakeRequestHash,
     amount: new BigNumber('1'),
     beneficiary: 'beneficiary',
