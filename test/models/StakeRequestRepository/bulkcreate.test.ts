@@ -112,4 +112,3 @@ describe('StakeRequestRepository::bulkCreate', (): void => {
     );
   });
 });
-
