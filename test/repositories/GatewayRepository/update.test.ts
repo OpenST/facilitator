@@ -24,21 +24,21 @@ import {
   GatewayType,
 } from '../../../src/repositories/GatewayRepository';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('GatewayRepository::update', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -54,13 +54,13 @@ describe('GatewayRepository::update', (): void => {
       activation: true,
     };
 
-    const objectForUpdate = await config.db.gatewayRepository.create(
+    const objectForUpdate = await config.repos.gatewayRepository.create(
       createGatewayAttributes,
     );
 
     Util.checkGatewayAgainstAttributes(objectForUpdate, createGatewayAttributes);
 
-    const updated = await config.db.gatewayRepository.update(
+    const updated = await config.repos.gatewayRepository.update(
       objectForUpdate,
     );
 
@@ -69,7 +69,9 @@ describe('GatewayRepository::update', (): void => {
       'An entry should be updated, as the gateway address in the attributes exists.',
     );
 
-    const updatedGateway = await config.db.gatewayRepository.get(objectForUpdate.gatewayAddress);
+    const updatedGateway = await config.repos.gatewayRepository.get(
+      objectForUpdate.gatewayAddress,
+    );
 
     Util.checkGatewayAgainstAttributes(
       updatedGateway as Gateway,
@@ -89,7 +91,7 @@ describe('GatewayRepository::update', (): void => {
       activation: true,
     };
 
-    const updated = await config.db.gatewayRepository.update(
+    const updated = await config.repos.gatewayRepository.update(
       gatewayAttributes,
     );
 
@@ -98,7 +100,9 @@ describe('GatewayRepository::update', (): void => {
       'The gateway address in the passed attributes does not exist, hence no update.',
     );
 
-    const updatedGateway = await config.db.gatewayRepository.get(gatewayAttributes.gatewayAddress);
+    const updatedGateway = await config.repos.gatewayRepository.get(
+      gatewayAttributes.gatewayAddress,
+    );
 
     return assert.strictEqual(
       updatedGateway,

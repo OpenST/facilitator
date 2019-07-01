@@ -22,21 +22,21 @@ import {
   Gateway,
   GatewayType,
 } from '../../../src/repositories/GatewayRepository';
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('GatewayRepository::get', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -52,11 +52,11 @@ describe('GatewayRepository::get', (): void => {
       activation: true,
     };
 
-    await config.db.gatewayRepository.create(
+    await config.repos.gatewayRepository.create(
       gatewayAttributes,
     );
 
-    const gateway = await config.db.gatewayRepository.get(
+    const gateway = await config.repos.gatewayRepository.get(
       gatewayAttributes.gatewayAddress,
     );
 
@@ -74,7 +74,7 @@ describe('GatewayRepository::get', (): void => {
 
   it('Checks retrieval of non-existing gateway.', async (): Promise<void> => {
     const nonExistingGatewayAddress = 'nonExistingGatewayAddress';
-    const gateway = await config.db.gatewayRepository.get(
+    const gateway = await config.repos.gatewayRepository.get(
       nonExistingGatewayAddress,
     );
 

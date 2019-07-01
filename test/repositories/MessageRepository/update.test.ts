@@ -26,21 +26,21 @@ import {
   MessageType,
 } from '../../../src/repositories/MessageRepository';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('MessageRepository::update', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -59,7 +59,7 @@ describe('MessageRepository::update', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
-    const objectForUpdate = await config.db.messageRepository.create(
+    const objectForUpdate = await config.repos.messageRepository.create(
       createMessageAttributes,
     );
 
@@ -68,7 +68,7 @@ describe('MessageRepository::update', (): void => {
     objectForUpdate.secret = 'secret';
     objectForUpdate.hashLock = 'hashLock';
 
-    const updated = await config.db.messageRepository.update(
+    const updated = await config.repos.messageRepository.update(
       objectForUpdate,
     );
 
@@ -77,7 +77,7 @@ describe('MessageRepository::update', (): void => {
       'An entry should be updated, as the message hash in the attributes exists.',
     );
 
-    const updatedMessage = await config.db.messageRepository.get(objectForUpdate.messageHash);
+    const updatedMessage = await config.repos.messageRepository.get(objectForUpdate.messageHash);
 
     Util.checkMessageAgainstAttributes(
       updatedMessage as Message,
@@ -100,7 +100,7 @@ describe('MessageRepository::update', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
-    const updated = await config.db.messageRepository.update(
+    const updated = await config.repos.messageRepository.update(
       messageAttributes,
     );
 
@@ -109,7 +109,7 @@ describe('MessageRepository::update', (): void => {
       'The message hash in the passed attributes does not exist, hence no update.',
     );
 
-    const updatedMessage = await config.db.messageRepository.get(messageAttributes.messageHash);
+    const updatedMessage = await config.repos.messageRepository.get(messageAttributes.messageHash);
 
     return assert.strictEqual(
       updatedMessage,

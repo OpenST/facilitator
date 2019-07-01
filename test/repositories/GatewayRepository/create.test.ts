@@ -24,21 +24,21 @@ import {
   GatewayType,
 } from '../../../src/repositories/GatewayRepository';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('GatewayRepository::create', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -54,13 +54,13 @@ describe('GatewayRepository::create', (): void => {
       activation: true,
     };
 
-    const createResponse = await config.db.gatewayRepository.create(
+    const createResponse = await config.repos.gatewayRepository.create(
       gatewayAttributes,
     );
 
     Util.checkGatewayAgainstAttributes(createResponse, gatewayAttributes);
 
-    const gateway = await config.db.gatewayRepository.get(
+    const gateway = await config.repos.gatewayRepository.get(
       gatewayAttributes.gatewayAddress,
     );
 
@@ -101,12 +101,12 @@ describe('GatewayRepository::create', (): void => {
       activation: false,
     };
 
-    await config.db.gatewayRepository.create(
+    await config.repos.gatewayRepository.create(
       gatewayAttributesA,
     );
 
     return assert.isRejected(
-      config.db.gatewayRepository.create(
+      config.repos.gatewayRepository.create(
         gatewayAttributesB,
       ),
       /^Failed to create a gateway*/,

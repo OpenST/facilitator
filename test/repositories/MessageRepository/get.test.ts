@@ -24,21 +24,21 @@ import {
   MessageStatus,
   MessageType,
 } from '../../../src/repositories/MessageRepository';
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('MessageRepository::get', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -57,11 +57,11 @@ describe('MessageRepository::get', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
-    await config.db.messageRepository.create(
+    await config.repos.messageRepository.create(
       messageAttributes,
     );
 
-    const message = await config.db.messageRepository.get(
+    const message = await config.repos.messageRepository.get(
       messageAttributes.messageHash,
     );
 
@@ -79,7 +79,7 @@ describe('MessageRepository::get', (): void => {
 
   it('Checks retrieval of non-existing message.', async (): Promise<void> => {
     const nonExistingMessageHash = 'nonExistingMessageHash';
-    const message = await config.db.messageRepository.get(
+    const message = await config.repos.messageRepository.get(
       nonExistingMessageHash,
     );
 

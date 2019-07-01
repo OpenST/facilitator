@@ -23,21 +23,21 @@ import {
   AuxiliaryChain,
 } from '../../../src/repositories/AuxiliaryChainRepository';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('AuxiliaryChainRepository::update', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -51,7 +51,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
       coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
-    const objectForUpdate = await config.db.auxiliaryChainRepository.create(
+    const objectForUpdate = await config.repos.auxiliaryChainRepository.create(
       createAuxiliaryChainAttributes,
     );
 
@@ -61,7 +61,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
     objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364475');
     objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364476');
 
-    const updated = await config.db.auxiliaryChainRepository.update(
+    const updated = await config.repos.auxiliaryChainRepository.update(
       objectForUpdate,
     );
 
@@ -70,7 +70,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
       'Entry should be updated, as chain id in chain attributes exists.',
     );
 
-    const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(
+    const updatedAuxiliaryChain = await config.repos.auxiliaryChainRepository.get(
       objectForUpdate.chainId,
     );
 
@@ -90,7 +90,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
       coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
-    const updated = await config.db.auxiliaryChainRepository.update(
+    const updated = await config.repos.auxiliaryChainRepository.update(
       auxiliaryChainAttributes,
     );
 
@@ -99,7 +99,7 @@ describe('AuxiliaryChainRepository::update', (): void => {
       'The chain id in the passed chain attributes does not exist, hence no update.',
     );
 
-    const updatedAuxiliaryChain = await config.db.auxiliaryChainRepository.get(
+    const updatedAuxiliaryChain = await config.repos.auxiliaryChainRepository.get(
       auxiliaryChainAttributes.chainId,
     );
 

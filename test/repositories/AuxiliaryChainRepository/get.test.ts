@@ -20,21 +20,21 @@ import {
   AuxiliaryChainAttributes,
   AuxiliaryChain,
 } from '../../../src/repositories/AuxiliaryChainRepository';
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('AuxiliaryChainRepository::get', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -48,11 +48,11 @@ describe('AuxiliaryChainRepository::get', (): void => {
       coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
-    await config.db.auxiliaryChainRepository.create(
+    await config.repos.auxiliaryChainRepository.create(
       auxiliaryChainAttributes,
     );
 
-    const auxiliaryChain = await config.db.auxiliaryChainRepository.get(
+    const auxiliaryChain = await config.repos.auxiliaryChainRepository.get(
       auxiliaryChainAttributes.chainId,
     );
 
@@ -70,7 +70,7 @@ describe('AuxiliaryChainRepository::get', (): void => {
 
   it('Checks retrieval of non-existing chain.', async (): Promise<void> => {
     const nonExistingChainId = 1;
-    const auxiliaryChain = await config.db.auxiliaryChainRepository.get(
+    const auxiliaryChain = await config.repos.auxiliaryChainRepository.get(
       nonExistingChainId,
     );
 

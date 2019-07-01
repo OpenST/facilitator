@@ -23,21 +23,21 @@ import {
 
 import StakeRequest from '../../../src/models/StakeRequest';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('StakeRequestRepository::get', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -53,11 +53,11 @@ describe('StakeRequestRepository::get', (): void => {
       stakerProxy: 'stakerProxy',
     };
 
-    await config.db.stakeRequestRepository.create(
+    await config.repos.stakeRequestRepository.create(
       stakeRequestAttributes,
     );
 
-    const stakeRequest = await config.db.stakeRequestRepository.get(
+    const stakeRequest = await config.repos.stakeRequestRepository.get(
       stakeRequestAttributes.stakeRequestHash,
     );
 
@@ -74,7 +74,7 @@ describe('StakeRequestRepository::get', (): void => {
   });
 
   it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const stakeRequest = await config.db.stakeRequestRepository.get(
+    const stakeRequest = await config.repos.stakeRequestRepository.get(
       'nonExistingHash',
     );
 

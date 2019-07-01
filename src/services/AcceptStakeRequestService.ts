@@ -16,12 +16,13 @@
 
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import Database from '../models/Database';
-import { StakeRequest, StakeRequestRepository } from '../models/StakeRequestRepository';
+import Repositories from '../repositories/Repositories';
+import StakeRequest from '../models/StakeRequest';
+import { StakeRequestRepository } from '../repositories/StakeRequestRepository';
 import Observer from '../observer/Observer';
 import {
   MessageType, MessageStatus, MessageDirection, MessageRepository, MessageAttributes,
-} from '../models/MessageRepository';
+} from '../repositories/MessageRepository';
 
 import crypto = require('crypto');
 const hash = crypto.createHash('sha256');
@@ -42,7 +43,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   /* Public Functions */
 
-  public constructor(db: Database, web3: Web3) {
+  public constructor(db: Repositories, web3: Web3) {
     super();
 
     this.web3 = web3;

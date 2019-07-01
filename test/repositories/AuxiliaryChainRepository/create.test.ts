@@ -22,21 +22,21 @@ import {
   AuxiliaryChain,
 } from '../../../src/repositories/AuxiliaryChainRepository';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('AuxiliaryChainRepository::create', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -50,13 +50,13 @@ describe('AuxiliaryChainRepository::create', (): void => {
       coAnchorAddress: '0x0000000000000000000000000000000000000004',
     };
 
-    const createResponse = await config.db.auxiliaryChainRepository.create(
+    const createResponse = await config.repos.auxiliaryChainRepository.create(
       auxiliaryChainAttributes,
     );
 
     Util.checkAuxiliaryChainAgainstAttributes(createResponse, auxiliaryChainAttributes);
 
-    const auxiliaryChain = await config.db.auxiliaryChainRepository.get(
+    const auxiliaryChain = await config.repos.auxiliaryChainRepository.get(
       auxiliaryChainAttributes.chainId,
     );
 
@@ -93,12 +93,12 @@ describe('AuxiliaryChainRepository::create', (): void => {
       coAnchorAddress: '0x0000000000000000000000000000000000000008',
     };
 
-    await config.db.auxiliaryChainRepository.create(
+    await config.repos.auxiliaryChainRepository.create(
       auxiliaryChainAttributesA,
     );
 
     return assert.isRejected(
-      config.db.auxiliaryChainRepository.create(
+      config.repos.auxiliaryChainRepository.create(
         auxiliaryChainAttributesB,
       ),
       /^Failed to create an auxiliary chain*/,

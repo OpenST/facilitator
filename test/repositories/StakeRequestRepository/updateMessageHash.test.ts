@@ -23,7 +23,7 @@ import {
 
 import StakeRequest from '../../../src/models/StakeRequest';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import StakeRequestUtil from './util';
 import { MessageAttributes } from '../../../src/repositories/MessageRepository';
@@ -31,14 +31,14 @@ import { MessageAttributes } from '../../../src/repositories/MessageRepository';
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  db: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('StakeRequestRepository::update', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      db: await Repositories.create(),
     };
   });
 

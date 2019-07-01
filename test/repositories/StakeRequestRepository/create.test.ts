@@ -23,21 +23,21 @@ import {
 
 import StakeRequest from '../../../src/models/StakeRequest';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('StakeRequestRepository::create', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -53,13 +53,13 @@ describe('StakeRequestRepository::create', (): void => {
       stakerProxy: 'stakerProxy',
     };
 
-    const stakeRequestResponse = await config.db.stakeRequestRepository.create(
+    const stakeRequestResponse = await config.repos.stakeRequestRepository.create(
       stakeRequestAttributes,
     );
 
     Util.checkStakeRequestAgainstAttributes(stakeRequestResponse, stakeRequestAttributes);
 
-    const stakeRequest = await config.db.stakeRequestRepository.get(
+    const stakeRequest = await config.repos.stakeRequestRepository.get(
       stakeRequestAttributes.stakeRequestHash,
     );
 
@@ -100,12 +100,12 @@ describe('StakeRequestRepository::create', (): void => {
       stakerProxy: 'stakerProxyB',
     };
 
-    await config.db.stakeRequestRepository.create(
+    await config.repos.stakeRequestRepository.create(
       stakeRequestAttributesA,
     );
 
     return assert.isRejected(
-      config.db.stakeRequestRepository.create(
+      config.repos.stakeRequestRepository.create(
         stakeRequestAttributesB,
       ),
       /^Failed to create a stake request*/,

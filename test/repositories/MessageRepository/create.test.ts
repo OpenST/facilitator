@@ -26,21 +26,21 @@ import {
   MessageType,
 } from '../../../src/repositories/MessageRepository';
 
-import Database from '../../../src/repositories/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import Util from './util';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
 describe('MessageRepository::create', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
@@ -59,13 +59,13 @@ describe('MessageRepository::create', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
-    const createResponse = await config.db.messageRepository.create(
+    const createResponse = await config.repos.messageRepository.create(
       messageAttributes,
     );
 
     Util.checkMessageAgainstAttributes(createResponse, messageAttributes);
 
-    const message = await config.db.messageRepository.get(
+    const message = await config.repos.messageRepository.get(
       messageAttributes.messageHash,
     );
 
@@ -112,12 +112,12 @@ describe('MessageRepository::create', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('2'),
     };
 
-    await config.db.messageRepository.create(
+    await config.repos.messageRepository.create(
       messageAttributesA,
     );
 
     return assert.isRejected(
-      config.db.messageRepository.create(
+      config.repos.messageRepository.create(
         messageAttributesB,
       ),
       /^Failed to create a message*/,

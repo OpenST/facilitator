@@ -21,7 +21,7 @@ import { AuxiliaryChainRepository } from './AuxiliaryChainRepository';
 import { MessageRepository } from './MessageRepository';
 import { GatewayRepository } from './GatewayRepository';
 
-export default class Database {
+export default class Repositories {
   /* Storage */
 
   public stakeRequestRepository: StakeRequestRepository;
@@ -32,25 +32,23 @@ export default class Database {
 
   public gatewayRepository: GatewayRepository;
 
+
   /* Public Functions */
 
   /**
-   * Creates a database object.
+   * Creates a repositories object.
    *
-   * Creates an empty database if a database does not exist.
-   * Opens a database in read/write mode.
-   *
-   * @param storage A database file path or ':memory' in case of in
-   *                memory database.
+   * @param storage A repositories file path or ':memory' in case of in
+   *                memory representation.
    */
-  public static async create(storage = ':memory:'): Promise<Database> {
+  public static async create(storage = ':memory:'): Promise<Repositories> {
     const sequelize = new Sequelize({
       dialect: 'sqlite',
       storage,
       logging: false,
     });
 
-    const db = new Database(sequelize);
+    const db = new Repositories(sequelize);
     await sequelize.sync();
 
     return db;
@@ -75,8 +73,6 @@ export default class Database {
   /* Private Functions */
 
   /**
-   * Creates a database object.
-   *
    * Function instantiates all repository classes by passing the following
    * configuration options:
    *    - underscored: true -- Sets field option for all attributes of all models
