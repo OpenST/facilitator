@@ -177,7 +177,7 @@ export class GatewayRepository {
    * @return {Promise<Array<Number>>}
    */
   public async update(gatewayAttributes: GatewayAttributes): Promise<number[]> {
-    return await GatewayModel.update(gatewayAttributes, {
+    return GatewayModel.update(gatewayAttributes, {
       where: {
         gatewayAddress: {
           [Op.eq]: gatewayAttributes.gatewayAddress,
@@ -207,7 +207,9 @@ export class GatewayRepository {
   private format(gateway: Gateway): void {
     gateway.bounty = new BigNumber(gateway.bounty);
     if (gateway.lastRemoteGatewayProvenBlockHeight) {
-      gateway.lastRemoteGatewayProvenBlockHeight = new BigNumber(gateway.lastRemoteGatewayProvenBlockHeight);
+      gateway.lastRemoteGatewayProvenBlockHeight = new BigNumber(
+        gateway.lastRemoteGatewayProvenBlockHeight,
+      );
     }
   }
 }
