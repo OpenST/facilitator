@@ -70,6 +70,8 @@ export default class GraphClient {
       reconnect: true,
     },
     WebSocket);
+
+    GraphClient.attachSubscriptionClientCallbacks(subscriptionClient);
     // Creates WebSocket link.
     const wsLink = new WebSocketLink(subscriptionClient);
     // Instantiate in memory cache object.
@@ -78,5 +80,33 @@ export default class GraphClient {
     const apolloClient = new ApolloClient({ link: wsLink, cache });
     // Creates and returns graph client
     return new GraphClient(apolloClient);
+  }
+
+  /**
+   * This method adds callback to subscription client. Currently, it logs the
+   * different callbacks. In future these callbacks, can be useful to design error
+   * handling and retry mechanisms.
+   *
+   * @param subscriptionClient Instance of subscription client.
+   */
+  private static attachSubscriptionClientCallbacks(subscriptionClient: SubscriptionClient) {
+    subscriptionClient.onConnected(() => {
+      Logger.info('Connected to the graph node');
+    });
+    subscriptionClient.onReconnected(() => {
+      Logger.info('Reconnected to the graph node');
+    });
+    subscriptionClient.onConnecting(() => {
+      Logger.info('Connecting to the graph node');
+    });
+    subscriptionClient.onReconnecting(() => {
+      Logger.info('Reconnecting to the graph node');
+    });
+    subscriptionClient.onDisconnected(() => {
+      Logger.info('Disconnected to the graph node');
+    });
+    subscriptionClient.onError((error) => {
+      Logger.error(`Error connecting to graph node. Reason: ${error.message}`);
+    });
   }
 }
