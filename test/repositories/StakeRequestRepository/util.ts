@@ -14,65 +14,88 @@
 //
 // ----------------------------------------------------------------------------
 
-import {
-  StakeRequestAttributes,
-} from '../../../src/repositories/StakeRequestRepository';
-
+import BigNumber from 'bignumber.js';
 import StakeRequest from '../../../src/models/StakeRequest';
 
 import assert from '../../utils/assert';
 
 const Util = {
-  checkStakeRequestAgainstAttributes(
-    stakeRequest: StakeRequest,
-    stakeRequestAttributes: StakeRequestAttributes,
+  checkInputAgainstOutput(
+    stakeRequestInput: StakeRequest,
+    stakeRequestOutput: StakeRequest,
   ): void {
-    assert.strictEqual(
-      stakeRequest.stakeRequestHash,
-      stakeRequestAttributes.stakeRequestHash,
-    );
-
-    if (stakeRequestAttributes.hasOwnProperty('messageHash')) {
+    if (stakeRequestInput.stakeRequestHash !== undefined) {
       assert.strictEqual(
-        stakeRequest.messageHash,
-        stakeRequestAttributes.messageHash,
+        stakeRequestInput.stakeRequestHash,
+        stakeRequestOutput.stakeRequestHash,
       );
     }
 
-    assert.notStrictEqual(
-      stakeRequest.amount,
-      stakeRequestAttributes.amount,
-    );
+    if (stakeRequestInput.amount !== undefined) {
+      assert.isOk(
+        stakeRequestInput.amount.comparedTo(stakeRequestOutput.amount as BigNumber) === 0,
+      );
+    }
 
-    assert.strictEqual(
-      stakeRequest.beneficiary,
-      stakeRequestAttributes.beneficiary,
-    );
+    if (stakeRequestInput.beneficiary !== undefined) {
+      assert.strictEqual(
+        stakeRequestInput.beneficiary,
+        stakeRequestOutput.beneficiary,
+      );
+    }
 
-    assert.notStrictEqual(
-      stakeRequest.gasPrice,
-      stakeRequestAttributes.gasPrice,
-    );
+    if (stakeRequestInput.gasPrice !== undefined) {
+      assert.isOk(
+        stakeRequestInput.gasPrice.comparedTo(stakeRequestOutput.gasPrice as BigNumber) === 0,
+      );
+    }
 
-    assert.notStrictEqual(
-      stakeRequest.gasLimit,
-      stakeRequestAttributes.gasLimit,
-    );
+    if (stakeRequestInput.gasLimit !== undefined) {
+      assert.isOk(
+        stakeRequestInput.gasLimit.comparedTo(stakeRequestOutput.gasLimit as BigNumber) === 0,
+      );
+    }
 
-    assert.notStrictEqual(
-      stakeRequest.nonce,
-      stakeRequestAttributes.nonce,
-    );
+    if (stakeRequestInput.nonce !== undefined) {
+      assert.isOk(
+        stakeRequestInput.nonce.comparedTo(stakeRequestOutput.nonce as BigNumber) === 0,
+      );
+    }
 
-    assert.strictEqual(
-      stakeRequest.gateway,
-      stakeRequestAttributes.gateway,
-    );
+    if (stakeRequestInput.gateway !== undefined) {
+      assert.strictEqual(
+        stakeRequestInput.gateway,
+        stakeRequestOutput.gateway,
+      );
+    }
 
-    assert.strictEqual(
-      stakeRequest.stakerProxy,
-      stakeRequestAttributes.stakerProxy,
-    );
+    if (stakeRequestInput.stakerProxy !== undefined) {
+      assert.strictEqual(
+        stakeRequestInput.stakerProxy,
+        stakeRequestOutput.stakerProxy,
+      );
+    }
+
+    if (stakeRequestInput.messageHash !== undefined) {
+      assert.strictEqual(
+        stakeRequestInput.messageHash,
+        stakeRequestOutput.messageHash,
+      );
+    }
+
+    if (stakeRequestInput.createdAt !== undefined) {
+      assert.strictEqual(
+        stakeRequestInput.createdAt,
+        stakeRequestOutput.createdAt,
+      );
+    }
+
+    if (stakeRequestInput.updatedAt !== undefined) {
+      assert.strictEqual(
+        stakeRequestInput.updatedAt,
+        stakeRequestOutput.updatedAt,
+      );
+    }
   },
 
 };

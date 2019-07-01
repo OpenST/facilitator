@@ -21,14 +21,14 @@ import BigNumber from 'bignumber.js';
 export default interface StakeRequest {
   stakeRequestHash: string;
   messageHash?: string;
-  amount: BigNumber;
-  beneficiary: string;
-  gasPrice: BigNumber;
-  gasLimit: BigNumber;
-  nonce: BigNumber;
-  gateway: string;
-  stakerProxy: string;
-  createdAt: Date;
-  updatedAt: Date;
+  amount?: BigNumber;
+  beneficiary?: string;
+  gasPrice?: BigNumber;
+  gasLimit?: BigNumber;
+  nonce?: BigNumber;
+  gateway?: string;
+  stakerProxy?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 // eslint-disable-next-line semi
 }

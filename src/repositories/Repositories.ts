@@ -16,7 +16,7 @@
 
 import { Sequelize, InitOptions } from 'sequelize';
 
-import { StakeRequestRepository } from './StakeRequestRepository';
+import StakeRequestRepository from './StakeRequestRepository';
 import { AuxiliaryChainRepository } from './AuxiliaryChainRepository';
 import { MessageRepository } from './MessageRepository';
 import { GatewayRepository } from './GatewayRepository';

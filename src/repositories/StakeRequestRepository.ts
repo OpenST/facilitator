@@ -21,6 +21,7 @@ import BigNumber from 'bignumber.js';
 import { MessageModel } from './MessageRepository';
 import Subject from '../observer/Subject';
 import StakeRequest from '../models/StakeRequest';
+import Utils from '../Utils';
 
 
 /**
@@ -53,30 +54,12 @@ class StakeRequestModel extends Model {
 }
 
 /**
- * An interface for input to create a StakeRequest object in the StakeRequestRepository.
- *
- * @see StakeRequestRepository::create()
- */
-export interface StakeRequestAttributes {
-  stakeRequestHash: string;
-  messageHash?: string;
-  amount: BigNumber;
-  beneficiary: string;
-  gasPrice: BigNumber;
-  gasLimit: BigNumber;
-  nonce: BigNumber;
-  gateway: string;
-  stakerProxy: string;
-}
-
-
-/**
  * Stores instances of StakeRequest.
  *
  * Class enables creation, update and retrieval of StakeRequest objects.
  * On construction it initializes underlying database model.
  */
-export class StakeRequestRepository extends Subject<StakeRequest> {
+export default class StakeRequestRepository extends Subject<StakeRequest> {
   /* Public Functions */
 
   /**
@@ -149,32 +132,23 @@ export class StakeRequestRepository extends Subject<StakeRequest> {
   }
 
   /**
-   * Creates a stake request model in the repository.
+   * Saves a stake request model in the repository.
+   * If a stake request does not exist, it creates, otherwise updates.
    *
-   * Function throws if a stake request with the same stake request's hash
-   * already exists.
+   * Function ignores (does not set to null) undefined (optional) fields
+   * from the passed stake request object.
    *
-   * @param stakeRequestAttributes Attributes of a newly created stake request.
-   *
-   * @return Newly created stake request object.
+   * @param stakeRequest Stake request object to update.
    */
-  public async create(stakeRequestAttributes: StakeRequestAttributes): Promise<StakeRequest> {
-    try {
-      const stakeRequestModel = await StakeRequestModel.create(stakeRequestAttributes);
-      const stakeRequest = this.convertToStakeRequest(stakeRequestModel);
-      this.newUpdate(stakeRequest);
+  public async save(stakeRequest: StakeRequest): Promise<void> {
+    const definedOwnProps: string[] = Utils.getDefinedOwnProps(stakeRequest);
 
-      return stakeRequest;
-    } catch (e) {
-      const errorContext = {
-        input: {
-          stakeRequestAttributes,
-        },
-        reason: e.message,
-      };
-
-      throw Error(`Failed to create a stake request: ${JSON.stringify(errorContext)}`);
-    }
+    await StakeRequestModel.upsert(
+      stakeRequest,
+      {
+        fields: definedOwnProps,
+      },
+    );
   }
 
   /**
@@ -205,7 +179,7 @@ export class StakeRequestRepository extends Subject<StakeRequest> {
   /**
    * Gets all stake requests with a null message hash.
    */
-  public async getStakeRequestsWithNullMessageHash(): Promise<StakeRequest[]> {
+  public async getWithNullMessageHash(): Promise<StakeRequest[]> {
     const stakeRequestModels: StakeRequestModel[] = await StakeRequestModel.findAll({
       where: {
         messageHash: null,
@@ -215,59 +189,24 @@ export class StakeRequestRepository extends Subject<StakeRequest> {
     return this.convertToStakeRequests(stakeRequestModels);
   }
 
-  /**
-   * Updates a message hash for the specified stake request's hash.
-   *
-   * Function fails if stake request's hash does not exist.
-   *
-   * @param stakeRequestHash Stake request's hash to update message hash.
-   * @param messageHash New message hash to update.
-   */
-  public async updateMessageHash(stakeRequestHash: string, messageHash: string): Promise<void> {
-    const stakeRequestModel: StakeRequestModel = await StakeRequestModel.findOne({
-      where: {
-        stakeRequestHash,
-      },
-    });
-
-    if (stakeRequestModel === null) {
-      const errorContext = {
-        input: {
-          stakeRequestHash,
-          messageHash,
-        },
-        reason: 'The specified stake request hash does not exist.',
-      };
-      throw new Error(`Failed to update a stake request: ${JSON.stringify(errorContext)}`);
-    }
-
-    try {
-      await stakeRequestModel.update({ messageHash });
-      const stakeRequest = this.convertToStakeRequest(stakeRequestModel);
-      this.newUpdate(stakeRequest);
-    } catch (e) {
-      const errorContext = {
-        input: {
-          stakeRequestHash,
-          messageHash,
-        },
-        reason: e.message,
-      };
-
-      throw Error(`Failed to update a stake request: ${JSON.stringify(errorContext)}`);
-    }
-  }
-
 
   /* Private Functions */
 
   private convertToStakeRequest(stakeRequestModel: StakeRequestModel): StakeRequest {
-    const stakeRequest: StakeRequest = stakeRequestModel;
+    const stakeRequest: StakeRequest = {
+      stakeRequestHash: stakeRequestModel.stakeRequestHash,
+    };
 
-    stakeRequest.amount = new BigNumber(stakeRequest.amount);
-    stakeRequest.nonce = new BigNumber(stakeRequest.nonce);
-    stakeRequest.gasLimit = new BigNumber(stakeRequest.gasLimit);
-    stakeRequest.gasPrice = new BigNumber(stakeRequest.gasPrice);
+    stakeRequest.messageHash = stakeRequestModel.messageHash;
+    stakeRequest.amount = new BigNumber(stakeRequestModel.amount);
+    stakeRequest.beneficiary = stakeRequestModel.beneficiary;
+    stakeRequest.gasPrice = new BigNumber(stakeRequestModel.gasPrice);
+    stakeRequest.gasLimit = new BigNumber(stakeRequestModel.gasLimit);
+    stakeRequest.nonce = new BigNumber(stakeRequestModel.nonce);
+    stakeRequest.gateway = stakeRequestModel.gateway;
+    stakeRequest.stakerProxy = stakeRequestModel.stakerProxy;
+    stakeRequest.createdAt = stakeRequestModel.createdAt;
+    stakeRequest.updatedAt = stakeRequestModel.updatedAt;
 
     return stakeRequest;
   }

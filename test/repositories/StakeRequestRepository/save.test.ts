@@ -26,14 +26,14 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('StakeRequestRepository::get', (): void => {
+describe('StakeRequestRepository::save', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of an existing stake request.', async (): Promise<void> => {
+  it('Checks creation.', async (): Promise<void> => {
     const stakeRequestInput: StakeRequest = {
       stakeRequestHash: 'stakeRequestHash',
       amount: new BigNumber('1'),
@@ -56,7 +56,22 @@ describe('StakeRequestRepository::get', (): void => {
     assert.notStrictEqual(
       stakeRequestOutput,
       null,
-      'Stake request should exists as it has been just created.',
+      'Newly created stake request exists.',
+    );
+
+    Util.checkInputAgainstOutput(
+      stakeRequestInput,
+      stakeRequestOutput as StakeRequest,
+    );
+
+    const stakeRequest = await config.repos.stakeRequestRepository.get(
+      stakeRequestInput.stakeRequestHash,
+    );
+
+    assert.notStrictEqual(
+      stakeRequest,
+      null,
+      'Newly created stake request does not exist.',
     );
 
     Util.checkInputAgainstOutput(
@@ -65,15 +80,55 @@ describe('StakeRequestRepository::get', (): void => {
     );
   });
 
-  it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const stakeRequest = await config.repos.stakeRequestRepository.get(
-      'nonExistingHash',
+  it('Checks update.', async (): Promise<void> => {
+    const stakeRequestInput: StakeRequest = {
+      stakeRequestHash: 'stakeRequestHash',
+      amount: new BigNumber('1'),
+      beneficiary: 'beneficiary',
+      gasPrice: new BigNumber('2'),
+      gasLimit: new BigNumber('3'),
+      nonce: new BigNumber('4'),
+      gateway: 'gateway',
+      stakerProxy: 'stakerProxy',
+    };
+
+    await config.repos.stakeRequestRepository.save(
+      stakeRequestInput,
     );
 
-    assert.strictEqual(
-      stakeRequest,
+    const stakeRequestUpdateInput: StakeRequest = {
+      stakeRequestHash: 'stakeRequestHash',
+      amount: new BigNumber('11'),
+      gateway: 'gatewayUpdated',
+    };
+
+    await config.repos.stakeRequestRepository.save(
+      stakeRequestUpdateInput,
+    );
+
+    const stakeRequestOutput = await config.repos.stakeRequestRepository.get(
+      stakeRequestInput.stakeRequestHash,
+    );
+
+    assert.notStrictEqual(
+      stakeRequestOutput,
       null,
-      'Stake request with \'nonExistingHash\' does not exist.',
+      'Newly created stake request does not exist.',
+    );
+
+    Util.checkInputAgainstOutput(
+      {
+        stakeRequestHash: stakeRequestInput.stakeRequestHash,
+        amount: stakeRequestUpdateInput.amount,
+        beneficiary: stakeRequestInput.beneficiary,
+        gasPrice: stakeRequestInput.gasPrice,
+        gasLimit: stakeRequestInput.gasLimit,
+        nonce: stakeRequestInput.nonce,
+        gateway: stakeRequestUpdateInput.gateway,
+        stakerProxy: stakeRequestUpdateInput.stakerProxy,
+        messageHash: stakeRequestInput.messageHash,
+      },
+      stakeRequestOutput as StakeRequest,
     );
   });
 });
