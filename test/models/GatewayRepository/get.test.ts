@@ -15,16 +15,15 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
-import BigNumber from 'bignumber.js';
 
 import {
   GatewayAttributes,
   Gateway,
-  GatewayType,
 } from '../../../src/models/GatewayRepository';
 import Database from '../../../src/models/Database';
 
 import Util from './util';
+import StubData from '../../utils/StubData';
 
 import assert = require('assert');
 
@@ -41,16 +40,7 @@ describe('GatewayRepository::get', (): void => {
   });
 
   it('Checks retrieval of an existing gateway.', async (): Promise<void> => {
-    const gatewayAttributes: GatewayAttributes = {
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      chainId: 1234,
-      gatewayType: GatewayType.Origin,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: new BigNumber('1'),
-      activation: true,
-    };
+    const gatewayAttributes: GatewayAttributes = StubData.gatewayAttributes();
 
     await config.db.gatewayRepository.create(
       gatewayAttributes,

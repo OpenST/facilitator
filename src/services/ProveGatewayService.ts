@@ -1,70 +1,100 @@
 import BigNumber from 'bignumber.js';
-import { AuxiliaryChainRepository } from '../models/AuxiliaryChainRepository';
-
-import Web3 = require('web3');
+import { GatewayRepository } from '../models/GatewayRepository';
+import { MessageRepository } from '../models/MessageRepository';
 
 const Mosaic = require('@openst/mosaic.js');
 
-export default class ProveGateway {
-  private auxiliaryChainRepository: AuxiliaryChainRepository;
+export default class ProveGatewayService {
+  private gatewayRepository: GatewayRepository;
 
-  private originWeb3: Web3;
+  private messageRepository: MessageRepository;
 
-  private auxiliaryWeb3: Web3;
+  private originWeb3: object;
+
+  private auxiliaryWeb3: object;
 
   private auxiliaryWorkerAddress: string;
+
+  private gatewayAddress: string;
 
   /**
    *  Constructor
    *
-   * @param auxiliaryChainRepository Instance of auxiliary chain repository.
+   * @param gatewayRepository Instance of auxiliary chain repository.
+   * @param messageRepository Instance of message repository.
    * @param originWeb3 Origin Web3 instance.
    * @param auxiliaryWeb3 Auxiliary Web3 instance.
    * @param auxiliaryWorkerAddress auxiliary worker address, this should be
    *                               unlocked and added in web3 wallet.
+   * @param gatewayAddress Address of gateway contract on origin chain.
+
    */
   public constructor(
-    auxiliaryChainRepository: AuxiliaryChainRepository,
-    originWeb3: Web3,
-    auxiliaryWeb3: Web3,
+    gatewayRepository: GatewayRepository,
+    messageRepository: MessageRepository,
+    originWeb3: object,
+    auxiliaryWeb3: object,
     auxiliaryWorkerAddress: string,
+    gatewayAddress: string,
   ) {
-    this.auxiliaryChainRepository = auxiliaryChainRepository;
+    this.gatewayRepository = gatewayRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.auxiliaryWorkerAddress = auxiliaryWorkerAddress;
+    this.gatewayAddress = gatewayAddress;
+    this.messageRepository = messageRepository;
   }
 
   /**
    * This method performs prove gateway transaction on auxiliary chain.
    * This throws if auxiliary chain details doesn't exist.
    *
-   * @param auxiliaryChainId Auxiliary chainId.
+   * @param blockHeight Block height at which anchor state root happens.
    *
-   * @return Return a promise that resolves to receipt.
+   * @return Return a promise that resolves to object which tell about success or failure.
    */
-  public async reactTo(auxiliaryChainId: number): Promise<object> {
-    const auxiliaryChain = await this.auxiliaryChainRepository.get(auxiliaryChainId);
-    if (auxiliaryChain === null) {
-      return Promise.reject(new Error('Auxiliary chain record doesnot exists for given chainId'));
+  public async reactTo(
+    blockHeight: BigNumber,
+  ): Promise<{success: boolean; receipt: object; message: string}> {
+    const gatewayRecord = await this.gatewayRepository.get(this.gatewayAddress);
+    if (gatewayRecord === null) {
+      return Promise.reject(new Error('Gateway record record doesnot exists for given gateway'));
     }
-    const { lastOriginBlockHeight, ostGatewayAddress, ostCoGatewayAddress } = auxiliaryChain!;
 
+    const booleanPromise = await this.messageRepository.isPendingMessages(
+      blockHeight,
+      this.gatewayAddress,
+    );
+    if (!booleanPromise) {
+      return Promise.resolve(
+        {
+          success: true,
+          receipt: {},
+          message: 'There are no pending messages for this gateway.',
+        },
+      );
+    }
+    const { gatewayAddress } = this;
+    const coGateway = gatewayRecord.remoteGatewayAddress;
     const { ProofGenerator } = Mosaic.Utils;
 
     const proofGenerator = new ProofGenerator(this.originWeb3, this.auxiliaryWeb3);
-    const { encodedAccountValue, serializedAccountProof } = await proofGenerator.getOutboxProof(
-      ostGatewayAddress,
+    const {
+      encodedAccountValue,
+      serializedAccountProof,
+    } = await proofGenerator.getOutboxProof(
+      gatewayAddress,
       [],
-      lastOriginBlockHeight,
+      blockHeight,
     );
 
-    return this.prove(
-      ostCoGatewayAddress,
-      lastOriginBlockHeight!,
+    const receipt = await this.prove(
+      coGateway,
+      blockHeight,
       encodedAccountValue,
       serializedAccountProof,
     );
+    return { success: true, receipt, message: 'Gateway successfully proven' };
   }
 
   /**
@@ -87,7 +117,7 @@ export default class ProveGateway {
 
     const eip20CoGateway = new EIP20CoGateway(this.auxiliaryWeb3, ostCoGatewayAddress);
 
-    return await eip20CoGateway.proveGateway(
+    return eip20CoGateway.proveGateway(
       lastOriginBlockHeight,
       encodedAccountValue,
       serializedAccountProof,

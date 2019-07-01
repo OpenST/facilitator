@@ -21,12 +21,12 @@ import BigNumber from 'bignumber.js';
 import {
   GatewayAttributes,
   Gateway,
-  GatewayType,
 } from '../../../src/models/GatewayRepository';
 
 import Database from '../../../src/models/Database';
 
 import Util from './util';
+import StubData from '../../utils/StubData';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -46,16 +46,7 @@ describe('GatewayRepository::update', (): void => {
   });
 
   it('Checks updation of gateway.', async (): Promise<void> => {
-    const createGatewayAttributes: GatewayAttributes = {
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      chainId: 1234,
-      gatewayType: GatewayType.Origin,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: new BigNumber('1'),
-      activation: true,
-    };
+    const createGatewayAttributes: GatewayAttributes = StubData.gatewayAttributes();
 
     const objectForUpdate = await config.db.gatewayRepository.create(
       createGatewayAttributes,
@@ -78,16 +69,7 @@ describe('GatewayRepository::update', (): void => {
   });
 
   it('Updation should fail for a non existing gateway ', async (): Promise<void> => {
-    const gatewayAttributes: GatewayAttributes = {
-      gatewayAddress: '0xd619143ac1bbe667473dfd060c7eee4c1e5ca96e',
-      chainId: 1234,
-      gatewayType: GatewayType.Origin,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: new BigNumber('1'),
-      activation: true,
-    };
+    const gatewayAttributes: GatewayAttributes = StubData.gatewayAttributes();
 
     const gatewayUpdateResponse = await config.db.gatewayRepository.update(
       gatewayAttributes,

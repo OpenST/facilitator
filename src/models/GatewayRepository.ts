@@ -28,7 +28,7 @@ export class GatewayModel extends Model {}
  */
 export interface GatewayAttributes {
   gatewayAddress: string;
-  chainId: number;
+  chainId: string;
   gatewayType: string;
   remoteGatewayAddress: string;
   tokenAddress: string;
@@ -66,7 +66,7 @@ export class GatewayRepository {
           },
         },
         chainId: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           allowNull: false,
           validate: {
             min: 0,
@@ -183,6 +183,20 @@ export class GatewayRepository {
           [Op.eq]: gatewayAttributes.gatewayAddress,
         },
       },
+    });
+  }
+
+  public async getAllByChain(chain: string): Promise<Gateway []> {
+    const models = await GatewayModel.findAll({
+      where: {
+        chainId: chain,
+      },
+    });
+
+    return models.map((model: Gateway) => {
+      const gateway: Gateway = model;
+      this.format(gateway);
+      return gateway;
     });
   }
 

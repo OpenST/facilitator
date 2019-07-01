@@ -1,8 +1,13 @@
 import * as sinon from 'sinon';
+import BigNumber from 'bignumber.js';
 import ProveGatewayService from '../../../src/services/ProveGatewayService';
-import { AuxiliaryChainRepository } from '../../../src/models/AuxiliaryChainRepository';
 import StubData from '../../utils/StubData';
 import SpyAssert from '../../utils/SpyAssert';
+import {
+  Gateway,
+  GatewayRepository,
+} from '../../../src/models/GatewayRepository';
+import { MessageRepository } from '../../../src/models/MessageRepository';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -16,11 +21,17 @@ describe('ProveGatewayService.reactTo()', () => {
   const originWeb3 = new Web3();
   const auxiliaryWeb3 = new Web3();
   const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
+  const gatewayAddress = '0x0000000000000000000000000000000000000001';
+  const blockNumber = new BigNumber(2);
 
-  it('should react to auxiliary chainId', async () => {
-    const auxiliaryChainRecord = StubData.auxiliaryChainRecord();
-    const auxilaryChainRepository = sinon.createStubInstance(AuxiliaryChainRepository, {
-      get: Promise.resolve(auxiliaryChainRecord),
+  it('should react to block height of new anchor state root', async () => {
+    const gatewayRecord: Gateway = StubData.gatewayRecord();
+    const gateawayRepository = sinon.createStubInstance(GatewayRepository, {
+      get: Promise.resolve(gatewayRecord),
+    });
+
+    const messageRepository = sinon.createStubInstance(MessageRepository, {
+      isPendingMessages: Promise.resolve(true),
     });
 
     const proof = { encodedAccountValue: 'encodedAccountValue', serializedAccountProof: 'serializedAccountProof' };
@@ -37,32 +48,39 @@ describe('ProveGatewayService.reactTo()', () => {
       sinon.fake.resolves(fakeReceipt),
     );
     const proveGatewayService = new ProveGatewayService(
-      auxilaryChainRepository as any,
+      gateawayRepository as any,
+      messageRepository as any,
       originWeb3,
       auxiliaryWeb3,
       auxiliaryWorkerAddress,
+      gatewayAddress,
     );
 
-    const auxiliaryChainId = 1;
-    const receipt = await proveGatewayService.reactTo(auxiliaryChainId);
+    const response = await proveGatewayService.reactTo(blockNumber);
 
     SpyAssert.assert(
-      auxilaryChainRepository.get,
+      gateawayRepository.get,
       1,
-      [[auxiliaryChainId]],
+      [[gatewayAddress]],
+    );
+
+    SpyAssert.assert(
+      messageRepository.isPendingMessages,
+      1,
+      [[blockNumber, gatewayAddress]],
     );
 
     SpyAssert.assert(
       proofGeneratorStub,
       1,
-      [[auxiliaryChainRecord.ostGatewayAddress, [], auxiliaryChainRecord.lastOriginBlockHeight]],
+      [[gatewayRecord.gatewayAddress, [], blockNumber]],
     );
 
     SpyAssert.assert(
       coGatewayStub,
       1,
       [[
-        auxiliaryChainRecord.lastOriginBlockHeight,
+        blockNumber,
         proof.encodedAccountValue,
         proof.serializedAccountProof,
         { from: auxiliaryWorkerAddress }]],
@@ -70,29 +88,87 @@ describe('ProveGatewayService.reactTo()', () => {
 
     assert.strictEqual(
       fakeReceipt,
-      receipt,
+      response.receipt,
       'Service must return expected receipt',
+    );
+
+    assert.strictEqual(
+      response.success,
+      true,
+      'Success must be true',
+    );
+    assert.strictEqual(
+      response.message,
+      'Gateway successfully proven',
+      'Service must return correct messages',
     );
   });
 
-  it('should fail to react if auxiliary chain details does not exists', async (): Promise<void> => {
-    const auxilaryChainRepository = sinon.createStubInstance(AuxiliaryChainRepository, {
+  it('should fail to react if gayeway details does not exists', async (): Promise<void> => {
+    const gateawayRepository = sinon.createStubInstance(GatewayRepository, {
       get: Promise.resolve(null),
     });
 
     const proveGatewayService = new ProveGatewayService(
-      auxilaryChainRepository as any,
+      gateawayRepository as any,
+      sinon.fake() as any,
       originWeb3,
       auxiliaryWeb3,
       auxiliaryWorkerAddress,
+      gatewayAddress,
     );
 
     await assert.isRejected(
       proveGatewayService.reactTo(
-        1,
+        blockNumber,
       ),
-      'Auxiliary chain record doesnot exists for given chainId',
-      'It must fail if auxiliary chain details does not exists.',
+      'Gateway record record doesnot exists for given gateway',
+      'It must fail if gatway record does not exists.',
+    );
+  });
+
+  it('should not try to proveGateway if there are no pending messages', async (): Promise<void> => {
+    const gatewayRecord: Gateway = StubData.gatewayRecord();
+    const gateawayRepository = sinon.createStubInstance(GatewayRepository, {
+      get: Promise.resolve(gatewayRecord),
+    });
+
+    const messageRepository = sinon.createStubInstance(MessageRepository, {
+      isPendingMessages: Promise.resolve(false),
+    });
+
+    const proveGatewayService = new ProveGatewayService(
+      gateawayRepository as any,
+      messageRepository as any,
+      originWeb3,
+      auxiliaryWeb3,
+      auxiliaryWorkerAddress,
+      gatewayAddress,
+    );
+
+    const response = await proveGatewayService.reactTo(blockNumber);
+
+    SpyAssert.assert(
+      gateawayRepository.get,
+      1,
+      [[gatewayAddress]],
+    );
+
+    SpyAssert.assert(
+      messageRepository.isPendingMessages,
+      1,
+      [[blockNumber, gatewayAddress]],
+    );
+
+    assert.strictEqual(
+      response.success,
+      true,
+      'Success must be true',
+    );
+    assert.strictEqual(
+      response.message,
+      'There are no pending messages for this gateway.',
+      'Service must return correct messages',
     );
   });
 });

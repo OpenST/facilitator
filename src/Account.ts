@@ -2,8 +2,6 @@
 
 import Logger from './Logger';
 
-import Web3 = require('web3');
-
 /**
  * It provides methods to create, encrypt and unlock accounts.
  */
@@ -24,7 +22,7 @@ export default class Account {
    * @param password The password required to unlock the account.
    * @returns {Account} Account object.
    */
-  public static create(web3: Web3, password: string): Account {
+  public static create(web3: any, password: string): Account {
     const web3Account = web3.eth.accounts.create();
     const encryptedAccount = web3.eth.accounts.encrypt(
       web3Account.privateKey.toString(),

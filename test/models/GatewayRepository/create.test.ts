@@ -16,17 +16,16 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
-import BigNumber from 'bignumber.js';
 
 import {
   GatewayAttributes,
   Gateway,
-  GatewayType,
 } from '../../../src/models/GatewayRepository';
 
 import Database from '../../../src/models/Database';
 
 import Util from './util';
+import StubData from '../../utils/StubData';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -46,16 +45,7 @@ describe('GatewayRepository::create', (): void => {
   });
 
   it('Checks creation of gateway model.', async (): Promise<void> => {
-    const gatewayAttributes: GatewayAttributes = {
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      chainId: 123,
-      gatewayType: GatewayType.Origin,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: new BigNumber('1'),
-      activation: true,
-    };
+    const gatewayAttributes: GatewayAttributes = StubData.gatewayAttributes();
 
     const createResponse = await config.db.gatewayRepository.create(
       gatewayAttributes,
@@ -81,28 +71,10 @@ describe('GatewayRepository::create', (): void => {
 
   it('Throws if a gateway '
     + 'with the same gateway address already exists.', async (): Promise<void> => {
-    const gatewayAttributesA: GatewayAttributes = {
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      chainId: 123,
-      gatewayType: GatewayType.Origin,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: new BigNumber('1'),
-      activation: true,
-    };
+    const gatewayAttributesA: GatewayAttributes = StubData.gatewayAttributes();
 
     // All members, except gatewayAddress are different from gatewayAttributesA.
-    const gatewayAttributesB: GatewayAttributes = {
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      chainId: 1234,
-      gatewayType: GatewayType.Auxiliary,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000005',
-      anchorAddress: '0x0000000000000000000000000000000000000006',
-      tokenAddress: '0x0000000000000000000000000000000000000007',
-      bounty: new BigNumber('2'),
-      activation: false,
-    };
+    const gatewayAttributesB: GatewayAttributes = StubData.gatewayAttributes();
 
     await config.db.gatewayRepository.create(
       gatewayAttributesA,

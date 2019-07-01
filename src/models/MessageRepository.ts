@@ -17,7 +17,7 @@
 /* eslint-disable class-methods-use-this */
 
 import {
-  DataTypes, Model, InitOptions, Op,
+  DataTypes, Model, InitOptions, Op, fn, col,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
 
@@ -193,7 +193,7 @@ export class MessageRepository {
         attributes: messageAttributes,
         reason: e.message,
       };
-      return Promise.reject(`Failed to create a message: ${JSON.stringify(errorContext)}`);
+      return Promise.reject(new Error(`Failed to create a message: ${JSON.stringify(errorContext)}`));
     }
   }
 
@@ -222,7 +222,7 @@ export class MessageRepository {
    * @return {Promise<Array<Number>>}
    */
   public async update(messageAttributes: MessageAttributes): Promise<number[]> {
-    return await MessageModel.update({
+    return MessageModel.update({
       secret: messageAttributes.secret,
       hashLock: messageAttributes.hashLock,
     }, {
@@ -232,6 +232,48 @@ export class MessageRepository {
         },
       },
     });
+  }
+
+  public async getGatewaysWithPendingMessages(
+    gateways: string[],
+    blockHeight: BigNumber,
+  ): Promise<string[]> {
+    const messageModels = await MessageModel.findAll({
+      attributes: [[fn('DISTINCT', col('gateway_address')), 'gatewayAddress']],
+      where: {
+        [Op.and]: {
+          gatewayAddress: {
+            [Op.in]: gateways,
+          },
+          sourceDeclarationBlockHeight: {
+            [Op.lte]: blockHeight,
+          },
+          sourceStatus: MessageStatus.Declared,
+          direction: MessageDirection.OriginToAuxiliary,
+        },
+
+      },
+    });
+    return messageModels.map((model: Record<string, string>) => model.gatewayAddress);
+  }
+
+  public async isPendingMessages(
+    blockHeight: BigNumber,
+    gateway: string,
+
+  ): Promise<boolean> {
+    return MessageModel.count({
+      where: {
+        [Op.and]: {
+          gatewayAddress: gateway,
+          sourceDeclarationBlockHeight: {
+            [Op.lte]: blockHeight,
+          },
+          sourceStatus: MessageStatus.Declared,
+          direction: MessageDirection.OriginToAuxiliary,
+        },
+      },
+    }).then((count: number) => count > 0);
   }
 
   /**
