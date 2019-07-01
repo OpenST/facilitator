@@ -5,7 +5,7 @@ import DBFileHelper from '../../src/DatabaseFileHelper';
 
 const sinon = require('sinon');
 
-describe('Database.verify()', () => {
+describe('DatabaseFileHelper.verify()', () => {
   function spyFsModule(status: boolean) {
     const fsSpy = sinon.replace(
       fs,
