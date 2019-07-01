@@ -20,6 +20,7 @@ import { StakeRequestRepository } from './StakeRequestRepository';
 import { AuxiliaryChainRepository } from './AuxiliaryChainRepository';
 import { MessageRepository } from './MessageRepository';
 import { GatewayRepository } from './GatewayRepository';
+import { UTSRepository } from './UTSRepository';
 
 export default class Database {
   /* Storage */
@@ -31,6 +32,8 @@ export default class Database {
   public messageRepository: MessageRepository;
 
   public gatewayRepository: GatewayRepository;
+
+  public utsRepository: UTSRepository;
 
   /* Public Functions */
 
@@ -97,6 +100,13 @@ export default class Database {
     });
 
     this.gatewayRepository = new GatewayRepository({
+      sequelize,
+      underscored: true,
+      timestamps: true,
+      freezeTableName: true,
+    });
+
+    this.utsRepository = new UTSRepository({
       sequelize,
       underscored: true,
       timestamps: true,
