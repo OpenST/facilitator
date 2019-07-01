@@ -4,6 +4,7 @@ import assert from '../utils/assert';
 import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../utils/SpyAssert';
+import TransactionHandler from '../../src/TransactionHandler';
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;
@@ -24,7 +25,8 @@ describe('Subscriber.subscribe()', () => {
       'subscribe',
       sinon.fake.resolves(mockQuerySubscriber),
     );
-    subscriber = new Subscriber(graphClient, subscriptionQueries);
+    const handler = sinon.mock(TransactionHandler);
+    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any);
     await subscriber.subscribe();
 
     assert.strictEqual(
@@ -42,7 +44,7 @@ describe('Subscriber.subscribe()', () => {
     SpyAssert.assert(
       spyGraphClientSubscribe,
       1,
-      [[subscriptionQueries.stakeRequested]],
+      [[subscriptionQueries.stakeRequested, handler]],
     );
 
     sinon.restore();
