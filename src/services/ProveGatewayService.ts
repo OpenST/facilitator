@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { GatewayRepository } from '../models/GatewayRepository';
 import { MessageRepository } from '../models/MessageRepository';
+import Logger from '../Logger';
 
 const Mosaic = require('@openst/mosaic.js');
 
@@ -58,6 +59,7 @@ export default class ProveGatewayService {
   ): Promise<{success: boolean; receipt: object; message: string}> {
     const gatewayRecord = await this.gatewayRepository.get(this.gatewayAddress);
     if (gatewayRecord === null) {
+      Logger.error(`Gateway record record doesnot exists for gateway ${this.gatewayAddress}`);
       return Promise.reject(new Error('Gateway record record doesnot exists for given gateway'));
     }
 
@@ -66,6 +68,10 @@ export default class ProveGatewayService {
       this.gatewayAddress,
     );
     if (!booleanPromise) {
+      Logger.info(
+        `There are no pending messages for gateway ${this.gatewayAddress}.`
+        + ' Hence skipping proveGateway',
+      );
       return Promise.resolve(
         {
           success: true,
@@ -78,6 +84,7 @@ export default class ProveGatewayService {
     const coGateway = gatewayRecord.remoteGatewayAddress;
     const { ProofGenerator } = Mosaic.Utils;
 
+    Logger.info(`Generating proof for gateway address ${this.gatewayAddress} at blockHeight ${blockHeight.toString()}`);
     const proofGenerator = new ProofGenerator(this.originWeb3, this.auxiliaryWeb3);
     const {
       encodedAccountValue,
@@ -87,13 +94,15 @@ export default class ProveGatewayService {
       [],
       blockHeight,
     );
-
+    Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
     const receipt = await this.prove(
       coGateway,
       blockHeight,
       encodedAccountValue,
       serializedAccountProof,
     );
+
+    Logger.info(`Prove gateway receipt ${receipt}`);
     return { success: true, receipt, message: 'Gateway successfully proven' };
   }
 
