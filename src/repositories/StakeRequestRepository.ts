@@ -23,6 +23,8 @@ import Subject from '../observer/Subject';
 import StakeRequest from '../models/StakeRequest';
 import Utils from '../Utils';
 
+import assert = require('assert');
+
 
 /**
  * An interface, that represents a row from a stake request table.
@@ -139,8 +141,10 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
    * from the passed stake request object.
    *
    * @param stakeRequest Stake request object to update.
+   *
+   * @returns Newly created or updated stake request object (with all saved fields).
    */
-  public async save(stakeRequest: StakeRequest): Promise<void> {
+  public async save(stakeRequest: StakeRequest): Promise<StakeRequest> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(stakeRequest);
 
     await StakeRequestModel.upsert(
@@ -149,6 +153,13 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
         fields: definedOwnProps,
       },
     );
+
+    const stakeRequestOutput = await this.get(stakeRequest.stakeRequestHash);
+    assert(stakeRequestOutput !== undefined);
+
+    this.newUpdate(stakeRequestOutput as StakeRequest);
+
+    return stakeRequestOutput as StakeRequest;
   }
 
   /**

@@ -45,8 +45,13 @@ describe('StakeRequestRepository::save', (): void => {
       stakerProxy: 'stakerProxy',
     };
 
-    await config.repos.stakeRequestRepository.save(
+    const stakeRequestResponse = await config.repos.stakeRequestRepository.save(
       stakeRequestInput,
+    );
+
+    Util.checkInputAgainstOutput(
+      stakeRequestInput,
+      stakeRequestResponse,
     );
 
     const stakeRequestOutput = await config.repos.stakeRequestRepository.get(
@@ -55,21 +60,6 @@ describe('StakeRequestRepository::save', (): void => {
 
     assert.notStrictEqual(
       stakeRequestOutput,
-      null,
-      'Newly created stake request exists.',
-    );
-
-    Util.checkInputAgainstOutput(
-      stakeRequestInput,
-      stakeRequestOutput as StakeRequest,
-    );
-
-    const stakeRequest = await config.repos.stakeRequestRepository.get(
-      stakeRequestInput.stakeRequestHash,
-    );
-
-    assert.notStrictEqual(
-      stakeRequest,
       null,
       'Newly created stake request does not exist.',
     );
@@ -102,8 +92,23 @@ describe('StakeRequestRepository::save', (): void => {
       gateway: 'gatewayUpdated',
     };
 
-    await config.repos.stakeRequestRepository.save(
+    const stakeRequestResponse = await config.repos.stakeRequestRepository.save(
       stakeRequestUpdateInput,
+    );
+
+    Util.checkInputAgainstOutput(
+      {
+        stakeRequestHash: stakeRequestInput.stakeRequestHash,
+        amount: stakeRequestUpdateInput.amount,
+        beneficiary: stakeRequestInput.beneficiary,
+        gasPrice: stakeRequestInput.gasPrice,
+        gasLimit: stakeRequestInput.gasLimit,
+        nonce: stakeRequestInput.nonce,
+        gateway: stakeRequestUpdateInput.gateway,
+        stakerProxy: stakeRequestUpdateInput.stakerProxy,
+        messageHash: stakeRequestInput.messageHash,
+      },
+      stakeRequestResponse,
     );
 
     const stakeRequestOutput = await config.repos.stakeRequestRepository.get(
@@ -113,7 +118,7 @@ describe('StakeRequestRepository::save', (): void => {
     assert.notStrictEqual(
       stakeRequestOutput,
       null,
-      'Newly created stake request does not exist.',
+      'Newly updated stake request exists.',
     );
 
     Util.checkInputAgainstOutput(
