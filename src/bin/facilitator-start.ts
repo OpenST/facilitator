@@ -10,7 +10,7 @@ const facilitatorCmd = commander
 
 facilitatorCmd
   .option('-mc, --mosaic-config <mosaicConfig>', 'path to mosaic configuration')
-  .option('-fc, --facilitatorCmd-config <facilitatorConfig>', 'path to facilitatorCmd configuration')
+  .option('-fc, --facilitator-config <facilitatorConfig>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
     let configObj: Config;
 
@@ -19,7 +19,7 @@ facilitatorCmd
       const facilitator: Facilitator = new Facilitator(configObj);
       await facilitator.start();
 
-      Logger.info('facilitatorCmd started');
+      Logger.info('facilitator started');
     } catch (err) {
       Logger.error(err.message);
     }
