@@ -25,7 +25,7 @@ describe('Facilitator.start()', () => {
     );
     const graphClientSpy = sinon.replace(
       GraphClient,
-      'getClientWithWsLink',
+      'getClient',
       sinon.fake.returns(mockGraphClient),
     );
     const subscribeStub = sinon.stub(Subscriber.prototype, 'subscribe');
@@ -54,8 +54,8 @@ describe('Facilitator.start()', () => {
       graphClientSpy,
       2,
       [
-        [subGraphDetails.origin.subGraphEndPoint],
-        [subGraphDetails.auxiliary.subGraphEndPoint],
+        ['ws', subGraphDetails.origin.subGraphEndPoint],
+        ['ws', subGraphDetails.auxiliary.subGraphEndPoint],
       ],
     );
 

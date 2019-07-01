@@ -4,6 +4,7 @@ import GraphClient from './GraphClient';
 import TransactionHandler from './TransactionHandler';
 import HandlerFactory from './handlers/HandlerFactory';
 import Database from './models/Database';
+import TransactionFetcher from "./TransactionFetcher";
 
 /**
  * The class defines properties and behaviour of a facilitator.
@@ -35,19 +36,27 @@ export default class Facilitator {
     const transactionalHandler: TransactionHandler = new TransactionHandler(
       HandlerFactory.get(database),
     );
+    const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
+      GraphClient.getClient('http', subGraphDetails.origin.httpSubGraphEndPoint)
+    );
     // Subscription to origin subgraph queries
     this.originSubscriber = new Subscriber(
-      GraphClient.getClientWithWsLink(subGraphDetails.origin.subGraphEndPoint),
+      GraphClient.getClient('ws', subGraphDetails.origin.wsSubGraphEndPoint),
       subGraphDetails.origin.subscriptionQueries,
       transactionalHandler,
+      originTransactionFetcher,
     );
     await this.originSubscriber.subscribe();
 
     // Subscription to auxiliary subgraph queries
+    const auxiliaryTransactionFetcher: TransactionFetcher = new TransactionFetcher(
+      GraphClient.getClient('http', subGraphDetails.auxiliary.httpSubGraphEndPoint)
+    );
     this.auxiliarySubscriber = new Subscriber(
-      GraphClient.getClientWithWsLink(subGraphDetails.auxiliary.subGraphEndPoint),
+      GraphClient.getClient('ws', subGraphDetails.auxiliary.wsSubGraphEndPoint),
       subGraphDetails.auxiliary.subscriptionQueries,
       transactionalHandler,
+      auxiliaryTransactionFetcher,
     );
     await this.auxiliarySubscriber.subscribe();
   }
@@ -73,48 +82,35 @@ export default class Facilitator {
   public static getSubscriptionDetails(): any {
     return {
       origin: {
-        subGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
+        wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
+        httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
         subscriptionQueries: {
           stakeRequested: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){id}}',
         },
-        filterQueries: {
-          stakeRequested: 'query ($uts: BigInt!) {\n' +
-          '  stakeRequesteds(where: {blockNumber_gt: $uts}, orderDirection: asc, limit: 100) {\n' +
-          '    id\n' +
-          '    amount\n' +
-          '    gasPrice\n' +
-          '    gasLimit\n' +
-          '    staker\n' +
-          '    gateway\n' +
-          '    stakeRequestHash\n' +
-          '    nonce\n' +
-          '    beneficiary\n' +
-          '    blockNumber\n' +
-          '  }\n' +
-          '}',
-        }
       },
       auxiliary: {
-        subGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
+        wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
+        httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
         subscriptionQueries: {
           stakeRequested: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){id}}',
         },
-        filterQueries: {
-          stakeRequested: 'query ($uts: BigInt!) {\n' +
-          '  stakeRequesteds(where: {blockNumber_gt: $uts}, orderDirection: asc, limit: 100) {\n' +
-          '    id\n' +
-          '    amount\n' +
-          '    gasPrice\n' +
-          '    gasLimit\n' +
-          '    staker\n' +
-          '    gateway\n' +
-          '    stakeRequestHash\n' +
-          '    nonce\n' +
-          '    beneficiary\n' +
-          '    blockNumber\n' +
-          '  }\n' +
-          '}',
-        },
+      },
+      fetchQueries: {
+        stakeRequested: 'query ($uts: BigInt!) {\n' +
+        '  stakeRequesteds(where: {uts_gt: $uts}, orderDirection: asc, limit: 100) {\n' +
+        '    id\n' +
+        '    amount\n' +
+        '    gasPrice\n' +
+        '    gasLimit\n' +
+        '    staker\n' +
+        '    gateway\n' +
+        '    stakeRequestHash\n' +
+        '    nonce\n' +
+        '    beneficiary\n' +
+        '    blockNumber\n' +
+        '    uts\n' +
+        '  }\n' +
+        '}',
       }
     };
   }
