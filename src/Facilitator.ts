@@ -97,7 +97,8 @@ export default class Facilitator {
         wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
         httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
         subscriptionQueries: {
-          stakeRequested: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){' +
+          stakeIntentConfirmed: 'subscription{stakeIntentConfirmeds(orderDirection: desc, first:' +
+          ' 1){' +
           '   id' +
           '   contractAddress ' +
           '  }' +
