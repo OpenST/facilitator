@@ -15,13 +15,14 @@
 // ----------------------------------------------------------------------------
 
 import Observer from './Observer';
+import Lessable from './Lessable';
 
 /**
  * The class enables one-to-many dependency between objects, so that
  * when object (subject) changes state, all its dependents (observers) are
  * notified and updated.
  */
-export default class Subject<UpdateType> {
+export default class Subject<UpdateType extends Lessable<UpdateType>> {
   /* Storage */
 
   private _observers: Observer<UpdateType>[] = [];
@@ -37,6 +38,7 @@ export default class Subject<UpdateType> {
       return [];
     }
 
+
     const updates = [...this._updates];
     this._updates.length = 0;
 
@@ -48,10 +50,16 @@ export default class Subject<UpdateType> {
     return Promise.all(observerNotifyPromises);
   }
 
-  /**
-   * @TODO Think about do we need to do de-duplication of updates.
-   */
   public newUpdate(t: UpdateType): void {
+    // De-duplicates an existing update.
+    const index = this._updates.findIndex(
+      (el: UpdateType): boolean => this.isEqual(el, t)
+    );
+
+    if (index !== -1) {
+      this._updates.splice(index, 1);
+    }
+
     this._updates.push(t);
   }
 
@@ -73,7 +81,9 @@ export default class Subject<UpdateType> {
    */
   public detach(observer: Observer<UpdateType>): void {
     const observerIndex = this._observers.indexOf(observer);
-    this._observers.splice(observerIndex, 1);
+    if (observerIndex !== -1) {
+      this._observers.splice(observerIndex, 1);
+    }
   }
 
   /* Getter for registered observers. */
@@ -84,5 +94,12 @@ export default class Subject<UpdateType> {
   /* Getter for collected updates. */
   public get updates(): UpdateType[] {
     return this._updates;
+  }
+
+
+  /* Private Functions */
+
+  private isEqual(u1: UpdateType, u2: UpdateType): boolean {
+    return !(u1.less(u2) || u2.less(u1));
   }
 }

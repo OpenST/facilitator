@@ -17,18 +17,28 @@
 /* eslint-disable class-methods-use-this */
 
 import BigNumber from 'bignumber.js';
+import Lessable from '../observer/Lessable';
 
-export default interface StakeRequest {
-  stakeRequestHash: string;
-  messageHash?: string;
-  amount?: BigNumber;
-  beneficiary?: string;
-  gasPrice?: BigNumber;
-  gasLimit?: BigNumber;
-  nonce?: BigNumber;
-  gateway?: string;
-  stakerProxy?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-// eslint-disable-next-line semi
+export default class StakeRequest extends Lessable<StakeRequest> {
+  public stakeRequestHash: string;
+  public messageHash?: string;
+  public amount?: BigNumber;
+  public beneficiary?: string;
+  public gasPrice?: BigNumber;
+  public gasLimit?: BigNumber;
+  public nonce?: BigNumber;
+  public gateway?: string;
+  public stakerProxy?: string;
+  public createdAt?: Date;
+  public updatedAt?: Date;
+
+  public constructor(stakeRequestHash: string) {
+    super();
+
+    this.stakeRequestHash = stakeRequestHash;
+  }
+
+  public less(other: StakeRequest): boolean {
+    return this.stakeRequestHash < other.stakeRequestHash;
+  }
 }

@@ -16,20 +16,22 @@
 
 import 'mocha';
 
-import Subject from '../../../src/observer/Subject';
 import ObserverSpy from '../ObserverSpy';
+import NumberUpdate from '../NumberUpdate';
+
+import Subject from '../../../src/observer/Subject';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  subject: Subject<number>;
+  subject: Subject<NumberUpdate>;
 }
 let config: TestConfigInterface;
 
 describe('Subject::attach', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      subject: new Subject<number>(),
+      subject: new Subject<NumberUpdate>(),
     };
   });
 

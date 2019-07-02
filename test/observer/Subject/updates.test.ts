@@ -16,12 +16,14 @@
 
 import 'mocha';
 
+import NumberUpdate from '../NumberUpdate';
+
 import Subject from '../../../src/observer/Subject';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  subject: Subject<number>;
+  subject: Subject<NumberUpdate>;
 }
 let config: TestConfigInterface;
 
@@ -29,7 +31,7 @@ let config: TestConfigInterface;
 describe('Subject::updates', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      subject: new Subject<number>(),
+      subject: new Subject<NumberUpdate>(),
     };
   });
 
@@ -42,7 +44,7 @@ describe('Subject::updates', (): void => {
   });
 
   it('Checks that registered observer is within a collection.', async (): Promise<void> => {
-    const update1 = 1;
+    const update1 = new NumberUpdate(1);
     config.subject.newUpdate(update1);
 
     assert.strictEqual(

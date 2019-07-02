@@ -18,13 +18,13 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import Repositories from '../repositories/Repositories';
 import StakeRequest from '../models/StakeRequest';
-import { StakeRequestRepository } from '../repositories/StakeRequestRepository';
 import Observer from '../observer/Observer';
 import {
   MessageType, MessageStatus, MessageDirection, MessageRepository, MessageAttributes,
 } from '../repositories/MessageRepository';
-
+import assert = require('assert');
 import crypto = require('crypto');
+
 const hash = crypto.createHash('sha256');
 
 /**
@@ -36,8 +36,6 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   private web3: Web3;
 
-  private stakeRequestRepository: StakeRequestRepository;
-
   private messageRepository: MessageRepository;
 
 
@@ -47,12 +45,15 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     super();
 
     this.web3 = web3;
-    this.stakeRequestRepository = db.stakeRequestRepository;
     this.messageRepository = db.messageRepository;
   }
 
-  public async update(): Promise<void> {
-    const nonAcceptedStakeRequests = await this.collectNonAcceptedStakeRequests();
+  public async update(stakeRequests: StakeRequest[]): Promise<void> {
+
+    const nonAcceptedStakeRequests = stakeRequests.filter(
+      (stakeRequest: StakeRequest): boolean => stakeRequest.messageHash === null
+    );
+
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }
 
@@ -62,24 +63,18 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequests(stakeRequests: StakeRequest[]): Promise<void> {
     const stakeRequestPromises = [];
     for (let i = 0; i < stakeRequests.length; i += 1) {
-      if (this.messageRepository) {
         stakeRequestPromises.push(this.acceptStakeRequest(stakeRequests[i]));
-      }
     }
 
     await Promise.all(stakeRequestPromises);
   }
 
-  private async collectNonAcceptedStakeRequests(): Promise<StakeRequest[]> {
-    return this.stakeRequestRepository.getStakeRequestsWithNullMessageHash();
-  }
-
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
-    // await this.sendAcceptStakeRequestTransaction(stakeRequest, hashLock);
-
     await this.createMessageInRepository(stakeRequest, secret, hashLock);
+
+    // await this.sendAcceptStakeRequestTransaction(stakeRequest, hashLock);
   }
 
   // private async sendAcceptStakeRequestTransaction(
@@ -91,16 +86,22 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   ): Promise<void> {
     const messageHash = this.calculateMessageHash(stakeRequest, hashLock);
 
+    assert(stakeRequest.gateway !== undefined);
+    assert(stakeRequest.gasPrice !== undefined);
+    assert(stakeRequest.gasLimit !== undefined);
+    assert(stakeRequest.nonce !== undefined);
+    assert(stakeRequest.stakerProxy !== undefined);
+
     const messageAttributes: MessageAttributes = {
       messageHash,
       type: MessageType.Stake,
-      gatewayAddress: stakeRequest.gateway,
+      gatewayAddress: stakeRequest.gateway as string,
       sourceStatus: MessageStatus.Undeclared,
       targetStatus: MessageStatus.Undeclared,
-      gasPrice: stakeRequest.gasPrice,
-      gasLimit: stakeRequest.gasLimit,
-      nonce: stakeRequest.nonce,
-      sender: stakeRequest.stakerProxy,
+      gasPrice: stakeRequest.gasPrice as BigNumber,
+      gasLimit: stakeRequest.gasLimit as BigNumber,
+      nonce: stakeRequest.nonce as BigNumber,
+      sender: stakeRequest.stakerProxy as string,
       direction: MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight: new BigNumber(await this.web3.eth.getBlockNumber()),
       secret,
@@ -122,10 +123,14 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   }
 
   private calculateMessageHash(stakeRequest: StakeRequest, hashLock: string): string {
+    assert(stakeRequest.amount !== undefined);
+    assert(stakeRequest.beneficiary !== undefined);
+    assert(stakeRequest.gateway !== undefined);
+
     const stakeIntentHash: string = this.calculateStakeIntentHash(
-      stakeRequest.amount,
-      stakeRequest.beneficiary,
-      stakeRequest.gateway,
+      stakeRequest.amount as BigNumber,
+      stakeRequest.beneficiary as string,
+      stakeRequest.gateway as string,
     );
 
     const messageTypeHash = this.web3.utils.keccak256(

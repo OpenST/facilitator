@@ -14,22 +14,6 @@
 //
 // ----------------------------------------------------------------------------
 
-import NumberUpdate from './NumberUpdate';
-
-import Observer from '../../src/observer/Observer';
-
-export default class ObserverSpy extends Observer<NumberUpdate> {
-  /* Storage */
-
-  public wasCalled: boolean = false;
-
-  public spyUpdates: NumberUpdate[] = [];
-
-
-  /* Public Functions */
-
-  public async update(updates: NumberUpdate[]): Promise<void> {
-    this.wasCalled = true;
-    this.spyUpdates = updates;
-  }
+export default abstract class Lessable<T> {
+  public abstract less(other: T): boolean;
 }

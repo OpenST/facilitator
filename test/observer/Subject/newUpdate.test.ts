@@ -16,41 +16,71 @@
 
 import 'mocha';
 
+import NumberUpdate from '../NumberUpdate';
+
 import Subject from '../../../src/observer/Subject';
 
 import assert from '../../utils/assert';
 
 interface TestConfigInterface {
-  subject: Subject<number>;
+  subject: Subject<NumberUpdate>;
 }
 let config: TestConfigInterface;
 
 describe('Subject::newUpdate', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      subject: new Subject<number>(),
+      subject: new Subject<NumberUpdate>(),
     };
   });
 
   it('Checks newly added update exists.', async (): Promise<void> => {
-    const update1 = 1;
+    const update1 = new NumberUpdate(1);
 
     config.subject.newUpdate(update1);
 
-    assert.notStrictEqual(
-      config.subject.updates.indexOf(update1),
-      -1,
+    assert.strictEqual(
+      config.subject.updates[0],
+      update1,
       'Newly added update exists.',
     );
 
-    const update2 = 2;
+    const update2 = new NumberUpdate(2);
 
     config.subject.newUpdate(update2);
 
-    assert.notStrictEqual(
-      config.subject.updates.indexOf(update2),
-      -1,
+    assert.strictEqual(
+      config.subject.updates[1],
+      update2,
       'Newly added update exists.',
+    );
+  });
+
+  it('Checks de-duplication of updates.', async (): Promise<void> => {
+    const update1 = new NumberUpdate(1);
+    config.subject.newUpdate(update1);
+
+    const update2 = new NumberUpdate(2);
+    config.subject.newUpdate(update2);
+
+    config.subject.newUpdate(update1);
+
+    assert.strictEqual(
+      config.subject.updates.length,
+      2,
+      'After de-duplication the updates array contains only two entries.',
+    )
+
+    assert.strictEqual(
+      config.subject.updates[0],
+      update2,
+      'After de-duplication the position 0 consumes update2.',
+    );
+
+    assert.strictEqual(
+      config.subject.updates[1],
+      update1,
+      'After de-duplication, and new addition the position 1 consumes update1.',
     );
   });
 });

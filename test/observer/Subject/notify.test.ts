@@ -16,14 +16,16 @@
 
 import 'mocha';
 
-import Subject from '../../../src/observer/Subject';
 import ObserverSpy from '../ObserverSpy';
+import NumberUpdate from '../NumberUpdate';
+
+import Subject from '../../../src/observer/Subject';
 
 import assert from '../../utils/assert';
 
 
 interface TestConfigInterface {
-  subject: Subject<number>;
+  subject: Subject<NumberUpdate>;
   observerA: ObserverSpy;
   observerB: ObserverSpy;
 }
@@ -32,7 +34,7 @@ let config: TestConfigInterface;
 describe('Subject::notify', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      subject: new Subject<number>(),
+      subject: new Subject<NumberUpdate>(),
       observerA: new ObserverSpy(),
       observerB: new ObserverSpy(),
     };
@@ -55,8 +57,8 @@ describe('Subject::notify', (): void => {
   });
 
   it('Checks that observers are notified with proper updates.', async (): Promise<void> => {
-    const update1 = 1;
-    const update2 = 2;
+    const update1 = new NumberUpdate(1);
+    const update2 = new NumberUpdate(2);
     config.subject.newUpdate(update1);
     config.subject.newUpdate(update2);
 
@@ -98,8 +100,8 @@ describe('Subject::notify', (): void => {
   });
 
   it('Checks that updates are cleared from a subject after notifying.', async (): Promise<void> => {
-    const update1 = 1;
-    const update2 = 2;
+    const update1 = new NumberUpdate(1);
+    const update2 = new NumberUpdate(2);
     config.subject.newUpdate(update1);
     config.subject.newUpdate(update2);
 

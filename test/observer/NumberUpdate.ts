@@ -14,22 +14,20 @@
 //
 // ----------------------------------------------------------------------------
 
-import NumberUpdate from './NumberUpdate';
+import Lessable from '../../src/observer/Lessable'
 
-import Observer from '../../src/observer/Observer';
-
-export default class ObserverSpy extends Observer<NumberUpdate> {
+export default class NumberUpdate extends Lessable<NumberUpdate> {
   /* Storage */
 
-  public wasCalled: boolean = false;
+  readonly value: number = 0;
 
-  public spyUpdates: NumberUpdate[] = [];
+  public less(other: NumberUpdate): boolean {
+    return this.value < other.value;
+  }
 
+  public constructor(value: number) {
+    super();
 
-  /* Public Functions */
-
-  public async update(updates: NumberUpdate[]): Promise<void> {
-    this.wasCalled = true;
-    this.spyUpdates = updates;
+    this.value = value;
   }
 }
