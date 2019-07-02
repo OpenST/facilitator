@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/Facilitator",
+  "definitions": {
+    "Address": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$"
+    },
+    "Facilitator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "database": {
+          "$ref": "#/definitions/Database"
+        },
+        "chains": {
+           "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9a-zA-Z]+$": {
+              "$ref": "#/definitions/Chain"
+            }
+          }
+
+        },
+        "encryptedAccounts": {
+          "$ref": "#/definitions/EncryptedAccounts"
+        }
+      },
+      "required": [
+        "chains",
+        "database",
+        "encryptedAccounts"
+      ],
+      "title": "Facilitator",
+      "description":"Object encapsulating details about facilitator config"
+    },
+    "Chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "worker": {
+          "type": "string"
+        },
+        "rpc": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "worker",
+        "rpc"
+      ],
+      "title": "Chain",
+      "description": "It encapsulates chain specific information"
+    },
+    "Database": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "Database",
+      "description":"It represents database config details"
+    },
+    "EncryptedAccounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "EncryptedAccounts",
+      "minProperties": 2,
+      "maxProperties": 2,
+      "patternProperties": {
+        "^0x[a-fA-F0-9]{40}$": {
+          "$ref": "#/definitions/Account",
+          "description":"Represents encrypted account for an address"
+        }
+      },
+      "description": "List of encrypted accounts"
+    },
+    "Account": {
+      "type": "object",
+      "title": "Web3 encrypted account",
+      "description":"Object represents encrypted web3 account"
+    }
+  }
+}
