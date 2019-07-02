@@ -61,10 +61,10 @@ export default class Repositories {
   public async notify(): Promise<void[][]> {
     const promises = [];
 
-    promises.push(this.messageRepository.notify());
+    // promises.push(this.messageRepository.notify());
     promises.push(this.stakeRequestRepository.notify());
-    promises.push(this.auxiliaryChainRepository.notify());
-    promises.push(this.gatewayRepository.notify());
+    // promises.push(this.auxiliaryChainRepository.notify());
+    // promises.push(this.gatewayRepository.notify());
 
     return Promise.all(promises);
   }

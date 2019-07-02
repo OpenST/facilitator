@@ -20,7 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import Subject from '../observer/Subject';
+// import Subject from '../observer/Subject';
 
 import assert = require('assert');
 
@@ -54,11 +54,11 @@ export enum GatewayType {
   Auxiliary = 'auxiliary',
 }
 
-export class GatewayRepository extends Subject<Gateway> {
+export class GatewayRepository { // extends Subject<Gateway> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
-    super();
+    // super();
 
     GatewayModel.init(
       {
@@ -146,7 +146,7 @@ export class GatewayRepository extends Subject<Gateway> {
     try {
       const gateway: Gateway = await GatewayModel.create(gatewayAttributes) as Gateway;
       this.format(gateway);
-      this.newUpdate(gateway);
+      // this.newUpdate(gateway);
       return gateway;
     } catch (e) {
       const errorContext = {
@@ -206,7 +206,7 @@ export class GatewayRepository extends Subject<Gateway> {
     if (updatedRowCount === 1) {
       const gateway = await this.get(gatewayAttributes.gatewayAddress);
       assert(gateway !== null);
-      this.newUpdate(gateway as Gateway);
+      // this.newUpdate(gateway as Gateway);
 
       return true;
     }

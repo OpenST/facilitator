@@ -21,7 +21,6 @@ import Lessable from '../observer/Lessable';
 
 export default class StakeRequest extends Lessable<StakeRequest> {
   public stakeRequestHash: string;
-  public messageHash?: string;
   public amount?: BigNumber;
   public beneficiary?: string;
   public gasPrice?: BigNumber;
@@ -29,13 +28,32 @@ export default class StakeRequest extends Lessable<StakeRequest> {
   public nonce?: BigNumber;
   public gateway?: string;
   public stakerProxy?: string;
+  public messageHash?: string;
   public createdAt?: Date;
   public updatedAt?: Date;
 
-  public constructor(stakeRequestHash: string) {
+  public constructor(
+    stakeRequestHash: string,
+    amount?: BigNumber,
+    beneficiary?: string,
+    gasPrice?: BigNumber,
+    gasLimit?: BigNumber,
+    nonce?: BigNumber,
+    gateway?: string ,
+    stakerProxy?: string,
+    messageHash?: string,
+  ) {
     super();
 
     this.stakeRequestHash = stakeRequestHash;
+    this.amount = amount;
+    this.beneficiary = beneficiary;
+    this.gasPrice = gasPrice;
+    this.gasLimit = gasLimit;
+    this.nonce = nonce;
+    this.gateway = gateway;
+    this.stakerProxy = stakerProxy;
+    this.messageHash = messageHash;
   }
 
   public less(other: StakeRequest): boolean {

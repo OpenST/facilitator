@@ -20,7 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import Subject from '../observer/Subject';
+// import Subject from '../observer/Subject';
 
 import assert = require('assert');
 
@@ -49,11 +49,11 @@ export interface AuxiliaryChain extends AuxiliaryChainAttributes {
   updatedAt: Date;
 }
 
-export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
+export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
-    super();
+    // super();
 
     AuxiliaryChainModel.init(
       {
@@ -143,7 +143,7 @@ export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     try {
       const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
       this.format(auxiliaryChain);
-      this.newUpdate(auxiliaryChain);
+      // this.newUpdate(auxiliaryChain);
       return auxiliaryChain;
     } catch (e) {
       const errorContext = {
@@ -195,7 +195,7 @@ export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     if (updatedRowCount === 1) {
       const auxiliaryChain = await this.get(auxiliaryChainAttributes.chainId);
       assert(auxiliaryChain !== null);
-      this.newUpdate(auxiliaryChain as AuxiliaryChain);
+      // this.newUpdate(auxiliaryChain as AuxiliaryChain);
 
       return true;
     }

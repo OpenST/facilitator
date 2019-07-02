@@ -20,7 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import Subject from '../observer/Subject';
+// import Subject from '../observer/Subject';
 
 import assert = require('assert');
 
@@ -71,11 +71,11 @@ export enum MessageDirection {
   AuxiliaryToOrigin = 'a2o',
 }
 
-export class MessageRepository extends Subject<Message> {
+export class MessageRepository { // extends Subject<Message> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
-    super();
+    // super();
 
     MessageModel.init(
       {
@@ -192,7 +192,7 @@ export class MessageRepository extends Subject<Message> {
     try {
       const message: Message = await MessageModel.create(messageAttributes);
       this.format(message);
-      this.newUpdate(message);
+      // this.newUpdate(message);
       return message;
     } catch (e) {
       const errorContext = {
@@ -245,7 +245,7 @@ export class MessageRepository extends Subject<Message> {
     if (updatedRowCount === 1) {
       const message = await this.get(messageAttributes.messageHash);
       assert(message !== null);
-      this.newUpdate(message as Message);
+      // this.newUpdate(message as Message);
 
       return true;
     }

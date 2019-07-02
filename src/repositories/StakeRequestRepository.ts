@@ -204,9 +204,9 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
   /* Private Functions */
 
   private convertToStakeRequest(stakeRequestModel: StakeRequestModel): StakeRequest {
-    const stakeRequest: StakeRequest = {
-      stakeRequestHash: stakeRequestModel.stakeRequestHash,
-    };
+    const stakeRequest = new StakeRequest (
+      stakeRequestModel.stakeRequestHash,
+    );
 
     stakeRequest.messageHash = stakeRequestModel.messageHash;
     stakeRequest.amount = new BigNumber(stakeRequestModel.amount);

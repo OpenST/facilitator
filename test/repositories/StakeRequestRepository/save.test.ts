@@ -34,16 +34,16 @@ describe('StakeRequestRepository::save', (): void => {
   });
 
   it('Checks creation.', async (): Promise<void> => {
-    const stakeRequestInput: StakeRequest = {
-      stakeRequestHash: 'stakeRequestHash',
-      amount: new BigNumber('1'),
-      beneficiary: 'beneficiary',
-      gasPrice: new BigNumber('2'),
-      gasLimit: new BigNumber('3'),
-      nonce: new BigNumber('4'),
-      gateway: 'gateway',
-      stakerProxy: 'stakerProxy',
-    };
+    const stakeRequestInput = new StakeRequest(
+      'stakeRequestHash',
+      new BigNumber('1'),
+      'beneficiary',
+      new BigNumber('2'),
+      new BigNumber('3'),
+      new BigNumber('4'),
+      'gateway',
+      'stakerProxy',
+    );
 
     const stakeRequestResponse = await config.repos.stakeRequestRepository.save(
       stakeRequestInput,
@@ -71,43 +71,43 @@ describe('StakeRequestRepository::save', (): void => {
   });
 
   it('Checks update.', async (): Promise<void> => {
-    const stakeRequestInput: StakeRequest = {
-      stakeRequestHash: 'stakeRequestHash',
-      amount: new BigNumber('1'),
-      beneficiary: 'beneficiary',
-      gasPrice: new BigNumber('2'),
-      gasLimit: new BigNumber('3'),
-      nonce: new BigNumber('4'),
-      gateway: 'gateway',
-      stakerProxy: 'stakerProxy',
-    };
+    const stakeRequestInput = new StakeRequest(
+      'stakeRequestHash',
+      new BigNumber('1'),
+      'beneficiary',
+      new BigNumber('2'),
+      new BigNumber('3'),
+      new BigNumber('4'),
+      'gateway',
+      'stakerProxy',
+    );
 
     await config.repos.stakeRequestRepository.save(
       stakeRequestInput,
     );
 
-    const stakeRequestUpdateInput: StakeRequest = {
-      stakeRequestHash: 'stakeRequestHash',
-      amount: new BigNumber('11'),
-      gateway: 'gatewayUpdated',
-    };
+    const stakeRequestUpdateInput = new StakeRequest(
+      'stakeRequestHash',
+    );
+    stakeRequestUpdateInput.amount = new BigNumber('11');
+    stakeRequestUpdateInput.gateway = 'gatewayUpdated';
 
     const stakeRequestResponse = await config.repos.stakeRequestRepository.save(
       stakeRequestUpdateInput,
     );
 
     Util.checkInputAgainstOutput(
-      {
-        stakeRequestHash: stakeRequestInput.stakeRequestHash,
-        amount: stakeRequestUpdateInput.amount,
-        beneficiary: stakeRequestInput.beneficiary,
-        gasPrice: stakeRequestInput.gasPrice,
-        gasLimit: stakeRequestInput.gasLimit,
-        nonce: stakeRequestInput.nonce,
-        gateway: stakeRequestUpdateInput.gateway,
-        stakerProxy: stakeRequestUpdateInput.stakerProxy,
-        messageHash: stakeRequestInput.messageHash,
-      },
+      new StakeRequest(
+        stakeRequestInput.stakeRequestHash,
+        stakeRequestUpdateInput.amount,
+        stakeRequestInput.beneficiary,
+        stakeRequestInput.gasPrice,
+        stakeRequestInput.gasLimit,
+        stakeRequestInput.nonce,
+        stakeRequestUpdateInput.gateway,
+        stakeRequestUpdateInput.stakerProxy,
+        stakeRequestInput.messageHash,
+      ),
       stakeRequestResponse,
     );
 
@@ -122,17 +122,17 @@ describe('StakeRequestRepository::save', (): void => {
     );
 
     Util.checkInputAgainstOutput(
-      {
-        stakeRequestHash: stakeRequestInput.stakeRequestHash,
-        amount: stakeRequestUpdateInput.amount,
-        beneficiary: stakeRequestInput.beneficiary,
-        gasPrice: stakeRequestInput.gasPrice,
-        gasLimit: stakeRequestInput.gasLimit,
-        nonce: stakeRequestInput.nonce,
-        gateway: stakeRequestUpdateInput.gateway,
-        stakerProxy: stakeRequestUpdateInput.stakerProxy,
-        messageHash: stakeRequestInput.messageHash,
-      },
+      new StakeRequest(
+        stakeRequestInput.stakeRequestHash,
+        stakeRequestUpdateInput.amount,
+        stakeRequestInput.beneficiary,
+        stakeRequestInput.gasPrice,
+        stakeRequestInput.gasLimit,
+        stakeRequestInput.nonce,
+        stakeRequestUpdateInput.gateway,
+        stakeRequestUpdateInput.stakerProxy,
+        stakeRequestInput.messageHash,
+      ),
       stakeRequestOutput as StakeRequest,
     );
   });

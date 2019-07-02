@@ -32,16 +32,17 @@ describe('StakeRequestedHandler.persist()', (): void => {
 
     const models = await handler.persist(transactions);
 
-    const stakeRequest: StakeRequest = {
-      stakeRequestHash: transactions[0].stakeRequestHash,
-      amount: new BigNumber(transactions[0].amount),
-      beneficiary: transactions[0].beneficiary,
-      gasPrice: new BigNumber(transactions[0].gasPrice),
-      gasLimit: new BigNumber(transactions[0].gasLimit),
-      nonce: new BigNumber(transactions[0].nonce),
-      gateway: transactions[0].gateway,
-      stakerProxy: transactions[0].stakerProxy,
-    };
+    const stakeRequest = new StakeRequest (
+      transactions[0].stakeRequestHash,
+      new BigNumber(transactions[0].amount),
+      transactions[0].beneficiary,
+      new BigNumber(transactions[0].gasPrice),
+      new BigNumber(transactions[0].gasLimit),
+      new BigNumber(transactions[0].nonce),
+      transactions[0].gateway,
+      transactions[0].stakerProxy,
+    );
+
     assert.equal(
       models.length,
       transactions.length,

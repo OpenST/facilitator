@@ -39,16 +39,16 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
         const gateway = transaction.gateway as string;
         const stakerProxy = transaction.stakerProxy as string;
 
-        return {
+        return new StakeRequest (
           stakeRequestHash,
-          amount: new BigNumber(amount),
+          new BigNumber(amount),
           beneficiary,
-          gasPrice: new BigNumber(gasPrice),
-          gasLimit: new BigNumber(gasLimit),
-          nonce: new BigNumber(nonce),
+          new BigNumber(gasPrice),
+          new BigNumber(gasLimit),
+          new BigNumber(nonce),
           gateway,
           stakerProxy,
-        };
+        );
       },
     );
 
