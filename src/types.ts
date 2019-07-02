@@ -11,5 +11,4 @@ export type SubscriptionInfo = {
     httpSubGraphEndPoint: string;
     subscriptionQueries: Record<string, string>;
   };
-  fetchQueries: Record<string, string>;
 }

@@ -86,32 +86,23 @@ export default class Facilitator {
         wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
         httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
         subscriptionQueries: {
-          stakeRequested: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){id}}',
+          stakeRequested: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){' +
+          '   id' +
+          '   contractAddress ' +
+          '  }' +
+          '}',
         },
       },
       auxiliary: {
         wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
         httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
         subscriptionQueries: {
-          stakeRequested: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){id}}',
+          stakeRequested: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){' +
+          '   id' +
+          '   contractAddress ' +
+          '  }' +
+          '}',
         },
-      },
-      fetchQueries: {
-        stakeRequested: 'query ($uts: BigInt!) {\n'
-        + '  stakeRequesteds(where: {uts_gt: $uts}, orderDirection: asc, limit: 100) {\n'
-        + '    id\n'
-        + '    amount\n'
-        + '    gasPrice\n'
-        + '    gasLimit\n'
-        + '    staker\n'
-        + '    gateway\n'
-        + '    stakeRequestHash\n'
-        + '    nonce\n'
-        + '    beneficiary\n'
-        + '    blockNumber\n'
-        + '    uts\n'
-        + '  }\n'
-        + '}',
       },
     };
   }
