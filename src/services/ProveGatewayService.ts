@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { GatewayRepository } from '../models/GatewayRepository';
 import { MessageRepository } from '../models/MessageRepository';
 import Logger from '../Logger';
+import Utils from '../Utils';
 
 const Mosaic = require('@openst/mosaic.js');
 
@@ -56,7 +57,7 @@ export default class ProveGatewayService {
    */
   public async reactTo(
     blockHeight: BigNumber,
-  ): Promise<{success: boolean; receipt: object; message: string}> {
+  ): Promise<{success: boolean; transactionHash: string; message: string}> {
     const gatewayRecord = await this.gatewayRepository.get(this.gatewayAddress);
     if (gatewayRecord === null) {
       Logger.error(`Gateway record record doesnot exists for gateway ${this.gatewayAddress}`);
@@ -75,7 +76,7 @@ export default class ProveGatewayService {
       return Promise.resolve(
         {
           success: true,
-          receipt: {},
+          transactionHash: '',
           message: 'There are no pending messages for this gateway.',
         },
       );
@@ -95,15 +96,15 @@ export default class ProveGatewayService {
       blockHeight,
     );
     Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
-    const receipt = await this.prove(
+    const transactionHash = await this.prove(
       coGateway,
       blockHeight,
       encodedAccountValue,
       serializedAccountProof,
     );
 
-    Logger.info(`Prove gateway receipt ${receipt}`);
-    return { success: true, receipt, message: 'Gateway successfully proven' };
+    Logger.info(`Prove gateway transaction hash ${transactionHash}`);
+    return { success: true, transactionHash, message: 'Gateway successfully proven' };
   }
 
   /**
@@ -121,16 +122,20 @@ export default class ProveGatewayService {
     lastOriginBlockHeight: BigNumber,
     encodedAccountValue: string,
     serializedAccountProof: string,
-  ): Promise<object> {
+  ): Promise<string> {
     const { EIP20CoGateway } = Mosaic.ContractInteract;
 
     const eip20CoGateway = new EIP20CoGateway(this.auxiliaryWeb3, ostCoGatewayAddress);
 
-    return eip20CoGateway.proveGateway(
+    const transactionOptions = { from: this.auxiliaryWorkerAddress };
+    const rawTx = await eip20CoGateway.proveGatewayRawTx(
       lastOriginBlockHeight,
       encodedAccountValue,
       serializedAccountProof,
-      { from: this.auxiliaryWorkerAddress },
+    );
+    return Utils.sendTransaction(
+      rawTx,
+      transactionOptions,
     );
   }
 }

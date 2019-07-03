@@ -16,4 +16,22 @@ export default class Utils {
     }
     throw new Error('File not found.');
   }
+
+  /**
+   * This method submits a raw transaction and returns transaction hash.
+   * @param tx Raw transaction.
+   * @param txOption Transaction options.
+   */
+  public static async sendTransaction(tx: any, txOption: any): Promise<string> {
+    return new Promise(async (onResolve, onReject) => {
+      const txOptions = Object.assign({}, txOption);
+      if (!txOptions.gas) {
+        txOptions.gas = await tx.estimateGas(txOptions);
+      }
+
+      tx.send(txOptions)
+        .on('transactionHash', (hash: string) => onResolve(hash))
+        .on('error', (error: Error) => onReject(error));
+    });
+  }
 }
