@@ -1,4 +1,5 @@
 {
+	"originChainId":"12346",
     "db": {
         "path": "/Users/gulshanvasnani/.mosaic/301/facilitator/mosaic_facilitator.db"
     },

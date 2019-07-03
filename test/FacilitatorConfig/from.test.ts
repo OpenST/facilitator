@@ -34,8 +34,9 @@ describe('FacilitatorConfig.from()', () => {
   }
 
   /**
-   * Path.join is called twice in `from` method. Args variable of spy for path.join method contains parameters of both calls.
-   * Args is 2-dimensional array. We can access args of both the calls above.
+   * Path.join is called twice in `from` method. Args variable of spy for path.join method
+   * contains parameters of both calls. Args is 2-dimensional array. We can access args of both
+   * the calls above.
    * Examples:-
    *  - path.join('a')
    *  - path.join('d','e')
