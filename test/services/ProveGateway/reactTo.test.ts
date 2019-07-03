@@ -31,7 +31,7 @@ describe('ProveGatewayService.reactTo()', () => {
     });
 
     const messageRepository = sinon.createStubInstance(MessageRepository, {
-      isPendingMessages: Promise.resolve(true),
+      isPendingOriginMessages: Promise.resolve(true),
     });
 
     const proof = { encodedAccountValue: 'encodedAccountValue', serializedAccountProof: 'serializedAccountProof' };
@@ -65,7 +65,7 @@ describe('ProveGatewayService.reactTo()', () => {
     );
 
     SpyAssert.assert(
-      messageRepository.isPendingMessages,
+      messageRepository.isPendingOriginMessages,
       1,
       [[blockNumber, gatewayAddress]],
     );
@@ -102,9 +102,11 @@ describe('ProveGatewayService.reactTo()', () => {
       'Gateway successfully proven',
       'Service must return correct messages',
     );
+
+    sinon.restore();
   });
 
-  it('should fail to react if gayeway details does not exists', async (): Promise<void> => {
+  it('should fail to react if gateway details does not exists', async (): Promise<void> => {
     const gateawayRepository = sinon.createStubInstance(GatewayRepository, {
       get: Promise.resolve(null),
     });
@@ -125,6 +127,7 @@ describe('ProveGatewayService.reactTo()', () => {
       'Gateway record record doesnot exists for given gateway',
       'It must fail if gatway record does not exists.',
     );
+    sinon.restore();
   });
 
   it('should not try to proveGateway if there are no pending messages', async (): Promise<void> => {
@@ -134,8 +137,22 @@ describe('ProveGatewayService.reactTo()', () => {
     });
 
     const messageRepository = sinon.createStubInstance(MessageRepository, {
-      isPendingMessages: Promise.resolve(false),
+      isPendingOriginMessages: Promise.resolve(false),
     });
+
+    const proof = { encodedAccountValue: 'encodedAccountValue', serializedAccountProof: 'serializedAccountProof' };
+    const proofGeneratorStub = sinon.replace(
+      Mosaic.Utils.ProofGenerator.prototype,
+      'getOutboxProof',
+      sinon.fake.resolves(proof),
+    );
+
+    const fakeReceipt = { status: true };
+    const coGatewayStub = sinon.replace(
+      Mosaic.ContractInteract.EIP20CoGateway.prototype,
+      'proveGateway',
+      sinon.fake.resolves(fakeReceipt),
+    );
 
     const proveGatewayService = new ProveGatewayService(
       gateawayRepository as any,
@@ -155,7 +172,7 @@ describe('ProveGatewayService.reactTo()', () => {
     );
 
     SpyAssert.assert(
-      messageRepository.isPendingMessages,
+      messageRepository.isPendingOriginMessages,
       1,
       [[blockNumber, gatewayAddress]],
     );
@@ -170,5 +187,17 @@ describe('ProveGatewayService.reactTo()', () => {
       'There are no pending messages for this gateway.',
       'Service must return correct messages',
     );
+    SpyAssert.assert(
+      proofGeneratorStub,
+      0,
+      [],
+    );
+
+    SpyAssert.assert(
+      coGatewayStub,
+      0,
+      [],
+    );
+    sinon.restore();
   });
 });

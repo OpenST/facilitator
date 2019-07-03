@@ -186,10 +186,14 @@ export class GatewayRepository {
     });
   }
 
+  /**
+   * This method returns list of gateway records based on chain identifier.
+   * @param chain Chain identifier.
+   */
   public async getAllByChain(chain: string): Promise<Gateway []> {
     const models = await GatewayModel.findAll({
       where: {
-        chain: chain,
+        chain,
       },
     });
 

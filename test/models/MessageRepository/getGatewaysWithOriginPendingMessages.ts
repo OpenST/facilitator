@@ -27,7 +27,7 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('MessageRepository::getGatewaysWithPendingMessages', (): void => {
+describe('MessageRepository::getGatewaysWithPendingMessagesFromSourceToOrigin', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       db: await Database.create(),
@@ -61,10 +61,11 @@ describe('MessageRepository::getGatewaysWithPendingMessages', (): void => {
       ),
     );
 
-    const gateways = await config.db.messageRepository.getGatewaysWithPendingMessages(
-      expectedGatewayAddresses,
-      new BigNumber(10),
-    );
+    const gateways = await config.db
+      .messageRepository.getGatewaysWithOriginPendingMessages(
+        expectedGatewayAddresses,
+        new BigNumber(10),
+      );
 
     assert.deepStrictEqual(
       expectedGatewayAddresses,

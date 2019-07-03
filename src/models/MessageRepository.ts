@@ -234,7 +234,13 @@ export class MessageRepository {
     });
   }
 
-  public async getGatewaysWithPendingMessages(
+  /**
+   * This return gateways which has pending stake and mint messages at given block.
+   *
+   * @param gateways List of gateway address.
+   * @param blockHeight Height below which pending messages needs to be checked.
+   */
+  public async getGatewaysWithOriginPendingMessages(
     gateways: string[],
     blockHeight: BigNumber,
   ): Promise<string[]> {
@@ -257,7 +263,14 @@ export class MessageRepository {
     return messageModels.map((model: Record<string, string>) => model.gatewayAddress);
   }
 
-  public async isPendingMessages(
+  /**
+   * This method checks if there are pending messages for a gateway at a
+   * block height.
+   *
+   * @param blockHeight Block height where pending messages needs to be checked.
+   * @param gateway Address of gateway.
+   */
+  public async isPendingOriginMessages(
     blockHeight: BigNumber,
     gateway: string,
 

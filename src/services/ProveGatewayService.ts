@@ -63,11 +63,11 @@ export default class ProveGatewayService {
       return Promise.reject(new Error('Gateway record record doesnot exists for given gateway'));
     }
 
-    const booleanPromise = await this.messageRepository.isPendingMessages(
+    const pendingMessages = await this.messageRepository.isPendingOriginMessages(
       blockHeight,
       this.gatewayAddress,
     );
-    if (!booleanPromise) {
+    if (!pendingMessages) {
       Logger.info(
         `There are no pending messages for gateway ${this.gatewayAddress}.`
         + ' Hence skipping proveGateway',
