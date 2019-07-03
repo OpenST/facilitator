@@ -21,7 +21,8 @@ import {
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
 
-export class ContractEntityModel extends Model {}
+export class ContractEntityModel extends Model {
+}
 
 /**
  * To be used for calling any methods which would change states of record(s) in Database.
@@ -35,7 +36,7 @@ export interface ContractEntityAttributes {
 /**
  * Repository would always return database rows after typecasting to this.
  */
-export interface ContractEntity extends ContractEntityAttributes{
+export interface ContractEntity extends ContractEntityAttributes {
   createdAt: Date;
   updatedAt: Date;
 }
@@ -71,7 +72,7 @@ export class ContractEntityRepository {
           type: DataTypes.INTEGER,
           allowNull: false,
           primaryKey: true,
-          autoIncrement: true
+          autoIncrement: true,
         },
         contractAddress: {
           type: DataTypes.STRING,
@@ -113,13 +114,13 @@ export class ContractEntityRepository {
 
   /**
    * Creates a contract entity model in the repository and syncs with database.
-   * @param {ContractEntityAttributes} contractEntityAttributes ContractEntityAttributes object.
+   * @param contractEntityAttributes ContractEntityAttributes object.
    * @return ContractEntity object.
    */
   public async create(contractEntityAttributes: ContractEntityAttributes): Promise<ContractEntity> {
     try {
       const contractEntity: ContractEntity = await ContractEntityModel.create(
-        contractEntityAttributes
+        contractEntityAttributes,
       ) as ContractEntity;
       this.format(contractEntity);
       return contractEntity;
@@ -137,7 +138,9 @@ export class ContractEntityRepository {
    * @param contractEntityAttribute ContractEntityAttributes object.
    * @returns ContractEntity object containing values which satisfy the `where` condition.
    */
-  public async get(contractEntityAttribute: ContractEntityAttributes): Promise<ContractEntity | null> {
+  public async get(
+    contractEntityAttribute: ContractEntityAttributes,
+  ): Promise<ContractEntity | null> {
     const contractEntityModel = await ContractEntityModel.findOne({
       where: {
         contractAddress: {
@@ -180,6 +183,7 @@ export class ContractEntityRepository {
    * @param contractEntity ContractEntity object.
    */
   private format(contractEntity: ContractEntity): void {
+    /* eslint-disable no-param-reassign */
     contractEntity.timestamp = new BigNumber(contractEntity.timestamp);
   }
 }

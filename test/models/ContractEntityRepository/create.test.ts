@@ -29,7 +29,7 @@ import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
-const {assert} = chai;
+const { assert } = chai;
 
 interface TestConfigInterface {
   db: Database;
@@ -48,7 +48,7 @@ describe('ContractEntityRepository::create', (): void => {
     const contractEntityAttributes: ContractEntityAttributes = {
       timestamp: new BigNumber('1'),
       contractAddress: '0x0000000000000000000000000000000000000002',
-      entityType: EntityType.StakeProgressed
+      entityType: EntityType.StakeProgressed,
     };
 
     const createResponse = await config.db.contractEntityRepository.create(
@@ -58,20 +58,20 @@ describe('ContractEntityRepository::create', (): void => {
     assert.strictEqual(
       createResponse.entityType,
       EntityType.StakeProgressed,
-      'Incorrect entity type created'
+      'Incorrect entity type created',
     );
 
     assert.strictEqual(
       createResponse.contractAddress,
       contractEntityAttributes.contractAddress,
-      'Incorrect contract address created'
+      'Incorrect contract address created',
     );
 
     assert.strictEqual(
       createResponse.timestamp.eq(contractEntityAttributes.timestamp),
       true,
-      `Expected timestamp is ${contractEntityAttributes.timestamp} but got`+
-      `${createResponse.timestamp}`
+      `Expected timestamp is ${contractEntityAttributes.timestamp} but got`
+      + `${createResponse.timestamp}`,
     );
   });
 
@@ -79,7 +79,7 @@ describe('ContractEntityRepository::create', (): void => {
     const contractEntityAttributes: ContractEntityAttributes = {
       timestamp: new BigNumber('1'),
       contractAddress: '0x0000000000000000000000000000000000000002',
-      entityType: EntityType.StakeProgressed
+      entityType: EntityType.StakeProgressed,
     };
 
     await config.db.contractEntityRepository.create(
@@ -91,7 +91,7 @@ describe('ContractEntityRepository::create', (): void => {
         contractEntityAttributes,
       ),
       'Failed to create a ContractEntity',
-      'Creation should fail as entry is already with same contract address and entity type'
+      'Creation should fail as entry is already with same contract address and entity type',
     );
   });
 });

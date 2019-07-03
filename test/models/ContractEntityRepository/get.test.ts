@@ -30,7 +30,7 @@ import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
-const {assert} = chai;
+const { assert } = chai;
 
 interface TestConfigInterface {
   db: Database;
@@ -39,6 +39,22 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('ContractEntityRepository::get', (): void => {
+  function assertion(
+    contractEntity: ContractEntity,
+    timestamp: BigNumber,
+  ): void {
+    assert.notStrictEqual(
+      contractEntity,
+      null,
+      'get response should not be null',
+    );
+
+    assert.strictEqual(
+      contractEntity.timestamp.eq(timestamp),
+      true,
+    );
+  }
+
 
   let contractEntityAttributes: ContractEntityAttributes;
 
@@ -50,7 +66,7 @@ describe('ContractEntityRepository::get', (): void => {
     contractEntityAttributes = {
       timestamp: new BigNumber('1'),
       contractAddress: '0x0000000000000000000000000000000000000002',
-      entityType: EntityType.StakeProgressed
+      entityType: EntityType.StakeProgressed,
     };
 
     await config.db.contractEntityRepository.create(
@@ -59,20 +75,11 @@ describe('ContractEntityRepository::get', (): void => {
   });
 
   it('should pass when retrieving contract entity model', async (): Promise<void> => {
-    const getResponse: ContractEntity | null = await config.db.contractEntityRepository.get(
-      contractEntityAttributes
+    const getResponse = await config.db.contractEntityRepository.get(
+      contractEntityAttributes,
     );
 
-    assert.notStrictEqual(
-      getResponse,
-      null,
-      'get response should not be null'
-    );
-
-    assert.strictEqual(
-      getResponse!.timestamp.eq(contractEntityAttributes.timestamp),
-      true
-    );
+    assertion(getResponse as ContractEntity, contractEntityAttributes.timestamp);
   });
 
   it('should fail when querying for non-existing contract address', async (): Promise<void> => {
@@ -85,7 +92,7 @@ describe('ContractEntityRepository::get', (): void => {
     assert.strictEqual(
       getResponse,
       null,
-      'get response should be null'
+      'get response should be null',
     );
   });
 
@@ -99,7 +106,7 @@ describe('ContractEntityRepository::get', (): void => {
     assert.strictEqual(
       getResponse,
       null,
-      'get response should be null'
+      'get response should be null',
     );
   });
 });
