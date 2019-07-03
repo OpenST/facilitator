@@ -112,7 +112,7 @@ export class ContractEntityRepository {
   }
 
   /**
-   * Creates a uts model in the repository and syncs with database.
+   * Creates a contract entity model in the repository and syncs with database.
    * @param {ContractEntityAttributes} contractEntityAttributes ContractEntityAttributes object.
    * @return ContractEntity object.
    */
