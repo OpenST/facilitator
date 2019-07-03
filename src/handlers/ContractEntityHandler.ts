@@ -5,13 +5,6 @@
  */
 export default abstract class ContractEntityHandler<T> {
   /**
-   * This method defines handler of a transaction.
-   *
-   * @param models Model object array.
-   */
-  abstract async handle(models: T[]): Promise<void>;
-
-  /**
    * This method parse a transaction and persist models.
    *
    * @param any Transaction from the subscriber.
@@ -19,4 +12,11 @@ export default abstract class ContractEntityHandler<T> {
    * @return Array of model objects.
    */
   abstract async persist(any: any[]): Promise<T[]>;
+
+  /**
+   * This method defines handler of a transaction.
+   *
+   * @param models Model object array.
+   */
+  abstract async handle(models: T[]): Promise<void>;
 }

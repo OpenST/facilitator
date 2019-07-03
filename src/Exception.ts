@@ -17,7 +17,7 @@ export class HandlerNotFoundException extends Error {
 /**
  * Defines error for facilitator config.
  */
-export default class InvalidFacilitatorConfigException extends Error {
+export class InvalidFacilitatorConfigException extends Error {
   /**
    * Constructor
    * @param {string} message Error message.
@@ -25,6 +25,21 @@ export default class InvalidFacilitatorConfigException extends Error {
   public constructor(message: string) {
     super(message);
     this.name = 'InvalidFacilitatorConfigException';
+    this.message = message;
+  }
+}
+
+/**
+ * Defines error if auxiliary chain record doesn't exist.
+ */
+export class AuxiliaryChainRecordNotFoundException extends Error {
+  /**
+   * Constructor
+   * @param {string} message Error message.
+   */
+  public constructor(message: string) {
+    super(message);
+    this.name = 'AuxiliaryChainRecordNotFoundException';
     this.message = message;
   }
 }
