@@ -24,7 +24,19 @@ import BigNumber from 'bignumber.js';
 
 import assert = require('assert');
 
-export class GatewayModel extends Model {}
+export class GatewayModel extends Model {
+  public readonly gatewayAddress!: string;
+  public readonly chainId!: number;
+  public readonly gatewayType!: string;
+  public readonly remoteGatewayAddress!: string;
+  public readonly tokenAddress!: string;
+  public readonly anchorAddress!: string;
+  public readonly bounty!: BigNumber;
+  public readonly activation!: boolean;
+  public readonly lastRemoteGatewayProvenBlockHeight!: BigNumber;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
 
 /**
  * To be used for calling any methods which would change states of record(s) in Database.

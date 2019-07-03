@@ -24,7 +24,19 @@ import BigNumber from 'bignumber.js';
 
 import assert = require('assert');
 
-class AuxiliaryChainModel extends Model {}
+class AuxiliaryChainModel extends Model {
+  public readonly chainId!: number;
+  public readonly originChainName!: string;
+  public readonly ostGatewayAddress!: string;
+  public readonly ostCoGatewayAddress!: string;
+  public readonly anchorAddress!: string;
+  public readonly coAnchorAddress!: string;
+  public readonly lastProcessedBlockNumber!: BigNumber;
+  public readonly lastOriginBlockHeight!: BigNumber;
+  public readonly lastAuxiliaryBlockHeight!: BigNumber;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
 
 /**
  * To be used for calling any methods which would change states of record(s) in Database.
@@ -141,7 +153,9 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
    */
   public async create(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<AuxiliaryChain> {
     try {
-      const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
+      const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(
+        auxiliaryChainAttributes
+      ) as AuxiliaryChain;
       this.format(auxiliaryChain);
       // this.newUpdate(auxiliaryChain);
       return auxiliaryChain;
