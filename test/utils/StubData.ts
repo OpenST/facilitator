@@ -25,7 +25,6 @@ export default class StubData {
     ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
     anchorAddress,
     coAnchorAddress: '0x0000000000000000000000000000000000000004',
-    lastProcessedBlockNumber: new BigNumber('214748364474'),
     lastAuxiliaryBlockHeight: new BigNumber('214748364475'),
     lastOriginBlockHeight,
     createdAt: new Date(),

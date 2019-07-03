@@ -60,7 +60,6 @@ describe('AuxiliaryChainRepository::update', (): void => {
 
     Util.checkAuxiliaryChainAgainstAttributes(objectForUpdate, createAuxiliaryChainAttributes);
 
-    objectForUpdate.lastProcessedBlockNumber = new BigNumber('214748364474');
     objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364475');
     objectForUpdate.lastAuxiliaryBlockHeight = new BigNumber('214748364476');
 

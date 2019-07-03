@@ -33,7 +33,6 @@ export interface AuxiliaryChainAttributes {
   ostCoGatewayAddress: string;
   anchorAddress: string;
   coAnchorAddress: string;
-  lastProcessedBlockNumber?: BigNumber;
   lastOriginBlockHeight?: BigNumber;
   lastAuxiliaryBlockHeight?: BigNumber;
 }
@@ -94,14 +93,6 @@ export class AuxiliaryChainRepository {
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
-          },
-        },
-        lastProcessedBlockNumber: {
-          type: DataTypes.BIGINT,
-          allowNull: true,
-          defaultValue: null,
-          validate: {
-            min: 0,
           },
         },
         lastOriginBlockHeight: {
@@ -178,7 +169,6 @@ export class AuxiliaryChainRepository {
    */
   public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number[]> {
     return AuxiliaryChainModel.update({
-      lastProcessedBlockNumber: auxiliaryChainAttributes.lastProcessedBlockNumber,
       lastOriginBlockHeight: auxiliaryChainAttributes.lastOriginBlockHeight,
       lastAuxiliaryBlockHeight: auxiliaryChainAttributes.lastAuxiliaryBlockHeight,
     }, {
@@ -195,18 +185,13 @@ export class AuxiliaryChainRepository {
    * @param {AuxiliaryChain} auxiliaryChain
    */
   private format(auxiliaryChain: AuxiliaryChain): void {
-    if (auxiliaryChain.lastProcessedBlockNumber) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(
-        auxiliaryChain.lastProcessedBlockNumber,
-      );
-    }
     if (auxiliaryChain.lastOriginBlockHeight) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(
+      auxiliaryChain.lastOriginBlockHeight = new BigNumber(
         auxiliaryChain.lastOriginBlockHeight,
       );
     }
     if (auxiliaryChain.lastAuxiliaryBlockHeight) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(
+      auxiliaryChain.lastAuxiliaryBlockHeight = new BigNumber(
         auxiliaryChain.lastAuxiliaryBlockHeight,
       );
     }
