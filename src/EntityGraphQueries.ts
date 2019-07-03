@@ -1,8 +1,8 @@
-export const ENTITY_GRAPH_QUERY = {
+const EntityGraphQueries: Record<string, string> = {
   stakeRequested: 'query ($contractAddress: String!, $uts: BigInt!,) {\n'
-  + 'stakeRequesteds(where: {contractAddress: $contractAddress, uts_gt: $uts}, ' +
-  '    orderDirection: asc,' +
-  '    limit: 100) {\n'
+  + 'stakeRequesteds(where: {contractAddress: $contractAddress, uts_gt: $uts}, '
+  + '    orderDirection: asc,'
+  + '    limit: 100) {\n'
   + '    id\n'
   + '    amount\n'
   + '    gasPrice\n'
@@ -17,4 +17,6 @@ export const ENTITY_GRAPH_QUERY = {
   + '    uts\n'
   + '  }\n'
   + '}',
-} as Record<string, string>;
+};
+
+export default EntityGraphQueries;

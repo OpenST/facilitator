@@ -38,11 +38,11 @@ export default class GraphClient {
    * @param fetcher Transaction fetcher object.
    * @return Query subscription object.
    */
-  public subscribe(
+  public async subscribe(
     subscriptionQry: string,
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
-  ): Subscription {
+  ): Promise<Subscription> {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
       throw (err);
@@ -50,7 +50,7 @@ export default class GraphClient {
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;
     // Subscription handling
-    const querySubscriber = this.apolloClient.subscribe({
+    const querySubscriber = await Promise.resolve(this.apolloClient.subscribe({
       query: gqlSubscriptionQry,
       variables: {},
     }).subscribe({
@@ -62,7 +62,7 @@ export default class GraphClient {
         // Log error using logger
         Logger.error(err);
       },
-    });
+    }));
 
     return querySubscriber;
   }

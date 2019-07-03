@@ -1,6 +1,6 @@
 export type Bytes32 = string;
 export type Address = string;
-export type SubscriptionInfo = {
+export interface SubscriptionInfo {
   origin: {
     wsSubGraphEndPoint: string;
     httpSubGraphEndPoint: string;

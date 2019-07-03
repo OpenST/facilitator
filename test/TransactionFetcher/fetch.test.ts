@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import GraphClient from '../../src/GraphClient';
 import TransactionFetcher from "../../src/TransactionFetcher";
 import SpyAssert from "../utils/SpyAssert";
-import {ENTITY_GRAPH_QUERY} from "../../src/EntityGraphQueries";
+import EntityGraphQueries from "../../src/EntityGraphQueries";
 
 describe('TransactionFetcher.fetch()', () => {
 
@@ -34,7 +34,7 @@ describe('TransactionFetcher.fetch()', () => {
       "Invalid response."
     );
 
-    const query = ENTITY_GRAPH_QUERY['stakeRequested'];
+    const query = EntityGraphQueries['stakeRequested'];
     const variables = {
       contractAddress: "0x0000000000000000000000000000000000000002",
       uts: 0,

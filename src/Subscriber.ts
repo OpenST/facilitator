@@ -44,13 +44,13 @@ export default class Subscriber {
    * @return {Promise<void>}
    */
   public async subscribe() {
-    for (const key in this.subscriptionQueries) {
-      this.querySubscriptions[key] = await this.graphClient.subscribe(
-        this.subscriptionQueries[key],
+    Object.keys(this.subscriptionQueries).forEach(async (entity) => {
+      this.querySubscriptions[entity] = await this.graphClient.subscribe(
+        this.subscriptionQueries[entity],
         this.handler,
         this.fetcher,
       );
-    }
+    });
   }
 
   /**
@@ -59,10 +59,10 @@ export default class Subscriber {
    * @return {Promise<void>}
    */
   public async unsubscribe() {
-    for (const key in this.subscriptionQueries) {
-      const querySubscription = this.querySubscriptions[key];
-      await querySubscription.unsubscribe();
-    }
+    Object.keys(this.subscriptionQueries).forEach(async (entity) => {
+      const querySubscription = this.querySubscriptions[entity];
+      await Promise.resolve(querySubscription.unsubscribe());
+    });
     // Deletes all query susbcribers as they are non useful
     this.querySubscriptions = {};
   }

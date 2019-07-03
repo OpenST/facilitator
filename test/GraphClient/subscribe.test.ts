@@ -1,5 +1,9 @@
 import gql from 'graphql-tag';
-import { assert } from 'chai';
+import chai = require('chai');
+import chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+const { assert } = chai;
+
 import * as sinon from 'sinon';
 
 import GraphClient from '../../src/GraphClient';
@@ -65,8 +69,10 @@ describe('GraphClient.subscribe()', () => {
   it('should throw an error when subscriptionQry is undefined object', async () => {
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
-    assert.throws(() => {
-      graphClient.subscribe(undefined as any, handler as any, fetcher as any,);
-    }, /Mandatory Parameter 'subscriptionQry' is missing or invalid./);
+    assert.isRejected(
+      graphClient.subscribe(undefined as any, handler as any, fetcher as any,),
+      'Mandatory Parameter \'subscriptionQry\' is missing or invalid.',
+      'Invalid subscriptionQry',
+    );
   });
 });
