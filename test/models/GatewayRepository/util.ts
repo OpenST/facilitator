@@ -33,8 +33,8 @@ const Util = {
     );
 
     assert.strictEqual(
-      gateway.chainId,
-      gatewayAttributes.chainId,
+      gateway.chain,
+      gatewayAttributes.chain,
       'chainId should match',
     );
 

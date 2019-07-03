@@ -40,10 +40,10 @@ export default class StubData {
     };
   }
 
-  public static gatewayAttributes(chainId = '1234', gatewayAddress = '0x0000000000000000000000000000000000000001'): GatewayAttributes {
+  public static gatewayAttributes(chain = '1234', gatewayAddress = '0x0000000000000000000000000000000000000001'): GatewayAttributes {
     return {
       gatewayAddress,
-      chainId,
+      chain,
       gatewayType: GatewayType.Origin,
       remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
       anchorAddress: '0x0000000000000000000000000000000000000003',
@@ -54,12 +54,12 @@ export default class StubData {
   }
 
   public static gatewayRecord(
-    chainId = '1234',
+    chain = '1234',
     gatewayAddress = '0x0000000000000000000000000000000000000001',
   ): Gateway {
     return {
       gatewayAddress,
-      chainId,
+      chain,
       gatewayType: GatewayType.Origin,
       remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
       anchorAddress: '0x0000000000000000000000000000000000000003',
