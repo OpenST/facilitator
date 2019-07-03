@@ -21,15 +21,25 @@ import Lessable from '../observer/Lessable';
 
 export default class StakeRequest extends Lessable<StakeRequest> {
   public stakeRequestHash: string;
+
   public amount?: BigNumber;
+
   public beneficiary?: string;
+
   public gasPrice?: BigNumber;
+
   public gasLimit?: BigNumber;
+
   public nonce?: BigNumber;
+
   public gateway?: string;
+
   public stakerProxy?: string;
+
   public messageHash?: string;
+
   public createdAt?: Date;
+
   public updatedAt?: Date;
 
   public constructor(
@@ -39,7 +49,7 @@ export default class StakeRequest extends Lessable<StakeRequest> {
     gasPrice?: BigNumber,
     gasLimit?: BigNumber,
     nonce?: BigNumber,
-    gateway?: string ,
+    gateway?: string,
     stakerProxy?: string,
     messageHash?: string,
   ) {

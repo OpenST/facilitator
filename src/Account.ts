@@ -1,32 +1,41 @@
 'use strict';
 
-import { EncryptedKeystoreV3Json, Account as Web3Account } from 'web3-eth-accounts';
-import Web3 from 'web3';
 import Logger from './Logger';
 
 /**
  * It provides methods to create, encrypt and unlock accounts.
  */
 export default class Account {
+  /* Storage */
+
+  public readonly address: string;
+
+  public readonly encryptedKeyStore: any;
+
   /**
    * Constructor
    * @param address Public address of the account.
    * @param encryptedKeyStore Encrypted keystore data for the account.
    */
-  constructor(
-    readonly address: string,
-    readonly encryptedKeyStore: EncryptedKeystoreV3Json,
-  ) {}
+  public constructor(
+    address: string,
+    encryptedKeyStore: any,
+  ) {
+    this.address = address;
+    this.encryptedKeyStore = encryptedKeyStore;
+  }
 
   /**
    * It creates new account and encrypts it with input password.
-   * @param {Web3} web3 The web3 instance.
+   *
+   * @param web3 The web3 instance.
    * @param password The password required to unlock the account.
-   * @returns {Account} Account object.
+   *
+   * @returns Account object.
    */
-  public static create(web3: Web3, password: string): Account {
-    const web3Account: Web3Account = web3.eth.accounts.create();
-    const encryptedAccount: EncryptedKeystoreV3Json = web3.eth.accounts.encrypt(
+  public static create(web3: any, password: string): Account {
+    const web3Account = web3.eth.accounts.create();
+    const encryptedAccount = web3.eth.accounts.encrypt(
       web3Account.privateKey.toString(),
       password,
     );

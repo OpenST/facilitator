@@ -8,7 +8,7 @@ import StakeRequestRepository from '../../../src/repositories/StakeRequestReposi
 
 import SpyAssert from '../../test_utils/SpyAssert';
 
-import Utils = require('web3-utils');
+const Utils = require('web3-utils');
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully', async (): Promise<void> => {

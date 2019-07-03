@@ -204,7 +204,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
   /* Private Functions */
 
   private convertToStakeRequest(stakeRequestModel: StakeRequestModel): StakeRequest {
-    const stakeRequest = new StakeRequest (
+    const stakeRequest = new StakeRequest(
       stakeRequestModel.stakeRequestHash,
     );
 

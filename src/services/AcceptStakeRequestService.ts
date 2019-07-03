@@ -15,17 +15,19 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import Web3 from 'web3';
+
 import Repositories from '../repositories/Repositories';
 import StakeRequest from '../models/StakeRequest';
 import Observer from '../observer/Observer';
 import {
   MessageType, MessageStatus, MessageDirection, MessageRepository, MessageAttributes,
 } from '../repositories/MessageRepository';
-import assert = require('assert');
-import crypto = require('crypto');
+import StakeRequestRepository from '../repositories/StakeRequestRepository';
 
-const hash = crypto.createHash('sha256');
+import assert = require('assert');
+
+const web3utils = require('web3-utils');
+
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts
@@ -34,27 +36,39 @@ const hash = crypto.createHash('sha256');
 export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   /* Storage */
 
-  private web3: Web3;
+  private web3: any;
+
+  private stakeRequestRepository: StakeRequestRepository;
 
   private messageRepository: MessageRepository;
 
 
   /* Public Functions */
 
-  public constructor(db: Repositories, web3: Web3) {
+  public constructor(db: Repositories, web3: any) {
     super();
 
     this.web3 = web3;
+    this.stakeRequestRepository = db.stakeRequestRepository;
     this.messageRepository = db.messageRepository;
   }
 
   public async update(stakeRequests: StakeRequest[]): Promise<void> {
-
     const nonAcceptedStakeRequests = stakeRequests.filter(
-      (stakeRequest: StakeRequest): boolean => stakeRequest.messageHash === null
+      (stakeRequest: StakeRequest): boolean => !stakeRequest.messageHash,
     );
 
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
+  }
+
+  public static generateSecret(): {secret: string; hashLock: string} {
+    const secret = web3utils.randomHex(32);
+    const hashLock = web3utils.keccak256(secret);
+
+    return {
+      secret,
+      hashLock,
+    };
   }
 
 
@@ -63,7 +77,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequests(stakeRequests: StakeRequest[]): Promise<void> {
     const stakeRequestPromises = [];
     for (let i = 0; i < stakeRequests.length; i += 1) {
-        stakeRequestPromises.push(this.acceptStakeRequest(stakeRequests[i]));
+      stakeRequestPromises.push(this.acceptStakeRequest(stakeRequests[i]));
     }
 
     await Promise.all(stakeRequestPromises);
@@ -72,18 +86,30 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
-    await this.createMessageInRepository(stakeRequest, secret, hashLock);
+    // const transactionHash = await this.sendAcceptStakeRequestTransaction(
+    //   stakeRequest, hashLock,
+    // );
 
-    // await this.sendAcceptStakeRequestTransaction(stakeRequest, hashLock);
+    const messageHash = await this.createMessageInRepository(
+      stakeRequest, secret, hashLock,
+    );
+
+    await this.updateMessageHashInStakeRequestRepository(
+      stakeRequest.stakeRequestHash,
+      messageHash,
+    );
   }
 
   // private async sendAcceptStakeRequestTransaction(
   //   stakeRequest: StakeRequest, hashLock: string,
-  // ): Promise<void>;
+  // ): Promise<string> {
+  // }
 
   private async createMessageInRepository(
-    stakeRequest: StakeRequest, secret: string, hashLock: string,
-  ): Promise<void> {
+    stakeRequest: StakeRequest,
+    secret: string,
+    hashLock: string,
+  ): Promise<string> {
     const messageHash = this.calculateMessageHash(stakeRequest, hashLock);
 
     assert(stakeRequest.gateway !== undefined);
@@ -103,29 +129,35 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       nonce: stakeRequest.nonce as BigNumber,
       sender: stakeRequest.stakerProxy as string,
       direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: new BigNumber(await this.web3.eth.getBlockNumber()),
+      sourceDeclarationBlockHeight: new BigNumber(0),
       secret,
       hashLock,
     };
 
     await this.messageRepository.create(messageAttributes);
+
+    return messageHash;
   }
 
-  private static generateSecret(): {secret: string; hashLock: string} {
-    const secret: string = crypto.randomBytes(256).toString('hex');
-    hash.update(secret);
-    const hashLock: string = hash.digest('hex');
+  private async updateMessageHashInStakeRequestRepository(
+    stakeRequestHash: string,
+    messageHash: string,
+  ): Promise<void> {
+    const stakeRequest = new StakeRequest(
+      stakeRequestHash,
+    );
+    stakeRequest.messageHash = messageHash;
 
-    return {
-      secret,
-      hashLock,
-    };
+    await this.stakeRequestRepository.save(stakeRequest);
   }
 
   private calculateMessageHash(stakeRequest: StakeRequest, hashLock: string): string {
     assert(stakeRequest.amount !== undefined);
     assert(stakeRequest.beneficiary !== undefined);
     assert(stakeRequest.gateway !== undefined);
+    assert(stakeRequest.nonce !== undefined);
+    assert(stakeRequest.gasPrice !== undefined);
+    assert(stakeRequest.gasLimit !== undefined);
 
     const stakeIntentHash: string = this.calculateStakeIntentHash(
       stakeRequest.amount as BigNumber,
@@ -151,9 +183,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
         [
           messageTypeHash,
           stakeIntentHash,
-          stakeRequest.nonce,
-          stakeRequest.gasPrice,
-          stakeRequest.gasLimit,
+          (stakeRequest.nonce as BigNumber).toFixed(),
+          (stakeRequest.gasPrice as BigNumber).toFixed(),
+          (stakeRequest.gasLimit as BigNumber).toFixed(),
           stakeRequest.stakerProxy,
           hashLock,
         ],
@@ -180,7 +212,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
         ],
         [
           stakeIntentTypeHash,
-          amount,
+          amount.toFixed(),
           beneficiary,
           gateway,
         ],

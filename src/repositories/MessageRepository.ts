@@ -26,19 +26,33 @@ import assert = require('assert');
 
 export class MessageModel extends Model {
   public readonly messageHash!: string;
+
   public readonly type!: string;
+
   public readonly gatewayAddress!: string;
+
   public readonly sourceStatus!: string;
+
   public readonly targetStatus!: string;
+
   public readonly gasPrice!: BigNumber;
+
   public readonly gasLimit!: BigNumber;
+
   public readonly nonce!: BigNumber;
+
   public readonly sender!: string;
+
   public readonly direction!: string;
+
   public readonly sourceDeclarationBlockHeight!: BigNumber;
+
   public readonly secret!: string;
+
   public readonly hashLock!: string;
+
   public readonly createdAt!: Date;
+
   public readonly updatedAt!: Date;
 }
 
