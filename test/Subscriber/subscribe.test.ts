@@ -16,7 +16,7 @@ describe('Subscriber.subscribe()', () => {
   beforeEach(() => {
     mockApolloClient = sinon.stub;
     graphClient = new GraphClient(mockApolloClient);
-    subscriptionQueries = { stakeRequested: 'subscription{stakeRequesteds{id}}' };
+    subscriptionQueries = { stakeRequesteds: 'subscription{stakeRequesteds{id}}' };
   });
 
   it('should work with correct parameters', async () => {
@@ -38,7 +38,7 @@ describe('Subscriber.subscribe()', () => {
     );
 
     assert.strictEqual(
-      subscriber.querySubscriptions.stakeRequested,
+      subscriber.querySubscriptions.stakeRequesteds,
       mockQuerySubscriber,
       'Invalid query subscription object.',
     );
@@ -46,7 +46,7 @@ describe('Subscriber.subscribe()', () => {
     SpyAssert.assert(
       spyGraphClientSubscribe,
       1,
-      [[subscriptionQueries.stakeRequested, handler, fetcher]],
+      [[subscriptionQueries.stakeRequesteds, handler, fetcher]],
     );
 
     sinon.restore();

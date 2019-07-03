@@ -7,6 +7,8 @@ import EntityGraphQueries from './EntityGraphQueries';
 export default class TransactionFetcher {
   private readonly graphClient: GraphClient;
 
+  private readonly queryLimit = 100;
+
   /**
    * Constructor
    * @param graphClient Graph client object.
@@ -21,17 +23,34 @@ export default class TransactionFetcher {
    * @param data Data received from subscription.
    * @return Graph query response from graph node.
    */
-  public async fetch(data: Record<string, any[]>): Promise<{data: object}> {
-    const entity = Object.keys(data)[0];
+  public async fetch(data: Record<string, any[]>): Promise<{[key: string]: object[]}> {
+    const entity = (Object.keys(data)[0]);
     const entityRecord = data[entity][0];
     const query = EntityGraphQueries[entity];
-    // Fetch entity based on uts from ContractEntity model and update the variables object
-    // Current dummy value is 0
-    const variables = {
-      contractAddress: entityRecord.contractAddress,
-      uts: 0,
-    };
-    const response = await this.graphClient.query(query, variables);
+    // Fetch uts based on entity & contract address from ContractEntity model and update the
+    // variables object uts field. <PLACEHOLDER>
+    let skip = 0;
+    let iteration = 0;
+    const transactions: object[] = [];
+    const response: any = {};
+    while (true) {
+      skip *= iteration;
+      const variables = {
+        contractAddress: entityRecord.contractAddress,
+        uts: 0,
+        limit: this.queryLimit,
+        skip,
+      };
+      /* eslint-disable no-await-in-loop */
+      // Note: await is needed here because GraphQL doesn't support aggregated count query.
+      const graphQueryResult = await this.graphClient.query(query, variables);
+      if (graphQueryResult.data[entity].length === 0) break;
+
+      transactions.concat(graphQueryResult.data[entity]);
+      iteration += 1;
+    }
+
+    response[entity] = transactions;
     return response;
   }
 }

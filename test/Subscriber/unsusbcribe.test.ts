@@ -16,7 +16,7 @@ describe('Subscriber.unsubscribe()', () => {
   beforeEach(() => {
     mockApolloClient = sinon.stub;
     graphClient = new GraphClient(mockApolloClient);
-    subscriptionQueries = { stakeRequested: 'subscription{stakeRequesteds{id}}' };
+    subscriptionQueries = { stakeRequesteds: 'subscription{stakeRequesteds{id}}' };
     mockUnsubscribe = {
       unsubscribe: sinon.spy,
     };
@@ -41,7 +41,7 @@ describe('Subscriber.unsubscribe()', () => {
 
     const mockQuerySubscription = sinon.spy;
     sinon.replace(
-      subscriber.querySubscriptions.stakeRequested,
+      subscriber.querySubscriptions.stakeRequesteds,
       'unsubscribe',
       sinon.fake.resolves(mockQuerySubscription),
     );

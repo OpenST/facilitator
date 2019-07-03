@@ -73,7 +73,8 @@ export default class GraphClient {
    * @param query Graph query.
    * @return Response from graph node.
    */
-  public async query(query: string, variables: Record<string, any>): Promise<{data: object}> {
+  public async query(query: string, variables: Record<string, any>):
+  Promise<{data: Record<string, object[]>}> {
     const gqlQuery = gql`${query}`;
     const queryResult = await this.apolloClient.query({
       query: gqlQuery,
