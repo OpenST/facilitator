@@ -57,7 +57,7 @@ describe('Facilitator.start()', () => {
         ['http', subGraphDetails.origin.httpSubGraphEndPoint],
         ['ws', subGraphDetails.origin.wsSubGraphEndPoint],
         ['http', subGraphDetails.auxiliary.httpSubGraphEndPoint],
-        ['ws', subGraphDetails.auxiliary.wsSubGraphEndPoint]
+        ['ws', subGraphDetails.auxiliary.wsSubGraphEndPoint],
       ],
     );
 

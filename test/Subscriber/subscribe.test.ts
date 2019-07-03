@@ -5,7 +5,7 @@ import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../utils/SpyAssert';
 import TransactionHandler from '../../src/TransactionHandler';
-import TransactionFetcher from "../../src/TransactionFetcher";
+import TransactionFetcher from '../../src/TransactionFetcher';
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;

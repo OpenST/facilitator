@@ -1,21 +1,22 @@
 import gql from 'graphql-tag';
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
-const { assert } = chai;
 
 import * as sinon from 'sinon';
 
 import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../utils/SpyAssert';
-import TransactionHandler from "../../src/TransactionHandler";
-import TransactionFetcher from "../../src/TransactionFetcher";
+import TransactionHandler from '../../src/TransactionHandler';
+import TransactionFetcher from '../../src/TransactionFetcher';
+
+import chai = require('chai');
+import chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+const { assert } = chai;
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;
   let subscriptionQry: string;
   let mockApolloClient: any;
-  let options: Object;
+  let options: Record<string, any>;
 
   beforeEach(() => {
     mockApolloClient = {
@@ -35,7 +36,7 @@ describe('GraphClient.subscribe()', () => {
       mockApolloClient,
       'subscribe',
       sinon.fake.returns({
-        subscribe: () => Promise.resolve(mockQuerySubscriber),
+        subscribe: async () => Promise.resolve(mockQuerySubscriber),
       }),
     );
     const handler = sinon.mock(TransactionHandler);
@@ -70,7 +71,7 @@ describe('GraphClient.subscribe()', () => {
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
     assert.isRejected(
-      graphClient.subscribe(undefined as any, handler as any, fetcher as any,),
+      graphClient.subscribe(undefined as any, handler as any, fetcher as any),
       'Mandatory Parameter \'subscriptionQry\' is missing or invalid.',
       'Invalid subscriptionQry',
     );
