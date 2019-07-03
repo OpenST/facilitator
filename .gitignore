@@ -17,4 +17,4 @@ src/**/*.js
 src/**/*.js.map
 
 # coverage
-coverage
+coverage/

@@ -1,7 +1,7 @@
 import TransactionHandler from '../../src/TransactionHandler';
 import StakeRequestedHandler from '../../src/handlers/StakeRequestedHandler';
-import SpyAssert from '../utils/SpyAssert';
-import StubData from '../utils/StubData';
+import SpyAssert from '../test_utils/SpyAssert';
+import StubData from '../test_utils/StubData';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');

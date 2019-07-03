@@ -21,7 +21,7 @@ import NumberUpdate from '../NumberUpdate';
 
 import Subject from '../../../src/observer/Subject';
 
-import assert from '../../utils/assert';
+import assert from '../../test_utils/assert';
 
 interface TestConfigInterface {
   subject: Subject<NumberUpdate>;

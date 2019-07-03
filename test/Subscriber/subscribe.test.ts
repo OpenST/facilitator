@@ -1,9 +1,9 @@
 import * as sinon from 'sinon';
-import assert from '../utils/assert';
+import assert from '../test_utils/assert';
 
 import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import TransactionHandler from '../../src/TransactionHandler';
 
 describe('Subscriber.subscribe()', () => {

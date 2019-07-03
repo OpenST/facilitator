@@ -19,7 +19,7 @@ import {
   Gateway,
 } from '../../../src/repositories/GatewayRepository';
 
-import assert from '../../utils/assert';
+import assert from '../../test_utils/assert';
 
 const Util = {
   checkGatewayAgainstAttributes(

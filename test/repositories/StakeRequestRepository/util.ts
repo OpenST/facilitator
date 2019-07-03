@@ -17,7 +17,7 @@
 import BigNumber from 'bignumber.js';
 import StakeRequest from '../../../src/models/StakeRequest';
 
-import assert from '../../utils/assert';
+import assert from '../../test_utils/assert';
 
 const Util = {
   checkInputAgainstOutput(

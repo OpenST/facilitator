@@ -19,7 +19,7 @@ import {
   AuxiliaryChain,
 } from '../../../src/repositories/AuxiliaryChainRepository';
 
-import assert from '../../utils/assert';
+import assert from '../../test_utils/assert';
 
 const Util = {
   checkAuxiliaryChainAgainstAttributes(

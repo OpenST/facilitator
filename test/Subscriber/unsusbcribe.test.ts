@@ -1,5 +1,5 @@
 import * as sinon from 'sinon';
-import assert from '../utils/assert';
+import assert from '../test_utils/assert';
 
 import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';

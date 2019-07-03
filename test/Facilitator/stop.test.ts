@@ -4,7 +4,7 @@ import Facilitator from '../../src/Facilitator';
 import GraphClient from '../../src/GraphClient';
 import Subscriber from '../../src/Subscriber';
 import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import Repositories from '../../src/repositories/Repositories';
 import HandlerFactory from '../../src/handlers/HandlerFactory';
 

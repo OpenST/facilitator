@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import DBFileHelper from '../../src/DatabaseFileHelper';
-import assert from '../utils/assert';
+import assert from '../test_utils/assert';
 
 const sinon = require('sinon');
 

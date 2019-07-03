@@ -19,7 +19,7 @@ import {
   Message,
 } from '../../../src/repositories/MessageRepository';
 
-import assert from '../../utils/assert';
+import assert from '../../test_utils/assert';
 
 const Util = {
   checkMessageAgainstAttributes(

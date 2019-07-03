@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
 import * as sinon from 'sinon';
-import assert from '../utils/assert';
+import assert from '../test_utils/assert';
 
 import GraphClient from '../../src/GraphClient';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import TransactionHandler from "../../src/TransactionHandler";
 
 describe('GraphClient.subscribe()', () => {

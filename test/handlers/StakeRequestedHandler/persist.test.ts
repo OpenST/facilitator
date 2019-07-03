@@ -6,7 +6,7 @@ import StakeRequestedHandler from '../../../src/handlers/StakeRequestedHandler';
 import StakeRequest from '../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
 
-import SpyAssert from '../../utils/SpyAssert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 import Utils = require('web3-utils');
 
@@ -32,7 +32,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
 
     const models = await handler.persist(transactions);
 
-    const stakeRequest = new StakeRequest (
+    const stakeRequest = new StakeRequest(
       transactions[0].stakeRequestHash,
       new BigNumber(transactions[0].amount),
       transactions[0].beneficiary,
