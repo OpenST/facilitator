@@ -136,7 +136,9 @@ export class AuxiliaryChainRepository {
    */
   public async create(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<AuxiliaryChain> {
     try {
-      const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(auxiliaryChainAttributes) as AuxiliaryChain;
+      const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(
+        auxiliaryChainAttributes,
+      ) as AuxiliaryChain;
       this.format(auxiliaryChain);
       return auxiliaryChain;
     } catch (e) {
@@ -144,7 +146,9 @@ export class AuxiliaryChainRepository {
         attributes: auxiliaryChainAttributes,
         reason: e.message,
       };
-      return Promise.reject(`Failed to create an auxiliary chain: ${JSON.stringify(errorContext)}`);
+      return Promise.reject(
+        `Failed to create an auxiliary chain: ${JSON.stringify(errorContext)}`,
+      );
     }
   }
 
@@ -173,7 +177,7 @@ export class AuxiliaryChainRepository {
    * @return {Promise<number[]>>}
    */
   public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<number[]> {
-    return await AuxiliaryChainModel.update({
+    return AuxiliaryChainModel.update({
       lastProcessedBlockNumber: auxiliaryChainAttributes.lastProcessedBlockNumber,
       lastOriginBlockHeight: auxiliaryChainAttributes.lastOriginBlockHeight,
       lastAuxiliaryBlockHeight: auxiliaryChainAttributes.lastAuxiliaryBlockHeight,
@@ -192,13 +196,19 @@ export class AuxiliaryChainRepository {
    */
   private format(auxiliaryChain: AuxiliaryChain): void {
     if (auxiliaryChain.lastProcessedBlockNumber) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastProcessedBlockNumber);
+      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(
+        auxiliaryChain.lastProcessedBlockNumber,
+      );
     }
     if (auxiliaryChain.lastOriginBlockHeight) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastOriginBlockHeight);
+      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(
+        auxiliaryChain.lastOriginBlockHeight,
+      );
     }
     if (auxiliaryChain.lastAuxiliaryBlockHeight) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastAuxiliaryBlockHeight);
+      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(
+        auxiliaryChain.lastAuxiliaryBlockHeight,
+      );
     }
   }
 }

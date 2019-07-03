@@ -64,9 +64,13 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
     return [chainRecord];
   }
 
-
-  public async handle(models: AuxiliaryChain[]): Promise<void> {
-    Logger.info(`Anchor  : ${models}`);
+  /**
+   * This method defines action on receiving auxiliary chain model.
+   *
+   * @param auxiliaryChains array of instances of auxiliaryChains object.
+   */
+  public async handle(auxiliaryChains: AuxiliaryChain[]): Promise<void> {
+    Logger.info(`AuxiliaryChains  : ${auxiliaryChains}`);
     return Promise.resolve();
   }
 }
