@@ -26,15 +26,25 @@ import assert = require('assert');
 
 class AuxiliaryChainModel extends Model {
   public readonly chainId!: number;
+
   public readonly originChainName!: string;
+
   public readonly ostGatewayAddress!: string;
+
   public readonly ostCoGatewayAddress!: string;
+
   public readonly anchorAddress!: string;
+
   public readonly coAnchorAddress!: string;
+
   public readonly lastProcessedBlockNumber!: BigNumber;
+
   public readonly lastOriginBlockHeight!: BigNumber;
+
   public readonly lastAuxiliaryBlockHeight!: BigNumber;
+
   public readonly createdAt!: Date;
+
   public readonly updatedAt!: Date;
 }
 
@@ -154,7 +164,7 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
   public async create(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<AuxiliaryChain> {
     try {
       const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(
-        auxiliaryChainAttributes
+        auxiliaryChainAttributes,
       ) as AuxiliaryChain;
       this.format(auxiliaryChain);
       // this.newUpdate(auxiliaryChain);

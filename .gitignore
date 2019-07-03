@@ -9,12 +9,10 @@ node_modules/
 
 # coverage report
 .nyc_output/
+coverage/
 
-# tsc
+# Typescript compiler (tsc) generated files.
 src/*.js
 src/*.js.map
 src/**/*.js
 src/**/*.js.map
-
-# coverage
-coverage/

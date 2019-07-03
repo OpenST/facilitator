@@ -24,28 +24,28 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of StakeRequestAttributes object.
+   * @return Array of instances of StakeRequest objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<StakeRequest[]> {
     const models: StakeRequest[] = transactions.map(
       (transaction): StakeRequest => {
         const stakeRequestHash = transaction.stakeRequestHash as string;
-        const amount = transaction.amount as number;
+        const amount = new BigNumber(transaction.amount);
         const beneficiary = transaction.beneficiary as string;
-        const gasPrice = transaction.gasPrice as number;
-        const gasLimit = transaction.gasLimit as number;
-        const nonce = transaction.nonce as number;
+        const gasPrice = new BigNumber(transaction.gasPrice);
+        const gasLimit = new BigNumber(transaction.gasLimit);
+        const nonce = new BigNumber(transaction.nonce);
         const gateway = transaction.gateway as string;
         const stakerProxy = transaction.stakerProxy as string;
 
-        return new StakeRequest (
+        return new StakeRequest(
           stakeRequestHash,
-          new BigNumber(amount),
+          amount,
           beneficiary,
-          new BigNumber(gasPrice),
-          new BigNumber(gasLimit),
-          new BigNumber(nonce),
+          gasPrice,
+          gasLimit,
+          nonce,
           gateway,
           stakerProxy,
         );
