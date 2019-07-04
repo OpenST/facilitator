@@ -69,7 +69,6 @@ describe('TransactionFetcher.fetch()', () => {
     const transactionFetcher = new TransactionFetcher(graphClient);
 
     const response = await transactionFetcher.fetch(subscriptionResponse);
-    console.log('response:', response);
     const expectedResponse = {
       stakeRequesteds: [
         {
