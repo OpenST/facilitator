@@ -103,6 +103,7 @@ export class FacilitatorConfig {
     this.database = config.database || new DBConfig();
     this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
+    this.assignDerivedParams = this.assignDerivedParams.bind(this);
     this.assignDerivedParams(config);
   }
 
@@ -112,7 +113,7 @@ export class FacilitatorConfig {
    */
   private assignDerivedParams(config: any) {
     const chains = config.chains || {};
-    for (const identifier in chains) {
+    Object.keys(chains).forEach(async (identifier, _) => {
       this.chains[identifier] = new Chain(
         chains[identifier].rpc,
         chains[identifier].worker,
@@ -121,7 +122,7 @@ export class FacilitatorConfig {
       if (identifier !== this.originChainId) {
         this.auxiliaryChainId = identifier;
       }
-    }
+    })
   }
 
   /**
