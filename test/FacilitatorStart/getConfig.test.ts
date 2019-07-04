@@ -2,7 +2,7 @@ import {Config, FacilitatorConfig} from '../../src/Config';
 import MosaicConfig from '../../src/MosaicConfig';
 import * as sinon from 'sinon';
 import {assert} from 'chai';
-import SpyAssert from "../utils/SpyAssert";
+import SpyAssert from '../test_utils/SpyAssert';
 import FacilitatorStart from '../../src/bin/FacilitatorStart';
 
 describe('Facilitator.getConfig()', function () {

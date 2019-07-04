@@ -1,7 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-const Web3 = require('web3');
-import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import MosaicConfig from './MosaicConfig';
 import Directory from './Directory';
@@ -9,6 +7,8 @@ import InvalidFacilitatorConfigException, { WorkerPasswordNotFoundException } fr
 import * as schema from './Config/FacilitatorConfig.schema.json';
 import Utils from './Utils';
 import Account from './Account';
+
+const Web3 = require('web3');
 
 // Database password key to read from env.
 const ENV_DB_PASSWORD = 'MOSAIC_FACILITATOR_DB_PASSWORD';
@@ -122,7 +122,7 @@ export class FacilitatorConfig {
       if (identifier !== this.originChainId) {
         this.auxiliaryChain = identifier;
       }
-    })
+    });
   }
 
   /**

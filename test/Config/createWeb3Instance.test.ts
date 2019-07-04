@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import {Chain, Config, ENV_WORKER_PASSWORD_PREFIX} from '../../src/Config';
-import SpyAssert from '../utils/SpyAssert';
+import { Chain, Config, ENV_WORKER_PASSWORD_PREFIX } from '../../src/Config';
+import SpyAssert from '../test_utils/SpyAssert';
 
 import Account from '../../src/Account';
 
@@ -21,14 +21,13 @@ describe('Config.createWeb3Instance', () => {
   it('should throw when password for worker is not set in ENV variables', () => {
     assert.throws(
       () => config.createWeb3Instance(
-        chain
+        chain,
       ),
       'password not found',
     );
   });
 
   it('should pass when password is available in ENV variables', () => {
-
     const unlockAccountSpy = sinon.replace(
       Account.prototype,
       'unlock',
@@ -45,7 +44,7 @@ describe('Config.createWeb3Instance', () => {
     );
 
     SpyAssert.assert(unlockAccountSpy, 1, [
-      [web3, chain.password]
+      [web3, chain.password],
     ]);
 
     process.env[envVariableNameForWorkerPassword] = undefined;

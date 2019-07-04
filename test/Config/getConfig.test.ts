@@ -1,6 +1,6 @@
 import MosaicConfig from '../../src/MosaicConfig';
 import {Config, FacilitatorConfig} from "../../src/Config";
-import SpyAssert from "../utils/SpyAssert";
+import SpyAssert from '../test_utils/SpyAssert';
 import {assert} from 'chai';
 
 const sinon = require('sinon');

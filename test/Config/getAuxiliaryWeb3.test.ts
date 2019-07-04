@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import {Chain, Config} from '../../src/Config';
-import SpyAssert from '../utils/SpyAssert';
+import { Chain, Config } from '../../src/Config';
+import SpyAssert from '../test_utils/SpyAssert';
 
 const Web3 = require('web3');
 
@@ -23,7 +23,7 @@ describe('Config.auxiliaryWeb3', () => {
       'createWeb3Instance',
       sinon.fake.returns(web3),
     );
-    const auxiliaryWeb3 = config.auxiliaryWeb3;
+    const { auxiliaryWeb3 } = config;
     assert.strictEqual(
       auxiliaryWeb3,
       web3,
@@ -35,5 +35,4 @@ describe('Config.auxiliaryWeb3', () => {
       [[chain]],
     );
   });
-
 });
