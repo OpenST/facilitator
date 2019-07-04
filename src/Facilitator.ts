@@ -3,7 +3,6 @@ import Subscriber from './Subscriber';
 import GraphClient from './GraphClient';
 import TransactionHandler from './TransactionHandler';
 import HandlerFactory from './handlers/HandlerFactory';
-import Database from './models/Database';
 import TransactionFetcher from './TransactionFetcher';
 import { SubscriptionInfo } from './types';
 import SubscriptionQueries from './SubscriptionQueries';

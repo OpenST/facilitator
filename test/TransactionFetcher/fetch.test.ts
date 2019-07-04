@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 
 import GraphClient from '../../src/GraphClient';
 import TransactionFetcher from '../../src/TransactionFetcher';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import EntityGraphQueries from '../../src/EntityGraphQueries';
 
 describe('TransactionFetcher.fetch()', () => {

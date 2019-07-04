@@ -52,7 +52,7 @@ export default class Account {
    * @param password The password required to unlock the account.
    * @returns `true` if its unlocked otherwise false.
    */
-  public unlock(web3: Web3, password: string): boolean {
+  public unlock(web3: any, password: string): boolean {
     // Unlocking the account and adding it to the local web3 instance so that everything is signed
     // locally when using web3.eth.send
     try {
