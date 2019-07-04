@@ -54,17 +54,40 @@ describe('FacilitatorConfig.fromPath()', () => {
 
   it('should return empty object when file path doesn\'t exists', () => {
     const fsSpy = spyFsModule(false);
-    const expectedFc = {
-      chains: {},
-      database: {},
-      encryptedAccounts: {},
-      originChainId: '',
-    };
+
     const fcConfig: FacilitatorConfig = FacilitatorConfig.fromPath(facilitatorConfigPath);
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
 
-    assert.deepEqual(fcConfig, expectedFc, ' it should be empty');
+    assert.deepEqual(
+      fcConfig.originChainId,
+      '',
+      ' it should be empty',
+    );
+
+    assert.deepEqual(
+      fcConfig.auxiliaryChainId,
+      '',
+      ' it should be empty',
+    );
+
+    assert.deepEqual(
+      fcConfig.database,
+      {},
+      ' it should be empty',
+    );
+
+    assert.deepEqual(
+      fcConfig.chains,
+      {},
+      ' it should be empty',
+    );
+
+    assert.deepEqual(
+      fcConfig.encryptedAccounts,
+      {},
+      ' it should be empty',
+    );
 
     fsSpy.restore();
     sinon.restore();

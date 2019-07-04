@@ -89,14 +89,15 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
+    facilitatorConfig.originChainId = originChainId;
+    facilitatorConfig.auxiliaryChainId = options.chainId;
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
-
-      facilitatorConfig.chains[chainid] = new Chain();
-      facilitatorConfig.chains[chainid].worker = account.address;
-      facilitatorConfig.chains[chainid].rpc = rpc;
-
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
+      facilitatorConfig.chains[chainid] = new Chain(
+        rpc,
+        account.address,
+      );
     };
 
     setFacilitator(originChainId, options.originRpc, options.originPassword);

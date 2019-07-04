@@ -1,15 +1,18 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
+const Web3 = require('web3');
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import MosaicConfig from './MosaicConfig';
 import Directory from './Directory';
-import InvalidFacilitatorConfigException from './Exception';
+import InvalidFacilitatorConfigException, { WorkerPasswordNotFoundException } from './Exception';
 import * as schema from './Config/FacilitatorConfig.schema.json';
 import Utils from './Utils';
+import Account from './Account';
 
 // Database password key to read from env.
 const ENV_DB_PASSWORD = 'MOSAIC_FACILITATOR_DB_PASSWORD';
+export const ENV_WORKER_PASSWORD_PREFIX = 'MOSAIC_ADDRESS_PASSW_';
 
 // Database type
 enum DBType {
@@ -50,10 +53,30 @@ export class DBConfig {
  */
 export class Chain {
   /** Chain RPC endpoint. */
-  public rpc?: string;
+  public readonly rpc: string;
 
   /** Worker address. */
-  public worker?: string;
+  public readonly worker: string;
+
+  /** Worker password. */
+  private readonly _password?: string;
+
+  public constructor(
+    rpc: string,
+    worker: string,
+    password?: string,
+  ) {
+    this.rpc = rpc;
+    this.worker = worker;
+    this._password = password;
+  }
+
+  /**
+   * Get the password for unlocking worker.
+   */
+  get password(): string | undefined {
+    return process.env[`${ENV_WORKER_PASSWORD_PREFIX}${this.worker}`] || this._password;
+  }
 }
 
 /**
@@ -61,6 +84,8 @@ export class Chain {
  */
 export class FacilitatorConfig {
   public originChainId: string;
+
+  public auxiliaryChainId: string;
 
   public database: DBConfig;
 
@@ -74,9 +99,21 @@ export class FacilitatorConfig {
    */
   private constructor(config: any) {
     this.originChainId = config.originChainId || '';
+    this.auxiliaryChainId = '';
     this.database = config.database || new DBConfig();
-    this.chains = config.chains || {};
+    this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
+    const chains = config.chains || {};
+    for (const identifier in chains) {
+      this.chains[identifier] = new Chain(
+        chains[identifier].rpc,
+        chains[identifier].worker,
+      );
+      // we have only 2 chains in config
+      if (identifier !== this.originChainId) {
+        this.auxiliaryChainId = identifier;
+      }
+    }
   }
 
   /**
@@ -165,6 +202,10 @@ export class Config {
 
   public mosaic: MosaicConfig;
 
+  private _originWeb3?: any;
+
+  private _auxiliaryWeb3?: any;
+
   /**
    * Constructor.
    * @param mosaicConfig Mosaic config object.
@@ -176,6 +217,40 @@ export class Config {
   ) {
     this.facilitator = facilitatorConfig;
     this.mosaic = mosaicConfig;
+  }
+
+  /**
+   * Returns web3 provider for origin chain.
+   */
+  public get originWeb3(): any {
+    if (this._originWeb3) {
+      return this._originWeb3;
+    }
+    const originChain = this.facilitator.chains[this.facilitator.originChainId];
+    if (!originChain.password) {
+      throw new WorkerPasswordNotFoundException(`password not found for ${originChain.worker}`);
+    }
+    const account = new Account(originChain.worker, this.facilitator.encryptedAccounts[originChain.rpc]);
+    this._originWeb3 = new Web3(originChain.rpc);
+    account.unlock(this._originWeb3, originChain.password);
+    return this._originWeb3;
+  }
+
+  /**
+   * Returns web3 provider for auxiliary chain.
+   */
+  public get auxiliaryWeb3(): any {
+    if (this._auxiliaryWeb3) {
+      return this._auxiliaryWeb3;
+    }
+    const auxiliaryChain = this.facilitator.chains[this.facilitator.auxiliaryChainId];
+    if (!auxiliaryChain.password) {
+      throw new WorkerPasswordNotFoundException(`password not found for ${auxiliaryChain.worker}`);
+    }
+    const account = new Account(auxiliaryChain.worker, this.facilitator.encryptedAccounts[auxiliaryChain.rpc]);
+    this._auxiliaryWeb3 = new Web3(auxiliaryChain.rpc);
+    account.unlock(this._auxiliaryWeb3, auxiliaryChain.password);
+    return this._auxiliaryWeb3;
   }
 
   /**
@@ -196,7 +271,7 @@ export class Config {
 
   /**
    * It provides config object from default paths.
-   * @param {string} originChain Origin chain id.
+   * @param {string} originChain Origin chain identifier (ex. ropsten).
    * @param {string} auxiliaryChain Auxiliary chain id.
    * @returns {Config} Config object consisting of mosaic and facilitator configurations.
    */
