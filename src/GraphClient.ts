@@ -57,6 +57,8 @@ export default class GraphClient {
       async next(response) {
         const transactions = await fetcher.fetch(response.data);
         await handler.handle(transactions);
+        // Integrate updation of ContractEntity uts here. Handlers should make sure error
+        // Promise.reject is thrown on error cases.
       },
       error(err) {
         // Log error using logger
