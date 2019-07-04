@@ -3,6 +3,7 @@ import { GatewayRepository } from '../models/GatewayRepository';
 import { MessageRepository } from '../models/MessageRepository';
 import Logger from '../Logger';
 import Utils from '../Utils';
+import { AUXILIARY_GAS_PRICE } from '../Constants';
 
 const Mosaic = require('@openst/mosaic.js');
 
@@ -127,7 +128,10 @@ export default class ProveGatewayService {
 
     const eip20CoGateway = new EIP20CoGateway(this.auxiliaryWeb3, ostCoGatewayAddress);
 
-    const transactionOptions = { from: this.auxiliaryWorkerAddress };
+    const transactionOptions = {
+      from: this.auxiliaryWorkerAddress,
+      gasPrice: AUXILIARY_GAS_PRICE,
+    };
     const rawTx = await eip20CoGateway.proveGatewayRawTx(
       lastOriginBlockHeight,
       encodedAccountValue,

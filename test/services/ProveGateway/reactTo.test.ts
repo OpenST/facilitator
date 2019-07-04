@@ -9,6 +9,7 @@ import {
 } from '../../../src/models/GatewayRepository';
 import { MessageRepository } from '../../../src/models/MessageRepository';
 import Utils from '../../../src/Utils';
+import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -96,7 +97,7 @@ describe('ProveGatewayService.reactTo()', () => {
     SpyAssert.assert(
       sendTransactionStub,
       1,
-      [[fakeRawTransaction, { from: auxiliaryWorkerAddress }]],
+      [[fakeRawTransaction, { from: auxiliaryWorkerAddress, gasPrice: AUXILIARY_GAS_PRICE }]],
     );
     assert.strictEqual(
       response.success,
