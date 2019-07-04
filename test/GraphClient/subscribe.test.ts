@@ -1,16 +1,11 @@
 import gql from 'graphql-tag';
-
 import * as sinon from 'sinon';
+import assert from '../test_utils/assert';
 
 import GraphClient from '../../src/GraphClient';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import TransactionHandler from '../../src/TransactionHandler';
 import TransactionFetcher from '../../src/TransactionFetcher';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
-const { assert } = chai;
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;

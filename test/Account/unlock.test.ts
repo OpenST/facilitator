@@ -2,7 +2,7 @@ import * as sinon from 'sinon';
 import { assert } from 'chai';
 
 import Account from '../../src/Account';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 
 const Web3 = require('web3');
 
@@ -18,7 +18,7 @@ describe('Unlock', () => {
     accountCreationResponse = Account.create(web3, validPassword);
     accountObject = new Account(
       accountCreationResponse.address,
-      accountCreationResponse.encryptedKeyStore
+      accountCreationResponse.encryptedKeyStore,
     );
   });
 

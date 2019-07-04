@@ -3,13 +3,13 @@ import Subscriber from './Subscriber';
 import GraphClient from './GraphClient';
 import TransactionHandler from './TransactionHandler';
 import HandlerFactory from './handlers/HandlerFactory';
-import Database from './models/Database';
 import TransactionFetcher from './TransactionFetcher';
 import { SubscriptionInfo } from './types';
 import SubscriptionQueries from './SubscriptionQueries';
+import Repositories from './repositories/Repositories';
 
 /**
- * The class defines properties and behaviour of a facilitator.
+ * The class defines properties and behavior of a facilitator.
  */
 export default class Facilitator {
   public readonly config: Config;
@@ -27,16 +27,12 @@ export default class Facilitator {
     this.config = config;
   }
 
-  /**
-   * Starts the facilitator by subscribing to subscription queries.
-   *
-   * @return Promise<void>
-   */
+  /** Starts the facilitator by subscribing to subscription queries. */
   public async start(): Promise<void> {
     const subGraphDetails = Facilitator.getSubscriptionDetails();
-    const database = await Database.create(this.config.facilitator.database.path);
+    const repos = await Repositories.create(this.config.facilitator.database.path);
     const transactionalHandler: TransactionHandler = new TransactionHandler(
-      HandlerFactory.get(database),
+      HandlerFactory.get(repos),
     );
     const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
       GraphClient.getClient('http', subGraphDetails.origin.httpSubGraphEndPoint),
@@ -66,8 +62,6 @@ export default class Facilitator {
   /**
    * Stops the facilitator and unsubscribe to query subscriptions.
    * This function should be called on signint or control-c.
-   *
-   * @return Promise<void>
    */
   public async stop(): Promise<void> {
     if (this.originSubscriber) {

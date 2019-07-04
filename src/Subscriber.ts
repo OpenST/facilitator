@@ -38,11 +38,7 @@ export default class Subscriber {
     this.fetcher = fetcher;
   }
 
-  /**
-   * Subscribes to subscription queries.
-   *
-   * @return {Promise<void>}
-   */
+  /** Subscribes to subscription queries. */
   public async subscribe() {
     Object.keys(this.subscriptionQueries).forEach(async (entity) => {
       this.querySubscriptions[entity] = await this.graphClient.subscribe(
