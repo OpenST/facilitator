@@ -53,5 +53,11 @@ describe('Utils::getDefinedOwnProps', (): void => {
       -1,
       'Property \'n\' is own property and it\'s defined',
     );
+
+    assert.strictEqual(
+      props.indexOf('b'),
+      -1,
+      'Property \'b\' is the owned property however undefined one.',
+    );
   });
 });

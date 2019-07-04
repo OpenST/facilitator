@@ -14,12 +14,16 @@
 //
 // ----------------------------------------------------------------------------
 
-import Lessable from '../../src/observer/Lessable'
+import Lessable from '../../src/observer/Lessable';
 
+/**
+ * The class is intended for testing functionality of observer/subject classes.
+ * It acts as a subject's update that is passed during notification to observers.
+ */
 export default class NumberUpdate extends Lessable<NumberUpdate> {
   /* Storage */
 
-  readonly value: number = 0;
+  public readonly value: number = 0;
 
   public less(other: NumberUpdate): boolean {
     return this.value < other.value;

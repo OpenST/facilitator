@@ -53,7 +53,7 @@ export default class Subject<UpdateType extends Lessable<UpdateType>> {
   public newUpdate(t: UpdateType): void {
     // De-duplicates an existing update.
     const index = this._updates.findIndex(
-      (el: UpdateType): boolean => this.isEqual(el, t)
+      (el: UpdateType): boolean => t.equal(el),
     );
 
     if (index !== -1) {
@@ -94,12 +94,5 @@ export default class Subject<UpdateType extends Lessable<UpdateType>> {
   /* Getter for collected updates. */
   public get updates(): UpdateType[] {
     return this._updates;
-  }
-
-
-  /* Private Functions */
-
-  private isEqual(u1: UpdateType, u2: UpdateType): boolean {
-    return !(u1.less(u2) || u2.less(u1));
   }
 }

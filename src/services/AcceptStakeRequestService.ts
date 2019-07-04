@@ -45,12 +45,12 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   /* Public Functions */
 
-  public constructor(db: Repositories, web3: any) {
+  public constructor(repos: Repositories, web3: any) {
     super();
 
     this.web3 = web3;
-    this.stakeRequestRepository = db.stakeRequestRepository;
-    this.messageRepository = db.messageRepository;
+    this.stakeRequestRepository = repos.stakeRequestRepository;
+    this.messageRepository = repos.messageRepository;
   }
 
   public async update(stakeRequests: StakeRequest[]): Promise<void> {
@@ -139,6 +139,12 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     return messageHash;
   }
 
+  /**
+   * Updates the message hash in stake requests' repository after
+   * accepting stake request. Accepting stake requests adds a new entry
+   * into messages' repository with a message hash. That exact message
+   * hash is updated here in stake requests' repository.
+   */
   private async updateMessageHashInStakeRequestRepository(
     stakeRequestHash: string,
     messageHash: string,

@@ -14,6 +14,16 @@
 //
 // ----------------------------------------------------------------------------
 
+/**
+ * Defines an abstract observer class.
+ * A class that wants to receive updates from a subject, inherits and
+ * implements `update()` method.
+ */
 export default abstract class Observer<T> {
+  /**
+   * Notifies the observer about state change in a subject.
+   *
+   * @param updates Updates (state change) that happened in a subject.
+   */
   public abstract async update(updates: T[]): Promise<void>;
 }

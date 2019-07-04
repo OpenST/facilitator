@@ -38,10 +38,17 @@ interface TestConfigInterface {
   stakeRequestWithMessageHashB: StakeRequest;
   stakeRequestWithNullMessageHashC: StakeRequest;
   service: AcceptStakeRequestService;
+  fakeData: {
+    secret: string;
+    hashLock: string;
+    messageHash: string;
+  };
 }
 let config: TestConfigInterface;
 
-describe('StakeRequestRepository::save', (): void => {
+const sandbox = sinon.createSandbox();
+
+describe('AcceptStakeRequestService::update', (): void => {
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
     const web3 = new Web3();
@@ -71,7 +78,17 @@ describe('StakeRequestRepository::save', (): void => {
         '0x0000000000000000000000000000000000000013',
       ),
       service,
+      fakeData: {
+        secret: '0x1d5b16860e7306df9e2d3ee077d6f3e3c4a4b5b22d2ae6d5adfee6a2147f529c',
+        hashLock: '0xa36e17d0a9b4240af1deff571017e108d2c1a40de02d84f419113b1e1f7ad40f',
+        messageHash: '0x15d2b8c03013fe1780d44c7c93b5d03422f88c8d4084568d190d7eb1a9907646',
+      },
     };
+
+    sandbox.stub(AcceptStakeRequestService, 'generateSecret').returns({
+      secret: config.fakeData.secret,
+      hashLock: config.fakeData.hashLock,
+    });
 
     const messageAttributes: MessageAttributes = {
       messageHash: config.stakeRequestWithMessageHashB.messageHash as string,
@@ -100,22 +117,15 @@ describe('StakeRequestRepository::save', (): void => {
     );
   });
 
-  it('Checks that repositories properly updated.', async (): Promise<void> => {
+  afterEach(async (): Promise<void> => {
+    sandbox.restore();
+  });
+
+  it('Checks that the stake request repository properly updated.', async (): Promise<void> => {
     const stakeRequests = [
       config.stakeRequestWithMessageHashB,
       config.stakeRequestWithNullMessageHashC,
     ];
-
-    const fakeSecret = '0x1d5b16860e7306df9e2d3ee077d6f3e3c4a4b5b22d2ae6d5adfee6a2147f529c';
-    const fakeHashLock = '0xa36e17d0a9b4240af1deff571017e108d2c1a40de02d84f419113b1e1f7ad40f';
-    const fakeMessageHash = '0x15d2b8c03013fe1780d44c7c93b5d03422f88c8d4084568d190d7eb1a9907646';
-
-    const generateFake = sinon.fake.returns({ secret: fakeSecret, hashLock: fakeHashLock });
-    sinon.replace(
-      AcceptStakeRequestService,
-      'generateSecret',
-      generateFake,
-    );
 
     await config.service.update(stakeRequests);
 
@@ -129,13 +139,28 @@ describe('StakeRequestRepository::save', (): void => {
       'Stake request exists in repository.',
     );
 
-    assert.isOk(
+    // Here we check against pre-calculated message hash (using fake data).
+    // This is a sanity check. It would fail if there is a semantic change
+    // in hash calculation. This should not happen in general. However,
+    // if it's intended, the message hash calculation in corresponding contract
+    // should be updated also. This catch (sync between message hash calculations
+    // in js and contract layer) is going to be taken care by integration test.
+    assert.strictEqual(
       stakeRequestC.messageHash,
-      'Stake request\'s hash is not null, as it has been accepted.',
+      config.fakeData.messageHash,
     );
+  });
+
+  it('Checks that the message repository is properly updated.', async (): Promise<void> => {
+    const stakeRequests = [
+      config.stakeRequestWithMessageHashB,
+      config.stakeRequestWithNullMessageHashC,
+    ];
+
+    await config.service.update(stakeRequests);
 
     const messageC = await config.repos.messageRepository.get(
-      stakeRequestC.messageHash as string,
+      config.fakeData.messageHash,
     ) as Message;
 
     assert.notStrictEqual(
@@ -151,7 +176,7 @@ describe('StakeRequestRepository::save', (): void => {
 
     assert.strictEqual(
       messageC.gatewayAddress,
-      stakeRequestC.gateway,
+      config.stakeRequestWithNullMessageHashC.gateway,
     );
 
     assert.strictEqual(
@@ -165,23 +190,23 @@ describe('StakeRequestRepository::save', (): void => {
     );
 
     assert.strictEqual(
-      messageC.gasPrice.comparedTo(stakeRequestC.gasPrice as BigNumber),
+      messageC.gasPrice.comparedTo(config.stakeRequestWithNullMessageHashC.gasPrice as BigNumber),
       0,
     );
 
     assert.strictEqual(
-      messageC.gasLimit.comparedTo(stakeRequestC.gasLimit as BigNumber),
+      messageC.gasLimit.comparedTo(config.stakeRequestWithNullMessageHashC.gasLimit as BigNumber),
       0,
     );
 
     assert.strictEqual(
-      messageC.nonce.comparedTo(stakeRequestC.nonce as BigNumber),
+      messageC.nonce.comparedTo(config.stakeRequestWithNullMessageHashC.nonce as BigNumber),
       0,
     );
 
     assert.strictEqual(
       messageC.sender,
-      stakeRequestC.stakerProxy,
+      config.stakeRequestWithNullMessageHashC.stakerProxy,
     );
 
     assert.strictEqual(
@@ -196,23 +221,12 @@ describe('StakeRequestRepository::save', (): void => {
 
     assert.strictEqual(
       messageC.secret,
-      fakeSecret,
+      config.fakeData.secret,
     );
 
     assert.strictEqual(
       messageC.hashLock,
-      fakeHashLock,
-    );
-
-    // Here we check against pre-calculated message hash (using fake data).
-    // This is a sanity check. It would fail if there is a semantic change
-    // in hash calculation. This should not happen in general. However,
-    // if it's intended, the message hash calculation in corresponding contract
-    // should be updated also. This catch (sync between message hash calculations
-    // in js and contract layer) is going to be taken care by integration test.
-    assert.strictEqual(
-      messageC.messageHash,
-      fakeMessageHash,
+      config.fakeData.hashLock,
     );
   });
 });

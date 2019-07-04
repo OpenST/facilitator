@@ -87,6 +87,11 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
       sourceDeclarationBlockHeight: new BigNumber('1'),
     };
 
+    // We create a message with config.stakeRequestWithMessageHashB.messageHash
+    // to be able to create an entry in stake requests repository with that
+    // message hash. Saving a stake request with non-null message hash
+    // in the stake request repository is only possible if that message hash
+    // exists in message repository. This is a foreign key requirement.
     await config.repos.messageRepository.create(
       messageAttributes,
     );

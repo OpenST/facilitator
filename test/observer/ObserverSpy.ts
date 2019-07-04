@@ -18,6 +18,12 @@ import NumberUpdate from './NumberUpdate';
 
 import Observer from '../../src/observer/Observer';
 
+/**
+ * The class is intended for testing functionality of observer/subject classes.
+ *
+ * It's an observer class implementation that spies and collects updates
+ * to assert later.
+ */
 export default class ObserverSpy extends Observer<NumberUpdate> {
   /* Storage */
 

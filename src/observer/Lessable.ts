@@ -14,6 +14,13 @@
 //
 // ----------------------------------------------------------------------------
 
+/** An abstract class that enables less operation. */
 export default abstract class Lessable<T> {
-  public abstract less(other: T): boolean;
+  /** Less comparison between the class and passed object. */
+  public abstract less(other: Lessable<T>): boolean;
+
+  /* Returns true if the class and passed object equal. */
+  public equal(other: Lessable<T>): boolean {
+    return !(this.less(other) || other.less(this));
+  }
 }
