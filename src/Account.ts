@@ -43,9 +43,16 @@ export default class Account {
    * @param password The password required to unlock the account.
    * @returns `true` if its unlocked otherwise false.
    */
-  // public unlock(web3: Web3, password: string): boolean {
-  //   // Unlocking the account and adding it to the local web3 instance so that everything is signed
-  //   // locally when using web3.eth.send
-  //   return false;
-  // }
+  public unlock(web3: Web3, password: string): boolean {
+    // Unlocking the account and adding it to the local web3 instance so that everything is signed
+    // locally when using web3.eth.send
+    try {
+      const web3Account = web3.eth.accounts.decrypt(this.encryptedKeyStore, password);
+      web3.eth.accounts.wallet.add(web3Account);
+      return true;
+    } catch (e) {
+      Logger.error(`unlock account failed: ${e.message}`);
+      return false;
+    }
+  }
 }
