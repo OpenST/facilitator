@@ -6,6 +6,7 @@ import HandlerFactory from './handlers/HandlerFactory';
 import Database from './models/Database';
 import TransactionFetcher from './TransactionFetcher';
 import { SubscriptionInfo } from './types';
+import SubscriptionQueries from './SubscriptionQueries';
 
 /**
  * The class defines properties and behaviour of a facilitator.
@@ -89,25 +90,12 @@ export default class Facilitator {
       origin: {
         wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
         httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
-        subscriptionQueries: {
-          stakeRequesteds: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){'
-          + '   id'
-          + '   contractAddress '
-          + '  }'
-          + '}',
-        },
+        subscriptionQueries: SubscriptionQueries.origin,
       },
       auxiliary: {
         wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
         httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
-        subscriptionQueries: {
-          stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderDirection: desc, first:'
-          + ' 1){'
-          + '   id'
-          + '   contractAddress '
-          + '  }'
-          + '}',
-        },
+        subscriptionQueries: SubscriptionQueries.auxiliary,
       },
     };
   }

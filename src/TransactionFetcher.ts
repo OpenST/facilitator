@@ -30,11 +30,9 @@ export default class TransactionFetcher {
     // Fetch uts based on entity & contract address from ContractEntity model and update the
     // variables object uts field. <PLACEHOLDER>
     let skip = 0;
-    let iteration = 0;
     const transactions: object[] = [];
     const response: any = {};
     while (true) {
-      skip *= iteration;
       const variables = {
         contractAddress: entityRecord.contractAddress,
         uts: 0,
@@ -47,7 +45,7 @@ export default class TransactionFetcher {
       if (graphQueryResult.data[entity].length === 0) break;
 
       transactions.concat(graphQueryResult.data[entity]);
-      iteration += 1;
+      skip += this.queryLimit;
     }
 
     response[entity] = transactions;
