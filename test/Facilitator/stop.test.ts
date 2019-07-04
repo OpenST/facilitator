@@ -4,12 +4,12 @@ import Facilitator from '../../src/Facilitator';
 import GraphClient from '../../src/GraphClient';
 import Subscriber from '../../src/Subscriber';
 import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
-import SpyAssert from '../utils/SpyAssert';
-import Database from '../../src/models/Database';
+import SpyAssert from '../test_utils/SpyAssert';
+import Repositories from '../../src/repositories/Repositories';
 import HandlerFactory from '../../src/handlers/HandlerFactory';
 
-describe('Facilitator.stop()', () => {
-  it('should stop facilitation', async () => {
+describe('Facilitator.stop()', (): void => {
+  it('should stop facilitation', async (): Promise<void> => {
     sinon.replace(
       HandlerFactory,
       'get',
@@ -22,7 +22,7 @@ describe('Facilitator.stop()', () => {
       sinon.fake.returns(mockGraphClient),
     );
     sinon.replace(
-      Database,
+      Repositories,
       'create',
       sinon.fake.resolves(true),
     );

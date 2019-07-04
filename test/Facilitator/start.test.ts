@@ -5,23 +5,23 @@ import Facilitator from '../../src/Facilitator';
 import GraphClient from '../../src/GraphClient';
 import Subscriber from '../../src/Subscriber';
 import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
-import SpyAssert from '../utils/SpyAssert';
-import Database from '../../src/models/Database';
+import SpyAssert from '../test_utils/SpyAssert';
+import Repositories from '../../src/repositories/Repositories';
 import HandlerFactory from '../../src/handlers/HandlerFactory';
 
-describe('Facilitator.start()', () => {
-  it('should start facilitation', async () => {
+describe('Facilitator.start()', (): void => {
+  it('should start facilitation', async (): Promise<void> => {
     const handlerFactoryStub = sinon.replace(
       HandlerFactory,
       'get',
       sinon.fake.resolves(true),
     );
     const mockGraphClient = sinon.createStubInstance(GraphClient);
-    const fakeDatabase = 'fakeDataBase';
-    const databaseSpy = sinon.replace(
-      Database,
+    const fakeRepositories = 'fakeRepositories';
+    const repositoriesSpy = sinon.replace(
+      Repositories,
       'create',
-      sinon.fake.resolves(fakeDatabase),
+      sinon.fake.resolves(fakeRepositories),
     );
     const graphClientSpy = sinon.replace(
       GraphClient,
@@ -45,17 +45,19 @@ describe('Facilitator.start()', () => {
     SpyAssert.assert(
       handlerFactoryStub,
       1,
-      [[fakeDatabase]],
+      [[fakeRepositories]],
     );
 
-    SpyAssert.assert(databaseSpy, 1, [[fakePath]]);
+    SpyAssert.assert(repositoriesSpy, 1, [[fakePath]]);
 
     SpyAssert.assert(
       graphClientSpy,
-      2,
+      4,
       [
-        [subGraphDetails.origin.subGraphEndPoint],
-        [subGraphDetails.auxiliary.subGraphEndPoint],
+        ['http', subGraphDetails.origin.httpSubGraphEndPoint],
+        ['ws', subGraphDetails.origin.wsSubGraphEndPoint],
+        ['http', subGraphDetails.auxiliary.httpSubGraphEndPoint],
+        ['ws', subGraphDetails.auxiliary.wsSubGraphEndPoint],
       ],
     );
 

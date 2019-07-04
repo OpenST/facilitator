@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import MosaicConfig from './MosaicConfig';
 import Directory from './Directory';
@@ -40,7 +39,7 @@ export class DBConfig {
   /**
    * Get the password for the database.
    */
-  get password(): string | undefined {
+  public get password(): string | undefined {
     return process.env[ENV_DB_PASSWORD] || this._password;
   }
 }
@@ -66,7 +65,7 @@ export class FacilitatorConfig {
 
   public chains: Record<string, Chain>;
 
-  public encryptedAccounts: Record<string, EncryptedKeystoreV3Json>;
+  public encryptedAccounts: Record<string, any>;
 
   /**
    * Constructor.

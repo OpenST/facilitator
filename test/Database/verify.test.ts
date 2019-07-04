@@ -1,12 +1,11 @@
 import * as fs from 'fs-extra';
-import SpyAssert from "./../utils/SpyAssert";
-import DBFileHelper from "../../src/DatabaseFileHelper";
-import {assert} from 'chai';
+import SpyAssert from '../test_utils/SpyAssert';
+import DBFileHelper from '../../src/DatabaseFileHelper';
+import assert from '../test_utils/assert';
 
 const sinon = require('sinon');
 
-describe('DatabaseFileHelper.verify()', function () {
-
+describe('Database.verify()', () => {
   function spyFsModule(status: boolean) {
     const fsSpy = sinon.replace(
       fs,
@@ -21,7 +20,7 @@ describe('DatabaseFileHelper.verify()', function () {
     dbFilePath: string,
     expectedStatus: boolean,
     message: string,
-    fsSpy: any
+    fsSpy: any,
   ) {
     const verificationStatus: boolean = DBFileHelper.verify(dbFilePath);
 
@@ -29,28 +28,28 @@ describe('DatabaseFileHelper.verify()', function () {
     assert.strictEqual(
       verificationStatus,
       expectedStatus,
-      message
+      message,
     );
   }
 
   const dbFilePath = 'tests/Database/OSTFacilitator.db';
 
-  it('should pass with valid arguments', function () {
+  it('should pass with valid arguments', () => {
     const fsSpy = spyFsModule(true);
 
     assertion(1, dbFilePath, true, 'DB file is invalid', fsSpy);
     sinon.restore();
   });
 
-  it('should fail when file extension is invalid', function () {
-    let dbFilePath = 'tests/Database/OSTFacilitator.txt';
+  it('should fail when file extension is invalid', () => {
+    const dbFilePath = 'tests/Database/OSTFacilitator.txt';
     const fsSpy = spyFsModule(true);
 
     assertion(1, dbFilePath, false, 'Db file extension is valid', fsSpy);
     sinon.restore();
   });
 
-  it('should fail when db file path doesn\'t exists', function () {
+  it('should fail when db file path doesn\'t exists', () => {
     const fsSpy = spyFsModule(false);
 
     assertion(1, dbFilePath, false, 'Db file path exists', fsSpy);
