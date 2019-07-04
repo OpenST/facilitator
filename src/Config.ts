@@ -103,6 +103,14 @@ export class FacilitatorConfig {
     this.database = config.database || new DBConfig();
     this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
+    this.assignDerivedParams(config);
+  }
+
+  /**
+   * Assigns derived parameters.
+   * @param config
+   */
+  private assignDerivedParams(config: any) {
     const chains = config.chains || {};
     for (const identifier in chains) {
       this.chains[identifier] = new Chain(
