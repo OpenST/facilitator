@@ -1,27 +1,22 @@
 import BigNumber from 'bignumber.js';
 import ContractEntityHandler from './ContractEntityHandler';
-import {
-  StakeRequestAttributes,
-  StakeRequestRepository,
-} from '../models/StakeRequestRepository';
+import StakeRequestRepository from '../repositories/StakeRequestRepository';
+import StakeRequest from '../models/StakeRequest';
 
 import Logger from '../Logger';
 
 /**
  * This class handels stake request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequestAttributes> {
+export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequest> {
+  /* Storage */
+
   private readonly stakeRequestRepository: StakeRequestRepository;
 
-  /**
-   * Constructor
-   *
-   * @param stakeRequestRepository Instance of stake request repository.
-   */
   public constructor(stakeRequestRepository: StakeRequestRepository) {
     super();
+
     this.stakeRequestRepository = stakeRequestRepository;
-    this.persist = this.persist.bind(this);
   }
 
   /**
@@ -29,42 +24,51 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of StakeRequestAttributes object.
+   * @return Array of instances of StakeRequest objects.
    */
-  public persist =
-  async (transactions: any[]): Promise<StakeRequestAttributes[]> => {
-    const models = transactions.map((transaction) => {
-      const {
-        gasLimit,
-        gateway,
-        gasPrice,
-        nonce,
-        beneficiary,
-        amount,
-        stakeRequestHash,
-        stakerProxy,
-      } = transaction;
-      return {
-        stakeRequestHash,
-        amount: new BigNumber(amount),
-        beneficiary,
-        gasPrice: new BigNumber(gasPrice),
-        gasLimit: new BigNumber(gasLimit),
-        nonce: new BigNumber(nonce),
-        gateway,
-        stakerProxy,
-      };
-    });
-    this.stakeRequestRepository.bulkCreate(models);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async persist(transactions: any[]): Promise<StakeRequest[]> {
+    const models: StakeRequest[] = transactions.map(
+      (transaction): StakeRequest => {
+        const stakeRequestHash = transaction.stakeRequestHash as string;
+        const amount = new BigNumber(transaction.amount);
+        const beneficiary = transaction.beneficiary as string;
+        const gasPrice = new BigNumber(transaction.gasPrice);
+        const gasLimit = new BigNumber(transaction.gasLimit);
+        const nonce = new BigNumber(transaction.nonce);
+        const gateway = transaction.gateway as string;
+        const stakerProxy = transaction.stakerProxy as string;
+
+        return new StakeRequest(
+          stakeRequestHash,
+          amount,
+          beneficiary,
+          gasPrice,
+          gasLimit,
+          nonce,
+          gateway,
+          stakerProxy,
+        );
+      },
+    );
+
+    const savePromises = [];
+    for (let i = 0; i < models.length; i += 1) {
+      savePromises.push(this.stakeRequestRepository.save(models[i]));
+    }
+
+    await Promise.all(savePromises);
+
     return models;
-  };
+  }
+
 
   /**
    * This method defines action on receiving stake request model.
    *
    * @param stakeRequest array of instances of StakeRequestAttributes object.
    */
-  public handle = async (stakeRequest: StakeRequestAttributes[]): Promise<void> => {
+  public handle = async (stakeRequest: StakeRequest[]): Promise<void> => {
     Logger.info(`Stake requests  : ${stakeRequest}`);
     return Promise.resolve();
     // stakeRequestService.reactTo(stakeRequest);

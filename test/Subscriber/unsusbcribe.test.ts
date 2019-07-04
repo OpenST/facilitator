@@ -1,9 +1,10 @@
-import { assert } from 'chai';
 import * as sinon from 'sinon';
+import assert from '../test_utils/assert';
 
 import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
 import TransactionHandler from '../../src/TransactionHandler';
+import TransactionFetcher from '../../src/TransactionFetcher';
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient: any;
@@ -15,7 +16,7 @@ describe('Subscriber.unsubscribe()', () => {
   beforeEach(() => {
     mockApolloClient = sinon.stub;
     graphClient = new GraphClient(mockApolloClient);
-    subscriptionQueries = { stakeRequested: 'subscription{stakeRequesteds{id}}' };
+    subscriptionQueries = { stakeRequesteds: 'subscription{stakeRequesteds{id}}' };
     mockUnsubscribe = {
       unsubscribe: sinon.spy,
     };
@@ -25,7 +26,8 @@ describe('Subscriber.unsubscribe()', () => {
       sinon.fake.resolves(mockUnsubscribe),
     );
     const handler = sinon.mock(TransactionHandler);
-    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any);
+    const fetcher = sinon.mock(TransactionFetcher);
+    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any, fetcher as any);
   });
 
   it('should work with correct parameters', async () => {
@@ -39,7 +41,7 @@ describe('Subscriber.unsubscribe()', () => {
 
     const mockQuerySubscription = sinon.spy;
     sinon.replace(
-      subscriber.querySubscriptions.stakeRequested,
+      subscriber.querySubscriptions.stakeRequesteds,
       'unsubscribe',
       sinon.fake.resolves(mockQuerySubscription),
     );
