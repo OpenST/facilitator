@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 import MosaicConfig from '../../src/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../src/Config';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Config.fromChain()', () => {
   const originChain = '2';
