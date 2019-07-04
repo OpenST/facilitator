@@ -52,10 +52,12 @@ describe('Facilitator.start()', (): void => {
 
     SpyAssert.assert(
       graphClientSpy,
-      2,
+      4,
       [
-        [subGraphDetails.origin.subGraphEndPoint],
-        [subGraphDetails.auxiliary.subGraphEndPoint],
+        ['http', subGraphDetails.origin.httpSubGraphEndPoint],
+        ['ws', subGraphDetails.origin.wsSubGraphEndPoint],
+        ['http', subGraphDetails.auxiliary.httpSubGraphEndPoint],
+        ['ws', subGraphDetails.auxiliary.wsSubGraphEndPoint],
       ],
     );
 
