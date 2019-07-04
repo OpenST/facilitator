@@ -65,7 +65,7 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.from('');
+    const facilitatorConfig = FacilitatorConfig.fromChain('');
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);

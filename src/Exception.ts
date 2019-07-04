@@ -1,10 +1,10 @@
 /**
- * This exception is used when mosaic config is invalid.
+ * The exception is thrown if a mosaic config is invalid.
  */
 export class InvalidMosaicConfigException extends Error {
   /**
-   * Constructor
-   * @param {string} message Error message
+   * It calls constructor of Error class and sets error message.
+   * @param message A human-readable description of the error.
    */
   public constructor(message: string) {
     super(message);
@@ -14,12 +14,12 @@ export class InvalidMosaicConfigException extends Error {
 }
 
 /**
- * This exception is used for any exception during mosaic config generation.
+ * This exception is used for any error during mosaic config generation.
  */
 export class MosaicConfigNotFoundException extends Error {
   /**
-   * Constructor
-   * @param {string} message Error message
+   * It calls constructor of Error class and sets error message.
+   * @param message A human-readable description of the error.
    */
   public constructor(message: string) {
     super(message);
@@ -29,12 +29,12 @@ export class MosaicConfigNotFoundException extends Error {
 }
 
 /**
- * This exception is used for any exception in Facilitator start command.
+ * Defines the error for Facilitator Start command.
  */
 export class FacilitatorStartException extends Error {
   /**
-   * Constructor
-   * @param {string} message Error message
+   * It calls constructor of Error class and sets error message.
+   * @param message A human-readable description of the error.
    */
   public constructor(message: string) {
     super(message);
@@ -64,7 +64,7 @@ export class HandlerNotFoundException extends Error {
  */
 export default class InvalidFacilitatorConfigException extends Error {
   /**
-   * Constructor
+   * It calls constructor of Error class and sets error message.
    * @param {string} message Error message.
    */
   public constructor(message: string) {

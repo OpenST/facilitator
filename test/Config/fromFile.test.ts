@@ -5,7 +5,7 @@ import { Config, FacilitatorConfig } from '../../src/Config';
 import SpyAssert from '../utils/SpyAssert';
 
 
-describe('Config.getConfigFromPath()', () => {
+describe('Config.fromFile()', () => {
   const mosaicConfigPath = 'test/Config/mosaic-config.json';
   const facilitatorConfigPath = 'test/Config/facilitator-config.json';
 
@@ -21,11 +21,11 @@ describe('Config.getConfigFromPath()', () => {
 
     const facilitatorConfigSpy = sinon.replace(
       FacilitatorConfig,
-      'fromPath',
+      'fromFile',
       sinon.fake.returns(facilitator),
     );
 
-    const config = Config.getConfigFromPath(mosaicConfigPath, facilitatorConfigPath);
+    const config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
 
     SpyAssert.assert(mosaicConfigSpy, 1, [[mosaicConfigPath]]);
     SpyAssert.assert(facilitatorConfigSpy, 1, [[facilitatorConfigPath]]);

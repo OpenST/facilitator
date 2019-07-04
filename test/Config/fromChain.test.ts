@@ -4,7 +4,7 @@ import MosaicConfig from '../../src/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../src/Config';
 import SpyAssert from '../utils/SpyAssert';
 
-describe('Config.getConfig()', () => {
+describe('Config.fromChain()', () => {
   const originChain = '2';
   const auxChain = '3';
 
@@ -20,11 +20,11 @@ describe('Config.getConfig()', () => {
 
     const facilitatorConfigSpy = sinon.replace(
       FacilitatorConfig,
-      'from',
+      'fromChain',
       sinon.fake.returns(facilitator),
     );
 
-    const config = Config.getConfig(originChain, auxChain);
+    const config = Config.fromChain(originChain, auxChain);
     SpyAssert.assert(mosaicConfigSpy, 1, [[originChain]]);
     SpyAssert.assert(facilitatorConfigSpy, 1, [[auxChain]]);
     assert.strictEqual(

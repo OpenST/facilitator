@@ -7,7 +7,7 @@ import Utils from '../../src/Utils';
 import SpyAssert from '../utils/SpyAssert';
 import { FacilitatorConfig } from '../../src/Config';
 
-describe('FacilitatorConfig.fromPath()', () => {
+describe('FacilitatorConfig.fromFile()', () => {
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
 
   function spyFsModule(status: boolean): any {
@@ -33,16 +33,16 @@ describe('FacilitatorConfig.fromPath()', () => {
   it('should pass with valid arguments', () => {
     const originChain = '12346';
     const fsSpy = spyFsModule(true);
-    const config = `{"originChainId":"${originChain}"}`;
+    const config = `{"originChain":"${originChain}"}`;
     const data = JSON.parse(config);
     const fsUtils = spyUtils(data);
 
-    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromPath(facilitatorConfigPath);
+    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
 
     SpyAssert.assert(fsUtils, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
     assert.strictEqual(
-      fcConfig.originChainId,
+      fcConfig.originChain,
       originChain,
       'origin chain id is different',
     );
@@ -58,9 +58,9 @@ describe('FacilitatorConfig.fromPath()', () => {
       chains: {},
       database: {},
       encryptedAccounts: {},
-      originChainId: '',
+      originChain: '',
     };
-    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromPath(facilitatorConfigPath);
+    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
 

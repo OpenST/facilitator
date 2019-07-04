@@ -3,7 +3,7 @@ import { assert } from 'chai';
 import { Config, FacilitatorConfig } from '../../src/Config';
 import MosaicConfig from '../../src/MosaicConfig';
 import SpyAssert from '../utils/SpyAssert';
-import FacilitatorOptionParser from '../../src/FacilitatorOptionParser';
+import FacilitatorStart from '../../src/FacilitatorOptionParser/FacilitatorStart';
 
 describe('FacilitatorOptionParser.getConfig()', () => {
   const originChain = '2';
@@ -11,20 +11,20 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   const facilitatorConfigPath = './facilitator-config.json';
   const mosaicConfigPath = './test/mosaic-config.json';
 
-  function spyFacilitatorFromPath(fcConfig: any): any {
+  function spyFacilitatorFromFile(fcConfig: any): any {
     const spy = sinon.stub(
       FacilitatorConfig,
-      'fromPath',
+      'fromFile',
     ).callsFake(
       sinon.fake.returns(fcConfig),
     );
     return spy;
   }
 
-  function spyFacilitatorFrom(fcConfig: any): any {
+  function spyFacilitatorFromChain(fcConfig: any): any {
     const spy = sinon.stub(
       FacilitatorConfig,
-      'from',
+      'fromChain',
     ).callsFake(
       sinon.fake.returns(fcConfig),
     );
@@ -54,15 +54,15 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   function spyConfigFromPath(mosaic: any, facilitator: any): any {
     const spy = sinon.stub(
       Config,
-      'getConfigFromPath',
+      'fromFile',
     ).callsFake(
       sinon.fake.returns(new Config(mosaic, facilitator)),
     );
     return spy;
   }
 
-  it('should fail when origin chain id is provided but aux chain id is undefined', () => {
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+  it('should fail when origin chain is provided but aux chain id is undefined', () => {
+    const fs: FacilitatorStart = new FacilitatorStart(
       originChain,
       undefined as any,
       mosaicConfigPath,
@@ -75,8 +75,8 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     );
   });
 
-  it('should fail when origin chain id is provided but aux chain id is blank', () => {
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+  it('should fail when origin chain is provided but aux chain id is blank', () => {
+    const fs: FacilitatorStart = new FacilitatorStart(
       originChain,
       '',
       mosaicConfigPath,
@@ -90,7 +90,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   });
 
   it('should fail when aux chain id is provided but origin chain is undefined', () => {
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       undefined as any,
       auxChain,
       mosaicConfigPath,
@@ -105,7 +105,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   });
 
   it('should fail when aux chain id is provided but origin chain is blank', () => {
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       undefined as any,
       auxChain,
       mosaicConfigPath,
@@ -120,11 +120,11 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   });
 
   it('should fail when aux chain id is not present in facilitator config', () => {
-    const config = '{"originChainId":"7","chains":{"2":{"worker": "0x123"},"5":{"worker": "0x123"}}}';
+    const config = '{"originChain":"7","chains":{"2":{"worker": "0x123"},"5":{"worker": "0x123"}}}';
     const fcConfig: FacilitatorConfig = JSON.parse(config) as FacilitatorConfig;
-    const spy = spyFacilitatorFromPath(fcConfig);
+    const spy = spyFacilitatorFromFile(fcConfig);
 
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       originChain,
       auxChain,
       mosaicConfigPath,
@@ -139,13 +139,13 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     sinon.restore();
   });
 
-  it('should fail when origin chain id is not present in facilitator config', () => {
-    const config = '{"originChainId":"7","chains":{"3":{"worker": "0x123"},"7":{"worker": "0x123"}}}';
+  it('should fail when origin chain is not present in facilitator config', () => {
+    const config = '{"originChain":"7","chains":{"3":{"worker": "0x123"},"7":{"worker": "0x123"}}}';
     const facilitatorConfig = JSON.parse(config) as FacilitatorConfig;
 
-    const spy = spyFacilitatorFromPath(facilitatorConfig);
+    const spy = spyFacilitatorFromFile(facilitatorConfig);
 
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       originChain,
       auxChain,
       mosaicConfigPath,
@@ -160,13 +160,13 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     sinon.restore();
   });
 
-  it('should fail when mosaic config path is provided and input origin chain id doesn\'t match in it', () => {
+  it('should fail when mosaic config path is provided and input origin chain doesn\'t match in it', () => {
     const config = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-    const dummyOriginChainId = '9';
+    const dummyoriginChain = '9';
     const spy = spyMosaicfromFile(JSON.parse(config));
 
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
-      dummyOriginChainId,
+    const fs: FacilitatorStart = new FacilitatorStart(
+      dummyoriginChain,
       auxChain,
       mosaicConfigPath,
       '',
@@ -185,7 +185,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     const config = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
     const dummyAuxChainId = '9';
     const spy = spyMosaicfromFile(JSON.parse(config));
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       originChain,
       dummyAuxChainId,
       mosaicConfigPath,
@@ -203,13 +203,13 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
   it('should pass when origin chain, aux chain id is provided and facilitator config path is '
     + 'provided', () => {
-    const config = `{"originChainId":"7","chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
+    const config = `{"originChain":"7","chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
     const mosaicConfig = sinon.createStubInstance(MosaicConfig);
     const facilitatorConfig = JSON.parse(config) as FacilitatorConfig;
-    const facilitatorSpy = spyFacilitatorFromPath(facilitatorConfig);
+    const facilitatorSpy = spyFacilitatorFromFile(facilitatorConfig);
     const mosaicSpy = spyMosaicFromChain(mosaicConfig);
 
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       originChain,
       auxChain,
       '',
@@ -236,9 +236,9 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     const mosaic = JSON.parse(config) as MosaicConfig;
     const mosaicSpy = spyMosaicfromFile(mosaic);
     const facilitator = sinon.createStubInstance(FacilitatorConfig);
-    const facilitatorSpy = spyFacilitatorFrom(facilitator);
+    const facilitatorSpy = spyFacilitatorFromChain(facilitator);
 
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       originChain,
       auxChain,
       mosaicConfigPath,
@@ -264,14 +264,14 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     sinon.restore();
   });
 
-  it('should pass when origin chain id and aux chain is provided', () => {
+  it('should pass when origin chain and aux chain is provided', () => {
     const facilitator = sinon.createStubInstance(FacilitatorConfig);
     const mosaic = sinon.createStubInstance(MosaicConfig);
 
-    const facilitatorSpy = spyFacilitatorFrom(facilitator);
+    const facilitatorSpy = spyFacilitatorFromChain(facilitator);
     const mosaicSpy = spyMosaicFromChain(mosaic);
 
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(originChain, auxChain, '', '');
+    const fs: FacilitatorStart = new FacilitatorStart(originChain, auxChain, '', '');
     const config: Config = fs.getConfig();
 
     SpyAssert.assert(mosaicSpy, 1, [[originChain]]);
@@ -296,7 +296,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
     const facilitator = sinon.createStubInstance(FacilitatorConfig);
     const configSpy = spyConfigFromPath(mosaic, facilitator);
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       undefined as any,
       undefined as any,
       mosaicConfigPath,
@@ -324,9 +324,9 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   it('should pass when only facilitator config is provided', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
 
-    const facilitatorSpy = spyFacilitatorFromPath(JSON.parse(`{"originChainId":"${originChain}"}`));
+    const facilitatorSpy = spyFacilitatorFromFile(JSON.parse(`{"originChain":"${originChain}"}`));
     const mosaicSpy = spyMosaicFromChain(mosaic);
-    const fs: FacilitatorOptionParser = new FacilitatorOptionParser(
+    const fs: FacilitatorStart = new FacilitatorStart(
       '',
       '',
       '',
@@ -343,9 +343,9 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     );
 
     assert.strictEqual(
-      config.facilitator.originChainId,
+      config.facilitator.originChain,
       originChain,
-      `Expected chain id is ${originChain} but got ${config.facilitator.originChainId}`,
+      `Expected chain id is ${originChain} but got ${config.facilitator.originChain}`,
     );
 
     sinon.restore();
