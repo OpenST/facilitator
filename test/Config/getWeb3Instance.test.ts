@@ -52,7 +52,7 @@ describe('config.originWeb3 and config.auxiliaryWeb3', () => {
       'originWeb3 should be an instance of Web3',
     );
 
-    const auxChainConfig = config.facilitator.chains[config.facilitator.auxiliaryChainId];
+    const auxChainConfig = config.facilitator.chains[config.facilitator.auxiliaryChain];
     const envVariableNameForAuxiliaryWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${auxChainConfig.worker}`;
     process.env[envVariableNameForAuxiliaryWorkerPassword] = '123';
 

@@ -66,7 +66,7 @@ describe('FacilitatorConfig.fromPath()', () => {
     );
 
     assert.deepEqual(
-      fcConfig.auxiliaryChainId,
+      fcConfig.auxiliaryChain,
       '',
       ' it should be empty',
     );

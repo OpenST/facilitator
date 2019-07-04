@@ -90,7 +90,7 @@ commander
 
     facilitatorConfig.database.path = dbPath;
     facilitatorConfig.originChainId = originChainId;
-    facilitatorConfig.auxiliaryChainId = options.chainId;
+    facilitatorConfig.auxiliaryChain = options.chainId;
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;

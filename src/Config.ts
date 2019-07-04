@@ -85,7 +85,7 @@ export class Chain {
 export class FacilitatorConfig {
   public originChainId: string;
 
-  public auxiliaryChainId: string;
+  public auxiliaryChain: string;
 
   public database: DBConfig;
 
@@ -99,7 +99,7 @@ export class FacilitatorConfig {
    */
   private constructor(config: any) {
     this.originChainId = config.originChainId || '';
-    this.auxiliaryChainId = '';
+    this.auxiliaryChain = '';
     this.database = config.database || new DBConfig();
     this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
@@ -120,7 +120,7 @@ export class FacilitatorConfig {
       );
       // we have only 2 chains in config
       if (identifier !== this.originChainId) {
-        this.auxiliaryChainId = identifier;
+        this.auxiliaryChain = identifier;
       }
     })
   }
@@ -247,7 +247,7 @@ export class Config {
     if (this._auxiliaryWeb3) {
       return this._auxiliaryWeb3;
     }
-    const auxiliaryChain = this.facilitator.chains[this.facilitator.auxiliaryChainId];
+    const auxiliaryChain = this.facilitator.chains[this.facilitator.auxiliaryChain];
     this._auxiliaryWeb3 = this.createWeb3Instance(auxiliaryChain);
     return this._auxiliaryWeb3;
   }
