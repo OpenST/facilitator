@@ -22,7 +22,7 @@ import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestS
 
 const web3utils = require('web3-utils');
 
-describe('StakeRequestRepository::save', (): void => {
+describe('AcceptStakeRequestService::generateSecret', (): void => {
   it('Checks that secret maches hash lock.', async (): Promise<void> => {
     const {
       secret,

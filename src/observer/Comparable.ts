@@ -15,12 +15,13 @@
 // ----------------------------------------------------------------------------
 
 /** An abstract class that enables less operation. */
-export default abstract class Lessable<T> {
-  /** Less comparison between the class and passed object. */
-  public abstract less(other: Lessable<T>): boolean;
-
-  /* Returns true if the class and passed object equal. */
-  public equal(other: Lessable<T>): boolean {
-    return !(this.less(other) || other.less(this));
-  }
+export default abstract class Comparable<T> {
+  /**
+   * Compares the current object with the provided one.
+   *
+   * @return positive integer, if the current object is greater than the specified object.
+   *         negative integer, if the current object is less than the specified object.
+   *         zero, if the current object is equal to the specified object.
+   */
+  public abstract compareTo(other: Comparable<T>): number;
 }

@@ -17,9 +17,9 @@
 /* eslint-disable class-methods-use-this */
 
 import BigNumber from 'bignumber.js';
-import Lessable from '../observer/Lessable';
+import Comparable from '../observer/Comparable';
 
-export default class StakeRequest extends Lessable<StakeRequest> {
+export default class StakeRequest extends Comparable<StakeRequest> {
   public stakeRequestHash: string;
 
   public amount?: BigNumber;
@@ -66,7 +66,15 @@ export default class StakeRequest extends Lessable<StakeRequest> {
     this.messageHash = messageHash;
   }
 
-  public less(other: StakeRequest): boolean {
-    return this.stakeRequestHash < other.stakeRequestHash;
+  public compareTo(other: StakeRequest): number {
+    if (this.stakeRequestHash > other.stakeRequestHash) {
+      return 1;
+    }
+
+    if (this.stakeRequestHash < other.stakeRequestHash) {
+      return -1;
+    }
+
+    return 0;
   }
 }

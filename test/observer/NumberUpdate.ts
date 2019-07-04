@@ -14,19 +14,19 @@
 //
 // ----------------------------------------------------------------------------
 
-import Lessable from '../../src/observer/Lessable';
+import Comparable from '../../src/observer/Comparable';
 
 /**
  * The class is intended for testing functionality of observer/subject classes.
  * It acts as a subject's update that is passed during notification to observers.
  */
-export default class NumberUpdate extends Lessable<NumberUpdate> {
+export default class NumberUpdate extends Comparable<NumberUpdate> {
   /* Storage */
 
   public readonly value: number = 0;
 
-  public less(other: NumberUpdate): boolean {
-    return this.value < other.value;
+  public compareTo(other: NumberUpdate): number {
+    return this.value - other.value;
   }
 
   public constructor(value: number) {

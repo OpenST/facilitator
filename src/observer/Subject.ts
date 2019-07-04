@@ -15,14 +15,14 @@
 // ----------------------------------------------------------------------------
 
 import Observer from './Observer';
-import Lessable from './Lessable';
+import Comparable from './Comparable';
 
 /**
  * The class enables one-to-many dependency between objects, so that
  * when object (subject) changes state, all its dependents (observers) are
  * notified and updated.
  */
-export default class Subject<UpdateType extends Lessable<UpdateType>> {
+export default class Subject<UpdateType extends Comparable<UpdateType>> {
   /* Storage */
 
   private _observers: Observer<UpdateType>[] = [];
@@ -53,7 +53,7 @@ export default class Subject<UpdateType extends Lessable<UpdateType>> {
   public newUpdate(t: UpdateType): void {
     // De-duplicates an existing update.
     const index = this._updates.findIndex(
-      (el: UpdateType): boolean => t.equal(el),
+      (el: UpdateType): boolean => el.compareTo(t) === 0,
     );
 
     if (index !== -1) {
