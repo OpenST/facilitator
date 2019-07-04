@@ -20,40 +20,31 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import ContractEntity from '../models/ContractEntity';
 
 export class ContractEntityModel extends Model {
-}
+  public readonly contractAddress?: string;
 
-/**
- * To be used for calling any methods which would change states of record(s) in Database.
- */
-export interface ContractEntityAttributes {
-  contractAddress: string;
-  entityType: string;
-  timestamp: BigNumber;
-}
+  public readonly entityType?: string;
 
-/**
- * Repository would always return database rows after typecasting to this.
- */
-export interface ContractEntity extends ContractEntityAttributes {
-  createdAt: Date;
-  updatedAt: Date;
+  public readonly timestamp?: BigNumber;
+
+  public readonly createdAt?: Date;
+
+  public readonly updatedAt?: Date;
 }
 
 /**
  * Entity types of origin and aux chain for which timestamp will be recorded.
  */
 export enum EntityType {
-  StakeRequested = 'stakerequested',
-  StakeIntentDeclared = 'stakeintentdeclared',
   StateRootAvailable = 'staterootavailable',
   StakeIntentConfirmed = 'stateintentconfirmed',
-  StakeProgressed = 'stakeprogressed',
   MintProgressed = 'mintprogressed',
   GatewayProven = 'gatewayproven',
-  BountyChangeInitiated = 'bountychangeinititated',
-  BountyChangeConfirmed = 'bountychangeconfirmed'
+  StakeRequested = 'stakerequested',
+  StakeIntentDeclared = 'stakeintentdeclared',
+  StakeProgressed = 'stakeprogressed',
 }
 
 /**
@@ -68,12 +59,6 @@ export class ContractEntityRepository {
   public constructor(initOptions: InitOptions) {
     ContractEntityModel.init(
       {
-        id: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          primaryKey: true,
-          autoIncrement: true,
-        },
         contractAddress: {
           type: DataTypes.STRING,
           allowNull: false,
@@ -81,7 +66,7 @@ export class ContractEntityRepository {
             isAlphanumeric: true,
             len: [42, 42],
           },
-          unique: 'UK_contractaddress_entitytype',
+          primaryKey: true,
         },
         entityType: {
           type: DataTypes.ENUM({
@@ -93,11 +78,9 @@ export class ContractEntityRepository {
               EntityType.StakeProgressed,
               EntityType.MintProgressed,
               EntityType.GatewayProven,
-              EntityType.BountyChangeInitiated,
-              EntityType.BountyChangeConfirmed,
             ],
           }),
-          unique: 'UK_contractaddress_entitytype',
+          primaryKey: true,
         },
         timestamp: {
           type: DataTypes.BIGINT,
@@ -107,26 +90,26 @@ export class ContractEntityRepository {
       {
         ...initOptions,
         modelName: 'ContractEntityModel',
-        tableName: 'contract_entity',
+        tableName: 'contract_entities',
       },
     );
   }
 
   /**
    * Creates a contract entity model in the repository and syncs with database.
-   * @param contractEntityAttributes ContractEntityAttributes object.
+   * @param contractEntity ContractEntity object to be created.
    * @return ContractEntity object.
    */
-  public async create(contractEntityAttributes: ContractEntityAttributes): Promise<ContractEntity> {
+  public async create(contractEntity: ContractEntity): Promise<ContractEntity> {
     try {
-      const contractEntity: ContractEntity = await ContractEntityModel.create(
-        contractEntityAttributes,
-      ) as ContractEntity;
-      this.format(contractEntity);
-      return contractEntity;
+      const entity: ContractEntity = await ContractEntityModel.create(
+        contractEntity,
+      );
+
+      return this.format(entity);
     } catch (e) {
       const errorContext = {
-        attributes: contractEntityAttributes,
+        attributes: contractEntity,
         reason: e.message,
       };
       return Promise.reject(new Error(`Failed to create a ContractEntity: ${JSON.stringify(errorContext)}`));
@@ -135,19 +118,21 @@ export class ContractEntityRepository {
 
   /**
    * Fetches ContractEntity data from database.
-   * @param contractEntityAttribute ContractEntityAttributes object.
+   * @param contractAddress Address of the contract.
+   * @param entityType Type of the entity.
    * @returns ContractEntity object containing values which satisfy the `where` condition.
    */
   public async get(
-    contractEntityAttribute: ContractEntityAttributes,
+    contractAddress: string,
+    entityType: string,
   ): Promise<ContractEntity | null> {
     const contractEntityModel = await ContractEntityModel.findOne({
       where: {
         contractAddress: {
-          [Op.eq]: contractEntityAttribute.contractAddress,
+          [Op.eq]: contractAddress,
         },
         entityType: {
-          [Op.eq]: contractEntityAttribute.entityType,
+          [Op.eq]: entityType,
         },
       },
     });
@@ -156,23 +141,23 @@ export class ContractEntityRepository {
       return null;
     }
     const contractEntity: ContractEntity = contractEntityModel;
-    this.format(contractEntity);
-    return contractEntity;
+
+    return this.format(contractEntity);
   }
 
   /**
    * Updates ContractEntity data in database.
-   * @param contractEntityAttributes ContractEntityAttributes object.
+   * @param contractEntity ContractEntity object.
    * @return Number of affected rows.
    */
-  public async update(contractEntityAttribute: ContractEntityAttributes): Promise<number[]> {
-    return ContractEntityModel.update(contractEntityAttribute, {
+  public async update(contractEntity: ContractEntity): Promise<number[]> {
+    return ContractEntityModel.update(contractEntity, {
       where: {
         contractAddress: {
-          [Op.eq]: contractEntityAttribute.contractAddress,
+          [Op.eq]: contractEntity.contractAddress,
         },
         entityType: {
-          [Op.eq]: contractEntityAttribute.entityType,
+          [Op.eq]: contractEntity.entityType,
         },
       },
     });
@@ -182,8 +167,11 @@ export class ContractEntityRepository {
    * Modifies the contract entity object by typecasting required properties.
    * @param contractEntity ContractEntity object.
    */
-  private format(contractEntity: ContractEntity): void {
-    /* eslint-disable no-param-reassign */
-    contractEntity.timestamp = new BigNumber(contractEntity.timestamp);
+  private format(contractEntity: ContractEntity): ContractEntity {
+    const formattedContractEntity: ContractEntity = contractEntity;
+    if (contractEntity.timestamp) {
+      formattedContractEntity.timestamp = new BigNumber(contractEntity.timestamp);
+    }
+    return formattedContractEntity;
   }
 }

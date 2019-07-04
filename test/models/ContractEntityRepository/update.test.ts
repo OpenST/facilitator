@@ -18,12 +18,14 @@ import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import {
-  ContractEntity,
-  ContractEntityAttributes,
   EntityType,
-} from '../../../src/models/ContractEntityRepository';
+} from '../../../src/repositories/ContractEntityRepository';
+
+import ContractEntity from '../../../src/models/ContractEntity';
 
 import Database from '../../../src/models/Database';
+
+import Utils from './utils';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -37,55 +39,64 @@ interface TestConfigInterface {
 }
 
 let config: TestConfigInterface;
-let contractEntityAttributes: ContractEntityAttributes;
+let contractEntity: ContractEntity;
 describe('ContractEntityRepository::create', (): void => {
-  function assertion(
-    contractEntity: ContractEntity,
-    timestamp: BigNumber,
-  ): void {
-    assert.strictEqual(
-      contractEntity.timestamp.eq(timestamp),
-      true,
-      `Expected timestamp is ${timestamp} but`
-      + `got ${contractEntity.timestamp}`,
-    );
-  }
-
+  // function assertion(
+  //   responseContractEntity: ContractEntity,
+  //   expectedContractEntity: ContractEntity,
+  // ): void {
+  //   assert.strictEqual(
+  //     responseContractEntity.timestamp.eq(expectedContractEntity.timestamp),
+  //     true,
+  //     `Expected timestamp is ${responseContractEntity.timestamp} but`
+  //     + `got ${expectedContractEntity.timestamp}`,
+  //   );
+  //   assert.strictEqual(
+  //     expectedContractEntity.entityType,
+  //     responseContractEntity.entityType,
+  //   );
+  //
+  //   assert.strictEqual(
+  //     expectedContractEntity.contractAddress,
+  //     responseContractEntity.contractAddress
+  //   );
+  // }
 
   beforeEach(async (): Promise<void> => {
     config = {
       db: await Database.create(),
     };
 
-    contractEntityAttributes = {
+    contractEntity = {
       timestamp: new BigNumber('1'),
       contractAddress: '0x0000000000000000000000000000000000000002',
       entityType: EntityType.StakeProgressed,
     };
     await config.db.contractEntityRepository.create(
-      contractEntityAttributes,
+      contractEntity,
     );
   });
 
   it('should pass when updating contract entity model.', async (): Promise<void> => {
-    contractEntityAttributes.timestamp = new BigNumber(3);
+    contractEntity.timestamp = new BigNumber(3);
     await config.db.contractEntityRepository.update(
-      contractEntityAttributes,
+      contractEntity,
     );
 
     const response = await config.db.contractEntityRepository.get(
-      contractEntityAttributes,
+      contractEntity.contractAddress,
+      contractEntity.entityType,
     );
 
-    assertion(response as ContractEntity, contractEntityAttributes.timestamp);
+    Utils.assertion(response as ContractEntity, contractEntity);
   });
 
   it('should fail for non-existing contract address',
     async (): Promise<void> => {
-      contractEntityAttributes.contractAddress = '0x0000000000000000000000000000000000000003';
+      contractEntity.contractAddress = '0x0000000000000000000000000000000000000003';
 
       const recordUpdated = await config.db.contractEntityRepository.update(
-        contractEntityAttributes,
+        contractEntity,
       );
 
       assert.strictEqual(
@@ -97,10 +108,10 @@ describe('ContractEntityRepository::create', (): void => {
 
   it('should fail when updating with entity whose record is not created',
     async (): Promise<void> => {
-      contractEntityAttributes.entityType = EntityType.MintProgressed;
+      contractEntity.entityType = EntityType.MintProgressed;
 
       const recordUpdated = await config.db.contractEntityRepository.update(
-        contractEntityAttributes,
+        contractEntity,
       );
 
       assert.strictEqual(

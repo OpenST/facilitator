@@ -18,11 +18,13 @@ import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import {
-  ContractEntityAttributes,
   EntityType,
-} from '../../../src/models/ContractEntityRepository';
+} from '../../../src/repositories/ContractEntityRepository';
 
 import Database from '../../../src/models/Database';
+
+import ContractEntity from '../../../src/models/ContractEntity';
+import Utils from './utils';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -44,52 +46,36 @@ describe('ContractEntityRepository::create', (): void => {
   });
 
   it('should pass when creating contract entity model.', async (): Promise<void> => {
-    const contractEntityAttributes: ContractEntityAttributes = {
+    const contractEntity: ContractEntity = {
       timestamp: new BigNumber('1'),
       contractAddress: '0x0000000000000000000000000000000000000002',
       entityType: EntityType.StakeProgressed,
     };
 
     const createResponse = await config.db.contractEntityRepository.create(
-      contractEntityAttributes,
+      contractEntity,
     );
 
-    assert.strictEqual(
-      createResponse.entityType,
-      EntityType.StakeProgressed,
-      'Incorrect entity type created',
-    );
-
-    assert.strictEqual(
-      createResponse.contractAddress,
-      contractEntityAttributes.contractAddress,
-      'Incorrect contract address created',
-    );
-
-    assert.strictEqual(
-      createResponse.timestamp.eq(contractEntityAttributes.timestamp),
-      true,
-      `Expected timestamp is ${contractEntityAttributes.timestamp} but got`
-      + `${createResponse.timestamp}`,
-    );
+    Utils.assertion(createResponse, contractEntity);
   });
 
-  it('should fail when creating for same contract address and entitytype', async (): Promise<void> => {
-    const contractEntityAttributes: ContractEntityAttributes = {
+  it('should fail when creating for same contract address and '
+    + 'entity type', async (): Promise<void> => {
+    const contractEntity: ContractEntity = {
       timestamp: new BigNumber('1'),
       contractAddress: '0x0000000000000000000000000000000000000002',
       entityType: EntityType.StakeProgressed,
     };
 
     await config.db.contractEntityRepository.create(
-      contractEntityAttributes,
+      contractEntity,
     );
 
     assert.isRejected(
       config.db.contractEntityRepository.create(
-        contractEntityAttributes,
+        contractEntity,
       ),
-      'Failed to create a ContractEntity',
+      'Failed to create a contractEntity',
       'Creation should fail as entry is already with same contract address and entity type',
     );
   });

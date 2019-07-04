@@ -19,12 +19,13 @@ import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import {
-  ContractEntity,
-  ContractEntityAttributes,
   EntityType,
-} from '../../../src/models/ContractEntityRepository';
+} from '../../../src/repositories/ContractEntityRepository';
 
 import Database from '../../../src/models/Database';
+
+import ContractEntity from '../../../src/models/ContractEntity';
+import Utils from './utils';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -39,54 +40,40 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('ContractEntityRepository::get', (): void => {
-  function assertion(
-    contractEntity: ContractEntity,
-    timestamp: BigNumber,
-  ): void {
-    assert.notStrictEqual(
-      contractEntity,
-      null,
-      'get response should not be null',
-    );
-
-    assert.strictEqual(
-      contractEntity.timestamp.eq(timestamp),
-      true,
-    );
-  }
-
-
-  let contractEntityAttributes: ContractEntityAttributes;
+  let conEntity: ContractEntity;
 
   beforeEach(async (): Promise<void> => {
     config = {
       db: await Database.create(),
     };
 
-    contractEntityAttributes = {
+    conEntity = {
       timestamp: new BigNumber('1'),
       contractAddress: '0x0000000000000000000000000000000000000002',
       entityType: EntityType.StakeProgressed,
     };
 
     await config.db.contractEntityRepository.create(
-      contractEntityAttributes,
+      conEntity,
     );
   });
 
   it('should pass when retrieving contract entity model', async (): Promise<void> => {
     const getResponse = await config.db.contractEntityRepository.get(
-      contractEntityAttributes,
+      conEntity.contractAddress,
+      conEntity.entityType,
     );
 
-    assertion(getResponse as ContractEntity, contractEntityAttributes.timestamp);
+    Utils.assertion(getResponse as ContractEntity, conEntity);
   });
 
-  it('should fail when querying for non-existing contract address', async (): Promise<void> => {
-    contractEntityAttributes.contractAddress = '0x0000000000000000000000000000000000000003';
+  it('should return null when querying for non-existing '
+    + 'contract address', async (): Promise<void> => {
+    conEntity.contractAddress = '0x0000000000000000000000000000000000000003';
 
     const getResponse = await config.db.contractEntityRepository.get(
-      contractEntityAttributes,
+      conEntity.contractAddress,
+      conEntity.entityType,
     );
 
     assert.strictEqual(
@@ -96,11 +83,13 @@ describe('ContractEntityRepository::get', (): void => {
     );
   });
 
-  it('should fail when querying for non-existing entity type', async (): Promise<void> => {
-    contractEntityAttributes.entityType = EntityType.MintProgressed;
+  it('should return null when querying for non-existing'
+    + ' entity type', async (): Promise<void> => {
+    conEntity.entityType = EntityType.MintProgressed;
 
     const getResponse = await config.db.contractEntityRepository.get(
-      contractEntityAttributes,
+      conEntity.contractAddress,
+      conEntity.entityType,
     );
 
     assert.strictEqual(
