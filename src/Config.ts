@@ -227,12 +227,7 @@ export class Config {
       return this._originWeb3;
     }
     const originChain = this.facilitator.chains[this.facilitator.originChainId];
-    if (!originChain.password) {
-      throw new WorkerPasswordNotFoundException(`password not found for ${originChain.worker}`);
-    }
-    const account = new Account(originChain.worker, this.facilitator.encryptedAccounts[originChain.rpc]);
-    this._originWeb3 = new Web3(originChain.rpc);
-    account.unlock(this._originWeb3, originChain.password);
+    this._originWeb3 = this.createWeb3Instance(originChain);
     return this._originWeb3;
   }
 
@@ -244,13 +239,22 @@ export class Config {
       return this._auxiliaryWeb3;
     }
     const auxiliaryChain = this.facilitator.chains[this.facilitator.auxiliaryChainId];
-    if (!auxiliaryChain.password) {
-      throw new WorkerPasswordNotFoundException(`password not found for ${auxiliaryChain.worker}`);
-    }
-    const account = new Account(auxiliaryChain.worker, this.facilitator.encryptedAccounts[auxiliaryChain.rpc]);
-    this._auxiliaryWeb3 = new Web3(auxiliaryChain.rpc);
-    account.unlock(this._auxiliaryWeb3, auxiliaryChain.password);
+    this._auxiliaryWeb3 = this.createWeb3Instance(auxiliaryChain);
     return this._auxiliaryWeb3;
+  }
+
+  /**
+   * Create web3 instance.
+   * @param chain : chain object for which web3 instance needs to be created
+   */
+  public createWeb3Instance(chain: Chain) {
+    if (!chain.password) {
+      throw new WorkerPasswordNotFoundException(`password not found for ${chain.worker}`);
+    }
+    const account = new Account(chain.worker, this.facilitator.encryptedAccounts[chain.rpc]);
+    const web3 = new Web3(chain.rpc);
+    account.unlock(web3, chain.password);
+    return web3;
   }
 
   /**

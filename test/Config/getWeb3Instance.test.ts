@@ -8,7 +8,7 @@ const Web3 = require('web3');
 
 const sinon = require('sinon');
 
-describe('Config.getWeb3Instance()', () => {
+describe('config.originWeb3 and config.auxiliaryWeb3', () => {
   let mosaicConfigPath: string; let
     facilitatorConfigPath: string;
 
