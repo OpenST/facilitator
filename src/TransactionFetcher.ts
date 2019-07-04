@@ -30,7 +30,7 @@ export default class TransactionFetcher {
     // Fetch uts based on entity & contract address from ContractEntity model and update the
     // variables object uts field. <PLACEHOLDER>
     let skip = 0;
-    const transactions: object[] = [];
+    let transactions: object[] = [];
     const response: any = {};
     while (true) {
       const variables = {
@@ -43,8 +43,7 @@ export default class TransactionFetcher {
       // Note: await is needed here because GraphQL doesn't support aggregated count query.
       const graphQueryResult = await this.graphClient.query(query, variables);
       if (graphQueryResult.data[entity].length === 0) break;
-
-      transactions.concat(graphQueryResult.data[entity]);
+      transactions = transactions.concat(graphQueryResult.data[entity]);
       skip += this.queryLimit;
     }
 

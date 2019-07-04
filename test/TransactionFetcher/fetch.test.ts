@@ -11,45 +11,94 @@ describe('TransactionFetcher.fetch()', () => {
     const mockApolloClient = sinon.stub as any;
     const graphClient = new GraphClient(mockApolloClient);
 
-    const mockQueryResponse = {
-      data: { stakeRequesteds: [] },
-    };
-    const spyGraphClientQuery = sinon.replace(
-      graphClient,
-      'query',
-      sinon.fake.resolves(mockQueryResponse),
-    );
-    const transactionFetcher = new TransactionFetcher(graphClient);
-
     const subscriptionResponse = {
       stakeRequesteds: [{
-        id: '0x0000000000000000000000000000000000000000000000000000000000000021-0',
+        id: '0x0000000000000000000000000000000000000000000000000000000000000001-0',
         contractAddress: '0x0000000000000000000000000000000000000022',
       }],
     };
-    const response = await transactionFetcher.fetch(subscriptionResponse);
-    const mockResponse = {
-      stakeRequesteds: [],
-    };
-    assert.equal(
-      typeof (response),
-      typeof (mockResponse),
-      'Invalid response type.',
-    );
-    assert.deepStrictEqual(
-      response,
-      mockResponse,
-      'Invalid response.',
-    );
 
-    const query = EntityGraphQueries.stakeRequesteds;
-    const variables = {
+    const mockQueryResponseIterationOne = {
+      data: {
+        stakeRequesteds: [{
+          id: '0x0000000000000000000000000000000000000000000000000000000000000021-0',
+          contractAddress: '0x0000000000000000000000000000000000000022',
+        }],
+      },
+    };
+    const iterationOneVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
       uts: 0,
       limit: 100,
       skip: 0,
     };
-    SpyAssert.assert(spyGraphClientQuery, 1, [[query, variables]]);
+
+    const mockQueryResponseIterationTwo = {
+      data: {
+        stakeRequesteds: [{
+          id: '0x0000000000000000000000000000000000000000000000000000000000000022-0',
+          contractAddress: '0x0000000000000000000000000000000000000022',
+        }],
+      },
+    };
+    const iterationTwoVariables = {
+      contractAddress: '0x0000000000000000000000000000000000000022',
+      uts: 0,
+      limit: 100,
+      skip: 100,
+    };
+
+    const mockQueryResponseIterationThree = {
+      data: { stakeRequesteds: [] },
+    };
+    const iterationThreeVariables = {
+      contractAddress: '0x0000000000000000000000000000000000000022',
+      uts: 0,
+      limit: 100,
+      skip: 200,
+    };
+
+    const spyGraphClientQuery = sinon.stub(
+      graphClient,
+      'query',
+    );
+    spyGraphClientQuery.onCall(0).resolves(mockQueryResponseIterationOne);
+    spyGraphClientQuery.onCall(1).resolves(mockQueryResponseIterationTwo);
+    spyGraphClientQuery.onCall(2).resolves(mockQueryResponseIterationThree);
+
+    const transactionFetcher = new TransactionFetcher(graphClient);
+
+    const response = await transactionFetcher.fetch(subscriptionResponse);
+    console.log('response:', response);
+    const expectedResponse = {
+      stakeRequesteds: [
+        {
+          id: '0x0000000000000000000000000000000000000000000000000000000000000021-0',
+          contractAddress: '0x0000000000000000000000000000000000000022',
+        },
+        {
+          id: '0x0000000000000000000000000000000000000000000000000000000000000022-0',
+          contractAddress: '0x0000000000000000000000000000000000000022',
+        },
+      ],
+    };
+    assert.equal(
+      typeof (response),
+      typeof (expectedResponse),
+      'Invalid response type.',
+    );
+    assert.deepStrictEqual(
+      response,
+      expectedResponse,
+      'Invalid response.',
+    );
+
+    const query = EntityGraphQueries.stakeRequesteds;
+    SpyAssert.assert(spyGraphClientQuery, 3, [
+      [query, iterationOneVariables],
+      [query, iterationTwoVariables],
+      [query, iterationThreeVariables],
+    ]);
 
     sinon.restore();
   });
