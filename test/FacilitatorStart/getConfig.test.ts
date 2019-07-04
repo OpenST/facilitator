@@ -83,7 +83,7 @@ describe('Facilitator.getConfig()', function () {
   it('should pass when origin chain id and aux chain is provided', function () {
      // const facilitator: FacilitatorConfig = FacilitatorConfig.from(auxChain);
      //  const mosaic: MosaicConfig = MosaicConfig.fromChain(originChain);
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    const facilitator: any = sinon.createStubInstance(FacilitatorConfig);
     const mosaic = sinon.createStubInstance(MosaicConfig);
 
     const facilitatorSpy = spyFacilitatorFrom(facilitator);
@@ -156,7 +156,7 @@ describe('Facilitator.getConfig()', function () {
     const config = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
     const mosaic = JSON.parse(config) as MosaicConfig;
     const mosaicSpy = spyMosaicfromFile(mosaic);
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    const facilitator: any = sinon.createStubInstance(FacilitatorConfig);
     const facilitatorSpy = spyFacilitatorFrom(facilitator);
 
     const configObj = FacilitatorStart.getConfig(originChain, auxChain, {mosaicConfig: mosaicConfigPath});
@@ -205,7 +205,7 @@ describe('Facilitator.getConfig()', function () {
 
   it('should pass when facilitator config and mosaic config is provided', function () {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    const facilitator: any = sinon.createStubInstance(FacilitatorConfig);
     const configSpy = spyConfigFromPath(mosaic, facilitator);
 
     const config: Config = FacilitatorStart.getConfig(
