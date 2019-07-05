@@ -14,13 +14,14 @@
 //
 // ----------------------------------------------------------------------------
 
-import * as assert from 'assert';
+import BigNumber from 'bignumber.js';
+import assert from '../../test_utils/assert';
 import ContractEntity from '../../../src/models/ContractEntity';
 
 /**
  * It contains common methods used for testing purpose of ContractEntityRepository.
  */
-export default class Utils {
+export default class Util {
   /**
    * It asserts fields of contract entity repository.
    * @param {ContractEntity} responseContractEntity Contract entity object received as response.
@@ -30,12 +31,14 @@ export default class Utils {
     responseContractEntity: ContractEntity,
     expectedContractEntity: ContractEntity,
   ): void {
-    assert.strictEqual(
-      responseContractEntity.timestamp.eq(expectedContractEntity.timestamp),
-      true,
-      `Expected timestamp is ${responseContractEntity.timestamp} but`
-      + `got ${expectedContractEntity.timestamp}`,
-    );
+    if (expectedContractEntity.timestamp !== undefined) {
+      assert.isOk(
+        expectedContractEntity.timestamp.comparedTo(
+          responseContractEntity.timestamp as BigNumber,
+        ) === 0,
+      );
+    }
+
     assert.strictEqual(
       expectedContractEntity.entityType,
       responseContractEntity.entityType,

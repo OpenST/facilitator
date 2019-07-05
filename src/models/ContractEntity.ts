@@ -19,16 +19,16 @@
 import BigNumber from 'bignumber.js';
 
 export default class ContractEntity {
-  public contractAddress: string;
+  public contractAddress?: string;
 
-  public entityType: string;
+  public entityType?: string;
 
-  public timestamp: BigNumber;
+  public timestamp?: BigNumber;
 
   public constructor(
-    contractAddress: string,
-    entityType: string,
-    timestamp: BigNumber,
+    contractAddress?: string,
+    entityType?: string,
+    timestamp?: BigNumber,
   ) {
     this.contractAddress = contractAddress;
     this.entityType = entityType;

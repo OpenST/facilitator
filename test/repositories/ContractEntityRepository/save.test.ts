@@ -21,62 +21,59 @@ import {
   EntityType,
 } from '../../../src/repositories/ContractEntityRepository';
 
-import Database from '../../../src/models/Database';
+import Repositories from '../../../src/repositories/Repositories';
 
 import ContractEntity from '../../../src/models/ContractEntity';
-import Utils from './utils';
+import Util from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
-const { assert } = chai;
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 
 let config: TestConfigInterface;
 
-describe('ContractEntityRepository::create', (): void => {
+describe('ContractEntityRepository::save', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
   it('should pass when creating contract entity model.', async (): Promise<void> => {
-    const contractEntity: ContractEntity = {
-      timestamp: new BigNumber('1'),
-      contractAddress: '0x0000000000000000000000000000000000000002',
-      entityType: EntityType.StakeProgressed,
-    };
-
-    const createResponse = await config.db.contractEntityRepository.create(
+    const contractEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000002',
+      EntityType.StakeProgressed,
+      new BigNumber(1),
+    );
+    const saveResponse = await config.repos.contractEntityRepository.save(
       contractEntity,
     );
 
-    Utils.assertion(createResponse, contractEntity);
+    Util.assertion(saveResponse as ContractEntity, contractEntity);
   });
 
-  it('should fail when creating for same contract address and '
-    + 'entity type', async (): Promise<void> => {
-    const contractEntity: ContractEntity = {
-      timestamp: new BigNumber('1'),
-      contractAddress: '0x0000000000000000000000000000000000000002',
-      entityType: EntityType.StakeProgressed,
-    };
+  it('should pass when updating contract entity model', async (): Promise<void> => {
+    const contractEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000002',
+      EntityType.StakeProgressed,
+      new BigNumber(1),
+    );
 
-    await config.db.contractEntityRepository.create(
+    await config.repos.contractEntityRepository.save(
       contractEntity,
     );
 
-    assert.isRejected(
-      config.db.contractEntityRepository.create(
-        contractEntity,
-      ),
-      'Failed to create a contractEntity',
-      'Creation should fail as entry is already with same contract address and entity type',
+    contractEntity.timestamp = new BigNumber(3);
+
+    const updateResponse = await config.repos.contractEntityRepository.save(
+      contractEntity,
     );
+
+    Util.assertion(updateResponse as ContractEntity, contractEntity);
   });
 });

@@ -22,10 +22,9 @@ import {
   EntityType,
 } from '../../../src/repositories/ContractEntityRepository';
 
-import Database from '../../../src/models/Database';
-
+import Repositories from '../../../src/repositories/Repositories';
 import ContractEntity from '../../../src/models/ContractEntity';
-import Utils from './utils';
+import Util from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -34,7 +33,7 @@ chai.use(chaiAsPromised);
 const { assert } = chai;
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 
 let config: TestConfigInterface;
@@ -44,7 +43,7 @@ describe('ContractEntityRepository::get', (): void => {
 
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
 
     conEntity = {
@@ -53,25 +52,25 @@ describe('ContractEntityRepository::get', (): void => {
       entityType: EntityType.StakeProgressed,
     };
 
-    await config.db.contractEntityRepository.create(
+    await config.repos.contractEntityRepository.save(
       conEntity,
     );
   });
 
   it('should pass when retrieving contract entity model', async (): Promise<void> => {
-    const getResponse = await config.db.contractEntityRepository.get(
+    const getResponse = await config.repos.contractEntityRepository.get(
       conEntity.contractAddress,
       conEntity.entityType,
     );
 
-    Utils.assertion(getResponse as ContractEntity, conEntity);
+    Util.assertion(getResponse as ContractEntity, conEntity);
   });
 
   it('should return null when querying for non-existing '
     + 'contract address', async (): Promise<void> => {
     conEntity.contractAddress = '0x0000000000000000000000000000000000000003';
 
-    const getResponse = await config.db.contractEntityRepository.get(
+    const getResponse = await config.repos.contractEntityRepository.get(
       conEntity.contractAddress,
       conEntity.entityType,
     );
@@ -87,7 +86,7 @@ describe('ContractEntityRepository::get', (): void => {
     + ' entity type', async (): Promise<void> => {
     conEntity.entityType = EntityType.MintProgressed;
 
-    const getResponse = await config.db.contractEntityRepository.get(
+    const getResponse = await config.repos.contractEntityRepository.get(
       conEntity.contractAddress,
       conEntity.entityType,
     );
