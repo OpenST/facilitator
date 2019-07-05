@@ -20,6 +20,8 @@ export default class ContractEntity extends Comparable<ContractEntity> {
    * @param contractAddress Address of the contract.
    * @param entityType Type of the entity.
    * @param timestamp Last updated time in secs.
+   * @param createdAt Time at which record is created.
+   * @param updatedAt Time at which record is updated.
    */
   public constructor(
     contractAddress: string,
