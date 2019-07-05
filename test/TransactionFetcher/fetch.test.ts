@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import GraphClient from '../../src/GraphClient';
 import TransactionFetcher from '../../src/TransactionFetcher';
 import SpyAssert from '../test_utils/SpyAssert';
-import EntityGraphQueries from '../../src/EntityGraphQueries';
+import EntityGraphQueries from '../../src/GraphQueries/EntityGraphQueries';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {

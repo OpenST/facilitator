@@ -5,7 +5,7 @@ import TransactionHandler from './TransactionHandler';
 import HandlerFactory from './handlers/HandlerFactory';
 import TransactionFetcher from './TransactionFetcher';
 import { SubscriptionInfo } from './types';
-import SubscriptionQueries from './SubscriptionQueries';
+import SubscriptionQueries from './GraphQueries/SubscriptionQueries';
 import Repositories from './repositories/Repositories';
 
 /**
