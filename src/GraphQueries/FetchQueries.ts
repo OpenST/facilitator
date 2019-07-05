@@ -1,4 +1,4 @@
-const EntityGraphQueries: Record<string, string> = {
+const FetchQueries: Record<string, string> = {
   stakeRequesteds: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
   + 'stakeRequesteds(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
@@ -148,4 +148,4 @@ const EntityGraphQueries: Record<string, string> = {
 
 };
 
-export default EntityGraphQueries;
+export default FetchQueries;

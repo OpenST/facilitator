@@ -1,5 +1,5 @@
 import GraphClient from './GraphClient';
-import EntityGraphQueries from './GraphQueries/EntityGraphQueries';
+import FetchQueries from './GraphQueries/FetchQueries';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -26,7 +26,7 @@ export default class TransactionFetcher {
   public async fetch(data: Record<string, any[]>): Promise<{[key: string]: object[]}> {
     const entity = (Object.keys(data)[0]);
     const entityRecord = data[entity][0];
-    const query = EntityGraphQueries[entity];
+    const query = FetchQueries[entity];
     // Fetch uts based on entity & contract address from ContractEntity model and update the
     // variables object uts field. <PLACEHOLDER>
     let skip = 0;

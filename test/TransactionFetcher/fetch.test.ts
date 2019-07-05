@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import GraphClient from '../../src/GraphClient';
 import TransactionFetcher from '../../src/TransactionFetcher';
 import SpyAssert from '../test_utils/SpyAssert';
-import EntityGraphQueries from '../../src/GraphQueries/EntityGraphQueries';
+import FetchQueries from '../../src/GraphQueries/FetchQueries';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {
@@ -92,7 +92,7 @@ describe('TransactionFetcher.fetch()', () => {
       'Invalid response.',
     );
 
-    const query = EntityGraphQueries.stakeRequesteds;
+    const query = FetchQueries.stakeRequesteds;
     SpyAssert.assert(spyGraphClientQuery, 3, [
       [query, iterationOneVariables],
       [query, iterationTwoVariables],
