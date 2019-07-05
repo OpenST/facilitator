@@ -17,21 +17,50 @@
 /* eslint-disable class-methods-use-this */
 
 import BigNumber from 'bignumber.js';
+import Comparable from "../observer/Comparable";
 
-export default class ContractEntity {
-  public contractAddress?: string;
+/**
+ * Represents model object.
+ */
+export default class ContractEntity extends Comparable<ContractEntity> {
+  public contractAddress: string;
 
   public entityType?: string;
 
   public timestamp?: BigNumber;
 
+  /**
+   * Constructor to set fields of Contract Entities table.
+   * @param contractAddress Address of the contract.
+   * @param entityType Type of the entity.
+   * @param timestamp Last updated time in secs.
+   */
   public constructor(
-    contractAddress?: string,
+    contractAddress: string,
     entityType?: string,
     timestamp?: BigNumber,
   ) {
+    super();
     this.contractAddress = contractAddress;
     this.entityType = entityType;
     this.timestamp = timestamp;
+  }
+
+  /**
+   * Compares ContractEntity objects.
+   * @param {ContractEntity} other ContractEntity object which is to be compared.
+   * @returns {number} `0` if the objects are same, 1 if new object is greater and -1 if new object is lesser.
+   */
+  public compareTo(other: ContractEntity): number {
+
+    if (this.contractAddress.concat(this.entityType!) < other.contractAddress.concat(other.entityType!)) {
+      return 1;
+    }
+
+    if (this.contractAddress.concat(this.entityType!) > other.contractAddress.concat(other.entityType!)) {
+      return -1;
+    }
+
+    return 0;
   }
 }

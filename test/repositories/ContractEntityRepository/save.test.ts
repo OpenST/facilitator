@@ -47,7 +47,7 @@ describe('ContractEntityRepository::save', (): void => {
   it('should pass when creating contract entity model.', async (): Promise<void> => {
     const contractEntity = new ContractEntity(
       '0x0000000000000000000000000000000000000002',
-      EntityType.StakeProgressed,
+      EntityType.StakeProgresseds,
       new BigNumber(1),
     );
     const saveResponse = await config.repos.contractEntityRepository.save(
@@ -60,7 +60,7 @@ describe('ContractEntityRepository::save', (): void => {
   it('should pass when updating contract entity model', async (): Promise<void> => {
     const contractEntity = new ContractEntity(
       '0x0000000000000000000000000000000000000002',
-      EntityType.StakeProgressed,
+      EntityType.StakeProgresseds,
       new BigNumber(1),
     );
 

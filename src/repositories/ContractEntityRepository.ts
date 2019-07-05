@@ -22,7 +22,6 @@ import {
 import BigNumber from 'bignumber.js';
 import ContractEntity from '../models/ContractEntity';
 import Subject from '../observer/Subject';
-import StakeRequest from '../models/StakeRequest';
 import Utils from '../Utils';
 
 /**
@@ -44,13 +43,13 @@ export class ContractEntityModel extends Model {
  * Entity types of origin and aux chain for which timestamp will be recorded.
  */
 export enum EntityType {
-  StateRootAvailable = 'staterootavailable',
-  StakeIntentConfirmed = 'stateintentconfirmed',
-  MintProgressed = 'mintprogressed',
-  GatewayProven = 'gatewayproven',
-  StakeRequested = 'stakerequested',
-  StakeIntentDeclared = 'stakeintentdeclared',
-  StakeProgressed = 'stakeprogressed',
+  StakeRequesteds = 'stakerequesteds',
+  StakeIntentDeclareds = 'stakeintentdeclared',
+  StateRootAvailables = 'staterootavailable',
+  GatewayProvens = 'gatewayproven',
+  StakeIntentConfirmeds = 'stateintentconfirmed',
+  StakeProgresseds = 'stakeprogressed',
+  MintProgresseds = 'mintprogressed',
 }
 
 /**
@@ -59,7 +58,7 @@ export enum EntityType {
  * Class enables creation, update and retrieval of ContractEntity objects.
  * On construction it initializes underlying database model.
  */
-export class ContractEntityRepository extends Subject<StakeRequest> {
+export class ContractEntityRepository extends Subject<ContractEntity> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -78,13 +77,13 @@ export class ContractEntityRepository extends Subject<StakeRequest> {
         entityType: {
           type: DataTypes.ENUM({
             values: [
-              EntityType.StakeIntentDeclared,
-              EntityType.StakeRequested,
-              EntityType.StateRootAvailable,
-              EntityType.StakeIntentConfirmed,
-              EntityType.StakeProgressed,
-              EntityType.MintProgressed,
-              EntityType.GatewayProven,
+              EntityType.StakeIntentDeclareds,
+              EntityType.StakeRequesteds,
+              EntityType.StateRootAvailables,
+              EntityType.StakeIntentConfirmeds,
+              EntityType.StakeProgresseds,
+              EntityType.MintProgresseds,
+              EntityType.GatewayProvens,
             ],
           }),
           primaryKey: true,
@@ -123,7 +122,10 @@ export class ContractEntityRepository extends Subject<StakeRequest> {
       },
     );
 
-    return this.get(contractEntity.contractAddress, contractEntity.entityType);
+    const updatedContractEntity = await this.get(contractEntity.contractAddress, contractEntity.entityType);
+    this.newUpdate(updatedContractEntity as ContractEntity);
+
+    return updatedContractEntity;
   }
 
   /**

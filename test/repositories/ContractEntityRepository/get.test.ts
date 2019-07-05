@@ -46,11 +46,11 @@ describe('ContractEntityRepository::get', (): void => {
       repos: await Repositories.create(),
     };
 
-    conEntity = {
-      timestamp: new BigNumber('1'),
-      contractAddress: '0x0000000000000000000000000000000000000002',
-      entityType: EntityType.StakeProgressed,
-    };
+    conEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000002',
+      EntityType.StakeProgresseds,
+      new BigNumber(1),
+    );
 
     await config.repos.contractEntityRepository.save(
       conEntity,
@@ -84,7 +84,7 @@ describe('ContractEntityRepository::get', (): void => {
 
   it('should return null when querying for non-existing'
     + ' entity type', async (): Promise<void> => {
-    conEntity.entityType = EntityType.MintProgressed;
+    conEntity.entityType = EntityType.MintProgresseds;
 
     const getResponse = await config.repos.contractEntityRepository.get(
       conEntity.contractAddress,
