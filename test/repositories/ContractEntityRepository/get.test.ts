@@ -50,6 +50,34 @@ describe('ContractEntityRepository::get', (): void => {
     Util.assertion(getResponse as ContractEntity, conEntity);
   });
 
+  it('should pass when contract addresses are different and '
+    + 'entities are same', async (): Promise<void> => {
+    const firstResponse = await config.repos.contractEntityRepository.get(
+      conEntity.contractAddress,
+      conEntity.entityType,
+    );
+
+    Util.assertion(firstResponse as ContractEntity, conEntity);
+
+    const secondConEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000009',
+      EntityType.StakeProgresseds,
+      new BigNumber(1),
+      createdAt,
+    );
+
+    await config.repos.contractEntityRepository.save(
+      secondConEntity,
+    );
+
+    const secondReponse = await config.repos.contractEntityRepository.get(
+      secondConEntity.contractAddress,
+      secondConEntity.entityType,
+    );
+
+    Util.assertion(secondReponse as ContractEntity, secondConEntity);
+  });
+
   it('should return null when querying for non-existing '
     + 'contract address', async (): Promise<void> => {
     conEntity.contractAddress = '0x0000000000000000000000000000000000000003';
