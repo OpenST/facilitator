@@ -1,21 +1,3 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-
-/* eslint-disable class-methods-use-this */
-
 import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
@@ -44,12 +26,12 @@ export class ContractEntityModel extends Model {
  */
 export enum EntityType {
   StakeRequesteds = 'stakerequesteds',
-  StakeIntentDeclareds = 'stakeintentdeclared',
-  StateRootAvailables = 'staterootavailable',
-  GatewayProvens = 'gatewayproven',
-  StakeIntentConfirmeds = 'stateintentconfirmed',
-  StakeProgresseds = 'stakeprogressed',
-  MintProgresseds = 'mintprogressed',
+  StakeIntentDeclareds = 'stakeintentdeclareds',
+  StateRootAvailables = 'staterootavailables',
+  GatewayProvens = 'gatewayprovens',
+  StakeIntentConfirmeds = 'stateintentconfirmeds',
+  StakeProgresseds = 'stakeprogresseds',
+  MintProgresseds = 'mintprogresseds',
 }
 
 /**
@@ -112,20 +94,23 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
    *
    * @returns Newly created or updated contract entity object.
    */
-  public async save(contractEntity: ContractEntity): Promise<ContractEntity | null> {
+  public async save(contractEntity: ContractEntity): Promise<ContractEntity> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(contractEntity);
 
-    ContractEntityModel.upsert(
+    await ContractEntityModel.upsert(
       contractEntity,
       {
         fields: definedOwnProps,
       },
     );
 
-    const updatedContractEntity = await this.get(contractEntity.contractAddress, contractEntity.entityType);
+    const updatedContractEntity = await this.get(
+      contractEntity.contractAddress,
+      contractEntity.entityType,
+    );
     this.newUpdate(updatedContractEntity as ContractEntity);
 
-    return updatedContractEntity;
+    return updatedContractEntity as ContractEntity;
   }
 
   /**
@@ -135,8 +120,8 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
    * @returns ContractEntity object containing values which satisfy the `where` condition.
    */
   public async get(
-    contractAddress?: string,
-    entityType?: string,
+    contractAddress: string,
+    entityType: string,
   ): Promise<ContractEntity | null> {
     const contractEntityModel = await ContractEntityModel.findOne({
       where: {
@@ -152,6 +137,7 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
     if (contractEntityModel === null) {
       return null;
     }
+
     return this.convertToContractEntity(contractEntityModel);
   }
 
@@ -163,11 +149,14 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
    * @param contractEntityModel Contract entity model object to convert.
    * @returns Contract Entity object.
    */
+  /* eslint-disable class-methods-use-this */
   private convertToContractEntity(contractEntityModel: ContractEntityModel): ContractEntity {
     const contractEntity = new ContractEntity(
       contractEntityModel.contractAddress,
       contractEntityModel.entityType,
       new BigNumber(contractEntityModel.timestamp),
+      contractEntityModel.createdAt,
+      contractEntityModel.updatedAt,
     );
 
     return contractEntity;

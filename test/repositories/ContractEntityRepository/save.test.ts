@@ -1,19 +1,3 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-
 import 'mocha';
 import BigNumber from 'bignumber.js';
 
@@ -36,6 +20,7 @@ interface TestConfigInterface {
 }
 
 let config: TestConfigInterface;
+const createdAt = new Date();
 
 describe('ContractEntityRepository::save', (): void => {
   beforeEach(async (): Promise<void> => {
@@ -49,12 +34,13 @@ describe('ContractEntityRepository::save', (): void => {
       '0x0000000000000000000000000000000000000002',
       EntityType.StakeProgresseds,
       new BigNumber(1),
+      createdAt,
     );
     const saveResponse = await config.repos.contractEntityRepository.save(
       contractEntity,
     );
 
-    Util.assertion(saveResponse as ContractEntity, contractEntity);
+    Util.assertion(saveResponse, contractEntity);
   });
 
   it('should pass when updating contract entity model', async (): Promise<void> => {
@@ -62,6 +48,7 @@ describe('ContractEntityRepository::save', (): void => {
       '0x0000000000000000000000000000000000000002',
       EntityType.StakeProgresseds,
       new BigNumber(1),
+      createdAt,
     );
 
     await config.repos.contractEntityRepository.save(
@@ -74,6 +61,6 @@ describe('ContractEntityRepository::save', (): void => {
       contractEntity,
     );
 
-    Util.assertion(updateResponse as ContractEntity, contractEntity);
+    Util.assertion(updateResponse, contractEntity);
   });
 });

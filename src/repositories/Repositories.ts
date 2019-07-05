@@ -20,7 +20,7 @@ import StakeRequestRepository from './StakeRequestRepository';
 import { AuxiliaryChainRepository } from './AuxiliaryChainRepository';
 import { MessageRepository } from './MessageRepository';
 import { GatewayRepository } from './GatewayRepository';
-import { ContractEntityRepository } from '../repositories/ContractEntityRepository';
+import { ContractEntityRepository } from './ContractEntityRepository';
 
 export default class Repositories {
   /* Storage */
