@@ -20,6 +20,7 @@ import StakeRequestRepository from './StakeRequestRepository';
 import { AuxiliaryChainRepository } from './AuxiliaryChainRepository';
 import { MessageRepository } from './MessageRepository';
 import { GatewayRepository } from './GatewayRepository';
+import { ContractEntityRepository } from './ContractEntityRepository';
 
 export default class Repositories {
   /* Storage */
@@ -32,6 +33,7 @@ export default class Repositories {
 
   public gatewayRepository: GatewayRepository;
 
+  public contractEntityRepository: ContractEntityRepository;
 
   /* Public Functions */
 
@@ -100,5 +102,7 @@ export default class Repositories {
     this.auxiliaryChainRepository = new AuxiliaryChainRepository(initOptions);
 
     this.gatewayRepository = new GatewayRepository(initOptions);
+
+    this.contractEntityRepository = new ContractEntityRepository(initOptions);
   }
 }
