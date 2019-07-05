@@ -45,14 +45,14 @@ export default class ContractEntity extends Comparable<ContractEntity> {
    *          is lesser.
    */
   public compareTo(other: ContractEntity): number {
-    const currentObjectKey = this.contractAddress.concat(this.entityType);
+    const existingKey = this.contractAddress.concat(this.entityType);
 
-    const newObjectKey = other.contractAddress.concat(other.entityType);
-    if (currentObjectKey < newObjectKey) {
+    const newKey = other.contractAddress.concat(other.entityType);
+    if (existingKey > newKey) {
       return 1;
     }
 
-    if (currentObjectKey > newObjectKey) {
+    if (existingKey < newKey) {
       return -1;
     }
 
