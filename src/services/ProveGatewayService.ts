@@ -4,10 +4,12 @@ import { MessageRepository } from '../repositories/MessageRepository';
 import Logger from '../Logger';
 import Utils from '../Utils';
 import { AUXILIARY_GAS_PRICE } from '../Constants';
+import Observer from '../observer/Observer';
+import { AuxiliaryChain } from '../repositories/AuxiliaryChainRepository';
 
 const Mosaic = require('@openst/mosaic.js');
 
-export default class ProveGatewayService {
+export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   private gatewayRepository: GatewayRepository;
 
   private messageRepository: MessageRepository;
@@ -20,6 +22,8 @@ export default class ProveGatewayService {
 
   private gatewayAddress: string;
 
+  private auxiliaryChainId: number;
+
   /**
    *  Constructor
    *
@@ -30,7 +34,7 @@ export default class ProveGatewayService {
    * @param auxiliaryWorkerAddress auxiliary worker address, this should be
    *                               unlocked and added in web3 wallet.
    * @param gatewayAddress Address of gateway contract on origin chain.
-
+   * @param auxiliaryChainId Auxiliary chain Id.
    */
   public constructor(
     gatewayRepository: GatewayRepository,
@@ -39,13 +43,45 @@ export default class ProveGatewayService {
     auxiliaryWeb3: object,
     auxiliaryWorkerAddress: string,
     gatewayAddress: string,
+    auxiliaryChainId: number,
   ) {
+    super();
+
     this.gatewayRepository = gatewayRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.auxiliaryWorkerAddress = auxiliaryWorkerAddress;
     this.gatewayAddress = gatewayAddress;
     this.messageRepository = messageRepository;
+    this.auxiliaryChainId = auxiliaryChainId;
+
+    // Suppressing lint error
+    // Refer: https://github.com/typescript-eslint/typescript-eslint/issues/636
+    /* eslint-disable @typescript-eslint/unbound-method */
+    this.reactTo = this.reactTo.bind(this);
+    this.update = this.update.bind(this);
+  }
+
+
+  /**
+   * This method react on changes in auxiliary chain models.
+   * @param auxiliaryChains List of auxiliary chains model
+   */
+  public async update(auxiliaryChains: AuxiliaryChain[]): Promise<void> {
+    const proveGatewayPromises = auxiliaryChains
+      .filter(ac => ac.chainId === this.auxiliaryChainId)
+      .map(
+        async (auxiliaryChain): Promise<{
+          success: boolean;
+          transactionHash: string;
+          message: string;
+        }> => (
+          auxiliaryChain.lastOriginBlockHeight
+            ? this.reactTo(auxiliaryChain.lastOriginBlockHeight)
+            : Promise.reject(new Error('Last anchored origin block height cannot be undefined.'))),
+      );
+
+    await Promise.all(proveGatewayPromises);
   }
 
   /**

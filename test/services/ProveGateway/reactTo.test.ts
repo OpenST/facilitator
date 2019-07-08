@@ -26,6 +26,7 @@ describe('ProveGatewayService.reactTo()', () => {
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
   const blockNumber = new BigNumber(2);
   const fakeTransactionHash = 'fakeHash';
+  const auxiliaryChainId = 123;
 
   it('should react to block height of new anchor state root', async () => {
     const gatewayRecord: Gateway = StubData.gatewayRecord();
@@ -63,6 +64,7 @@ describe('ProveGatewayService.reactTo()', () => {
       auxiliaryWeb3,
       auxiliaryWorkerAddress,
       gatewayAddress,
+      auxiliaryChainId,
     );
 
     const response = await proveGatewayService.reactTo(blockNumber);
@@ -129,6 +131,7 @@ describe('ProveGatewayService.reactTo()', () => {
       auxiliaryWeb3,
       auxiliaryWorkerAddress,
       gatewayAddress,
+      auxiliaryChainId,
     );
 
     await assert.isRejected(
@@ -178,6 +181,7 @@ describe('ProveGatewayService.reactTo()', () => {
       auxiliaryWeb3,
       auxiliaryWorkerAddress,
       gatewayAddress,
+      auxiliaryChainId,
     );
 
     const response = await proveGatewayService.reactTo(blockNumber);

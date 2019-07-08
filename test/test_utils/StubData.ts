@@ -25,12 +25,15 @@ export default class StubData {
     'stakerProxy',
   );
 
-  public static auxiliaryChainRecord(): AuxiliaryChain {
+  public static auxiliaryChainRecord(
+    chainId = 10002,
+    lastOriginBlockHeight = new BigNumber(100),
+  ): AuxiliaryChain {
     return {
       lastAuxiliaryBlockHeight: undefined,
-      lastOriginBlockHeight: undefined,
+      lastOriginBlockHeight,
       lastProcessedBlockNumber: undefined,
-      chainId: 10002,
+      chainId,
       originChainName: '10003',
       ostGatewayAddress: '0x0000000000000000000000000000000000000001',
       ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
@@ -91,5 +94,4 @@ export default class StubData {
       sourceDeclarationBlockHeight,
     };
   }
-
 }
