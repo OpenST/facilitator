@@ -3,7 +3,7 @@ import ContractEntityHandler from './ContractEntityHandler';
 import {
   AuxiliaryChain,
   AuxiliaryChainRepository,
-} from '../models/AuxiliaryChainRepository';
+} from '../repositories/AuxiliaryChainRepository';
 import Logger from '../Logger';
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
 

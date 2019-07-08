@@ -14,7 +14,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noErrorTruncation": true,
-        "sourceMap": true,
+        "inlineSourceMap": true,
         "types": [
             "chai",
             "node",

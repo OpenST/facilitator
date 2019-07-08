@@ -3,7 +3,7 @@ import * as path from 'path';
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 import Directory from '../../src/Directory';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import { FacilitatorConfig } from '../../src/Config';
 
 
