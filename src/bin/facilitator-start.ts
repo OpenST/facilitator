@@ -4,11 +4,23 @@ import Facilitator from '../Facilitator';
 import { Config } from '../Config';
 import FacilitatorStart from '../FacilitatorOptionParser/FacilitatorStart';
 
-
-const facilitator = commander
+const facilitatorCmd = commander
   .arguments('[origin_chain] [aux_chain_id]');
 
-facilitator
+process.on('SIGINT', terminationHandler)
+  .on('SIGTERM', terminationHandler);
+
+let facilitator: Facilitator;
+async function terminationHandler() {
+  Logger.info('Stopping facilitator');
+  if (facilitator) {
+    await facilitator.stop();
+  }
+  Logger.info('Facilitator stopped');
+  process.exit(0);
+}
+
+facilitatorCmd
   .option('-mc, --mosaic-config <mosaicConfig>', 'path to mosaic configuration')
   .option('-fc, --facilitator-config <facilitatorConfig>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
@@ -22,7 +34,7 @@ facilitator
         options.facilitatorConfig,
       );
       configObj = facilitatorStart.getConfig();
-      const facilitator: Facilitator = new Facilitator(configObj);
+      facilitator = new Facilitator(configObj);
 
       Logger.info('starting facilitator');
       await facilitator.start();
