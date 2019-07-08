@@ -101,7 +101,7 @@ export enum MessageDirection {
   AuxiliaryToOrigin = 'a2o',
 }
 
-export class MessageRepository { // extends Subject<Message> {
+export default class MessageRepository { // extends Subject<Message> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -130,11 +130,11 @@ export class MessageRepository { // extends Subject<Message> {
         sourceStatus: {
           type: DataTypes.ENUM({
             values: [
+              MessageStatus.Undeclared,
               MessageStatus.Declared,
               MessageStatus.Progressed,
               MessageStatus.RevocationDeclared,
               MessageStatus.Revoked,
-              MessageStatus.Undeclared,
             ],
           }),
           allowNull: false,

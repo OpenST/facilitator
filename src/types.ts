@@ -1,3 +1,6 @@
+import StakeRequestedHandler from "./handlers/StakeRequestedHandler";
+import ProveGatewayHandler from "./handlers/ProveGatewayHandler";
+
 export type Bytes32 = string;
 export type Address = string;
 export interface SubscriptionInfo {
@@ -11,4 +14,8 @@ export interface SubscriptionInfo {
     httpSubGraphEndPoint: string;
     subscriptionQueries: Record<string, string>;
   };
-}
+};
+export interface HandlerTypes {
+  stakeRequesteds: StakeRequestedHandler,
+    gatewayProvens: ProveGatewayHandler,
+};

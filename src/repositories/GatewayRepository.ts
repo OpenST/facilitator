@@ -20,7 +20,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-// import Subject from '../observer/Subject';
+import Subject from '../observer/Subject';
 
 import assert = require('assert');
 

@@ -51,5 +51,7 @@ export default class TransactionHandler {
       const handler = this.handlers[transactionKind];
       handler.handle(models[transactionKind]);
     });
+
+    /// Call Repository.notify
   }
 }
