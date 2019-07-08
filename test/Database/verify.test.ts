@@ -1,11 +1,11 @@
 import * as fs from 'fs-extra';
-import { assert } from 'chai';
-import SpyAssert from '../utils/SpyAssert';
+import SpyAssert from '../test_utils/SpyAssert';
 import DBFileHelper from '../../src/DatabaseFileHelper';
+import assert from '../test_utils/assert';
 
 const sinon = require('sinon');
 
-describe('DatabaseFileHelper.verify()', () => {
+describe('Database.verify()', () => {
   function spyFsModule(status: boolean) {
     const fsSpy = sinon.replace(
       fs,

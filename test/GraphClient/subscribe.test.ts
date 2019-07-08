@@ -1,16 +1,17 @@
 import gql from 'graphql-tag';
-import { assert } from 'chai';
 import * as sinon from 'sinon';
+import assert from '../test_utils/assert';
 
 import GraphClient from '../../src/GraphClient';
-import SpyAssert from '../utils/SpyAssert';
-import TransactionHandler from "../../src/TransactionHandler";
+import SpyAssert from '../test_utils/SpyAssert';
+import TransactionHandler from '../../src/TransactionHandler';
+import TransactionFetcher from '../../src/TransactionFetcher';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;
   let subscriptionQry: string;
   let mockApolloClient: any;
-  let options: Object;
+  let options: Record<string, any>;
 
   beforeEach(() => {
     mockApolloClient = {
@@ -30,11 +31,16 @@ describe('GraphClient.subscribe()', () => {
       mockApolloClient,
       'subscribe',
       sinon.fake.returns({
-        subscribe: () => Promise.resolve(mockQuerySubscriber),
+        subscribe: async () => Promise.resolve(mockQuerySubscriber),
       }),
     );
     const handler = sinon.mock(TransactionHandler);
-    const querySubscriber = await graphClient.subscribe(subscriptionQry, handler as any);
+    const fetcher = sinon.mock(TransactionFetcher);
+    const querySubscriber = await graphClient.subscribe(
+      subscriptionQry,
+      handler as any,
+      fetcher as any,
+    );
 
     assert(
       querySubscriber,
@@ -58,8 +64,11 @@ describe('GraphClient.subscribe()', () => {
 
   it('should throw an error when subscriptionQry is undefined object', async () => {
     const handler = sinon.mock(TransactionHandler);
-    assert.throws(() => {
-      graphClient.subscribe(undefined as any, handler as any);
-    }, /Mandatory Parameter 'subscriptionQry' is missing or invalid./);
+    const fetcher = sinon.mock(TransactionFetcher);
+    assert.isRejected(
+      graphClient.subscribe(undefined as any, handler as any, fetcher as any),
+      'Mandatory Parameter \'subscriptionQry\' is missing or invalid.',
+      'Invalid subscriptionQry',
+    );
   });
 });

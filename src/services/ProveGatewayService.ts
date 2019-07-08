@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
-import { GatewayRepository } from '../models/GatewayRepository';
-import { MessageRepository } from '../models/MessageRepository';
+import { GatewayRepository } from '../repositories/GatewayRepository';
+import { MessageRepository } from '../repositories/MessageRepository';
 import Logger from '../Logger';
 import Utils from '../Utils';
 import { AUXILIARY_GAS_PRICE } from '../Constants';
