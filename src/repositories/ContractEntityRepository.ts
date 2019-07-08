@@ -77,7 +77,7 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
       },
       {
         ...initOptions,
-        modelName: 'ContractEntityModel',
+        modelName: 'ContractEntity',
         tableName: 'contract_entities',
       },
     );
