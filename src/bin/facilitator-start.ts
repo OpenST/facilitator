@@ -7,8 +7,7 @@ import FacilitatorStart from '../FacilitatorOptionParser/FacilitatorStart';
 const facilitatorCmd = commander
   .arguments('[origin_chain] [aux_chain_id]');
 
-process.on('SIGINT', terminationHandler)
-  .on('SIGTERM', terminationHandler);
+process.on('SIGINT', terminationHandler);
 
 let facilitator: Facilitator;
 async function terminationHandler() {
@@ -20,7 +19,6 @@ async function terminationHandler() {
   process.exit(0);
 }
 
-facilitatorCmd
 facilitatorCmd
   .option('-mc, --mosaic-config <mosaicConfig>', 'path to mosaic configuration')
   .option('-fc, --facilitator-config <facilitatorConfig>', 'path to facilitator configuration')
