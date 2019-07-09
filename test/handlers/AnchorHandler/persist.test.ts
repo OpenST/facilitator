@@ -39,8 +39,10 @@ describe('AnchorHandler.persist()', () => {
 
     const models = await handler.persist(transactionsWithInterestedAnchor);
 
-    const expectedModel = auxiliaryChainRecord;
-    expectedModel.lastOriginBlockHeight = blockHeight;
+    const expectedModel = StubData.getAuxiliaryChainRecord(
+      anchorAddress,
+      blockHeight,
+    );
     assert.equal(models.length, transactionsWithInterestedAnchor.length, 'Number of models must be equal to transactions');
     assert.deepStrictEqual(models[0], expectedModel);
     SpyAssert.assert(update, 1, [[expectedModel]]);

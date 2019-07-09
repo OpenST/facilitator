@@ -27,7 +27,7 @@ export default class StubData {
     coAnchorAddress: '0x0000000000000000000000000000000000000004',
     lastAuxiliaryBlockHeight: new BigNumber('214748364475'),
     lastOriginBlockHeight,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date(10),
+    updatedAt: new Date(10),
   })
 }
