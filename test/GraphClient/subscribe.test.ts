@@ -6,6 +6,7 @@ import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../test_utils/SpyAssert';
 import TransactionHandler from '../../src/TransactionHandler';
 import TransactionFetcher from '../../src/TransactionFetcher';
+import { ContractEntityRepository } from '../../src/repositories/ContractEntityRepository';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;
@@ -36,10 +37,12 @@ describe('GraphClient.subscribe()', () => {
     );
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
+    const contractEntityRepository = sinon.mock(ContractEntityRepository);
     const querySubscriber = await graphClient.subscribe(
       subscriptionQry,
       handler as any,
       fetcher as any,
+      contractEntityRepository as any,
     );
 
     assert(
@@ -65,8 +68,14 @@ describe('GraphClient.subscribe()', () => {
   it('should throw an error when subscriptionQry is undefined object', async () => {
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
+    const contractEntityRepository = sinon.mock(ContractEntityRepository);
     assert.isRejected(
-      graphClient.subscribe(undefined as any, handler as any, fetcher as any),
+      graphClient.subscribe(
+        undefined as any,
+        handler as any,
+        fetcher as any,
+        contractEntityRepository as any,
+      ),
       'Mandatory Parameter \'subscriptionQry\' is missing or invalid.',
       'Invalid subscriptionQry',
     );

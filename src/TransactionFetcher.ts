@@ -1,5 +1,7 @@
 import GraphClient from './GraphClient';
 import EntityGraphQueries from './EntityGraphQueries';
+import { ContractEntityRepository } from './repositories/ContractEntityRepository';
+import Logger from './Logger';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -9,12 +11,16 @@ export default class TransactionFetcher {
 
   private readonly queryLimit = 100;
 
+  private contractEntityRepository: ContractEntityRepository;
+
   /**
    * Constructor
    * @param graphClient Graph client object.
+   * @param contractEntityRepository ContractEntityRepository.
    */
-  public constructor(graphClient: GraphClient) {
+  public constructor(graphClient: GraphClient, contractEntityRepository: ContractEntityRepository) {
     this.graphClient = graphClient;
+    this.contractEntityRepository = contractEntityRepository;
   }
 
   /**
@@ -27,15 +33,21 @@ export default class TransactionFetcher {
     const entity = (Object.keys(data)[0]);
     const entityRecord = data[entity][0];
     const query = EntityGraphQueries[entity];
-    // Fetch uts based on entity & contract address from ContractEntity model and update the
-    // variables object uts field. <PLACEHOLDER>
+
+    const contractEntityRecord = await this.contractEntityRepository.get(
+      entityRecord.contractAddress,
+      entity,
+    );
+
+    const uts = contractEntityRecord ? contractEntityRecord.timestamp : 0;
+    Logger.info(`Querying records for ${entity} for UTS ${uts}`);
     let skip = 0;
     let transactions: object[] = [];
     const response: any = {};
     while (true) {
       const variables = {
         contractAddress: entityRecord.contractAddress,
-        uts: 0,
+        uts,
         limit: this.queryLimit,
         skip,
       };

@@ -7,9 +7,12 @@ import { Subscription } from 'apollo-client/util/Observable';
 import gql from 'graphql-tag';
 import * as WebSocket from 'ws';
 
+import BigNumber from 'bignumber.js';
 import Logger from './Logger';
 import TransactionHandler from './TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
+import { ContractEntityRepository } from './repositories/ContractEntityRepository';
+import ContractEntity from './models/ContractEntity';
 /**
  * The class interacts with graph node server for subscription and query.
  */
@@ -36,12 +39,14 @@ export default class GraphClient {
    * @param subscriptionQry Subscription query.
    * @param handler Transaction handler object.
    * @param fetcher Transaction fetcher object.
+   * @param contractEntityRepository Instance of contract entity repository.
    * @return Query subscription object.
    */
   public async subscribe(
     subscriptionQry: string,
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
+    contractEntityRepository: ContractEntityRepository,
   ): Promise<Subscription> {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
@@ -57,8 +62,11 @@ export default class GraphClient {
       async next(response) {
         const transactions = await fetcher.fetch(response.data);
         await handler.handle(transactions);
-        // Integrate updation of ContractEntity uts here. Handlers should make sure error
-        // Promise.reject is thrown on error cases.
+        await GraphClient.updateLastestUTS(
+          transactions,
+          response.data,
+          contractEntityRepository,
+        );
       },
       error(err) {
         // Log error using logger
@@ -67,6 +75,29 @@ export default class GraphClient {
     }));
 
     return querySubscriber;
+  }
+
+  private static async updateLastestUTS(
+    transactions: {[key: string]: object[]},
+    subscriptionResponse: Record<string, any[]>,
+    contractEntityRepository: ContractEntityRepository,
+  ): Promise<void> {
+    const savePromises = Object.keys(transactions).map(
+      async (transactionKind) => {
+        const { contractAddress } = subscriptionResponse[transactionKind][0];
+        const currentUTS = new BigNumber(
+          transactions[transactionKind].length > 0
+            ? transactions[transactionKind.length - 1] as any ['uts']
+            : 0,
+        );
+
+        return contractEntityRepository.save(
+          new ContractEntity(contractAddress, transactionKind.toLocaleLowerCase(), currentUTS),
+        );
+      },
+    );
+
+    await Promise.all(savePromises);
   }
 
   /**

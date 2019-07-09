@@ -8,7 +8,7 @@ describe('TransactionFetcher.constructor()', () => {
   it('should construct with correct parameters', async () => {
     const mockApolloClient = sinon.stub as any;
     const graphClient = new GraphClient(mockApolloClient);
-    const transactionFetcher = new TransactionFetcher(graphClient);
+    const transactionFetcher = new TransactionFetcher(graphClient, sinon.mock() as any);
 
     assert(
       transactionFetcher,

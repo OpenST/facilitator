@@ -6,6 +6,7 @@ import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../test_utils/SpyAssert';
 import TransactionHandler from '../../src/TransactionHandler';
 import TransactionFetcher from '../../src/TransactionFetcher';
+import {ContractEntityRepository} from "../../src/repositories/ContractEntityRepository";
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;
@@ -28,7 +29,14 @@ describe('Subscriber.subscribe()', () => {
     );
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
-    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any, fetcher as any);
+    const contractEntityRepository = sinon.mock(ContractEntityRepository);
+    subscriber = new Subscriber(
+      graphClient,
+      subscriptionQueries,
+      handler as any,
+      fetcher as any,
+      contractEntityRepository as any,
+    );
     await subscriber.subscribe();
 
     assert.strictEqual(
@@ -46,7 +54,7 @@ describe('Subscriber.subscribe()', () => {
     SpyAssert.assert(
       spyGraphClientSubscribe,
       1,
-      [[subscriptionQueries.stakeRequesteds, handler, fetcher]],
+      [[subscriptionQueries.stakeRequesteds, handler, fetcher, contractEntityRepository]],
     );
 
     sinon.restore();

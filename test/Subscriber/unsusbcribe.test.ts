@@ -5,6 +5,7 @@ import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
 import TransactionHandler from '../../src/TransactionHandler';
 import TransactionFetcher from '../../src/TransactionFetcher';
+import { ContractEntityRepository } from '../../src/repositories/ContractEntityRepository';
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient: any;
@@ -27,7 +28,14 @@ describe('Subscriber.unsubscribe()', () => {
     );
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
-    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any, fetcher as any);
+    const contractEntityRepository = sinon.mock(ContractEntityRepository);
+    subscriber = new Subscriber(
+      graphClient,
+      subscriptionQueries,
+      handler as any,
+      fetcher as any,
+      contractEntityRepository as any,
+    );
   });
 
   it('should work with correct parameters', async () => {
