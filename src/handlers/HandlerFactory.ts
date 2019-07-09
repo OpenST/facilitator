@@ -14,7 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
-import StakeRequestedHandler from './StakeRequestedHandler';
+import StakeRequestHandler from './StakeRequestHandler';
 import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
 
@@ -25,9 +25,9 @@ export default class HandlerFactory {
    *
    * @return Different kinds of transaction handlers.
    */
-  public static get(repos: Repositories): { stakeRequesteds: StakeRequestedHandler; anchor: AnchorHandler } {
+  public static get(repos: Repositories): { stakeRequesteds: StakeRequestHandler; anchor: AnchorHandler } {
     return {
-      stakeRequesteds: new StakeRequestedHandler(
+      stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
       ),
       anchor: new AnchorHandler(

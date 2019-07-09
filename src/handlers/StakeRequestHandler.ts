@@ -24,7 +24,7 @@ import Logger from '../Logger';
 /**
  * This class handels stake request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequest> {
+export default class StakeRequestHandler extends ContractEntityHandler<StakeRequest> {
   /* Storage */
 
   private readonly stakeRequestRepository: StakeRequestRepository;
