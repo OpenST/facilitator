@@ -58,7 +58,6 @@ export interface AuxiliaryChainAttributes {
   ostCoGatewayAddress: string;
   anchorAddress: string;
   coAnchorAddress: string;
-  lastProcessedBlockNumber?: BigNumber;
   lastOriginBlockHeight?: BigNumber;
   lastAuxiliaryBlockHeight?: BigNumber;
 }
@@ -123,14 +122,6 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
             len: [42, 42],
           },
         },
-        lastProcessedBlockNumber: {
-          type: DataTypes.BIGINT,
-          allowNull: true,
-          defaultValue: null,
-          validate: {
-            min: 0,
-          },
-        },
         lastOriginBlockHeight: {
           type: DataTypes.BIGINT,
           allowNull: true,
@@ -174,7 +165,9 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
         attributes: auxiliaryChainAttributes,
         reason: e.message,
       };
-      return Promise.reject(`Failed to create an auxiliary chain: ${JSON.stringify(errorContext)}`);
+      return Promise.reject(
+        `Failed to create an auxiliary chain: ${JSON.stringify(errorContext)}`,
+      );
     }
   }
 
@@ -200,7 +193,6 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
   /** Updates auxiliary chain data in database and does not return the updated state. */
   public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<boolean> {
     const [updatedRowCount] = await AuxiliaryChainModel.update({
-      lastProcessedBlockNumber: auxiliaryChainAttributes.lastProcessedBlockNumber,
       lastOriginBlockHeight: auxiliaryChainAttributes.lastOriginBlockHeight,
       lastAuxiliaryBlockHeight: auxiliaryChainAttributes.lastAuxiliaryBlockHeight,
     }, {
@@ -232,14 +224,15 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
    * @param {AuxiliaryChain} auxiliaryChain
    */
   private format(auxiliaryChain: AuxiliaryChain): void {
-    if (auxiliaryChain.lastProcessedBlockNumber) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastProcessedBlockNumber);
-    }
     if (auxiliaryChain.lastOriginBlockHeight) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastOriginBlockHeight);
+      auxiliaryChain.lastOriginBlockHeight = new BigNumber(
+        auxiliaryChain.lastOriginBlockHeight,
+      );
     }
     if (auxiliaryChain.lastAuxiliaryBlockHeight) {
-      auxiliaryChain.lastProcessedBlockNumber = new BigNumber(auxiliaryChain.lastAuxiliaryBlockHeight);
+      auxiliaryChain.lastAuxiliaryBlockHeight = new BigNumber(
+        auxiliaryChain.lastAuxiliaryBlockHeight,
+      );
     }
   }
 }
