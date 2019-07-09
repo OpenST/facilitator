@@ -23,6 +23,7 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('GatewayRepository::save', (): void => {
+
 let gatewayAddress: string;
 let chainId: number;
 let gatewayType: string;
@@ -70,7 +71,7 @@ let updatedAt: Date;
       gateway,
     );
 
-    Util.assertAttributes(createdGateway, gateway);
+    Util.assertGatewayAttributes(createdGateway, gateway);
   });
 
   it('Throws if a gateway '
@@ -127,7 +128,7 @@ let updatedAt: Date;
       gateway,
     );
 
-    Util.assertAttributes(updatedGateway, gateway);
+    Util.assertGatewayAttributes(updatedGateway, gateway);
   });
 
   it('Update should fail for a non existing gateway ', async (): Promise<void> => {

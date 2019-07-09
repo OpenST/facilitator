@@ -1,112 +1,106 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-
-import {
-  MessageAttributes,
-  Message,
-} from '../../../src/repositories/MessageRepository';
+import Message from '../../../src/models/Message';
 
 import assert from '../../test_utils/assert';
 
 const Util = {
-  checkMessageAgainstAttributes(
-    message: Message,
-    messageAttributes: MessageAttributes,
+  assertMessageAttributes(
+    inputMessage: Message,
+    expectedMessage: Message,
   ): void {
     assert.strictEqual(
-      message.messageHash,
-      messageAttributes.messageHash,
+      inputMessage.messageHash,
+      expectedMessage.messageHash,
       'messageHash should match',
     );
 
     assert.strictEqual(
-      message.type,
-      messageAttributes.type,
+      inputMessage.type,
+      expectedMessage.type,
       'type should match',
     );
 
     assert.strictEqual(
-      message.gatewayAddress,
-      messageAttributes.gatewayAddress,
+      inputMessage.gatewayAddress,
+      expectedMessage.gatewayAddress,
       'gatewayAddress should match',
     );
 
     assert.strictEqual(
-      message.sourceStatus,
-      messageAttributes.sourceStatus,
+      inputMessage.sourceStatus,
+      expectedMessage.sourceStatus,
       'sourceStatus should match',
     );
 
     assert.strictEqual(
-      message.targetStatus,
-      messageAttributes.targetStatus,
+      inputMessage.targetStatus,
+      expectedMessage.targetStatus,
       'targetStatus should match',
     );
 
     assert.notStrictEqual(
-      message.gasPrice,
-      messageAttributes.gasPrice,
+      inputMessage.gasPrice,
+      expectedMessage.gasPrice,
       'gasPrice should match',
     );
 
     assert.notStrictEqual(
-      message.gasLimit,
-      messageAttributes.gasLimit,
+      inputMessage.gasLimit,
+      expectedMessage.gasLimit,
       'gasLimit should match',
     );
 
     assert.notStrictEqual(
-      message.nonce,
-      messageAttributes.nonce,
+      inputMessage.nonce,
+      expectedMessage.nonce,
       'nonce should match',
     );
 
     assert.strictEqual(
-      message.sender,
-      messageAttributes.sender,
+      inputMessage.sender,
+      expectedMessage.sender,
       'sender should match',
     );
 
     assert.strictEqual(
-      message.direction,
-      messageAttributes.direction,
+      inputMessage.direction,
+      expectedMessage.direction,
       'direction should match',
     );
 
     assert.notStrictEqual(
-      message.sourceDeclarationBlockHeight,
-      messageAttributes.sourceDeclarationBlockHeight,
+      inputMessage.sourceDeclarationBlockHeight,
+      expectedMessage.sourceDeclarationBlockHeight,
       'sourceDeclarationBlockHeight should match',
     );
 
-    if (messageAttributes.hashLock) {
+    if (inputMessage.hashLock) {
       assert.strictEqual(
-        message.hashLock,
-        messageAttributes.hashLock,
+        inputMessage.hashLock,
+        expectedMessage.hashLock,
         'hashLock should match',
       );
     }
 
-    if (messageAttributes.secret) {
+    if (inputMessage.secret) {
       assert.strictEqual(
-        message.secret,
-        messageAttributes.secret,
+        inputMessage.secret,
+        expectedMessage.secret,
         'secret should match',
       );
-    }
+    };
+
+    if (inputMessage.createdAt && expectedMessage.createdAt) {
+      assert.strictEqual(
+        inputMessage.createdAt.getTime(),
+        expectedMessage.createdAt.getTime(),
+        'Expected created at time is different than the one received in response',
+      );
+    };
+
+    assert.isNotNull(
+      inputMessage.updatedAt,
+      'Updated at should not be null',
+    );
   },
 
 };

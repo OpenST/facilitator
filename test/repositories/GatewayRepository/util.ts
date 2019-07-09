@@ -2,7 +2,7 @@ import assert from '../../test_utils/assert';
 import Gateway from "../../../src/models/Gateway";
 
 const Util = {
-  assertAttributes(
+  assertGatewayAttributes(
     inputGateway: Gateway,
     expectedGateway: Gateway,
   ): void {
@@ -54,7 +54,7 @@ const Util = {
       'activation should match',
     );
 
-    if (expectedGateway.lastRemoteGatewayProvenBlockHeight) {
+    if (inputGateway.lastRemoteGatewayProvenBlockHeight) {
       assert.notStrictEqual(
         inputGateway.lastRemoteGatewayProvenBlockHeight,
         expectedGateway.lastRemoteGatewayProvenBlockHeight,

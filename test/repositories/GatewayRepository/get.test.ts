@@ -22,7 +22,7 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('Gateway::get', (): void => {
-  let gateway: Gateway;
+  let message: Message;
 
   beforeEach(async (): Promise<void> => {
     config = {
@@ -40,7 +40,7 @@ describe('Gateway::get', (): void => {
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    gateway = new Gateway(
+    message = new Gateway(
       gatewayAddress,
       chainId,
       gatewayType,
@@ -54,20 +54,20 @@ describe('Gateway::get', (): void => {
       updatedAt,
     );
     await config.repos.gatewayRepository.save(
-      gateway,
+      message,
     );
   });
 
   it('should pass when retrieving Gateway model', async (): Promise<void> => {
     const getResponse = await config.repos.gatewayRepository.get(
-      gateway.gatewayAddress,
+      message.gatewayAddress,
     );
 
-    Util.assertAttributes(getResponse as Gateway, gateway);
+    Util.assertGatewayAttributes(getResponse as Gateway, message);
   });
 
   it('should return null when querying for non-existing '
-    + 'gateway contract address', async (): Promise<void> => {
+    + 'message contract address', async (): Promise<void> => {
     const nonExistingGatewayAddress = '0x0000000000000000000000000000000000000033';
 
     const getResponse = await config.repos.gatewayRepository.get(
@@ -77,7 +77,7 @@ describe('Gateway::get', (): void => {
     assert.strictEqual(
       getResponse,
       null,
-      'Non existing gateway address,',
+      'Non existing message address,',
     );
   });
 });
