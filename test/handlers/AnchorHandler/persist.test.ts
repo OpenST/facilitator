@@ -61,8 +61,7 @@ describe('AnchorHandler.persist()', () => {
 
     const models = await handler.persist(transactions);
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
-    assert.deepStrictEqual(models[0], auxiliaryChainRecord);
+    assert.equal(models.length, 0, 'Number of updated models must be equal to zero');
     SpyAssert.assert(update, 0, [[]]);
   });
 
@@ -82,8 +81,7 @@ describe('AnchorHandler.persist()', () => {
 
     const models = await handler.persist(transactions);
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
-    assert.deepStrictEqual(models[0], auxiliaryChainRecord);
+    assert.equal(models.length, 0, 'Number of updated models must be equal to zero');
     SpyAssert.assert(update, 0, [[]]);
   });
 
@@ -103,8 +101,7 @@ describe('AnchorHandler.persist()', () => {
 
     const models = await handler.persist(transactions);
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
-    assert.deepStrictEqual(models[0], auxiliaryChainRecord);
+    assert.equal(models.length, 0, 'Number of updated models must be equal to zero');
     SpyAssert.assert(update, 0, [[]]);
   });
 });
