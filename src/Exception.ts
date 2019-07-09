@@ -29,6 +29,21 @@ export class MosaicConfigNotFoundException extends Error {
 }
 
 /**
+ * This exception is used for any error during facilitator config generation.
+ */
+export class FacilitatorConfigNotFoundException extends Error {
+  /**
+   * It calls constructor of Error class and sets error message.
+   * @param message A human-readable description of the error.
+   */
+  public constructor(message: string) {
+    super(message);
+    this.name = 'FacilitatorConfigNotFoundException';
+    this.message = message;
+  }
+}
+
+/**
  * Defines the error for Facilitator Start command.
  */
 export class FacilitatorStartException extends Error {

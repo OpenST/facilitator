@@ -26,10 +26,6 @@ describe('FacilitatorConfig.fromFile()', () => {
     return fsUtils;
   }
 
-  beforeEach(async () => {
-
-  });
-
   it('should pass with valid arguments', () => {
     const originChain = '12346';
     const fsSpy = spyFsModule(true);
@@ -52,19 +48,13 @@ describe('FacilitatorConfig.fromFile()', () => {
     sinon.restore();
   });
 
-  it('should return empty object when file path doesn\'t exists', () => {
+  it('should throw exception when file path doesn\'t exists', () => {
     const fsSpy = spyFsModule(false);
-    const expectedFc = {
-      chains: {},
-      database: {},
-      encryptedAccounts: {},
-      originChain: '',
-    };
-    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
 
-    SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-
-    assert.deepEqual(fcConfig, expectedFc, ' it should be empty');
+    assert.throws(() => FacilitatorConfig.fromFile(
+      facilitatorConfigPath),
+      'File path doesn\'t exists'
+    );
 
     fsSpy.restore();
     sinon.restore();

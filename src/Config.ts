@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import MosaicConfig from './MosaicConfig';
 import Directory from './Directory';
-import InvalidFacilitatorConfigException from './Exception';
+import InvalidFacilitatorConfigException, { FacilitatorConfigNotFoundException } from './Exception';
 import * as schema from './Config/FacilitatorConfig.schema.json';
 import Utils from './Utils';
 
@@ -127,7 +127,7 @@ export class FacilitatorConfig {
       const config = Utils.getJsonDataFromPath(filePath);
       return new FacilitatorConfig(config);
     }
-    return new FacilitatorConfig({});
+    throw new FacilitatorConfigNotFoundException('File path doesn\'t exists');
   }
 
   /**

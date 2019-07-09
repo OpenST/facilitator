@@ -21,6 +21,7 @@ async function terminationHandler() {
 }
 
 facilitatorCmd
+facilitatorCmd
   .option('-mc, --mosaic-config <mosaicConfig>', 'path to mosaic configuration')
   .option('-fc, --facilitator-config <facilitatorConfig>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
