@@ -5,10 +5,10 @@ import { Config } from '../Config';
 import FacilitatorStart from '../FacilitatorOptionParser/FacilitatorStart';
 
 
-const facilitator = commander
+const facilitatorCmd = commander
   .arguments('[origin_chain] [aux_chain_id]');
 
-facilitator
+facilitatorCmd
   .option('-mc, --mosaic-config <mosaicConfig>', 'path to mosaic configuration')
   .option('-fc, --facilitator-config <facilitatorConfig>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {

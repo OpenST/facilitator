@@ -6,7 +6,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { Subscription } from 'apollo-client/util/Observable';
 import gql from 'graphql-tag';
 import * as WebSocket from 'ws';
-import fetch  from 'node-fetch';
+import fetch from 'node-fetch';
 
 import Logger from './Logger';
 import TransactionHandler from './TransactionHandler';
@@ -111,7 +111,7 @@ export default class GraphClient {
       // fetch is defined as any because of below issue
       // More details: https://maecapozzi.com/using-node-fetch-with-apollo-link-http/
       // Github issue: https://github.com/apollographql/apollo-client/issues/4857
-      link = createHttpLink({ uri: subgraphEndPoint, fetch: fetch as any});
+      link = createHttpLink({ uri: subgraphEndPoint, fetch: fetch as any });
     }
     // Instantiate in memory cache object.
     const cache = new InMemoryCache();

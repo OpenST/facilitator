@@ -156,7 +156,6 @@ export default class FacilitatorStart {
    * @returns `true` if only facilitator config path is present otherwise false.
    */
   private isOnlyFacilitatorConfigPath(): boolean {
-
     return this.originChain === ''
       && this.auxChainId === ''
       && this.facilitatorConfigPath !== undefined;
