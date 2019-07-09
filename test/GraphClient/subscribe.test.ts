@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
 import * as sinon from 'sinon';
+import { Observer } from 'apollo-client/util/Observable';
+import ApolloClient from 'apollo-client';
 import assert from '../test_utils/assert';
 
 import GraphClient from '../../src/GraphClient';
@@ -27,16 +29,30 @@ describe('GraphClient.subscribe()', () => {
   });
 
   it('should work with correct parameters', async () => {
-    const mockQuerySubscriber = sinon.spy() as any;
+    const transactions: object[] = [];
+    const subscriptionData = {
+      data: {},
+    };
+    const mockQuerySubscriber = {
+      subscribe: (fakeObserver: Observer<any>) => {
+        if (fakeObserver.next) fakeObserver.next(subscriptionData);
+        return sinon.fake();
+      },
+    };
+    const mockApolloClientWithFakeSubscriber = sinon.createStubInstance(ApolloClient);
     const spyMethod = sinon.replace(
-      mockApolloClient,
+      mockApolloClientWithFakeSubscriber,
       'subscribe',
-      sinon.fake.returns({
-        subscribe: async () => Promise.resolve(mockQuerySubscriber),
-      }),
+      sinon.fake.returns(mockQuerySubscriber) as any,
     );
-    const handler = sinon.mock(TransactionHandler);
-    const fetcher = sinon.mock(TransactionFetcher);
+    graphClient = new GraphClient(mockApolloClientWithFakeSubscriber as any);
+    const handler = sinon.createStubInstance(TransactionHandler);
+    const fetcher = sinon.createStubInstance(TransactionFetcher);
+    const fetcherSpy = sinon.replace(
+      fetcher,
+      'fetch',
+      sinon.fake.resolves(transactions) as any,
+    );
     const contractEntityRepository = sinon.mock(ContractEntityRepository);
     const querySubscriber = await graphClient.subscribe(
       subscriptionQry,
@@ -50,16 +66,22 @@ describe('GraphClient.subscribe()', () => {
       'Invalid query subscription object.',
     );
 
-    assert.strictEqual(
-      querySubscriber,
-      mockQuerySubscriber,
-      'Invalid querySubscriber.',
-    );
-
     SpyAssert.assert(
       spyMethod,
       1,
       [[options]],
+    );
+
+    SpyAssert.assert(
+      fetcherSpy,
+      1,
+      [[subscriptionData.data]],
+    );
+
+    SpyAssert.assert(
+      handler.handle,
+      1,
+      [[transactions]],
     );
 
     sinon.restore();

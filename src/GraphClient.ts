@@ -55,29 +55,32 @@ export default class GraphClient {
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;
     // Subscription handling
-    const querySubscriber = await Promise.resolve(this.apolloClient.subscribe({
+    const observable = this.apolloClient.subscribe({
       query: gqlSubscriptionQry,
       variables: {},
-    }).subscribe({
-      async next(response) {
-        const transactions = await fetcher.fetch(response.data);
-        await handler.handle(transactions);
-        await GraphClient.updateLastestUTS(
-          transactions,
-          response.data,
-          contractEntityRepository,
-        );
-      },
-      error(err) {
-        // Log error using logger
-        Logger.error(err);
-      },
-    }));
+    });
+    const querySubscriber = await Promise.resolve(
+      observable
+        .subscribe({
+          async next(response) {
+            const transactions = await fetcher.fetch(response.data);
+            await handler.handle(transactions);
+            await GraphClient.updateLatestUTS(
+              transactions,
+              response.data,
+              contractEntityRepository,
+            );
+          },
+          error(err) {
+            Logger.error(err);
+          },
+        }),
+    );
 
     return querySubscriber;
   }
 
-  private static async updateLastestUTS(
+  private static async updateLatestUTS(
     transactions: {[key: string]: object[]},
     subscriptionResponse: Record<string, any[]>,
     contractEntityRepository: ContractEntityRepository,
