@@ -1,29 +1,14 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-
-/* eslint-disable class-methods-use-this */
-
 import {
-  DataTypes, Model, InitOptions, Op,
+  DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
-// import Subject from '../observer/Subject';
+import Subject from '../observer/Subject';
+import Utils from '../Utils';
+import AuxiliaryChain from '../models/AuxiliaryChain';
 
-import assert = require('assert');
-
+/**
+ * An interface, that represents a row from a auxiliary_chains table.
+ */
 class AuxiliaryChainModel extends Model {
   public readonly chainId!: number;
 
@@ -49,32 +34,16 @@ class AuxiliaryChainModel extends Model {
 }
 
 /**
- * To be used for calling any methods which would change states of record(s) in Database.
+ * Stores instances of AuxiliaryChain.
+ *
+ * Class enables creation, update and retrieval of AuxiliaryChain objects.
+ * On construction it initializes underlying database model.
  */
-export interface AuxiliaryChainAttributes {
-  chainId: number;
-  originChainName: string;
-  ostGatewayAddress: string;
-  ostCoGatewayAddress: string;
-  anchorAddress: string;
-  coAnchorAddress: string;
-  lastOriginBlockHeight?: BigNumber;
-  lastAuxiliaryBlockHeight?: BigNumber;
-}
-
-/**
- * Repository would always return database rows after typecasting to this
- */
-export interface AuxiliaryChain extends AuxiliaryChainAttributes {
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
+export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
-    // super();
+    super();
 
     AuxiliaryChainModel.init(
       {
@@ -122,6 +91,14 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
             len: [42, 42],
           },
         },
+        lastProcessedBlockNumber: {
+          type: DataTypes.BIGINT,
+          allowNull: true,
+          defaultValue: null,
+          validate: {
+            min: 0,
+          },
+        },
         lastOriginBlockHeight: {
           type: DataTypes.BIGINT,
           allowNull: true,
@@ -141,40 +118,45 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
       },
       {
         ...initOptions,
-        modelName: 'auxiliaryChain',
-        tableName: 'auxiliary_chain',
+        modelName: 'AuxiliaryChain',
+        tableName: 'auxiliary_chains',
       },
     );
   }
 
   /**
-   * Creates an auxiliary chain model in the repository and syncs with database.
-   * @param {AuxiliaryChainAttributes} auxiliaryChainAttributes
-   * @return {Promise<AuxiliaryChain>}
+   * Saves a AuxiliaryChain object in the repository.
+   * If a AuxiliaryChain does not exist, it creates, otherwise updates.
+   *
+   * @param auxiliaryChain AuxiliaryChain object.
+   *
+   * @returns Newly created or updated AuxiliaryChain object.
    */
-  public async create(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<AuxiliaryChain> {
-    try {
-      const auxiliaryChain: AuxiliaryChain = await AuxiliaryChainModel.create(
-        auxiliaryChainAttributes,
-      ) as AuxiliaryChain;
-      this.format(auxiliaryChain);
-      // this.newUpdate(auxiliaryChain);
-      return auxiliaryChain;
-    } catch (e) {
-      const errorContext = {
-        attributes: auxiliaryChainAttributes,
-        reason: e.message,
-      };
-      return Promise.reject(
-        `Failed to create an auxiliary chain: ${JSON.stringify(errorContext)}`,
-      );
-    }
+  public async save(auxiliaryChain: AuxiliaryChain): Promise<AuxiliaryChain> {
+    const definedOwnProps: string[] = Utils.getDefinedOwnProps(auxiliaryChain);
+
+    await AuxiliaryChainModel.upsert(
+      auxiliaryChain,
+      {
+        fields: definedOwnProps,
+      },
+    );
+
+    const updatedAuxiliaryChain = await this.get(
+      auxiliaryChain.chainId,
+    );
+
+    this.newUpdate(updatedAuxiliaryChain as AuxiliaryChain);
+
+    return updatedAuxiliaryChain as AuxiliaryChain;
   }
 
   /**
-   * Fetches auxiliary chain data from database.
-   * @param {number} chainId
-   * @return {Promise<AuxiliaryChain | null>}
+   * Fetches AuxiliaryChain object from database if found. Otherwise returns null.
+   *
+   * @param chainId Chain identifier.
+   *
+   * @returns AuxiliaryChain object containing values which satisfy the `where` condition.
    */
   public async get(chainId: number): Promise<AuxiliaryChain | null> {
     const auxiliaryChainModel = await AuxiliaryChainModel.findOne({
@@ -182,57 +164,37 @@ export class AuxiliaryChainRepository { // extends Subject<AuxiliaryChain> {
         chainId,
       },
     });
+
     if (auxiliaryChainModel === null) {
       return null;
     }
-    const auxiliaryChain: AuxiliaryChain = auxiliaryChainModel;
-    this.format(auxiliaryChain);
-    return auxiliaryChain;
+
+    return this.convertToAuxiliaryChain(auxiliaryChainModel);
   }
 
-  /** Updates auxiliary chain data in database and does not return the updated state. */
-  public async update(auxiliaryChainAttributes: AuxiliaryChainAttributes): Promise<boolean> {
-    const [updatedRowCount] = await AuxiliaryChainModel.update({
-      lastOriginBlockHeight: auxiliaryChainAttributes.lastOriginBlockHeight,
-      lastAuxiliaryBlockHeight: auxiliaryChainAttributes.lastAuxiliaryBlockHeight,
-    }, {
-      where: {
-        chainId: {
-          [Op.eq]: auxiliaryChainAttributes.chainId,
-        },
-      },
-    });
-
-    assert(
-      updatedRowCount <= 1,
-      'As a chain id is a primary key, one or no entry should be affected.',
-    );
-
-    if (updatedRowCount === 1) {
-      const auxiliaryChain = await this.get(auxiliaryChainAttributes.chainId);
-      assert(auxiliaryChain !== null);
-      // this.newUpdate(auxiliaryChain as AuxiliaryChain);
-
-      return true;
-    }
-
-    return false;
-  }
+  /* Private Functions */
 
   /**
-   * Modifies the auxiliaryChain object by typecasting required properties.
-   * @param {AuxiliaryChain} auxiliaryChain
+   * It converts AuxiliaryChain db object to AuxiliaryChain model object.
+   *
+   * @param auxiliaryChainModel AuxiliaryChainModel object to convert.
+   *
+   * @returns AuxiliaryChain object.
    */
-  private format(auxiliaryChain: AuxiliaryChain): void {
-    if (auxiliaryChain.lastOriginBlockHeight) {
-      auxiliaryChain.lastOriginBlockHeight = new BigNumber(
-        auxiliaryChain.lastOriginBlockHeight,
-      );
-    }
-    if (auxiliaryChain.lastAuxiliaryBlockHeight) {
-      auxiliaryChain.lastAuxiliaryBlockHeight = new BigNumber(
-        auxiliaryChain.lastAuxiliaryBlockHeight,
-      );
-    }
+  /* eslint-disable class-methods-use-this */
+  private convertToAuxiliaryChain(auxiliaryChainModel: AuxiliaryChainModel): AuxiliaryChain {
+    return new AuxiliaryChain(
+      auxiliaryChainModel.chainId,
+      auxiliaryChainModel.originChainName,
+      auxiliaryChainModel.ostGatewayAddress,
+      auxiliaryChainModel.ostCoGatewayAddress,
+      auxiliaryChainModel.anchorAddress,
+      auxiliaryChainModel.coAnchorAddress,
+      new BigNumber(auxiliaryChainModel.lastProcessedBlockNumber),
+      new BigNumber(auxiliaryChainModel.lastOriginBlockHeight),
+      new BigNumber(auxiliaryChainModel.lastAuxiliaryBlockHeight),
+      auxiliaryChainModel.createdAt,
+      auxiliaryChainModel.updatedAt,
+    );
   }
 }

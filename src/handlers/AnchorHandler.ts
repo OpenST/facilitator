@@ -16,10 +16,8 @@
 
 import BigNumber from 'bignumber.js';
 import ContractEntityHandler from './ContractEntityHandler';
-import {
-  AuxiliaryChain,
-  AuxiliaryChainRepository,
-} from '../repositories/AuxiliaryChainRepository';
+import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
+import AuxiliaryChain from '../models/AuxiliaryChain';
 import Logger from '../Logger';
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
 
@@ -71,7 +69,7 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
       return [];
     }
     chainRecord.lastOriginBlockHeight = anchorBlockHeight;
-    await this.auxiliaryChainRepository.update(chainRecord);
+    await this.auxiliaryChainRepository.save(chainRecord);
     // This is returned in the case when higher latest anchored block height is received.
     return [chainRecord];
   }
