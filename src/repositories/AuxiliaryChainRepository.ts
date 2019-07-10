@@ -2,10 +2,10 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import AuxiliaryChain from '../models/AuxiliaryChain';
-import * as assert from "assert";
 
 /**
  * An interface, that represents a row from a auxiliary_chains table.

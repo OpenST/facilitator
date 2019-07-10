@@ -2,11 +2,11 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import Subject from '../observer/Subject';
 
 import Gateway from '../models/Gateway';
 import Utils from '../Utils';
-import * as assert from "assert";
 
 /**
  * An interface, that represents a row from a gateways table.

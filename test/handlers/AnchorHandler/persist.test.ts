@@ -68,7 +68,6 @@ describe('AnchorHandler.persist()', () => {
   });
 
   it('should not save latest block height for interested anchor with lower block height', async () => {
-
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
       anchorAddress,
@@ -88,7 +87,6 @@ describe('AnchorHandler.persist()', () => {
   });
 
   it('should not save latest block height for interested anchor with equal block height', async () => {
-
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
       anchorAddress,
