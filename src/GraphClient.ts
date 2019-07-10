@@ -81,21 +81,29 @@ export default class GraphClient {
   }
 
   private static async updateLatestUTS(
-    transactions: {[key: string]: object[]},
+    transactions: Record<string, Record<string, any>>,
     subscriptionResponse: Record<string, any[]>,
     contractEntityRepository: ContractEntityRepository,
   ): Promise<void> {
     const savePromises = Object.keys(transactions).map(
       async (transactionKind) => {
         const { contractAddress } = subscriptionResponse[transactionKind][0];
+        const transaction = transactions[transactionKind].length > 0
+          ? transactions[transactionKind][transactions[transactionKind].length - 1]
+          : null;
+
+        const number = transaction ? transaction.uts : 0;
         const currentUTS = new BigNumber(
-          transactions[transactionKind].length > 0
-            ? transactions[transactionKind.length - 1] as any ['uts']
-            : 0,
+          number,
         );
 
+        const contractEntity = new ContractEntity(
+          contractAddress,
+          transactionKind,
+          currentUTS,
+        );
         return contractEntityRepository.save(
-          new ContractEntity(contractAddress, transactionKind.toLocaleLowerCase(), currentUTS),
+          contractEntity,
         );
       },
     );
