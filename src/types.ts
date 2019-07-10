@@ -1,5 +1,6 @@
-import StakeRequestedHandler from "./handlers/StakeRequestedHandler";
+import StakeRequestedHandler from "./handlers/StakeRequestHandler";
 import ProveGatewayHandler from "./handlers/ProveGatewayHandler";
+import AnchorHandler from './handlers/AnchorHandler';
 
 export type Bytes32 = string;
 export type Address = string;
@@ -17,5 +18,6 @@ export interface SubscriptionInfo {
 };
 export interface HandlerTypes {
   stakeRequesteds: StakeRequestedHandler,
-    gatewayProvens: ProveGatewayHandler,
+  gatewayProvens: ProveGatewayHandler,
+  anchor: AnchorHandler,
 };
