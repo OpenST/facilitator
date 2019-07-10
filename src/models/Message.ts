@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import Comparable from '../observer/Comparable';
 
 /**
- * Represents Gateway model object.
+ * Represents Message model object.
  */
 export default class Message extends Comparable<Message> {
   public messageHash: string;
@@ -36,7 +36,7 @@ export default class Message extends Comparable<Message> {
   public updatedAt?: Date;
 
   /**
-   * Constructor to set fields of Messages table.
+   * Constructor to set fields of Messages model.
    *
    * @param messageHash Message hash is unique for each request.
    * @param type Type of the message stake/redeem.
@@ -90,22 +90,22 @@ export default class Message extends Comparable<Message> {
   }
 
   /**
-   * Compares Message objects.
+   * Compares two Message models.
    *
-   * @param other Message object which is to be compared.
+   * @param other A Message object to compare with.
    *
-   * @returns `0` if the objects are same, 1 if new object is greater and -1 if new object
-   *          is lesser.
+   * @returns 0 if two objects are equal, 1 if the current object is greater
+   *                 and -1 if the specified object is greater.
    */
   public compareTo(other: Message): number {
-    const existingKey = this.messageHash;
-    const newKey = other.messageHash;
+    const currentKey = this.messageHash;
+    const specifiedKey = other.messageHash;
 
-    if (existingKey > newKey) {
+    if (currentKey > specifiedKey) {
       return 1;
     }
 
-    if (existingKey < newKey) {
+    if (currentKey < specifiedKey) {
       return -1;
     }
 

@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import AuxiliaryChain from '../models/AuxiliaryChain';
+import * as assert from "assert";
 
 /**
  * An interface, that represents a row from a auxiliary_chains table.
@@ -145,6 +146,7 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     const updatedAuxiliaryChain = await this.get(
       auxiliaryChain.chainId,
     );
+    assert(updatedAuxiliaryChain !== null);
 
     this.newUpdate(updatedAuxiliaryChain as AuxiliaryChain);
 

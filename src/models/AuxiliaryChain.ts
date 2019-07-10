@@ -28,7 +28,7 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
   public updatedAt?: Date;
 
   /**
-   * Constructor to set fields of AuxiliaryChain table.
+   * Constructor to set fields of AuxiliaryChain model.
    *
    * @param chainId Chain identifier.
    * @param originChainName Name of the origin chain.
@@ -70,22 +70,22 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
   }
 
   /**
-   * Compares AuxiliaryChain objects.
+   * Compares two auxiliary chain models.
    *
-   * @param other AuxiliaryChain object which is to be compared.
+   * @param other An auxiliary chain object to compare with.
    *
-   * @returns `0` if the objects are same, 1 if new object is greater and -1 if new object
-   *          is lesser.
+   * @returns 0 if two objects are equal, 1 if the current object is greater
+   *                 and -1 if the specified object is greater.
    */
   public compareTo(other: AuxiliaryChain): number {
-    const existingKey = this.chainId;
-    const newKey = other.chainId;
+    const currentKey = this.chainId;
+    const specifiedKey = other.chainId;
 
-    if (existingKey > newKey) {
+    if (currentKey > specifiedKey) {
       return 1;
     }
 
-    if (existingKey < newKey) {
+    if (currentKey < specifiedKey) {
       return -1;
     }
 

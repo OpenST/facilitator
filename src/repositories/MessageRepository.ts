@@ -6,6 +6,7 @@ import Subject from '../observer/Subject';
 
 import Utils from '../Utils';
 import Message from '../models/Message';
+import * as assert from "assert";
 
 /**
  * An interface, that represents a row from a messages table.
@@ -203,6 +204,7 @@ export class MessageRepository extends Subject<Message> {
     const updatedMessage = await this.get(
       message.messageHash,
     );
+    assert(updatedMessage !== null);
 
     this.newUpdate(updatedMessage as Message);
 

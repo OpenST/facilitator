@@ -28,7 +28,7 @@ export default class Gateway extends Comparable<Gateway> {
   public updatedAt?: Date;
 
   /**
-   * Constructor to set fields of Gateway table.
+   * Constructor to set fields of Gateway model.
    *
    * @param gatewayAddress Address of the gateway contract.
    * @param chainId Chain identifier.
@@ -72,22 +72,22 @@ export default class Gateway extends Comparable<Gateway> {
   }
 
   /**
-   * Compares Gateway objects.
+   * Compares two Gateway models.
    *
-   * @param other Gateway object which is to be compared.
+   * @param other A Gateway object to compare with.
    *
-   * @returns `0` if the objects are same, 1 if new object is greater and -1 if new object
-   *          is lesser.
+   * @returns 0 if two objects are equal, 1 if the current object is greater
+   *                 and -1 if the specified object is greater.
    */
   public compareTo(other: Gateway): number {
-    const existingKey = this.gatewayAddress;
-    const newKey = other.gatewayAddress;
+    const currentKey = this.gatewayAddress;
+    const specifiedKey = other.gatewayAddress;
 
-    if (existingKey > newKey) {
+    if (currentKey > specifiedKey) {
       return 1;
     }
 
-    if (existingKey < newKey) {
+    if (currentKey < specifiedKey) {
       return -1;
     }
 

@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import Comparable from '../observer/Comparable';
 
 /**
- * Represents model object.
+ * Represents ContractEntity model object.
  */
 export default class ContractEntity extends Comparable<ContractEntity> {
   public contractAddress: string;
@@ -16,7 +16,7 @@ export default class ContractEntity extends Comparable<ContractEntity> {
   public updatedAt?: Date;
 
   /**
-   * Constructor to set fields of Contract Entities table.
+   * Constructor to set fields of Contract Entities model.
    * @param contractAddress Address of the contract.
    * @param entityType Type of the entity.
    * @param timestamp Last updated time in secs.

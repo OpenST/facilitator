@@ -125,8 +125,8 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
       },
       {
         ...initOptions,
-        modelName: 'stakeRequest',
-        tableName: 'stake_request',
+        modelName: 'StakeRequest',
+        tableName: 'stake_requests',
       },
     );
 
@@ -155,7 +155,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
     );
 
     const stakeRequestOutput = await this.get(stakeRequest.stakeRequestHash);
-    assert(stakeRequestOutput !== undefined);
+    assert(stakeRequestOutput !== null);
 
     this.newUpdate(stakeRequestOutput as StakeRequest);
 
