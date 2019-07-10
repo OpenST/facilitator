@@ -284,12 +284,12 @@ export class MessageRepository { // extends Subject<Message> {
   }
 
   /**
-   * This return gateways which has pending stake and mint messages at given block.
+   * This return gateways which has pending stake and mint messages at or below given block.
    *
    * @param gateways List of gateway address.
    * @param blockHeight Height below which pending messages needs to be checked.
    */
-  public async getGatewaysWithOriginPendingMessages(
+  public async getGatewaysWithPendingOriginMessages(
     gateways: string[],
     blockHeight: BigNumber,
   ): Promise<string[]> {
@@ -313,13 +313,13 @@ export class MessageRepository { // extends Subject<Message> {
   }
 
   /**
-   * This method checks if there are pending messages for a gateway at a
-   * block height.
+   * This method checks if there are pending messages for a gateway at or below at
+   * given block height.
    *
    * @param blockHeight Block height where pending messages needs to be checked.
    * @param gateway Address of gateway.
    */
-  public async isPendingOriginMessages(
+  public async hasPendingOriginMessages(
     blockHeight: BigNumber,
     gateway: string,
 

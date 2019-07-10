@@ -19,24 +19,24 @@ import 'mocha';
 import { assert } from 'chai';
 
 import BigNumber from 'bignumber.js';
-import Database from '../../../src/DatabaseFileHelper';
 import StubData from '../../test_utils/StubData';
+import Repositories from '../../../src/repositories/Repositories';
 
 interface TestConfigInterface {
-  db: Database;
+  repos: Repositories;
 }
 let config: TestConfigInterface;
 
-describe('MessageRepository::getGatewaysWithPendingMessagesFromSourceToOrigin', (): void => {
+describe('MessageRepository::getGatewaysWithPendingOriginMessages', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
-      db: await Database.create(),
+      repos: await Repositories.create(),
     };
   });
 
   it('should fetch all pending messages of given gateways and given height.', async (): Promise<void> => {
     const expectedGatewayAddresses = ['0x0000000000000000000000000000000000000001', '0x0000000000000000000000000000000000000002'];
-    await config.db.messageRepository.create(
+    await config.repos.messageRepository.create(
       StubData.messageAttributes(
         '0x000000000000000000000000000000000000000000000000000001',
         expectedGatewayAddresses[0],
@@ -44,7 +44,7 @@ describe('MessageRepository::getGatewaysWithPendingMessagesFromSourceToOrigin', 
       ),
     );
 
-    await config.db.messageRepository.create(
+    await config.repos.messageRepository.create(
       StubData.messageAttributes(
         '0x000000000000000000000000000000000000000000000000000002',
         expectedGatewayAddresses[0],
@@ -53,7 +53,7 @@ describe('MessageRepository::getGatewaysWithPendingMessagesFromSourceToOrigin', 
     );
 
 
-    await config.db.messageRepository.create(
+    await config.repos.messageRepository.create(
       StubData.messageAttributes(
         '0x000000000000000000000000000000000000000000000000000003',
         expectedGatewayAddresses[1],
@@ -61,8 +61,8 @@ describe('MessageRepository::getGatewaysWithPendingMessagesFromSourceToOrigin', 
       ),
     );
 
-    const gateways = await config.db
-      .messageRepository.getGatewaysWithOriginPendingMessages(
+    const gateways = await config.repos
+      .messageRepository.getGatewaysWithPendingOriginMessages(
         expectedGatewayAddresses,
         new BigNumber(10),
       );

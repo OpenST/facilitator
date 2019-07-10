@@ -58,7 +58,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     // Suppressing lint error
     // Refer: https://github.com/typescript-eslint/typescript-eslint/issues/636
     /* eslint-disable @typescript-eslint/unbound-method */
-    this.reactTo = this.reactTo.bind(this);
+    this.proveGateway = this.proveGateway.bind(this);
     this.update = this.update.bind(this);
   }
 
@@ -69,7 +69,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
    */
   public async update(auxiliaryChains: AuxiliaryChain[]): Promise<void> {
     const proveGatewayPromises = auxiliaryChains
-      .filter(ac => ac.chainId === this.auxiliaryChainId)
+      .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId)
       .map(
         async (auxiliaryChain): Promise<{
           success: boolean;
@@ -77,7 +77,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
           message: string;
         }> => (
           auxiliaryChain.lastOriginBlockHeight
-            ? this.reactTo(auxiliaryChain.lastOriginBlockHeight)
+            ? this.proveGateway(auxiliaryChain.lastOriginBlockHeight)
             : Promise.reject(new Error('Last anchored origin block height cannot be undefined.'))),
       );
 
@@ -92,7 +92,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
    *
    * @return Return a promise that resolves to object which tell about success or failure.
    */
-  public async reactTo(
+  public async proveGateway(
     blockHeight: BigNumber,
   ): Promise<{success: boolean; transactionHash: string; message: string}> {
     const gatewayRecord = await this.gatewayRepository.get(this.gatewayAddress);
@@ -101,7 +101,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       return Promise.reject(new Error('Gateway record record doesnot exists for given gateway'));
     }
 
-    const pendingMessages = await this.messageRepository.isPendingOriginMessages(
+    const pendingMessages = await this.messageRepository.hasPendingOriginMessages(
       blockHeight,
       this.gatewayAddress,
     );

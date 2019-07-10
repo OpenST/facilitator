@@ -34,7 +34,7 @@ describe('ProveGatewayService.update()', () => {
       originBlockHeight,
     );
 
-    const reactToStub = sinon.stub(proveGatewayService, 'reactTo');
+    const reactToStub = sinon.stub(proveGatewayService, 'proveGateway');
     await proveGatewayService.update([auxiliaryChain]);
 
     SpyAssert.assert(reactToStub, 1, [[originBlockHeight]]);
@@ -45,7 +45,7 @@ describe('ProveGatewayService.update()', () => {
       1,
     );
 
-    const reactToStub = sinon.stub(proveGatewayService, 'reactTo');
+    const reactToStub = sinon.stub(proveGatewayService, 'proveGateway');
     await proveGatewayService.update([auxiliaryChain]);
 
     SpyAssert.assert(reactToStub, 0, [[]]);
@@ -58,7 +58,7 @@ describe('ProveGatewayService.update()', () => {
       undefined,
     );
 
-    sinon.stub(proveGatewayService, 'reactTo');
+    sinon.stub(proveGatewayService, 'proveGateway');
     await proveGatewayService.update([auxiliaryChain]);
 
     assert.isRejected(

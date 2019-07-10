@@ -19,7 +19,7 @@ const { assert } = chai;
 const Mosaic = require('@openst/mosaic.js');
 const Web3 = require('web3');
 
-describe('ProveGatewayService.reactTo()', () => {
+describe('ProveGatewayService.proveGateway()', () => {
   const originWeb3 = new Web3();
   const auxiliaryWeb3 = new Web3();
   const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
@@ -35,7 +35,7 @@ describe('ProveGatewayService.reactTo()', () => {
     });
 
     const messageRepository = sinon.createStubInstance(MessageRepository, {
-      isPendingOriginMessages: Promise.resolve(true),
+      hasPendingOriginMessages: Promise.resolve(true),
     });
 
     const proof = { encodedAccountValue: 'encodedAccountValue', serializedAccountProof: 'serializedAccountProof' };
@@ -67,7 +67,7 @@ describe('ProveGatewayService.reactTo()', () => {
       auxiliaryChainId,
     );
 
-    const response = await proveGatewayService.reactTo(blockNumber);
+    const response = await proveGatewayService.proveGateway(blockNumber);
 
     SpyAssert.assert(
       gateawayRepository.get,
@@ -76,7 +76,7 @@ describe('ProveGatewayService.reactTo()', () => {
     );
 
     SpyAssert.assert(
-      messageRepository.isPendingOriginMessages,
+      messageRepository.hasPendingOriginMessages,
       1,
       [[blockNumber, gatewayAddress]],
     );
@@ -135,7 +135,7 @@ describe('ProveGatewayService.reactTo()', () => {
     );
 
     await assert.isRejected(
-      proveGatewayService.reactTo(
+      proveGatewayService.proveGateway(
         blockNumber,
       ),
       'Gateway record record doesnot exists for given gateway',
@@ -151,7 +151,7 @@ describe('ProveGatewayService.reactTo()', () => {
     });
 
     const messageRepository = sinon.createStubInstance(MessageRepository, {
-      isPendingOriginMessages: Promise.resolve(false),
+      hasPendingOriginMessages: Promise.resolve(false),
     });
 
     const fakeRawTransaction = { status: true };
@@ -184,7 +184,7 @@ describe('ProveGatewayService.reactTo()', () => {
       auxiliaryChainId,
     );
 
-    const response = await proveGatewayService.reactTo(blockNumber);
+    const response = await proveGatewayService.proveGateway(blockNumber);
 
     SpyAssert.assert(
       gateawayRepository.get,
@@ -193,7 +193,7 @@ describe('ProveGatewayService.reactTo()', () => {
     );
 
     SpyAssert.assert(
-      messageRepository.isPendingOriginMessages,
+      messageRepository.hasPendingOriginMessages,
       1,
       [[blockNumber, gatewayAddress]],
     );
