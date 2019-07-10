@@ -20,11 +20,12 @@ import Repositories from '../repositories/Repositories';
 import StakeRequest from '../models/StakeRequest';
 import Observer from '../observer/Observer';
 import {
-  MessageType, MessageStatus, MessageDirection, MessageRepository, MessageAttributes,
+  MessageType, MessageStatus, MessageDirection, MessageRepository,
 } from '../repositories/MessageRepository';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 
 import assert = require('assert');
+import Message from "../models/Message";
 
 const web3utils = require('web3-utils');
 
@@ -118,23 +119,23 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     assert(stakeRequest.nonce !== undefined);
     assert(stakeRequest.stakerProxy !== undefined);
 
-    const messageAttributes: MessageAttributes = {
+    const message = new Message(
       messageHash,
-      type: MessageType.Stake,
-      gatewayAddress: stakeRequest.gateway as string,
-      sourceStatus: MessageStatus.Undeclared,
-      targetStatus: MessageStatus.Undeclared,
-      gasPrice: stakeRequest.gasPrice as BigNumber,
-      gasLimit: stakeRequest.gasLimit as BigNumber,
-      nonce: stakeRequest.nonce as BigNumber,
-      sender: stakeRequest.stakerProxy as string,
-      direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: new BigNumber(0),
+      MessageType.Stake,
+      stakeRequest.gateway as string,
+      MessageStatus.Undeclared,
+      MessageStatus.Undeclared,
+      stakeRequest.gasPrice as BigNumber,
+      stakeRequest.gasLimit as BigNumber,
+      stakeRequest.nonce as BigNumber,
+      stakeRequest.stakerProxy as string,
+      MessageDirection.OriginToAuxiliary,
+      new BigNumber(0),
       secret,
       hashLock,
-    };
+    );
 
-    await this.messageRepository.create(messageAttributes);
+    await this.messageRepository.save(message);
 
     return messageHash;
   }

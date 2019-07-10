@@ -14,7 +14,6 @@ import Util from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import assert from "../../test_utils/assert";
 
 chai.use(chaiAsPromised);
 
@@ -87,39 +86,6 @@ describe('MessageRepository::save', (): void => {
     Util.assertMessageAttributes(createdMessage, message);
   });
 
-  it('Throws if a message '
-    + 'with the same message hash already exists.', async (): Promise<void> => {
-    const message = new Message(
-      messageHash,
-      type,
-      gatewayAddress,
-      sourceStatus,
-      targetStatus,
-      gasPrice,
-      gasLimit,
-      nonce,
-      sender,
-      direction,
-      sourceDeclarationBlockHeight,
-      secret,
-      hashLock,
-      createdAt,
-      updatedAt,
-    );
-
-    await config.repos.messageRepository.save(
-      message,
-    );
-
-    return assert.isRejected(
-      config.repos.messageRepository.save(
-        message,
-      ),
-      /^Failed to create a message*/,
-      'Creation should fail as a message with the same messageHash already exists.',
-    );
-  });
-
   it('should pass when updating Message model', async (): Promise<void> => {
     const message = new Message(
       messageHash,
@@ -150,44 +116,6 @@ describe('MessageRepository::save', (): void => {
     );
 
     Util.assertMessageAttributes(updatedMessage, message);
-  });
-
-  it('Update should fail for a non existing messageHash ', async (): Promise<void> => {
-    const nonExistingMessageHash = '0x00000000000000000000000000000000000000000000000000000000000000222';
-    const message = new Message(
-      messageHash,
-      type,
-      gatewayAddress,
-      sourceStatus,
-      targetStatus,
-      gasPrice,
-      gasLimit,
-      nonce,
-      sender,
-      direction,
-      sourceDeclarationBlockHeight,
-      secret,
-      hashLock,
-      createdAt,
-      updatedAt,
-    );
-    const updated = await config.repos.messageRepository.save(
-      message,
-    );
-
-    assert.isNotOk(
-      updated,
-      'The messageHash in the passed attributes does not exist, hence no update.',
-    );
-
-    const updatedMessage = await config.repos.messageRepository.get(
-      nonExistingMessageHash,
-    );
-
-    return assert.strictEqual(
-      updatedMessage,
-      null,
-    );
   });
 
 });

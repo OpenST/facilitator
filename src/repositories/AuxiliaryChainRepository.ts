@@ -189,9 +189,9 @@ export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
       auxiliaryChainModel.ostCoGatewayAddress,
       auxiliaryChainModel.anchorAddress,
       auxiliaryChainModel.coAnchorAddress,
-      auxiliaryChainModel.lastProcessedBlockNumber,
-      auxiliaryChainModel.lastOriginBlockHeight,
-      auxiliaryChainModel.lastAuxiliaryBlockHeight,
+      new BigNumber(auxiliaryChainModel.lastProcessedBlockNumber),
+      new BigNumber(auxiliaryChainModel.lastOriginBlockHeight),
+      new BigNumber(auxiliaryChainModel.lastAuxiliaryBlockHeight),
       auxiliaryChainModel.createdAt,
       auxiliaryChainModel.updatedAt,
     );

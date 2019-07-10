@@ -7,7 +7,6 @@ import Util from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import assert from "../../test_utils/assert";
 
 chai.use(chaiAsPromised);
 
@@ -69,35 +68,6 @@ describe('AuxiliaryChainRepository::save', (): void => {
     Util.assertAuxiliaryChainAttributes(createdAuxiliaryChain, auxiliaryChain);
   });
 
-  it('Throws if an auxiliaryChain '
-    + 'with the same chainId already exists.', async (): Promise<void> => {
-    const auxiliaryChain = new AuxiliaryChain(
-      chainId,
-      originChainName,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
-      anchorAddress,
-      coAnchorAddress,
-      lastProcessedBlockNumber,
-      lastOriginBlockHeight,
-      lastAuxiliaryBlockHeight,
-      createdAt,
-      updatedAt,
-    );
-
-    await config.repos.auxiliaryChainRepository.save(
-      auxiliaryChain,
-    );
-
-    assert.isRejected(
-      config.repos.auxiliaryChainRepository.save(
-        auxiliaryChain,
-      ),
-      /^Failed to create an AuxiliaryChain*/,
-      'Creation should fail as an AuxiliaryChain with the same chainId already exists.',
-    );
-  });
-
   it('should pass when updating AuxiliaryChain model', async (): Promise<void> => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
@@ -124,40 +94,6 @@ describe('AuxiliaryChainRepository::save', (): void => {
     );
 
     Util.assertAuxiliaryChainAttributes(updatedAuxiliaryChain, auxiliaryChain);
-  });
-
-  it('Update should fail for a non existing chainId ', async (): Promise<void> => {
-    const nonExistingChainId = 21;
-    const auxiliaryChain = new AuxiliaryChain(
-      chainId,
-      originChainName,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
-      anchorAddress,
-      coAnchorAddress,
-      lastProcessedBlockNumber,
-      lastOriginBlockHeight,
-      lastAuxiliaryBlockHeight,
-      createdAt,
-      updatedAt,
-    );
-    const updated = await config.repos.auxiliaryChainRepository.save(
-      auxiliaryChain,
-    );
-
-    assert.isNotOk(
-      updated,
-      'The chainId in the passed attributes does not exist, hence no update.',
-    );
-
-    const updatedAuxiliaryChain = await config.repos.auxiliaryChainRepository.get(
-      nonExistingChainId,
-    );
-
-    return assert.strictEqual(
-      updatedAuxiliaryChain,
-      null,
-    );
   });
 
 });

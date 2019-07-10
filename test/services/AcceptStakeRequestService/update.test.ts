@@ -21,12 +21,11 @@ import * as sinon from 'sinon';
 import StakeRequest from '../../../src/models/StakeRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import {
-  Message,
-  MessageAttributes,
   MessageDirection,
   MessageStatus,
   MessageType,
 } from '../../../src/repositories/MessageRepository';
+import Message from '../../../src/models/Message';
 import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
 import assert from '../../test_utils/assert';
 
@@ -90,22 +89,26 @@ describe('AcceptStakeRequestService::update', (): void => {
       hashLock: config.fakeData.hashLock,
     });
 
-    const messageAttributes: MessageAttributes = {
-      messageHash: config.stakeRequestWithMessageHashB.messageHash as string,
-      type: MessageType.Stake,
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      sourceStatus: MessageStatus.Declared,
-      targetStatus: MessageStatus.Undeclared,
-      gasPrice: new BigNumber('1'),
-      gasLimit: new BigNumber('1'),
-      nonce: new BigNumber('1'),
-      sender: '0x0000000000000000000000000000000000000002',
-      direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: new BigNumber('1'),
-    };
+    const message = new Message(
+      config.stakeRequestWithMessageHashB.messageHash as string,
+      MessageType.Stake,
+      '0x0000000000000000000000000000000000000001',
+      MessageStatus.Declared,
+      MessageStatus.Undeclared,
+      new BigNumber('1'),
+      new BigNumber('1'),
+      new BigNumber('1'),
+      '0x0000000000000000000000000000000000000002',
+      MessageDirection.OriginToAuxiliary,
+      new BigNumber('1'),
+      '0x00000000000000000000000000000000000000000000000000000000000000001',
+      '0x00000000000000000000000000000000000000000000000000000000000000002',
+      new Date(),
+      new Date(),
+  );
 
-    await config.repos.messageRepository.create(
-      messageAttributes,
+    await config.repos.messageRepository.save(
+      message,
     );
 
     await config.repos.stakeRequestRepository.save(

@@ -11,7 +11,6 @@ import Util from './util';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import assert from "../../test_utils/assert";
 
 chai.use(chaiAsPromised);
 
@@ -73,35 +72,6 @@ let updatedAt: Date;
     Util.assertGatewayAttributes(createdGateway, gateway);
   });
 
-  it('Throws if a gateway '
-    + 'with the same gateway address already exists.', async (): Promise<void> => {
-    const gateway = new Gateway(
-      gatewayAddress,
-      chainId,
-      gatewayType,
-      remoteGatewayAddress,
-      tokenAddress,
-      anchorAddress,
-      bounty,
-      activation,
-      lastRemoteGatewayProvenBlockHeight,
-      createdAt,
-      updatedAt,
-    );
-
-    await config.repos.gatewayRepository.save(
-      gateway,
-    );
-
-    return assert.isRejected(
-      config.repos.gatewayRepository.save(
-        gateway,
-      ),
-      /^Failed to create a gateway*/,
-      'Creation should fail as a gateway with the same gateway address already exists.',
-    );
-  });
-
   it('should pass when updating Gateway model', async (): Promise<void> => {
     const gateway = new Gateway(
       gatewayAddress,
@@ -128,40 +98,6 @@ let updatedAt: Date;
     );
 
     Util.assertGatewayAttributes(updatedGateway, gateway);
-  });
-
-  it('Update should fail for a non existing gateway ', async (): Promise<void> => {
-    const nonExistingGatewayAddress = '0x0000000000000000000000000000000000000011';
-    const gateway = new Gateway(
-      nonExistingGatewayAddress,
-      chainId,
-      gatewayType,
-      remoteGatewayAddress,
-      tokenAddress,
-      anchorAddress,
-      bounty,
-      activation,
-      lastRemoteGatewayProvenBlockHeight,
-      createdAt,
-      updatedAt,
-    );
-    const updated = await config.repos.gatewayRepository.save(
-      gateway,
-    );
-
-    assert.isNotOk(
-      updated,
-      'The gateway address in the passed attributes does not exist, hence no update.',
-    );
-
-    const updatedGateway = await config.repos.gatewayRepository.get(
-      nonExistingGatewayAddress,
-    );
-
-    return assert.strictEqual(
-      updatedGateway,
-      null,
-    );
   });
 
 });
