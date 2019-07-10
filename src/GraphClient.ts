@@ -80,6 +80,12 @@ export default class GraphClient {
     return querySubscriber;
   }
 
+  /**
+   * This method updates latest timestamp for contract entities.
+   * @param transactions Transactions for transaction fetcher.
+   * @param subscriptionResponse Subscription response.
+   * @param contractEntityRepository Instance of contract entity repository.
+   */
   private static async updateLatestUTS(
     transactions: Record<string, Record<string, any>>,
     subscriptionResponse: Record<string, any[]>,
