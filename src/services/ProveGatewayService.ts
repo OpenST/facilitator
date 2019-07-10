@@ -72,7 +72,6 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId)
       .map(
         async (auxiliaryChain): Promise<{
-          success: boolean;
           transactionHash: string;
           message: string;
         }> => (
@@ -94,7 +93,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
    */
   public async proveGateway(
     blockHeight: BigNumber,
-  ): Promise<{success: boolean; transactionHash: string; message: string}> {
+  ): Promise<{ transactionHash: string; message: string}> {
     const gatewayRecord = await this.gatewayRepository.get(this.gatewayAddress);
     if (gatewayRecord === null) {
       Logger.error(`Gateway record record doesnot exists for gateway ${this.gatewayAddress}`);
@@ -112,7 +111,6 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       );
       return Promise.resolve(
         {
-          success: true,
           transactionHash: '',
           message: 'There are no pending messages for this gateway.',
         },
@@ -141,7 +139,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     );
 
     Logger.info(`Prove gateway transaction hash ${transactionHash}`);
-    return { success: true, transactionHash, message: 'Gateway successfully proven' };
+    return { transactionHash, message: 'Gateway successfully proven' };
   }
 
   /**

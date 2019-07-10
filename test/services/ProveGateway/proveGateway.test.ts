@@ -101,11 +101,7 @@ describe('ProveGatewayService.proveGateway()', () => {
       1,
       [[fakeRawTransaction, { from: auxiliaryWorkerAddress, gasPrice: AUXILIARY_GAS_PRICE }]],
     );
-    assert.strictEqual(
-      response.success,
-      true,
-      'Success must be true',
-    );
+
     assert.strictEqual(
       response.message,
       'Gateway successfully proven',
@@ -198,11 +194,6 @@ describe('ProveGatewayService.proveGateway()', () => {
       [[blockNumber, gatewayAddress]],
     );
 
-    assert.strictEqual(
-      response.success,
-      true,
-      'Success must be true',
-    );
     assert.strictEqual(
       response.message,
       'There are no pending messages for this gateway.',
