@@ -1,4 +1,3 @@
-import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import {
@@ -22,7 +21,7 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('Gateway::get', (): void => {
-  let message: Message;
+  let gateway: Gateway;
 
   beforeEach(async (): Promise<void> => {
     config = {
@@ -40,7 +39,7 @@ describe('Gateway::get', (): void => {
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    message = new Gateway(
+    gateway = new Gateway(
       gatewayAddress,
       chainId,
       gatewayType,
@@ -54,16 +53,16 @@ describe('Gateway::get', (): void => {
       updatedAt,
     );
     await config.repos.gatewayRepository.save(
-      message,
+      gateway,
     );
   });
 
   it('should pass when retrieving Gateway model', async (): Promise<void> => {
     const getResponse = await config.repos.gatewayRepository.get(
-      message.gatewayAddress,
+      gateway.gatewayAddress,
     );
 
-    Util.assertGatewayAttributes(getResponse as Gateway, message);
+    Util.assertGatewayAttributes(getResponse as Gateway, gateway);
   });
 
   it('should return null when querying for non-existing '

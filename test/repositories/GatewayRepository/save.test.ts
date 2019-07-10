@@ -1,4 +1,3 @@
-import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import Repositories from '../../../src/repositories/Repositories';
