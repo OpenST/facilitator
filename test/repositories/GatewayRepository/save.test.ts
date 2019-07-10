@@ -21,18 +21,17 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('GatewayRepository::save', (): void => {
-
-let gatewayAddress: string;
-let chainId: number;
-let gatewayType: string;
-let remoteGatewayAddress: string;
-let tokenAddress: string;
-let anchorAddress: string;
-let bounty: BigNumber;
-let activation: boolean;
-let lastRemoteGatewayProvenBlockHeight: BigNumber;
-let createdAt: Date;
-let updatedAt: Date;
+  let gatewayAddress: string;
+  let chainId: number;
+  let gatewayType: string;
+  let remoteGatewayAddress: string;
+  let tokenAddress: string;
+  let anchorAddress: string;
+  let bounty: BigNumber;
+  let activation: boolean;
+  let lastRemoteGatewayProvenBlockHeight: BigNumber;
+  let createdAt: Date;
+  let updatedAt: Date;
 
   beforeEach(async (): Promise<void> => {
     config = {
@@ -99,5 +98,4 @@ let updatedAt: Date;
 
     Util.assertGatewayAttributes(updatedGateway, gateway);
   });
-
 });

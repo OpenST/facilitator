@@ -24,7 +24,7 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('MessageRepository::save', (): void => {
-  let messageHash:  string;
+  let messageHash: string;
   let type: string;
   let gatewayAddress: string;
   let sourceStatus: string;
@@ -117,5 +117,4 @@ describe('MessageRepository::save', (): void => {
 
     Util.assertMessageAttributes(updatedMessage, message);
   });
-
 });

@@ -1,5 +1,5 @@
 import assert from '../../test_utils/assert';
-import Gateway from "../../../src/models/Gateway";
+import Gateway from '../../../src/models/Gateway';
 
 const Util = {
   assertGatewayAttributes(
@@ -60,7 +60,7 @@ const Util = {
         expectedGateway.lastRemoteGatewayProvenBlockHeight,
         'lastRemoteGatewayProvenBlockHeight should match',
       );
-    };
+    }
 
     if (inputGateway.createdAt && expectedGateway.createdAt) {
       assert.strictEqual(
@@ -68,7 +68,7 @@ const Util = {
         expectedGateway.createdAt.getTime(),
         'Expected created at time is different than the one received in response',
       );
-    };
+    }
 
     assert.isNotNull(
       inputGateway.updatedAt,

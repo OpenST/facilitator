@@ -23,9 +23,9 @@ import {
   MessageType, MessageStatus, MessageDirection, MessageRepository,
 } from '../repositories/MessageRepository';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
+import Message from '../models/Message';
 
 import assert = require('assert');
-import Message from "../models/Message";
 
 const web3utils = require('web3-utils');
 

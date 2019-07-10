@@ -64,7 +64,7 @@ const Util = {
         expectedAuxiliaryChain.lastAuxiliaryBlockHeight,
         'lastAuxiliaryBlockHeight should match',
       );
-    };
+    }
 
     if (inputAuxiliaryChain.createdAt && expectedAuxiliaryChain.createdAt) {
       assert.strictEqual(
@@ -72,7 +72,7 @@ const Util = {
         expectedAuxiliaryChain.createdAt.getTime(),
         'Expected created at time is different than the one received in response',
       );
-    };
+    }
 
     assert.isNotNull(
       inputAuxiliaryChain.updatedAt,

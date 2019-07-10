@@ -17,7 +17,6 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('AuxiliaryChainRepository::save', (): void => {
-
   let chainId: number;
   let originChainName: string;
   let ostGatewayAddress: string;
@@ -40,9 +39,9 @@ describe('AuxiliaryChainRepository::save', (): void => {
     ostCoGatewayAddress = '0x0000000000000000000000000000000000000002';
     anchorAddress = '0x0000000000000000000000000000000000000003';
     coAnchorAddress = '0x0000000000000000000000000000000000000004';
-    lastProcessedBlockNumber = new BigNumber("100");
-    lastOriginBlockHeight = new BigNumber("200");
-    lastAuxiliaryBlockHeight = new BigNumber("50");
+    lastProcessedBlockNumber = new BigNumber('100');
+    lastOriginBlockHeight = new BigNumber('200');
+    lastAuxiliaryBlockHeight = new BigNumber('50');
     createdAt = new Date();
     updatedAt = new Date();
   });
@@ -95,5 +94,4 @@ describe('AuxiliaryChainRepository::save', (): void => {
 
     Util.assertAuxiliaryChainAttributes(updatedAuxiliaryChain, auxiliaryChain);
   });
-
 });

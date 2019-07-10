@@ -53,7 +53,7 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
     lastOriginBlockHeight: BigNumber,
     lastAuxiliaryBlockHeight: BigNumber,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
   ) {
     super();
     this.chainId = chainId;

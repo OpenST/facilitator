@@ -29,9 +29,9 @@ describe('AuxiliaryChain::get', (): void => {
     const ostCoGatewayAddress = '0x0000000000000000000000000000000000000002';
     const anchorAddress = '0x0000000000000000000000000000000000000003';
     const coAnchorAddress = '0x0000000000000000000000000000000000000004';
-    const lastProcessedBlockNumber = new BigNumber("100");
-    const lastOriginBlockHeight = new BigNumber("200");
-    const lastAuxiliaryBlockHeight = new BigNumber("50");
+    const lastProcessedBlockNumber = new BigNumber('100');
+    const lastOriginBlockHeight = new BigNumber('200');
+    const lastAuxiliaryBlockHeight = new BigNumber('50');
     const createdAt = new Date();
     const updatedAt = new Date();
 

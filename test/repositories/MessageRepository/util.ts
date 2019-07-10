@@ -87,7 +87,7 @@ const Util = {
         expectedMessage.secret,
         'secret should match',
       );
-    };
+    }
 
     if (inputMessage.createdAt && expectedMessage.createdAt) {
       assert.strictEqual(
@@ -95,7 +95,7 @@ const Util = {
         expectedMessage.createdAt.getTime(),
         'Expected created at time is different than the one received in response',
       );
-    };
+    }
 
     assert.isNotNull(
       inputMessage.updatedAt,

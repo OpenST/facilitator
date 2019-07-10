@@ -105,7 +105,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       '0x00000000000000000000000000000000000000000000000000000000000000002',
       new Date(),
       new Date(),
-  );
+    );
 
     await config.repos.messageRepository.save(
       message,

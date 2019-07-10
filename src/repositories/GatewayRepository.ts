@@ -4,8 +4,8 @@ import {
 import BigNumber from 'bignumber.js';
 import Subject from '../observer/Subject';
 
-import Gateway from "../models/Gateway";
-import Utils from "../Utils";
+import Gateway from '../models/Gateway';
+import Utils from '../Utils';
 
 /**
  * An interface, that represents a row from a gateways table.
@@ -181,11 +181,12 @@ export class GatewayRepository extends Subject<Gateway> {
   /* Private Functions */
 
   /**
-   * It converts GatewayModel object to Gateway object.
+   * It converts Gateway db object to Gateway model object.
    *
    * @param gatewayModel GatewayModel object to convert.
    * @returns Gateway object.
    */
+  /* eslint-disable class-methods-use-this */
   private convertToGateway(gatewayModel: GatewayModel): Gateway {
     return new Gateway(
       gatewayModel.gatewayAddress,

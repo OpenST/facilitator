@@ -1,11 +1,11 @@
 import {
-  DataTypes, Model, InitOptions
+  DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
 import Subject from '../observer/Subject';
 
-import Utils from "../Utils";
-import Message from "../models/Message";
+import Utils from '../Utils';
+import Message from '../models/Message';
 
 /**
  * An interface, that represents a row from a messages table.
@@ -70,7 +70,7 @@ export enum MessageDirection {
  * Class enables creation, update and retrieval of Message objects.
  * On construction it initializes underlying database model.
  */
-export class MessageRepository  extends Subject<Message> {
+export class MessageRepository extends Subject<Message> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -217,11 +217,11 @@ export class MessageRepository  extends Subject<Message> {
    * @returns Message object containing values which satisfy the `where` condition.
    */
   public async get(messageHash: string): Promise<Message | null> {
-      const messageModel = await MessageModel.findOne({
-        where: {
-         messageHash,
-        },
-      });
+    const messageModel = await MessageModel.findOne({
+      where: {
+        messageHash,
+      },
+    });
 
     if (messageModel === null) {
       return null;
@@ -233,12 +233,13 @@ export class MessageRepository  extends Subject<Message> {
   /* Private Functions */
 
   /**
-   * It converts MessageModel object to Message object.
+   * It converts Message db object to Message model object.
    *
    * @param messageModel MessageModel object to convert.
    *
    * @returns Message object.
    */
+  /* eslint-disable class-methods-use-this */
   private convertToMessage(messageModel: MessageModel): Message {
     return new Message(
       messageModel.messageHash,

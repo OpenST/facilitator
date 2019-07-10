@@ -1,10 +1,10 @@
 import {
-  DataTypes, Model, InitOptions
+  DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
 import Subject from '../observer/Subject';
-import Utils from "../Utils";
-import AuxiliaryChain from "../models/AuxiliaryChain";
+import Utils from '../Utils';
+import AuxiliaryChain from '../models/AuxiliaryChain';
 
 /**
  * An interface, that represents a row from a auxiliary_chains table.
@@ -39,7 +39,7 @@ class AuxiliaryChainModel extends Model {
  * Class enables creation, update and retrieval of AuxiliaryChain objects.
  * On construction it initializes underlying database model.
  */
-export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
+export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -175,12 +175,13 @@ export class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
   /* Private Functions */
 
   /**
-   * It converts AuxiliaryChainModel object to AuxiliaryChain object.
+   * It converts AuxiliaryChain db object to AuxiliaryChain model object.
    *
    * @param auxiliaryChainModel AuxiliaryChainModel object to convert.
    *
    * @returns AuxiliaryChain object.
    */
+  /* eslint-disable class-methods-use-this */
   private convertToAuxiliaryChain(auxiliaryChainModel: AuxiliaryChainModel): AuxiliaryChain {
     return new AuxiliaryChain(
       auxiliaryChainModel.chainId,
