@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import { MosaicConfig } from './MosaicConfig';
 import Directory from './Directory';
-import InvalidFacilitatorConfigException from './Exception';
+import { InvalidFacilitatorConfigException } from './Exception';
 import * as schema from './Config/FacilitatorConfig.schema.json';
 import Utils from './Utils';
 
