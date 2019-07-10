@@ -251,7 +251,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     SpyAssert.assert(facilitatorSpy, 1, [[auxChain]]);
     assert.strictEqual(
       configObj.facilitator,
-      facilitator,
+      facilitator as any,
       'invalid facilitator object',
     );
     assert.strictEqual(
@@ -283,7 +283,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     );
     assert.strictEqual(
       config.facilitator,
-      facilitator,
+      facilitator as any,
       'invalid facilitator object',
     );
 
@@ -293,8 +293,14 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   });
 
   it('should pass when facilitator config and mosaic config is provided', () => {
-    const mosaic = sinon.createStubInstance(MosaicConfig);
+    const configJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
+    const mosaic = JSON.parse(configJson) as MosaicConfig;
+    // const mosaic = sinon.createStubInstance(MosaicConfig);
     const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    facilitator.originChain = '2';
+    // mosaic.originChain = new OriginChain();
+    // mosaic.originChain.chain = '12346';
+    facilitator.auxChainId = '3';
     const configSpy = spyConfigFromPath(mosaic, facilitator);
     const fs: FacilitatorStart = new FacilitatorStart(
       undefined as any,
@@ -313,8 +319,57 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     );
     assert.strictEqual(
       config.facilitator,
-      facilitator,
+      facilitator as any,
       'Invalid mosaic object',
+    );
+
+    configSpy.restore();
+    sinon.restore();
+  });
+
+  it('should fail when facilitator config and mosaic config is provided but origin chain doesn\'t match', () => {
+    const configJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
+    const mosaic = JSON.parse(configJson) as MosaicConfig;
+    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    facilitator.originChain = '5';
+
+    facilitator.auxChainId = '3';
+    const configSpy = spyConfigFromPath(mosaic, facilitator);
+    const fs: FacilitatorStart = new FacilitatorStart(
+      undefined as any,
+      undefined as any,
+      mosaicConfigPath,
+      facilitatorConfigPath,
+    );
+
+    assert.throws(
+      () => fs.getConfig(),
+      'origin chain id in mosaic config is different than the one provided'
+    );
+
+    configSpy.restore();
+    sinon.restore();
+  });
+
+it('should fail when facilitator config and mosaic config is provided but auxiliary ' +
+  'id doesn\'t match', () => {
+    const configJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
+    const mosaic = JSON.parse(configJson) as MosaicConfig;
+    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    facilitator.originChain = '5';
+
+    facilitator.auxChainId = '3';
+    const configSpy = spyConfigFromPath(mosaic, facilitator);
+    const fs: FacilitatorStart = new FacilitatorStart(
+      undefined as any,
+      undefined as any,
+      mosaicConfigPath,
+      facilitatorConfigPath,
+    );
+
+    assert.throws(
+      () => fs.getConfig(),
+      'origin chain id in mosaic config is different than the one provided'
     );
 
     configSpy.restore();

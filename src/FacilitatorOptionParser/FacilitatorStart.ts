@@ -93,6 +93,9 @@ export default class FacilitatorStart {
     // When no origin and aux chain provided.
     if (this.mosaicConfigPath) {
       configObj = Config.fromFile(this.mosaicConfigPath, this.facilitatorConfigPath);
+      this.originChain = configObj.facilitator.originChain;
+      this.auxChainId = configObj.facilitator.auxChainId;
+      this.verifyChainIdInMosaicConfig(configObj.mosaic);
     } else {
       const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromFile(
         this.facilitatorConfigPath,

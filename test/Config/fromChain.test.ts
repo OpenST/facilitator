@@ -10,7 +10,7 @@ describe('Config.fromChain()', () => {
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    const facilitator = sinon.fake(FacilitatorConfig);
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,
@@ -29,7 +29,7 @@ describe('Config.fromChain()', () => {
     SpyAssert.assert(facilitatorConfigSpy, 1, [[auxChain]]);
     assert.strictEqual(
       config.facilitator,
-      facilitator,
+      facilitator as any,
       'Facilitator object is different',
     );
     assert.strictEqual(

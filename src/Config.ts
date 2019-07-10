@@ -53,6 +53,15 @@ export class Chain {
 
   /** Worker address. */
   public worker?: string;
+
+  public constructor(
+    rpc: string,
+    worker: string
+  )
+  {
+    this.rpc = rpc;
+    this.worker = worker;
+  }
 }
 
 /**
@@ -60,6 +69,8 @@ export class Chain {
  */
 export class FacilitatorConfig {
   public originChain: string;
+
+  public auxChainId: string;
 
   public database: DBConfig;
 
@@ -73,9 +84,29 @@ export class FacilitatorConfig {
    */
   private constructor(config: any) {
     this.originChain = config.originChain || '';
+    this.auxChainId = config.auxChainId || '';
     this.database = config.database || new DBConfig();
-    this.chains = config.chains || {};
     this.encryptedAccounts = config.encryptedAccounts || {};
+    this.assignDerivedParams = this.assignDerivedParams.bind(this);
+    this.assignDerivedParams(config);
+  }
+
+  /**
+   * Assigns derived parameters.
+   * @param config JSON config object.
+   */
+  private assignDerivedParams(config: any) {
+    const chains = config.chains || {};
+    Object.keys(chains).forEach(async (identifier, _) => {
+      this.chains[identifier] = new Chain(
+        chains[identifier].rpc,
+        chains[identifier].worker,
+      );
+      // we have only 2 chains in config
+      if (identifier !== this.originChain) {
+        this.auxChainId = identifier;
+      }
+    });
   }
 
   /**
