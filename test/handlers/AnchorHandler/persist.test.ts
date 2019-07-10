@@ -3,7 +3,7 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 
 import BigNumber from 'bignumber.js';
-import { AuxiliaryChainRepository } from '../../../src/repositories/AuxiliaryChainRepository';
+import AuxiliaryChainRepository from '../../../src/repositories/AuxiliaryChainRepository';
 
 import SpyAssert from '../../test_utils/SpyAssert';
 import AnchorHandler from '../../../src/handlers/AnchorHandler';
@@ -32,7 +32,7 @@ describe('AnchorHandler.persist()', () => {
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
       {
-        update: update as any,
+        save: update as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
     const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
@@ -56,7 +56,7 @@ describe('AnchorHandler.persist()', () => {
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
       {
-        update: update as any,
+        save: update as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
     const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
@@ -76,7 +76,7 @@ describe('AnchorHandler.persist()', () => {
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
       {
-        update: update as any,
+        save: update as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
     const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
@@ -96,7 +96,7 @@ describe('AnchorHandler.persist()', () => {
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
       {
-        update: update as any,
+        save: update as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
     const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
