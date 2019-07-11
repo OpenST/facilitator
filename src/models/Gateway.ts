@@ -7,7 +7,7 @@ import Comparable from '../observer/Comparable';
 export default class Gateway extends Comparable<Gateway> {
   public gatewayAddress: string;
 
-  public chainId?: number;
+  public chain?: string;
 
   public gatewayType?: string;
 
@@ -31,7 +31,7 @@ export default class Gateway extends Comparable<Gateway> {
    * Constructor to set fields of Gateway model.
    *
    * @param gatewayAddress Address of the gateway contract.
-   * @param chainId Chain identifier.
+   * @param chain Chain identifier.
    * @param gatewayType Type of gateway origin/auxiliary.
    * @param remoteGatewayAddress Gateway contract address of remote chain.
    * @param tokenAddress The ERC20 token contract address that will be staked and corresponding
@@ -46,7 +46,7 @@ export default class Gateway extends Comparable<Gateway> {
    */
   public constructor(
     gatewayAddress: string,
-    chainId?: number,
+    chain?: string,
     gatewayType?: string,
     remoteGatewayAddress?: string,
     tokenAddress?: string,
@@ -59,7 +59,7 @@ export default class Gateway extends Comparable<Gateway> {
   ) {
     super();
     this.gatewayAddress = gatewayAddress;
-    this.chainId = chainId;
+    this.chain = chain;
     this.gatewayType = gatewayType;
     this.remoteGatewayAddress = remoteGatewayAddress;
     this.tokenAddress = tokenAddress;
