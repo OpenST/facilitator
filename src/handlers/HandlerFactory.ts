@@ -18,7 +18,7 @@ import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
 import ProveGatewayHandler from "./ProveGatewayHandler";
 import StakeRequestedHandler from "./StakeRequestHandler";
-import {HandlerTypes} from "../types";
+//import {HandlerTypes} from "../types";
 
 
 export default class HandlerFactory {
@@ -28,17 +28,22 @@ export default class HandlerFactory {
    *
    * @return Different kinds of transaction handlers.
    */
-  public static get(repos: Repositories): HandlerTypes {
+  public static get(repos: Repositories): {
+    stakeRequesteds: StakeRequestedHandler;
+    stateRootAvailables: AnchorHandler,
+    gatewayProvens: ProveGatewayHandler
+  }
+    {
     return {
       stakeRequesteds: new StakeRequestedHandler(
         repos.stakeRequestRepository,
       ),
-      anchor: new AnchorHandler(
+      stateRootAvailables: new AnchorHandler(
         repos.auxiliaryChainRepository,
       1243,
       ),
       gatewayProvens: new ProveGatewayHandler(
-        repos.messageRepository,
+        repos.gatewayRepository,
       ),
     };
   }

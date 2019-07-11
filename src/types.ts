@@ -18,6 +18,6 @@ export interface SubscriptionInfo {
 };
 export interface HandlerTypes {
   stakeRequesteds: StakeRequestedHandler,
+  stateRootAvailables: AnchorHandler,
   gatewayProvens: ProveGatewayHandler,
-  anchor: AnchorHandler,
 };

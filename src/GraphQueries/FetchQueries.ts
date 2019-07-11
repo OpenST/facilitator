@@ -54,7 +54,8 @@ const FetchQueries: Record<string, string> = {
 
   gatewayProvens: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'gatewayProvens(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'gatewayProvens(skip: $skip, first:$limit, order: $uts, orderDirection: asc, where:' +
+  ' {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'
