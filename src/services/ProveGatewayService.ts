@@ -88,8 +88,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   ): Promise<{ transactionHash: string; message: string}> {
     const gatewayRecord = await this.gatewayRepository.get(this.gatewayAddress);
     if (gatewayRecord === null) {
-      Logger.error(`Gateway record record doesnot exists for gateway ${this.gatewayAddress}`);
-      return Promise.reject(new Error('Gateway record record doesnot exists for given gateway'));
+      return Promise.reject(new Error('Gateway record does not exist for given gateway'));
     }
 
     const pendingMessages = await this.messageRepository.hasPendingOriginMessages(

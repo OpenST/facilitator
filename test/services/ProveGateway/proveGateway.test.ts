@@ -132,7 +132,7 @@ describe('ProveGatewayService.proveGateway()', () => {
       proveGatewayService.proveGateway(
         blockNumber,
       ),
-      'Gateway record record doesnot exists for given gateway',
+      'Gateway record does not exist for given gateway',
       'It must fail if gatway record does not exists.',
     );
     sinon.restore();
