@@ -22,7 +22,7 @@ let config: TestConfigInterface;
 
 describe('GatewayRepository::save', (): void => {
   let gatewayAddress: string;
-  let chainId: number;
+  let chain: string;
   let gatewayType: string;
   let remoteGatewayAddress: string;
   let tokenAddress: string;
@@ -38,7 +38,7 @@ describe('GatewayRepository::save', (): void => {
       repos: await Repositories.create(),
     };
     gatewayAddress = '0x0000000000000000000000000000000000000001';
-    chainId = 1;
+    chain = '1';
     gatewayType = GatewayType.Auxiliary;
     remoteGatewayAddress = '0x0000000000000000000000000000000000000002';
     tokenAddress = '0x0000000000000000000000000000000000000003';
@@ -53,7 +53,7 @@ describe('GatewayRepository::save', (): void => {
   it('should pass when creating Gateway model.', async (): Promise<void> => {
     const gateway = new Gateway(
       gatewayAddress,
-      chainId,
+      chain,
       gatewayType,
       remoteGatewayAddress,
       tokenAddress,
@@ -74,7 +74,7 @@ describe('GatewayRepository::save', (): void => {
   it('should pass when updating Gateway model', async (): Promise<void> => {
     const gateway = new Gateway(
       gatewayAddress,
-      chainId,
+      chain,
       gatewayType,
       remoteGatewayAddress,
       tokenAddress,
