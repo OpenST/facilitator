@@ -1,7 +1,7 @@
 const EntityGraphQueries: Record<string, string> = {
   stakeRequesteds: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'stakeRequesteds(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'stakeRequesteds(skip: $skip, first:$limit, orderBy: uts, orderDirection: asc, where: {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'
@@ -22,7 +22,7 @@ const EntityGraphQueries: Record<string, string> = {
 
   stakeIntentDeclareds: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'stakeIntentDeclareds(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'stakeIntentDeclareds(skip: $skip, first:$limit, orderBy: uts, orderDirection: asc, where: {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'
@@ -43,7 +43,7 @@ const EntityGraphQueries: Record<string, string> = {
 
   stateRootAvailables: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'stateRootAvailables(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'stateRootAvailables(skip: $skip, first:$limit, orderBy: uts, orderDirection: asc, where: {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'
@@ -64,7 +64,7 @@ const EntityGraphQueries: Record<string, string> = {
 
   stakeIntentConfirmeds: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'stakeIntentConfirmeds(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'stakeIntentConfirmeds(skip: $skip, first:$limit, orderBy: uts, orderDirection: asc, where: {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'
@@ -85,7 +85,7 @@ const EntityGraphQueries: Record<string, string> = {
 
   gatewayProvens: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'gatewayProvens(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'gatewayProvens(skip: $skip, first:$limit, orderBy: uts, orderDirection: asc, where: {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'
@@ -106,7 +106,7 @@ const EntityGraphQueries: Record<string, string> = {
 
   stakeProgresseds: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'stakeProgresseds(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'stakeProgresseds(skip: $skip, first:$limit, orderBy: uts, orderDirection: asc, where: {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'
@@ -127,7 +127,7 @@ const EntityGraphQueries: Record<string, string> = {
 
   mintProgresseds: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'mintProgresseds(skip: $skip, first:$limit, orderDirection: asc, where: {contractAddress:'
+  + 'mintProgresseds(skip: $skip, first:$limit, orderBy: uts, orderDirection: asc, where: {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
   + '    limit: 100) {\n'

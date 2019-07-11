@@ -26,13 +26,13 @@ class ContractEntityModel extends Model {
  * Entity types of origin and aux chain for which timestamp will be recorded.
  */
 export enum EntityType {
-  StakeRequesteds = 'stakerequesteds',
-  StakeIntentDeclareds = 'stakeintentdeclareds',
-  StateRootAvailables = 'staterootavailables',
-  GatewayProvens = 'gatewayprovens',
-  StakeIntentConfirmeds = 'stateintentconfirmeds',
-  StakeProgresseds = 'stakeprogresseds',
-  MintProgresseds = 'mintprogresseds',
+  StakeRequesteds = 'stakeRequesteds',
+  StakeIntentDeclareds = 'stakeIntentDeclareds',
+  StateRootAvailables = 'stateRootAvailables',
+  GatewayProvens = 'gatewayProvens',
+  StakeIntentConfirmeds = 'stateIntentConfirmeds',
+  StakeProgresseds = 'stakeProgresseds',
+  MintProgresseds = 'mintProgresseds',
 }
 
 /**
