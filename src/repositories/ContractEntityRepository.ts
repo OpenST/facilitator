@@ -12,7 +12,7 @@ import Utils from '../Utils';
 export class ContractEntityModel extends Model {
   public readonly contractAddress!: string;
 
-  public readonly entityType!: string;
+  public readonly entityType!: EntityType;
 
   public readonly timestamp!: BigNumber;
 
@@ -57,8 +57,9 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
           primaryKey: true,
         },
         entityType: {
-          type: DataTypes.ENUM({
-            values: [
+          primaryKey: true,
+          type: DataTypes.ENUM,
+          values: [
               EntityType.StakeIntentDeclareds,
               EntityType.StakeRequesteds,
               EntityType.StateRootAvailables,
@@ -66,9 +67,20 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
               EntityType.GatewayProvens,
-            ],
-          }),
-          primaryKey: true,
+          ],
+          validate: {
+            verifyEntityType(value: EntityType) {
+              let present = false;
+              for(let entity in EntityType) {
+                if(EntityType[entity] === value) {
+                  present = true;
+                }
+              }
+              if(present === false) {
+                throw new Error('Invalid entity type');
+              }
+            }
+          }
         },
         timestamp: {
           type: DataTypes.BIGINT,

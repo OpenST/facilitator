@@ -1,5 +1,6 @@
 import 'mocha';
 import BigNumber from 'bignumber.js';
+import assert from '../../test_utils/assert';
 
 import {
   EntityType,
@@ -62,5 +63,20 @@ describe('ContractEntityRepository::save', (): void => {
     );
 
     Util.assertion(updateResponse, contractEntity);
+  });
+
+  it('should fail when invalid entity type is to be saved', async (): Promise<void> => {
+    const contractEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000002',
+      'invalid_entity_type' as EntityType,
+      new BigNumber(1),
+      createdAt,
+    );
+
+    assert.isRejected(
+      config.repos.contractEntityRepository.save(contractEntity),
+      'Invalid entity type'
+    );
+
   });
 });

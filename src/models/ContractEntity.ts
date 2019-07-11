@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import Comparable from '../observer/Comparable';
+import { EntityType } from '../repositories/ContractEntityRepository';
 
 /**
  * Represents model object.
@@ -7,7 +8,7 @@ import Comparable from '../observer/Comparable';
 export default class ContractEntity extends Comparable<ContractEntity> {
   public contractAddress: string;
 
-  public entityType: string;
+  public entityType: EntityType;
 
   public timestamp: BigNumber;
 
@@ -25,7 +26,7 @@ export default class ContractEntity extends Comparable<ContractEntity> {
    */
   public constructor(
     contractAddress: string,
-    entityType: string,
+    entityType: EntityType,
     timestamp: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
