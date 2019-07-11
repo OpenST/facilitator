@@ -217,7 +217,8 @@ export class Config {
   }
 
   /**
-   * It provides config object from the path specified.
+   * It provides config object from the path specified. This will throw if
+   * mosaic config path or facilitator config path doesn't exists.
    * @param mosaicConfigPath Path to mosaic config file path.
    * @param facilitatorConfigPath Path to facilitator config file path/
    * @returns Config object consisting of mosaic and facilitator configurations.
@@ -233,7 +234,8 @@ export class Config {
   }
 
   /**
-   * It provides config object from default paths.
+   * It provides config object from default paths. If file does not exist on
+   * default location, it will initialize new config objects.
    * @param originChain Origin chain id.
    * @param  auxiliaryChain Auxiliary chain id.
    * @returns Config object consisting of mosaic and facilitator configurations.
