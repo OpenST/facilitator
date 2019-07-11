@@ -7,29 +7,29 @@ import Comparable from '../observer/Comparable';
 export default class Message extends Comparable<Message> {
   public messageHash: string;
 
-  public type: string;
+  public type?: string;
 
-  public gatewayAddress: string;
+  public gatewayAddress?: string;
 
-  public sourceStatus: string;
+  public sourceStatus?: string;
 
-  public targetStatus: string;
+  public targetStatus?: string;
 
-  public gasPrice: BigNumber;
+  public gasPrice?: BigNumber;
 
-  public gasLimit: BigNumber;
+  public gasLimit?: BigNumber;
 
-  public nonce: BigNumber;
+  public nonce?: BigNumber;
 
-  public sender: string;
+  public sender?: string;
 
-  public direction: string;
+  public direction?: string;
 
-  public sourceDeclarationBlockHeight: BigNumber;
+  public sourceDeclarationBlockHeight?: BigNumber;
 
-  public secret: string;
+  public secret?: string;
 
-  public hashLock: string;
+  public hashLock?: string;
 
   public createdAt?: Date;
 
@@ -56,18 +56,18 @@ export default class Message extends Comparable<Message> {
    */
   public constructor(
     messageHash: string,
-    type: string,
-    gatewayAddress: string,
-    sourceStatus: string,
-    targetStatus: string,
-    gasPrice: BigNumber,
-    gasLimit: BigNumber,
-    nonce: BigNumber,
-    sender: string,
-    direction: string,
-    sourceDeclarationBlockHeight: BigNumber,
-    secret: string,
-    hashLock: string,
+    type?: string,
+    gatewayAddress?: string,
+    sourceStatus?: string,
+    targetStatus?: string,
+    gasPrice?: BigNumber,
+    gasLimit?: BigNumber,
+    nonce?: BigNumber,
+    sender?: string,
+    direction?: string,
+    sourceDeclarationBlockHeight?: BigNumber,
+    secret?: string,
+    hashLock?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {

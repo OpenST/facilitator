@@ -7,21 +7,21 @@ import Comparable from '../observer/Comparable';
 export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
   public chainId: number;
 
-  public originChainName: string;
+  public originChainName?: string;
 
-  public ostGatewayAddress: string;
+  public ostGatewayAddress?: string;
 
-  public ostCoGatewayAddress: string;
+  public ostCoGatewayAddress?: string;
 
-  public anchorAddress: string;
+  public anchorAddress?: string;
 
-  public coAnchorAddress: string;
+  public coAnchorAddress?: string;
 
-  public lastProcessedBlockNumber: BigNumber;
+  public lastProcessedBlockNumber?: BigNumber;
 
-  public lastOriginBlockHeight: BigNumber;
+  public lastOriginBlockHeight?: BigNumber;
 
-  public lastAuxiliaryBlockHeight: BigNumber;
+  public lastAuxiliaryBlockHeight?: BigNumber;
 
   public createdAt?: Date;
 
@@ -44,14 +44,14 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
    */
   public constructor(
     chainId: number,
-    originChainName: string,
-    ostGatewayAddress: string,
-    ostCoGatewayAddress: string,
-    anchorAddress: string,
-    coAnchorAddress: string,
-    lastProcessedBlockNumber: BigNumber,
-    lastOriginBlockHeight: BigNumber,
-    lastAuxiliaryBlockHeight: BigNumber,
+    originChainName?: string,
+    ostGatewayAddress?: string,
+    ostCoGatewayAddress?: string,
+    anchorAddress?: string,
+    coAnchorAddress?: string,
+    lastProcessedBlockNumber?: BigNumber,
+    lastOriginBlockHeight?: BigNumber,
+    lastAuxiliaryBlockHeight?: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
   ) {

@@ -7,21 +7,21 @@ import Comparable from '../observer/Comparable';
 export default class Gateway extends Comparable<Gateway> {
   public gatewayAddress: string;
 
-  public chainId: number;
+  public chainId?: number;
 
-  public gatewayType: string;
+  public gatewayType?: string;
 
-  public remoteGatewayAddress: string;
+  public remoteGatewayAddress?: string;
 
-  public tokenAddress: string;
+  public tokenAddress?: string;
 
-  public anchorAddress: string;
+  public anchorAddress?: string;
 
-  public bounty: BigNumber;
+  public bounty?: BigNumber;
 
-  public activation: boolean;
+  public activation?: boolean;
 
-  public lastRemoteGatewayProvenBlockHeight: BigNumber;
+  public lastRemoteGatewayProvenBlockHeight?: BigNumber;
 
   public createdAt?: Date;
 
@@ -46,14 +46,14 @@ export default class Gateway extends Comparable<Gateway> {
    */
   public constructor(
     gatewayAddress: string,
-    chainId: number,
-    gatewayType: string,
-    remoteGatewayAddress: string,
-    tokenAddress: string,
-    anchorAddress: string,
-    bounty: BigNumber,
-    activation: boolean,
-    lastRemoteGatewayProvenBlockHeight: BigNumber,
+    chainId?: number,
+    gatewayType?: string,
+    remoteGatewayAddress?: string,
+    tokenAddress?: string,
+    anchorAddress?: string,
+    bounty?: BigNumber,
+    activation?: boolean,
+    lastRemoteGatewayProvenBlockHeight?: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
