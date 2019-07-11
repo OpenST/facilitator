@@ -3,16 +3,14 @@ import BigNumber from 'bignumber.js';
 import ProveGatewayService from '../../../src/services/ProveGatewayService';
 import StubData from '../../test_utils/StubData';
 import SpyAssert from '../../test_utils/SpyAssert';
-import {
-  Gateway,
-  GatewayRepository,
-} from '../../../src/repositories/GatewayRepository';
+import GatewayRepository from '../../../src/repositories/GatewayRepository';
 import { MessageRepository } from '../../../src/repositories/MessageRepository';
 import Utils from '../../../src/Utils';
 import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
+import Gateway from "../../../src/models/Gateway";
 chai.use(chaiAsPromised);
 const { assert } = chai;
 

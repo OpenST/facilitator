@@ -1,12 +1,12 @@
 import BigNumber from 'bignumber.js';
 import * as assert from 'assert';
-import { GatewayRepository } from '../repositories/GatewayRepository';
+import GatewayRepository from '../repositories/GatewayRepository';
 import { MessageRepository } from '../repositories/MessageRepository';
 import Logger from '../Logger';
 import Utils from '../Utils';
 import { AUXILIARY_GAS_PRICE } from '../Constants';
 import Observer from '../observer/Observer';
-import { AuxiliaryChain } from '../repositories/AuxiliaryChainRepository';
+import AuxiliaryChain from "../models/AuxiliaryChain";
 
 const Mosaic = require('@openst/mosaic.js');
 
@@ -124,7 +124,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     );
     Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
     const transactionHash = await this.prove(
-      coGateway,
+      coGateway!,
       blockHeight,
       encodedAccountValue,
       serializedAccountProof,

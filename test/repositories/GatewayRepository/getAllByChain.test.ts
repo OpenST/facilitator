@@ -37,13 +37,13 @@ describe('GatewayRepository::getAllByChain', (): void => {
 
   it('should return all gateway by chain', async (): Promise<void> => {
     const chainId = '1234';
-    const firstGateway = StubData.gatewayAttributes(chainId, '0x0000000000000000000000000000000000000002');
-    await config.repos.gatewayRepository.create(
+    const firstGateway = StubData.gatewayRecord(chainId, '0x0000000000000000000000000000000000000002');
+    await config.repos.gatewayRepository.save(
       firstGateway,
     );
 
-    const secondGateway = StubData.gatewayAttributes(chainId, '0x0000000000000000000000000000000000000003');
-    await config.repos.gatewayRepository.create(
+    const secondGateway = StubData.gatewayRecord(chainId, '0x0000000000000000000000000000000000000003');
+    await config.repos.gatewayRepository.save(
       secondGateway,
     );
 
@@ -57,11 +57,11 @@ describe('GatewayRepository::getAllByChain', (): void => {
       'It must return expected number of gateways',
     );
 
-    Util.checkGatewayAgainstAttributes(
+    Util.assertGatewayAttributes(
       gateways[0],
       firstGateway,
     );
-    Util.checkGatewayAgainstAttributes(
+    Util.assertGatewayAttributes(
       gateways[1],
       secondGateway,
     );

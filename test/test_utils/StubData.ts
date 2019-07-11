@@ -1,16 +1,15 @@
 
 import BigNumber from 'bignumber.js';
 import StakeRequest from '../../src/models/StakeRequest';
-import { AuxiliaryChain } from '../../src/repositories/AuxiliaryChainRepository';
+import AuxiliaryChain from '../../src/models/AuxiliaryChain';
+import { GatewayType } from '../../src/repositories/GatewayRepository';
+import Gateway from '../../src/models/Gateway';
 import {
-  Gateway,
-  GatewayAttributes,
-  GatewayType,
-} from '../../src/repositories/GatewayRepository';
-import {
-  MessageAttributes, MessageDirection, MessageStatus,
+  MessageDirection,
+  MessageStatus,
   MessageType,
 } from '../../src/repositories/MessageRepository';
+import Message from "../../src/models/Message";
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
@@ -28,84 +27,73 @@ export default class StubData {
     chainId = 10002,
     lastOriginBlockHeight?: BigNumber,
   ): AuxiliaryChain {
-    return {
-      lastAuxiliaryBlockHeight: undefined,
-      lastOriginBlockHeight,
+    return new AuxiliaryChain(
       chainId,
-      originChainName: '10003',
-      ostGatewayAddress: '0x0000000000000000000000000000000000000001',
-      ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      coAnchorAddress: '0x0000000000000000000000000000000000000004',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-  }
+      '10003',
+      '0x0000000000000000000000000000000000000001',
+      '0x0000000000000000000000000000000000000002',
+      '0x0000000000000000000000000000000000000003',
+      '0x0000000000000000000000000000000000000004',
+      lastOriginBlockHeight,
+      undefined,
+      new Date(),
+      new Date(),
 
-  public static gatewayAttributes(chain = '1234', gatewayAddress = '0x0000000000000000000000000000000000000001'): GatewayAttributes {
-    return {
-      gatewayAddress,
-      chain,
-      gatewayType: GatewayType.Origin,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: new BigNumber('1'),
-      activation: true,
-    };
+    )
   }
 
   public static gatewayRecord(
     chain = '1234',
     gatewayAddress = '0x0000000000000000000000000000000000000001',
   ): Gateway {
-    return {
-      gatewayAddress,
+    return new Gateway
+    (gatewayAddress,
       chain,
-      gatewayType: GatewayType.Origin,
-      remoteGatewayAddress: '0x0000000000000000000000000000000000000002',
-      anchorAddress: '0x0000000000000000000000000000000000000003',
-      tokenAddress: '0x0000000000000000000000000000000000000004',
-      bounty: new BigNumber('1'),
-      activation: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      GatewayType.Origin,
+      '0x0000000000000000000000000000000000000002',
+      '0x0000000000000000000000000000000000000004',
+      '0x0000000000000000000000000000000000000003',
+        new BigNumber('1'),
+      true,
+      new BigNumber('1'),
+       new Date(),
+       new Date()
+      );
   }
 
   public static messageAttributes(
     messageHash = '0x000000000000000000000000000000000000000000000000000001',
     gatewayAddress = '0x0000000000000000000000000000000000000001',
     sourceDeclarationBlockHeight = new BigNumber(1),
-  ): MessageAttributes {
-    return {
+  ): Message {
+    return new Message(
       messageHash,
-      type: MessageType.Stake,
+      MessageType.Stake,
       gatewayAddress,
-      sourceStatus: MessageStatus.Declared,
-      targetStatus: MessageStatus.Undeclared,
-      gasPrice: new BigNumber('1'),
-      gasLimit: new BigNumber('1'),
-      nonce: new BigNumber('1'),
-      sender: '0x0000000000000000000000000000000000000002',
-      direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight,
-    };
+      MessageStatus.Declared,
+      MessageStatus.Undeclared,
+      new BigNumber('1'),
+      new BigNumber('1'),
+      new BigNumber('1'),
+      '0x0000000000000000000000000000000000000002',
+      MessageDirection.OriginToAuxiliary,
+      sourceDeclarationBlockHeight
+    )
   }
 
   public static getAuxiliaryChainRecord = (
     anchorAddress: string = '0x0000000000000000000000000000000000000003',
     lastOriginBlockHeight: BigNumber = new BigNumber('214748364475'),
-  ): AuxiliaryChain => ({
-    chainId: 10001,
-    originChainName: '10001',
-    ostGatewayAddress: '0x0000000000000000000000000000000000000001',
-    ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
+  ): AuxiliaryChain => new AuxiliaryChain(
+    10001,
+    '10001',
+    '0x0000000000000000000000000000000000000001',
+    '0x0000000000000000000000000000000000000002',
     anchorAddress,
-    coAnchorAddress: '0x0000000000000000000000000000000000000004',
-    lastAuxiliaryBlockHeight: new BigNumber('214748364475'),
+    '0x0000000000000000000000000000000000000004',
     lastOriginBlockHeight,
-    createdAt: new Date(10),
-    updatedAt: new Date(10),
-  })
+    new BigNumber('2000'),
+    new Date(10),
+    new Date(10)
+  )
 }
