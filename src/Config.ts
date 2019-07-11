@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import MosaicConfig from './MosaicConfig';
 import Directory from './Directory';
-import InvalidFacilitatorConfigException, { FacilitatorConfigNotFoundException } from './Exception';
+import { InvalidFacilitatorConfigException, FacilitatorConfigNotFoundException } from './Exception';
 import * as schema from './Config/FacilitatorConfig.schema.json';
 import Utils from './Utils';
 
@@ -53,6 +53,14 @@ export class Chain {
 
   /** Worker address. */
   public worker?: string;
+
+  public constructor(
+    rpc: string,
+    worker: string,
+  ) {
+    this.rpc = rpc;
+    this.worker = worker;
+  }
 }
 
 /**
@@ -60,6 +68,8 @@ export class Chain {
  */
 export class FacilitatorConfig {
   public originChain: string;
+
+  public auxChainId: string;
 
   public database: DBConfig;
 
@@ -73,9 +83,30 @@ export class FacilitatorConfig {
    */
   private constructor(config: any) {
     this.originChain = config.originChain || '';
+    this.auxChainId = config.auxChainId || '';
     this.database = config.database || new DBConfig();
-    this.chains = config.chains || {};
+    this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
+    this.assignDerivedParams = this.assignDerivedParams.bind(this);
+    this.assignDerivedParams(config);
+  }
+
+  /**
+   * Assigns derived parameters.
+   * @param config JSON config object.
+   */
+  private assignDerivedParams(config: any) {
+    const chains = config.chains || {};
+    Object.keys(chains).forEach(async (identifier, _) => {
+      this.chains[identifier] = new Chain(
+        chains[identifier].rpc,
+        chains[identifier].worker,
+      );
+      // we have only 2 chains in config
+      if (identifier !== this.originChain) {
+        this.auxChainId = identifier;
+      }
+    });
   }
 
   /**
@@ -109,9 +140,7 @@ export class FacilitatorConfig {
     );
 
     if (fs.existsSync(facilitatorConfigPath)) {
-      const config = Utils.getJsonDataFromPath(facilitatorConfigPath);
-      FacilitatorConfig.verifySchema(config);
-      return new FacilitatorConfig(config);
+      return this.readConfig(facilitatorConfigPath);
     }
     return new FacilitatorConfig({});
   }
@@ -124,8 +153,7 @@ export class FacilitatorConfig {
    */
   public static fromFile(filePath: string): FacilitatorConfig {
     if (fs.existsSync(filePath)) {
-      const config = Utils.getJsonDataFromPath(filePath);
-      return new FacilitatorConfig(config);
+      return this.readConfig(filePath);
     }
     throw new FacilitatorConfigNotFoundException('File path doesn\'t exists');
   }
@@ -155,6 +183,16 @@ export class FacilitatorConfig {
     );
     return (statOutput.size > 0);
   }
+
+  /**
+   * This method reads config from file
+   * @param filePath Absolute path of file.
+   */
+  private static readConfig(filePath: string) {
+    const config = Utils.getJsonDataFromPath(filePath);
+    FacilitatorConfig.verifySchema(config);
+    return new FacilitatorConfig(config);
+  }
 }
 
 /**
@@ -179,7 +217,8 @@ export class Config {
   }
 
   /**
-   * It provides config object from the path specified.
+   * It provides config object from the path specified. This will throw if
+   * mosaic config path or facilitator config path doesn't exists.
    * @param mosaicConfigPath Path to mosaic config file path.
    * @param facilitatorConfigPath Path to facilitator config file path/
    * @returns Config object consisting of mosaic and facilitator configurations.
@@ -195,7 +234,8 @@ export class Config {
   }
 
   /**
-   * It provides config object from default paths.
+   * It provides config object from default paths. If file does not exist on
+   * default location, it will initialize new config objects.
    * @param originChain Origin chain id.
    * @param  auxiliaryChain Auxiliary chain id.
    * @returns Config object consisting of mosaic and facilitator configurations.

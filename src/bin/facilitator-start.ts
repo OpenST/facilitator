@@ -2,7 +2,7 @@ import * as commander from 'commander';
 import Logger from '../Logger';
 import Facilitator from '../Facilitator';
 import { Config } from '../Config';
-import FacilitatorStart from '../FacilitatorOptionParser/FacilitatorStart';
+import FacilitatorStart from '../OptionParser/FacilitatorStart';
 
 const facilitatorCmd = commander
   .arguments('[origin_chain] [aux_chain_id]');

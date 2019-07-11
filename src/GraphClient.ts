@@ -8,9 +8,13 @@ import gql from 'graphql-tag';
 import * as WebSocket from 'ws';
 import fetch from 'node-fetch';
 
+import BigNumber from 'bignumber.js';
 import Logger from './Logger';
 import TransactionHandler from './TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
+import ContractEntityRepository from './repositories/ContractEntityRepository';
+import ContractEntity from './models/ContractEntity';
+
 /**
  * The class interacts with graph node server for subscription and query.
  */
@@ -37,12 +41,14 @@ export default class GraphClient {
    * @param subscriptionQry Subscription query.
    * @param handler Transaction handler object.
    * @param fetcher Transaction fetcher object.
+   * @param contractEntityRepository Instance of contract entity repository.
    * @return Query subscription object.
    */
   public async subscribe(
     subscriptionQry: string,
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
+    contractEntityRepository: ContractEntityRepository,
   ): Promise<Subscription> {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
@@ -51,23 +57,70 @@ export default class GraphClient {
     // GraphQL query that is parsed into the standard GraphQL AST(Abstract syntax tree)
     const gqlSubscriptionQry = gql`${subscriptionQry}`;
     // Subscription handling
-    const querySubscriber = await Promise.resolve(this.apolloClient.subscribe({
+    const observable = this.apolloClient.subscribe({
       query: gqlSubscriptionQry,
       variables: {},
-    }).subscribe({
-      async next(response) {
-        const transactions = await fetcher.fetch(response.data);
-        await handler.handle(transactions);
-        // Integrate updation of ContractEntity uts here. Handlers should make sure error
-        // Promise.reject is thrown on error cases.
-      },
-      error(err) {
-        // Log error using logger
-        Logger.error(err);
-      },
-    }));
+    });
+    const querySubscriber = await Promise.resolve(
+      observable
+        .subscribe({
+          async next(response: Record<string, any>) {
+            const transactions: Record<
+            string,
+            Record<string, any>[]
+            > = await fetcher.fetch(response.data);
+            await handler.handle(transactions);
+            await GraphClient.updateLatestUTS(
+              transactions,
+              response.data,
+              contractEntityRepository,
+            );
+          },
+          error(err) {
+            Logger.error(err);
+          },
+        }),
+    );
 
     return querySubscriber;
+  }
+
+  /**
+   * This method updates latest timestamp for contract entities.
+   * @param transactions Transactions for transaction fetcher.
+   * @param subscriptionResponse Subscription response.
+   * @param contractEntityRepository Instance of contract entity repository.
+   */
+  private static async updateLatestUTS(
+    transactions: Record<string, Record<string, any>[]>,
+    subscriptionResponse: Record<string, any[]>,
+    contractEntityRepository: ContractEntityRepository,
+  ): Promise<void> {
+    const savePromises = Object.keys(transactions).map(
+      async (transactionKind) => {
+        const { contractAddress } = subscriptionResponse[transactionKind][0];
+        const transaction = transactions[transactionKind].length > 0
+          ? transactions[transactionKind][transactions[transactionKind].length - 1]
+          : null;
+
+        // Do nothing if there is no transaction for a transaction kind.
+        if (transaction === null) {
+          return Promise.resolve();
+        }
+        const currentUTS = new BigNumber(transaction.uts);
+
+        const contractEntity = new ContractEntity(
+          contractAddress,
+          transactionKind,
+          currentUTS,
+        );
+        return contractEntityRepository.save(
+          contractEntity,
+        );
+      },
+    );
+
+    await Promise.all(savePromises);
   }
 
   /**

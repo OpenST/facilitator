@@ -50,7 +50,7 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    if (mandatoryOptionMissing === true) {
+    if (mandatoryOptionMissing) {
       process.exit(1);
     }
 
@@ -92,9 +92,7 @@ commander
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
 
-      facilitatorConfig.chains[chainid] = new Chain();
-      facilitatorConfig.chains[chainid].worker = account.address;
-      facilitatorConfig.chains[chainid].rpc = rpc;
+      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
