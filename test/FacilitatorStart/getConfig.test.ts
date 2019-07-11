@@ -3,7 +3,7 @@ import { assert } from 'chai';
 import { Config, FacilitatorConfig } from '../../src/Config';
 import MosaicConfig from '../../src/MosaicConfig';
 import SpyAssert from '../test_utils/SpyAssert';
-import FacilitatorStart from '../../src/FacilitatorOptionParser/FacilitatorStart';
+import FacilitatorStart from '../../src/OptionParser/FacilitatorStart';
 
 describe('FacilitatorOptionParser.getConfig()', () => {
   const originChain = '2';

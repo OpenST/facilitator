@@ -30,7 +30,7 @@ export class InvalidMosaicConfigException extends Error {
 }
 
 /**
- * This exception is used for any error during mosaic config generation.
+ * This exception is thrown if mosaic config is not found.
  */
 export class MosaicConfigNotFoundException extends Error {
   /**
@@ -45,7 +45,7 @@ export class MosaicConfigNotFoundException extends Error {
 }
 
 /**
- * This exception is used for any error during facilitator config generation.
+ * This exception is thrown if facilitator config is not found.
  */
 export class FacilitatorConfigNotFoundException extends Error {
   /**

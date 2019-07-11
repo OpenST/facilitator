@@ -88,7 +88,7 @@ export default class FacilitatorStart {
    * @returns Config object encapsulating facilitator and mosaic configs.
    */
   private handleFacilitatorConfigOption(): Config {
-    let configObj = {} as any as Config;
+    let configObj;
     // When no origin and aux chain provided.
     if (this.mosaicConfigPath) {
       configObj = Config.fromFile(this.mosaicConfigPath, this.facilitatorConfigPath);
