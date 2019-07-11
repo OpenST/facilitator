@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 
 import BigNumber from 'bignumber.js';
-import StakeRequestedHandler from '../../../src/handlers/StakeRequestedHandler';
+import StakeRequestHandler from '../../../src/handlers/StakeRequestHandler';
 import StakeRequest from '../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
 
@@ -28,7 +28,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {
       save: saveStub as any,
     });
-    const handler = new StakeRequestedHandler(sinonMock as any);
+    const handler = new StakeRequestHandler(sinonMock as any);
 
     const models = await handler.persist(transactions);
 

@@ -55,8 +55,8 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
     fsConfig.writeToFacilitatorConfig(chain);
 
     const data = {
-      originChain:'',
-      auxChainId:'',
+      originChain: '',
+      auxChainId: '',
       database: {},
       chains: {},
       encryptedAccounts: {},

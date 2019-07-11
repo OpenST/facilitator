@@ -69,7 +69,7 @@ describe('Subject::newUpdate', (): void => {
       config.subject.updates.length,
       2,
       'After de-duplication the updates array contains only two entries.',
-    )
+    );
 
     assert.strictEqual(
       config.subject.updates[0],

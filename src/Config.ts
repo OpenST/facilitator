@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import MosaicConfig from './MosaicConfig';
 import Directory from './Directory';
-import InvalidFacilitatorConfigException, { FacilitatorConfigNotFoundException } from './Exception';
+import { InvalidFacilitatorConfigException, FacilitatorConfigNotFoundException } from './Exception';
 import * as schema from './Config/FacilitatorConfig.schema.json';
 import Utils from './Utils';
 
@@ -86,6 +86,7 @@ export class FacilitatorConfig {
     this.originChain = config.originChain || '';
     this.auxChainId = config.auxChainId || '';
     this.database = config.database || new DBConfig();
+    this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
     this.assignDerivedParams = this.assignDerivedParams.bind(this);
     this.assignDerivedParams(config);

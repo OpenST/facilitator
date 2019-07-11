@@ -34,7 +34,7 @@ export default class TransactionHandler {
 
     const persistPromises = Object.keys(bulkTransactions).map(async (transactionKind) => {
       Logger.info(`Handling records of kind ${transactionKind}`);
-      Logger.info(`Records: ${bulkTransactions}`);
+      Logger.info(`Records: ${JSON.stringify(bulkTransactions)}`);
       const handler = this.handlers[transactionKind];
       if (typeof handler === 'undefined') {
         throw new HandlerNotFoundException(
