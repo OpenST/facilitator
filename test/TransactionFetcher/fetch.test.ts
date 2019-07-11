@@ -7,7 +7,7 @@ import TransactionFetcher from '../../src/TransactionFetcher';
 import SpyAssert from '../test_utils/SpyAssert';
 import EntityGraphQueries from '../../src/EntityGraphQueries';
 import StubData from '../test_utils/StubData';
-import { ContractEntityRepository } from '../../src/repositories/ContractEntityRepository';
+import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {

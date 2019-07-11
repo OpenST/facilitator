@@ -1,6 +1,6 @@
 import GraphClient from './GraphClient';
 import EntityGraphQueries from './EntityGraphQueries';
-import { ContractEntityRepository } from './repositories/ContractEntityRepository';
+import ContractEntityRepository from './repositories/ContractEntityRepository';
 import Logger from './Logger';
 
 /**
@@ -39,7 +39,10 @@ export default class TransactionFetcher {
       entity,
     );
 
-    const uts = contractEntityRecord ? contractEntityRecord.timestamp : 0;
+    if (contractEntityRecord === null || contractEntityRecord.timestamp === null) {
+      throw new Error(`Contract Entity record not found for entity ${entity} and address ${entityRecord.contractAddress}`);
+    }
+    const uts = contractEntityRecord.timestamp;
     Logger.info(`Querying records for ${entity} for UTS ${uts}`);
     let skip = 0;
     let transactions: object[] = [];

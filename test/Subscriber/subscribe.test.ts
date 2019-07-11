@@ -6,7 +6,7 @@ import GraphClient from '../../src/GraphClient';
 import SpyAssert from '../test_utils/SpyAssert';
 import TransactionHandler from '../../src/TransactionHandler';
 import TransactionFetcher from '../../src/TransactionFetcher';
-import {ContractEntityRepository} from "../../src/repositories/ContractEntityRepository";
+import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;

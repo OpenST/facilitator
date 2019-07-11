@@ -5,7 +5,7 @@ import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
 import TransactionHandler from '../../src/TransactionHandler';
 import TransactionFetcher from '../../src/TransactionFetcher';
-import { ContractEntityRepository } from '../../src/repositories/ContractEntityRepository';
+import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient: any;

@@ -11,8 +11,9 @@ import BigNumber from 'bignumber.js';
 import Logger from './Logger';
 import TransactionHandler from './TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
-import { ContractEntityRepository } from './repositories/ContractEntityRepository';
+import ContractEntityRepository from './repositories/ContractEntityRepository';
 import ContractEntity from './models/ContractEntity';
+
 /**
  * The class interacts with graph node server for subscription and query.
  */
@@ -98,10 +99,7 @@ export default class GraphClient {
           ? transactions[transactionKind][transactions[transactionKind].length - 1]
           : null;
 
-        const number = transaction ? transaction.uts : 0;
-        const currentUTS = new BigNumber(
-          number,
-        );
+        const currentUTS = new BigNumber(transaction.uts);
 
         const contractEntity = new ContractEntity(
           contractAddress,
