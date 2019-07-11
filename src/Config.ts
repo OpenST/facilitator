@@ -56,9 +56,8 @@ export class Chain {
 
   public constructor(
     rpc: string,
-    worker: string
-  )
-  {
+    worker: string,
+  ) {
     this.rpc = rpc;
     this.worker = worker;
   }
