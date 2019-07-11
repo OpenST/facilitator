@@ -13,8 +13,8 @@ const Util = {
     );
 
     assert.strictEqual(
-      inputGateway.chainId,
-      expectedGateway.chainId,
+      inputGateway.chain,
+      expectedGateway.chain,
       'chainId should match',
     );
 

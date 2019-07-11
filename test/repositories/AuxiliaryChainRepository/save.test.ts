@@ -23,7 +23,6 @@ describe('AuxiliaryChainRepository::save', (): void => {
   let ostCoGatewayAddress: string;
   let anchorAddress: string;
   let coAnchorAddress: string;
-  let lastProcessedBlockNumber: BigNumber;
   let lastOriginBlockHeight: BigNumber;
   let lastAuxiliaryBlockHeight: BigNumber;
   let createdAt: Date;
@@ -39,7 +38,6 @@ describe('AuxiliaryChainRepository::save', (): void => {
     ostCoGatewayAddress = '0x0000000000000000000000000000000000000002';
     anchorAddress = '0x0000000000000000000000000000000000000003';
     coAnchorAddress = '0x0000000000000000000000000000000000000004';
-    lastProcessedBlockNumber = new BigNumber('100');
     lastOriginBlockHeight = new BigNumber('200');
     lastAuxiliaryBlockHeight = new BigNumber('50');
     createdAt = new Date();
@@ -54,7 +52,6 @@ describe('AuxiliaryChainRepository::save', (): void => {
       ostCoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
-      lastProcessedBlockNumber,
       lastOriginBlockHeight,
       lastAuxiliaryBlockHeight,
       createdAt,
@@ -75,7 +72,6 @@ describe('AuxiliaryChainRepository::save', (): void => {
       ostCoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
-      lastProcessedBlockNumber,
       lastOriginBlockHeight,
       lastAuxiliaryBlockHeight,
       createdAt,
@@ -85,8 +81,6 @@ describe('AuxiliaryChainRepository::save', (): void => {
     await config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
     );
-
-    auxiliaryChain.lastProcessedBlockNumber = new BigNumber('101');
 
     const updatedAuxiliaryChain = await config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
