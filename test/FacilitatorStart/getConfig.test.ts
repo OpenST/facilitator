@@ -106,8 +106,8 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
   it('should fail when aux chain id an empty string', () => {
     const fs: FacilitatorStart = new FacilitatorStart(
-      undefined as any,
-      auxChain,
+      originChain,
+      '',
       mosaicConfigPath,
       facilitatorConfigPath,
     );
