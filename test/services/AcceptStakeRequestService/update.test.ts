@@ -193,17 +193,17 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
 
     assert.strictEqual(
-      messageC.gasPrice.comparedTo(config.stakeRequestWithNullMessageHashC.gasPrice as BigNumber),
+      messageC.gasPrice!.comparedTo(config.stakeRequestWithNullMessageHashC.gasPrice as BigNumber),
       0,
     );
 
     assert.strictEqual(
-      messageC.gasLimit.comparedTo(config.stakeRequestWithNullMessageHashC.gasLimit as BigNumber),
+      messageC.gasLimit!.comparedTo(config.stakeRequestWithNullMessageHashC.gasLimit as BigNumber),
       0,
     );
 
     assert.strictEqual(
-      messageC.nonce.comparedTo(config.stakeRequestWithNullMessageHashC.nonce as BigNumber),
+      messageC.nonce!.comparedTo(config.stakeRequestWithNullMessageHashC.nonce as BigNumber),
       0,
     );
 
@@ -218,7 +218,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
 
     assert.strictEqual(
-      messageC.sourceDeclarationBlockHeight.comparedTo(0),
+      messageC.sourceDeclarationBlockHeight!.comparedTo(0),
       0,
     );
 

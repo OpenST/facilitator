@@ -2,6 +2,7 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import AuxiliaryChain from '../models/AuxiliaryChain';
@@ -145,6 +146,7 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     const updatedAuxiliaryChain = await this.get(
       auxiliaryChain.chainId,
     );
+    assert(updatedAuxiliaryChain !== null);
 
     this.newUpdate(updatedAuxiliaryChain as AuxiliaryChain);
 

@@ -2,6 +2,7 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import Subject from '../observer/Subject';
 
 import Gateway from '../models/Gateway';
@@ -10,7 +11,7 @@ import Utils from '../Utils';
 /**
  * An interface, that represents a row from a gateways table.
  */
-export class GatewayModel extends Model {
+class GatewayModel extends Model {
   public readonly gatewayAddress!: string;
 
   public readonly chainId!: number;
@@ -48,7 +49,7 @@ export enum GatewayType {
  * Class enables creation, updation and retrieval of Gateway objects.
  * On construction it initializes underlying database model.
  */
-export class GatewayRepository extends Subject<Gateway> {
+export default class GatewayRepository extends Subject<Gateway> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -152,6 +153,7 @@ export class GatewayRepository extends Subject<Gateway> {
     const updatedGateway = await this.get(
       gateway.gatewayAddress,
     );
+    assert(updatedGateway !== null);
 
     this.newUpdate(updatedGateway as Gateway);
 

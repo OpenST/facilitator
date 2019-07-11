@@ -2,6 +2,7 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import Subject from '../observer/Subject';
 
 import Utils from '../Utils';
@@ -9,6 +10,10 @@ import Message from '../models/Message';
 
 /**
  * An interface, that represents a row from a messages table.
+ *
+ * MessageModel has been exported so that StakeRequestRepository::StakeRequestModel can make
+ * belongsTo association. It's recommended to not use MessageModel for external use. Use
+ * models/Message.ts to represent Message model objects.
  */
 export class MessageModel extends Model {
   public readonly messageHash!: string;
@@ -203,6 +208,7 @@ export class MessageRepository extends Subject<Message> {
     const updatedMessage = await this.get(
       message.messageHash,
     );
+    assert(updatedMessage !== null);
 
     this.newUpdate(updatedMessage as Message);
 
