@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import { GatewayRepository } from '../repositories/GatewayRepository';
 import { MessageRepository } from '../repositories/MessageRepository';
 import Logger from '../Logger';
@@ -54,31 +55,24 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     this.gatewayAddress = gatewayAddress;
     this.messageRepository = messageRepository;
     this.auxiliaryChainId = auxiliaryChainId;
-
-    // Suppressing lint error
-    // Refer: https://github.com/typescript-eslint/typescript-eslint/issues/636
-    /* eslint-disable @typescript-eslint/unbound-method */
-    this.proveGateway = this.proveGateway.bind(this);
-    this.update = this.update.bind(this);
   }
-
 
   /**
    * This method react on changes in auxiliary chain models.
    * @param auxiliaryChains List of auxiliary chains model
    */
   public async update(auxiliaryChains: AuxiliaryChain[]): Promise<void> {
-    const proveGatewayPromises = auxiliaryChains
+    const interestedAuxiliaryChainRecord = auxiliaryChains
       .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId
-      && auxiliaryChain.lastOriginBlockHeight !== undefined)
-      .map(
-        async (auxiliaryChain): Promise<{
-          transactionHash: string;
-          message: string;
-        }> => this.proveGateway(auxiliaryChain.lastOriginBlockHeight!),
-      );
+        && auxiliaryChain.lastOriginBlockHeight !== undefined);
 
-    await Promise.all(proveGatewayPromises);
+    assert(interestedAuxiliaryChainRecord.length <= 1);
+
+    if (interestedAuxiliaryChainRecord.length === 1) {
+      await this.proveGateway(
+        interestedAuxiliaryChainRecord[0].lastOriginBlockHeight!,
+      );
+    }
   }
 
   /**
