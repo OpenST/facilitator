@@ -1,7 +1,15 @@
 
 import BigNumber from 'bignumber.js';
 import StakeRequest from '../../src/models/StakeRequest';
-import { AuxiliaryChain } from '../../src/repositories/AuxiliaryChainRepository';
+import AuxiliaryChain from '../../src/models/AuxiliaryChain';
+import { GatewayType } from '../../src/repositories/GatewayRepository';
+import Gateway from '../../src/models/Gateway';
+import {
+  MessageDirection,
+  MessageStatus,
+  MessageType,
+} from '../../src/repositories/MessageRepository';
+import Message from '../../src/models/Message';
 import ContractEntity from '../../src/models/ContractEntity';
 import { EntityType } from '../../src/repositories/ContractEntityRepository';
 
@@ -17,21 +25,77 @@ export default class StubData {
     'stakerProxy',
   );
 
+  public static auxiliaryChainRecord(
+    chainId = 10002,
+    lastOriginBlockHeight?: BigNumber,
+  ): AuxiliaryChain {
+    return new AuxiliaryChain(
+      chainId,
+      '10003',
+      '0x0000000000000000000000000000000000000001',
+      '0x0000000000000000000000000000000000000002',
+      '0x0000000000000000000000000000000000000003',
+      '0x0000000000000000000000000000000000000004',
+      lastOriginBlockHeight,
+      undefined,
+      new Date(),
+      new Date(),
+
+    );
+  }
+
+  public static gatewayRecord(
+    chain = '1234',
+    gatewayAddress = '0x0000000000000000000000000000000000000001',
+  ): Gateway {
+    return new Gateway(gatewayAddress,
+      chain,
+      GatewayType.Origin,
+      '0x0000000000000000000000000000000000000002',
+      '0x0000000000000000000000000000000000000004',
+      '0x0000000000000000000000000000000000000003',
+      new BigNumber('1'),
+      true,
+      new BigNumber('1'),
+      new Date(),
+      new Date());
+  }
+
+  public static messageAttributes(
+    messageHash = '0x000000000000000000000000000000000000000000000000000001',
+    gatewayAddress = '0x0000000000000000000000000000000000000001',
+    sourceDeclarationBlockHeight = new BigNumber(1),
+  ): Message {
+    return new Message(
+      messageHash,
+      MessageType.Stake,
+      gatewayAddress,
+      MessageStatus.Declared,
+      MessageStatus.Undeclared,
+      new BigNumber('1'),
+      new BigNumber('1'),
+      new BigNumber('1'),
+      '0x0000000000000000000000000000000000000002',
+      MessageDirection.OriginToAuxiliary,
+      sourceDeclarationBlockHeight,
+    );
+  }
+
   public static getAuxiliaryChainRecord = (
     anchorAddress: string = '0x0000000000000000000000000000000000000003',
     lastOriginBlockHeight: BigNumber = new BigNumber('214748364475'),
-  ): AuxiliaryChain => ({
-    chainId: 10001,
-    originChainName: '10001',
-    ostGatewayAddress: '0x0000000000000000000000000000000000000001',
-    ostCoGatewayAddress: '0x0000000000000000000000000000000000000002',
+  ): AuxiliaryChain => new AuxiliaryChain(
+    10001,
+    '10001',
+    '0x0000000000000000000000000000000000000001',
+    '0x0000000000000000000000000000000000000002',
     anchorAddress,
-    coAnchorAddress: '0x0000000000000000000000000000000000000004',
-    lastAuxiliaryBlockHeight: new BigNumber('214748364475'),
+    '0x0000000000000000000000000000000000000004',
     lastOriginBlockHeight,
-    createdAt: new Date(10),
-    updatedAt: new Date(10),
-  })
+    new BigNumber('2000'),
+    new Date(10),
+    new Date(10),
+  )
 
   public static getContractEntity = (
     timestamp = new BigNumber(1),

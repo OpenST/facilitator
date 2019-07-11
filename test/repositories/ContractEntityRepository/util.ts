@@ -16,8 +16,8 @@ export default class Util {
   ): void {
     if (expectedContractEntity.timestamp !== undefined) {
       assert.isOk(
-        expectedContractEntity.timestamp.comparedTo(
-          responseContractEntity.timestamp,
+        expectedContractEntity.timestamp!.comparedTo(
+          responseContractEntity.timestamp!,
         ) === 0,
       );
     }

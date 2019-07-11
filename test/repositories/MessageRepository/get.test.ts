@@ -1,92 +1,93 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-
 import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import {
-  MessageAttributes,
-  Message,
-  MessageDirection,
   MessageStatus,
+  MessageDirection,
   MessageType,
 } from '../../../src/repositories/MessageRepository';
-import Repositories from '../../../src/repositories/Repositories';
 
+import Repositories from '../../../src/repositories/Repositories';
+import Message from '../../../src/models/Message';
 import Util from './util';
 
-import assert from '../../test_utils/assert';
+import chai = require('chai');
+import chaiAsPromised = require('chai-as-promised');
+
+chai.use(chaiAsPromised);
+const { assert } = chai;
 
 interface TestConfigInterface {
   repos: Repositories;
 }
+
 let config: TestConfigInterface;
 
-describe('MessageRepository::get', (): void => {
+describe('Message::get', (): void => {
+  let message: Message;
+
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
-  });
+    const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
+    const type = MessageType.Stake;
+    const gatewayAddress = '0x0000000000000000000000000000000000000001';
+    const sourceStatus = MessageStatus.Declared;
+    const targetStatus = MessageStatus.Declared;
+    const gasPrice = new BigNumber(100);
+    const gasLimit = new BigNumber(200);
+    const nonce = new BigNumber(1);
+    const sender = '0x0000000000000000000000000000000000000002';
+    const direction = MessageDirection.OriginToAuxiliary;
+    const sourceDeclarationBlockHeight = new BigNumber(300);
+    const secret = '0x00000000000000000000000000000000000000000000000000000000000000334';
+    const hashLock = '0x00000000000000000000000000000000000000000000000000000000000000335';
+    const createdAt = new Date();
+    const updatedAt = new Date();
 
-  it('Checks retrieval of an existing message.', async (): Promise<void> => {
-    const messageAttributes: MessageAttributes = {
-      messageHash: '0x000000000000000000000000000000000000000000000000000001',
-      type: MessageType.Stake,
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      sourceStatus: MessageStatus.Declared,
-      targetStatus: MessageStatus.Undeclared,
-      gasPrice: new BigNumber('1'),
-      gasLimit: new BigNumber('1'),
-      nonce: new BigNumber('1'),
-      sender: '0x0000000000000000000000000000000000000002',
-      direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: new BigNumber('1'),
-    };
-
-    await config.repos.messageRepository.create(
-      messageAttributes,
+    message = new Message(
+      messageHash,
+      type,
+      gatewayAddress,
+      sourceStatus,
+      targetStatus,
+      gasPrice,
+      gasLimit,
+      nonce,
+      sender,
+      direction,
+      sourceDeclarationBlockHeight,
+      secret,
+      hashLock,
+      createdAt,
+      updatedAt,
     );
-
-    const message = await config.repos.messageRepository.get(
-      messageAttributes.messageHash,
-    );
-
-    assert.notStrictEqual(
+    await config.repos.messageRepository.save(
       message,
-      null,
-      'Message should exist as it has been just created.',
-    );
-
-    Util.checkMessageAgainstAttributes(
-      message as Message,
-      messageAttributes,
     );
   });
 
-  it('Checks retrieval of non-existing message.', async (): Promise<void> => {
-    const nonExistingMessageHash = 'nonExistingMessageHash';
-    const message = await config.repos.messageRepository.get(
+  it('should pass when retrieving Message model', async (): Promise<void> => {
+    const getResponse = await config.repos.messageRepository.get(
+      message.messageHash,
+    );
+
+    Util.assertMessageAttributes(getResponse as Message, message);
+  });
+
+  it('should return null when querying for non-existing '
+    + 'messageHash', async (): Promise<void> => {
+    const nonExistingMessageHash = '0x00000000000000000000000000000000000000000000000000000000000000222';
+
+    const getResponse = await config.repos.messageRepository.get(
       nonExistingMessageHash,
     );
 
     assert.strictEqual(
-      message,
+      getResponse,
       null,
-      'Message  with \'nonExistingMessageHash\' does not exist.',
+      'Non existing message object,',
     );
   });
 });

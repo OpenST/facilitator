@@ -2,6 +2,7 @@ import {
   DataTypes, Model, InitOptions, Op,
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import ContractEntity from '../models/ContractEntity';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
@@ -9,7 +10,7 @@ import Utils from '../Utils';
 /**
  * An interface, that represents a row from a contract entities table.
  */
-export class ContractEntityModel extends Model {
+class ContractEntityModel extends Model {
   public readonly contractAddress!: string;
 
   public readonly entityType!: string;
@@ -40,7 +41,7 @@ export enum EntityType {
  * Class enables creation, update and retrieval of ContractEntity objects.
  * On construction it initializes underlying database model.
  */
-export class ContractEntityRepository extends Subject<ContractEntity> {
+export default class ContractEntityRepository extends Subject<ContractEntity> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -77,7 +78,7 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
       },
       {
         ...initOptions,
-        modelName: 'ContractEntityModel',
+        modelName: 'ContractEntity',
         tableName: 'contract_entities',
       },
     );
@@ -108,6 +109,8 @@ export class ContractEntityRepository extends Subject<ContractEntity> {
       contractEntity.contractAddress,
       contractEntity.entityType,
     );
+    assert(updatedContractEntity !== null);
+
     this.newUpdate(updatedContractEntity as ContractEntity);
 
     return updatedContractEntity as ContractEntity;
