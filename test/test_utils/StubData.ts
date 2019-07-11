@@ -26,7 +26,7 @@ export default class StubData {
 
   public static auxiliaryChainRecord(
     chainId = 10002,
-    lastOriginBlockHeight = new BigNumber(100),
+    lastOriginBlockHeight?: BigNumber,
   ): AuxiliaryChain {
     return {
       lastAuxiliaryBlockHeight: undefined,

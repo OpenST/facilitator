@@ -69,15 +69,13 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
    */
   public async update(auxiliaryChains: AuxiliaryChain[]): Promise<void> {
     const proveGatewayPromises = auxiliaryChains
-      .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId)
+      .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId
+      && auxiliaryChain.lastOriginBlockHeight !== undefined)
       .map(
         async (auxiliaryChain): Promise<{
           transactionHash: string;
           message: string;
-        }> => (
-          auxiliaryChain.lastOriginBlockHeight
-            ? this.proveGateway(auxiliaryChain.lastOriginBlockHeight)
-            : Promise.reject(new Error('Last anchored origin block height cannot be undefined.'))),
+        }> => this.proveGateway(auxiliaryChain.lastOriginBlockHeight!),
       );
 
     await Promise.all(proveGatewayPromises);

@@ -25,7 +25,7 @@ const Utils = {
   async sendTransaction(tx: any, txOption: any): Promise<string> {
     return new Promise(async (onResolve, onReject) => {
       const txOptions = Object.assign({}, txOption);
-      if (!txOptions.gas) {
+      if (txOptions.gas === undefined) {
         txOptions.gas = await tx.estimateGas(txOptions);
       }
 

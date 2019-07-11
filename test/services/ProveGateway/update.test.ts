@@ -3,7 +3,6 @@ import * as sinon from 'sinon';
 import ProveGatewayService from '../../../src/services/ProveGatewayService';
 import StubData from '../../test_utils/StubData';
 import SpyAssert from '../../test_utils/SpyAssert';
-import assert from '../../test_utils/assert';
 
 const Web3 = require('web3');
 
@@ -43,28 +42,25 @@ describe('ProveGatewayService.update()', () => {
   it('should only react to interested chainID', async () => {
     const auxiliaryChain = StubData.auxiliaryChainRecord(
       1,
+      new BigNumber(100),
     );
 
-    const reactToStub = sinon.stub(proveGatewayService, 'proveGateway');
+    const proveGatewayStub = sinon.stub(proveGatewayService, 'proveGateway');
     await proveGatewayService.update([auxiliaryChain]);
 
-    SpyAssert.assert(reactToStub, 0, [[]]);
+    SpyAssert.assert(proveGatewayStub, 0, [[]]);
   });
 
 
-  it('should fail for null last origin block height', async () => {
+  it('should skip for null last origin block height', async () => {
     const auxiliaryChain = StubData.auxiliaryChainRecord(
       auxiliaryChainId,
       undefined,
     );
 
-    sinon.stub(proveGatewayService, 'proveGateway');
+    const proveGatewayStub = sinon.stub(proveGatewayService, 'proveGateway');
     await proveGatewayService.update([auxiliaryChain]);
 
-    assert.isRejected(
-      proveGatewayService.update([auxiliaryChain]),
-      'Last anchored origin block height cannot be undefined.',
-      'It must fail if latest origin block height is not defined',
-    );
+    SpyAssert.assert(proveGatewayStub, 0, [[]]);
   });
 });
