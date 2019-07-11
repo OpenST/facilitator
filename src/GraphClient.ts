@@ -63,8 +63,11 @@ export default class GraphClient {
     const querySubscriber = await Promise.resolve(
       observable
         .subscribe({
-          async next(response) {
-            const transactions = await fetcher.fetch(response.data);
+          async next(response: Record<string, any>) {
+            const transactions: Record<
+            string,
+            Record<string, any>[]
+            > = await fetcher.fetch(response.data);
             await handler.handle(transactions);
             await GraphClient.updateLatestUTS(
               transactions,
@@ -88,7 +91,7 @@ export default class GraphClient {
    * @param contractEntityRepository Instance of contract entity repository.
    */
   private static async updateLatestUTS(
-    transactions: Record<string, Record<string, any>>,
+    transactions: Record<string, Record<string, any>[]>,
     subscriptionResponse: Record<string, any[]>,
     contractEntityRepository: ContractEntityRepository,
   ): Promise<void> {
@@ -99,6 +102,10 @@ export default class GraphClient {
           ? transactions[transactionKind][transactions[transactionKind].length - 1]
           : null;
 
+        // Do nothing if there is no transaction for a transaction kind.
+        if (transaction === null) {
+          return Promise.resolve();
+        }
         const currentUTS = new BigNumber(transaction.uts);
 
         const contractEntity = new ContractEntity(
