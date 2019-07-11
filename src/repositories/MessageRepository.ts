@@ -291,6 +291,32 @@ export class MessageRepository extends Subject<Message> {
     }).then((count: number) => count > 0);
   }
 
+  /**
+   * This return messages which is to be processed after GatewayProven event is emitted.
+   *
+   * @param gatewayAddress Address of the gateway.
+   */
+  public async getMessagesForProvenGateway(
+    gatewayAddress: string,
+  ): Promise<Message[]> {
+    const messageModels = await MessageModel.findAll({
+      where: {
+        [Op.and]: {
+          gatewayAddress: gatewayAddress,
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
+          direction: MessageDirection.OriginToAuxiliary,
+        },
+      },
+    });
+
+    let messages: Message[] = [];
+    for(let i=0; i< messageModels.length; i++){
+      messages.push(this.convertToMessage(messageModels[i]));
+    }
+    return messages;
+  }
+
   /* Private Functions */
 
   /**
