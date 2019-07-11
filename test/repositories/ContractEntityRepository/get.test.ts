@@ -1,4 +1,3 @@
-import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import {
@@ -21,6 +20,7 @@ interface TestConfigInterface {
 
 let config: TestConfigInterface;
 const createdAt = new Date();
+const updatedAt = new Date();
 
 describe('ContractEntityRepository::get', (): void => {
   let conEntity: ContractEntity;
@@ -35,6 +35,7 @@ describe('ContractEntityRepository::get', (): void => {
       EntityType.StakeProgresseds,
       new BigNumber(1),
       createdAt,
+      updatedAt,
     );
     await config.repos.contractEntityRepository.save(
       conEntity,
@@ -46,7 +47,6 @@ describe('ContractEntityRepository::get', (): void => {
       conEntity.contractAddress,
       conEntity.entityType,
     );
-
     Util.assertion(getResponse as ContractEntity, conEntity);
   });
 
@@ -56,7 +56,6 @@ describe('ContractEntityRepository::get', (): void => {
       conEntity.contractAddress,
       conEntity.entityType,
     );
-
     Util.assertion(firstResponse as ContractEntity, conEntity);
 
     const secondConEntity = new ContractEntity(
@@ -64,6 +63,7 @@ describe('ContractEntityRepository::get', (): void => {
       EntityType.StakeProgresseds,
       new BigNumber(1),
       createdAt,
+      updatedAt,
     );
 
     await config.repos.contractEntityRepository.save(
@@ -74,7 +74,6 @@ describe('ContractEntityRepository::get', (): void => {
       secondConEntity.contractAddress,
       secondConEntity.entityType,
     );
-
     Util.assertion(secondReponse as ContractEntity, secondConEntity);
   });
 

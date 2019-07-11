@@ -17,10 +17,10 @@
 import { Sequelize, InitOptions } from 'sequelize';
 
 import StakeRequestRepository from './StakeRequestRepository';
-import { AuxiliaryChainRepository } from './AuxiliaryChainRepository';
+import AuxiliaryChainRepository from './AuxiliaryChainRepository';
 import { MessageRepository } from './MessageRepository';
-import { GatewayRepository } from './GatewayRepository';
-import { ContractEntityRepository } from './ContractEntityRepository';
+import GatewayRepository from './GatewayRepository';
+import ContractEntityRepository from './ContractEntityRepository';
 
 export default class Repositories {
   /* Storage */
@@ -63,10 +63,11 @@ export default class Repositories {
   public async notify(): Promise<void[][]> {
     const promises = [];
 
-    // promises.push(this.messageRepository.notify());
+    promises.push(this.messageRepository.notify());
     promises.push(this.stakeRequestRepository.notify());
-    // promises.push(this.auxiliaryChainRepository.notify());
-    // promises.push(this.gatewayRepository.notify());
+    promises.push(this.auxiliaryChainRepository.notify());
+    promises.push(this.gatewayRepository.notify());
+    promises.push(this.contractEntityRepository.notify());
 
     return Promise.all(promises);
   }

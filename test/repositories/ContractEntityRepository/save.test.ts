@@ -1,4 +1,3 @@
-import 'mocha';
 import BigNumber from 'bignumber.js';
 import assert from '../../test_utils/assert';
 
