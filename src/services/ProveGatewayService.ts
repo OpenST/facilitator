@@ -6,7 +6,7 @@ import Logger from '../Logger';
 import Utils from '../Utils';
 import { AUXILIARY_GAS_PRICE } from '../Constants';
 import Observer from '../observer/Observer';
-import AuxiliaryChain from "../models/AuxiliaryChain";
+import AuxiliaryChain from '../models/AuxiliaryChain';
 
 const Mosaic = require('@openst/mosaic.js');
 
@@ -78,6 +78,9 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   /**
    * This method performs prove gateway transaction on auxiliary chain.
    * This throws if auxiliary chain details doesn't exist.
+   *
+   * This method is not intended to use outside this class, it's public
+   * temporarily, it will soon be made private.
    *
    * @param blockHeight Block height at which anchor state root happens.
    *
