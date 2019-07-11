@@ -175,9 +175,6 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
       where: {
         stakeRequestHash,
       },
-      include: [
-        MessageModel,
-      ],
     });
 
     if (stakeRequestModel === null) {
