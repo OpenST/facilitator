@@ -30,9 +30,11 @@ Facilitator can be started in below two ways :-
     * `--mosaic-config` is optional argument.
     * If both `--mosaic-config` is given it will read mosaic and facilitator configs from `<mosaic-config>` and `<facilitator-config>` paths respectively. 
 
-2. `./facilitator start <origin-chain> <aux-chain-id> --mosaic-config <mosaic-config> --facilitator-config <facilitator-config>`
+2. `./facilitator start <origin-chain> <aux-chain-id> `
 	* Replace `<origin-chain>` with name of the origin chain.
 	* Replace `<aux-chain-id>` with id of the auxiliary chain.
+	
+	##### Options
 	* `--mosaic-config` and `--facilitator-config` refers to file path of mosaic config and facilitator config respectively. They are optional fields.
 	* If `--mosaic-config` is given then it will read the facilitator config from default path for `<aux-chain-id>` and mosaic-config from `<mosaic-config>` path. Argument `<origin-chain>` and `<aux-chain-id>` should be present in mosaic-config.  
 	* If `--facilitator-config` is given then it will read the mosaic config from default path for `<origin-chain>` and facilitator-config from `<facilitator-config>` path. Argument`<origin-chain>` and `<aux-chain-id>` should be present in it. 

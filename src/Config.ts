@@ -140,9 +140,7 @@ export class FacilitatorConfig {
     );
 
     if (fs.existsSync(facilitatorConfigPath)) {
-      const config = Utils.getJsonDataFromPath(facilitatorConfigPath);
-      FacilitatorConfig.verifySchema(config);
-      return new FacilitatorConfig(config);
+      return this.readConfig(facilitatorConfigPath);
     }
     return new FacilitatorConfig({});
   }
@@ -155,8 +153,7 @@ export class FacilitatorConfig {
    */
   public static fromFile(filePath: string): FacilitatorConfig {
     if (fs.existsSync(filePath)) {
-      const config = Utils.getJsonDataFromPath(filePath);
-      return new FacilitatorConfig(config);
+      return this.readConfig(filePath);
     }
     throw new FacilitatorConfigNotFoundException('File path doesn\'t exists');
   }
@@ -185,6 +182,16 @@ export class FacilitatorConfig {
       path.join(Directory.getMosaicDirectoryPath(), chain, MOSAIC_FACILITATOR_CONFIG),
     );
     return (statOutput.size > 0);
+  }
+
+  /**
+   * This method reads config from file
+   * @param filePath Absolute path of file.
+   */
+  private static readConfig(filePath: string) {
+    const config = Utils.getJsonDataFromPath(filePath);
+    FacilitatorConfig.verifySchema(config);
+    return new FacilitatorConfig(config);
   }
 }
 

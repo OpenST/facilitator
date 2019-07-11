@@ -33,6 +33,10 @@ describe('FacilitatorConfig.fromFile()', () => {
     const data = JSON.parse(config);
     const fsUtils = spyUtils(data);
 
+    sinon.stub(
+      FacilitatorConfig,
+      'verifySchema',
+    );
     const fcConfig: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
 
     SpyAssert.assert(fsUtils, 1, [[facilitatorConfigPath]]);
@@ -52,9 +56,9 @@ describe('FacilitatorConfig.fromFile()', () => {
     const fsSpy = spyFsModule(false);
 
     assert.throws(() => FacilitatorConfig.fromFile(
-      facilitatorConfigPath),
-      'File path doesn\'t exists'
-    );
+      facilitatorConfigPath,
+    ),
+    'File path doesn\'t exists');
 
     fsSpy.restore();
     sinon.restore();

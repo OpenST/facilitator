@@ -50,7 +50,7 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    if (mandatoryOptionMissing === true) {
+    if (mandatoryOptionMissing) {
       process.exit(1);
     }
 

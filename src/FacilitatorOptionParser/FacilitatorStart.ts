@@ -22,15 +22,15 @@ export default class FacilitatorStart {
    * @param facilitatorConfigPath Path to facilitator config path.
    */
   public constructor(
-    originChain: string | undefined,
-    auxChainId: string | undefined,
-    mosaicConfigPath: string | undefined,
-    facilitatorConfigPath: string | undefined,
+    originChain?: string,
+    auxChainId?: string,
+    mosaicConfigPath?: string,
+    facilitatorConfigPath?: string,
   ) {
-    this.originChain = originChain === undefined ? '' : originChain.trim();
-    this.auxChainId = auxChainId === undefined ? '' : auxChainId.trim();
-    this.mosaicConfigPath = mosaicConfigPath === undefined ? '' : mosaicConfigPath.trim();
-    this.facilitatorConfigPath = facilitatorConfigPath === undefined ? '' : facilitatorConfigPath.trim();
+    this.originChain = originChain || '';
+    this.auxChainId = auxChainId || '';
+    this.mosaicConfigPath = mosaicConfigPath || '';
+    this.facilitatorConfigPath = facilitatorConfigPath || '';
   }
 
   /**
@@ -38,11 +38,10 @@ export default class FacilitatorStart {
    * @returns Config object that contains mosaic and facilitator configs.
    */
   public getConfig(): Config {
-    if (this.isOnlyFacilitatorConfigPath()) {
+    if (this.isFacilitatorConfigPathAvailable()) {
       return this.handleFacilitatorConfigOption();
-    } else {
-      return this.handleOriginAuxChainOption();
     }
+    return this.handleOriginAuxChainOption();
   }
 
   /**
@@ -150,7 +149,7 @@ export default class FacilitatorStart {
    */
   private verifyOriginAuxChainDefined(): void {
     if (this.originChain === '' || this.auxChainId === '') {
-      throw new FacilitatorStartException('both origin_chain and aux_chain_id is required');
+      throw new FacilitatorStartException('Origin chain and auxiliary chain id both are required');
     }
   }
 
@@ -158,7 +157,7 @@ export default class FacilitatorStart {
    * It verifies that only facilitator config path is provided.
    * @returns `true` if only facilitator config path is present otherwise false.
    */
-  private isOnlyFacilitatorConfigPath(): boolean {
+  private isFacilitatorConfigPathAvailable(): boolean {
     return this.originChain === ''
       && this.auxChainId === ''
       && this.facilitatorConfigPath !== undefined;

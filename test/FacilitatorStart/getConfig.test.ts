@@ -71,7 +71,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
     assert.throws(
       () => fs.getConfig(),
-      'both origin_chain and aux_chain_id is required',
+      'Origin chain and auxiliary chain id both are required',
     );
   });
 
@@ -85,7 +85,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
     assert.throws(
       () => fs.getConfig(),
-      'both origin_chain and aux_chain_id is required',
+      'Origin chain and auxiliary chain id both are required',
     );
   });
 
@@ -100,11 +100,11 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
     assert.throws(
       () => fs.getConfig(),
-      'both origin_chain and aux_chain_id is required',
+      'Origin chain and auxiliary chain id both are required',
     );
   });
 
-  it('should fail when aux chain id is provided but origin chain is blank', () => {
+  it('should fail when aux chain id an empty string', () => {
     const fs: FacilitatorStart = new FacilitatorStart(
       undefined as any,
       auxChain,
@@ -112,10 +112,9 @@ describe('FacilitatorOptionParser.getConfig()', () => {
       facilitatorConfigPath,
     );
 
-
     assert.throws(
       () => fs.getConfig(),
-      'both origin_chain and aux_chain_id is required',
+      'Origin chain and auxiliary chain id both are required',
     );
   });
 
