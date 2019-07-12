@@ -1,11 +1,7 @@
 import BigNumber from 'bignumber.js';
 
-import {
-  EntityType,
-} from '../../../src/repositories/ContractEntityRepository';
-
 import Repositories from '../../../src/repositories/Repositories';
-import ContractEntity from '../../../src/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
 import Util from './util';
 
 import chai = require('chai');

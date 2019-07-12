@@ -1,6 +1,18 @@
 import BigNumber from 'bignumber.js';
 import Comparable from '../observer/Comparable';
-import { EntityType } from '../repositories/ContractEntityRepository';
+
+/**
+ * Entity types of origin and aux chain for which timestamp will be recorded.
+ */
+export enum EntityType {
+  StakeRequesteds = 'stakerequesteds',
+  StakeIntentDeclareds = 'stakeintentdeclareds',
+  StateRootAvailables = 'staterootavailables',
+  GatewayProvens = 'gatewayprovens',
+  StakeIntentConfirmeds = 'stateintentconfirmeds',
+  StakeProgresseds = 'stakeprogresseds',
+  MintProgresseds = 'mintprogresseds',
+}
 
 /**
  * Represents ContractEntity model object.
