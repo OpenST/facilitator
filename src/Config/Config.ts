@@ -1,16 +1,16 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import MosaicConfig from './MosaicConfig';
-import Directory from './Directory';
+import MosaicConfig from '../MosaicConfig';
+import Directory from '../Directory';
 import {
   FacilitatorConfigNotFoundException,
   InvalidFacilitatorConfigException,
   WorkerPasswordNotFoundException
-} from './Exception';
-import * as schema from './Config/FacilitatorConfig.schema.json';
-import Utils from './Utils';
-import Account from './Account';
+} from '../Exception';
+import * as schema from './FacilitatorConfig.schema.json';
+import Utils from '../Utils';
+import Account from '../Account';
 
 const Web3 = require('web3');
 

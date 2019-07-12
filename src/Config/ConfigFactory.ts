@@ -1,11 +1,11 @@
-import { Config, FacilitatorConfig } from '../Config';
+import { Config, FacilitatorConfig } from './Config';
 import MosaicConfig from '../MosaicConfig';
 import { FacilitatorStartException } from '../Exception';
 
 /**
  * It parses and evaluates input params of facilitator start command to get config object.
  */
-export default class FacilitatorStart {
+export default class ConfigFactory {
   public originChain?: string;
 
   public auxChainId?: number;
