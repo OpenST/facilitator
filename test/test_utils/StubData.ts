@@ -6,11 +6,13 @@ import ContractEntity from '../../src/models/ContractEntity';
 import Gateway from '../../src/models/Gateway';
 import Message from '../../src/models/Message';
 import StakeRequest from '../../src/models/StakeRequest';
-import { EntityType } from '../../src/repositories/ContractEntityRepository';
 import { GatewayType } from '../../src/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../src/repositories/MessageRepository';
+import Message from '../../src/models/Message';
+import Message from '../../src/models/Message';
+import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
