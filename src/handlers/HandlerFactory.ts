@@ -18,7 +18,6 @@ import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
 import ProveGatewayHandler from "./ProveGatewayHandler";
 import StakeRequestedHandler from "./StakeRequestHandler";
-//import {HandlerTypes} from "../types";
 
 
 export default class HandlerFactory {
@@ -40,7 +39,7 @@ export default class HandlerFactory {
       ),
       stateRootAvailables: new AnchorHandler(
         repos.auxiliaryChainRepository,
-      1243,
+        1243, // fixme #87 replace with auxiliary chain id
       ),
       gatewayProvens: new ProveGatewayHandler(
         repos.gatewayRepository,

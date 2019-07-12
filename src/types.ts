@@ -1,7 +1,3 @@
-import StakeRequestedHandler from "./handlers/StakeRequestHandler";
-import ProveGatewayHandler from "./handlers/ProveGatewayHandler";
-import AnchorHandler from './handlers/AnchorHandler';
-
 export type Bytes32 = string;
 export type Address = string;
 export interface SubscriptionInfo {
@@ -15,9 +11,4 @@ export interface SubscriptionInfo {
     httpSubGraphEndPoint: string;
     subscriptionQueries: Record<string, string>;
   };
-};
-export interface HandlerTypes {
-  stakeRequesteds: StakeRequestedHandler,
-  stateRootAvailables: AnchorHandler,
-  gatewayProvens: ProveGatewayHandler,
 };

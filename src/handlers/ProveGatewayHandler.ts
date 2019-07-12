@@ -5,7 +5,7 @@ import Gateway from "../models/Gateway";
 import Logger from "../Logger";
 
 /**
- * This class handels prove gateway handler transactions.
+ * This class handles GatewayProven transactions.
  */
 export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> {
   /* Storage */
