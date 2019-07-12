@@ -65,12 +65,12 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
   /**
    * This method reacts on changes when GatewayProven entity is received.
    *
-   * Gateway model object is selected because facilitator works for a gateway pair.
+   * Gateway model first object is selected because facilitator works for a gateway pair.
    * So for all gateways objects gatewayAddress will be same.
    *
-   * Messages to be send for confirmation is selected and confirmStakeIntent is called.
+   * Messages to be send for confirmation is fetched and confirmStakeIntent is called.
    *
-   * @param gateway List of Gateway models
+   * @param gateway List of Gateway models.
    */
   public async update(gateway: Gateway[]): Promise<void> {
     const provenGateway: Gateway = gateway[0];
@@ -79,6 +79,16 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       provenGateway.lastRemoteGatewayProvenBlockHeight!,
     );
 
+    await this.confirmStakeIntent(provenGateway, messages);
+  }
+
+  /**
+   * Collects all confirmStakeIntent promises and transaction is sent.
+   *
+   * @param gateway Instance of Gateway model.
+   * @param messages List of message models
+   */
+  public async confirmStakeIntent(gateway: Gateway, messages: Message[]): Promise<void> {
     const proofGenerator = new ProofGenerator(
       this.originWeb3,
       this.auxiliaryWeb3,
@@ -86,13 +96,12 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
 
     let confirmStakeIntentPromises = [];
     for( let i=0; i< messages.length; i++) {
-      let message = messages[i];
-      confirmStakeIntentPromises.push(this.confirmStakeIntent(
-        proofGenerator,
-        message,
-        provenGateway)
+      const message = messages[i];
+      confirmStakeIntentPromises.push(
+        this.confirm(proofGenerator, message, gateway)
       );
     }
+
     await Promise.all(confirmStakeIntentPromises);
   }
 
@@ -100,10 +109,10 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * Generates outbox proof for a messageHash and sends confirmStakeIntent transaction.
    *
    * @param proofGenerator Instance of ProofGenerator class.
-   * @param message Instance of Message object.
-   * @param gateway Instance of Gateway object.
+   * @param message Instance of Message model.
+   * @param gateway Instance of Gateway model.
    */
-  private async confirmStakeIntent(proofGenerator: any, message: Message, gateway: Gateway):
+  private async confirm(proofGenerator: any, message: Message, gateway: Gateway):
     Promise<string> {
     const {
       proofData,
