@@ -18,7 +18,7 @@ commander
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
     // Validating mandatory parameters
-    let mandatoryOptionMissing:boolean = false;
+    let mandatoryOptionMissing = false;
 
     if (options.mosaicConfig === undefined) {
       Logger.error('required --mosaicConfig <mosaic-config>');
@@ -50,7 +50,7 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    if (mandatoryOptionMissing === true) {
+    if (mandatoryOptionMissing) {
       process.exit(1);
     }
 
@@ -65,7 +65,7 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.from('');
+    const facilitatorConfig = FacilitatorConfig.fromChain('');
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
@@ -92,9 +92,7 @@ commander
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
 
-      facilitatorConfig.chains[chainid] = new Chain();
-      facilitatorConfig.chains[chainid].worker = account.address;
-      facilitatorConfig.chains[chainid].rpc = rpc;
+      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };

@@ -10,18 +10,25 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "originChain": {
+          "type": "string",
+          "additionalProperties": false
+        },
+        "auxChainId": {
+          "type": "string",
+          "additionalProperties": false
+        },
         "database": {
           "$ref": "#/definitions/Database"
         },
         "chains": {
-           "type": "object",
+          "type": "object",
           "additionalProperties": false,
           "patternProperties": {
             "^[0-9a-zA-Z]+$": {
               "$ref": "#/definitions/Chain"
             }
           }
-
         },
         "encryptedAccounts": {
           "$ref": "#/definitions/EncryptedAccounts"
@@ -30,10 +37,11 @@
       "required": [
         "chains",
         "database",
-        "encryptedAccounts"
+        "encryptedAccounts",
+        "originChain"
       ],
       "title": "Facilitator",
-      "description":"Object encapsulating details about facilitator config"
+      "description": "Object encapsulating details about facilitator config"
     },
     "Chain": {
       "type": "object",
@@ -65,7 +73,7 @@
         "path"
       ],
       "title": "Database",
-      "description":"It represents database config details"
+      "description": "It represents database config details"
     },
     "EncryptedAccounts": {
       "type": "object",
@@ -76,7 +84,7 @@
       "patternProperties": {
         "^0x[a-fA-F0-9]{40}$": {
           "$ref": "#/definitions/Account",
-          "description":"Represents encrypted account for an address"
+          "description": "Represents encrypted account for an address"
         }
       },
       "description": "List of encrypted accounts"
@@ -84,7 +92,7 @@
     "Account": {
       "type": "object",
       "title": "Web3 encrypted account",
-      "description":"Object represents encrypted web3 account"
+      "description": "Object represents encrypted web3 account"
     }
   }
 }
