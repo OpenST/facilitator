@@ -172,6 +172,15 @@ export class FacilitatorConfig {
     }
   }
 
+  public static remove(chain: string): void {
+    const facilitatorConfigPath = path.join(
+      Directory.getMosaicDirectoryPath(),
+      chain,
+      MOSAIC_FACILITATOR_CONFIG,
+    );
+    fs.removeSync(facilitatorConfigPath);
+  }
+
   /**
    * It checks if facilitator config is present for given chain id.
    * @param chain Auxiliary chain id.

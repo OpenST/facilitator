@@ -63,9 +63,11 @@ commander
       } catch (e) {
         Logger.info('creating facilitator config as it is not present');
       }
+    } else {
+      FacilitatorConfig.remove(options.chainId);
     }
 
-    const facilitatorConfig = FacilitatorConfig.fromChain('');
+    const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);

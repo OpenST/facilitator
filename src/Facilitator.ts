@@ -72,10 +72,10 @@ export default class Facilitator {
    */
   public async stop(): Promise<void> {
     if (this.originSubscriber) {
-      this.originSubscriber.unsubscribe();
+      await this.originSubscriber.unsubscribe();
     }
     if (this.auxiliarySubscriber) {
-      this.auxiliarySubscriber.unsubscribe();
+      await this.auxiliarySubscriber.unsubscribe();
     }
   }
 
