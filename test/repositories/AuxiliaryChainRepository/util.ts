@@ -42,14 +42,6 @@ const Util = {
       'coAnchorAddress should match',
     );
 
-    if (inputAuxiliaryChain.lastProcessedBlockNumber) {
-      assert.notStrictEqual(
-        inputAuxiliaryChain.lastProcessedBlockNumber,
-        expectedAuxiliaryChain.lastProcessedBlockNumber,
-        'lastProcessedBlockNumber should match',
-      );
-    }
-
     if (inputAuxiliaryChain.lastOriginBlockHeight) {
       assert.notStrictEqual(
         inputAuxiliaryChain.lastOriginBlockHeight,

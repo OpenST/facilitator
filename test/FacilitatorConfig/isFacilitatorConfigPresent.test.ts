@@ -13,7 +13,6 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
   const mosaicDirectoryPath = '.mosaic';
   let pathSpy: any;
   let directorySpy: any;
-  let fsSpy: any;
 
   function spyFsModule(fileSize: number): any {
     const fsSpy: any = sinon.replace(
@@ -38,7 +37,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
 
   it('should pass with valid arguments', () => {
     const fileSize = 1;
-    fsSpy = spyFsModule(fileSize);
+    const fsSpy = spyFsModule(fileSize);
 
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
     SpyAssert.assert(directorySpy, 1, [[]]);
@@ -57,7 +56,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
 
   it('should fail when file is empty', () => {
     const fileSize = 0;
-    fsSpy = spyFsModule(fileSize);
+    const fsSpy = spyFsModule(fileSize);
 
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
 
