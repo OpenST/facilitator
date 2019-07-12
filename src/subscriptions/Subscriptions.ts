@@ -6,16 +6,28 @@ import Subscriber from './Subscriber';
 import { SubscriptionInfo } from '../types';
 import SubscriptionQueries from './SubscriptionQueries';
 
+/**
+ * This class is container that holds instances of all the subscriptions.
+ */
 export default class Subscriptions {
   public readonly originSubscriber: Subscriber;
 
   public readonly auxiliarySubscriber: Subscriber;
 
+  /**
+   * @param originSubscriber Instance of origin subscriber.
+   * @param auxiliarySubscriber Instance of auxiliary subscriber.
+   */
   private constructor(originSubscriber: Subscriber, auxiliarySubscriber: Subscriber) {
     this.originSubscriber = originSubscriber;
     this.auxiliarySubscriber = auxiliarySubscriber;
   }
 
+  /**
+   * This is a factory method to create subscription container.
+   * @param transactionHandler Instance of transaction handler.
+   * @param repos Repository container.
+   */
   public static async create(
     transactionHandler: TransactionHandler,
     repos: Repositories,

@@ -4,7 +4,7 @@ import Repositories from './repositories/Repositories';
 import Services from './services/Services';
 import Subscriptions from './subscriptions/Subscriptions';
 import TransactionHandler from './TransactionHandler';
-import Handlers from './handlers/HandlerFactory';
+import Handlers from './handlers/Handlers';
 
 export default class Container {
   /**
@@ -13,8 +13,9 @@ export default class Container {
    * @param auxChainId Auxiliary chain ID.
    * @param mosaicConfigPath Mosaic Config path.
    * @param facilitatorConfigPath Facilitator config path.
+   * @return Promise that resolves to facilitator instance.
    */
-  public async create(
+  public static async create(
     originChain?: string,
     auxChainId?: string,
     mosaicConfigPath?: string,

@@ -18,7 +18,7 @@ import StakeRequestHandler from './StakeRequestHandler';
 import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
 
-export default class HandlerFactory {
+export default class Handlers {
   /**
    * This methods instantiate different kinds of handlers. This method also takes
    * responsibility of instantiating repositories and services.
