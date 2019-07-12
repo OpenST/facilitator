@@ -9,8 +9,8 @@ export default class Facilitator {
   private auxiliarySubscriber: Subscriber;
 
   /**
-   * Facilitator class constructor.
-   *
+   * @param originSubscriber Origin subscriber instance.
+   * @param auxiliarySubscriber Auxiliary subscriber instance.
    */
   public constructor(originSubscriber: Subscriber, auxiliarySubscriber: Subscriber) {
     this.originSubscriber = originSubscriber;

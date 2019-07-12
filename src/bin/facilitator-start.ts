@@ -29,7 +29,7 @@ facilitatorCmd
         aux_chain_id,
         options.mosaicConfig,
         options.facilitatorConfig,
-      ).construct();
+      ).create();
 
       Logger.info('starting facilitator');
       await facilitator.start();

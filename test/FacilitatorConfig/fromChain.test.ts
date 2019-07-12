@@ -4,7 +4,7 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 import Utils from '../../src/Utils';
 import SpyAssert from '../test_utils/SpyAssert';
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 
 
 describe('FacilitatorConfig.fromChain()', () => {

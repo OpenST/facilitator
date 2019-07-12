@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { Chain, Config } from '../../src/Config';
+import { Chain, Config } from '../../src/Config/Config';
 import SpyAssert from '../test_utils/SpyAssert';
 
 const Web3 = require('web3');

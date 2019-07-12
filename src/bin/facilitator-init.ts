@@ -2,7 +2,7 @@ import * as commander from 'commander';
 import Account from '../Account';
 import Logger from '../Logger';
 import DatabaseFileHelper from '../DatabaseFileHelper';
-import { FacilitatorConfig, Chain } from '../Config';
+import { FacilitatorConfig, Chain } from '../Config/Config';
 import Utils from '../Utils';
 
 const Web3 = require('web3');
