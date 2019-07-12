@@ -48,7 +48,12 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
   it('should pass with valid arguments', () => {
     const fsEnsureDirSyncSpy = spyFsEnsureDirSync();
     const fsWriteFileSyncSpy = spyFsWriteFileSync();
-    const fsConfig: FacilitatorConfig = FacilitatorConfig.fromChain('');
+    sinon.replace(
+      fs,
+      'existsSync',
+      sinon.fake.returns(false),
+    );
+    const fsConfig: FacilitatorConfig = FacilitatorConfig.fromChain(chain);
     const directorySpy = spyDirectory();
     const pathSpy = spyPath();
 

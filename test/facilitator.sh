@@ -115,7 +115,7 @@ facilitator_init_no_auxiliarypassword_fail
 facilitator_init_no_auxiliaryrpc_fail
 facilitator_init_no_originrpc_fail
 
-
+remove_facilitator_config
 # Facilitator init will create facilitator-config.json file.
 # All mandatory params are provided.
 facilitator_init_pass
