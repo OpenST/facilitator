@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 
 import GraphClient from '../../src/GraphClient';
+import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
 import Subscriber from '../../src/Subscriber';
 import TransactionFetcher from '../../src/TransactionFetcher';
 import TransactionHandler from '../../src/TransactionHandler';
@@ -27,7 +28,14 @@ describe('Subscriber.unsubscribe()', () => {
     );
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
-    subscriber = new Subscriber(graphClient, subscriptionQueries, handler as any, fetcher as any);
+    const contractEntityRepository = sinon.mock(ContractEntityRepository);
+    subscriber = new Subscriber(
+      graphClient,
+      subscriptionQueries,
+      handler as any,
+      fetcher as any,
+      contractEntityRepository as any,
+    );
   });
 
   it('should work with correct parameters', async () => {

@@ -50,7 +50,7 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    if (mandatoryOptionMissing === true) {
+    if (mandatoryOptionMissing) {
       process.exit(1);
     }
 
@@ -66,7 +66,7 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.from('');
+    const facilitatorConfig = FacilitatorConfig.fromChain('');
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
@@ -93,9 +93,7 @@ commander
     const setFacilitator = (chainId: string, rpc: string, password: string): void => {
       const account: Account = Account.create(new Web3(null), password);
 
-      facilitatorConfig.chains[chainId] = new Chain();
-      facilitatorConfig.chains[chainId].worker = account.address;
-      facilitatorConfig.chains[chainId].rpc = rpc;
+      facilitatorConfig.chains[chainId] = new Chain(rpc, account.address);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };

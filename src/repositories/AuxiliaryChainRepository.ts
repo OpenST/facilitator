@@ -22,8 +22,6 @@ class AuxiliaryChainModel extends Model {
 
   public readonly coAnchorAddress!: string;
 
-  public readonly lastProcessedBlockNumber!: BigNumber;
-
   public readonly lastOriginBlockHeight!: BigNumber;
 
   public readonly lastAuxiliaryBlockHeight!: BigNumber;
@@ -89,14 +87,6 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
-          },
-        },
-        lastProcessedBlockNumber: {
-          type: DataTypes.BIGINT,
-          allowNull: true,
-          defaultValue: null,
-          validate: {
-            min: 0,
           },
         },
         lastOriginBlockHeight: {
@@ -191,7 +181,6 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
       auxiliaryChainModel.ostCoGatewayAddress,
       auxiliaryChainModel.anchorAddress,
       auxiliaryChainModel.coAnchorAddress,
-      new BigNumber(auxiliaryChainModel.lastProcessedBlockNumber),
       new BigNumber(auxiliaryChainModel.lastOriginBlockHeight),
       new BigNumber(auxiliaryChainModel.lastAuxiliaryBlockHeight),
       auxiliaryChainModel.createdAt,

@@ -12,7 +12,7 @@ import Utils from '../Utils';
 class GatewayModel extends Model {
   public readonly gatewayAddress!: string;
 
-  public readonly chainId!: number;
+  public readonly chain!: string;
 
   public readonly gatewayType!: string;
 
@@ -63,8 +63,8 @@ export default class GatewayRepository extends Subject<Gateway> {
             len: [42, 42],
           },
         },
-        chainId: {
-          type: DataTypes.INTEGER,
+        chain: {
+          type: DataTypes.STRING,
           allowNull: false,
           validate: {
             min: 0,
@@ -181,6 +181,23 @@ export default class GatewayRepository extends Subject<Gateway> {
   /* Private Functions */
 
   /**
+   * This method returns list of gateway records based on chain identifier.
+   * @param chain Chain identifier.
+   */
+  public async getAllByChain(chain: string): Promise<Gateway []> {
+    const models = await GatewayModel.findAll({
+      where: {
+        chain,
+      },
+    });
+
+    return models.map((model: GatewayModel) => {
+      const gateway: Gateway = this.convertToGateway(model);
+      return gateway;
+    });
+  }
+
+  /**
    * It converts Gateway db object to Gateway model object.
    *
    * @param gatewayModel GatewayModel object to convert.
@@ -190,7 +207,7 @@ export default class GatewayRepository extends Subject<Gateway> {
   private convertToGateway(gatewayModel: GatewayModel): Gateway {
     return new Gateway(
       gatewayModel.gatewayAddress,
-      gatewayModel.chainId,
+      gatewayModel.chain,
       gatewayModel.gatewayType,
       gatewayModel.remoteGatewayAddress,
       gatewayModel.tokenAddress,

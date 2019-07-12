@@ -24,7 +24,7 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', (): void => {
       'writeFileSync',
     ).callsFake(sinon.fake.returns(true));
 
-    const fsConfig: FacilitatorConfig = FacilitatorConfig.from('');
+    const fsConfig: FacilitatorConfig = FacilitatorConfig.fromChain('');
 
     const directorySpy = sandbox.stub(
       Directory,
@@ -39,6 +39,8 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', (): void => {
     fsConfig.writeToFacilitatorConfig(chain);
 
     const data = {
+      originChain: '',
+      auxChainId: '',
       database: {},
       chains: {},
       encryptedAccounts: {},

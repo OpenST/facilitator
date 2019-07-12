@@ -1,14 +1,25 @@
+import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
 import EntityGraphQueries from '../../src/EntityGraphQueries';
 import GraphClient from '../../src/GraphClient';
+import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
 import TransactionFetcher from '../../src/TransactionFetcher';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
+import StubData from '../test_utils/StubData';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {
     const mockApolloClient = sinon.stub as any;
+    const mockedContractEntityRepo = sinon.createStubInstance(ContractEntityRepository);
+
+    const uts = new BigNumber(1);
+    const contractEntityRepoSpy = sinon.replace(
+      mockedContractEntityRepo,
+      'get',
+      sinon.fake.resolves(StubData.getContractEntity(uts)) as any,
+    );
     const graphClient = new GraphClient(mockApolloClient);
 
     const subscriptionResponse = {
@@ -28,7 +39,7 @@ describe('TransactionFetcher.fetch()', () => {
     };
     const iterationOneVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
-      uts: 0,
+      uts,
       limit: 100,
       skip: 0,
     };
@@ -43,7 +54,7 @@ describe('TransactionFetcher.fetch()', () => {
     };
     const iterationTwoVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
-      uts: 0,
+      uts,
       limit: 100,
       skip: 100,
     };
@@ -53,7 +64,7 @@ describe('TransactionFetcher.fetch()', () => {
     };
     const iterationThreeVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
-      uts: 0,
+      uts,
       limit: 100,
       skip: 200,
     };
@@ -66,7 +77,10 @@ describe('TransactionFetcher.fetch()', () => {
     spyGraphClientQuery.onCall(1).resolves(mockQueryResponseIterationTwo);
     spyGraphClientQuery.onCall(2).resolves(mockQueryResponseIterationThree);
 
-    const transactionFetcher = new TransactionFetcher(graphClient);
+    const transactionFetcher = new TransactionFetcher(
+      graphClient,
+      mockedContractEntityRepo as any,
+    );
 
     const response = await transactionFetcher.fetch(subscriptionResponse);
     const expectedResponse = {
@@ -98,6 +112,14 @@ describe('TransactionFetcher.fetch()', () => {
       [query, iterationTwoVariables],
       [query, iterationThreeVariables],
     ]);
+
+    SpyAssert.assert(
+      contractEntityRepoSpy,
+      1,
+      [[
+        '0x0000000000000000000000000000000000000022', 'stakeRequesteds',
+      ]],
+    );
 
     sinon.restore();
   });

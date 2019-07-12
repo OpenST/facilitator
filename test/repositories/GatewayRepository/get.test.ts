@@ -20,7 +20,7 @@ describe('Gateway::get', (): void => {
       repos: await Repositories.create(),
     };
     const gatewayAddress = '0x0000000000000000000000000000000000000001';
-    const chainId = 1;
+    const chain = '1';
     const gatewayType = GatewayType.Auxiliary;
     const remoteGatewayAddress = '0x0000000000000000000000000000000000000002';
     const tokenAddress = '0x0000000000000000000000000000000000000003';
@@ -33,7 +33,7 @@ describe('Gateway::get', (): void => {
 
     gateway = new Gateway(
       gatewayAddress,
-      chainId,
+      chain,
       gatewayType,
       remoteGatewayAddress,
       tokenAddress,

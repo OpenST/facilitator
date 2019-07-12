@@ -18,8 +18,6 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
 
   public coAnchorAddress?: string;
 
-  public lastProcessedBlockNumber?: BigNumber;
-
   public lastOriginBlockHeight?: BigNumber;
 
   public lastAuxiliaryBlockHeight?: BigNumber;
@@ -37,7 +35,6 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
    * @param ostCoGatewayAddress CoGateway contract address.
    * @param anchorAddress Anchor contract address.
    * @param coAnchorAddress CoAnchor contract address.
-   * @param lastProcessedBlockNumber Last processed block number of that chain.
    * @param lastOriginBlockHeight Latest orign chain block height.
    * @param lastAuxiliaryBlockHeight Latest auxiliary chain block height.
    * @param createdAt Time at which record is created.
@@ -50,7 +47,6 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
     ostCoGatewayAddress?: string,
     anchorAddress?: string,
     coAnchorAddress?: string,
-    lastProcessedBlockNumber?: BigNumber,
     lastOriginBlockHeight?: BigNumber,
     lastAuxiliaryBlockHeight?: BigNumber,
     createdAt?: Date,
@@ -63,7 +59,6 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
     this.ostCoGatewayAddress = ostCoGatewayAddress;
     this.anchorAddress = anchorAddress;
     this.coAnchorAddress = coAnchorAddress;
-    this.lastProcessedBlockNumber = lastProcessedBlockNumber;
     this.lastOriginBlockHeight = lastOriginBlockHeight;
     this.lastAuxiliaryBlockHeight = lastAuxiliaryBlockHeight;
     this.createdAt = createdAt;

@@ -1,6 +1,7 @@
 import { Subscription } from 'apollo-client/util/Observable';
 
 import GraphClient from './GraphClient';
+import ContractEntityRepository from './repositories/ContractEntityRepository';
 import TransactionFetcher from './TransactionFetcher';
 import TransactionHandler from './TransactionHandler';
 
@@ -16,22 +17,28 @@ export default class Subscriber {
 
   private handler: TransactionHandler;
 
+  private contractEntityRepository: ContractEntityRepository;
+
   private fetcher: TransactionFetcher;
 
   /**
    * Constructor
    *
-   * @params graphClient Graph client instance.
+   * @param graphClient Graph client instance.
    * @param subscriptionQueries Object of subscription queries.
    * @param handler Instance of transaction handler.
    * @param fetcher Instance of TransactionFetcher class.
+   * @param contractEntityRepository Instance of contract entity repository.
    */
   public constructor(
     graphClient: GraphClient,
     subscriptionQueries: Record<string, string>,
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
+    contractEntityRepository: ContractEntityRepository,
+
   ) {
+    this.contractEntityRepository = contractEntityRepository;
     this.querySubscriptions = {};
     this.subscriptionQueries = subscriptionQueries;
     this.graphClient = graphClient;
@@ -46,6 +53,7 @@ export default class Subscriber {
         this.subscriptionQueries[entity],
         this.handler,
         this.fetcher,
+        this.contractEntityRepository,
       );
     });
   }

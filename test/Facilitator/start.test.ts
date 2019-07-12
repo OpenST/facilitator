@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import sinon from 'sinon';
 
 import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
@@ -7,6 +6,7 @@ import GraphClient from '../../src/GraphClient';
 import HandlerFactory from '../../src/handlers/HandlerFactory';
 import Repositories from '../../src/repositories/Repositories';
 import Subscriber from '../../src/Subscriber';
+import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Facilitator.start()', (): void => {
@@ -34,7 +34,7 @@ describe('Facilitator.start()', (): void => {
     const fakePath = 'SomePath';
     const database = sinon.createStubInstance(DBConfig);
     database.path = fakePath;
-    const facilitatorStub = sinon.createStubInstance(FacilitatorConfig);
+    const facilitatorStub = sinon.fake(FacilitatorConfig) as any;
     facilitatorStub.database = database;
     const configStub = sinon.createStubInstance(Config);
     configStub.facilitator = facilitatorStub;

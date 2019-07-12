@@ -17,6 +17,24 @@ const Utils = {
     throw new Error('File not found.');
   },
 
+  /**
+   * This method submits a raw transaction and returns transaction hash.
+   * @param tx Raw transaction.
+   * @param txOption Transaction options.
+   */
+  async sendTransaction(tx: any, txOption: any): Promise<string> {
+    return new Promise(async (onResolve, onReject) => {
+      const txOptions = Object.assign({}, txOption);
+      if (txOptions.gas === undefined) {
+        txOptions.gas = await tx.estimateGas(txOptions);
+      }
+
+      tx.send(txOptions)
+        .on('transactionHash', (hash: string) => onResolve(hash))
+        .on('error', (error: Error) => onReject(error));
+    });
+  },
+
   getDefinedOwnProps(obj: {}): string[] {
     const nonUndefinedOwnedProps: string[] = [];
     Object.entries(obj).forEach(

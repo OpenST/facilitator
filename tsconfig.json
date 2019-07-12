@@ -22,7 +22,8 @@
         "types": [
             "chai",
             "node",
-            "mocha"
+            "mocha",
+            "web3"
         ]
     },
     "include": [

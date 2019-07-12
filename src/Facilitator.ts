@@ -35,7 +35,11 @@ export default class Facilitator {
       HandlerFactory.get(repos),
     );
     const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
-      GraphClient.getClient('http', subGraphDetails.origin.httpSubGraphEndPoint),
+      GraphClient.getClient(
+        'http',
+        subGraphDetails.origin.httpSubGraphEndPoint,
+      ),
+      repos.contractEntityRepository,
     );
     // Subscription to origin subgraph queries
     this.originSubscriber = new Subscriber(
@@ -43,18 +47,21 @@ export default class Facilitator {
       subGraphDetails.origin.subscriptionQueries,
       transactionalHandler,
       originTransactionFetcher,
+      repos.contractEntityRepository,
     );
     await this.originSubscriber.subscribe();
 
     // Subscription to auxiliary subgraph queries
     const auxiliaryTransactionFetcher: TransactionFetcher = new TransactionFetcher(
       GraphClient.getClient('http', subGraphDetails.auxiliary.httpSubGraphEndPoint),
+      repos.contractEntityRepository,
     );
     this.auxiliarySubscriber = new Subscriber(
       GraphClient.getClient('ws', subGraphDetails.auxiliary.wsSubGraphEndPoint),
       subGraphDetails.auxiliary.subscriptionQueries,
       transactionalHandler,
       auxiliaryTransactionFetcher,
+      repos.contractEntityRepository,
     );
     await this.auxiliarySubscriber.subscribe();
   }
