@@ -118,3 +118,19 @@ export class AuxiliaryChainRecordNotFoundException extends Error {
     this.message = message;
   }
 }
+
+/**
+ * This will be thrown when password to unlock worker account is not found.
+ */
+export class WorkerPasswordNotFoundException extends Error {
+  /**
+   * Constructor
+   *
+   * @param message Exception reason.
+   */
+  public constructor(message: string) {
+    super(message);
+    this.name = 'WorkerPasswordNotFoundException';
+    this.message = message;
+  }
+}
