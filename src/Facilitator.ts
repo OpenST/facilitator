@@ -1,11 +1,11 @@
 import { Config } from './Config';
-import Subscriber from './Subscriber';
-import GraphClient from './GraphClient';
+import Subscriber from './subscriptions/Subscriber';
+import GraphClient from './subscriptions/GraphClient';
 import TransactionHandler from './TransactionHandler';
 import HandlerFactory from './handlers/HandlerFactory';
-import TransactionFetcher from './TransactionFetcher';
+import TransactionFetcher from './subscriptions/TransactionFetcher';
 import { SubscriptionInfo } from './types';
-import SubscriptionQueries from './SubscriptionQueries';
+import SubscriptionQueries from './subscriptions/SubscriptionQueries';
 import Repositories from './repositories/Repositories';
 
 /**

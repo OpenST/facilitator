@@ -2,8 +2,8 @@ import * as sinon from 'sinon';
 import { assert } from 'chai';
 
 import Facilitator from '../../src/Facilitator';
-import GraphClient from '../../src/GraphClient';
-import Subscriber from '../../src/Subscriber';
+import GraphClient from '../../src/subscriptions/GraphClient';
+import Subscriber from '../../src/subscriptions/Subscriber';
 import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
 import SpyAssert from '../test_utils/SpyAssert';
 import Repositories from '../../src/repositories/Repositories';
