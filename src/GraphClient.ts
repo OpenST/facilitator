@@ -10,16 +10,10 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import WebSocket from 'ws';
 
 import Logger from './Logger';
-import ContractEntity from './models/ContractEntity';
+import { EntityType } from './models/ContractEntity';
 import ContractEntityRepository from './repositories/ContractEntityRepository';
 import TransactionFetcher from './TransactionFetcher';
 import TransactionHandler from './TransactionHandler';
-import TransactionFetcher from './TransactionFetcher';
-import ContractEntityRepository from './repositories/ContractEntityRepository';
-import ContractEntity from './models/ContractEntity';
-import TransactionFetcher from './TransactionFetcher';
-import ContractEntityRepository from './repositories/ContractEntityRepository';
-import ContractEntity, { EntityType } from './models/ContractEntity';
 
 /**
  * The class interacts with graph node server for subscription and query.

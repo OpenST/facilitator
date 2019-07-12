@@ -1,14 +1,7 @@
 import BigNumber from 'bignumber.js';
 
-import {
-  EntityType,
-} from '../../../src/repositories/ContractEntityRepository';
-
-import ContractEntity from '../../../src/models/ContractEntity';
-import { EntityType } from '../../../src/repositories/ContractEntityRepository';
-import Repositories from '../../../src/repositories/Repositories';
-import ContractEntity from '../../../src/models/ContractEntity';
 import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
+import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
 

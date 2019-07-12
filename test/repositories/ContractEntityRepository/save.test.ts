@@ -1,11 +1,8 @@
 import BigNumber from 'bignumber.js';
-import assert from '../../test_utils/assert';
-
-import ContractEntity from '../../../src/models/ContractEntity';
-import { EntityType } from '../../../src/repositories/ContractEntityRepository';
-import Repositories from '../../../src/repositories/Repositories';
 
 import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
+import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../test_utils/assert';
 import Util from './util';
 
 interface TestConfigInterface {
@@ -68,7 +65,7 @@ describe('ContractEntityRepository::save', (): void => {
 
     assert.isRejected(
       config.repos.contractEntityRepository.save(contractEntity),
-      `${invalidEntityType}`
+      `${invalidEntityType}`,
     );
   });
 });

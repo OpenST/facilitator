@@ -5,20 +5,12 @@ import gql from 'graphql-tag';
 import sinon from 'sinon';
 
 import GraphClient from '../../src/GraphClient';
-import ContractEntity from '../../src/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
 import TransactionFetcher from '../../src/TransactionFetcher';
 import TransactionHandler from '../../src/TransactionHandler';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
-import TransactionHandler from '../../src/TransactionHandler';
-import TransactionFetcher from '../../src/TransactionFetcher';
-import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
-import ContractEntity from '../../src/models/ContractEntity';
-import TransactionHandler from '../../src/TransactionHandler';
-import TransactionFetcher from '../../src/TransactionFetcher';
-import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
-import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;

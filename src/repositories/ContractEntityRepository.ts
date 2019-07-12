@@ -48,7 +48,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
         entityType: {
           primaryKey: true,
           type: DataTypes.ENUM({
-          values: [
+            values: [
               EntityType.StakeIntentDeclareds,
               EntityType.StakeRequesteds,
               EntityType.StateRootAvailables,
@@ -56,7 +56,8 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
               EntityType.GatewayProvens,
-          ]}),
+            ],
+          }),
         },
         timestamp: {
           type: DataTypes.BIGINT,
