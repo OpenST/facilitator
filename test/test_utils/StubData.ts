@@ -10,8 +10,7 @@ import {
   MessageType,
 } from '../../src/repositories/MessageRepository';
 import Message from '../../src/models/Message';
-import ContractEntity from '../../src/models/ContractEntity';
-import { EntityType } from '../../src/repositories/ContractEntityRepository';
+import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(

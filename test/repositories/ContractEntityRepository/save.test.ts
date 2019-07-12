@@ -1,12 +1,9 @@
 import BigNumber from 'bignumber.js';
-
-import {
-  EntityType,
-} from '../../../src/repositories/ContractEntityRepository';
+import assert from '../../test_utils/assert';
 
 import Repositories from '../../../src/repositories/Repositories';
 
-import ContractEntity from '../../../src/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
 import Util from './util';
 
 import chai = require('chai');
@@ -61,5 +58,20 @@ describe('ContractEntityRepository::save', (): void => {
     );
 
     Util.assertion(updateResponse, contractEntity);
+  });
+
+  it('should fail when invalid entity type is to be saved', async (): Promise<void> => {
+    const invalidEntityType = 'invalid_entity_type' as EntityType;
+    const contractEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000002',
+      invalidEntityType,
+      new BigNumber(1),
+      createdAt,
+    );
+
+    assert.isRejected(
+      config.repos.contractEntityRepository.save(contractEntity),
+      `${invalidEntityType}`
+    );
   });
 });

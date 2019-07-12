@@ -91,6 +91,8 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
+    facilitatorConfig.originChain = originChainId;
+    facilitatorConfig.auxChainId = options.chainId;
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
 

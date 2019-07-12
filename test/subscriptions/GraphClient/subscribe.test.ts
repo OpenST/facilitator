@@ -10,7 +10,7 @@ import SpyAssert from '../../test_utils/SpyAssert';
 import TransactionHandler from '../../../src/TransactionHandler';
 import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
 import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
-import ContractEntity from '../../../src/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;
@@ -110,7 +110,7 @@ describe('GraphClient.subscribe()', () => {
       1,
       [[new ContractEntity(
         '0x0000000000000000000000000000000000000002',
-        'stakeRequesteds',
+        EntityType.StakeRequesteds,
         new BigNumber(1001),
       )]],
     );
