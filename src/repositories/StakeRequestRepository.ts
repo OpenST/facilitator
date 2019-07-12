@@ -185,6 +185,28 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
   }
 
   /**
+   * Returns a stake request with the specified message hash or
+   * null if there is no.
+   *
+   * @param messageHash Stake request's hash to retrieve.
+   *
+   * @return Stake request object if exists, otherwise null.
+   */
+  public async getByMessagehash(messageHash: string): Promise<StakeRequest | null> {
+    const stakeRequestModel = await StakeRequestModel.findOne({
+      where: {
+        messageHash,
+      },
+    });
+
+    if (stakeRequestModel === null) {
+      return null;
+    }
+
+    return this.convertToStakeRequest(stakeRequestModel);
+  }
+
+  /**
    * Gets all stake requests with a null message hash.
    */
   public async getWithNullMessageHash(): Promise<StakeRequest[]> {

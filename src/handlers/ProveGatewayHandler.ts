@@ -20,28 +20,25 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
 
   /**
    * This method parses gatewayProven transactions and returns Gateway object.
-   * It updates lastRemoteGatewayProvenBlockHeight for a Gateway model.
+   * It extracts gateway model with highest block height and updates proven
+   * blockHeight in Gateway model.
    *
    * @param transactions Transaction objects.
    *
    * @return Array of instances of Gateway objects.
    */
   public async persist(transactions: any[]): Promise<Gateway[]> {
-    let models: Gateway[] = [];
-    for (let i = 0; i < transactions.length; i += 1) {
-      const transaction = transactions[i];
-      const gatewayAddress = transaction._gateway as string;
-      const gateway = await this.GatewayRepository.get(gatewayAddress);
-      if (gateway === null) {
-        throw new Error(`Cannot find record for gateway ${gatewayAddress}`);
-      }
-      const lastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
-      gateway.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
-      models.push(gateway);
+    const transaction = transactions[transactions.length-1];
+    const gatewayAddress = transaction._gateway as string;
+    const gateway = await this.GatewayRepository.get(gatewayAddress);
+    if (gateway === null) {
+      throw new Error(`Cannot find record for gateway ${gatewayAddress}`);
     }
-    await Promise.all(models);
+    const lastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
+    gateway.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
+    await this.GatewayRepository.save(gateway);
 
-    return models;
+    return [gateway];
   }
 
   /**

@@ -295,9 +295,11 @@ export class MessageRepository extends Subject<Message> {
    * This return messages which is to be processed after GatewayProven event is emitted.
    *
    * @param gatewayAddress Address of the gateway.
+   * @param blockHeight Block height at which Gateway is proven.
    */
-  public async getMessagesForProvenGateway(
+  public async getMessagesForConfirmation(
     gatewayAddress: string,
+    blockHeight: BigNumber
   ): Promise<Message[]> {
     const messageModels = await MessageModel.findAll({
       where: {
@@ -306,6 +308,9 @@ export class MessageRepository extends Subject<Message> {
           sourceStatus: MessageStatus.Declared,
           targetStatus: MessageStatus.Undeclared,
           direction: MessageDirection.OriginToAuxiliary,
+          sourceDeclarationBlockHeight: {
+            [Op.lte]: blockHeight,
+          },
         },
       },
     });
