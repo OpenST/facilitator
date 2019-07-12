@@ -4,15 +4,12 @@ import { Config } from './Config';
 import Repositories from './repositories/Repositories';
 import Services from './services/Services';
 import Subscriptions from './subscriptions/Subscriptions';
+import TransactionHandler from './TransactionHandler';
+import Handlers from './handlers/HandlerFactory';
 
 export default class Container {
   private config: Config;
 
-  private repositories: Repositories;
-
-  private services: Services;
-
-  private subscriptions: Subscriptions;
 
   /**
    *
@@ -29,14 +26,24 @@ export default class Container {
   ) {
     const facilitatorStart: FacilitatorStart = new FacilitatorStart(
       originChain,
-      auxChainId,
+      auxChainId ? Number.parseInt(auxChainId, 10) : undefined,
       mosaicConfigPath,
       facilitatorConfigPath,
     );
     this.config = facilitatorStart.getConfig();
   }
 
-  public construct(): Facilitator {
-    return new Facilitator(this.config);
+  public async construct(): Promise<Facilitator> {
+    const repositories = await Repositories.create();
+    const transactionHandler = new TransactionHandler(
+      Handlers.create(repositories, this.config.facilitator.auxChainId),
+
+    );
+    const subscriptions = await Subscriptions.create(
+      transactionHandler,
+      repositories,
+    );
+
+    return new Facilitator(subscriptions.originSubscriber, subscriptions.auxiliarySubscriber);
   }
 }

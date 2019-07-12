@@ -23,16 +23,22 @@ export default class HandlerFactory {
    * This methods instantiate different kinds of handlers. This method also takes
    * responsibility of instantiating repositories and services.
    *
+   * @param repos Repository container.
+   * @param auxChainId ID of auxiliary chain.
    * @return Different kinds of transaction handlers.
    */
-  public static get(repos: Repositories): { stakeRequesteds: StakeRequestHandler; anchor: AnchorHandler } {
+  public static create(repos: Repositories, auxChainId: number):
+  {
+    stakeRequesteds: StakeRequestHandler;
+    anchor: AnchorHandler;
+  } {
     return {
       stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
       ),
       anchor: new AnchorHandler(
         repos.auxiliaryChainRepository,
-        1243, // fixme #87 replace with auxiliary chain id
+        auxChainId,
       ),
     };
   }

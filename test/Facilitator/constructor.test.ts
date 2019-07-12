@@ -1,25 +1,22 @@
 import * as sinon from 'sinon';
 import assert from '../test_utils/assert';
 
-import { Config } from '../../src/Config';
 import Facilitator from '../../src/Facilitator';
+import Subscriber from '../../src/subscriptions/Subscriber';
 
 describe('Facilitator.constructor()', () => {
   it('should construct with correct parameters', async () => {
-    const configStub = sinon.createStubInstance(Config);
-    const facilitator = new Facilitator(configStub);
+    const originSubscriber = sinon.createStubInstance(Subscriber);
+    const auxiliarySubscriber = sinon.createStubInstance(Subscriber);
+
+    const facilitator = new Facilitator(
+      originSubscriber as any,
+      auxiliarySubscriber as any,
+    );
 
     assert(
       facilitator,
       'Invalid Facilitator object.',
     );
-
-    assert.strictEqual(
-      facilitator.config,
-      configStub,
-      'Config mismatch.',
-    );
-
-    sinon.restore();
   });
 });
