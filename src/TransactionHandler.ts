@@ -46,10 +46,5 @@ export default class TransactionHandler {
     });
 
     await Promise.all(persistPromises);
-
-    Object.keys(models).forEach((transactionKind) => {
-      const handler = this.handlers[transactionKind];
-      handler.handle(models[transactionKind]);
-    });
   }
 }

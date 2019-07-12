@@ -57,8 +57,7 @@ commander
     if (!options.force) {
       try {
         if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
-          Logger.error('facilitator config already present. '
-            + 'use -f option to override the existing facilitator config.');
+          Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
           process.exit(1);
         }
       } catch (e) {
@@ -90,10 +89,12 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
-    const setFacilitator = (chainId: string, rpc: string, password: string): void => {
+    facilitatorConfig.originChain = originChainId;
+    facilitatorConfig.auxChainId = options.chainId;
+    const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(null), password);
 
-      facilitatorConfig.chains[chainId] = new Chain(rpc, account.address);
+      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
