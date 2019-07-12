@@ -14,9 +14,9 @@
 //
 // ----------------------------------------------------------------------------
 
-import StakeRequestHandler from './StakeRequestHandler';
 import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
+import StakeRequestHandler from './StakeRequestHandler';
 
 export default class HandlerFactory {
   /**

@@ -1,7 +1,8 @@
 
 import BigNumber from 'bignumber.js';
-import StakeRequest from '../../src/models/StakeRequest';
+
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
+import StakeRequest from '../../src/models/StakeRequest';
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(

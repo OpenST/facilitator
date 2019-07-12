@@ -1,12 +1,12 @@
 import { Config } from './Config';
-import Subscriber from './Subscriber';
 import GraphClient from './GraphClient';
-import TransactionHandler from './TransactionHandler';
 import HandlerFactory from './handlers/HandlerFactory';
-import TransactionFetcher from './TransactionFetcher';
-import { SubscriptionInfo } from './types';
-import SubscriptionQueries from './SubscriptionQueries';
 import Repositories from './repositories/Repositories';
+import Subscriber from './Subscriber';
+import SubscriptionQueries from './SubscriptionQueries';
+import TransactionFetcher from './TransactionFetcher';
+import TransactionHandler from './TransactionHandler';
+import { SubscriptionInfo } from './types';
 
 /**
  * The class defines properties and behavior of a facilitator.

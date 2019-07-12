@@ -14,21 +14,19 @@
 //
 // ----------------------------------------------------------------------------
 
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
+import Web3 from 'web3';
+import * as Web3Utils from 'web3-utils';
 
-import Repositories from '../repositories/Repositories';
+import Message from '../models/Message';
 import StakeRequest from '../models/StakeRequest';
 import Observer from '../observer/Observer';
 import {
-  MessageType, MessageStatus, MessageDirection, MessageRepository,
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
+import Repositories from '../repositories/Repositories';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
-import Message from '../models/Message';
-
-import assert = require('assert');
-
-const web3utils = require('web3-utils');
-
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts
@@ -37,7 +35,7 @@ const web3utils = require('web3-utils');
 export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   /* Storage */
 
-  private web3: any;
+  private web3: Web3;
 
   private stakeRequestRepository: StakeRequestRepository;
 
@@ -46,7 +44,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   /* Public Functions */
 
-  public constructor(repos: Repositories, web3: any) {
+  public constructor(repos: Repositories, web3: Web3) {
     super();
 
     this.web3 = web3;
@@ -63,8 +61,8 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   }
 
   public static generateSecret(): {secret: string; hashLock: string} {
-    const secret = web3utils.randomHex(32);
-    const hashLock = web3utils.keccak256(secret);
+    const secret = Web3Utils.randomHex(32);
+    const hashLock = Web3Utils.keccak256(secret);
 
     return {
       secret,
@@ -173,7 +171,8 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
 
     const messageTypeHash = this.web3.utils.keccak256(
-      'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,uint256 gasLimit,address sender,bytes32 hashLock)',
+      'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
+      + 'uint256 gasLimit,address sender,bytes32 hashLock)',
     );
 
     return this.web3.utils.keccak256(

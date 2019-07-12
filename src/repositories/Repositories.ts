@@ -14,13 +14,13 @@
 //
 // ----------------------------------------------------------------------------
 
-import { Sequelize, InitOptions } from 'sequelize';
+import { InitOptions, Sequelize } from 'sequelize';
 
-import StakeRequestRepository from './StakeRequestRepository';
 import AuxiliaryChainRepository from './AuxiliaryChainRepository';
-import { MessageRepository } from './MessageRepository';
-import GatewayRepository from './GatewayRepository';
 import ContractEntityRepository from './ContractEntityRepository';
+import GatewayRepository from './GatewayRepository';
+import { MessageRepository } from './MessageRepository';
+import StakeRequestRepository from './StakeRequestRepository';
 
 export default class Repositories {
   /* Storage */

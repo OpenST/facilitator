@@ -1,10 +1,10 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
+import EntityGraphQueries from '../../src/EntityGraphQueries';
 import GraphClient from '../../src/GraphClient';
 import TransactionFetcher from '../../src/TransactionFetcher';
+import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
-import EntityGraphQueries from '../../src/EntityGraphQueries';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {

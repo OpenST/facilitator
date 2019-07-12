@@ -1,10 +1,11 @@
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import { MosaicConfig } from './MosaicConfig';
+import path from 'path';
+
+import schema from './Config/FacilitatorConfig.schema.json';
 import Directory from './Directory';
 import { InvalidFacilitatorConfigException } from './Exception';
-import * as schema from './Config/FacilitatorConfig.schema.json';
+import { MosaicConfig } from './MosaicConfig';
 import Utils from './Utils';
 
 // Database password key to read from env.

@@ -1,5 +1,5 @@
-import ContractEntityHandler from './handlers/ContractEntityHandler';
 import { HandlerNotFoundException } from './Exception';
+import ContractEntityHandler from './handlers/ContractEntityHandler';
 import Logger from './Logger';
 
 /**

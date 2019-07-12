@@ -1,5 +1,5 @@
-import assert from '../../test_utils/assert';
 import AuxiliaryChain from '../../../src/models/AuxiliaryChain';
+import assert from '../../test_utils/assert';
 
 const Util = {
   assertAuxiliaryChainAttributes(

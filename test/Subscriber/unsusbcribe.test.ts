@@ -1,10 +1,10 @@
-import * as sinon from 'sinon';
-import assert from '../test_utils/assert';
+import sinon from 'sinon';
 
-import Subscriber from '../../src/Subscriber';
 import GraphClient from '../../src/GraphClient';
-import TransactionHandler from '../../src/TransactionHandler';
+import Subscriber from '../../src/Subscriber';
 import TransactionFetcher from '../../src/TransactionFetcher';
+import TransactionHandler from '../../src/TransactionHandler';
+import assert from '../test_utils/assert';
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient: any;

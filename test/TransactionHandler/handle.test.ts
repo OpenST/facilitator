@@ -1,14 +1,10 @@
-import TransactionHandler from '../../src/TransactionHandler';
+import sinon from 'sinon';
+
 import StakeRequestHandler from '../../src/handlers/StakeRequestHandler';
+import TransactionHandler from '../../src/TransactionHandler';
+import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
-const { assert } = chai;
-
-import sinon = require('sinon');
 
 describe('TransactionHandler.handle()', () => {
   const bulkTransactions = {

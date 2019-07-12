@@ -1,8 +1,9 @@
-import {
-  DataTypes, Model, InitOptions, Op,
-} from 'sequelize';
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import * as assert from 'assert';
+import {
+  DataTypes, InitOptions, Model, Op,
+} from 'sequelize';
+
 import ContractEntity from '../models/ContractEntity';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';

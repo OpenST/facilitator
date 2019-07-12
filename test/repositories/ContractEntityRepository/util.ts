@@ -1,5 +1,5 @@
-import assert from '../../test_utils/assert';
 import ContractEntity from '../../../src/models/ContractEntity';
+import assert from '../../test_utils/assert';
 
 /**
  * It contains common methods used for testing purpose of ContractEntityRepository.
@@ -16,7 +16,7 @@ export default class Util {
   ): void {
     if (expectedContractEntity.timestamp !== undefined) {
       assert.isOk(
-        expectedContractEntity.timestamp!.comparedTo(
+        expectedContractEntity.timestamp.comparedTo(
           responseContractEntity.timestamp!,
         ) === 0,
       );

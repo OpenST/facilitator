@@ -1,44 +1,50 @@
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-import Directory from '../../src/Directory';
-import SpyAssert from '../test_utils/SpyAssert';
+import fs from 'fs-extra';
+import path from 'path';
+import sinon from 'sinon';
+
 import { FacilitatorConfig } from '../../src/Config';
+import Directory from '../../src/Directory';
+import assert from '../test_utils/assert';
+import SpyAssert from '../test_utils/SpyAssert';
 
+const sandbox = sinon.createSandbox();
 
-describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
+let pathSpy: any;
+let directorySpy: any;
+let fsSpy: any;
+
+async function spyFsModule(fileSize: number): Promise<any> {
+  fsSpy = sandbox.stub(
+    fs,
+    'statSync',
+  ).callsFake(sinon.fake.returns({ size: fileSize }));
+}
+
+describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
   const chain = '301';
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
-  let pathSpy: any;
-  let directorySpy: any;
-  let fsSpy: any;
 
-  function spyFsModule(fileSize: number): any {
-    const fsSpy: any = sinon.replace(
-      fs,
-      'statSync',
-      sinon.fake.returns({ size: fileSize }),
-    );
-    return fsSpy;
-  }
 
-  beforeEach(async () => {
-    pathSpy = sinon.stub(
+  beforeEach(async (): Promise<void> => {
+    pathSpy = sandbox.stub(
       path,
       'join',
-    ).callsFake(sinon.fake.returns(facilitatorConfigPath));
+    ).returns(facilitatorConfigPath);
 
-    directorySpy = sinon.stub(
+    directorySpy = sandbox.stub(
       Directory,
       'getMosaicDirectoryPath',
-    ).callsFake(sinon.fake.returns(mosaicDirectoryPath));
+    ).returns(mosaicDirectoryPath);
   });
 
-  it('should pass with valid arguments', () => {
+  afterEach(async (): Promise<void> => {
+    sandbox.restore();
+  });
+
+  it('should pass with valid arguments', (): void => {
     const fileSize = 1;
-    fsSpy = spyFsModule(fileSize);
+    spyFsModule(fileSize);
 
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
     SpyAssert.assert(directorySpy, 1, [[]]);
@@ -49,15 +55,11 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
       true,
       `Facilitator config for ${chain} should be present`,
     );
-
-    pathSpy.restore();
-    directorySpy.restore();
-    sinon.restore();
   });
 
-  it('should fail when file is empty', () => {
+  it('should fail when file is empty', (): void => {
     const fileSize = 0;
-    fsSpy = spyFsModule(fileSize);
+    spyFsModule(fileSize);
 
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
 
@@ -71,9 +73,5 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
       false,
       `Facilitator config for chain ${chain} should not be present`,
     );
-
-    pathSpy.restore();
-    directorySpy.restore();
-    sinon.restore();
   });
 });

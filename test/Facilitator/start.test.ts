@@ -1,13 +1,13 @@
-import * as sinon from 'sinon';
 import { assert } from 'chai';
+import sinon from 'sinon';
 
+import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
 import Facilitator from '../../src/Facilitator';
 import GraphClient from '../../src/GraphClient';
-import Subscriber from '../../src/Subscriber';
-import { Config, DBConfig, FacilitatorConfig } from '../../src/Config';
-import SpyAssert from '../test_utils/SpyAssert';
-import Repositories from '../../src/repositories/Repositories';
 import HandlerFactory from '../../src/handlers/HandlerFactory';
+import Repositories from '../../src/repositories/Repositories';
+import Subscriber from '../../src/Subscriber';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Facilitator.start()', (): void => {
   it('should start facilitation', async (): Promise<void> => {

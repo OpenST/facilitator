@@ -1,8 +1,8 @@
-import * as sinon from 'sinon';
-import assert from '../test_utils/assert';
+import sinon from 'sinon';
 
 import { Config } from '../../src/Config';
 import Facilitator from '../../src/Facilitator';
+import assert from '../test_utils/assert';
 
 describe('Facilitator.constructor()', () => {
   it('should construct with correct parameters', async () => {

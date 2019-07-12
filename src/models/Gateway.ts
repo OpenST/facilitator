@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+
 import Comparable from '../observer/Comparable';
 
 /**

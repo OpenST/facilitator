@@ -1,5 +1,5 @@
-import assert from '../../test_utils/assert';
 import Gateway from '../../../src/models/Gateway';
+import assert from '../../test_utils/assert';
 
 const Util = {
   assertGatewayAttributes(

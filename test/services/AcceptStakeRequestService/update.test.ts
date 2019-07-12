@@ -17,22 +17,20 @@
 import 'mocha';
 
 import BigNumber from 'bignumber.js';
-import * as sinon from 'sinon';
-import StakeRequest from '../../../src/models/StakeRequest';
-import Repositories from '../../../src/repositories/Repositories';
-import {
-  MessageDirection,
-  MessageStatus,
-  MessageType,
-} from '../../../src/repositories/MessageRepository';
+import sinon from 'sinon';
+import Web3 from 'web3';
+
 import Message from '../../../src/models/Message';
+import StakeRequest from '../../../src/models/StakeRequest';
+import {
+  MessageDirection, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import Repositories from '../../../src/repositories/Repositories';
 import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
 import assert from '../../test_utils/assert';
 
-const Web3 = require('web3');
-
 interface TestConfigInterface {
-  web3: any;
+  web3: Web3;
   repos: Repositories;
   stakeRequestWithMessageHashB: StakeRequest;
   stakeRequestWithNullMessageHashC: StakeRequest;
@@ -50,7 +48,7 @@ const sandbox = sinon.createSandbox();
 describe('AcceptStakeRequestService::update', (): void => {
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
-    const web3 = new Web3();
+    const web3 = new Web3(null);
     const service = new AcceptStakeRequestService(repos, web3);
     config = {
       web3,

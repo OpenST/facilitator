@@ -1,18 +1,9 @@
 import BigNumber from 'bignumber.js';
 
-import {
-  EntityType,
-} from '../../../src/repositories/ContractEntityRepository';
-
-import Repositories from '../../../src/repositories/Repositories';
-
 import ContractEntity from '../../../src/models/ContractEntity';
+import { EntityType } from '../../../src/repositories/ContractEntityRepository';
+import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-
-chai.use(chaiAsPromised);
 
 interface TestConfigInterface {
   repos: Repositories;

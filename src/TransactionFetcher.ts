@@ -1,5 +1,5 @@
-import GraphClient from './GraphClient';
 import EntityGraphQueries from './EntityGraphQueries';
+import GraphClient from './GraphClient';
 
 /**
  * The class fetches the transactions based on contract address and uts.

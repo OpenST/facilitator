@@ -1,11 +1,11 @@
-import * as commander from 'commander';
-import Account from '../Account';
-import Logger from '../Logger';
-import DatabaseFileHelper from '../DatabaseFileHelper';
-import { FacilitatorConfig, Chain } from '../Config';
-import Utils from '../Utils';
+import commander from 'commander';
+import Web3 from 'web3';
 
-const Web3 = require('web3');
+import Account from '../Account';
+import { Chain, FacilitatorConfig } from '../Config';
+import DatabaseFileHelper from '../DatabaseFileHelper';
+import Logger from '../Logger';
+import Utils from '../Utils';
 
 commander
   .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -16,9 +16,9 @@ commander
   .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
   .option('-dbp, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forceful override facilitator config')
-  .action((options) => {
+  .action((options): void => {
     // Validating mandatory parameters
-    let mandatoryOptionMissing:boolean = false;
+    let mandatoryOptionMissing = false;
 
     if (options.mosaicConfig === undefined) {
       Logger.error('required --mosaicConfig <mosaic-config>');
@@ -57,7 +57,8 @@ commander
     if (!options.force) {
       try {
         if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
-          Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
+          Logger.error('facilitator config already present. '
+            + 'use -f option to override the existing facilitator config.');
           process.exit(1);
         }
       } catch (e) {
@@ -89,12 +90,12 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
-    const setFacilitator = (chainid: string, rpc: string, password: string) => {
-      const account: Account = Account.create(new Web3(), password);
+    const setFacilitator = (chainId: string, rpc: string, password: string): void => {
+      const account: Account = Account.create(new Web3(null), password);
 
-      facilitatorConfig.chains[chainid] = new Chain();
-      facilitatorConfig.chains[chainid].worker = account.address;
-      facilitatorConfig.chains[chainid].rpc = rpc;
+      facilitatorConfig.chains[chainId] = new Chain();
+      facilitatorConfig.chains[chainId].worker = account.address;
+      facilitatorConfig.chains[chainId].rpc = rpc;
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };

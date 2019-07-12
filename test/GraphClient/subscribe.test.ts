@@ -1,11 +1,11 @@
 import gql from 'graphql-tag';
-import * as sinon from 'sinon';
-import assert from '../test_utils/assert';
+import sinon from 'sinon';
 
 import GraphClient from '../../src/GraphClient';
-import SpyAssert from '../test_utils/SpyAssert';
-import TransactionHandler from '../../src/TransactionHandler';
 import TransactionFetcher from '../../src/TransactionFetcher';
+import TransactionHandler from '../../src/TransactionHandler';
+import assert from '../test_utils/assert';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;

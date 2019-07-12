@@ -1,15 +1,16 @@
-import ApolloClient from 'apollo-client';
-import { WebSocketLink } from 'apollo-link-ws';
-import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
+import ApolloClient from 'apollo-client';
 import { Subscription } from 'apollo-client/util/Observable';
+import { createHttpLink } from 'apollo-link-http';
+import { WebSocketLink } from 'apollo-link-ws';
 import gql from 'graphql-tag';
-import * as WebSocket from 'ws';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
+import WebSocket from 'ws';
 
 import Logger from './Logger';
-import TransactionHandler from './TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
+import TransactionHandler from './TransactionHandler';
+
 /**
  * The class interacts with graph node server for subscription and query.
  */

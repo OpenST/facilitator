@@ -14,9 +14,8 @@
 //
 // ----------------------------------------------------------------------------
 
-import NumberUpdate from './NumberUpdate';
-
 import Observer from '../../src/observer/Observer';
+import NumberUpdate from './NumberUpdate';
 
 /**
  * The class is intended for testing functionality of observer/subject classes.

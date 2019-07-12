@@ -1,8 +1,8 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import GraphClient from '../../src/GraphClient';
 import TransactionFetcher from '../../src/TransactionFetcher';
+import assert from '../test_utils/assert';
 
 describe('TransactionFetcher.constructor()', () => {
   it('should construct with correct parameters', async () => {

@@ -1,5 +1,5 @@
-import * as path from 'path';
-import * as os from 'os';
+import os from 'os';
+import path from 'path';
 
 /**
  * Directory provides operations on strings representing directories.

@@ -1,6 +1,4 @@
-'use strict';
-
-import { assert } from 'chai';
+import assert from './assert';
 
 /**
  * This class includes the utility functions to assert spy data.

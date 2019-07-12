@@ -15,11 +15,12 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import ContractEntityHandler from './ContractEntityHandler';
-import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
-import AuxiliaryChain from '../models/AuxiliaryChain';
-import Logger from '../Logger';
+
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
+import Logger from '../Logger';
+import AuxiliaryChain from '../models/AuxiliaryChain';
+import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
+import ContractEntityHandler from './ContractEntityHandler';
 
 /**
  * This class handles Anchor event
@@ -48,13 +49,15 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
     const chainRecord = await this.auxiliaryChainRepository.get(this.auxiliaryChainID);
     let hasChanged = false;
     if (chainRecord === null) {
-      throw new AuxiliaryChainRecordNotFoundException(`Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`);
+      throw new AuxiliaryChainRecordNotFoundException(
+        `Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`,
+      );
     }
 
     let anchorBlockHeight = chainRecord.lastOriginBlockHeight;
     transactions
-      .filter(transaction => chainRecord.anchorAddress === transaction.contractAddress)
-      .forEach((filteredTransaction) => {
+      .filter((transaction): boolean => chainRecord.anchorAddress === transaction.contractAddress)
+      .forEach((filteredTransaction): void => {
         if (
           anchorBlockHeight === undefined
           || anchorBlockHeight.lt(new BigNumber(filteredTransaction._blockHeight))

@@ -1,14 +1,12 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-
 import BigNumber from 'bignumber.js';
+import sinon from 'sinon';
+import * as Utils from 'web3-utils';
+
 import StakeRequestHandler from '../../../src/handlers/StakeRequestHandler';
 import StakeRequest from '../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
-
+import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
-
-const Utils = require('web3-utils');
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully', async (): Promise<void> => {
