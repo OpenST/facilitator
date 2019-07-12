@@ -32,14 +32,16 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
     const gatewayAddress = transaction._gateway as string;
     const gateway = await this.GatewayRepository.get(gatewayAddress);
     if (gateway === null) {
-      throw new Error(`Cannot find record for gateway ${gatewayAddress}`);
+      throw new Error(`Cannot find record for gateway: ${gatewayAddress}`);
     }
     const lastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
-    gateway.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
-    await this.GatewayRepository.save(gateway);
+    if(lastRemoteGatewayProvenBlockHeight.gte(gateway.lastRemoteGatewayProvenBlockHeight!)) {
+      gateway.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
+      await this.GatewayRepository.save(gateway);
+      Logger.info('Gateway:' + gatewayAddress + ' lastRemoteGatewayProvenBlockHeight updated to ' +
+        lastRemoteGatewayProvenBlockHeight);
+    }
 
-    Logger.info('Gateway:' + gatewayAddress + 'lastRemoteGatewayProvenBlockHeight updated to' +
-      lastRemoteGatewayProvenBlockHeight);
     return [gateway];
   }
 
