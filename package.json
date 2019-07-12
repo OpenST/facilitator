@@ -4,7 +4,7 @@
   "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
   "scripts": {
     "lint:ts": "eslint src -c .eslintrc.json --ext ts",
-    "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/handlers/ProveGatewayHandler/persist.test.ts",
+    "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
     "test:facilitator": "./test/facilitator.sh",
     "test": "npm run test:unit && npm run test:facilitator",
     "coverage:report": "nyc report",
