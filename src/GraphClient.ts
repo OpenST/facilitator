@@ -13,7 +13,7 @@ import Logger from './Logger';
 import TransactionHandler from './TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
 import ContractEntityRepository from './repositories/ContractEntityRepository';
-import ContractEntity from './models/ContractEntity';
+import ContractEntity, { EntityType } from './models/ContractEntity';
 
 /**
  * The class interacts with graph node server for subscription and query.
@@ -111,7 +111,7 @@ export default class GraphClient {
 
         const contractEntity = new ContractEntity(
           contractAddress,
-          transactionKind,
+          transactionKind as EntityType,
           currentUTS,
         );
         return contractEntityRepository.save(
