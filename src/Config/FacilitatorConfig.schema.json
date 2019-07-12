@@ -18,10 +18,6 @@
           "type": "string",
           "additionalProperties": false
         },
-        "auxiliaryChain": {
-          "type": "string",
-          "additionalProperties": false
-        },
         "database": {
           "$ref": "#/definitions/Database"
         },
