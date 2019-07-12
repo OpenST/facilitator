@@ -164,27 +164,6 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     return this.convertToAuxiliaryChain(auxiliaryChainModel);
   }
 
-  /**
-   * Fetches AuxiliaryChain object from database if found. Otherwise returns null.
-   *
-   * @param chainId Chain identifier.
-   *
-   * @returns AuxiliaryChain object containing values which satisfy the `where` condition.
-   */
-  public async getByGateway(chainId: number): Promise<AuxiliaryChain | null> {
-    const auxiliaryChainModel = await AuxiliaryChainModel.findOne({
-      where: {
-        chainId,
-      },
-    });
-
-    if (auxiliaryChainModel === null) {
-      return null;
-    }
-
-    return this.convertToAuxiliaryChain(auxiliaryChainModel);
-  }
-
   /* Private Functions */
 
   /**
