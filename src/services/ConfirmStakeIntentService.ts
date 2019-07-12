@@ -1,5 +1,5 @@
 import Observer from "../observer/Observer";
-import {MessageRepository, MessageStatus} from "../repositories/MessageRepository";
+import {MessageRepository} from "../repositories/MessageRepository";
 import Gateway from "../models/Gateway";
 import Message from "../models/Message";
 import Utils from "../Utils";
@@ -68,8 +68,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * Gateway model object is selected because facilitator works for a gateway pair.
    * So for all gateways objects gatewayAddress will be same.
    *
-   * Messages to be send for confirmation is selected. After sending ConfirmStakeIntent
-   * transaction message target status is updated to Declared.
+   * Messages to be send for confirmation is selected and confirmStakeIntent is called.
    *
    * @param gateway List of Gateway models
    */
@@ -86,7 +85,6 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     );
 
     let confirmStakeIntentPromises = [];
-    let savePromises = [];
     for( let i=0; i< messages.length; i++) {
       let message = messages[i];
       confirmStakeIntentPromises.push(this.confirmStakeIntent(
@@ -94,12 +92,8 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
         message,
         provenGateway)
       );
-
-      message.targetStatus = MessageStatus.Declared;
-      savePromises.push(this.messageRepository.save(message));
     }
     await Promise.all(confirmStakeIntentPromises);
-    await Promise.all(savePromises);
   }
 
   /**
@@ -126,7 +120,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       from: this.auxiliaryWorkerAddress,
       gasPrice: AUXILIARY_GAS_PRICE,
     };
-    const stakeRequest = await this.stakeRequestRepository.get(message.messageHash);
+    const stakeRequest = await this.stakeRequestRepository.getByMessageHash(message.messageHash);
     const rawTx = await eip20CoGateway.methods.confirmStakeIntent(
         message.sender!,
         message.nonce!.toString(),

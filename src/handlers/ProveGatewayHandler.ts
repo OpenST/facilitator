@@ -38,6 +38,8 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
     gateway.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
     await this.GatewayRepository.save(gateway);
 
+    Logger.info('Gateway:' + gatewayAddress + 'lastRemoteGatewayProvenBlockHeight updated to' +
+      lastRemoteGatewayProvenBlockHeight);
     return [gateway];
   }
 
