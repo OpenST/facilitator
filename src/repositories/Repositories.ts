@@ -48,7 +48,7 @@ export default class Repositories {
       dialect: 'sqlite',
       storage,
       logging: false,
-      typeValidation: true
+      typeValidation: true,
     });
 
     const db = new Repositories(sequelize);
