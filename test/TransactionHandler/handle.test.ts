@@ -35,11 +35,6 @@ describe('TransactionHandler.handle()', (): void => {
       'persist',
       sinon.fake.resolves([aStakeRequest]),
     );
-    const handleSpy = sinon.replace(
-      stakeRequestedHandler,
-      'handle',
-      sinon.fake.returns(Promise.resolve()),
-    );
     const handlers = {
       stakeRequesteds: stakeRequestedHandler,
     };
@@ -58,7 +53,6 @@ describe('TransactionHandler.handle()', (): void => {
     await transactionHandler.handle(bulkTransactions);
 
     SpyAssert.assert(persistSpy, 1, [[bulkTransactions.stakeRequesteds]]);
-    SpyAssert.assert(handleSpy, 1, [[[aStakeRequest]]]);
     SpyAssert.assert(reposNotifySpy, 1, [[]]);
   });
 
