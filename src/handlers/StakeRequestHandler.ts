@@ -19,8 +19,6 @@ import ContractEntityHandler from './ContractEntityHandler';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import StakeRequest from '../models/StakeRequest';
 
-import Logger from '../Logger';
-
 /**
  * This class handels stake request transactions.
  */
@@ -77,16 +75,4 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
 
     return models;
   }
-
-
-  /**
-   * This method defines action on receiving stake request model.
-   *
-   * @param stakeRequest array of instances of StakeRequestAttributes object.
-   */
-  public handle = async (stakeRequest: StakeRequest[]): Promise<void> => {
-    Logger.info(`Stake requests  : ${stakeRequest}`);
-    return Promise.resolve();
-    // stakeRequestService.reactTo(stakeRequest);
-  };
 }

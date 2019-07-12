@@ -3,7 +3,7 @@ import {
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
 import * as assert from 'assert';
-import ContractEntity from '../models/ContractEntity';
+import ContractEntity, { EntityType } from '../models/ContractEntity';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 
@@ -13,26 +13,13 @@ import Utils from '../Utils';
 class ContractEntityModel extends Model {
   public readonly contractAddress!: string;
 
-  public readonly entityType!: string;
+  public readonly entityType!: EntityType;
 
   public readonly timestamp!: BigNumber;
 
   public readonly createdAt!: Date;
 
   public readonly updatedAt!: Date;
-}
-
-/**
- * Entity types of origin and aux chain for which timestamp will be recorded.
- */
-export enum EntityType {
-  StakeRequesteds = 'stakeRequesteds',
-  StakeIntentDeclareds = 'stakeIntentDeclareds',
-  StateRootAvailables = 'stateRootAvailables',
-  GatewayProvens = 'gatewayProvens',
-  StakeIntentConfirmeds = 'stateIntentConfirmeds',
-  StakeProgresseds = 'stakeProgresseds',
-  MintProgresseds = 'mintProgresseds',
 }
 
 /**
@@ -58,8 +45,9 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
           primaryKey: true,
         },
         entityType: {
+          primaryKey: true,
           type: DataTypes.ENUM({
-            values: [
+          values: [
               EntityType.StakeIntentDeclareds,
               EntityType.StakeRequesteds,
               EntityType.StateRootAvailables,
@@ -67,9 +55,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
               EntityType.GatewayProvens,
-            ],
-          }),
-          primaryKey: true,
+          ]}),
         },
         timestamp: {
           type: DataTypes.BIGINT,
