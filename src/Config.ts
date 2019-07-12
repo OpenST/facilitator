@@ -69,7 +69,7 @@ export class Chain {
 export class FacilitatorConfig {
   public originChain: string;
 
-  public auxChainId: string;
+  public auxChainId: number;
 
   public database: DBConfig;
 
@@ -104,7 +104,7 @@ export class FacilitatorConfig {
       );
       // we have only 2 chains in config
       if (identifier !== this.originChain) {
-        this.auxChainId = identifier;
+        this.auxChainId = Number.parseInt(identifier, 10);
       }
     });
   }
@@ -113,11 +113,11 @@ export class FacilitatorConfig {
    * It writes facilitator config object.
    * @param chain Auxiliary chain id.
    */
-  public writeToFacilitatorConfig(chain: string): void {
+  public writeToFacilitatorConfig(chain: number): void {
     const mosaicConfigDir = Directory.getMosaicDirectoryPath();
     const configPath = path.join(
       mosaicConfigDir,
-      chain,
+      chain.toString(),
     );
     fs.ensureDirSync(configPath);
 
@@ -132,10 +132,10 @@ export class FacilitatorConfig {
    * @param chain Auxiliary chain id.
    * @returns Facilitator config object.
    */
-  public static fromChain(chain: string): FacilitatorConfig {
+  public static fromChain(chain: number): FacilitatorConfig {
     const facilitatorConfigPath = path.join(
       Directory.getMosaicDirectoryPath(),
-      chain,
+      chain.toString(),
       MOSAIC_FACILITATOR_CONFIG,
     );
 
@@ -186,9 +186,9 @@ export class FacilitatorConfig {
    * @param chain Auxiliary chain id.
    * @returns `true` if file is present.
    */
-  public static isFacilitatorConfigPresent(chain: string): boolean {
+  public static isFacilitatorConfigPresent(chain: number): boolean {
     const statOutput = fs.statSync(
-      path.join(Directory.getMosaicDirectoryPath(), chain, MOSAIC_FACILITATOR_CONFIG),
+      path.join(Directory.getMosaicDirectoryPath(), chain.toString(), MOSAIC_FACILITATOR_CONFIG),
     );
     return (statOutput.size > 0);
   }
@@ -251,7 +251,7 @@ export class Config {
    */
   public static fromChain(
     originChain: string,
-    auxiliaryChain: string,
+    auxiliaryChain: number,
   ): Config {
     const mosaic: MosaicConfig = MosaicConfig.fromChain(originChain);
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(auxiliaryChain);

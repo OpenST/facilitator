@@ -7,7 +7,7 @@ import { FacilitatorConfig } from '../../src/Config';
 
 
 describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
-  const chain = '301';
+  const chain = 301;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
 
@@ -72,7 +72,7 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
     SpyAssert.assert(fsEnsureDirSyncSpy, 1, [[facilitatorConfigPath]]);
 
     SpyAssert.assert(fsWriteFileSyncSpy, 1, [[facilitatorConfigPath, objectWritten]]);
-    SpyAssert.assert(pathSpy, 2, [[mosaicDirectoryPath, chain], [facilitatorConfigPath, 'facilitator-config.json']]);
+    SpyAssert.assert(pathSpy, 2, [[mosaicDirectoryPath, chain.toString()], [facilitatorConfigPath, 'facilitator-config.json']]);
 
     pathSpy.restore();
     directorySpy.restore();

@@ -8,7 +8,7 @@ import { FacilitatorConfig } from '../../src/Config';
 
 
 describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
-  const chain = '301';
+  const chain = 301;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
   let pathSpy: any;
@@ -42,7 +42,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
     SpyAssert.assert(directorySpy, 1, [[]]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain, 'facilitator-config.json']]);
+    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain.toString(), 'facilitator-config.json']]);
     assert.strictEqual(
       status,
       true,
@@ -62,7 +62,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', () => {
 
     SpyAssert.assert(directorySpy, 1, [[]]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain, 'facilitator-config.json']]);
+    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain.toString(), 'facilitator-config.json']]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
 
     assert.strictEqual(

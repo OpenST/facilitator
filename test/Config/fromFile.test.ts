@@ -11,7 +11,7 @@ describe('Config.fromFile()', () => {
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = FacilitatorConfig.fromChain('3');
+    const facilitator = FacilitatorConfig.fromChain(3);
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,
