@@ -24,12 +24,13 @@ facilitatorCmd
   .option('-fc, --facilitator-config <facilitatorConfig>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
     try {
-      facilitator = new Container(
+      facilitator = await Container.create(
         origin_chain,
         aux_chain_id,
         options.mosaicConfig,
         options.facilitatorConfig,
-      ).create();
+      );
+      facilitator.start();
 
       Logger.info('starting facilitator');
       await facilitator.start();
