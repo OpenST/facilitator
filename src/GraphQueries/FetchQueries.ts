@@ -1,7 +1,7 @@
 const FetchQueries: Record<string, string> = {
   stakeRequesteds: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'stakeRequesteds(skip: $skip, first: $limit, order: uts, orderDirection: asc, where:' +
+  + 'stakeRequesteds(skip: $skip, first:$limit, order: uts, orderDirection: asc, where:' +
   ' {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'
@@ -41,7 +41,7 @@ const FetchQueries: Record<string, string> = {
 
   stateRootAvailables: 'query ($contractAddress: String!, $uts: BigInt!, $skip: BigInt!, $limit:'
   + ' BigInt!) {\n'
-  + 'stateRootAvailables(skip: $skip, first: $limit, order: uts, orderDirection: asc, where:' +
+  + 'stateRootAvailables(skip: $skip, first:$limit, order: uts, orderDirection: asc, where:' +
   ' {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}, '
   + '    orderDirection: asc,'

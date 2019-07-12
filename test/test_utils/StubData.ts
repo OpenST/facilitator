@@ -9,7 +9,9 @@ import {
   MessageStatus,
   MessageType,
 } from '../../src/repositories/MessageRepository';
-import Message from "../../src/models/Message";
+import Message from '../../src/models/Message';
+import ContractEntity from '../../src/models/ContractEntity';
+import { EntityType } from '../../src/repositories/ContractEntityRepository';
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
@@ -39,26 +41,24 @@ export default class StubData {
       new Date(),
       new Date(),
 
-    )
+    );
   }
 
   public static gatewayRecord(
     chain = '1234',
     gatewayAddress = '0x0000000000000000000000000000000000000001',
   ): Gateway {
-    return new Gateway
-    (gatewayAddress,
+    return new Gateway(gatewayAddress,
       chain,
       GatewayType.Origin,
       '0x0000000000000000000000000000000000000002',
       '0x0000000000000000000000000000000000000004',
       '0x0000000000000000000000000000000000000003',
-        new BigNumber('1'),
+      new BigNumber('1'),
       true,
       new BigNumber('1'),
-       new Date(),
-       new Date()
-      );
+      new Date(),
+      new Date());
   }
 
   public static messageAttributes(
@@ -77,8 +77,8 @@ export default class StubData {
       new BigNumber('1'),
       '0x0000000000000000000000000000000000000002',
       MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight
-    )
+      sourceDeclarationBlockHeight,
+    );
   }
 
   public static getAuxiliaryChainRecord = (
@@ -94,6 +94,15 @@ export default class StubData {
     lastOriginBlockHeight,
     new BigNumber('2000'),
     new Date(10),
-    new Date(10)
+    new Date(10),
   )
+
+  public static getContractEntity = (
+    timestamp = new BigNumber(1),
+  ): ContractEntity => new ContractEntity(
+    '0x0000000000000000000000000000000000000002',
+    EntityType.StakeProgresseds,
+    timestamp,
+    new Date(),
+  );
 }
