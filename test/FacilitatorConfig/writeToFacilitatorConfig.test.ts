@@ -48,15 +48,20 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
   it('should pass with valid arguments', () => {
     const fsEnsureDirSyncSpy = spyFsEnsureDirSync();
     const fsWriteFileSyncSpy = spyFsWriteFileSync();
-    const fsConfig: FacilitatorConfig = FacilitatorConfig.from('');
+    sinon.replace(
+      fs,
+      'existsSync',
+      sinon.fake.returns(false),
+    );
+    const fsConfig: FacilitatorConfig = FacilitatorConfig.fromChain('');
     const directorySpy = spyDirectory();
     const pathSpy = spyPath();
 
     fsConfig.writeToFacilitatorConfig(chain);
 
     const data = {
-      originChainId: '',
-      auxiliaryChain: '',
+      originChain: '',
+      auxChainId: '',
       database: {},
       chains: {},
       encryptedAccounts: {},

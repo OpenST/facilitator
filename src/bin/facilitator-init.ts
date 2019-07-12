@@ -50,7 +50,7 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    if (mandatoryOptionMissing === true) {
+    if (mandatoryOptionMissing) {
       process.exit(1);
     }
 
@@ -65,7 +65,7 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.from('');
+    const facilitatorConfig = FacilitatorConfig.fromChain('');
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
@@ -89,15 +89,14 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
-    facilitatorConfig.originChainId = originChainId;
-    facilitatorConfig.auxiliaryChain = options.chainId;
+    facilitatorConfig.originChain = originChainId;
+    facilitatorConfig.auxChainId = options.chainId;
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
+
+      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
+
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
-      facilitatorConfig.chains[chainid] = new Chain(
-        rpc,
-        account.address,
-      );
     };
 
     setFacilitator(originChainId, options.originRpc, options.originPassword);

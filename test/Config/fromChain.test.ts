@@ -1,42 +1,41 @@
+import { assert } from 'chai';
+import * as sinon from 'sinon';
 import MosaicConfig from '../../src/MosaicConfig';
-import {Config, FacilitatorConfig} from "../../src/Config";
+import { Config, FacilitatorConfig } from '../../src/Config';
 import SpyAssert from '../test_utils/SpyAssert';
-import {assert} from 'chai';
 
-const sinon = require('sinon');
-
-describe('Config.getConfig()', function () {
+describe('Config.fromChain()', () => {
   const originChain = '2';
   const auxChain = '3';
 
-  it('should pass with valid arguments', function () {
+  it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    const facilitator = sinon.fake(FacilitatorConfig);
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,
       'fromChain',
-      sinon.fake.returns(mosaic)
+      sinon.fake.returns(mosaic),
     );
 
     const facilitatorConfigSpy = sinon.replace(
       FacilitatorConfig,
-      'from',
-      sinon.fake.returns(facilitator)
+      'fromChain',
+      sinon.fake.returns(facilitator),
     );
 
-    const config = Config.getConfig(originChain, auxChain);
+    const config = Config.fromChain(originChain, auxChain);
     SpyAssert.assert(mosaicConfigSpy, 1, [[originChain]]);
     SpyAssert.assert(facilitatorConfigSpy, 1, [[auxChain]]);
     assert.strictEqual(
       config.facilitator,
-      facilitator,
-      'Facilitator object is different'
+      facilitator as any,
+      'Facilitator object is different',
     );
     assert.strictEqual(
       config.mosaic,
       mosaic,
-      'Mosaic object is different'
+      'Mosaic object is different',
     );
 
     sinon.restore();

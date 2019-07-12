@@ -7,7 +7,7 @@ import SpyAssert from '../test_utils/SpyAssert';
 import { FacilitatorConfig } from '../../src/Config';
 
 
-describe('FacilitatorConfig.from()', () => {
+describe('FacilitatorConfig.fromChain()', () => {
   const chain = '301';
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const facilitatorDBPath = 'test/database/mosaic_facilitator.db';
@@ -34,7 +34,7 @@ describe('FacilitatorConfig.from()', () => {
   }
 
   /**
-   * Path.join is called twice in `from` method. Args variable of spy for path.join method
+   * Path.join is called twice in `fromChain` method. Args variable of spy for path.join method
    * contains parameters of both calls. Args is 2-dimensional array. We can access args of both
    * the calls above.
    * Examples:-
@@ -98,7 +98,7 @@ describe('FacilitatorConfig.from()', () => {
       sinon.fake.returns(true),
     );
 
-    const facilitatorConfig = FacilitatorConfig.from(chain);
+    const facilitatorConfig = FacilitatorConfig.fromChain(chain);
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(facilitatorSpy, 1, [[JSON.parse(config)]]);
@@ -115,7 +115,7 @@ describe('FacilitatorConfig.from()', () => {
   it('should fail when facilitator file path doesn\'t exists', () => {
     const fsSpy = spyFsModule(false);
 
-    const facilitatorConfig = FacilitatorConfig.from(chain);
+    const facilitatorConfig = FacilitatorConfig.fromChain(chain);
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
 
@@ -137,7 +137,7 @@ describe('FacilitatorConfig.from()', () => {
       sinon.fake.throws('invalid facilitator config'),
     );
 
-    assert.throws(() => FacilitatorConfig.from(chain), 'invalid facilitator config');
+    assert.throws(() => FacilitatorConfig.fromChain(chain), 'invalid facilitator config');
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(facilitatorSpy, 1, [[JSON.parse(config)]]);
     SpyAssert.assert(utilsSpy, 1, [[facilitatorConfigPath]]);

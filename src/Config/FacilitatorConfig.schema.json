@@ -10,7 +10,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "originChainId": {
+        "originChain": {
+          "type": "string",
+          "additionalProperties": false
+        },
+        "auxChainId": {
           "type": "string",
           "additionalProperties": false
         },
@@ -38,7 +42,7 @@
         "chains",
         "database",
         "encryptedAccounts",
-        "originChainId"
+        "originChain"
       ],
       "title": "Facilitator",
       "description": "Object encapsulating details about facilitator config"

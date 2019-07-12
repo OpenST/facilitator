@@ -7,7 +7,7 @@ import Utils from '../../src/Utils';
 import SpyAssert from '../test_utils/SpyAssert';
 import { FacilitatorConfig } from '../../src/Config';
 
-describe('FacilitatorConfig.fromPath()', () => {
+describe('FacilitatorConfig.fromFile()', () => {
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
 
   function spyFsModule(status: boolean): any {
@@ -26,23 +26,23 @@ describe('FacilitatorConfig.fromPath()', () => {
     return fsUtils;
   }
 
-  beforeEach(async () => {
-
-  });
-
   it('should pass with valid arguments', () => {
     const originChain = '12346';
     const fsSpy = spyFsModule(true);
-    const config = `{"originChainId":"${originChain}"}`;
+    const config = `{"originChain":"${originChain}"}`;
     const data = JSON.parse(config);
     const fsUtils = spyUtils(data);
 
-    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromPath(facilitatorConfigPath);
+    sinon.stub(
+      FacilitatorConfig,
+      'verifySchema',
+    );
+    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
 
     SpyAssert.assert(fsUtils, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
     assert.strictEqual(
-      fcConfig.originChainId,
+      fcConfig.originChain,
       originChain,
       'origin chain id is different',
     );
@@ -52,42 +52,13 @@ describe('FacilitatorConfig.fromPath()', () => {
     sinon.restore();
   });
 
-  it('should return empty object when file path doesn\'t exists', () => {
+  it('should throw exception when file path doesn\'t exists', () => {
     const fsSpy = spyFsModule(false);
 
-    const fcConfig: FacilitatorConfig = FacilitatorConfig.fromPath(facilitatorConfigPath);
-
-    SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-
-    assert.deepEqual(
-      fcConfig.originChainId,
-      '',
-      ' it should be empty',
-    );
-
-    assert.deepEqual(
-      fcConfig.auxiliaryChain,
-      '',
-      ' it should be empty',
-    );
-
-    assert.deepEqual(
-      fcConfig.database,
-      {},
-      ' it should be empty',
-    );
-
-    assert.deepEqual(
-      fcConfig.chains,
-      {},
-      ' it should be empty',
-    );
-
-    assert.deepEqual(
-      fcConfig.encryptedAccounts,
-      {},
-      ' it should be empty',
-    );
+    assert.throws(() => FacilitatorConfig.fromFile(
+      facilitatorConfigPath,
+    ),
+    'File path doesn\'t exists');
 
     fsSpy.restore();
     sinon.restore();

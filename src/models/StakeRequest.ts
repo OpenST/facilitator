@@ -52,6 +52,8 @@ export default class StakeRequest extends Comparable<StakeRequest> {
     gateway?: string,
     stakerProxy?: string,
     messageHash?: string,
+    createdAt?: Date,
+    updatedAt?: Date,
   ) {
     super();
 
@@ -64,6 +66,8 @@ export default class StakeRequest extends Comparable<StakeRequest> {
     this.gateway = gateway;
     this.stakerProxy = stakerProxy;
     this.messageHash = messageHash;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   public compareTo(other: StakeRequest): number {

@@ -1,26 +1,24 @@
+import { assert } from 'chai';
+import * as sinon from 'sinon';
 import MosaicConfig from '../../src/MosaicConfig';
-import {Config, FacilitatorConfig} from "../../src/Config";
-import {assert} from 'chai';
+import { Config } from '../../src/Config';
 
-const sinon = require('sinon');
 
-describe('Config.constructor()', function () {
-
-  it('should pass with valid arguments', function () {
+describe('Config.constructor()', () => {
+  it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
-
+    const facilitator = sinon.fake() as any;
     const config = new Config(mosaic, facilitator);
 
     assert.strictEqual(
       config.facilitator,
       facilitator,
-      'Facilitator object is different'
+      'Facilitator object is different',
     );
     assert.strictEqual(
       config.mosaic,
       mosaic,
-      'Mosaic object is different'
+      'Mosaic object is different',
     );
 
     sinon.restore();

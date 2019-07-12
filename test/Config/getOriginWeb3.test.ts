@@ -12,8 +12,8 @@ describe('Config.originWeb3', () => {
   beforeEach(() => {
     const mosaicConfigPath = 'test/Facilitator/testdata/mosaic-config.json';
     const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
-    config = Config.getConfigFromPath(mosaicConfigPath, facilitatorConfigPath);
-    chain = config.facilitator.chains[config.facilitator.originChainId];
+    config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
+    chain = config.facilitator.chains[config.facilitator.originChain];
   });
 
   it('should return web3 instance', () => {

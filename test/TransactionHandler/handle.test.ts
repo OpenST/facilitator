@@ -1,5 +1,5 @@
 import TransactionHandler from '../../src/TransactionHandler';
-import StakeRequestedHandler from '../../src/handlers/StakeRequestedHandler';
+import StakeRequestHandler from '../../src/handlers/StakeRequestHandler';
 import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
 
@@ -30,7 +30,7 @@ describe('TransactionHandler.handle()', () => {
 
   it('should handle stake request transactions if handler is available', async () => {
     const aStakeRequest = StubData.getAStakeRequest('123');
-    const stakeRequestedHandler = new StakeRequestedHandler(sinon.fake() as any);
+    const stakeRequestedHandler = new StakeRequestHandler(sinon.fake() as any);
 
     const persistSpy = sinon.replace(
       stakeRequestedHandler,

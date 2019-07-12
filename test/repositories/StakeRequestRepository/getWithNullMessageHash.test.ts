@@ -20,8 +20,8 @@ import StakeRequest from '../../../src/models/StakeRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
 import assert from '../../test_utils/assert';
+import Message from '../../../src/models/Message';
 import {
-  MessageAttributes,
   MessageDirection,
   MessageStatus,
   MessageType,
@@ -73,27 +73,47 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
       ),
     };
 
-    const messageAttributes: MessageAttributes = {
-      messageHash: config.stakeRequestWithMessageHashB.messageHash as string,
-      type: MessageType.Stake,
-      gatewayAddress: '0x0000000000000000000000000000000000000001',
-      sourceStatus: MessageStatus.Declared,
-      targetStatus: MessageStatus.Undeclared,
-      gasPrice: new BigNumber('1'),
-      gasLimit: new BigNumber('1'),
-      nonce: new BigNumber('1'),
-      sender: '0x0000000000000000000000000000000000000002',
-      direction: MessageDirection.OriginToAuxiliary,
-      sourceDeclarationBlockHeight: new BigNumber('1'),
-    };
+    const messageHash = config.stakeRequestWithMessageHashB.messageHash as string;
+    const type = MessageType.Stake;
+    const gatewayAddress = '0x0000000000000000000000000000000000000001';
+    const sourceStatus = MessageStatus.Declared;
+    const targetStatus = MessageStatus.Undeclared;
+    const gasPrice = new BigNumber('1');
+    const gasLimit = new BigNumber('1');
+    const nonce = new BigNumber('1');
+    const sender = '0x0000000000000000000000000000000000000002';
+    const direction = MessageDirection.OriginToAuxiliary;
+    const sourceDeclarationBlockHeight = new BigNumber('1');
+    const secret = '0x00000000000000000000000000000000000000000000000000000000000000334';
+    const hashLock = '0x00000000000000000000000000000000000000000000000000000000000000335';
+    const createdAt = new Date();
+    const updatedAt = new Date();
+
+    const message = new Message(
+      messageHash,
+      type,
+      gatewayAddress,
+      sourceStatus,
+      targetStatus,
+      gasPrice,
+      gasLimit,
+      nonce,
+      sender,
+      direction,
+      sourceDeclarationBlockHeight,
+      secret,
+      hashLock,
+      createdAt,
+      updatedAt,
+    );
 
     // We create a message with config.stakeRequestWithMessageHashB.messageHash
     // to be able to create an entry in stake requests repository with that
     // message hash. Saving a stake request with non-null message hash
     // in the stake request repository is only possible if that message hash
     // exists in message repository. This is a foreign key requirement.
-    await config.repos.messageRepository.create(
-      messageAttributes,
+    await config.repos.messageRepository.save(
+      message,
     );
   });
 
