@@ -17,6 +17,7 @@
 import StakeRequestHandler from './StakeRequestHandler';
 import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
+import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
 
 export default class Handlers {
   /**
@@ -27,10 +28,12 @@ export default class Handlers {
    * @param auxChainId ID of auxiliary chain.
    * @return Different kinds of transaction handlers.
    */
+
   public static create(repos: Repositories, auxChainId: number):
   {
     stakeRequesteds: StakeRequestHandler;
     anchor: AnchorHandler;
+    stakeIntentDeclareds: StakeIntentDeclareHandler;
   } {
     return {
       stakeRequesteds: new StakeRequestHandler(
@@ -40,6 +43,7 @@ export default class Handlers {
         repos.auxiliaryChainRepository,
         auxChainId,
       ),
+      stakeIntentDeclareds: new StakeIntentDeclareHandler(repos.messageRepository),
     };
   }
 }
