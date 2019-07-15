@@ -14,6 +14,8 @@ const Mosaic = require('@openst/mosaic.js');
 
 const { ProofGenerator } = Mosaic.Utils;
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /**
  * Class collects all non confirmed pending messages and confirms those messages.
  */
@@ -86,8 +88,8 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
   /**
    * Collects all confirmStakeIntent promises and transaction is sent.
    *
-   * @param gateway Instance of Gateway model.
-   * @param messages List of message models
+   * @param gateway Instance of Gateway model object.
+   * @param messages List of message models.
    */
   public async confirmStakeIntent(gateway: Gateway, messages: Message[]):
   Promise<Record<string, string>> {
@@ -97,12 +99,11 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     );
 
     const transactionHashes: Record<string, string> = {};
-    for (let i = 0; i < messages.length; i += 1) {
-      const message = messages[i];
-      const transactionHash: string = await this.confirm(proofGenerator, message, gateway);
+    messages.forEach(async (message) => {
+      const transactionHash = await this.confirm(proofGenerator, message, gateway);
       Logger.info(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
       transactionHashes[message.messageHash] = transactionHash;
-    }
+    });
 
     return transactionHashes;
   }
