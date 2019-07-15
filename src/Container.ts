@@ -21,13 +21,13 @@ export default class Container {
     mosaicConfigPath?: string,
     facilitatorConfigPath?: string,
   ): Promise<Facilitator> {
-    const facilitatorStart: ConfigFactory = new ConfigFactory(
+    const configFactory: ConfigFactory = new ConfigFactory(
       originChain,
       auxChainId ? Number.parseInt(auxChainId, 10) : undefined,
       mosaicConfigPath,
       facilitatorConfigPath,
     );
-    const config = facilitatorStart.getConfig();
+    const config = configFactory.getConfig();
 
     const repositories = await Repositories.create();
     const transactionHandler = new TransactionHandler(

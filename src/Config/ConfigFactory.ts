@@ -3,7 +3,7 @@ import MosaicConfig from '../MosaicConfig';
 import { FacilitatorStartException } from '../Exception';
 
 /**
- * It parses and evaluates input params of facilitator start command to get config object.
+ * This is a factory class to create config.
  */
 export default class ConfigFactory {
   public originChain?: string;
@@ -15,7 +15,6 @@ export default class ConfigFactory {
   public facilitatorConfigPath?: string;
 
   /**
-   * It is used to set the input from facilitator start command.
    * @param originChain Name of the origin chain.
    * @param auxChainId Identifier of the aux chain.
    * @param mosaicConfigPath Path to mosaic config file.
