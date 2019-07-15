@@ -56,7 +56,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
           message.gatewayAddress = transaction.contractAddress;
-          message.sourceDeclarationBlockHeight = transaction.blockNumber;
+          message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
         }
         if (!message.sourceStatus || message.sourceStatus === MessageStatus.Undeclared) {
           message.sourceStatus = MessageStatus.Declared;
