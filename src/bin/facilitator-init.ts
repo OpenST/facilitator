@@ -54,7 +54,10 @@ commander
       process.exit(1);
     }
 
-    if (!options.force) {
+    if (options.force) {
+      FacilitatorConfig.remove(options.chainId);
+    }
+    else {
       try {
         if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
           Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
@@ -63,8 +66,6 @@ commander
       } catch (e) {
         Logger.info('creating facilitator config as it is not present');
       }
-    } else {
-      FacilitatorConfig.remove(options.chainId);
     }
 
     const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);

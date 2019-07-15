@@ -29,7 +29,7 @@ export default class Container {
     );
     const config = configFactory.getConfig();
 
-    const repositories = await Repositories.create();
+    const repositories = await Repositories.create(config.facilitator.database.path);
     const transactionHandler = new TransactionHandler(
       Handlers.create(repositories, config.facilitator.auxChainId),
       repositories,
