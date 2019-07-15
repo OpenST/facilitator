@@ -4,13 +4,13 @@ import { assert } from 'chai';
 
 import BigNumber from 'bignumber.js';
 import Repositories from '../../../src/repositories/Repositories';
-import Message from "../../../src/models/Message";
+import Message from '../../../src/models/Message';
 import {
   MessageDirection,
   MessageStatus,
-  MessageType
-} from "../../../src/repositories/MessageRepository";
-import Util from "./util";
+  MessageType,
+} from '../../../src/repositories/MessageRepository';
+import Util from './util';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -90,37 +90,37 @@ describe('MessageRepository::getMessagesForConfirmation', (): void => {
   it('should fetch all messages to be sent for confirmation.', async (): Promise<void> => {
     const gatewayProvenBlockHeight = new BigNumber(200);
     const responseMessages = await config.repos.messageRepository.getMessagesForConfirmation(
-      gatewayAddress, gatewayProvenBlockHeight
+      gatewayAddress, gatewayProvenBlockHeight,
     );
-    Util.assertMessageAttributes(responseMessages[0] as Message, message1);
-    Util.assertMessageAttributes(responseMessages[1] as Message, message2);
+    Util.assertMessageAttributes(responseMessages[0], message1);
+    Util.assertMessageAttributes(responseMessages[1], message2);
   });
 
   it('should not fetch messages which does not need to be sent for confirmation.', async (): Promise<void> => {
     const gatewayProvenBlockHeight = new BigNumber(200);
     const invalidGatewayAddress = '0x0000000000000000000000000000000000000099';
     const responseMessages = await config.repos.messageRepository.getMessagesForConfirmation(
-      invalidGatewayAddress, gatewayProvenBlockHeight
+      invalidGatewayAddress, gatewayProvenBlockHeight,
     );
     assert.deepEqual(
       responseMessages,
       [],
-      "No messages for confirmation."
-    )
+      'No messages for confirmation.',
+    );
   });
 
-  it('should not fetch messages if gatewayProvenBlockHeight is less than' +
-    ' sourceDeclarationBlockHeight' +
-    ' .', async (): Promise<void> => {
+  it('should not fetch messages if gatewayProvenBlockHeight is less than'
+    + ' sourceDeclarationBlockHeight'
+    + ' .', async (): Promise<void> => {
     const gatewayProvenBlockHeight = new BigNumber(50);
     const responseMessages = await config.repos.messageRepository.getMessagesForConfirmation(
-      gatewayAddress, gatewayProvenBlockHeight
+      gatewayAddress, gatewayProvenBlockHeight,
     );
 
     assert.deepEqual(
       responseMessages,
       [],
-      "No messages for confirmation."
-    )
+      'No messages for confirmation.',
+    );
   });
 });

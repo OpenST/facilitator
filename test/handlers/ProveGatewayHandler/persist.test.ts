@@ -1,11 +1,11 @@
+import BigNumber from 'bignumber.js';
 import assert from '../../test_utils/assert';
 
-import BigNumber from 'bignumber.js';
 import ProveGatewayHandler from '../../../src/handlers/ProveGatewayHandler';
 import Gateway from '../../../src/models/Gateway';
-import {GatewayType} from '../../../src/repositories/GatewayRepository';
+import { GatewayType } from '../../../src/repositories/GatewayRepository';
 
-import Repositories from "../../../src/repositories/Repositories";
+import Repositories from '../../../src/repositories/Repositories';
 
 const Utils = require('web3-utils');
 
@@ -18,7 +18,6 @@ let gatewayAddress: string;
 let lastRemoteGatewayProvenBlockHeight: BigNumber;
 
 describe('ProveGatewayhandler.persist()', (): void => {
-
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
@@ -53,8 +52,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
   });
 
   it('should persist successfully', async (): Promise<void> => {
-
-    const updatedLastRemoteProvenBlockHeight = new BigNumber("10");
+    const updatedLastRemoteProvenBlockHeight = new BigNumber('10');
     const proveGatewayTransactions = [{
       id: '1',
       _gateway: gatewayAddress,
@@ -62,8 +60,8 @@ describe('ProveGatewayhandler.persist()', (): void => {
       _storageRoot: Utils.sha3('1'),
       _wasAlreadyProved: false,
       contractAddress: '0x00000000000000000000000000000000000000011',
-      blockNumber: new BigNumber("100"),
-      uts: new BigNumber('1111')
+      blockNumber: new BigNumber('100'),
+      uts: new BigNumber('1111'),
     }];
 
     const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
@@ -71,15 +69,14 @@ describe('ProveGatewayhandler.persist()', (): void => {
 
     const updatedGateway = await config.repos.gatewayRepository.get(gatewayAddress);
     assert.deepEqual(
-      updatedGateway!.lastRemoteGatewayProvenBlockHeight,
+      updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
       updatedLastRemoteProvenBlockHeight,
-      "Error updating GatewayProven block height in Gateway model."
+      'Error updating GatewayProven block height in Gateway model.',
     );
   });
 
   it('It should throw error when Gateway doesn"t exist', async (): Promise<void> => {
-
-    const updatedLastRemoteProvenBlockHeight = new BigNumber("10");
+    const updatedLastRemoteProvenBlockHeight = new BigNumber('10');
     const invalidGateway = 'invalidGateway';
     const proveGatewayTransactions = [{
       id: '1',
@@ -88,8 +85,8 @@ describe('ProveGatewayhandler.persist()', (): void => {
       _storageRoot: Utils.sha3('1'),
       _wasAlreadyProved: false,
       contractAddress: '0x00000000000000000000000000000000000000011',
-      blockNumber: new BigNumber("100"),
-      uts: new BigNumber('1111')
+      blockNumber: new BigNumber('100'),
+      uts: new BigNumber('1111'),
     }];
 
     const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
@@ -101,10 +98,9 @@ describe('ProveGatewayhandler.persist()', (): void => {
     );
   });
 
-  it('should not update when received provenGatewayBlock height is less than already updated' +
-    ' provenGatewayBlock height.', async (): Promise<void> => {
-
-    const updatedLowerLastRemoteProvenBlockHeight = new BigNumber("1");
+  it('should not update when received provenGatewayBlock height is less than already updated'
+    + ' provenGatewayBlock height.', async (): Promise<void> => {
+    const updatedLowerLastRemoteProvenBlockHeight = new BigNumber('1');
     const proveGatewayTransactions = [{
       id: '1',
       _gateway: gatewayAddress,
@@ -112,8 +108,8 @@ describe('ProveGatewayhandler.persist()', (): void => {
       _storageRoot: Utils.sha3('1'),
       _wasAlreadyProved: false,
       contractAddress: '0x00000000000000000000000000000000000000011',
-      blockNumber: new BigNumber("100"),
-      uts: new BigNumber('1111')
+      blockNumber: new BigNumber('100'),
+      uts: new BigNumber('1111'),
     }];
 
     const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
@@ -121,9 +117,9 @@ describe('ProveGatewayhandler.persist()', (): void => {
 
     const updatedGateway = await config.repos.gatewayRepository.get(gatewayAddress);
     assert.deepEqual(
-      updatedGateway!.lastRemoteGatewayProvenBlockHeight,
+      updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
       lastRemoteGatewayProvenBlockHeight,
-      "It should not update lower GatewayProven block height."
+      'It should not update lower GatewayProven block height.',
     );
   });
 });

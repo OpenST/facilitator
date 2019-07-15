@@ -2,8 +2,8 @@ import * as sinon from 'sinon';
 import ConfirmStakeIntentService from '../../../src/services/ConfirmStakeIntentService';
 import StubData from '../../test_utils/StubData';
 import SpyAssert from '../../test_utils/SpyAssert';
-import Repositories from "../../../src/repositories/Repositories";
-import Message from "../../../src/models/Message";
+import Repositories from '../../../src/repositories/Repositories';
+import Message from '../../../src/models/Message';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -23,7 +23,7 @@ describe('ConfirmStakeIntentService.update()', () => {
 
   beforeEach(async (): Promise<void> => {
     config = {
-      repos: await Repositories.create()
+      repos: await Repositories.create(),
     };
 
     confirmStakeIntentService = new ConfirmStakeIntentService(
@@ -56,5 +56,4 @@ describe('ConfirmStakeIntentService.update()', () => {
       [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight]],
     );
   });
-
 });

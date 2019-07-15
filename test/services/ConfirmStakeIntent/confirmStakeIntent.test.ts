@@ -2,7 +2,7 @@ import * as sinon from 'sinon';
 import ConfirmStakeIntentService from '../../../src/services/ConfirmStakeIntentService';
 import StubData from '../../test_utils/StubData';
 import assert from '../../test_utils/assert';
-import Repositories from "../../../src/repositories/Repositories";
+import Repositories from '../../../src/repositories/Repositories';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -22,7 +22,7 @@ describe('ConfirmStakeIntentService.confirmStakeIntent()', () => {
 
   beforeEach(async (): Promise<void> => {
     config = {
-      repos: await Repositories.create()
+      repos: await Repositories.create(),
     };
 
     confirmStakeIntentService = new ConfirmStakeIntentService(
@@ -50,13 +50,13 @@ describe('ConfirmStakeIntentService.confirmStakeIntent()', () => {
 
     const spyConfirm = sinon.stub(
       confirmStakeIntentService as any,
-      "confirm",
+      'confirm',
     );
 
-    const mockTxResponse1 = "mockTxResponse1";
+    const mockTxResponse1 = 'mockTxResponse1';
     spyConfirm.onCall(0).resolves(mockTxResponse1);
 
-    const mockTxResponse2 = "mockTxResponse2";
+    const mockTxResponse2 = 'mockTxResponse2';
     spyConfirm.onCall(1).resolves(mockTxResponse2);
 
     const transactionHashes = await confirmStakeIntentService.confirmStakeIntent(gateway, messages);
@@ -64,22 +64,21 @@ describe('ConfirmStakeIntentService.confirmStakeIntent()', () => {
     assert.strictEqual(
       Object.keys(transactionHashes).length,
       2,
-      "Invalid transactionHashes object length"
+      'Invalid transactionHashes object length',
     );
 
     assert.strictEqual(
       transactionHashes[message1.messageHash],
       mockTxResponse1,
-      "Mismatch in messageHash1"
+      'Mismatch in messageHash1',
     );
 
     assert.strictEqual(
       transactionHashes[message2.messageHash],
       mockTxResponse2,
-      "Mismatch in messageHash2"
+      'Mismatch in messageHash2',
     );
 
     sinon.restore();
   });
-
 });

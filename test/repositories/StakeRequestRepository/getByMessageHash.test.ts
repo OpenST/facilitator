@@ -4,12 +4,12 @@ import StakeRequest from '../../../src/models/StakeRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
 import assert from '../../test_utils/assert';
-import Message from "../../../src/models/Message";
+import Message from '../../../src/models/Message';
 import {
   MessageDirection,
   MessageStatus,
-  MessageType
-} from "../../../src/repositories/MessageRepository";
+  MessageType,
+} from '../../../src/repositories/MessageRepository';
 
 interface TestConfigInterface {
   repos: Repositories;
