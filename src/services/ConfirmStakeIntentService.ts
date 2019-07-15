@@ -11,9 +11,10 @@ const { ProofGenerator } = Mosaic.Utils;
 import { interacts} from "@openst/mosaic-contracts";
 import {EIP20CoGateway} from "@openst/mosaic-contracts/dist/interacts/EIP20CoGateway";
 import StakeRequestRepository from "../repositories/StakeRequestRepository";
+import Logger from "../Logger";
 
 /**
- * Class collects all non confirmed pending messages and confirms those messages in parallel.
+ * Class collects all non confirmed pending messages and confirms those messages.
  */
 export default class ConfirmStakeIntentService extends Observer<Gateway> {
 
@@ -65,8 +66,8 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
   /**
    * This method reacts on changes when GatewayProven entity is received.
    *
-   * Gateway model first object is selected because facilitator works for a gateway pair.
-   * So for all gateways objects gatewayAddress will be same.
+   * Gateway model first object is selected because of update argument interface. From
+   * ProveGatewayHandler single Gateway model is passed.
    *
    * Messages to be send for confirmation is fetched and confirmStakeIntent is called.
    *
@@ -88,21 +89,21 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * @param gateway Instance of Gateway model.
    * @param messages List of message models
    */
-  public async confirmStakeIntent(gateway: Gateway, messages: Message[]): Promise<void> {
+  public async confirmStakeIntent(gateway: Gateway, messages: Message[]): Promise<Record<string, string>> {
     const proofGenerator = new ProofGenerator(
       this.originWeb3,
       this.auxiliaryWeb3,
     );
 
-    let confirmStakeIntentPromises = [];
+    let transactionHashes: Record<string, string> = {};
     for( let i=0; i< messages.length; i++) {
       const message = messages[i];
-      confirmStakeIntentPromises.push(
-        this.confirm(proofGenerator, message, gateway)
-      );
+      const transactionHash:string = await this.confirm(proofGenerator, message, gateway);
+      Logger.info(`For message: ${message.messageHash} Confirm transaction hash: ${transactionHash}`);
+      transactionHashes[message.messageHash] = transactionHash;
     }
 
-    await Promise.all(confirmStakeIntentPromises);
+    return transactionHashes;
   }
 
   /**
