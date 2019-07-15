@@ -32,7 +32,7 @@ export default class Container {
     const repositories = await Repositories.create();
     const transactionHandler = new TransactionHandler(
       Handlers.create(repositories, config.facilitator.auxChainId),
-
+      repositories,
     );
     const subscriptions = await Subscriptions.create(
       transactionHandler,
