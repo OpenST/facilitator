@@ -47,7 +47,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
         entityType: {
           primaryKey: true,
           type: DataTypes.ENUM({
-          values: [
+            values: [
               EntityType.StakeIntentDeclareds,
               EntityType.StakeRequesteds,
               EntityType.StateRootAvailables,
@@ -55,7 +55,8 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
               EntityType.GatewayProvens,
-          ]}),
+            ],
+          }),
         },
         timestamp: {
           type: DataTypes.BIGINT,
@@ -138,8 +139,8 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
    * @param contractEntityModel Contract entity model object to convert.
    * @returns Contract Entity object.
    */
+  /* eslint-disable class-methods-use-this */
   private convertToContractEntity(contractEntityModel: ContractEntityModel): ContractEntity {
-    /* eslint-disable class-methods-use-this */
     const contractEntity = new ContractEntity(
       contractEntityModel.contractAddress,
       contractEntityModel.entityType,

@@ -11,4 +11,4 @@ export interface SubscriptionInfo {
     httpSubGraphEndPoint: string;
     subscriptionQueries: Record<string, string>;
   };
-};
+}

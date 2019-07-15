@@ -8,6 +8,8 @@ import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import Message from '../models/Message';
 
+/* eslint-disable class-methods-use-this */
+
 /**
  * An interface, that represents a row from a messages table.
  *
@@ -299,12 +301,12 @@ export class MessageRepository extends Subject<Message> {
    */
   public async getMessagesForConfirmation(
     gatewayAddress: string,
-    blockHeight: BigNumber
+    blockHeight: BigNumber,
   ): Promise<Message[]> {
     const messageModels = await MessageModel.findAll({
       where: {
         [Op.and]: {
-          gatewayAddress: gatewayAddress,
+          gatewayAddress,
           sourceStatus: MessageStatus.Declared,
           targetStatus: MessageStatus.Undeclared,
           direction: MessageDirection.OriginToAuxiliary,
@@ -315,8 +317,8 @@ export class MessageRepository extends Subject<Message> {
       },
     });
 
-    let messages: Message[] = [];
-    for(let i=0; i< messageModels.length; i++){
+    const messages: Message[] = [];
+    for (let i = 0; i < messageModels.length; i += 1) {
       messages.push(this.convertToMessage(messageModels[i]));
     }
     return messages;
@@ -331,7 +333,6 @@ export class MessageRepository extends Subject<Message> {
    *
    * @returns Message object.
    */
-  /* eslint-disable class-methods-use-this */
   private convertToMessage(messageModel: MessageModel): Message {
     return new Message(
       messageModel.messageHash,

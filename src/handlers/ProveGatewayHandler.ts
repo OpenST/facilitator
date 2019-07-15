@@ -1,21 +1,22 @@
 import BigNumber from 'bignumber.js';
 import ContractEntityHandler from './ContractEntityHandler';
 import GatewayRepository from '../repositories/GatewayRepository';
-import Gateway from "../models/Gateway";
-import Logger from "../Logger";
+import Gateway from '../models/Gateway';
+import Logger from '../Logger';
 
 /**
- * This class handles GatewayProven transactions.
+ * This class handles GatewayProven transactions and updates lastRemoteGatewayProvenBlockHeight
+ * to Gateway model.
  */
 export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> {
   /* Storage */
 
   private readonly GatewayRepository: GatewayRepository;
 
-  public constructor(GatewayRepository: GatewayRepository) {
+  public constructor(gatewayRepository: GatewayRepository) {
     super();
 
-    this.GatewayRepository = GatewayRepository;
+    this.GatewayRepository = gatewayRepository;
   }
 
   /**
@@ -25,21 +26,22 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of Gateway objects.
+   * @return List of instances of Gateway objects.
    */
   public async persist(transactions: any[]): Promise<Gateway[]> {
-    const transaction = transactions[transactions.length-1];
+    const transaction = transactions[transactions.length - 1];
     const gatewayAddress = transaction._gateway as string;
     const gateway = await this.GatewayRepository.get(gatewayAddress);
     if (gateway === null) {
       throw new Error(`Cannot find record for gateway: ${gatewayAddress}`);
     }
     const lastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
-    if(lastRemoteGatewayProvenBlockHeight.gte(gateway.lastRemoteGatewayProvenBlockHeight!)) {
+    if (gateway.lastRemoteGatewayProvenBlockHeight
+      && lastRemoteGatewayProvenBlockHeight.gt(gateway.lastRemoteGatewayProvenBlockHeight)) {
       gateway.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
       await this.GatewayRepository.save(gateway);
-      Logger.info('Gateway:' + gatewayAddress + ' lastRemoteGatewayProvenBlockHeight updated to ' +
-        lastRemoteGatewayProvenBlockHeight);
+      Logger.info(`Gateway:${gatewayAddress} lastRemoteGatewayProvenBlockHeight updated to ${
+        lastRemoteGatewayProvenBlockHeight}`);
     }
 
     return [gateway];
