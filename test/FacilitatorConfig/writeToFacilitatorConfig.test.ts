@@ -68,11 +68,14 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
     };
     const objectWritten = JSON.stringify(data, null, '    ');
 
-    SpyAssert.assert(directorySpy, 1, [[]]);
+    SpyAssert.assert(directorySpy, 2, [[], []]);
     SpyAssert.assert(fsEnsureDirSyncSpy, 1, [[facilitatorConfigPath]]);
 
     SpyAssert.assert(fsWriteFileSyncSpy, 1, [[facilitatorConfigPath, objectWritten]]);
-    SpyAssert.assert(pathSpy, 2, [[mosaicDirectoryPath, chain.toString()], [facilitatorConfigPath, 'facilitator-config.json']]);
+    SpyAssert.assert(pathSpy, 2, [
+      [mosaicDirectoryPath, chain.toString()],
+      [mosaicDirectoryPath, chain.toString(), 'facilitator-config.json'],
+    ]);
 
     pathSpy.restore();
     directorySpy.restore();

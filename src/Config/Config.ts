@@ -23,9 +23,6 @@ enum DBType {
   SQLITE = 'SQLITE',
 }
 
-// Facilitator config file name.
-const MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
-
 /**
  * Holds database configurations.
  */
@@ -142,7 +139,7 @@ export class FacilitatorConfig {
     fs.ensureDirSync(configPath);
 
     fs.writeFileSync(
-      path.join(configPath, MOSAIC_FACILITATOR_CONFIG),
+      Directory.getFacilitatorConfigPath(chain.toString()),
       JSON.stringify(this, null, '    '),
     );
   }
@@ -153,11 +150,7 @@ export class FacilitatorConfig {
    * @returns Facilitator config object.
    */
   public static fromChain(chain: number): FacilitatorConfig {
-    const facilitatorConfigPath = path.join(
-      Directory.getMosaicDirectoryPath(),
-      chain.toString(),
-      MOSAIC_FACILITATOR_CONFIG,
-    );
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain.toString());
 
     if (fs.existsSync(facilitatorConfigPath)) {
       return this.readConfig(facilitatorConfigPath);
@@ -192,12 +185,12 @@ export class FacilitatorConfig {
     }
   }
 
+  /**
+   * This method removes config from default path
+   * @param chain Chain Identifier.
+   */
   public static remove(chain: string): void {
-    const facilitatorConfigPath = path.join(
-      Directory.getMosaicDirectoryPath(),
-      chain,
-      MOSAIC_FACILITATOR_CONFIG,
-    );
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain);
     fs.removeSync(facilitatorConfigPath);
   }
 
@@ -208,7 +201,7 @@ export class FacilitatorConfig {
    */
   public static isFacilitatorConfigPresent(chain: number): boolean {
     const statOutput = fs.statSync(
-      path.join(Directory.getMosaicDirectoryPath(), chain.toString(), MOSAIC_FACILITATOR_CONFIG),
+      Directory.getFacilitatorConfigPath(chain.toString()),
     );
     return (statOutput.size > 0);
   }
