@@ -6,7 +6,7 @@ import Logger from '../Logger';
 
 /**
  * This class handles GatewayProven transactions and updates lastRemoteGatewayProvenBlockHeight
- * to Gateway model.
+ * in Gateway model.
  */
 export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> {
   /* Storage */
@@ -35,13 +35,13 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
     if (gateway === null) {
       throw new Error(`Cannot find record for gateway: ${gatewayAddress}`);
     }
-    const lastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
+    const currentLastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
     if (gateway.lastRemoteGatewayProvenBlockHeight
-      && lastRemoteGatewayProvenBlockHeight.gt(gateway.lastRemoteGatewayProvenBlockHeight)) {
-      gateway.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
+      && gateway.lastRemoteGatewayProvenBlockHeight.lt(currentLastRemoteGatewayProvenBlockHeight)) {
+      gateway.lastRemoteGatewayProvenBlockHeight = currentLastRemoteGatewayProvenBlockHeight;
       await this.GatewayRepository.save(gateway);
       Logger.info(`Gateway:${gatewayAddress} lastRemoteGatewayProvenBlockHeight updated to ${
-        lastRemoteGatewayProvenBlockHeight}`);
+        currentLastRemoteGatewayProvenBlockHeight}`);
     }
 
     return [gateway];
