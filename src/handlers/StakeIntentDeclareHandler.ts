@@ -19,11 +19,11 @@ import ContractEntityHandler from './ContractEntityHandler';
 import Message from '../models/Message';
 import {
   MessageDirection,
-  MessageRepository, MessageStatus,
+  MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
 
 /**
- * This class handels stake intent declared transactions.
+ * This class handles stake intent declared transactions.
  */
 export default class StakeIntentDeclareHandler extends ContractEntityHandler<Message> {
   /* Storage */
@@ -37,7 +37,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
   }
 
   /**
-   * This method parse stake intent declare transaction and returns message model object.
+   * This method parses stake intent declare transaction and returns message model object.
    *
    * @param transactions Transaction objects.
    *
@@ -49,11 +49,14 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if some other facilitator has accepted the stake request.
-        if (message == null) {
+        if (message === null) {
           message = new Message(transaction._messageHash);
           message.sender = transaction._staker;
           message.nonce = new BigNumber(transaction._stakerNonce);
           message.direction = MessageDirection.OriginToAuxiliary;
+          message.type = MessageType.Stake;
+          message.gatewayAddress = transaction.contractAddress;
+          message.sourceDeclarationBlockHeight = transaction.blockNumber;
         }
         if (!message.sourceStatus || message.sourceStatus === MessageStatus.Undeclared) {
           message.sourceStatus = MessageStatus.Declared;

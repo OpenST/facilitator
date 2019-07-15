@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import SpyAssert from '../../test_utils/SpyAssert';
 import {
   MessageDirection,
-  MessageRepository, MessageStatus,
+  MessageRepository, MessageStatus, MessageType,
 } from '../../../src/repositories/MessageRepository';
 import StakeIntentDeclareHandler
   from '../../../src/handlers/StakeIntentDeclareHandler';
@@ -21,6 +21,8 @@ describe('StakeIntentDeclareHandler.persist()', () => {
     _stakerNonce: '1',
     _beneficiary: '0x0000000000000000000000000000000000000002',
     _amount: '100',
+    contractAddress: '0x0000000000000000000000000000000000000002',
+    blockNumber: '10',
   }];
 
   it('should change message state to source declared', async () => {
@@ -42,6 +44,9 @@ describe('StakeIntentDeclareHandler.persist()', () => {
     expectedModel.nonce = new BigNumber(transactions[0]._stakerNonce);
     expectedModel.direction = MessageDirection.OriginToAuxiliary;
     expectedModel.sourceStatus = MessageStatus.Declared;
+    expectedModel.type = MessageType.Stake;
+    expectedModel.gatewayAddress = transactions[0].contractAddress;
+    expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
     SpyAssert.assert(save, 1, [[expectedModel]]);
