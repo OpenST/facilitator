@@ -186,7 +186,7 @@ export class FacilitatorConfig {
   }
 
   /**
-   * This method removes config from default path
+   * This method removes config from default path.
    * @param chain Chain Identifier.
    */
   public static remove(chain: string): void {
