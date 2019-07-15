@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { Chain, Config, ENV_WORKER_PASSWORD_PREFIX } from '../../src/Config';
+import { Chain, Config, ENV_WORKER_PASSWORD_PREFIX } from '../../src/Config/Config';
 import SpyAssert from '../test_utils/SpyAssert';
 
 import Account from '../../src/Account';

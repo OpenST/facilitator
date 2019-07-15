@@ -17,19 +17,23 @@
 import StakeRequestHandler from './StakeRequestHandler';
 import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
-import StakeIntentDeclareHandler from "./StakeIntentDeclareHandler";
+import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
 
-export default class HandlerFactory {
+export default class Handlers {
   /**
    * This methods instantiate different kinds of handlers. This method also takes
    * responsibility of instantiating repositories and services.
    *
+   * @param repos Repository container.
+   * @param auxChainId ID of auxiliary chain.
    * @return Different kinds of transaction handlers.
    */
-  public static get(repos: Repositories): {
+
+  public static create(repos: Repositories, auxChainId: number):
+  {
     stakeRequesteds: StakeRequestHandler;
     anchor: AnchorHandler;
-    stakeIntentDeclareds: StakeIntentDeclareHandler
+    stakeIntentDeclareds: StakeIntentDeclareHandler;
   } {
     return {
       stakeRequesteds: new StakeRequestHandler(
@@ -37,7 +41,7 @@ export default class HandlerFactory {
       ),
       anchor: new AnchorHandler(
         repos.auxiliaryChainRepository,
-        1243, // fixme #87 replace with auxiliary chain id
+        auxChainId,
       ),
       stakeIntentDeclareds: new StakeIntentDeclareHandler(repos.messageRepository),
     };

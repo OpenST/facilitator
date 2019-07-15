@@ -1,30 +1,31 @@
 import * as sinon from 'sinon';
-import assert from '../test_utils/assert';
+import assert from '../../test_utils/assert';
 
-import Subscriber from '../../src/Subscriber';
-import GraphClient from '../../src/GraphClient';
-import TransactionHandler from '../../src/TransactionHandler';
-import TransactionFetcher from '../../src/TransactionFetcher';
-import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
+import Subscriber from '../../../src/subscriptions/Subscriber';
+import GraphClient from '../../../src/subscriptions/GraphClient';
+import SpyAssert from '../../test_utils/SpyAssert';
+import TransactionHandler from '../../../src/TransactionHandler';
+import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
 
-describe('Subscriber.unsubscribe()', () => {
+describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;
   let graphClient: GraphClient;
   let subscriptionQueries: Record<string, string>;
   let subscriber: Subscriber;
-  let mockUnsubscribe: any;
 
   beforeEach(() => {
     mockApolloClient = sinon.stub;
     graphClient = new GraphClient(mockApolloClient);
     subscriptionQueries = { stakeRequesteds: 'subscription{stakeRequesteds{id}}' };
-    mockUnsubscribe = {
-      unsubscribe: sinon.spy,
-    };
-    sinon.replace(
+  });
+
+  it('should work with correct parameters', async () => {
+    const mockQuerySubscriber = sinon.spy as any;
+    const spyGraphClientSubscribe = sinon.replace(
       graphClient,
       'subscribe',
-      sinon.fake.resolves(mockUnsubscribe),
+      sinon.fake.resolves(mockQuerySubscriber),
     );
     const handler = sinon.mock(TransactionHandler);
     const fetcher = sinon.mock(TransactionFetcher);
@@ -36,9 +37,6 @@ describe('Subscriber.unsubscribe()', () => {
       fetcher as any,
       contractEntityRepository as any,
     );
-  });
-
-  it('should work with correct parameters', async () => {
     await subscriber.subscribe();
 
     assert.strictEqual(
@@ -47,18 +45,16 @@ describe('Subscriber.unsubscribe()', () => {
       'Subscription failed.',
     );
 
-    const mockQuerySubscription = sinon.spy;
-    sinon.replace(
+    assert.strictEqual(
       subscriber.querySubscriptions.stakeRequesteds,
-      'unsubscribe',
-      sinon.fake.resolves(mockQuerySubscription),
+      mockQuerySubscriber,
+      'Invalid query subscription object.',
     );
 
-    await subscriber.unsubscribe();
-    assert.strictEqual(
-      Object.keys(subscriber.querySubscriptions).length,
-      0,
-      'UnSubscription failed.',
+    SpyAssert.assert(
+      spyGraphClientSubscribe,
+      1,
+      [[subscriptionQueries.stakeRequesteds, handler, fetcher, contractEntityRepository]],
     );
 
     sinon.restore();

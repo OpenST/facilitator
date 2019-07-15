@@ -1,16 +1,16 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import MosaicConfig from './MosaicConfig';
-import Directory from './Directory';
+import MosaicConfig from '../MosaicConfig';
+import Directory from '../Directory';
 import {
   FacilitatorConfigNotFoundException,
   InvalidFacilitatorConfigException,
   WorkerPasswordNotFoundException
-} from './Exception';
-import * as schema from './Config/FacilitatorConfig.schema.json';
-import Utils from './Utils';
-import Account from './Account';
+} from '../Exception';
+import * as schema from './FacilitatorConfig.schema.json';
+import Utils from '../Utils';
+import Account from '../Account';
 
 const Web3 = require('web3');
 
@@ -22,9 +22,6 @@ export const ENV_WORKER_PASSWORD_PREFIX = 'MOSAIC_ADDRESS_PASSW_';
 enum DBType {
   SQLITE = 'SQLITE',
 }
-
-// Facilitator config file name.
-const MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
 
 /**
  * Holds database configurations.
@@ -89,7 +86,7 @@ export class Chain {
 export class FacilitatorConfig {
   public originChain: string;
 
-  public auxChainId: string;
+  public auxChainId: number;
 
   public database: DBConfig;
 
@@ -124,7 +121,7 @@ export class FacilitatorConfig {
       );
       // we have only 2 chains in config
       if (identifier !== this.originChain) {
-        this.auxChainId = identifier;
+        this.auxChainId = Number.parseInt(identifier, 10);
       }
     });
   }
@@ -133,16 +130,16 @@ export class FacilitatorConfig {
    * It writes facilitator config object.
    * @param chain Auxiliary chain id.
    */
-  public writeToFacilitatorConfig(chain: string): void {
+  public writeToFacilitatorConfig(chain: number): void {
     const mosaicConfigDir = Directory.getMosaicDirectoryPath();
     const configPath = path.join(
       mosaicConfigDir,
-      chain,
+      chain.toString(),
     );
     fs.ensureDirSync(configPath);
 
     fs.writeFileSync(
-      path.join(configPath, MOSAIC_FACILITATOR_CONFIG),
+      Directory.getFacilitatorConfigPath(chain.toString()),
       JSON.stringify(this, null, '    '),
     );
   }
@@ -152,12 +149,8 @@ export class FacilitatorConfig {
    * @param chain Auxiliary chain id.
    * @returns Facilitator config object.
    */
-  public static fromChain(chain: string): FacilitatorConfig {
-    const facilitatorConfigPath = path.join(
-      Directory.getMosaicDirectoryPath(),
-      chain,
-      MOSAIC_FACILITATOR_CONFIG,
-    );
+  public static fromChain(chain: number): FacilitatorConfig {
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain.toString());
 
     if (fs.existsSync(facilitatorConfigPath)) {
       return this.readConfig(facilitatorConfigPath);
@@ -193,13 +186,22 @@ export class FacilitatorConfig {
   }
 
   /**
+   * This method removes config from default path.
+   * @param chain Chain Identifier.
+   */
+  public static remove(chain: string): void {
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain);
+    fs.removeSync(facilitatorConfigPath);
+  }
+
+  /**
    * It checks if facilitator config is present for given chain id.
    * @param chain Auxiliary chain id.
    * @returns `true` if file is present.
    */
-  public static isFacilitatorConfigPresent(chain: string): boolean {
+  public static isFacilitatorConfigPresent(chain: number): boolean {
     const statOutput = fs.statSync(
-      path.join(Directory.getMosaicDirectoryPath(), chain, MOSAIC_FACILITATOR_CONFIG),
+      Directory.getFacilitatorConfigPath(chain.toString()),
     );
     return (statOutput.size > 0);
   }
@@ -304,7 +306,7 @@ export class Config {
    */
   public static fromChain(
     originChain: string,
-    auxiliaryChain: string,
+    auxiliaryChain: number,
   ): Config {
     const mosaic: MosaicConfig = MosaicConfig.fromChain(originChain);
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(auxiliaryChain);
