@@ -33,6 +33,7 @@ export default class Facilitator {
     const repos = await Repositories.create(this.config.facilitator.database.path);
     const transactionalHandler: TransactionHandler = new TransactionHandler(
       HandlerFactory.get(repos),
+      repos,
     );
     const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
       GraphClient.getClient(
