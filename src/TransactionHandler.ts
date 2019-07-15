@@ -16,6 +16,7 @@ export default class TransactionHandler {
    * Constructor
    *
    * @param handlers This is mapping of handler kind with specific handler instance.
+   * @param repos Container holding all repositories
    */
   public constructor(
     handlers: Record<string, ContractEntityHandler<any>>,
