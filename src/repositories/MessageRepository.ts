@@ -294,7 +294,8 @@ export class MessageRepository extends Subject<Message> {
   }
 
   /**
-   * This return messages which is to be processed after GatewayProven event is emitted.
+   * This returns stake and mint messages for a given address with sourceStatus declared, target
+   * status undeclared below or equal to the given block height.
    *
    * @param gatewayAddress Address of the gateway.
    * @param blockHeight Block height at which Gateway is proven.
@@ -317,10 +318,9 @@ export class MessageRepository extends Subject<Message> {
       },
     });
 
-    const messages: Message[] = [];
-    for (let i = 0; i < messageModels.length; i += 1) {
-      messages.push(this.convertToMessage(messageModels[i]));
-    }
+    const messages: Message[] = messageModels.map(
+      message => this.convertToMessage(message)
+    );
     return messages;
   }
 

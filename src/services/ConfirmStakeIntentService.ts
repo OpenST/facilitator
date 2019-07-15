@@ -9,6 +9,7 @@ import { AUXILIARY_GAS_PRICE } from '../Constants';
 
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import Logger from '../Logger';
+import * as assert from "assert";
 
 const Mosaic = require('@openst/mosaic.js');
 
@@ -43,7 +44,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * @param auxiliaryWeb3 Instance of auxiliary chain web3.
    * @param gatewayAddress Origin chain gateway address.
    * @param coGatewayAddress Auxiliary chain gateway address.
-   * @param auxiliaryWorkerAddress Auxiliary chain werker address.
+   * @param auxiliaryWorkerAddress Auxiliary chain worker address.
    */
   public constructor(
     messageRepository: MessageRepository,
@@ -69,13 +70,14 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * This method reacts on changes when GatewayProven entity is received.
    *
    * Gateway model first object is selected because of update argument interface. From
-   * ProveGatewayHandler single Gateway model is passed.
+   * ProveGatewayHandler always single Gateway model is passed.
    *
    * Messages to be send for confirmation is fetched and confirmStakeIntent is called.
    *
    * @param gateway List of Gateway models.
    */
   public async update(gateway: Gateway[]): Promise<void> {
+    assert(gateway.length == 1);
     const provenGateway: Gateway = gateway[0];
     const messages: Message[] = await this.messageRepository.getMessagesForConfirmation(
       provenGateway.gatewayAddress,
@@ -99,7 +101,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     );
 
     const transactionHashes: Record<string, string> = {};
-    messages.forEach(async (message) => {
+    messages.map(async (message) => {
       const transactionHash = await this.confirm(proofGenerator, message, gateway);
       Logger.info(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
       transactionHashes[message.messageHash] = transactionHash;

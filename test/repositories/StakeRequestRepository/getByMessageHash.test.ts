@@ -4,12 +4,7 @@ import StakeRequest from '../../../src/models/StakeRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
 import assert from '../../test_utils/assert';
-import Message from '../../../src/models/Message';
-import {
-  MessageDirection,
-  MessageStatus,
-  MessageType,
-} from '../../../src/repositories/MessageRepository';
+import StubData from "../../test_utils/StubData";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -25,36 +20,17 @@ describe('StakeRequestRepository::getByMessageHash', (): void => {
 
   it('Checks retrieval of StakeRequest by messageHash.', async (): Promise<void> => {
     const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
-    const message = new Message(
+    const message = StubData.messageAttributes(
       messageHash,
-      MessageType.Stake,
       '0x0000000000000000000000000000000000000001',
-      MessageStatus.Declared,
-      MessageStatus.Declared,
-      new BigNumber(100),
-      new BigNumber(200),
-      new BigNumber('1'),
-      '0x0000000000000000000000000000000000000002',
-      MessageDirection.OriginToAuxiliary,
-      new BigNumber(300),
-      '0x00000000000000000000000000000000000000000000000000000000000000334',
-      '0x00000000000000000000000000000000000000000000000000000000000000335',
+      new BigNumber(300)
     );
     await config.repos.messageRepository.save(
       message,
     );
 
-    const stakeRequest = new StakeRequest(
-      'stakeRequestHash',
-      new BigNumber('1'),
-      'beneficiary',
-      new BigNumber('2'),
-      new BigNumber('3'),
-      new BigNumber('4'),
-      'gateway',
-      'stakerProxy',
-      messageHash,
-    );
+    const stakeRequest = StubData.getAStakeRequest('stakeRequestHash');
+    stakeRequest.messageHash = messageHash;
 
     await config.repos.stakeRequestRepository.save(
       stakeRequest,

@@ -3,9 +3,9 @@ import assert from '../../test_utils/assert';
 
 import ProveGatewayHandler from '../../../src/handlers/ProveGatewayHandler';
 import Gateway from '../../../src/models/Gateway';
-import { GatewayType } from '../../../src/repositories/GatewayRepository';
 
 import Repositories from '../../../src/repositories/Repositories';
+import StubData from "../../test_utils/StubData";
 
 const Utils = require('web3-utils');
 
@@ -15,7 +15,7 @@ interface TestConfigInterface {
 
 let config: TestConfigInterface;
 let gatewayAddress: string;
-let lastRemoteGatewayProvenBlockHeight: BigNumber;
+let gateway: Gateway;
 
 describe('ProveGatewayhandler.persist()', (): void => {
   beforeEach(async (): Promise<void> => {
@@ -24,28 +24,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
     };
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     const chain = '1';
-    const gatewayType = GatewayType.Auxiliary;
-    const remoteGatewayAddress = '0x0000000000000000000000000000000000000002';
-    const tokenAddress = '0x0000000000000000000000000000000000000003';
-    const anchorAddress = '0x0000000000000000000000000000000000000004';
-    const bounty = new BigNumber(100);
-    const activation = true;
-    lastRemoteGatewayProvenBlockHeight = new BigNumber('5');
-    const createdAt = new Date();
-    const updatedAt = new Date();
-    const gateway = new Gateway(
-      gatewayAddress,
-      chain,
-      gatewayType,
-      remoteGatewayAddress,
-      tokenAddress,
-      anchorAddress,
-      bounty,
-      activation,
-      lastRemoteGatewayProvenBlockHeight,
-      createdAt,
-      updatedAt,
-    );
+    gateway = StubData.gatewayRecord(chain, gatewayAddress);
     await config.repos.gatewayRepository.save(
       gateway,
     );
@@ -55,7 +34,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
     const updatedLastRemoteProvenBlockHeight = new BigNumber('10');
     const proveGatewayTransactions = [{
       id: '1',
-      _gateway: gatewayAddress,
+      _gateway: gateway.gatewayAddress,
       _blockHeight: updatedLastRemoteProvenBlockHeight,
       _storageRoot: Utils.sha3('1'),
       _wasAlreadyProved: false,
@@ -65,9 +44,9 @@ describe('ProveGatewayhandler.persist()', (): void => {
     }];
 
     const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
-    await handler.persist(proveGatewayTransactions);
+    const updatedGateways = await handler.persist(proveGatewayTransactions);
+    const updatedGateway = updatedGateways[0];
 
-    const updatedGateway = await config.repos.gatewayRepository.get(gatewayAddress);
     assert.deepEqual(
       updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
       updatedLastRemoteProvenBlockHeight,
@@ -113,13 +92,38 @@ describe('ProveGatewayhandler.persist()', (): void => {
     }];
 
     const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
-    await handler.persist(proveGatewayTransactions);
+    const updatedGateways = await handler.persist(proveGatewayTransactions);
+    const updatedGateway = updatedGateways[0];
 
-    const updatedGateway = await config.repos.gatewayRepository.get(gatewayAddress);
     assert.deepEqual(
       updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
-      lastRemoteGatewayProvenBlockHeight,
+      gateway.lastRemoteGatewayProvenBlockHeight,
       'It should not update lower GatewayProven block height.',
+    );
+  });
+
+  it('should not update when received provenGatewayBlock height is equal to already updated'
+    + ' provenGatewayBlock height.', async (): Promise<void> => {
+    const updatedEqualLastRemoteProvenBlockHeight = new BigNumber('5');
+    const proveGatewayTransactions = [{
+      id: '1',
+      _gateway: gatewayAddress,
+      _blockHeight: updatedEqualLastRemoteProvenBlockHeight,
+      _storageRoot: Utils.sha3('1'),
+      _wasAlreadyProved: false,
+      contractAddress: '0x00000000000000000000000000000000000000011',
+      blockNumber: new BigNumber('100'),
+      uts: new BigNumber('1111'),
+    }];
+
+    const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
+    const updatedGateways = await handler.persist(proveGatewayTransactions);
+    const updatedGateway = updatedGateways[0];
+
+    assert.deepEqual(
+      updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
+      gateway.lastRemoteGatewayProvenBlockHeight,
+      'It should not update already updated equal GatewayProven block height.',
     );
   });
 });

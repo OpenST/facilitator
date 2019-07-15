@@ -9,7 +9,6 @@ import Logger from '../Logger';
  * in Gateway model.
  */
 export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> {
-  /* Storage */
 
   private readonly GatewayRepository: GatewayRepository;
 
@@ -46,14 +45,4 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
 
     return [gateway];
   }
-
-  /**
-   * This method defines action on receiving gateway models.
-   *
-   * @param gateway array of instances of gateway object.
-   */
-  public handle = async (gateway: Gateway[]): Promise<void> => {
-    Logger.info(`Gateway  : ${gateway}`);
-    return Promise.resolve();
-  };
 }
