@@ -74,6 +74,15 @@ export default class Repositories {
     return Promise.all(promises);
   }
 
+  /**
+   * This method attach services to repositories so that repositories can
+   * notify about changes in model to services.
+   * @param services Service container.
+   */
+  public attach(services: Services): void {
+    this.stakeRequestRepository.attach(services.acceptStakeRequestService);
+    this.auxiliaryChainRepository.attach(services.proveGatewayService);
+  }
 
   /* Private Functions */
 
@@ -107,15 +116,5 @@ export default class Repositories {
     this.gatewayRepository = new GatewayRepository(initOptions);
 
     this.contractEntityRepository = new ContractEntityRepository(initOptions);
-  }
-
-  /**
-   * This method attach services to repositories so that repositories can
-   * notify about changes in model to services.
-   * @param services Service container.
-   */
-  public attach(services: Services): void {
-    this.stakeRequestRepository.attach(services.acceptStakeRequestService);
-    this.auxiliaryChainRepository.attach(services.proveGatewayService);
   }
 }
