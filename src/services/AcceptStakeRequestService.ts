@@ -16,6 +16,8 @@
 
 import BigNumber from 'bignumber.js';
 
+import { interacts } from '@openst/mosaic-contracts';
+import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
 import Repositories from '../repositories/Repositories';
 import StakeRequest from '../models/StakeRequest';
 import Observer from '../observer/Observer';
@@ -24,6 +26,8 @@ import {
 } from '../repositories/MessageRepository';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import Message from '../models/Message';
+import Utils from '../Utils';
+import { ORIGIN_GAS_PRICE } from '../Constants';
 
 import assert = require('assert');
 
@@ -43,15 +47,26 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   private messageRepository: MessageRepository;
 
+  private ostComposerAddress: string;
+
+  private originWorkerAddress: string;
+
 
   /* Public Functions */
 
-  public constructor(repos: Repositories, web3: any) {
+  public constructor(
+    repos: Repositories,
+    web3: any,
+    ostComposerAddress: string,
+    originWorkerAddress: string,
+  ) {
     super();
 
     this.web3 = web3;
     this.stakeRequestRepository = repos.stakeRequestRepository;
     this.messageRepository = repos.messageRepository;
+    this.ostComposerAddress = ostComposerAddress;
+    this.originWorkerAddress = originWorkerAddress;
   }
 
   public async update(stakeRequests: StakeRequest[]): Promise<void> {
@@ -87,9 +102,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
-    // const transactionHash = await this.sendAcceptStakeRequestTransaction(
-    //   stakeRequest, hashLock,
-    // );
+    await this.sendAcceptStakeRequestTransaction(
+      stakeRequest, hashLock,
+    );
 
     const messageHash = await this.createMessageInRepository(
       stakeRequest, secret, hashLock,
@@ -101,10 +116,25 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
   }
 
-  // private async sendAcceptStakeRequestTransaction(
-  //   stakeRequest: StakeRequest, hashLock: string,
-  // ): Promise<string> {
-  // }
+  private async sendAcceptStakeRequestTransaction(
+    stakeRequest: StakeRequest, hashLock: string,
+  ): Promise<string> {
+    const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
+    const rawTx = ostComposer.methods.acceptStakeRequest(
+      stakeRequest.amount!.toString(10),
+      stakeRequest.beneficiary!,
+      stakeRequest.gasPrice!.toString(10),
+      stakeRequest.gasLimit!.toString(10),
+      stakeRequest.nonce!.toString(10),
+      stakeRequest.stakerProxy!,
+      stakeRequest.gateway!,
+      hashLock,
+    );
+    return Utils.sendTransaction(rawTx, {
+      from: this.originWorkerAddress,
+      gasPrice: ORIGIN_GAS_PRICE,
+    });
+  }
 
   private async createMessageInRepository(
     stakeRequest: StakeRequest,
