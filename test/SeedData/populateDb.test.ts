@@ -19,6 +19,8 @@ describe('SeedData.populateDb()', () => {
   let config: Config, seedData: SeedData, repositories: Repositories;
   let web3: any;
 
+  const originChain = '12346';
+  const auxiliaryChainId = 301;
   const zeroBn = new BigNumber('0');
   const ostComposerAddress = '0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38';
   const ostGatewayAddress = '0x97BA58DBE58898F2B669C56496f46F638DC322d4';
@@ -84,8 +86,8 @@ describe('SeedData.populateDb()', () => {
 
   it('should create entry in auxiliary_chains table', async () => {
     const auxiliaryChain = new AuxiliaryChain(
-      301,
-      '12346',
+      auxiliaryChainId,
+      originChain,
       ostGatewayAddress,
       ostCoGatewayAddress,
       anchorAddress,
@@ -93,7 +95,7 @@ describe('SeedData.populateDb()', () => {
       zeroBn,
       zeroBn,
     );
-    const auxiliaryChainFromDb = await repositories.auxiliaryChainRepository.get(301);
+    const auxiliaryChainFromDb = await repositories.auxiliaryChainRepository.get(auxiliaryChainId);
     AuxiliaryChainRepositoryUtil.assertAuxiliaryChainAttributes(auxiliaryChain, auxiliaryChainFromDb as AuxiliaryChain);
     sinon.restore();
   });
@@ -101,7 +103,7 @@ describe('SeedData.populateDb()', () => {
   it('should create entry for Gateway contract in gateways table', async () => {
     const gateway = new Gateway(
       ostGatewayAddress,
-      '12346',
+      originChain,
       GatewayType.Origin,
       ostCoGatewayAddress,
       simpleTokenAddress,
@@ -117,7 +119,7 @@ describe('SeedData.populateDb()', () => {
   it('should create entry for CoGateway contract in gateways table', async () => {
     const gateway = new Gateway(
       ostCoGatewayAddress,
-      '301',
+      auxiliaryChainId.toString(),
       GatewayType.Auxiliary,
       ostGatewayAddress,
       ostPrimeAddress,
