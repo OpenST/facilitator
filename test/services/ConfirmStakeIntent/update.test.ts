@@ -140,8 +140,8 @@ describe('ConfirmStakeIntentService.update()', () => {
         message.gasLimit!.toString(),
         message.hashLock!,
         proof!.blockNumber!.toString(),
-        proof.storageProof
-      ]]
+        proof.storageProof,
+      ]],
     );
 
     sinon.restore();
@@ -242,8 +242,8 @@ describe('ConfirmStakeIntentService.update()', () => {
         message.gasLimit!.toString(),
         message.hashLock!,
         proof!.blockNumber!.toString(),
-        proof.storageProof
-      ]]
+        proof.storageProof,
+      ]],
     );
 
     sinon.restore();
