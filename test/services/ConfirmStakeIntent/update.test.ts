@@ -12,8 +12,9 @@ import StakeRequestRepository from '../../../src/repositories/StakeRequestReposi
 import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
 
 const Mosaic = require('@openst/mosaic.js');
-
 const Web3 = require('web3');
+
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 describe('ConfirmStakeIntentService.update()', () => {
   const originWeb3 = new Web3();
