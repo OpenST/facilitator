@@ -21,12 +21,11 @@ import {
   MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
 import Message from '../models/Message';
-import Logger from '../Logger';
 
 /**
  * This class handles StakeIntentConfirmed event.
  */
-export default class ConfirmStakeIntentHandler extends ContractEntityHandler<Message> {
+export default class StakeIntentConfirmHandler extends ContractEntityHandler<Message> {
   private messageRepository: MessageRepository;
 
   /**
@@ -48,16 +47,19 @@ export default class ConfirmStakeIntentHandler extends ContractEntityHandler<Mes
     let message: Message | null;
     const models: Message[] = [];
     for (let i = 0; i < transactions.length; i++) {
-      const messageHash = transactions[i]._messageHash as string;
+      const messageHash = transactions[i]._messageHash;
       message = await this.messageRepository.get(messageHash);
-      message!.sender = transactions[i]._staker as string;
-      message!.nonce = transactions[i]._stakerNonce as BigNumber;
-      message!.gatewayAddress = transactions[i]._contractAddress;
-      message!.type = MessageType.Stake;
-      message!.direction = MessageDirection.OriginToAuxiliary;
-      message!.targetStatus = MessageStatus.Declared;
-
-      models.push(message!);
+      if (message === null) {
+        message = new Message(messageHash);
+        message.sender = transactions[i]._staker as string;
+        message.nonce = transactions[i]._stakerNonce as BigNumber;
+        message.type = MessageType.Stake;
+        message.direction = MessageDirection.OriginToAuxiliary;
+      }
+      if (message.targetStatus === undefined || message.targetStatus === MessageStatus.Undeclared) {
+        message.targetStatus = MessageStatus.Declared;
+      }
+      models.push(message);
     }
 
     const savePromises = [];
@@ -68,15 +70,5 @@ export default class ConfirmStakeIntentHandler extends ContractEntityHandler<Mes
     await Promise.all(savePromises);
 
     return models;
-  }
-
-  /**
-   * This method defines action on receiving message model.
-   *
-   * @param message array of instances of Message model object.
-   */
-  public async handle(message: Message[]): Promise<void> {
-    Logger.info(`Message model ${message}`);
-    return Promise.resolve();
   }
 }
