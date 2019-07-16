@@ -1,12 +1,12 @@
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 import MosaicConfig from '../../src/MosaicConfig';
-import { Config, FacilitatorConfig } from '../../src/Config';
+import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Config.fromChain()', () => {
   const originChain = '2';
-  const auxChain = '3';
+  const auxChain = 3;
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);

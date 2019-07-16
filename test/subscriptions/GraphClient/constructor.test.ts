@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
-import assert from '../test_utils/assert';
+import assert from '../../test_utils/assert';
 
-import GraphClient from '../../src/GraphClient';
+import GraphClient from '../../../src/subscriptions/GraphClient';
 
 describe('GraphClient.constructor()', () => {
   let mockApolloClient;

@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 import MosaicConfig from '../../src/MosaicConfig';
-import { Config } from '../../src/Config';
+import { Config } from '../../src/Config/Config';
 
 
 describe('Config.constructor()', () => {

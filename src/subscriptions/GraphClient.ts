@@ -9,11 +9,11 @@ import * as WebSocket from 'ws';
 import fetch from 'node-fetch';
 
 import BigNumber from 'bignumber.js';
-import Logger from './Logger';
-import TransactionHandler from './TransactionHandler';
+import Logger from '../Logger';
+import TransactionHandler from '../TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
-import ContractEntityRepository from './repositories/ContractEntityRepository';
-import ContractEntity, { EntityType } from './models/ContractEntity';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import ContractEntity, { EntityType } from '../models/ContractEntity';
 
 /**
  * The class interacts with graph node server for subscription and query.

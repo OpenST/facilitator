@@ -3,14 +3,14 @@ import * as sinon from 'sinon';
 import { Observer } from 'apollo-client/util/Observable';
 import ApolloClient from 'apollo-client';
 import BigNumber from 'bignumber.js';
-import assert from '../test_utils/assert';
+import assert from '../../test_utils/assert';
 
-import GraphClient from '../../src/GraphClient';
-import SpyAssert from '../test_utils/SpyAssert';
-import TransactionHandler from '../../src/TransactionHandler';
-import TransactionFetcher from '../../src/TransactionFetcher';
-import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
-import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
+import GraphClient from '../../../src/subscriptions/GraphClient';
+import SpyAssert from '../../test_utils/SpyAssert';
+import TransactionHandler from '../../../src/TransactionHandler';
+import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
+import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;
