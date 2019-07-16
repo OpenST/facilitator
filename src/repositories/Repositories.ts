@@ -21,6 +21,7 @@ import AuxiliaryChainRepository from './AuxiliaryChainRepository';
 import { MessageRepository } from './MessageRepository';
 import GatewayRepository from './GatewayRepository';
 import ContractEntityRepository from './ContractEntityRepository';
+import Services from '../services/Services';
 
 export default class Repositories {
   /* Storage */
@@ -48,6 +49,7 @@ export default class Repositories {
       dialect: 'sqlite',
       storage,
       logging: false,
+      typeValidation: true,
     });
 
     const db = new Repositories(sequelize);
@@ -105,5 +107,15 @@ export default class Repositories {
     this.gatewayRepository = new GatewayRepository(initOptions);
 
     this.contractEntityRepository = new ContractEntityRepository(initOptions);
+  }
+
+  /**
+   * This method attach services to repositories so that repositories can
+   * notify about changes in model to services.
+   * @param services Service container.
+   */
+  public attach(services: Services): void {
+    this.stakeRequestRepository.attach(services.acceptStakeRequestService);
+    this.auxiliaryChainRepository.attach(services.proveGatewayService);
   }
 }

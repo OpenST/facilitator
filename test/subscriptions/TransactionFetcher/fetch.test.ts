@@ -2,12 +2,12 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 
 import BigNumber from 'bignumber.js';
-import GraphClient from '../../src/GraphClient';
-import TransactionFetcher from '../../src/TransactionFetcher';
-import SpyAssert from '../test_utils/SpyAssert';
-import EntityGraphQueries from '../../src/EntityGraphQueries';
-import StubData from '../test_utils/StubData';
-import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
+import GraphClient from '../../../src/subscriptions/GraphClient';
+import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import SpyAssert from '../../test_utils/SpyAssert';
+import EntityGraphQueries from '../../../src/subscriptions/EntityGraphQueries';
+import StubData from '../../test_utils/StubData';
+import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {

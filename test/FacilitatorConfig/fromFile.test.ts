@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 import Utils from '../../src/Utils';
 
 import SpyAssert from '../test_utils/SpyAssert';
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 
 describe('FacilitatorConfig.fromFile()', () => {
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';

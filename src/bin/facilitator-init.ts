@@ -2,7 +2,7 @@ import * as commander from 'commander';
 import Account from '../Account';
 import Logger from '../Logger';
 import DatabaseFileHelper from '../DatabaseFileHelper';
-import { FacilitatorConfig, Chain } from '../Config';
+import { FacilitatorConfig, Chain } from '../Config/Config';
 import Utils from '../Utils';
 
 const Web3 = require('web3');
@@ -54,7 +54,10 @@ commander
       process.exit(1);
     }
 
-    if (!options.force) {
+    if (options.force) {
+      FacilitatorConfig.remove(options.chainId);
+    }
+    else {
       try {
         if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
           Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
@@ -65,7 +68,7 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.fromChain('');
+    const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
@@ -89,6 +92,8 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
+    facilitatorConfig.originChain = originChainId;
+    facilitatorConfig.auxChainId = options.chainId;
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
 

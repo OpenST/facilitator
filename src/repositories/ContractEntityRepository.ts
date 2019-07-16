@@ -3,7 +3,7 @@ import {
 } from 'sequelize';
 import BigNumber from 'bignumber.js';
 import * as assert from 'assert';
-import ContractEntity from '../models/ContractEntity';
+import ContractEntity, { EntityType } from '../models/ContractEntity';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 
@@ -20,19 +20,6 @@ class ContractEntityModel extends Model {
   public readonly createdAt!: Date;
 
   public readonly updatedAt!: Date;
-}
-
-/**
- * Entity types of origin and aux chain for which timestamp will be recorded.
- */
-export enum EntityType {
-  StakeRequesteds = 'stakeRequesteds',
-  StakeIntentDeclareds = 'stakeIntentDeclareds',
-  StateRootAvailables = 'stateRootAvailables',
-  GatewayProvens = 'gatewayProvens',
-  StakeIntentConfirmeds = 'stateIntentConfirmeds',
-  StakeProgresseds = 'stakeProgresseds',
-  MintProgresseds = 'mintProgresseds',
 }
 
 /**
@@ -59,7 +46,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
         },
         entityType: {
           primaryKey: true,
-          type: DataTypes.ENUM,
+          type: DataTypes.ENUM({
           values: [
               EntityType.StakeIntentDeclareds,
               EntityType.StakeRequesteds,
@@ -68,20 +55,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
               EntityType.GatewayProvens,
-          ],
-          validate: {
-            verifyEntityType(value: EntityType) {
-              let present = false;
-              for(let entity in EntityType) {
-                if(EntityType[entity] === value) {
-                  present = true;
-                }
-              }
-              if(present === false) {
-                throw new Error('Invalid entity type');
-              }
-            }
-          }
+          ]}),
         },
         timestamp: {
           type: DataTypes.BIGINT,

@@ -4,11 +4,11 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 import Utils from '../../src/Utils';
 import SpyAssert from '../test_utils/SpyAssert';
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 
 
 describe('FacilitatorConfig.fromChain()', () => {
-  const chain = '301';
+  const chain = 301;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const facilitatorDBPath = 'test/database/mosaic_facilitator.db';
   const config = `{"database":{"path":"${facilitatorDBPath}"}}`;
@@ -68,7 +68,7 @@ describe('FacilitatorConfig.fromChain()', () => {
     );
     assert.strictEqual(
       pathSpy.args[1][1],
-      chain,
+      chain.toString(),
       'Chain name is incorrect',
     );
     assert.strictEqual(

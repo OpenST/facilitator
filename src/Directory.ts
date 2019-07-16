@@ -5,6 +5,9 @@ import * as os from 'os';
  * Directory provides operations on strings representing directories.
  */
 export default class Directory {
+  // Facilitator config file name.
+  public static MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
+
   /**
    * Provides path to mosaic directory
    * @returns {string} It returns mosaic directory path.
@@ -46,6 +49,18 @@ export default class Directory {
     return path.join(
       Directory.getDefaultMosaicDataDir,
       'configs',
+    );
+  }
+
+  /**
+   * This returns default facilitator config path
+   * @param chain Chain Identifier.
+   */
+  public static getFacilitatorConfigPath(chain: string): string {
+    return path.join(
+      Directory.getMosaicDirectoryPath(),
+      chain,
+      Directory.MOSAIC_FACILITATOR_CONFIG,
     );
   }
 }

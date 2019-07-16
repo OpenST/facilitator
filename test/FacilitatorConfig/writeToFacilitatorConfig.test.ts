@@ -3,11 +3,11 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 import Directory from '../../src/Directory';
 import SpyAssert from '../test_utils/SpyAssert';
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 
 
 describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
-  const chain = '301';
+  const chain = 301;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
 
@@ -48,7 +48,12 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
   it('should pass with valid arguments', () => {
     const fsEnsureDirSyncSpy = spyFsEnsureDirSync();
     const fsWriteFileSyncSpy = spyFsWriteFileSync();
-    const fsConfig: FacilitatorConfig = FacilitatorConfig.fromChain('');
+    sinon.replace(
+      fs,
+      'existsSync',
+      sinon.fake.returns(false),
+    );
+    const fsConfig: FacilitatorConfig = FacilitatorConfig.fromChain(chain);
     const directorySpy = spyDirectory();
     const pathSpy = spyPath();
 
@@ -63,11 +68,14 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', () => {
     };
     const objectWritten = JSON.stringify(data, null, '    ');
 
-    SpyAssert.assert(directorySpy, 1, [[]]);
+    SpyAssert.assert(directorySpy, 2, [[], []]);
     SpyAssert.assert(fsEnsureDirSyncSpy, 1, [[facilitatorConfigPath]]);
 
     SpyAssert.assert(fsWriteFileSyncSpy, 1, [[facilitatorConfigPath, objectWritten]]);
-    SpyAssert.assert(pathSpy, 2, [[mosaicDirectoryPath, chain], [facilitatorConfigPath, 'facilitator-config.json']]);
+    SpyAssert.assert(pathSpy, 2, [
+      [mosaicDirectoryPath, chain.toString()],
+      [mosaicDirectoryPath, chain.toString(), 'facilitator-config.json'],
+    ]);
 
     pathSpy.restore();
     directorySpy.restore();

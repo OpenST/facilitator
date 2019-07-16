@@ -2,15 +2,12 @@ import TransactionHandler from '../../src/TransactionHandler';
 import StakeRequestHandler from '../../src/handlers/StakeRequestHandler';
 import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
-const { assert } = chai;
+import Repositories from '../../src/repositories/Repositories';
+import assert from '../test_utils/assert';
 
 import sinon = require('sinon');
 
-describe('TransactionHandler.handle()', () => {
+describe('TransactionHandler.handle()', (): void => {
   const bulkTransactions = {
     stakeRequesteds: [
       {
@@ -28,7 +25,8 @@ describe('TransactionHandler.handle()', () => {
     ],
   };
 
-  it('should handle stake request transactions if handler is available', async () => {
+  it('should handle stake request transactions if '
+  + 'handler is available', async (): Promise<void> => {
     const aStakeRequest = StubData.getAStakeRequest('123');
     const stakeRequestedHandler = new StakeRequestHandler(sinon.fake() as any);
 
@@ -37,24 +35,31 @@ describe('TransactionHandler.handle()', () => {
       'persist',
       sinon.fake.resolves([aStakeRequest]),
     );
-    const handleSpy = sinon.replace(
-      stakeRequestedHandler,
-      'handle',
-      sinon.fake.returns(Promise.resolve()),
-    );
     const handlers = {
       stakeRequesteds: stakeRequestedHandler,
     };
 
-    const transactionHandler = new TransactionHandler(handlers as any);
+    const repos = await Repositories.create();
+    const reposNotifySpy = sinon.stub(
+      repos,
+      'notify',
+    ).callsFake(async (): Promise<void[][]> => []);
+
+    const transactionHandler = new TransactionHandler(
+      handlers as any,
+      repos,
+    );
+
     await transactionHandler.handle(bulkTransactions);
 
     SpyAssert.assert(persistSpy, 1, [[bulkTransactions.stakeRequesteds]]);
-    SpyAssert.assert(handleSpy, 1, [[[aStakeRequest]]]);
+    SpyAssert.assert(reposNotifySpy, 1, [[]]);
   });
 
-  it('should fail if handler is not available', () => {
-    const transactionHandler = new TransactionHandler({});
+  it('should fail if handler is not available', async (): Promise<void> => {
+    const repos = await Repositories.create();
+
+    const transactionHandler = new TransactionHandler({}, repos);
 
     assert.isRejected(
       transactionHandler.handle(bulkTransactions),
