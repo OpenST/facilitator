@@ -181,74 +181,77 @@ export default class SeedData {
   }
 
   /**
-   * @returns Returns auxiliary chain mosaic config.
+   * @return Returns auxiliary chain mosaic config.
    */
   private get auxiliaryChainMosaicConfig(): AuxiliaryChainMosaicConfig {
     return this.config.mosaic.auxiliaryChains[this.config.facilitator.auxChainId];
   }
 
   /**
-   * @returns Returns origin chain mosaic config.
+   * @return Returns origin chain mosaic config.
    */
   private get originChainMosaicConfig(): OriginChainMosaicConfig {
     return this.config.mosaic.originChain;
   }
 
   /**
-   * @returns Returns Gateway address.
+   * @return Returns Gateway address.
    */
   private get gatewayAddress(): string | undefined {
     return this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress;
   }
 
   /**
-   * @returns Returns CoGateway address.
+   * @return Returns CoGateway address.
    */
   private get coGatewayAddress(): string | undefined {
     return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress;
   }
 
   /**
-   * @returns Returns Anchor address.
+   * @return Returns Anchor address.
    */
   private get anchorAddress(): string | undefined {
     return this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress;
   }
 
   /**
-   * @returns Returns CoAnchor address.
+   * @return Returns CoAnchor address.
    */
   private get coAnchorAddress(): string | undefined {
     return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress;
   }
 
   /**
-   * @returns Returns OstComposer address.
+   * @return Returns OstComposer address.
    */
   private get ostComposerAddress(): string | undefined {
     return this.originChainMosaicConfig.contractAddresses.ostComposerAddress;
   }
 
   /**
-   * @returns Returns OstPrime address.
+   * @return Returns OstPrime address.
    */
   private get ostPrimeAddress(): string | undefined {
     return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress;
   }
 
   /**
-   * @returns Returns SimpleToken address.
+   * @return Returns SimpleToken address.
    */
   private get simpleTokenAddress(): string | undefined {
     return this.originChainMosaicConfig.contractAddresses.simpleTokenAddress;
   }
 
+  /**
+   * @return Returns zero BigNumber object.
+   */
   private get zeroBn(): BigNumber {
     return new BigNumber('0');
   }
 
   /**
-   * @returns Returns properties of Gateway contract from chain.
+   * @return Returns properties of Gateway contract from chain.
    */
   private async getGatewayProperties(): Promise<{activated: boolean; bounty: BigNumber}> {
     const eip20Gateway: EIP20Gateway = interacts.getEIP20Gateway(this.config.originWeb3, this.gatewayAddress);
@@ -259,7 +262,7 @@ export default class SeedData {
   }
 
   /**
-   * @returns Returns bounty of CoGateway contract from chain.
+   * @return Returns bounty of CoGateway contract from chain.
    */
   private async getCoGatewayBounty(): Promise<BigNumber> {
     const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(this.config.auxiliaryWeb3, this.coGatewayAddress);
