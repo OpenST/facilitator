@@ -18,7 +18,7 @@ import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
 import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
 import ProveGatewayHandler from './ProveGatewayHandler';
-import StakeRequestHandler from "./StakeRequestHandler";
+import StakeRequestHandler from './StakeRequestHandler';
 
 
 export default class Handlers {

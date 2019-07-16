@@ -4,7 +4,7 @@ import TransactionFetcher from './TransactionFetcher';
 import GraphClient from './GraphClient';
 import Subscriber from './Subscriber';
 import { SubscriptionInfo } from '../types';
-import SubscriptionQueries from './SubscriptionQueries';
+import SubscriptionQueries from '../GraphQueries/SubscriptionQueries';
 
 /**
  * This class is container that holds instances of all the subscriptions.

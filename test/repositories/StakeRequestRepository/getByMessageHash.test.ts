@@ -4,7 +4,7 @@ import StakeRequest from '../../../src/models/StakeRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
 import assert from '../../test_utils/assert';
-import StubData from "../../test_utils/StubData";
+import StubData from '../../test_utils/StubData';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -23,7 +23,7 @@ describe('StakeRequestRepository::getByMessageHash', (): void => {
     const message = StubData.messageAttributes(
       messageHash,
       '0x0000000000000000000000000000000000000001',
-      new BigNumber(300)
+      new BigNumber(300),
     );
     await config.repos.messageRepository.save(
       message,

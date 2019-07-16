@@ -5,7 +5,7 @@ import ProveGatewayHandler from '../../../src/handlers/ProveGatewayHandler';
 import Gateway from '../../../src/models/Gateway';
 
 import Repositories from '../../../src/repositories/Repositories';
-import StubData from "../../test_utils/StubData";
+import StubData from '../../test_utils/StubData';
 
 const Utils = require('web3-utils');
 

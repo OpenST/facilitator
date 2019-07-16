@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import Repositories from '../../../src/repositories/Repositories';
 import Message from '../../../src/models/Message';
 import Util from './util';
-import StubData from "../../test_utils/StubData";
+import StubData from '../../test_utils/StubData';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -29,7 +29,7 @@ describe('MessageRepository::getMessagesForConfirmation', (): void => {
     message1 = StubData.messageAttributes(
       messageHash1,
       gatewayAddress,
-      sourceDeclarationBlockHeight1
+      sourceDeclarationBlockHeight1,
     );
     // Save message1
     await config.repos.messageRepository.save(
@@ -42,7 +42,7 @@ describe('MessageRepository::getMessagesForConfirmation', (): void => {
     message2 = StubData.messageAttributes(
       messageHash2,
       gatewayAddress,
-      sourceDeclarationBlockHeight2
+      sourceDeclarationBlockHeight2,
     );
     await config.repos.messageRepository.save(
       message2,

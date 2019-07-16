@@ -319,7 +319,7 @@ export class MessageRepository extends Subject<Message> {
     });
 
     const messages: Message[] = messageModels.map(
-      message => this.convertToMessage(message)
+      message => this.convertToMessage(message),
     );
     return messages;
   }

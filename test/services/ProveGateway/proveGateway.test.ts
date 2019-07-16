@@ -7,10 +7,10 @@ import GatewayRepository from '../../../src/repositories/GatewayRepository';
 import { MessageRepository } from '../../../src/repositories/MessageRepository';
 import Utils from '../../../src/Utils';
 import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
+import Gateway from '../../../src/models/Gateway';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import Gateway from "../../../src/models/Gateway";
 chai.use(chaiAsPromised);
 const { assert } = chai;
 

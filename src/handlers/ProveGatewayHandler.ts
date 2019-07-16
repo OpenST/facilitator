@@ -9,7 +9,6 @@ import Logger from '../Logger';
  * in Gateway model.
  */
 export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> {
-
   private readonly GatewayRepository: GatewayRepository;
 
   public constructor(gatewayRepository: GatewayRepository) {
