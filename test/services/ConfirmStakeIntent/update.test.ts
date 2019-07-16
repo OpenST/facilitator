@@ -239,13 +239,13 @@ describe('ConfirmStakeIntentService.update()', () => {
       0,
       [[
         message.sender!,
-        message.nonce!.toString(),
+        message.nonce!.toString(10),
         stakeRequest.beneficiary!,
-        stakeRequest.amount!.toString(),
-        message.gasPrice!.toString(),
-        message.gasLimit!.toString(),
+        stakeRequest.amount!.toString(10),
+        message.gasPrice!.toString(10),
+        message.gasLimit!.toString(10),
         message.hashLock!,
-        proof!.blockNumber!.toString(),
+        proof!.blockNumber!.toString(10),
         proof.storageProof,
       ]],
     );

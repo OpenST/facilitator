@@ -19,7 +19,6 @@ import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
 import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
 import ProveGatewayHandler from './ProveGatewayHandler';
-import StakeRequestHandler from './StakeRequestHandler';
 import MintProgressHandler from './MintProgressHandler';
 import StakeProgressHandler from './StakeProgressHandler';
 
