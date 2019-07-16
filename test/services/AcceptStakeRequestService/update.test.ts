@@ -18,6 +18,7 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 import * as sinon from 'sinon';
+import { interacts } from '@openst/mosaic-contracts';
 import StakeRequest from '../../../src/models/StakeRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import {
@@ -28,6 +29,9 @@ import {
 import Message from '../../../src/models/Message';
 import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
 import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
+import Utils from '../../../src/Utils';
+import { ORIGIN_GAS_PRICE } from '../../../src/Constants';
 
 const Web3 = require('web3');
 
@@ -48,10 +52,22 @@ let config: TestConfigInterface;
 const sandbox = sinon.createSandbox();
 
 describe('AcceptStakeRequestService::update', (): void => {
+  let acceptStakeRequestSpy: any;
+  let interactsSpy: any;
+  let web3: any;
+  const ostComposerAddress = '0x0000000000000000000000000000000000000001';
+  const originWorkerAddress = '0x0000000000000000000000000000000000000002';
+  let sendTransactionSpy: any;
+  const fakeTransactionHash = 'fakeTransactionHash';
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
-    const web3 = new Web3();
-    const service = new AcceptStakeRequestService(repos, web3);
+    web3 = new Web3();
+    const service = new AcceptStakeRequestService(
+      repos,
+      web3,
+      ostComposerAddress,
+      originWorkerAddress,
+    );
     config = {
       web3,
       repos,
@@ -118,9 +134,33 @@ describe('AcceptStakeRequestService::update', (): void => {
     await config.repos.stakeRequestRepository.save(
       config.stakeRequestWithNullMessageHashC,
     );
+
+    const someFakeOSTComposerInstance = {
+      methods: {
+        acceptStakeRequest: () => {},
+      },
+    };
+
+    acceptStakeRequestSpy = sinon.replace(
+      someFakeOSTComposerInstance.methods,
+      'acceptStakeRequest',
+      sinon.fake.returns(fakeTransactionHash),
+    );
+    interactsSpy = sinon.replace(
+      interacts,
+      'getOSTComposer',
+      sinon.fake.returns(someFakeOSTComposerInstance),
+    );
+
+    sendTransactionSpy = sinon.replace(
+      Utils,
+      'sendTransaction',
+      sinon.fake.returns(fakeTransactionHash),
+    );
   });
 
   afterEach(async (): Promise<void> => {
+    sinon.restore();
     sandbox.restore();
   });
 
@@ -135,6 +175,10 @@ describe('AcceptStakeRequestService::update', (): void => {
     const stakeRequestC = await config.repos.stakeRequestRepository.get(
       config.stakeRequestWithNullMessageHashC.stakeRequestHash,
     ) as StakeRequest;
+
+    const messageC = await config.repos.messageRepository.get(
+      config.fakeData.messageHash,
+    ) as Message;
 
     assert.notStrictEqual(
       stakeRequestC,
@@ -152,6 +196,33 @@ describe('AcceptStakeRequestService::update', (): void => {
       stakeRequestC.messageHash,
       config.fakeData.messageHash,
     );
+    SpyAssert.assert(
+      interactsSpy,
+      1,
+      [[web3, ostComposerAddress]],
+    );
+    SpyAssert.assert(
+      acceptStakeRequestSpy,
+      1,
+      [[
+        stakeRequestC.amount!.toString(10),
+        stakeRequestC.beneficiary!,
+        stakeRequestC.gasPrice!.toString(10),
+        stakeRequestC.gasLimit!.toString(10),
+        stakeRequestC.nonce!.toString(10),
+        stakeRequestC.stakerProxy!,
+        stakeRequestC.gateway!,
+        messageC.hashLock,
+      ]],
+    );
+    SpyAssert.assert(
+      sendTransactionSpy,
+      1,
+      [[fakeTransactionHash, {
+        from: originWorkerAddress,
+        gasPrice: ORIGIN_GAS_PRICE,
+      }]],
+    );
   });
 
   it('Checks that the message repository is properly updated.', async (): Promise<void> => {
@@ -165,6 +236,10 @@ describe('AcceptStakeRequestService::update', (): void => {
     const messageC = await config.repos.messageRepository.get(
       config.fakeData.messageHash,
     ) as Message;
+
+    const stakeRequestC = await config.repos.stakeRequestRepository.get(
+      config.stakeRequestWithNullMessageHashC.stakeRequestHash,
+    ) as StakeRequest;
 
     assert.notStrictEqual(
       messageC,
@@ -230,6 +305,33 @@ describe('AcceptStakeRequestService::update', (): void => {
     assert.strictEqual(
       messageC.hashLock,
       config.fakeData.hashLock,
+    );
+    SpyAssert.assert(
+      interactsSpy,
+      1,
+      [[web3, ostComposerAddress]],
+    );
+    SpyAssert.assert(
+      acceptStakeRequestSpy,
+      1,
+      [[
+        stakeRequestC.amount!.toString(10),
+        stakeRequestC.beneficiary!,
+        stakeRequestC.gasPrice!.toString(10),
+        stakeRequestC.gasLimit!.toString(10),
+        stakeRequestC.nonce!.toString(10),
+        stakeRequestC.stakerProxy!,
+        stakeRequestC.gateway!,
+        messageC.hashLock,
+      ]],
+    );
+    SpyAssert.assert(
+      sendTransactionSpy,
+      1,
+      [[fakeTransactionHash, {
+        from: originWorkerAddress,
+        gasPrice: ORIGIN_GAS_PRICE,
+      }]],
     );
   });
 });
