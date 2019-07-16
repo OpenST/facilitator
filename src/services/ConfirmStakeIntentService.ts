@@ -140,13 +140,13 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     const stakeRequest = await this.stakeRequestRepository.getByMessageHash(message.messageHash);
     const rawTx = await Promise.resolve(eip20CoGateway.methods.confirmStakeIntent(
       message.sender!,
-      message.nonce!.toString(),
+      message.nonce!.toString(10),
       stakeRequest!.beneficiary!,
-      stakeRequest!.amount!.toString(),
-      message.gasPrice!.toString(),
-      message.gasLimit!.toString(),
+      stakeRequest!.amount!.toString(10),
+      message.gasPrice!.toString(10),
+      message.gasLimit!.toString(10),
       message.hashLock!,
-      proofData.blockNumber.toString(),
+      proofData.blockNumber.toString(10),
       proofData.storageProof[0].serializedProof,
     ));
     return Utils.sendTransaction(
