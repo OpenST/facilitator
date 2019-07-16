@@ -28,7 +28,7 @@ export default class Facilitator {
    * This function should be called on signint or control-c.
    */
   public async stop(): Promise<void> {
-      await this.originSubscriber.unsubscribe();
-      await this.auxiliarySubscriber.unsubscribe();
+    await this.originSubscriber.unsubscribe();
+    await this.auxiliarySubscriber.unsubscribe();
   }
 }

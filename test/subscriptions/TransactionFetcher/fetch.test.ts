@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import GraphClient from '../../../src/subscriptions/GraphClient';
 import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
 import SpyAssert from '../../test_utils/SpyAssert';
-import EntityGraphQueries from '../../../src/subscriptions/EntityGraphQueries';
+import FetchQueries from '../../../src/GraphQueries/FetchQueries';
 import StubData from '../../test_utils/StubData';
 import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
 
@@ -106,7 +106,7 @@ describe('TransactionFetcher.fetch()', () => {
       'Invalid response.',
     );
 
-    const query = EntityGraphQueries.stakeRequesteds;
+    const query = FetchQueries.stakeRequesteds;
     SpyAssert.assert(spyGraphClientQuery, 3, [
       [query, iterationOneVariables],
       [query, iterationTwoVariables],
