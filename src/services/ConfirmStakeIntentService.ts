@@ -1,19 +1,19 @@
-import { interacts } from '@openst/mosaic-contracts';
-import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+import {interacts} from '@openst/mosaic-contracts';
+import {EIP20CoGateway} from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import * as assert from 'assert';
 import Observer from '../observer/Observer';
-import { MessageRepository } from '../repositories/MessageRepository';
+import {MessageRepository} from '../repositories/MessageRepository';
 import Gateway from '../models/Gateway';
 import Message from '../models/Message';
 import Utils from '../Utils';
-import { AUXILIARY_GAS_PRICE } from '../Constants';
+import {AUXILIARY_GAS_PRICE} from '../Constants';
 
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import Logger from '../Logger';
 
 const Mosaic = require('@openst/mosaic.js');
 
-const { ProofGenerator } = Mosaic.Utils;
+const {ProofGenerator} = Mosaic.Utils;
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -94,7 +94,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * @param messages List of message models.
    */
   private async confirmStakeIntent(gateway: Gateway, messages: Message[]):
-  Promise<Record<string, string>> {
+    Promise<Record<string, string>> {
     if (messages.length === 0) {
       return {};
     }
@@ -105,16 +105,15 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     );
 
     const transactionHashes: Record<string, string> = {};
-    const promises = [];
-    for (let i = 0; i < messages.length; i += 1) {
-      const promise = this.confirm(proofGenerator, messages[i], gateway)
-        .then((transactionHash) => {
-          const message = messages[i];
-          Logger.info(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
-          transactionHashes[message.messageHash] = transactionHash;
-        });
-      promises.push(promise);
-    }
+    const promises = messages.filter(message => message.isValidSecret())
+      .map(async (message) =>
+        this.confirm(proofGenerator, message, gateway)
+          .then((transactionHash) => {
+            Logger.info(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
+            transactionHashes[message.messageHash] = transactionHash;
+          })
+      )
+    ;
     await Promise.all(promises);
     return transactionHashes;
   }
@@ -127,7 +126,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * @param gateway Instance of Gateway model.
    */
   private async confirm(proofGenerator: any, message: Message, gateway: Gateway):
-  Promise<string> {
+    Promise<string> {
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],
@@ -142,14 +141,11 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       gasPrice: AUXILIARY_GAS_PRICE,
     };
     const stakeRequest = await this.stakeRequestRepository.getByMessageHash(message.messageHash);
-    if (stakeRequest === null) {
-      throw new Error(`Invalid stakeRequest for message: ${message.messageHash}`);
-    }
     const rawTx = await Promise.resolve(eip20CoGateway.methods.confirmStakeIntent(
       message.sender!,
       message.nonce!.toString(),
-      stakeRequest.beneficiary!,
-      stakeRequest.amount!.toString(),
+      stakeRequest!.beneficiary!,
+      stakeRequest!.amount!.toString(),
       message.gasPrice!.toString(),
       message.gasLimit!.toString(),
       message.hashLock!,

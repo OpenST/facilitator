@@ -13,6 +13,7 @@ import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
 
 const Mosaic = require('@openst/mosaic.js');
 const Web3 = require('web3');
+const web3utils = require('web3-utils');
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -32,6 +33,8 @@ describe('ConfirmStakeIntentService.update()', () => {
   beforeEach(async (): Promise<void> => {
     gateway = StubData.gatewayRecord();
     message = StubData.messageAttributes();
+    message.secret = "secret";
+    message.hashLock = web3utils.keccak256(message.secret);
     stakeRequest = StubData.getAStakeRequest('stakeRequestHash');
     // Foreign key linking
     stakeRequest.messageHash = message.messageHash;
