@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import sinon from 'sinon';
 
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 import Directory from '../../src/Directory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
@@ -21,7 +21,7 @@ async function spyFsModule(fileSize: number): Promise<any> {
 }
 
 describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
-  const chain = '301';
+  const chain = 301;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
 
@@ -49,7 +49,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
     SpyAssert.assert(directorySpy, 1, [[]]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain, 'facilitator-config.json']]);
+    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain.toString(), 'facilitator-config.json']]);
     assert.strictEqual(
       status,
       true,
@@ -65,7 +65,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
 
     SpyAssert.assert(directorySpy, 1, [[]]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain, 'facilitator-config.json']]);
+    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain.toString(), 'facilitator-config.json']]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
 
     assert.strictEqual(

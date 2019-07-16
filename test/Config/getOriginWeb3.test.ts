@@ -1,10 +1,9 @@
 import { assert } from 'chai';
-import { Chain, Config } from '../../src/Config';
+import sinon from 'sinon';
+import Web3 from 'web3';
+
+import { Chain, Config } from '../../src/Config/Config';
 import SpyAssert from '../test_utils/SpyAssert';
-
-const Web3 = require('web3');
-
-const sinon = require('sinon');
 
 describe('Config.originWeb3', () => {
   let config: Config; let chain: Chain;

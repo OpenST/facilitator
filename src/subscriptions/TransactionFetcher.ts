@@ -1,7 +1,7 @@
+import Logger from '../Logger';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import EntityGraphQueries from './EntityGraphQueries';
 import GraphClient from './GraphClient';
-import Logger from './Logger';
-import ContractEntityRepository from './repositories/ContractEntityRepository';
 
 /**
  * The class fetches the transactions based on contract address and uts.

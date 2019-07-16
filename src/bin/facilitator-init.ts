@@ -2,7 +2,7 @@ import commander from 'commander';
 import Web3 from 'web3';
 
 import Account from '../Account';
-import { Chain, FacilitatorConfig } from '../Config';
+import { Chain, FacilitatorConfig } from '../Config/Config';
 import DatabaseFileHelper from '../DatabaseFileHelper';
 import Logger from '../Logger';
 import Utils from '../Utils';
@@ -54,7 +54,10 @@ commander
       process.exit(1);
     }
 
-    if (!options.force) {
+    if (options.force) {
+      FacilitatorConfig.remove(options.chainId);
+    }
+    else {
       try {
         if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
           Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
@@ -65,7 +68,7 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.fromChain('');
+    const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);

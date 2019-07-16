@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import { Config } from '../../src/Config';
+import { Config } from '../../src/Config/Config';
 import MosaicConfig from '../../src/MosaicConfig';
 import assert from '../test_utils/assert';
 

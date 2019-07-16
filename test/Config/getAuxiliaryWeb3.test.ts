@@ -1,10 +1,9 @@
 import { assert } from 'chai';
-import { Chain, Config } from '../../src/Config';
+import sinon from 'sinon';
+import Web3 from 'web3';
+
+import { Chain, Config } from '../../src/Config/Config';
 import SpyAssert from '../test_utils/SpyAssert';
-
-const Web3 = require('web3');
-
-const sinon = require('sinon');
 
 describe('Config.auxiliaryWeb3', () => {
   let config: Config; let chain: Chain;
@@ -17,7 +16,7 @@ describe('Config.auxiliaryWeb3', () => {
   });
 
   it('should return web3 instance', () => {
-    const web3 = new Web3();
+    const web3 = new Web3(null);
     sinon.replace(
       config,
       'createWeb3Instance',

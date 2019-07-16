@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import sinon from 'sinon';
 
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 import Utils from '../../src/Utils';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';

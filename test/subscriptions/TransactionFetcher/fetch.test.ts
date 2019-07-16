@@ -1,13 +1,13 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
-import EntityGraphQueries from '../../src/EntityGraphQueries';
-import GraphClient from '../../src/GraphClient';
-import ContractEntityRepository from '../../src/repositories/ContractEntityRepository';
-import TransactionFetcher from '../../src/TransactionFetcher';
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
-import StubData from '../test_utils/StubData';
+import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
+import EntityGraphQueries from '../../../src/subscriptions/EntityGraphQueries';
+import GraphClient from '../../../src/subscriptions/GraphClient';
+import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
+import StubData from '../../test_utils/StubData';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {

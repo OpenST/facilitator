@@ -2,13 +2,13 @@ import fs from 'fs-extra';
 import path from 'path';
 import sinon from 'sinon';
 
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 import Directory from '../../src/Directory';
 import SpyAssert from '../test_utils/SpyAssert';
 
 const sandbox = sinon.createSandbox();
 
-const chain = '301';
+const chain = 301;
 const facilitatorConfigPath = 'test/Database/facilitator-config.json';
 const mosaicDirectoryPath = '.mosaic';
 
@@ -58,3 +58,4 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', (): void => {
     );
   });
 });
+

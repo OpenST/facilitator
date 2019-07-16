@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import { FacilitatorConfig } from '../../src/Config';
+import { FacilitatorConfig } from '../../src/Config/Config';
 import { InvalidFacilitatorConfigException } from '../../src/Exception';
 import assert from '../test_utils/assert';
 

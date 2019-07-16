@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import { Config, FacilitatorConfig } from '../../src/Config';
+import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import MosaicConfig from '../../src/MosaicConfig';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
@@ -11,7 +11,7 @@ describe('Config.fromFile()', () => {
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = FacilitatorConfig.fromChain('3');
+    const facilitator = FacilitatorConfig.fromChain(3);
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,

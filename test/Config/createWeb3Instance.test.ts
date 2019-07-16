@@ -1,12 +1,10 @@
 import { assert } from 'chai';
-import { Chain, Config, ENV_WORKER_PASSWORD_PREFIX } from '../../src/Config';
-import SpyAssert from '../test_utils/SpyAssert';
+import sinon from 'sinon';
+import Web3 from 'web3';
 
 import Account from '../../src/Account';
-
-const Web3 = require('web3');
-
-const sinon = require('sinon');
+import { Chain, Config, ENV_WORKER_PASSWORD_PREFIX } from '../../src/Config/Config';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Config.createWeb3Instance', () => {
   let config: Config; let chain: Chain;

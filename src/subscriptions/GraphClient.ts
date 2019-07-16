@@ -9,11 +9,11 @@ import fetch from 'node-fetch';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import WebSocket from 'ws';
 
-import Logger from './Logger';
-import { EntityType } from './models/ContractEntity';
-import ContractEntityRepository from './repositories/ContractEntityRepository';
+import Logger from '../Logger';
+import ContractEntity, { EntityType } from '../models/ContractEntity';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import TransactionHandler from '../TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
-import TransactionHandler from './TransactionHandler';
 
 /**
  * The class interacts with graph node server for subscription and query.

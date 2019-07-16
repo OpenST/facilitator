@@ -1,9 +1,9 @@
 import { Subscription } from 'apollo-client/util/Observable';
 
-import GraphClient from './GraphClient';
-import ContractEntityRepository from './repositories/ContractEntityRepository';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import TransactionFetcher from './TransactionFetcher';
-import TransactionHandler from './TransactionHandler';
+import TransactionHandler from '../TransactionHandler';
+import GraphClient from './GraphClient';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
