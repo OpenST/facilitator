@@ -18,6 +18,7 @@ import BigNumber from 'bignumber.js';
 
 import { interacts } from '@openst/mosaic-contracts';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
+import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import Repositories from '../repositories/Repositories';
 import StakeRequest from '../models/StakeRequest';
 import Observer from '../observer/Observer';
@@ -116,11 +117,16 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
   }
 
+  /**
+   * This method sends accept stake request transaction.
+   * @param stakeRequest Stake request object.
+   * @param hashLock Hash lock passed as accept request argument.
+   */
   private async sendAcceptStakeRequestTransaction(
     stakeRequest: StakeRequest, hashLock: string,
   ): Promise<string> {
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
-    const rawTx = ostComposer.methods.acceptStakeRequest(
+    const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
       stakeRequest.amount!.toString(10),
       stakeRequest.beneficiary!,
       stakeRequest.gasPrice!.toString(10),
