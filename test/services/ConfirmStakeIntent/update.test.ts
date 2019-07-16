@@ -33,7 +33,7 @@ describe('ConfirmStakeIntentService.update()', () => {
   beforeEach(async (): Promise<void> => {
     gateway = StubData.gatewayRecord();
     message = StubData.messageAttributes();
-    message.secret = "secret";
+    message.secret = 'secret';
     message.hashLock = web3utils.keccak256(message.secret);
     stakeRequest = StubData.getAStakeRequest('stakeRequestHash');
     // Foreign key linking
@@ -41,7 +41,7 @@ describe('ConfirmStakeIntentService.update()', () => {
 
     proof = {
       blockNumber: gateway.lastRemoteGatewayProvenBlockHeight,
-      storageProof: ['storageProof'],
+      storageProof: [{ serializedProof: 'storageProof' }],
     };
     proofGeneratorStub = sinon.replace(
       Mosaic.Utils.ProofGenerator.prototype,
@@ -144,7 +144,7 @@ describe('ConfirmStakeIntentService.update()', () => {
         message.gasLimit!.toString(),
         message.hashLock!,
         proof!.blockNumber!.toString(),
-        proof.storageProof,
+        proof!.storageProof[0].serializedProof,
       ]],
     );
 

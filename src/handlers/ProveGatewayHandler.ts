@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import * as assert from 'assert';
 import ContractEntityHandler from './ContractEntityHandler';
 import GatewayRepository from '../repositories/GatewayRepository';
 import Gateway from '../models/Gateway';
@@ -30,11 +31,9 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
     const transaction = transactions[transactions.length - 1];
     const gatewayAddress = transaction._gateway as string;
     const gateway = await this.GatewayRepository.get(gatewayAddress);
-    if (gateway === null) {
-      throw new Error(`Cannot find record for gateway: ${gatewayAddress}`);
-    }
+    assert(gateway !== null);
     const currentLastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
-    if (gateway.lastRemoteGatewayProvenBlockHeight
+    if (gateway && gateway.lastRemoteGatewayProvenBlockHeight
       && gateway.lastRemoteGatewayProvenBlockHeight.lt(currentLastRemoteGatewayProvenBlockHeight)) {
       gateway.lastRemoteGatewayProvenBlockHeight = currentLastRemoteGatewayProvenBlockHeight;
       await this.GatewayRepository.save(gateway);
@@ -42,6 +41,6 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
         currentLastRemoteGatewayProvenBlockHeight}`);
     }
 
-    return [gateway];
+    return [gateway!];
   }
 }

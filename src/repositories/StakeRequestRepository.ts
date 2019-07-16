@@ -188,7 +188,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
    * Returns a stake request with the specified message hash or
    * null if there is no.
    *
-   * @param messageHash Message hash to to be used for retrieval.
+   * @param messageHash Message hash to be used for retrieval.
    *
    * @return Stake request object if exists, otherwise null.
    */
