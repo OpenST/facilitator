@@ -52,8 +52,6 @@ class ProgressService {
       if (message.sourceStatus === MessageStatus.Declared &&
         message.targetStatus === MessageStatus.Declared
       ) {
-        await this.progressStake(message);
-        await this.progressMint(message);
         Promise.all([await this.progressStake(message), await this.progressMint(message)]);
       }
 
