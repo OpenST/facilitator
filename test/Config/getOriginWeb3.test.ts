@@ -16,7 +16,7 @@ describe('Config.originWeb3', () => {
   });
 
   it('should return web3 instance', () => {
-    const web3 = new Web3();
+    const web3 = new Web3(null);
     sinon.replace(
       config,
       'createWeb3Instance',
