@@ -25,6 +25,8 @@ describe('ConfirmStakeIntentService.update()', () => {
   let gateway: Gateway;
   let message: Message;
   let stakeRequest: StakeRequest;
+  let proof: any;
+  let proofGeneratorStub: any;
 
   beforeEach(async (): Promise<void> => {
     gateway = StubData.gatewayRecord();
@@ -32,6 +34,16 @@ describe('ConfirmStakeIntentService.update()', () => {
     stakeRequest = StubData.getAStakeRequest('stakeRequestHash');
     // Foreign key linking
     stakeRequest.messageHash = message.messageHash;
+
+    proof = {
+      blockNumber: gateway.lastRemoteGatewayProvenBlockHeight,
+      storageProof: ['storageProof'],
+    };
+    proofGeneratorStub = sinon.replace(
+      Mosaic.Utils.ProofGenerator.prototype,
+      'getOutboxProof',
+      sinon.fake.resolves(proof),
+    );
   });
 
   it('Should react to update on gateway model ', async () => {
@@ -43,26 +55,23 @@ describe('ConfirmStakeIntentService.update()', () => {
       getByMessageHash: Promise.resolve(stakeRequest),
     });
 
-    const proof = {
-      blockNumber: gateway.lastRemoteGatewayProvenBlockHeight,
-      storageProof: ['storageProof'],
-    };
-    const proofGeneratorStub = sinon.replace(
-      Mosaic.Utils.ProofGenerator.prototype,
-      'getOutboxProof',
-      sinon.fake.resolves(proof),
-    );
-
-    const rawTx = 'rawTx';
-    const eip20CoGatewayMockObject = {
+    const eip20CoGatewayMockInstance = {
       methods: {
-        confirmStakeIntent: sinon.fake.resolves(rawTx),
+        confirmStakeIntent: () => {},
       },
     };
-    sinon.replace(
+
+    const rawTx = 'rawTx';
+    const confirmStakeIntentSpy = sinon.replace(
+      eip20CoGatewayMockInstance.methods,
+      'confirmStakeIntent',
+      sinon.fake.returns(rawTx),
+    );
+
+    const interactsSpy = sinon.replace(
       interacts,
       'getEIP20CoGateway',
-      () => eip20CoGatewayMockObject as any,
+      sinon.fake.returns(eip20CoGatewayMockInstance),
     );
 
     const fakeTransactionHash = 'fakeHash';
@@ -113,6 +122,28 @@ describe('ConfirmStakeIntentService.update()', () => {
       [[rawTx, transactionOptions]],
     );
 
+    SpyAssert.assert(
+      interactsSpy,
+      1,
+      [[auxiliaryWeb3, coGatewayAddress]],
+    );
+
+    SpyAssert.assert(
+      confirmStakeIntentSpy,
+      1,
+      [[
+        message.sender!,
+        message.nonce!.toString(),
+        stakeRequest.beneficiary!,
+        stakeRequest.amount!.toString(),
+        message.gasPrice!.toString(),
+        message.gasLimit!.toString(),
+        message.hashLock!,
+        proof!.blockNumber!.toString(),
+        proof.storageProof
+      ]]
+    );
+
     sinon.restore();
   });
 
@@ -125,30 +156,27 @@ describe('ConfirmStakeIntentService.update()', () => {
       getByMessageHash: Promise.resolve(null),
     });
 
-    const proof = {
-      blockNumber: gateway.lastRemoteGatewayProvenBlockHeight,
-      storageProof: ['storageProof'],
-    };
-    const proofGeneratorStub = sinon.replace(
-      Mosaic.Utils.ProofGenerator.prototype,
-      'getOutboxProof',
-      sinon.fake.resolves(proof),
-    );
 
-    const rawTx = 'rawTx';
-    const eip20CoGatewayMockObject = {
+    const eip20CoGatewayMockInstance = {
       methods: {
-        confirmStakeIntent: sinon.fake.resolves(rawTx),
+        confirmStakeIntent: () => {},
       },
     };
-    sinon.replace(
+
+    const rawTx = 'rawTx';
+    const confirmStakeIntentSpy = sinon.replace(
+      eip20CoGatewayMockInstance.methods,
+      'confirmStakeIntent',
+      sinon.fake.returns(rawTx),
+    );
+
+    const interactsSpy = sinon.replace(
       interacts,
       'getEIP20CoGateway',
-      () => eip20CoGatewayMockObject as any,
+      sinon.fake.returns(eip20CoGatewayMockInstance),
     );
 
     const fakeTransactionHash = 'fakeHash';
-
     const sendTransactionSpy = sinon.replace(
       Utils,
       'sendTransaction',
@@ -194,6 +222,28 @@ describe('ConfirmStakeIntentService.update()', () => {
       sendTransactionSpy,
       0,
       [[rawTx, transactionOptions]],
+    );
+
+    SpyAssert.assert(
+      interactsSpy,
+      0,
+      [[auxiliaryWeb3, coGatewayAddress]],
+    );
+
+    SpyAssert.assert(
+      confirmStakeIntentSpy,
+      0,
+      [[
+        message.sender!,
+        message.nonce!.toString(),
+        stakeRequest.beneficiary!,
+        stakeRequest.amount!.toString(),
+        message.gasPrice!.toString(),
+        message.gasLimit!.toString(),
+        message.hashLock!,
+        proof!.blockNumber!.toString(),
+        proof.storageProof
+      ]]
     );
 
     sinon.restore();
