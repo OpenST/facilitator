@@ -26,7 +26,7 @@ export default class ProgressService {
   /**
    * @param gatewayRepository Instance of GatewayRepository.
    * @param originWeb3 Origin chain web3 object.
-   * @param auxiliaryWeb3 Auxiliary chain web3 object
+   * @param auxiliaryWeb3 Auxiliary chain web3 object.
    * @param gatewayAddress Address of gateway contract.
    * @param originWorkerAddress Origin chain worker address.
    * @param auxWorkerAddress Auxiliary chain worker address.
@@ -68,7 +68,7 @@ export default class ProgressService {
         if (message.targetStatus === MessageStatus.Declared) {
           return this.progressMint(message);
         }
-        return Promise.resolve(); // may not be needed.
+        return Promise.resolve();
       });
 
     await Promise.all(progressPromises);
@@ -105,11 +105,14 @@ export default class ProgressService {
    * @returns Promise which resolves to transaction hash.
    */
   private async progressMint(message: Message): Promise<string> {
-    const gateway = await this.gatewayRepository.get(message.gatewayAddress!);
-    console.log("gateway :- ",gateway);
+    const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress!);
+
+     if (gatewayRecord === null) {
+      return Promise.reject(new Error('Gateway record does not exist for given gateway'));
+    }
     const eip20CoGateway = mosaicContract.interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
-      gateway!.remoteGatewayAddress,
+      gatewayRecord!.remoteGatewayAddress,
     );
 
     const transactionOptions = {

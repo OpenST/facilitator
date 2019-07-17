@@ -68,7 +68,6 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
     }
 
     await Promise.all(savePromises);
-
     return models;
   }
 }
