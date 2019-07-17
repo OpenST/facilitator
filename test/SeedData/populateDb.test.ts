@@ -30,6 +30,9 @@ describe('SeedData.populateDb()', () => {
   const simpleTokenAddress = '0x325f05a75999347b7d8461BaEf274afAE0B8AE1c';
   const ostPrimeAddress = '0x0d3E57044B1B96a257fB2ba3958c1130219A2d55';
 
+  /**
+   * Verifies data which was inserted for in auxiliary_chains table.
+   */
   async function verifyDataInAuxiliaryChainsTable() {
     const auxiliaryChain = new AuxiliaryChain(
       auxiliaryChainId,
@@ -48,6 +51,9 @@ describe('SeedData.populateDb()', () => {
     );
   }
 
+  /**
+   * Verifies data which was inserted for Gateway in gateways table.
+   */
   async function verifyGatewayData() {
     const gateway = new Gateway(
       ostGatewayAddress,
@@ -63,6 +69,9 @@ describe('SeedData.populateDb()', () => {
     GatewayRepositoryUtil.assertGatewayAttributes(gateway, gatewayFromDb as Gateway);
   }
 
+  /**
+   * Verifies data which was inserted for CoGateway in gateways table.
+   */
   async function verifyCoGatewayData() {
     const gateway = new Gateway(
       ostCoGatewayAddress,
@@ -78,11 +87,17 @@ describe('SeedData.populateDb()', () => {
     GatewayRepositoryUtil.assertGatewayAttributes(gateway, gatewayFromDb as Gateway);
   }
 
+  /**
+   * Verifies data which was inserted in gateways table.
+   */
   async function verifyDataInGatewaysTable() {
     await verifyGatewayData();
     await verifyCoGatewayData();
   }
 
+  /**
+   * Verifies data which was inserted for OstComposer related events in contract_entities table.
+   */
   async function verifyOstComposerRelatedContractEntities() {
     const contractEntity = new ContractEntity(
       ostComposerAddress,
@@ -96,6 +111,9 @@ describe('SeedData.populateDb()', () => {
     ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
   }
 
+  /**
+   * Verifies data which was inserted for Gateway related events in contract_entities table.
+   */
   async function verifyGatewayRelatedContractEntities() {
     const eventTypes = [
       EntityType.StakeIntentDeclareds,
@@ -122,6 +140,9 @@ describe('SeedData.populateDb()', () => {
     await Promise.all(promises);
   }
 
+  /**
+   * Verifies data which was inserted for Auxiliary Anchor related events in contract_entities table.
+   */
   async function verifyAuxiliaryAnchorRelatedContractEntities() {
     const contractEntity = new ContractEntity(
       coAnchorAddress,
@@ -135,6 +156,9 @@ describe('SeedData.populateDb()', () => {
     ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
   }
 
+  /**
+   * Verifies data which was inserted for CoGateway related events in contract_entities table.
+   */
   async function verifyCoGatewayRelatedContractEntities() {
     const eventTypes = [
       EntityType.StakeIntentConfirmeds,
@@ -162,6 +186,9 @@ describe('SeedData.populateDb()', () => {
     await Promise.all(promises);
   }
 
+  /**
+   * Verifies data which was inserted in contract_entities table.
+   */
   async function verifyDataInContractEntitiesTable() {
     await verifyOstComposerRelatedContractEntities();
     await verifyGatewayRelatedContractEntities();
