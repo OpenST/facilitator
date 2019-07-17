@@ -1,0 +1,254 @@
+import * as sinon from 'sinon';
+import BigNumber from 'bignumber.js';
+import { interacts } from '@openst/mosaic-contracts';
+import SeedData from '../../src/SeedData';
+import { Config } from '../../src/Config/Config';
+import Repositories from '../../src/repositories/Repositories';
+import AuxiliaryChain from '../../src/models/AuxiliaryChain';
+import Gateway from '../../src/models/Gateway';
+import { GatewayType } from '../../src/repositories/GatewayRepository';
+import AuxiliaryChainRepositoryUtil from '../repositories/AuxiliaryChainRepository/util';
+import GatewayRepositoryUtil from '../repositories/GatewayRepository/util';
+import ContractEntityRepositoryUtil from '../repositories/ContractEntityRepository/util';
+import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
+
+const Web3 = require('web3');
+
+describe('SeedData.populateDb()', () => {
+  let config: Config; let seedData: SeedData; let
+    repositories: Repositories;
+  let web3: any;
+
+  const originChain = '12346';
+  const auxiliaryChainId = 301;
+  const zeroBn = new BigNumber('0');
+  const ostComposerAddress = '0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38';
+  const ostGatewayAddress = '0x97BA58DBE58898F2B669C56496f46F638DC322d4';
+  const ostCoGatewayAddress = '0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227';
+  const anchorAddress = '0xaC80704c80AB83512b48314bDfa82f79923C2Fbe';
+  const coAnchorAddress = '0xBe26124167E8a350eE806B3ba11Ddb6c8E6dc689';
+  const simpleTokenAddress = '0x325f05a75999347b7d8461BaEf274afAE0B8AE1c';
+  const ostPrimeAddress = '0x0d3E57044B1B96a257fB2ba3958c1130219A2d55';
+
+  /**
+   * Verifies data which was inserted in auxiliary_chains table.
+   */
+  async function verifyDataInAuxiliaryChainsTable() {
+    const auxiliaryChain = new AuxiliaryChain(
+      auxiliaryChainId,
+      originChain,
+      ostGatewayAddress,
+      ostCoGatewayAddress,
+      anchorAddress,
+      coAnchorAddress,
+      zeroBn,
+      zeroBn,
+    );
+    const auxiliaryChainFromDb = await repositories.auxiliaryChainRepository.get(auxiliaryChainId);
+    AuxiliaryChainRepositoryUtil.assertAuxiliaryChainAttributes(
+      auxiliaryChain,
+      auxiliaryChainFromDb as AuxiliaryChain,
+    );
+  }
+
+  /**
+   * Verifies data which was inserted for Gateway in gateways table.
+   */
+  async function verifyGatewayData() {
+    const gateway = new Gateway(
+      ostGatewayAddress,
+      originChain,
+      GatewayType.Origin,
+      ostCoGatewayAddress,
+      simpleTokenAddress,
+      anchorAddress,
+      zeroBn,
+      true,
+    );
+    const gatewayFromDb = await repositories.gatewayRepository.get(ostGatewayAddress);
+    GatewayRepositoryUtil.assertGatewayAttributes(gateway, gatewayFromDb as Gateway);
+  }
+
+  /**
+   * Verifies data which was inserted for CoGateway in gateways table.
+   */
+  async function verifyCoGatewayData() {
+    const gateway = new Gateway(
+      ostCoGatewayAddress,
+      auxiliaryChainId.toString(),
+      GatewayType.Auxiliary,
+      ostGatewayAddress,
+      ostPrimeAddress,
+      coAnchorAddress,
+      zeroBn,
+      undefined,
+    );
+    const gatewayFromDb = await repositories.gatewayRepository.get(ostCoGatewayAddress);
+    GatewayRepositoryUtil.assertGatewayAttributes(gateway, gatewayFromDb as Gateway);
+  }
+
+  /**
+   * Verifies data which was inserted in gateways table.
+   */
+  async function verifyDataInGatewaysTable() {
+    await verifyGatewayData();
+    await verifyCoGatewayData();
+  }
+
+  /**
+   * Verifies data which was inserted for OstComposer related events in contract_entities table.
+   */
+  async function verifyOstComposerRelatedContractEntities() {
+    const contractEntity = new ContractEntity(
+      ostComposerAddress,
+      EntityType.StakeRequesteds,
+      zeroBn,
+    );
+    const contractEntityFromDb = await repositories.contractEntityRepository.get(
+      ostComposerAddress,
+      EntityType.StakeRequesteds,
+    );
+    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+  }
+
+  /**
+   * Verifies data which was inserted for Gateway related events in contract_entities table.
+   */
+  async function verifyGatewayRelatedContractEntities() {
+    const eventTypes = [
+      EntityType.StakeIntentDeclareds,
+      EntityType.StakeProgresseds,
+    ];
+    const promises = [];
+    for (let i = 0; i < eventTypes.length; i += 1) {
+      const contractEntity = new ContractEntity(
+        ostGatewayAddress,
+        eventTypes[i],
+        zeroBn,
+      );
+      const promise = repositories.contractEntityRepository.get(
+        ostGatewayAddress,
+        eventTypes[i],
+      ).then((contractEntityFromDb) => {
+        ContractEntityRepositoryUtil.assertion(
+          contractEntity,
+          contractEntityFromDb as ContractEntity,
+        );
+      });
+      promises.push(promise);
+    }
+    await Promise.all(promises);
+  }
+
+  /**
+   * Verifies data which was inserted for Auxiliary Anchor related events in contract_entities table.
+   */
+  async function verifyAuxiliaryAnchorRelatedContractEntities() {
+    const contractEntity = new ContractEntity(
+      coAnchorAddress,
+      EntityType.StateRootAvailables,
+      zeroBn,
+    );
+    const contractEntityFromDb = await repositories.contractEntityRepository.get(
+      coAnchorAddress,
+      EntityType.StateRootAvailables,
+    );
+    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+  }
+
+  /**
+   * Verifies data which was inserted for CoGateway related events in contract_entities table.
+   */
+  async function verifyCoGatewayRelatedContractEntities() {
+    const eventTypes = [
+      EntityType.StakeIntentConfirmeds,
+      EntityType.MintProgresseds,
+      EntityType.GatewayProvens,
+    ];
+    const promises = [];
+    for (let i = 0; i < eventTypes.length; i += 1) {
+      const contractEntity = new ContractEntity(
+        ostCoGatewayAddress,
+        eventTypes[i],
+        zeroBn,
+      );
+      const promise = repositories.contractEntityRepository.get(
+        ostCoGatewayAddress,
+        eventTypes[i],
+      ).then((contractEntityFromDb) => {
+        ContractEntityRepositoryUtil.assertion(
+          contractEntity,
+          contractEntityFromDb as ContractEntity,
+        );
+      });
+      promises.push(promise);
+    }
+    await Promise.all(promises);
+  }
+
+  /**
+   * Verifies data which was inserted in contract_entities table.
+   */
+  async function verifyDataInContractEntitiesTable() {
+    await verifyOstComposerRelatedContractEntities();
+    await verifyGatewayRelatedContractEntities();
+    await verifyAuxiliaryAnchorRelatedContractEntities();
+    await verifyCoGatewayRelatedContractEntities();
+  }
+
+  beforeEach(async (): Promise<void> => {
+    web3 = new Web3();
+    const eip20GatewayMockObject = {
+      methods: {
+        activated: sinon.fake.returns({ call: async () => Promise.resolve(true) }),
+        bounty: sinon.fake.returns({ call: async () => Promise.resolve(new BigNumber(10)) }),
+      },
+    };
+    sinon.replace(
+      interacts,
+      'getEIP20Gateway',
+      () => eip20GatewayMockObject as any,
+    );
+    const eip20CoGatewayMockObject = {
+      methods: {
+        bounty: sinon.fake.returns({ call: async () => Promise.resolve(new BigNumber(10)) }),
+      },
+    };
+    sinon.replace(
+      interacts,
+      'getEIP20CoGateway',
+      () => eip20CoGatewayMockObject as any,
+    );
+    const mosaicConfigPath = 'test/Facilitator/testdata/mosaic-config.json';
+    const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
+    config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
+    sinon.replaceGetter(
+      config,
+      'originWeb3',
+      async () => web3,
+    );
+    sinon.replaceGetter(
+      config,
+      'auxiliaryWeb3',
+      async () => web3,
+    );
+    repositories = await Repositories.create();
+    seedData = new SeedData(
+      config,
+      repositories.gatewayRepository,
+      repositories.auxiliaryChainRepository,
+      repositories.contractEntityRepository,
+    );
+  });
+
+  it('should verify data population in db tables', async () => {
+    await seedData.populateDb();
+    await verifyDataInAuxiliaryChainsTable();
+    await verifyDataInGatewaysTable();
+    await verifyDataInContractEntitiesTable();
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+  });
+});
