@@ -32,20 +32,6 @@ describe('ProgressService.update()', () => {
   const progressStakeRawTx = 'progressStakeRawTx';
   const fakeTransactionHash = 'fakeHash';
   const coGatewayAddress = '0x0000000000000000000000000000000000000002';
-  // const chain = '1234';
-  // const gatewayInstance = new Gateway(
-  //   gatewayAddress,
-  //   chain,
-  //   GatewayType.Origin,
-  //   coGatewayAddress,
-  //   '0x0000000000000000000000000000000000000004',
-  //   '0x0000000000000000000000000000000000000003',
-  //   new BigNumber('1'),
-  //   true,
-  //   new BigNumber('1'),
-  //   new Date(),
-  //   new Date(),
-  // );
 
   const gatewayInstance = StubData.gatewayRecord();
 
