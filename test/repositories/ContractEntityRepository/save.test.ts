@@ -71,7 +71,7 @@ describe('ContractEntityRepository::save', (): void => {
 
     assert.isRejected(
       config.repos.contractEntityRepository.save(contractEntity),
-      `${invalidEntityType}`
+      `${invalidEntityType}`,
     );
   });
 });
