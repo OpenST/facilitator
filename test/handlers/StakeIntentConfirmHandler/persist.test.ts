@@ -16,7 +16,7 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
   let saveStub: any;
   let messageRecord: Message;
   let message: Message;
-  let sinonMock: any;
+  let sinonMessageRepositoryMock: any;
   beforeEach(async () => {
     transactions = [{
       id: '1',
@@ -33,30 +33,18 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
     saveStub = sinon.stub();
     messageRecord = StubData.messageAttributes();
 
-    sinonMock = sinon.createStubInstance(MessageRepository, {
+    sinonMessageRepositoryMock = sinon.createStubInstance(MessageRepository, {
       save: saveStub,
       get: Promise.resolve(messageRecord),
     });
-
-    message = new Message(
-      transactions[0]._messageHash,
-      MessageType.Stake,
-      transactions[0].gatewayAddress,
-      MessageStatus.Declared,
-      MessageStatus.Declared,
-      new BigNumber(1),
-      new BigNumber(1),
-      new BigNumber(transactions[0]._stakerNonce),
-      transactions[0]._staker,
-      transactions[0].direction,
-      new BigNumber(transactions[0].sourceDeclarationBlockHeight),
-    );
+    message = StubData.messageAttributes();
+    message.targetStatus = MessageStatus.Declared;
   });
 
   it('should persist successfully when target status is undeclared', async (): Promise<void> => {
     messageRecord.targetStatus = MessageStatus.Undeclared;
 
-    const handler = new StakeIntentConfirmHandler(sinonMock);
+    const handler = new StakeIntentConfirmHandler(sinonMessageRepositoryMock);
 
     const models = await handler.persist(transactions);
 
@@ -73,7 +61,7 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
   it('should persist successfully when target status is undefined', async (): Promise<void> => {
     messageRecord.targetStatus = undefined as unknown as MessageStatus;
 
-    const handler = new StakeIntentConfirmHandler(sinonMock);
+    const handler = new StakeIntentConfirmHandler(sinonMessageRepositoryMock);
 
     const models = await handler.persist(transactions);
 
@@ -87,7 +75,7 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
     SpyAssert.assert(saveStub, 1, [[message]]);
   });
 
-  it('should create new entry when message hash is not present', async (): Promise<void> => {
+  it('should create new entry when message is not present', async (): Promise<void> => {
     const transaction = [{
       id: '1',
       _messageHash: '0x000000000000000000000000000000000000000000000000000001',

@@ -22,8 +22,7 @@ describe('AuxiliaryChain::get', (): void => {
     );
   });
 
-  it('should return null when querying for non-existing '
-    + 'chainId', async (): Promise<void> => {
+  it('should return false when for invalid secret', async (): Promise<void> => {
     message.hashLock = '12345';
 
     const result = message.isValidSecret();

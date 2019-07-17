@@ -38,29 +38,29 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
 
   /**
    * This method parse confirm stake intent transaction and returns Message model object.
-   *
    * @param transactions Transaction objects.
-   *
    * @return Array of instances of Message objects.
    */
   public async persist(transactions: any[]): Promise<Message[]> {
     let message: Message | null;
-    const models: Message[] = [];
-    for (let i = 0; i < transactions.length; i++) {
-      const messageHash = transactions[i]._messageHash;
-      message = await this.messageRepository.get(messageHash);
-      if (message === null) {
-        message = new Message(messageHash);
-        message.sender = transactions[i]._staker as string;
-        message.nonce = transactions[i]._stakerNonce as BigNumber;
-        message.type = MessageType.Stake;
-        message.direction = MessageDirection.OriginToAuxiliary;
-      }
-      if (message.targetStatus === undefined || message.targetStatus === MessageStatus.Undeclared) {
-        message.targetStatus = MessageStatus.Declared;
-      }
-      models.push(message);
-    }
+
+    let models: Message[] = await Promise.all(transactions.map(
+      async (transaction): Promise<Message> => {
+        const messageHash = transaction._messageHash;
+        message = await this.messageRepository.get(messageHash);
+        if (message === null) {
+          message = new Message(transaction._messageHash);
+          message.sender = transaction._staker;
+          message.nonce = new BigNumber(transaction._stakerNonce);
+          message.type = MessageType.Stake;
+          message.direction = MessageDirection.OriginToAuxiliary;
+        }
+        if (message.targetStatus === undefined || message.targetStatus === MessageStatus.Undeclared) {
+          message.targetStatus = MessageStatus.Declared;
+        }
+        return message;
+      },
+    ));
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {

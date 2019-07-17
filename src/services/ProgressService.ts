@@ -5,6 +5,8 @@ import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../Constants';
 
 import GatewayRepository from '../repositories/GatewayRepository';
 
+import * as assert from 'assert';
+
 const mosaicContract = require('@openst/mosaic-contracts');
 
 /**
@@ -75,7 +77,7 @@ export default class ProgressService {
   }
 
   /**
-   * This is a private method which uses mosaic.js to make progressStake transaction.
+   * This is a private method which uses mosaic-contracts to make progressStake transaction.
    * @param message Message model object.
    * @returns Promise which resolves to transaction hash.
    */
@@ -100,16 +102,15 @@ export default class ProgressService {
   }
 
   /**
-   * This is a private method which uses mosaic.js to make progressMint transaction.
+   * This is a private method which uses mosaic-contracts to make progressMint transaction.
    * @param message Message model object.
    * @returns Promise which resolves to transaction hash.
    */
   private async progressMint(message: Message): Promise<string> {
     const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress!);
 
-     if (gatewayRecord === null) {
-      return Promise.reject(new Error('Gateway record does not exist for given gateway'));
-    }
+    assert(gatewayRecord !== null);
+
     const eip20CoGateway = mosaicContract.interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
       gatewayRecord!.remoteGatewayAddress,
