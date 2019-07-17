@@ -197,7 +197,7 @@ describe('ProgressService.update()', () => {
     sinon.restore();
   });
 
-  it('should progress on auxiliary when target status '
+  it('should progress only on auxiliary when target status '
     + 'is declared', async () => {
     message.targetStatus = MessageStatus.Declared;
 
