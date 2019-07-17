@@ -31,7 +31,7 @@ describe('SeedData.populateDb()', () => {
   const ostPrimeAddress = '0x0d3E57044B1B96a257fB2ba3958c1130219A2d55';
 
   /**
-   * Verifies data which was inserted for in auxiliary_chains table.
+   * Verifies data which was inserted in auxiliary_chains table.
    */
   async function verifyDataInAuxiliaryChainsTable() {
     const auxiliaryChain = new AuxiliaryChain(
