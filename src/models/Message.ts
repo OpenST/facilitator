@@ -115,13 +115,12 @@ export default class Message extends Comparable<Message> {
   }
 
   /**
-   * It generates hashLock from secret and verifies against the hashLock in Message object.
-   * @returns `true` if generated hashlock matches the input hashLock from Message object
-   *          otherwise `false`.
+   * Check if hashlock is valid or not.
    */
   public isValidSecret(): boolean {
-    const generatedHashLock = web3utils.keccak256(this.secret).toString();
-
-    return (generatedHashLock === this.hashLock);
+    if (web3utils.keccak256(this.secret) === this.hashLock) {
+      return true;
+    }
+    return false;
   }
 }
