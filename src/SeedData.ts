@@ -28,6 +28,10 @@ import AuxiliaryChain from './models/AuxiliaryChain';
 import Gateway from './models/Gateway';
 import ContractEntity, { EntityType } from './models/ContractEntity';
 
+const ZeroBN = new BigNumber('0');
+
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /**
  * SeedData provides functionality to populate seed data in db tables.
  */
@@ -50,18 +54,16 @@ export default class SeedData {
     config: Config,
     gatewayRepository: GatewayRepository,
     auxiliaryChainRepository: AuxiliaryChainRepository,
-    contractEntityRepository: ContractEntityRepository
+    contractEntityRepository: ContractEntityRepository,
   ) {
     this.config = config;
     this.gatewayRepository = gatewayRepository;
     this.auxiliaryChainRepository = auxiliaryChainRepository;
     this.contractEntityRepository = contractEntityRepository;
-    this.populateContractEntityTable = this.populateContractEntityTable.bind(this);
   }
 
   /**
    * Populates seed data in database tables.
-   * @return {Promise<void>}
    */
   public async populateDb(): Promise<void> {
     const promises = [];
@@ -69,12 +71,10 @@ export default class SeedData {
     promises.push(this.populateGatewayTable());
     promises.push(this.populateContractEntityTable());
     await Promise.all(promises);
-    return Promise.resolve();
   }
 
   /**
    * Populates seed data in auxiliary_chains table.
-   * @return {Promise<void>}
    */
   private async populateAuxiliaryChainTable(): Promise<void> {
     const auxiliaryChain = new AuxiliaryChain(
@@ -84,33 +84,32 @@ export default class SeedData {
       this.coGatewayAddress,
       this.anchorAddress,
       this.coAnchorAddress,
-      this.zeroBn,
-      this.zeroBn,
+      ZeroBN,
+      ZeroBN,
     );
     await this.auxiliaryChainRepository.save(auxiliaryChain);
-    return Promise.resolve();
   }
 
   /**
    * Populates seed data in gateways table.
-   * @return {Promise<void>}
    */
   private async populateGatewayTable(): Promise<void> {
     const promises = [];
     promises.push(this.populateGatewayEntry());
     promises.push(this.populateCoGatewayEntry());
     await Promise.all(promises);
-    return Promise.resolve();
   }
 
   /**
    * Populates seed data for Gateway in gateways table.
-   * @return {Promise<void>}
    */
   private async populateGatewayEntry(): Promise<void> {
-    const gatewayProperties: {activated: boolean; bounty: BigNumber} = await this.getGatewayProperties();
+    const gatewayProperties: {
+      activated: boolean;
+      bounty: BigNumber;
+    } = await this.getGatewayProperties();
     const originGateway = new Gateway(
-      this.gatewayAddress!,
+      this.gatewayAddress,
       this.config.facilitator.originChain,
       GatewayType.Origin,
       this.coGatewayAddress,
@@ -118,19 +117,17 @@ export default class SeedData {
       this.anchorAddress,
       gatewayProperties.bounty,
       gatewayProperties.activated,
-      this.zeroBn,
+      ZeroBN,
     );
     await this.gatewayRepository.save(originGateway);
-    return Promise.resolve();
   }
 
   /**
    * Populates seed data for CoGateway in gateways table.
-   * @return {Promise<void>}
    */
   private async populateCoGatewayEntry(): Promise<void> {
     const auxiliaryGateway = new Gateway(
-      this.coGatewayAddress!,
+      this.coGatewayAddress,
       this.config.facilitator.auxChainId.toString(),
       GatewayType.Auxiliary,
       this.gatewayAddress,
@@ -138,25 +135,23 @@ export default class SeedData {
       this.coAnchorAddress,
       await this.getCoGatewayBounty(),
       undefined,
-      this.zeroBn,
+      ZeroBN,
     );
     await this.gatewayRepository.save(auxiliaryGateway);
-    return Promise.resolve();
   }
 
   /**
    * Populates seed data in contract_entities table.
-   * @return {Promise<void>}
    */
   private async populateContractEntityTable(): Promise<void> {
     const contractAddressEventTypesMap: Record<string, EntityType[]> = {
-      [this.ostComposerAddress!]: [EntityType.StakeRequesteds],
-      [this.gatewayAddress!]: [
+      [this.ostComposerAddress]: [EntityType.StakeRequesteds],
+      [this.gatewayAddress]: [
         EntityType.StakeIntentDeclareds,
         EntityType.StakeProgresseds,
       ],
-      [this.coAnchorAddress!]: [EntityType.StateRootAvailables],
-      [this.coGatewayAddress!]: [
+      [this.coAnchorAddress]: [EntityType.StateRootAvailables],
+      [this.coGatewayAddress]: [
         EntityType.StakeIntentConfirmeds,
         EntityType.MintProgresseds,
         EntityType.GatewayProvens,
@@ -164,20 +159,19 @@ export default class SeedData {
     };
     const promises: any = [];
     const contractAddresses = Object.keys(contractAddressEventTypesMap);
-    for (let i = 0; i < contractAddresses.length; i++) {
+    for (let i = 0; i < contractAddresses.length; i += 1) {
       const contractAddress = contractAddresses[i];
       const eventTypes = contractAddressEventTypesMap[contractAddress];
-      for (let j = 0; eventTypes.length; j++) {
+      for (let j = 0; eventTypes.length; j += 1) {
         if (!eventTypes[j]) { break; }
         promises.push(this.contractEntityRepository.save(new ContractEntity(
           contractAddress,
           eventTypes[j],
-          this.zeroBn,
+          ZeroBN,
         )));
       }
     }
     await Promise.all(promises);
-    return Promise.resolve();
   }
 
   /**
@@ -197,64 +191,60 @@ export default class SeedData {
   /**
    * @return Returns Gateway address.
    */
-  private get gatewayAddress(): string | undefined {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress;
+  private get gatewayAddress(): string {
+    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!;
   }
 
   /**
    * @return Returns CoGateway address.
    */
-  private get coGatewayAddress(): string | undefined {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress;
+  private get coGatewayAddress(): string {
+    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!;
   }
 
   /**
    * @return Returns Anchor address.
    */
-  private get anchorAddress(): string | undefined {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress;
+  private get anchorAddress(): string {
+    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!;
   }
 
   /**
    * @return Returns CoAnchor address.
    */
-  private get coAnchorAddress(): string | undefined {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress;
+  private get coAnchorAddress(): string {
+    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!;
   }
 
   /**
    * @return Returns OstComposer address.
    */
-  private get ostComposerAddress(): string | undefined {
-    return this.originChainMosaicConfig.contractAddresses.ostComposerAddress;
+  private get ostComposerAddress(): string {
+    return this.originChainMosaicConfig.contractAddresses.ostComposerAddress!;
   }
 
   /**
    * @return Returns OstPrime address.
    */
-  private get ostPrimeAddress(): string | undefined {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress;
+  private get ostPrimeAddress(): string {
+    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!;
   }
 
   /**
    * @return Returns SimpleToken address.
    */
-  private get simpleTokenAddress(): string | undefined {
-    return this.originChainMosaicConfig.contractAddresses.simpleTokenAddress;
-  }
-
-  /**
-   * @return Returns zero BigNumber object.
-   */
-  private get zeroBn(): BigNumber {
-    return new BigNumber('0');
+  private get simpleTokenAddress(): string {
+    return this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!;
   }
 
   /**
    * @return Returns properties of Gateway contract from chain.
    */
   private async getGatewayProperties(): Promise<{activated: boolean; bounty: BigNumber}> {
-    const eip20Gateway: EIP20Gateway = interacts.getEIP20Gateway(this.config.originWeb3, this.gatewayAddress);
+    const eip20Gateway: EIP20Gateway = interacts.getEIP20Gateway(
+      this.config.originWeb3,
+      this.gatewayAddress,
+    );
     return Promise.resolve({
       activated: await eip20Gateway.methods.activated().call(),
       bounty: new BigNumber(await eip20Gateway.methods.bounty().call()),
@@ -265,7 +255,10 @@ export default class SeedData {
    * @return Returns bounty of CoGateway contract from chain.
    */
   private async getCoGatewayBounty(): Promise<BigNumber> {
-    const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(this.config.auxiliaryWeb3, this.coGatewayAddress);
-    return await new BigNumber(await eip20CoGateway.methods.bounty().call());
+    const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(
+      this.config.auxiliaryWeb3,
+      this.coGatewayAddress,
+    );
+    return new BigNumber(await eip20CoGateway.methods.bounty().call());
   }
 }
