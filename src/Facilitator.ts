@@ -1,5 +1,5 @@
 import Subscriber from './subscriptions/Subscriber';
-import Logger from "./Logger";
+import Logger from './Logger';
 
 /**
  * The class defines properties and behavior of a facilitator.

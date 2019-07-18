@@ -19,7 +19,7 @@ import ContractEntityHandler from './ContractEntityHandler';
 import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
 import AuxiliaryChain from '../models/AuxiliaryChain';
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
-import Logger from "../Logger";
+import Logger from '../Logger';
 
 /**
  * This class handles Anchor event

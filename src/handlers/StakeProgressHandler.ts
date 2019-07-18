@@ -21,7 +21,7 @@ import {
   MessageDirection,
   MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
-import Logger from "../Logger";
+import Logger from '../Logger';
 
 /**
  * This class handles stake progress transactions.

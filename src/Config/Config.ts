@@ -214,6 +214,7 @@ export class FacilitatorConfig {
    * @param filePath Absolute path of file.
    */
   private static readConfig(filePath: string) {
+    Logger.debug(`Reading mosaic config from path ${filePath}`);
     const config = Utils.getJsonDataFromPath(filePath);
     FacilitatorConfig.verifySchema(config);
     return new FacilitatorConfig(config);
