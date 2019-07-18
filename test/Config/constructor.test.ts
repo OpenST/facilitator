@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import * as sinon from 'sinon';
-import MosaicConfig from '../../src/MosaicConfig';
+import MosaicConfig from '../../src/Config/MosaicConfig';
 import { Config } from '../../src/Config/Config';
 
 
