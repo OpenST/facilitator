@@ -74,13 +74,13 @@ export default class Subscriptions {
   public static getSubscriptionDetails(): SubscriptionInfo {
     return {
       origin: {
-        wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
-        httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
+        wsSubGraphEndPoint: 'ws://3.214.143.1:60003/subgraphs/name/mosaic/origin-1406',
+        httpSubGraphEndPoint: 'http://3.214.143.1:10003/subgraphs/name/mosaic/origin-1406',
         subscriptionQueries: SubscriptionQueries.origin,
       },
       auxiliary: {
-        wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
-        httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
+        wsSubGraphEndPoint: 'ws://3.214.143.1:61406/subgraphs/name/mosaic/auxiliary-1406',
+        httpSubGraphEndPoint: 'http://3.214.143.1:11406/subgraphs/name/mosaic/auxiliary-1406',
         subscriptionQueries: SubscriptionQueries.auxiliary,
       },
     };
