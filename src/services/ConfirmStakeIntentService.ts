@@ -159,7 +159,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     assert((stakeRequest as StakeRequest).beneficiary !== undefined);
     assert((stakeRequest as StakeRequest).amount !== undefined);
 
-    const rawTx = await Promise.resolve(eip20CoGateway.methods.confirmStakeIntent(
+    const rawTx = eip20CoGateway.methods.confirmStakeIntent(
       message.sender as string,
       (message.nonce as BigNumber).toString(10),
       (stakeRequest as StakeRequest).beneficiary as string,
@@ -169,7 +169,8 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       (message.hashLock as string),
       proofData.blockNumber.toString(10),
       proofData.storageProof[0].serializedProof,
-    ));
+    );
+
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
