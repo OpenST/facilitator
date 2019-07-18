@@ -23,12 +23,12 @@ import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoG
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 
 import { Config } from './Config/Config';
+import {
+  AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
+} from './Config/MosaicConfig';
 import AuxiliaryChain from './models/AuxiliaryChain';
 import ContractEntity, { EntityType } from './models/ContractEntity';
 import Gateway from './models/Gateway';
-import {
-  AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
-} from './MosaicConfig';
 import AuxiliaryChainRepository from './repositories/AuxiliaryChainRepository';
 import ContractEntityRepository from './repositories/ContractEntityRepository';
 import GatewayRepository, { GatewayType } from './repositories/GatewayRepository';

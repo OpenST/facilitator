@@ -1,6 +1,6 @@
 import { FacilitatorStartException } from '../Exception';
-import MosaicConfig from '../MosaicConfig';
 import { Config, FacilitatorConfig } from './Config';
+import MosaicConfig from './MosaicConfig';
 
 /**
  * This is a factory class to create config.

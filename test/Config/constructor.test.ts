@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 
 import { Config } from '../../src/Config/Config';
-import MosaicConfig from '../../src/MosaicConfig';
+import MosaicConfig from '../../src/Config/MosaicConfig';
 import assert from '../test_utils/assert';
 
 describe('Config.constructor()', () => {
