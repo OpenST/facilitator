@@ -49,9 +49,9 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('AcceptStakeRequestService::update', (): void => {
+  const web3 = new Web3(null);
   let acceptStakeRequestSpy: any;
   let interactsSpy: any;
-  let web3: Web3;
   const ostComposerAddress = '0x0000000000000000000000000000000000000001';
   const originWorkerAddress = '0x0000000000000000000000000000000000000002';
   let sendTransactionSpy: any;
@@ -59,15 +59,12 @@ describe('AcceptStakeRequestService::update', (): void => {
 
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
-    web3 = new Web3(null);
     const service = new AcceptStakeRequestService(
       repos,
       web3,
       ostComposerAddress,
       originWorkerAddress,
     );
-    const web3 = new Web3(null);
-    const service = new AcceptStakeRequestService(repos, web3);
     config = {
       web3,
       repos,
@@ -146,6 +143,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       'acceptStakeRequest',
       sinon.fake.returns(fakeTransactionHash),
     );
+
     interactsSpy = sinon.replace(
       interacts,
       'getOSTComposer',

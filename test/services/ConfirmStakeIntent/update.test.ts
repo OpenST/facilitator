@@ -3,6 +3,7 @@ import Web3 from 'web3';
 import * as web3utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
+import { ProofGenerator } from '@openst/mosaic-proof';
 
 import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
 import Gateway from '../../../src/models/Gateway';
@@ -18,7 +19,6 @@ import StubData from '../../test_utils/StubData';
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 describe('ConfirmStakeIntentService.update()', (): void => {
-
   const originWeb3 = new Web3(null);
   const auxiliaryWeb3 = new Web3(null);
   const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
@@ -45,7 +45,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       storageProof: [{ serializedProof: 'storageProof' }],
     };
     proofGeneratorStub = sinon.replace(
-      Mosaic.Utils.ProofGenerator.prototype,
+      ProofGenerator.prototype,
       'getOutboxProof',
       sinon.fake.resolves(proof),
     );

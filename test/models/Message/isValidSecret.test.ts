@@ -10,8 +10,11 @@ describe('AuxiliaryChain::get', (): void => {
 
   message.secret = '1';
 
-  it('should return true when hashlock is generated from correct secret', async (): Promise<void> => {
-    const generatedHashLock = web3utils.keccak256(message.secret).toString();
+  it('should return true when hashlock is '
+    + 'generated from correct secret', async (): Promise<void> => {
+    assert(message.secret !== undefined);
+
+    const generatedHashLock = web3utils.keccak256(message.secret as string).toString();
     message.hashLock = generatedHashLock;
     const result = message.isValidSecret();
 

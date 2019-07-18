@@ -201,8 +201,10 @@ describe('SeedData.populateDb()', (): void => {
     web3 = new Web3(null);
     const eip20GatewayMockObject = {
       methods: {
-        activated: sinon.fake.returns({ call: async () => Promise.resolve(true) }),
-        bounty: sinon.fake.returns({ call: async () => Promise.resolve(new BigNumber(10)) }),
+        activated: sinon.fake.returns({ call: async (): Promise<boolean> => Promise.resolve(true) }),
+        bounty: sinon.fake.returns(
+          { call: async (): Promise<BigNumber> => Promise.resolve(new BigNumber(10)) }
+        ),
       },
     };
     sinon.replace(
@@ -226,13 +228,15 @@ describe('SeedData.populateDb()', (): void => {
     sinon.replaceGetter(
       config,
       'originWeb3',
-      async () => web3,
+      (): Web3 => web3,
     );
+
     sinon.replaceGetter(
       config,
       'auxiliaryWeb3',
-      async () => web3,
+      (): Web3 => web3,
     );
+
     repositories = await Repositories.create();
     seedData = new SeedData(
       config,
@@ -242,7 +246,7 @@ describe('SeedData.populateDb()', (): void => {
     );
   });
 
-  it('should verify data population in db tables', async () => {
+  it('should verify data population in db tables', async (): Promise<void> => {
     await seedData.populateDb();
     await verifyDataInAuxiliaryChainsTable();
     await verifyDataInGatewaysTable();

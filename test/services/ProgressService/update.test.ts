@@ -95,6 +95,10 @@ describe('ProgressService.update()', () => {
     message.isValidSecret.callsFake(() => true);
   });
 
+  afterEach(async (): Promise<void> => {
+    sinon.restore();
+  });
+
   it('should progress on origin and auxiliary when source and target status '
     + 'is declared', async () => {
     message.sourceStatus = MessageStatus.Declared;

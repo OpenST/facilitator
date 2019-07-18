@@ -1,150 +1,151 @@
+/* eslint-disable import/no-unresolved */
+
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
+import Web3 from 'web3';
 
-import { ProofData, ProofGenerator } from '@openst/mosaic-proof';
+import { interacts } from '@openst/mosaic-contracts';
+import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+import { ProofGenerator } from '@openst/mosaic-proof';
 
-import EIP20CoGateway from '../interacts/EIP20CoGateway';
-import InteractsFactory from '../interacts/InteractsFactory';
+import { AUXILIARY_GAS_PRICE } from '../Constants';
 import Logger from '../Logger';
 import AuxiliaryChain from '../models/AuxiliaryChain';
 import Observer from '../observer/Observer';
 import GatewayRepository from '../repositories/GatewayRepository';
 import { MessageRepository } from '../repositories/MessageRepository';
+import Utils from '../Utils';
 
 export default class ProveGatewayService extends Observer<AuxiliaryChain> {
-  /* Storage */
+  private gatewayRepository: GatewayRepository;
+
+  private messageRepository: MessageRepository;
+
+  private originWeb3: Web3;
+
+  private auxiliaryWeb3: Web3;
+
+  private auxiliaryWorkerAddress: string;
 
   private gatewayAddress: string;
 
   private auxiliaryChainId: number;
 
-  private gatewayRepository: GatewayRepository;
-
-  private messageRepository: MessageRepository;
-
-  private proofGenerator: ProofGenerator;
-
-  private interactsFactory: InteractsFactory;
-
-
-  /* Public Functions */
-
   /**
-   * @param gatewayAddress Address of gateway contract on origin chain.
-   * @param auxiliaryChainId Auxiliary chain Id.
+   *  Constructor
+   *
    * @param gatewayRepository Instance of auxiliary chain repository.
    * @param messageRepository Instance of message repository.
-   * @param proofGenerator Instance of a proof generator.
-   * @param eip20CoGatewayFactory Instance of a EIP20 co-gateway factory.
+   * @param originWeb3 Origin Web3 instance.
+   * @param auxiliaryWeb3 Auxiliary Web3 instance.
+   * @param auxiliaryWorkerAddress auxiliary worker address, this should be
+   *                               unlocked and added in web3 wallet.
+   * @param gatewayAddress Address of gateway contract on origin chain.
+   * @param auxiliaryChainId Auxiliary chain Id.
    */
   public constructor(
-    gatewayAddress: string,
-    auxiliaryChainId: number,
     gatewayRepository: GatewayRepository,
     messageRepository: MessageRepository,
-    proofGenerator: ProofGenerator,
-    interactsFactory: InteractsFactory,
+    originWeb3: Web3,
+    auxiliaryWeb3: Web3,
+    auxiliaryWorkerAddress: string,
+    gatewayAddress: string,
+    auxiliaryChainId: number,
   ) {
     super();
 
-    this.gatewayAddress = gatewayAddress;
-    this.auxiliaryChainId = auxiliaryChainId;
     this.gatewayRepository = gatewayRepository;
+    this.originWeb3 = originWeb3;
+    this.auxiliaryWeb3 = auxiliaryWeb3;
+    this.auxiliaryWorkerAddress = auxiliaryWorkerAddress;
+    this.gatewayAddress = gatewayAddress;
     this.messageRepository = messageRepository;
-    this.proofGenerator = proofGenerator;
-    this.interactsFactory = interactsFactory;
+    this.auxiliaryChainId = auxiliaryChainId;
   }
 
   /**
-   * Reacts on changes in auxiliary chain models.
-   *
-   * @param auxiliaryChains Changed auxiliary chain models.
+   * This method react on changes in auxiliary chain models.
+   * @param auxiliaryChains List of auxiliary chains model
    */
   public async update(auxiliaryChains: AuxiliaryChain[]): Promise<void> {
-    const auxiliaryChain: AuxiliaryChain | undefined = auxiliaryChains.find(
-      (ch: AuxiliaryChain): boolean => ch.chainId === this.auxiliaryChainId
-          && ch.lastOriginBlockHeight !== undefined,
-    );
+    const interestedAuxiliaryChainRecord = auxiliaryChains
+      .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId
+        && auxiliaryChain.lastOriginBlockHeight !== undefined);
 
-    if (auxiliaryChain !== undefined) {
-      assert(auxiliaryChain.lastOriginBlockHeight !== undefined);
-      await this.proveGateway(auxiliaryChain.lastOriginBlockHeight as BigNumber);
+    assert(interestedAuxiliaryChainRecord.length <= 1);
+
+    if (interestedAuxiliaryChainRecord.length === 1) {
+      await this.proveGateway(
+        interestedAuxiliaryChainRecord[0].lastOriginBlockHeight!,
+      );
     }
   }
 
   /**
-   * Performs prove gateway transaction on auxiliary chain.
+   * This method performs prove gateway transaction on auxiliary chain.
+   * This throws if auxiliary chain details doesn't exist.
    *
    * This method is not intended to use outside this class, it's public
    * temporarily, it will soon be made private.
    *
    * @param blockHeight Block height at which anchor state root happens.
    *
-   * @returns A promise that resolves to the transaction hash and reason message.
+   * @return Return a promise that resolves to object which tell about success or failure.
    */
-  private async proveGateway(
+  public async proveGateway(
     blockHeight: BigNumber,
   ): Promise<{ transactionHash: string; message: string}> {
-    const { gatewayAddress } = this;
-
-    const gatewayRecord = await this.gatewayRepository.get(gatewayAddress);
+    const gatewayRecord = await this.gatewayRepository.get(this.gatewayAddress);
     if (gatewayRecord === null) {
-      const message = 'A gateway record for the given gateway address '
-      + `(${this.gatewayAddress}) does not exist, hence skipping proving gateway.`;
-      Logger.info(message);
-      return {
-        transactionHash: '',
-        message,
-      };
+      return Promise.reject(new Error('Gateway record does not exist for given gateway'));
     }
 
     const pendingMessages = await this.messageRepository.hasPendingOriginMessages(
       blockHeight,
       this.gatewayAddress,
     );
-
     if (!pendingMessages) {
-      const message = `There are no pending messages for gateway ${this.gatewayAddress}.`
-      + ', hence skipping proving gateway';
-      Logger.info(message);
-      return {
-        transactionHash: '',
-        message,
-      };
+      Logger.info(
+        `There are no pending messages for gateway ${this.gatewayAddress}.`
+        + ' Hence skipping proveGateway',
+      );
+      return Promise.resolve(
+        {
+          transactionHash: '',
+          message: 'There are no pending messages for this gateway.',
+        },
+      );
     }
-    const coGatewayAddress = gatewayRecord.remoteGatewayAddress;
+    const { gatewayAddress } = this;
+    const coGateway = gatewayRecord.remoteGatewayAddress;
 
-    Logger.info(`Generating proof for gateway address ${this.gatewayAddress} `
-      + `at blockHeight ${blockHeight.toString()}`);
-
-    const outboxProof: ProofData = await this.proofGenerator.getOutboxProof(
+    Logger.info(`Generating proof for gateway address ${this.gatewayAddress} at blockHeight ${blockHeight.toString()}`);
+    const proofGenerator = new ProofGenerator(this.originWeb3);
+    const {
+      encodedAccountValue,
+      serializedAccountProof,
+    } = await proofGenerator.getOutboxProof(
       gatewayAddress,
       [],
       blockHeight.toString(16),
     );
-
-    Logger.info(`Proof generated encodedAccountValue ${outboxProof.encodedAccountValue} and `
-    + `accountProof ${outboxProof.serializedAccountProof} `);
-
-    assert(coGatewayAddress !== undefined);
-    assert(outboxProof.encodedAccountValue !== undefined);
-    assert(outboxProof.serializedAccountProof !== undefined);
-    assert(outboxProof.block_number !== undefined);
-    assert(blockHeight.comparedTo(new BigNumber(outboxProof.block_number as string)) === 0);
-
+    Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
+    assert(encodedAccountValue !== undefined);
+    assert(serializedAccountProof !== undefined);
     const transactionHash = await this.prove(
-      coGatewayAddress as string,
+      coGateway!,
       blockHeight,
-      outboxProof.encodedAccountValue as string,
-      outboxProof.serializedAccountProof as string,
+      encodedAccountValue as string,
+      serializedAccountProof as string,
     );
 
     Logger.info(`Prove gateway transaction hash ${transactionHash}`);
-
     return { transactionHash, message: 'Gateway successfully proven' };
   }
 
   /**
+   * This is a private method which uses mosaic.js to make proveGateway transaction.
+   *
    * @param ostCoGatewayAddress  ost co-gateway address.
    * @param lastOriginBlockHeight Block height at which latest state root is anchored.
    * @param encodedAccountValue RPL encoded value of gateway account.
@@ -158,14 +159,25 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     encodedAccountValue: string,
     serializedAccountProof: string,
   ): Promise<string> {
-    const eip20CoGateway: EIP20CoGateway = this.interactsFactory.getEIP20CoGateway(
+    const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(
+      this.auxiliaryWeb3,
       ostCoGatewayAddress,
     );
 
-    return eip20CoGateway.proveGateway(
-      lastOriginBlockHeight,
-      encodedAccountValue,
-      serializedAccountProof,
+    const transactionOptions = {
+      from: this.auxiliaryWorkerAddress,
+      gasPrice: AUXILIARY_GAS_PRICE,
+    };
+
+    const rawTx = eip20CoGateway.methods.proveGateway(
+      lastOriginBlockHeight.toString(10),
+      encodedAccountValue as any,
+      serializedAccountProof as any,
+    );
+
+    return Utils.sendTransaction(
+      rawTx,
+      transactionOptions,
     );
   }
 }

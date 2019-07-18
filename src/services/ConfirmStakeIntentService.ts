@@ -26,7 +26,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
 
   private stakeRequestRepository: StakeRequestRepository;
 
-  private proofGenerator: ProofGenerator;
+  private originWeb3: Web3;
 
   private auxiliaryWeb3: Web3;
 
@@ -41,7 +41,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    *
    * @param messageRepository Instance of message repository.
    * @param stakeRequestRepository Instance of stake request repository.
-   * @param proofGenerator Instance of a proof generator.
+   * @param originWeb3 Instance of origin chain web3.
    * @param auxiliaryWeb3 Instance of auxiliary chain web3.
    * @param gatewayAddress Origin chain gateway address.
    * @param coGatewayAddress Auxiliary chain gateway address.
@@ -50,7 +50,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
   public constructor(
     messageRepository: MessageRepository,
     stakeRequestRepository: StakeRequestRepository,
-    proofGenerator: ProofGenerator,
+    originWeb3: Web3,
     auxiliaryWeb3: Web3,
     gatewayAddress: string,
     coGatewayAddress: string,
@@ -60,7 +60,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
 
     this.messageRepository = messageRepository;
     this.stakeRequestRepository = stakeRequestRepository;
-    this.proofGenerator = proofGenerator;
+    this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.gatewayAddress = gatewayAddress;
     this.coGatewayAddress = coGatewayAddress;
@@ -102,11 +102,15 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       return {};
     }
 
+    const proofGenerator = new ProofGenerator(
+      this.originWeb3,
+    );
+
     const transactionHashes: Record<string, string> = {};
 
     const promises = messages
       .filter((message): boolean => message.isValidSecret())
-      .map(async (message): Promise<void> => this.confirm(this.proofGenerator, message, gateway)
+      .map(async (message): Promise<void> => this.confirm(proofGenerator, message, gateway)
         .then((transactionHash): void => {
           Logger.info(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
           transactionHashes[message.messageHash] = transactionHash;
