@@ -24,6 +24,7 @@ import StakeRequest from '../models/StakeRequest';
 import Utils from '../Utils';
 
 import assert = require('assert');
+import Logger from "../Logger";
 
 
 /**
@@ -120,7 +121,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
         },
         stakerProxy: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
         },
       },
       {
@@ -146,14 +147,15 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
    */
   public async save(stakeRequest: StakeRequest): Promise<StakeRequest> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(stakeRequest);
-
-    await StakeRequestModel.upsert(
+    Logger.debug(`Defined own propose  ${JSON.stringify(definedOwnProps)}`);
+    Logger.debug(`stakeRequest  ${JSON.stringify(stakeRequest)}`);
+    const result = await StakeRequestModel.upsert(
       stakeRequest,
       {
         fields: definedOwnProps,
       },
     );
-
+    Logger.debug(`Upsert result: ${result}`);
     const stakeRequestOutput = await this.get(stakeRequest.stakeRequestHash);
     assert(stakeRequestOutput !== null);
 

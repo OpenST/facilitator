@@ -45,7 +45,7 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
    * @param transactions Bulk transactions.
    */
   public async persist(transactions: any[]): Promise<AuxiliaryChain[]> {
-    Logger.debug('Persisting Anchor records');
+    Logger.debug('Started persisting Anchor records');
     const chainRecord = await this.auxiliaryChainRepository.get(this.auxiliaryChainID);
     let hasChanged = false;
     if (chainRecord === null) {
@@ -72,7 +72,7 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
       return [];
     }
     chainRecord.lastOriginBlockHeight = anchorBlockHeight;
-    Logger.debug(`Persisting lastOriginBlockHeight to ${anchorBlockHeight}`);
+    Logger.debug(`Anchor handler Chain record   ${chainRecord}`);
     await this.auxiliaryChainRepository.save(chainRecord);
     // This is returned in the case when higher latest anchored block height is received.
     return [chainRecord];
