@@ -44,7 +44,7 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
   public async persist(transactions: any[]): Promise<Message[]> {
     let message: Message | null;
 
-    let models: Message[] = await Promise.all(transactions.map(
+    const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         const messageHash = transaction._messageHash;
         message = await this.messageRepository.get(messageHash);
@@ -55,7 +55,8 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
           message.type = MessageType.Stake;
           message.direction = MessageDirection.OriginToAuxiliary;
         }
-        if (message.targetStatus === undefined || message.targetStatus === MessageStatus.Undeclared) {
+        if (message.targetStatus === undefined
+          || message.targetStatus === MessageStatus.Undeclared) {
           message.targetStatus = MessageStatus.Declared;
         }
         return message;

@@ -1,11 +1,10 @@
+import * as assert from 'assert';
 import Message from '../models/Message';
 import { MessageStatus } from '../repositories/MessageRepository';
 import Utils from '../Utils';
 import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../Constants';
 
 import GatewayRepository from '../repositories/GatewayRepository';
-
-import * as assert from 'assert';
 
 const mosaicContract = require('@openst/mosaic-contracts');
 
