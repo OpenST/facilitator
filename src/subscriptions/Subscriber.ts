@@ -3,6 +3,7 @@ import GraphClient from './GraphClient';
 import TransactionHandler from '../TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import Logger from '../Logger';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -35,7 +36,6 @@ export default class Subscriber {
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
     contractEntityRepository: ContractEntityRepository,
-
   ) {
     this.contractEntityRepository = contractEntityRepository;
     this.querySubscriptions = {};
@@ -47,27 +47,29 @@ export default class Subscriber {
 
   /** Subscribes to subscription queries. */
   public async subscribe() {
-    Object.keys(this.subscriptionQueries).forEach(async (entity) => {
-      this.querySubscriptions[entity] = await this.graphClient.subscribe(
+    const oThis = this;
+    const subscriptionPromises = Object.keys(this.subscriptionQueries).map(
+      async entity => this.graphClient.subscribe(
         this.subscriptionQueries[entity],
         this.handler,
         this.fetcher,
         this.contractEntityRepository,
-      );
-    });
+      ).then((querySubscription) => {
+        Logger.info(`Subscription done for entity: ${entity}`);
+        oThis.querySubscriptions[entity] = querySubscription;
+      }),
+    );
+    await Promise.all(subscriptionPromises);
   }
 
-  /**
-   * Unsubscribes the query subscribers and deletes the query subscribers object.
-   *
-   * @return {Promise<void>}
-   */
+  /** Unsubscribes the query subscribers and deletes the query subscribers object. */
   public async unsubscribe() {
     Object.keys(this.subscriptionQueries).forEach(async (entity) => {
       const querySubscription = this.querySubscriptions[entity];
-      await Promise.resolve(querySubscription.unsubscribe());
+      querySubscription.unsubscribe();
+      Logger.info(`UnSubscription done for entity: ${entity}`);
     });
-    // Deletes all query susbcribers as they are non useful
+    // Deletes all query susbcribers as they are non useful.
     this.querySubscriptions = {};
   }
 }

@@ -6,7 +6,7 @@ import Directory from '../Directory';
 import {
   FacilitatorConfigNotFoundException,
   InvalidFacilitatorConfigException,
-  WorkerPasswordNotFoundException
+  WorkerPasswordNotFoundException,
 } from '../Exception';
 import * as schema from './FacilitatorConfig.schema.json';
 import Utils from '../Utils';
@@ -274,7 +274,7 @@ export class Config {
     if (!chain.password) {
       throw new WorkerPasswordNotFoundException(`password not found for ${chain.worker}`);
     }
-    const account = new Account(chain.worker, this.facilitator.encryptedAccounts[chain.rpc]);
+    const account = new Account(chain.worker, this.facilitator.encryptedAccounts[chain.worker]);
     const web3 = new Web3(chain.rpc);
     account.unlock(web3, chain.password);
     return web3;
