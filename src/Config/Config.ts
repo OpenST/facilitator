@@ -9,6 +9,7 @@ import {
   FacilitatorConfigNotFoundException, InvalidFacilitatorConfigException,
   WorkerPasswordNotFoundException,
 } from '../Exception';
+import Logger from '../Logger';
 import Utils from '../Utils';
 import schema from './FacilitatorConfig.schema.json';
 import MosaicConfig from './MosaicConfig';
@@ -136,10 +137,12 @@ export class FacilitatorConfig {
     );
     fs.ensureDirSync(configPath);
 
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain.toString());
     fs.writeFileSync(
-      Directory.getFacilitatorConfigPath(chain.toString()),
+      facilitatorConfigPath,
       JSON.stringify(this, null, '    '),
     );
+    Logger.info(`Created facilitator config on path ${facilitatorConfigPath}`);
   }
 
   /**
@@ -209,6 +212,7 @@ export class FacilitatorConfig {
    * @param filePath Absolute path of file.
    */
   private static readConfig(filePath: string): FacilitatorConfig {
+    Logger.debug(`Reading mosaic config from path ${filePath}`);
     const config = Utils.getJsonDataFromPath(filePath);
     FacilitatorConfig.verifySchema(config);
     return new FacilitatorConfig(config);

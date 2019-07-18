@@ -16,6 +16,7 @@
 
 import BigNumber from 'bignumber.js';
 
+import Logger from '../Logger';
 import Message from '../models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
@@ -45,6 +46,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
+    Logger.debug('Persisting Stake intent declared records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -57,6 +59,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
           message.type = MessageType.Stake;
           message.gatewayAddress = transaction.contractAddress;
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
+          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
         if (!message.sourceStatus || message.sourceStatus === MessageStatus.Undeclared) {
           message.sourceStatus = MessageStatus.Declared;
@@ -67,11 +70,12 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
+      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);
-
+    Logger.debug('Messages saved');
     return models;
   }
 }

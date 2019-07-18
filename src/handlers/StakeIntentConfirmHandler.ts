@@ -16,6 +16,7 @@
 
 import BigNumber from 'bignumber.js';
 
+import Logger from '../Logger';
 import Message from '../models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
@@ -43,7 +44,7 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
    */
   public async persist(transactions: any[]): Promise<Message[]> {
     let message: Message | null;
-
+    Logger.debug('Persisting Stake intent confirm records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         const messageHash = transaction._messageHash;
@@ -54,6 +55,7 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
           message.nonce = new BigNumber(transaction._stakerNonce);
           message.type = MessageType.Stake;
           message.direction = MessageDirection.OriginToAuxiliary;
+          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
         if (message.targetStatus === undefined
           || message.targetStatus === MessageStatus.Undeclared) {
@@ -65,10 +67,12 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
+      Logger.debug(`Changing target status to declared for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);
+    Logger.debug('Messages saved');
     return models;
   }
 }

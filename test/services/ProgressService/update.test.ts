@@ -85,7 +85,7 @@ describe('ProgressService.update()', () => {
     utilsSpy = sinon.replace(
       Utils,
       'sendTransaction',
-      sinon.fake.returns(fakeTransactionHash),
+      sinon.fake.resolves(fakeTransactionHash),
     );
 
     message = sinon.createStubInstance(Message);

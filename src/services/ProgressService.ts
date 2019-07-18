@@ -4,11 +4,12 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 
 import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../Constants';
+import Logger from '../Logger';
+import Gateway from '../models/Gateway';
 import Message from '../models/Message';
 import GatewayRepository from '../repositories/GatewayRepository';
 import { MessageStatus } from '../repositories/MessageRepository';
 import Utils from '../Utils';
-import Gateway from '../models/Gateway';
 
 /**
  * It facilitates progress staking and minting.
@@ -55,20 +56,26 @@ export default class ProgressService {
    * @param messages List of Message models.
    */
   public async update(messages: Message[]): Promise<void> {
+    Logger.debug('Progress service invoked');
+
     const progressPromises = messages
       .filter(message => message.isValidSecret())
       .map(async (message) => {
+        Logger.debug(`Progressing message hash ${message.messageHash}`);
         if (message.sourceStatus === MessageStatus.Declared
         && message.targetStatus === MessageStatus.Declared
         ) {
+          Logger.debug(`Performing progress stake and progress mint for message hash ${message.messageHash}`);
           return Promise.all([this.progressStake(message), this.progressMint(message)]);
         }
 
         if (message.sourceStatus === MessageStatus.Declared) {
+          Logger.debug(`Performing progress stake for message hash ${message.messageHash}`);
           return this.progressStake(message);
         }
 
         if (message.targetStatus === MessageStatus.Declared) {
+          Logger.debug(`Performing progress mint for message hash ${message.messageHash}`);
           return this.progressMint(message);
         }
         return Promise.resolve();
@@ -83,6 +90,7 @@ export default class ProgressService {
    * @returns Promise which resolves to transaction hash.
    */
   private async progressStake(message: Message): Promise<string> {
+    Logger.debug(`Sending progress stake transaction for message ${message.messageHash}`);
     const eip20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       this.gatewayAddress,
@@ -102,7 +110,10 @@ export default class ProgressService {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
-    );
+    ).then((txHash) => {
+      Logger.debug(`Progress stake transaction hash ${txHash} for message ${message.messageHash}`);
+      return txHash;
+    });
   }
 
   /**
@@ -111,6 +122,8 @@ export default class ProgressService {
    * @returns Promise which resolves to transaction hash.
    */
   private async progressMint(message: Message): Promise<string> {
+    Logger.debug(`Sending progress mint transaction for message ${message.messageHash}`);
+
     assert(message.gatewayAddress !== undefined);
 
     const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress as string);
@@ -135,6 +148,9 @@ export default class ProgressService {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
-    );
+    ).then((txHash) => {
+      Logger.debug(`Progress mint transaction hash ${txHash} for message ${message.messageHash}`);
+      return txHash;
+    });
   }
 }

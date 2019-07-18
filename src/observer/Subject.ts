@@ -14,6 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
+import Logger from '../Logger';
 import Comparable from './Comparable';
 import Observer from './Observer';
 
@@ -34,6 +35,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
 
   /** Notifies all observers about change in the subject. */
   public async notify(): Promise<void[]> {
+    Logger.debug(`Notifying observers for total ${this._updates.length} updates `);
     if (this._updates.length === 0) {
       return [];
     }

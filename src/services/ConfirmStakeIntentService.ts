@@ -78,6 +78,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * @param gateway List of Gateway models.
    */
   public async update(gateway: Gateway[]): Promise<void> {
+    Logger.debug('Confirm stake intent service invoked');
     assert(gateway.length === 1);
     const provenGateway: Gateway = gateway[0];
     const messages: Message[] = await this.messageRepository.getMessagesForConfirmation(
@@ -112,7 +113,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       .filter((message): boolean => message.isValidSecret())
       .map(async (message): Promise<void> => this.confirm(proofGenerator, message, gateway)
         .then((transactionHash): void => {
-          Logger.info(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
+          Logger.debug(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
           transactionHashes[message.messageHash] = transactionHash;
         }));
 

@@ -17,6 +17,7 @@
 import BigNumber from 'bignumber.js';
 
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
+import Logger from '../Logger';
 import AuxiliaryChain from '../models/AuxiliaryChain';
 import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
 import ContractEntityHandler from './ContractEntityHandler';
@@ -45,12 +46,12 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
    * @param transactions Bulk transactions.
    */
   public async persist(transactions: any[]): Promise<AuxiliaryChain[]> {
+    Logger.debug('Persisting Anchor records');
     const chainRecord = await this.auxiliaryChainRepository.get(this.auxiliaryChainID);
     let hasChanged = false;
     if (chainRecord === null) {
-      throw new AuxiliaryChainRecordNotFoundException(
-        `Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`,
-      );
+      Logger.error(`Auxiliary chain record not found for chain ${this.auxiliaryChainID}`);
+      throw new AuxiliaryChainRecordNotFoundException(`Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`);
     }
 
     let anchorBlockHeight = chainRecord.lastOriginBlockHeight;
@@ -66,11 +67,13 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
         }
       });
 
+    Logger.debug(`Change in latest anchor state root is?:  ${hasChanged}`);
     // No change in block height of interested anchor.
     if (!hasChanged) {
       return [];
     }
     chainRecord.lastOriginBlockHeight = anchorBlockHeight;
+    Logger.debug(`Persisting lastOriginBlockHeight to ${anchorBlockHeight}`);
     await this.auxiliaryChainRepository.save(chainRecord);
     // This is returned in the case when higher latest anchored block height is received.
     return [chainRecord];

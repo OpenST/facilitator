@@ -14,6 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
+import Logger from '../Logger';
 import Message from '../models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
@@ -43,6 +44,7 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
+    Logger.debug('Persisting Mint progress records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -53,6 +55,7 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
           message.targetStatus = MessageStatus.Undeclared;
+          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
         // Undeclared use case can happen when progress event appears before declare event.
         if (message.targetStatus === MessageStatus.Undeclared
@@ -66,6 +69,7 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
+      Logger.debug(`Changing target status to progress mint for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 

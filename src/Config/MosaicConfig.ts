@@ -5,6 +5,7 @@ import path from 'path';
 
 import Directory from '../Directory';
 import { InvalidMosaicConfigException, MosaicConfigNotFoundException } from '../Exception';
+import Logger from '../Logger';
 import schema from './MosaicConfig.schema.json';
 
 /**
@@ -152,6 +153,7 @@ export default class MosaicConfig {
    * @return {object}
    */
   private static readConfigFromFile(filePath: string): object {
+    Logger.debug(`Reading mosaic config from path ${filePath}`);
     const configString = fs.readFileSync(filePath).toString();
     if (configString && configString.length > 0) {
       const configObject = JSON.parse(configString);
