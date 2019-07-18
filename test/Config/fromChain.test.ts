@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import * as sinon from 'sinon';
-import MosaicConfig from '../../src/MosaicConfig';
+import MosaicConfig from '../../src/Config/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import SpyAssert from '../test_utils/SpyAssert';
 

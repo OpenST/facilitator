@@ -19,7 +19,7 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 
-import { OriginChain as OriginChainMosaicConfig, AuxiliaryChain as AuxiliaryChainMosaicConfig } from './MosaicConfig';
+import { OriginChain as OriginChainMosaicConfig, AuxiliaryChain as AuxiliaryChainMosaicConfig } from './Config/MosaicConfig';
 import { Config } from './Config/Config';
 import GatewayRepository, { GatewayType } from './repositories/GatewayRepository';
 import AuxiliaryChainRepository from './repositories/AuxiliaryChainRepository';
