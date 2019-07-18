@@ -4,7 +4,6 @@ import * as fs from 'fs-extra';
 import { Validator } from 'jsonschema';
 
 import Directory from '../Directory';
-import Logger from '../Logger';
 import { InvalidMosaicConfigException, MosaicConfigNotFoundException } from '../Exception';
 const schema = require('./MosaicConfig.schema.json');
 
@@ -128,7 +127,6 @@ export default class MosaicConfig {
       Directory.getMosaicFileName(),
     );
 
-    console.log('filePath :- ',filePath);
     if (fs.existsSync(filePath)) {
       const configObject = MosaicConfig.readConfigFromFile(filePath);
       return new MosaicConfig(configObject);
@@ -146,27 +144,6 @@ export default class MosaicConfig {
       return new MosaicConfig(configObject);
     }
     throw new MosaicConfigNotFoundException(`Missing config file at path: ${filePath}`);
-  }
-
-  /**
-   * Saves this config to a file in its auxiliary chain directory.
-   */
-  public writeToMosaicConfigDirectory(): void {
-    const mosaicConfigDir = path.join(
-      Directory.getDefaultMosaicDataDir,
-      this.originChain.chain,
-    );
-
-    fs.ensureDirSync(mosaicConfigDir);
-    const configPath = path.join(
-      mosaicConfigDir,
-      Directory.getMosaicFileName(),
-    );
-    Logger.info('storing mosaic config', { configPath });
-    fs.writeFileSync(
-      configPath,
-      JSON.stringify(this, null, '    '),
-    );
   }
 
   /**
