@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import MosaicConfig from '../MosaicConfig';
+import MosaicConfig from './MosaicConfig';
 import Directory from '../Directory';
 import {
   FacilitatorConfigNotFoundException,
@@ -277,7 +277,7 @@ export class Config {
     if (!chain.password) {
       throw new WorkerPasswordNotFoundException(`password not found for ${chain.worker}`);
     }
-    const account = new Account(chain.worker, this.facilitator.encryptedAccounts[chain.rpc]);
+    const account = new Account(chain.worker, this.facilitator.encryptedAccounts[chain.worker]);
     const web3 = new Web3(chain.rpc);
     account.unlock(web3, chain.password);
     return web3;
