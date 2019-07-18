@@ -16,7 +16,7 @@
 
 import Observer from './Observer';
 import Comparable from './Comparable';
-import Logger from "../Logger";
+import Logger from '../Logger';
 
 /**
  * The class enables one-to-many dependency between objects, so that
@@ -35,6 +35,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
 
   /** Notifies all observers about change in the subject. */
   public async notify(): Promise<void[]> {
+    Logger.debug(`Notifying observers for total ${this._updates.length} updates `);
     if (this._updates.length === 0) {
       return [];
     }
@@ -60,7 +61,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
     if (index !== -1) {
       this._updates.splice(index, 1);
     }
-    Logger.info(`Pushing to updates t: ${t}`);
+
     this._updates.push(t);
   }
 

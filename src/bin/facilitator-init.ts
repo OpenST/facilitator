@@ -107,10 +107,10 @@ commander
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
     Logger.info('facilitator config file is generated');
 
-    Logger.info(`👉 worker address for ${originChainId} chain is` +
-    `${facilitatorConfig.chains[originChainId].worker}`);
+    Logger.info(`👉 worker address for ${originChainId} chain is `
+    + `${facilitatorConfig.chains[originChainId].worker}`);
 
-    Logger.info(`👉 worker address for ${options.chainId} chain is` +
-      `${facilitatorConfig.chains[options.chainId].worker}`);
+    Logger.info(`👉 worker address for ${options.chainId} chain is `
+      + `${facilitatorConfig.chains[options.chainId].worker}`);
   })
   .parse(process.argv);

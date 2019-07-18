@@ -18,7 +18,7 @@ import BigNumber from 'bignumber.js';
 import ContractEntityHandler from './ContractEntityHandler';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import StakeRequest from '../models/StakeRequest';
-import Logger from "../Logger";
+import Logger from '../Logger';
 
 /**
  * This class handels stake request transactions.
@@ -43,7 +43,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<StakeRequest[]> {
-    Logger.info(`StakeRequestHandler persist started`);
+    Logger.debug('Persisting stake request records');
     const models: StakeRequest[] = transactions.map(
       (transaction): StakeRequest => {
         const stakeRequestHash = transaction.stakeRequestHash as string;
@@ -67,14 +67,15 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
         );
       },
     );
-    Logger.info(`models to save: ${models}`);
+
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
+      Logger.debug(`Saving stake request model ${JSON.stringify(models[i])}`);
       savePromises.push(this.stakeRequestRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);
-
+    Logger.debug('Stake requests saved');
     return models;
   }
 }
