@@ -51,12 +51,13 @@ export default class TransactionFetcher {
       const variables = {
         contractAddress: entityRecord.contractAddress,
         uts,
-        limit: this.queryLimit,
         skip,
       };
+      Logger.info(`variables:`, variables);
       /* eslint-disable no-await-in-loop */
       // Note: await is needed here because GraphQL doesn't support aggregated count query.
       const graphQueryResult = await this.graphClient.query(fetchQuery, variables);
+      Logger.info("graphQueryResult:", graphQueryResult);
       if (graphQueryResult.data[entity].length === 0) break;
       transactions = transactions.concat(graphQueryResult.data[entity]);
       skip += this.queryLimit;

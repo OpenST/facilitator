@@ -16,6 +16,7 @@
 
 import Observer from './Observer';
 import Comparable from './Comparable';
+import Logger from "../Logger";
 
 /**
  * The class enables one-to-many dependency between objects, so that
@@ -59,7 +60,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
     if (index !== -1) {
       this._updates.splice(index, 1);
     }
-
+    Logger.info(`Pushing to updates t: ${t}`);
     this._updates.push(t);
   }
 

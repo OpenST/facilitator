@@ -65,10 +65,10 @@ export default class GraphClient {
       observable
         .subscribe({
           async next(response: Record<string, any>) {
-            const transactions: Record<
-            string,
-            Record<string, any>[]
-            > = await fetcher.fetch(response.data);
+            Logger.info("Subscription response:", response);
+            const transactions: Record<string, Record<string, any>[]> =
+            await fetcher.fetch(response.data);
+            Logger.info("Total fetched transactions:", transactions);
             await handler.handle(transactions);
             await GraphClient.updateLatestUTS(
               transactions,
@@ -114,6 +114,7 @@ export default class GraphClient {
           transactionKind as EntityType,
           currentUTS,
         );
+        Logger.info(`Updating uts to: ${currentUTS} for transactionKind: ${transactionKind}`);
         return contractEntityRepository.save(
           contractEntity,
         );

@@ -41,6 +41,7 @@ export default class TransactionHandler {
         Logger.info(`Handling records of kind ${transactionKind}`);
         Logger.info(`Records: ${JSON.stringify(bulkTransactions)}`);
         const handler = this.handlers[transactionKind];
+        Logger.info("handler:", handler);
         if (typeof handler === 'undefined') {
           throw new HandlerNotFoundException(
             `Handler implementation not found for ${transactionKind}`,
