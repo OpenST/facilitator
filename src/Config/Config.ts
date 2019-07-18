@@ -6,11 +6,12 @@ import Directory from '../Directory';
 import {
   FacilitatorConfigNotFoundException,
   InvalidFacilitatorConfigException,
-  WorkerPasswordNotFoundException
+  WorkerPasswordNotFoundException,
 } from '../Exception';
 import * as schema from './FacilitatorConfig.schema.json';
 import Utils from '../Utils';
 import Account from '../Account';
+import Logger from '../Logger';
 
 const Web3 = require('web3');
 
@@ -138,10 +139,12 @@ export class FacilitatorConfig {
     );
     fs.ensureDirSync(configPath);
 
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain.toString());
     fs.writeFileSync(
-      Directory.getFacilitatorConfigPath(chain.toString()),
+      facilitatorConfigPath,
       JSON.stringify(this, null, '    '),
     );
+    Logger.info(`Created facilitator config on path ${facilitatorConfigPath}`);
   }
 
   /**

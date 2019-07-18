@@ -3,6 +3,7 @@ import GraphClient from './GraphClient';
 import TransactionHandler from '../TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import Logger from '../Logger';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -48,12 +49,14 @@ export default class Subscriber {
   /** Subscribes to subscription queries. */
   public async subscribe() {
     Object.keys(this.subscriptionQueries).forEach(async (entity) => {
+      Logger.debug(`Subscribing to block chain entity ${entity}`);
       this.querySubscriptions[entity] = await this.graphClient.subscribe(
         this.subscriptionQueries[entity],
         this.handler,
         this.fetcher,
         this.contractEntityRepository,
       );
+      Logger.debug(`Subscription to block chain entity ${entity} is done`);
     });
   }
 
@@ -64,8 +67,10 @@ export default class Subscriber {
    */
   public async unsubscribe() {
     Object.keys(this.subscriptionQueries).forEach(async (entity) => {
+      Logger.debug(`Unsubscribing to block chain entity ${entity}`);
       const querySubscription = this.querySubscriptions[entity];
       await Promise.resolve(querySubscription.unsubscribe());
+      Logger.debug(`Unsubscribed to block chain entity ${entity}.`);
     });
     // Deletes all query susbcribers as they are non useful
     this.querySubscriptions = {};

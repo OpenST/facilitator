@@ -29,6 +29,7 @@ import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import Message from '../models/Message';
 import Utils from '../Utils';
 import { ORIGIN_GAS_PRICE } from '../Constants';
+import Logger from '../Logger';
 
 import assert = require('assert');
 
@@ -71,6 +72,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   }
 
   public async update(stakeRequests: StakeRequest[]): Promise<void> {
+    Logger.debug('Accept stake request service invoked');
     const nonAcceptedStakeRequests = stakeRequests.filter(
       (stakeRequest: StakeRequest): boolean => !stakeRequest.messageHash,
     );
@@ -103,10 +105,10 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
-    await this.sendAcceptStakeRequestTransaction(
+    const transactionHash = await this.sendAcceptStakeRequestTransaction(
       stakeRequest, hashLock,
     );
-
+    Logger.info(`Accept stake request transaction hash ${transactionHash}`);
     const messageHash = await this.createMessageInRepository(
       stakeRequest, secret, hashLock,
     );
@@ -125,6 +127,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async sendAcceptStakeRequestTransaction(
     stakeRequest: StakeRequest, hashLock: string,
   ): Promise<string> {
+    Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.stakerProxy}`);
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
     const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
       stakeRequest.amount!.toString(10),
@@ -148,7 +151,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     hashLock: string,
   ): Promise<string> {
     const messageHash = this.calculateMessageHash(stakeRequest, hashLock);
-
+    Logger.debug(`Creating message for message hash ${messageHash}`);
     assert(stakeRequest.gateway !== undefined);
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
@@ -172,7 +175,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
 
     await this.messageRepository.save(message);
-
+    Logger.debug(`Message object saved for message hash ${message.messageHash}`);
     return messageHash;
   }
 
@@ -190,7 +193,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequestHash,
     );
     stakeRequest.messageHash = messageHash;
-
+    Logger.debug('Updating message hash in stake request repository');
     await this.stakeRequestRepository.save(stakeRequest);
   }
 
