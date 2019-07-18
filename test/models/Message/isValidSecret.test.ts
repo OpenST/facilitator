@@ -1,7 +1,7 @@
+import * as web3utils from 'web3-utils';
+
 import Message from '../../../src/models/Message';
 import assert from '../../test_utils/assert';
-
-const web3utils = require('web3-utils');
 
 describe('AuxiliaryChain::get', (): void => {
   const message = new Message(

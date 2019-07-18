@@ -1,4 +1,5 @@
 import assert from 'assert';
+import Web3 from 'web3';
 
 import mosaicContract from '@openst/mosaic-contracts';
 
@@ -12,9 +13,9 @@ import Utils from '../Utils';
  * It facilitates progress staking and minting.
  */
 export default class ProgressService {
-  private originWeb3: any;
+  private originWeb3: Web3;
 
-  private auxiliaryWeb3: any;
+  private auxiliaryWeb3: Web3;
 
   private gatewayAddress: string;
 
@@ -34,8 +35,8 @@ export default class ProgressService {
    */
   public constructor(
     gatewayRepository: GatewayRepository,
-    originWeb3: any,
-    auxiliaryWeb3: any,
+    originWeb3: Web3,
+    auxiliaryWeb3: Web3,
     gatewayAddress: string,
     originWorkerAddress: string,
     auxWorkerAddress: string,

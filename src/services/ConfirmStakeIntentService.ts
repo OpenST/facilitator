@@ -2,6 +2,7 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
+import Web3 from 'web3';
 
 import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
@@ -27,7 +28,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
 
   private proofGenerator: ProofGenerator;
 
-  private auxiliaryWeb3: object;
+  private auxiliaryWeb3: Web3;
 
   private gatewayAddress: string;
 
@@ -50,7 +51,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     messageRepository: MessageRepository,
     stakeRequestRepository: StakeRequestRepository,
     proofGenerator: ProofGenerator,
-    auxiliaryWeb3: object,
+    auxiliaryWeb3: Web3,
     gatewayAddress: string,
     coGatewayAddress: string,
     auxiliaryWorkerAddress: string,

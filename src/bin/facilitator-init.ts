@@ -56,8 +56,7 @@ commander
 
     if (options.force) {
       FacilitatorConfig.remove(options.chainId);
-    }
-    else {
+    } else {
       try {
         if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
           Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
@@ -94,10 +93,10 @@ commander
     facilitatorConfig.database.path = dbPath;
     facilitatorConfig.originChain = originChainId;
     facilitatorConfig.auxChainId = options.chainId;
-    const setFacilitator = (chainid: string, rpc: string, password: string) => {
+    const setFacilitator = (chainId: string, rpc: string, password: string): void => {
       const account: Account = Account.create(new Web3(null), password);
 
-      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
+      facilitatorConfig.chains[chainId] = new Chain(rpc, account.address);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
@@ -108,10 +107,10 @@ commander
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
     Logger.info('facilitator config file is generated');
 
-    Logger.info(`👉 worker address for ${originChainId} chain is` +
-    `${facilitatorConfig.chains[originChainId].worker}`);
+    Logger.info(`👉 worker address for ${originChainId} chain is`
+    + `${facilitatorConfig.chains[originChainId].worker}`);
 
-    Logger.info(`👉 worker address for ${options.chainId} chain is` +
-      `${facilitatorConfig.chains[options.chainId].worker}`);
+    Logger.info(`👉 worker address for ${options.chainId} chain is`
+      + `${facilitatorConfig.chains[options.chainId].worker}`);
   })
   .parse(process.argv);

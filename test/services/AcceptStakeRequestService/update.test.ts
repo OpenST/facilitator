@@ -56,6 +56,7 @@ describe('AcceptStakeRequestService::update', (): void => {
   const originWorkerAddress = '0x0000000000000000000000000000000000000002';
   let sendTransactionSpy: any;
   const fakeTransactionHash = 'fakeTransactionHash';
+
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
     web3 = new Web3(null);

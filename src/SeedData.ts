@@ -14,6 +14,8 @@
 //
 // ----------------------------------------------------------------------------
 
+/* eslint-disable import/no-unresolved */
+
 import BigNumber from 'bignumber.js';
 
 import { interacts } from '@openst/mosaic-contracts';

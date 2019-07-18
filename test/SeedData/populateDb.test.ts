@@ -15,7 +15,7 @@ import AuxiliaryChainRepositoryUtil from '../repositories/AuxiliaryChainReposito
 import ContractEntityRepositoryUtil from '../repositories/ContractEntityRepository/util';
 import GatewayRepositoryUtil from '../repositories/GatewayRepository/util';
 
-describe('SeedData.populateDb()', () => {
+describe('SeedData.populateDb()', (): void => {
   let config: Config; let seedData: SeedData; let
     repositories: Repositories;
   let web3: Web3;
@@ -34,7 +34,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted in auxiliary_chains table.
    */
-  async function verifyDataInAuxiliaryChainsTable() {
+  async function verifyDataInAuxiliaryChainsTable(): Promise<void> {
     const auxiliaryChain = new AuxiliaryChain(
       auxiliaryChainId,
       originChain,
@@ -55,7 +55,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted for Gateway in gateways table.
    */
-  async function verifyGatewayData() {
+  async function verifyGatewayData(): Promise<void> {
     const gateway = new Gateway(
       ostGatewayAddress,
       originChain,
@@ -73,7 +73,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted for CoGateway in gateways table.
    */
-  async function verifyCoGatewayData() {
+  async function verifyCoGatewayData(): Promise<void> {
     const gateway = new Gateway(
       ostCoGatewayAddress,
       auxiliaryChainId.toString(),
@@ -91,7 +91,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted in gateways table.
    */
-  async function verifyDataInGatewaysTable() {
+  async function verifyDataInGatewaysTable(): Promise<void> {
     await verifyGatewayData();
     await verifyCoGatewayData();
   }
@@ -99,7 +99,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted for OstComposer related events in contract_entities table.
    */
-  async function verifyOstComposerRelatedContractEntities() {
+  async function verifyOstComposerRelatedContractEntities(): Promise<void> {
     const contractEntity = new ContractEntity(
       ostComposerAddress,
       EntityType.StakeRequesteds,
@@ -115,7 +115,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted for Gateway related events in contract_entities table.
    */
-  async function verifyGatewayRelatedContractEntities() {
+  async function verifyGatewayRelatedContractEntities(): Promise<void> {
     const eventTypes = [
       EntityType.StakeIntentDeclareds,
       EntityType.StakeProgresseds,
@@ -144,7 +144,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted for Auxiliary Anchor related events in contract_entities table.
    */
-  async function verifyAuxiliaryAnchorRelatedContractEntities() {
+  async function verifyAuxiliaryAnchorRelatedContractEntities(): Promise<void> {
     const contractEntity = new ContractEntity(
       coAnchorAddress,
       EntityType.StateRootAvailables,
@@ -160,7 +160,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted for CoGateway related events in contract_entities table.
    */
-  async function verifyCoGatewayRelatedContractEntities() {
+  async function verifyCoGatewayRelatedContractEntities(): Promise<void> {
     const eventTypes = [
       EntityType.StakeIntentConfirmeds,
       EntityType.MintProgresseds,
@@ -190,7 +190,7 @@ describe('SeedData.populateDb()', () => {
   /**
    * Verifies data which was inserted in contract_entities table.
    */
-  async function verifyDataInContractEntitiesTable() {
+  async function verifyDataInContractEntitiesTable(): Promise<void> {
     await verifyOstComposerRelatedContractEntities();
     await verifyGatewayRelatedContractEntities();
     await verifyAuxiliaryAnchorRelatedContractEntities();
