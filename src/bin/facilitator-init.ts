@@ -56,8 +56,7 @@ commander
 
     if (options.force) {
       FacilitatorConfig.remove(options.chainId);
-    }
-    else {
+    } else {
       try {
         if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
           Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');

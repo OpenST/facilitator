@@ -138,7 +138,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       gasPrice: AUXILIARY_GAS_PRICE,
     };
     const stakeRequest = await this.stakeRequestRepository.getByMessageHash(message.messageHash);
-    const rawTx = await Promise.resolve(eip20CoGateway.methods.confirmStakeIntent(
+    const rawTx = eip20CoGateway.methods.confirmStakeIntent(
       message.sender!,
       message.nonce!.toString(10),
       stakeRequest!.beneficiary!,
@@ -148,7 +148,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       message.hashLock!,
       proofData.blockNumber.toString(10),
       proofData.storageProof[0].serializedProof,
-    ));
+    );
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,

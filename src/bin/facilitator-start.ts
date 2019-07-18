@@ -32,9 +32,9 @@ facilitatorCmd
       );
       facilitator.start();
 
-      Logger.info('starting facilitator');
+      Logger.info('facilitator starting...');
       await facilitator.start();
-      Logger.info('facilitator started');
+      Logger.info('facilitator started.');
     } catch (err) {
       Logger.error(err.message);
     }
