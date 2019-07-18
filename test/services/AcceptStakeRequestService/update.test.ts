@@ -43,8 +43,6 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-const sandbox = sinon.createSandbox();
-
 describe('AcceptStakeRequestService::update', (): void => {
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
@@ -82,7 +80,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       },
     };
 
-    sandbox.stub(AcceptStakeRequestService, 'generateSecret').returns({
+    sinon.stub(AcceptStakeRequestService, 'generateSecret').returns({
       secret: config.fakeData.secret,
       hashLock: config.fakeData.hashLock,
     });
@@ -119,7 +117,7 @@ describe('AcceptStakeRequestService::update', (): void => {
   });
 
   afterEach(async (): Promise<void> => {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('Checks that the stake request repository properly updated.', async (): Promise<void> => {

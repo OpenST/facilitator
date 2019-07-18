@@ -6,55 +6,51 @@ import { FacilitatorConfig } from '../../src/Config/Config';
 import Directory from '../../src/Directory';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const sandbox = sinon.createSandbox();
-
 const chain = 301;
-const facilitatorConfigPath = 'test/Database/facilitator-config.json';
 const mosaicDirectoryPath = '.mosaic';
+const facilitatorConfigPath = path.join(
+  mosaicDirectoryPath,
+  chain.toString(),
+  Directory.MOSAIC_FACILITATOR_CONFIG,
+);
 
 describe('FacilitatorConfig.writeToFacilitatorConfig()', (): void => {
+  afterEach(async (): Promise<void> => {
+    sinon.restore();
+  });
+
   it('should pass with valid arguments', (): void => {
-    const fsEnsureDirSyncSpy = sandbox.stub(
-      fs,
-      'ensureDirSync',
-    ).callsFake(sinon.fake.returns(facilitatorConfigPath));
-
-    const fsWriteFileSyncSpy = sandbox.stub(
-      fs,
-      'writeFileSync',
-    ).callsFake(sinon.fake.returns(true));
-
-    const fsConfig: FacilitatorConfig = FacilitatorConfig.fromChain(chain);
-
-    const directorySpy = sandbox.stub(
+    sinon.stub(
       Directory,
       'getMosaicDirectoryPath',
-    ).callsFake(sinon.fake.returns(mosaicDirectoryPath));
+    ).returns(mosaicDirectoryPath);
 
-    const pathSpy = sandbox.stub(
-      path,
-      'join',
-    ).callsFake(sinon.fake.returns(facilitatorConfigPath));
+    sinon.stub(
+      fs,
+      'ensureDirSync',
+    );
+
+    const writeFileSyncStub = sinon.stub(
+      fs,
+      'writeFileSync',
+    );
+
+    const existsSyncStub = sinon.stub(
+      fs,
+      'existsSync',
+    ).returns(false);
+    const fsConfig = FacilitatorConfig.fromChain(chain);
+    existsSyncStub.restore();
+
+    fsConfig.originChain = 'originChain';
+    fsConfig.auxChainId = 2;
+    fsConfig.chains = {};
+    fsConfig.encryptedAccounts = {};
+
+    const fsConfigJson = JSON.stringify(fsConfig, null, '    ');
 
     fsConfig.writeToFacilitatorConfig(chain);
 
-    const data = {
-      originChain: '',
-      auxChainId: '',
-      database: {},
-      chains: {},
-      encryptedAccounts: {},
-    };
-    const objectWritten = JSON.stringify(data, null, '    ');
-
-    SpyAssert.assert(directorySpy, 1, [[]]);
-    SpyAssert.assert(fsEnsureDirSyncSpy, 1, [[facilitatorConfigPath]]);
-
-    SpyAssert.assert(fsWriteFileSyncSpy, 1, [[facilitatorConfigPath, objectWritten]]);
-    SpyAssert.assert(
-      pathSpy,
-      2,
-      [[mosaicDirectoryPath, chain], [facilitatorConfigPath, 'facilitator-config.json']],
-    );
+    SpyAssert.assert(writeFileSyncStub, 1, [[facilitatorConfigPath, fsConfigJson]]);
   });
 });

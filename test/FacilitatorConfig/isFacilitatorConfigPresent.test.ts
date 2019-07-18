@@ -7,14 +7,12 @@ import Directory from '../../src/Directory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const sandbox = sinon.createSandbox();
-
 let pathSpy: any;
 let directorySpy: any;
 let fsSpy: any;
 
 async function spyFsModule(fileSize: number): Promise<any> {
-  fsSpy = sandbox.stub(
+  fsSpy = sinon.stub(
     fs,
     'statSync',
   ).callsFake(sinon.fake.returns({ size: fileSize }));
@@ -27,19 +25,19 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
 
 
   beforeEach(async (): Promise<void> => {
-    pathSpy = sandbox.stub(
+    pathSpy = sinon.stub(
       path,
       'join',
     ).returns(facilitatorConfigPath);
 
-    directorySpy = sandbox.stub(
+    directorySpy = sinon.stub(
       Directory,
       'getMosaicDirectoryPath',
     ).returns(mosaicDirectoryPath);
   });
 
   afterEach(async (): Promise<void> => {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('should pass with valid arguments', (): void => {

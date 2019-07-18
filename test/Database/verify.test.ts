@@ -5,8 +5,6 @@ import DBFileHelper from '../../src/DatabaseFileHelper';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const sandbox = sinon.createSandbox();
-
 function assertion(
   callCount: number,
   dbFilePath: string,
@@ -29,11 +27,11 @@ const dbFilePath = 'tests/Database/OSTFacilitator.db';
 
 describe('Database.verify()', (): void => {
   afterEach(async (): Promise<void> => {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('should pass with valid arguments', (): void => {
-    const fsSpy = sandbox.stub(
+    const fsSpy = sinon.stub(
       fs,
       'existsSync',
     ).returns(true);
@@ -42,7 +40,7 @@ describe('Database.verify()', (): void => {
   });
 
   it('should fail when db file path doesn\'t exist', (): void => {
-    const fsSpy = sandbox.stub(
+    const fsSpy = sinon.stub(
       fs,
       'existsSync',
     ).returns(false);

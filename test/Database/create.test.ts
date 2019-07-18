@@ -7,13 +7,11 @@ import Directory from '../../src/Directory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const sandbox = sinon.createSandbox();
-
 const chainId = '1';
 
 describe('Database.create()', (): void => {
   afterEach(async (): Promise<void> => {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('should fail when chain id is blank', (): void => {
@@ -24,18 +22,18 @@ describe('Database.create()', (): void => {
     const dbPath = 'test/Database/';
     const dbFileName = 'mosaic_facilitator.db';
 
-    const spyDirectory = sandbox.stub(
+    const spyDirectory = sinon.stub(
       Directory, 'getDBFilePath',
     ).returns(dbPath);
 
-    const sqliteSpy = sandbox.stub(
+    const sqliteSpy = sinon.stub(
       sqlite,
       'Database',
     ).returns(
       'sqlite db is created',
     );
 
-    const fsSpy = sandbox.stub(fs, 'ensureDirSync').callsFake((): boolean => true);
+    const fsSpy = sinon.stub(fs, 'ensureDirSync').callsFake((): boolean => true);
 
     const actualFacilitatorConfigPath = DBFileHelper.create(chainId);
     const expectedFacilitatorConfigPath = `${dbPath + dbFileName}`;
