@@ -5,7 +5,8 @@ import { Validator } from 'jsonschema';
 
 import Directory from '../Directory';
 import { InvalidMosaicConfigException, MosaicConfigNotFoundException } from '../Exception';
-import Logger from "../Logger";
+import Logger from '../Logger';
+
 const schema = require('./MosaicConfig.schema.json');
 
 /**
