@@ -46,7 +46,7 @@ export default class Subscriber {
   }
 
   /** Subscribes to subscription queries. */
-  public async subscribe() {
+  public async subscribe(): Promise<void[]> {
     const subscriptionPromises = Object.keys(this.subscriptionQueries).map(
       async entity => this.graphClient.subscribe(
         this.subscriptionQueries[entity],
@@ -58,7 +58,7 @@ export default class Subscriber {
         this.querySubscriptions[entity] = querySubscription;
       }),
     );
-    await Promise.all(subscriptionPromises);
+    return Promise.all(subscriptionPromises);
   }
 
   /** Unsubscribes the query subscribers and deletes the query subscribers object. */
