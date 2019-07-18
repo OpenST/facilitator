@@ -48,11 +48,13 @@ const Util = {
       'bounty should match',
     );
 
-    assert.strictEqual(
-      inputGateway.activation,
-      expectedGateway.activation,
-      'activation should match',
-    );
+    if (inputGateway.activation !== undefined) {
+      assert.strictEqual(
+        inputGateway.activation,
+        expectedGateway.activation,
+        'activation should match',
+      );
+    }
 
     if (inputGateway.lastRemoteGatewayProvenBlockHeight) {
       assert.notStrictEqual(

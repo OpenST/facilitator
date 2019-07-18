@@ -14,11 +14,18 @@
 //
 // ----------------------------------------------------------------------------
 
+/* eslint-disable import/no-unresolved */
+
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import * as Web3Utils from 'web3-utils';
 
+import { interacts } from '@openst/mosaic-contracts';
+import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
+import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
+
+import { ORIGIN_GAS_PRICE } from '../Constants';
 import Message from '../models/Message';
 import StakeRequest from '../models/StakeRequest';
 import Observer from '../observer/Observer';
@@ -27,6 +34,7 @@ import {
 } from '../repositories/MessageRepository';
 import Repositories from '../repositories/Repositories';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
+import Utils from '../Utils';
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts
@@ -41,15 +49,26 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   private messageRepository: MessageRepository;
 
+  private ostComposerAddress: string;
+
+  private originWorkerAddress: string;
+
 
   /* Public Functions */
 
-  public constructor(repos: Repositories, web3: Web3) {
+  public constructor(
+    repos: Repositories,
+    web3: Web3,
+    ostComposerAddress: string,
+    originWorkerAddress: string,
+  ) {
     super();
 
     this.web3 = web3;
     this.stakeRequestRepository = repos.stakeRequestRepository;
     this.messageRepository = repos.messageRepository;
+    this.ostComposerAddress = ostComposerAddress;
+    this.originWorkerAddress = originWorkerAddress;
   }
 
   public async update(stakeRequests: StakeRequest[]): Promise<void> {
@@ -85,9 +104,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
-    // const transactionHash = await this.sendAcceptStakeRequestTransaction(
-    //   stakeRequest, hashLock,
-    // );
+    await this.sendAcceptStakeRequestTransaction(
+      stakeRequest, hashLock,
+    );
 
     const messageHash = await this.createMessageInRepository(
       stakeRequest, secret, hashLock,
@@ -99,10 +118,39 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
   }
 
-  // private async sendAcceptStakeRequestTransaction(
-  //   stakeRequest: StakeRequest, hashLock: string,
-  // ): Promise<string> {
-  // }
+  /**
+   * This method sends accept stake request transaction.
+   * @param stakeRequest Stake request object.
+   * @param hashLock Hash lock passed as accept request argument.
+   */
+  private async sendAcceptStakeRequestTransaction(
+    stakeRequest: StakeRequest, hashLock: string,
+  ): Promise<string> {
+    const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
+
+    assert(stakeRequest.amount !== undefined);
+    assert(stakeRequest.beneficiary !== undefined);
+    assert(stakeRequest.gasPrice !== undefined);
+    assert(stakeRequest.gasLimit !== undefined);
+    assert(stakeRequest.nonce !== undefined);
+    assert(stakeRequest.stakerProxy !== undefined);
+    assert(stakeRequest.gateway !== undefined);
+
+    const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
+      (stakeRequest.amount as BigNumber).toString(10),
+      (stakeRequest.beneficiary as string),
+      (stakeRequest.gasPrice as BigNumber).toString(10),
+      (stakeRequest.gasLimit as BigNumber).toString(10),
+      (stakeRequest.nonce as BigNumber).toString(10),
+      (stakeRequest.stakerProxy as string),
+      (stakeRequest.gateway as string),
+      hashLock,
+    );
+    return Utils.sendTransaction(rawTx, {
+      from: this.originWorkerAddress,
+      gasPrice: ORIGIN_GAS_PRICE,
+    });
+  }
 
   private async createMessageInRepository(
     stakeRequest: StakeRequest,

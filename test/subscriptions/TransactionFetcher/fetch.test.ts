@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
+import FetchQueries from '../../../src/GraphQueries/FetchQueries';
 import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
-import EntityGraphQueries from '../../../src/subscriptions/EntityGraphQueries';
 import GraphClient from '../../../src/subscriptions/GraphClient';
 import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
 import assert from '../../test_utils/assert';
@@ -106,7 +106,7 @@ describe('TransactionFetcher.fetch()', () => {
       'Invalid response.',
     );
 
-    const query = EntityGraphQueries.stakeRequesteds;
+    const query = FetchQueries.stakeRequesteds;
     SpyAssert.assert(spyGraphClientQuery, 3, [
       [query, iterationOneVariables],
       [query, iterationTwoVariables],

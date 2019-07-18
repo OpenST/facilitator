@@ -145,8 +145,6 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   }
 
   /**
-   * This is a private method which uses mosaic.js to make proveGateway transaction.
-   *
    * @param ostCoGatewayAddress  ost co-gateway address.
    * @param lastOriginBlockHeight Block height at which latest state root is anchored.
    * @param encodedAccountValue RPL encoded value of gateway account.

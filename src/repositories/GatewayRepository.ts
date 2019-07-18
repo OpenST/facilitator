@@ -109,14 +109,14 @@ export default class GatewayRepository extends Subject<Gateway> {
         },
         activation: {
           type: DataTypes.BOOLEAN,
-          allowNull: false,
+          allowNull: true,
           validate: {
             min: 0,
           },
         },
         lastRemoteGatewayProvenBlockHeight: {
           type: DataTypes.BIGINT,
-          allowNull: true,
+          allowNull: false,
           validate: {
             min: 0,
           },

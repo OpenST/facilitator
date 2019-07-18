@@ -1,10 +1,10 @@
+import SubscriptionQueries from '../GraphQueries/SubscriptionQueries';
 import Repositories from '../repositories/Repositories';
 import TransactionHandler from '../TransactionHandler';
-import TransactionFetcher from './TransactionFetcher';
+import { SubscriptionInfo } from '../types';
 import GraphClient from './GraphClient';
 import Subscriber from './Subscriber';
-import { SubscriptionInfo } from '../types';
-import SubscriptionQueries from './SubscriptionQueries';
+import TransactionFetcher from './TransactionFetcher';
 
 /**
  * This class is container that holds instances of all the subscriptions.

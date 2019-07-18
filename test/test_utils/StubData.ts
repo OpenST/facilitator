@@ -53,7 +53,7 @@ export default class StubData {
       '0x0000000000000000000000000000000000000003',
       new BigNumber('1'),
       true,
-      new BigNumber('1'),
+      new BigNumber('5'),
       new Date(),
       new Date());
   }
@@ -92,7 +92,7 @@ export default class StubData {
     new BigNumber('2000'),
     new Date(10),
     new Date(10),
-  )
+  );
 
   public static getContractEntity = (
     timestamp = new BigNumber(1),

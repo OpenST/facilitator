@@ -36,7 +36,7 @@ describe('MessageRepository::getGatewaysWithPendingOriginMessages', (): void => 
 
   it('should fetch all pending messages of given gateways and given height.', async (): Promise<void> => {
     const expectedGatewayAddresses = ['0x0000000000000000000000000000000000000001', '0x0000000000000000000000000000000000000002'];
-    await config.repos.messageRepository.create(
+    await config.repos.messageRepository.save(
       StubData.messageAttributes(
         '0x000000000000000000000000000000000000000000000000000001',
         expectedGatewayAddresses[0],
@@ -44,7 +44,7 @@ describe('MessageRepository::getGatewaysWithPendingOriginMessages', (): void => 
       ),
     );
 
-    await config.repos.messageRepository.create(
+    await config.repos.messageRepository.save(
       StubData.messageAttributes(
         '0x000000000000000000000000000000000000000000000000000002',
         expectedGatewayAddresses[0],
@@ -53,7 +53,7 @@ describe('MessageRepository::getGatewaysWithPendingOriginMessages', (): void => 
     );
 
 
-    await config.repos.messageRepository.create(
+    await config.repos.messageRepository.save(
       StubData.messageAttributes(
         '0x000000000000000000000000000000000000000000000000000003',
         expectedGatewayAddresses[1],

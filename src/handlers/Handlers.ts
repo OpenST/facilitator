@@ -16,7 +16,10 @@
 
 import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
+import MintProgressHandler from './MintProgressHandler';
+import ProveGatewayHandler from './ProveGatewayHandler';
 import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
+import StakeProgressHandler from './StakeProgressHandler';
 import StakeRequestHandler from './StakeRequestHandler';
 
 export default class Handlers {
@@ -28,22 +31,29 @@ export default class Handlers {
    * @param auxChainId ID of auxiliary chain.
    * @return Different kinds of transaction handlers.
    */
-
   public static create(repos: Repositories, auxChainId: number):
   {
     stakeRequesteds: StakeRequestHandler;
-    anchor: AnchorHandler;
+    stateRootAvailables: AnchorHandler;
     stakeIntentDeclareds: StakeIntentDeclareHandler;
+    gatewayProvens: ProveGatewayHandler;
+    stakeProgresseds: StakeProgressHandler;
+    mintProgresseds: MintProgressHandler;
   } {
     return {
       stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
       ),
-      anchor: new AnchorHandler(
+      stateRootAvailables: new AnchorHandler(
         repos.auxiliaryChainRepository,
         auxChainId,
       ),
       stakeIntentDeclareds: new StakeIntentDeclareHandler(repos.messageRepository),
+      gatewayProvens: new ProveGatewayHandler(
+        repos.gatewayRepository,
+      ),
+      stakeProgresseds: new StakeProgressHandler(repos.messageRepository),
+      mintProgresseds: new MintProgressHandler(repos.messageRepository),
     };
   }
 }

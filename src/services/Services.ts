@@ -32,6 +32,8 @@ export default class Services {
     const acceptStakeRequestService = new AcceptStakeRequestService(
       repositories,
       config.originWeb3,
+      config.mosaic.originChain.contractAddresses.ostComposerAddress!,
+      config.facilitator.chains[config.facilitator.originChain].worker,
     );
     const { auxChainId } = config.facilitator;
     const proveGatewayService = new ProveGatewayService(

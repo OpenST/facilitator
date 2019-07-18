@@ -8,6 +8,8 @@ import Message from '../models/Message';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 
+/* eslint-disable class-methods-use-this */
+
 /**
  * An interface, that represents a row from a messages table.
  *
@@ -291,6 +293,37 @@ export class MessageRepository extends Subject<Message> {
     }).then((count: number) => count > 0);
   }
 
+  /**
+   * This returns stake and mint messages for a given address with sourceStatus declared, target
+   * status undeclared below or equal to the given block height.
+   *
+   * @param gatewayAddress Address of the gateway.
+   * @param blockHeight Block height at which Gateway is proven.
+   */
+  public async getMessagesForConfirmation(
+    gatewayAddress: string,
+    blockHeight: BigNumber,
+  ): Promise<Message[]> {
+    const messageModels = await MessageModel.findAll({
+      where: {
+        [Op.and]: {
+          gatewayAddress,
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
+          direction: MessageDirection.OriginToAuxiliary,
+          sourceDeclarationBlockHeight: {
+            [Op.lte]: blockHeight,
+          },
+        },
+      },
+    });
+
+    const messages: Message[] = messageModels.map(
+      message => this.convertToMessage(message),
+    );
+    return messages;
+  }
+
   /* Private Functions */
 
   /**
@@ -300,7 +333,6 @@ export class MessageRepository extends Subject<Message> {
    *
    * @returns Message object.
    */
-  /* eslint-disable class-methods-use-this */
   private convertToMessage(messageModel: MessageModel): Message {
     return new Message(
       messageModel.messageHash,
