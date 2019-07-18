@@ -50,13 +50,21 @@
         "worker": {
           "type": "string"
         },
-        "rpc": {
+        "nodeRpc": {
+          "type": "string"
+        },
+        "subGraphWs":{
+          "type": "string"
+        },
+        "subGraphRpc":{
           "type": "string"
         }
       },
       "required": [
         "worker",
-        "rpc"
+        "nodeRpc",
+        "subGraphWs",
+        "subGraphRpc"
       ],
       "title": "Chain",
       "description": "It encapsulates chain specific information"

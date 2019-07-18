@@ -34,9 +34,15 @@ export default class Container {
       Handlers.create(repositories, config.facilitator.auxChainId),
       repositories,
     );
+    const configOriginChain = config.facilitator.originChain;
+    const configAuxChainId = config.facilitator.auxChainId;
     const subscriptions = await Subscriptions.create(
       transactionHandler,
       repositories,
+      config.facilitator.chains[configOriginChain].subGraphWs,
+      config.facilitator.chains[configOriginChain].subGraphRpc,
+      config.facilitator.chains[configAuxChainId].subGraphWs,
+      config.facilitator.chains[configAuxChainId].subGraphRpc
     );
 
     const services = Services.create(repositories, config);

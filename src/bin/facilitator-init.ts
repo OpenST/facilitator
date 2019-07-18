@@ -14,6 +14,10 @@ commander
   .option('-ap, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
   .option('-or, --origin-rpc <origin-rpc>', 'origin chain rpc')
   .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
+  .option('-ogw, --origin-graph-ws <origin-graph-ws>', 'origin ws subgraph endpoint ')
+  .option('-ogr, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
+  .option('-agw, --auxiliary-graph-ws <auxiliary-graph-ws>', 'auxiliary ws subgraph endpoint')
+  .option('-agr, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
   .option('-dbp, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forceful override facilitator config')
   .action((options) => {
@@ -93,16 +97,16 @@ commander
     facilitatorConfig.database.path = dbPath;
     facilitatorConfig.originChain = originChainId;
     facilitatorConfig.auxChainId = options.chainId;
-    const setFacilitator = (chainid: string, rpc: string, password: string) => {
+    const setFacilitator = (chainid: string, rpc: string, subGraphWs: string, subGraphRpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
 
-      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
+      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
 
-    setFacilitator(originChainId, options.originRpc, options.originPassword);
-    setFacilitator(options.chainId, options.auxiliaryRpc, options.auxiliaryPassword);
+    setFacilitator(originChainId, options.originRpc, options.originGraphWs, options.originGraphRpc, options.originPassword);
+    setFacilitator(options.chainId, options.auxiliaryRpc, options.auxiliaryGraphWs, options.auxiliaryGraphRpc, options.auxiliaryPassword);
 
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
     Logger.info('facilitator config file is generated');
