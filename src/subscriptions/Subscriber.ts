@@ -47,7 +47,6 @@ export default class Subscriber {
 
   /** Subscribes to subscription queries. */
   public async subscribe() {
-    const oThis = this;
     const subscriptionPromises = Object.keys(this.subscriptionQueries).map(
       async entity => this.graphClient.subscribe(
         this.subscriptionQueries[entity],
@@ -56,7 +55,7 @@ export default class Subscriber {
         this.contractEntityRepository,
       ).then((querySubscription) => {
         Logger.info(`Subscription done for entity: ${entity}`);
-        oThis.querySubscriptions[entity] = querySubscription;
+        this.querySubscriptions[entity] = querySubscription;
       }),
     );
     await Promise.all(subscriptionPromises);
