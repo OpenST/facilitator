@@ -32,7 +32,7 @@
                     "merklePatriciaLibAddress": "0xcA0422cB2428369E3ba577ec11d5bc1daB9a7f19"
                 }
             },
-            "chainId": "301",
+            "chainId": 301,
             "genesis": {
                 "config": {
                     "chainId": 301,
@@ -854,7 +854,7 @@
                     "merklePatriciaLibAddress": "0xcA0422cB2428369E3ba577ec11d5bc1daB9a7f19"
                 }
             },
-            "chainId": "301",
+            "chainId": 301,
             "genesis": {
                 "config": {
                     "chainId": 301,

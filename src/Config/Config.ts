@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import MosaicConfig from '../MosaicConfig';
+import MosaicConfig from './MosaicConfig';
 import Directory from '../Directory';
 import {
   FacilitatorConfigNotFoundException,

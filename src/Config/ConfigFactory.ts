@@ -1,5 +1,5 @@
 import { Config, FacilitatorConfig } from './Config';
-import MosaicConfig from '../MosaicConfig';
+import MosaicConfig from './MosaicConfig';
 import { FacilitatorStartException } from '../Exception';
 
 /**
