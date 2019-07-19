@@ -46,7 +46,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Persisting Stake intent declared records');
+    Logger.debug('Started persisting Stake intent declared records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -59,18 +59,18 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
           message.type = MessageType.Stake;
           message.gatewayAddress = transaction.contractAddress;
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
-          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
         if (!message.sourceStatus || message.sourceStatus === MessageStatus.Undeclared) {
           message.sourceStatus = MessageStatus.Declared;
         }
+        Logger.debug(`Creating message object ${JSON.stringify(message)}`);
         return message;
       },
     ));
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
+      Logger.debug(`Message object to save: ${JSON.stringify(models[i])}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 
