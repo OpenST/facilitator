@@ -3,7 +3,10 @@ import Account from '../Account';
 import Logger from '../Logger';
 import DatabaseFileHelper from '../DatabaseFileHelper';
 import { FacilitatorConfig, Chain } from '../Config/Config';
-import Utils from '../Utils';
+import MosaicConfig from '../Config/MosaicConfig';
+// import { Config } from '../Config/Config';
+// import Repositories from '../repositories/Repositories';
+// import SeedData from '../SeedData';
 
 const Web3 = require('web3');
 
@@ -16,7 +19,7 @@ commander
   .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
   .option('-dbp, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forceful override facilitator config')
-  .action((options) => {
+  .action(async (options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 
@@ -70,7 +73,7 @@ commander
     const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);
 
     // Get origin chain id.
-    const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
+    const mosaicConfig = MosaicConfig.fromFile(options.mosaicConfig);
     const auxChain = mosaicConfig.auxiliaryChains[options.chainId];
     if (auxChain === null || auxChain === undefined) {
       Logger.error('aux chain id is not present in the mosaic config');
@@ -95,14 +98,22 @@ commander
     facilitatorConfig.auxChainId = options.chainId;
     const setFacilitator = (chainid: string, rpc: string, password: string) => {
       const account: Account = Account.create(new Web3(), password);
-
-      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
-
+      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address, password);
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
 
     setFacilitator(originChainId, options.originRpc, options.originPassword);
     setFacilitator(options.chainId, options.auxiliaryRpc, options.auxiliaryPassword);
+
+    // const config = new Config(mosaicConfig, facilitatorConfig);
+    // const repositories = await Repositories.create(config.facilitator.database.path);
+    // const seedData = new SeedData(
+    //   config,
+    //   repositories.gatewayRepository,
+    //   repositories.auxiliaryChainRepository,
+    //   repositories.contractEntityRepository,
+    // );
+    // await seedData.populateDb();
 
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
     Logger.info('facilitator config file is generated');
