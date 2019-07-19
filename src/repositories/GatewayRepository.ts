@@ -1,11 +1,9 @@
-import {
-  DataTypes, Model, InitOptions,
-} from 'sequelize';
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import * as assert from 'assert';
-import Subject from '../observer/Subject';
+import { DataTypes, InitOptions, Model } from 'sequelize';
 
 import Gateway from '../models/Gateway';
+import Subject from '../observer/Subject';
 import Utils from '../Utils';
 
 /**

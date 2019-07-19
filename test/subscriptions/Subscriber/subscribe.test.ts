@@ -1,12 +1,12 @@
-import * as sinon from 'sinon';
-import assert from '../../test_utils/assert';
+import sinon from 'sinon';
 
-import Subscriber from '../../../src/subscriptions/Subscriber';
-import GraphClient from '../../../src/subscriptions/GraphClient';
-import SpyAssert from '../../test_utils/SpyAssert';
-import TransactionHandler from '../../../src/TransactionHandler';
-import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
 import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
+import GraphClient from '../../../src/subscriptions/GraphClient';
+import Subscriber from '../../../src/subscriptions/Subscriber';
+import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import TransactionHandler from '../../../src/TransactionHandler';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;

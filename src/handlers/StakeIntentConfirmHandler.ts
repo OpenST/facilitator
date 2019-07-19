@@ -15,13 +15,13 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import ContractEntityHandler from './ContractEntityHandler';
-import {
-  MessageDirection,
-  MessageRepository, MessageStatus, MessageType,
-} from '../repositories/MessageRepository';
-import Message from '../models/Message';
+
 import Logger from '../Logger';
+import Message from '../models/Message';
+import {
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
+} from '../repositories/MessageRepository';
+import ContractEntityHandler from './ContractEntityHandler';
 
 /**
  * This class handles StakeIntentConfirmed event.

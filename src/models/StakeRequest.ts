@@ -17,6 +17,7 @@
 /* eslint-disable class-methods-use-this */
 
 import BigNumber from 'bignumber.js';
+
 import Comparable from '../observer/Comparable';
 
 export default class StakeRequest extends Comparable<StakeRequest> {

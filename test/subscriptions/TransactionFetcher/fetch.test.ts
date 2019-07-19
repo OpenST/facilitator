@@ -1,13 +1,13 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-
 import BigNumber from 'bignumber.js';
+import sinon from 'sinon';
+
+import FetchQueries from '../../../src/GraphQueries/FetchQueries';
+import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
 import GraphClient from '../../../src/subscriptions/GraphClient';
 import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
-import FetchQueries from '../../../src/GraphQueries/FetchQueries';
 import StubData from '../../test_utils/StubData';
-import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {

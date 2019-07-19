@@ -15,10 +15,11 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import ContractEntityHandler from './ContractEntityHandler';
-import StakeRequestRepository from '../repositories/StakeRequestRepository';
-import StakeRequest from '../models/StakeRequest';
+
 import Logger from '../Logger';
+import StakeRequest from '../models/StakeRequest';
+import StakeRequestRepository from '../repositories/StakeRequestRepository';
+import ContractEntityHandler from './ContractEntityHandler';
 
 /**
  * This class handels stake request transactions.

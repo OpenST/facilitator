@@ -15,11 +15,12 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import ContractEntityHandler from './ContractEntityHandler';
-import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
-import AuxiliaryChain from '../models/AuxiliaryChain';
+
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
 import Logger from '../Logger';
+import AuxiliaryChain from '../models/AuxiliaryChain';
+import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
+import ContractEntityHandler from './ContractEntityHandler';
 
 /**
  * This class handles Anchor event
@@ -55,8 +56,8 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
 
     let anchorBlockHeight = chainRecord.lastOriginBlockHeight;
     transactions
-      .filter(transaction => chainRecord.coAnchorAddress === transaction.contractAddress)
-      .forEach((filteredTransaction) => {
+      .filter((transaction): boolean => chainRecord.coAnchorAddress === transaction.contractAddress)
+      .forEach((filteredTransaction): void => {
         if (
           anchorBlockHeight === undefined
           || anchorBlockHeight.lt(new BigNumber(filteredTransaction._blockHeight))

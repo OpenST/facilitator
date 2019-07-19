@@ -1,8 +1,8 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-import MosaicConfig from '../../src/Config/MosaicConfig';
-import { Config } from '../../src/Config/Config';
+import sinon from 'sinon';
 
+import { Config } from '../../src/Config/Config';
+import MosaicConfig from '../../src/Config/MosaicConfig';
+import assert from '../test_utils/assert';
 
 describe('Config.constructor()', () => {
   it('should pass with valid arguments', () => {

@@ -1,14 +1,14 @@
-import * as commander from 'commander';
+import commander from 'commander';
+import Web3 from 'web3';
+
 import Account from '../Account';
-import Logger from '../Logger';
+import { Chain, FacilitatorConfig } from '../Config/Config';
 import DatabaseFileHelper from '../DatabaseFileHelper';
-import { FacilitatorConfig, Chain } from '../Config/Config';
+import Logger from '../Logger';
 import MosaicConfig from '../Config/MosaicConfig';
 // import { Config } from '../Config/Config';
 // import Repositories from '../repositories/Repositories';
 // import SeedData from '../SeedData';
-
-const Web3 = require('web3');
 
 commander
   .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -19,7 +19,7 @@ commander
   .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
   .option('-dbp, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forceful override facilitator config')
-  .action(async (options) => {
+  .action(async (options): Promise<void> => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 
@@ -96,9 +96,11 @@ commander
     facilitatorConfig.database.path = dbPath;
     facilitatorConfig.originChain = originChainId;
     facilitatorConfig.auxChainId = options.chainId;
-    const setFacilitator = (chainid: string, rpc: string, password: string) => {
-      const account: Account = Account.create(new Web3(), password);
-      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address, password);
+    const setFacilitator = (chainid: string, rpc: string, password: string): void => {
+      const account: Account = Account.create(new Web3(null), password);
+
+      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
+
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
 

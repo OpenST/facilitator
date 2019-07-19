@@ -16,14 +16,15 @@
 
 /* eslint-disable class-methods-use-this */
 
-import { DataTypes, Model, InitOptions } from 'sequelize';
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { MessageModel } from './MessageRepository';
-import Subject from '../observer/Subject';
-import StakeRequest from '../models/StakeRequest';
-import Utils from '../Utils';
+import { DataTypes, InitOptions, Model } from 'sequelize';
 
-import assert = require('assert');
+import StakeRequest from '../models/StakeRequest';
+import Subject from '../observer/Subject';
+import Utils from '../Utils';
+import { MessageModel } from './MessageRepository';
+
 import Logger from "../Logger";
 
 

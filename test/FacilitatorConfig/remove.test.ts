@@ -1,5 +1,6 @@
-import * as fs from 'fs-extra';
-import * as sinon from 'sinon';
+import fs from 'fs-extra';
+import sinon from 'sinon';
+
 import { FacilitatorConfig } from '../../src/Config/Config';
 import Directory from '../../src/Directory';
 import SpyAssert from '../test_utils/SpyAssert';

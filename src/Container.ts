@@ -1,11 +1,11 @@
-import Facilitator from './Facilitator';
 import ConfigFactory from './Config/ConfigFactory';
+import Facilitator from './Facilitator';
+import Handlers from './handlers/Handlers';
+import Logger from './Logger';
 import Repositories from './repositories/Repositories';
 import Services from './services/Services';
 import Subscriptions from './subscriptions/Subscriptions';
 import TransactionHandler from './TransactionHandler';
-import Handlers from './handlers/Handlers';
-import Logger from './Logger';
 
 export default class Container {
   /**

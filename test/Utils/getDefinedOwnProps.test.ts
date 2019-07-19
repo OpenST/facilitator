@@ -18,7 +18,6 @@
 import 'mocha';
 
 import Utils from '../../src/Utils';
-
 import assert from '../test_utils/assert';
 
 describe('Utils::getDefinedOwnProps', (): void => {

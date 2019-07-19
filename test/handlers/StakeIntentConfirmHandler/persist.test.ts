@@ -1,14 +1,13 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-
 import BigNumber from 'bignumber.js';
+import sinon from 'sinon';
+
 import StakeIntentConfirmHandler from '../../../src/handlers/StakeIntentConfirmHandler';
-import {
-  MessageDirection, MessageStatus,
-  MessageType, MessageRepository,
-} from '../../../src/repositories/MessageRepository';
-import SpyAssert from '../../test_utils/SpyAssert';
 import Message from '../../../src/models/Message';
+import {
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 import StubData from '../../test_utils/StubData';
 
 describe('StakeIntentConfirmHandler.persist()', (): void => {

@@ -1,8 +1,8 @@
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import Facilitator from '../../src/Facilitator';
-import SpyAssert from '../test_utils/SpyAssert';
 import Subscriber from '../../src/subscriptions/Subscriber';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Facilitator.start()', (): void => {
   it('should start facilitation', async (): Promise<void> => {

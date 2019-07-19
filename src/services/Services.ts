@@ -1,7 +1,7 @@
+import { Config } from '../Config/Config';
 import Repositories from '../repositories/Repositories';
 import AcceptStakeRequestService from './AcceptStakeRequestService';
 import ProveGatewayService from './ProveGatewayService';
-import { Config } from '../Config/Config';
 import ConfirmStakeIntentService from "./ConfirmStakeIntentService";
 import ProgressService from "./ProgressService";
 

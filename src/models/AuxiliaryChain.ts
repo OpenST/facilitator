@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+
 import Comparable from '../observer/Comparable';
 
 /**
@@ -34,7 +35,7 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
    * @param ostCoGatewayAddress CoGateway contract address.
    * @param anchorAddress Anchor contract address.
    * @param coAnchorAddress CoAnchor contract address.
-   * @param lastOriginBlockHeight Latest orign chain block height.
+   * @param lastOriginBlockHeight Latest origin chain block height.
    * @param lastAuxiliaryBlockHeight Latest auxiliary chain block height.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.

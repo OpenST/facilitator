@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es2016",
         "module": "commonjs",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
         "alwaysStrict": true,
         "strictNullChecks": true,
         "strictBindCallApply": true,
@@ -14,14 +16,15 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noErrorTruncation": true,
+        "resolveJsonModule": true,
         "inlineSourceMap": true,
+        "declaration": true,
         "types": [
             "chai",
             "node",
             "mocha",
             "web3"
-        ],
-        "resolveJsonModule": true
+        ]
     },
     "include": [
         "index.ts",

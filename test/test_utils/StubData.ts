@@ -1,16 +1,14 @@
-
 import BigNumber from 'bignumber.js';
-import StakeRequest from '../../src/models/StakeRequest';
+
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
-import { GatewayType } from '../../src/repositories/GatewayRepository';
-import Gateway from '../../src/models/Gateway';
-import {
-  MessageDirection,
-  MessageStatus,
-  MessageType,
-} from '../../src/repositories/MessageRepository';
-import Message from '../../src/models/Message';
 import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
+import Gateway from '../../src/models/Gateway';
+import Message from '../../src/models/Message';
+import StakeRequest from '../../src/models/StakeRequest';
+import { GatewayType } from '../../src/repositories/GatewayRepository';
+import {
+  MessageDirection, MessageStatus, MessageType,
+} from '../../src/repositories/MessageRepository';
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(

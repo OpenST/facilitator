@@ -1,12 +1,11 @@
 
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-
 import BigNumber from 'bignumber.js';
-import AuxiliaryChainRepository from '../../../src/repositories/AuxiliaryChainRepository';
+import sinon from 'sinon';
 
-import SpyAssert from '../../test_utils/SpyAssert';
 import AnchorHandler from '../../../src/handlers/AnchorHandler';
+import AuxiliaryChainRepository from '../../../src/repositories/AuxiliaryChainRepository';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 import StubData from '../../test_utils/StubData';
 
 describe('AnchorHandler.persist()', () => {

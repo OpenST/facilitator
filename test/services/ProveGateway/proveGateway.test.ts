@@ -1,32 +1,30 @@
-import * as sinon from 'sinon';
 import BigNumber from 'bignumber.js';
-import ProveGatewayService from '../../../src/services/ProveGatewayService';
-import StubData from '../../test_utils/StubData';
-import SpyAssert from '../../test_utils/SpyAssert';
-import GatewayRepository from '../../../src/repositories/GatewayRepository';
-import { MessageRepository } from '../../../src/repositories/MessageRepository';
-import Utils from '../../../src/Utils';
+import sinon from 'sinon';
+import Web3 from 'web3';
+
+import { interacts } from '@openst/mosaic-contracts';
+import { ProofGenerator } from '@openst/mosaic-proof';
+
 import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
 import Gateway from '../../../src/models/Gateway';
+import GatewayRepository from '../../../src/repositories/GatewayRepository';
+import { MessageRepository } from '../../../src/repositories/MessageRepository';
+import ProveGatewayService from '../../../src/services/ProveGatewayService';
+import Utils from '../../../src/Utils';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
+import StubData from '../../test_utils/StubData';
 
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
-const { assert } = chai;
-
-const Mosaic = require('@openst/mosaic.js');
-const Web3 = require('web3');
-
-describe('ProveGatewayService.proveGateway()', () => {
-  const originWeb3 = new Web3();
-  const auxiliaryWeb3 = new Web3();
+describe('ProveGatewayService.proveGateway()', (): void => {
+  const originWeb3 = new Web3(null);
+  const auxiliaryWeb3 = new Web3(null);
   const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
   const blockNumber = new BigNumber(2);
   const fakeTransactionHash = 'fakeHash';
   const auxiliaryChainId = 123;
 
-  it('should react to block height of new anchor state root', async () => {
+  it('should react to block height of new anchor state root', async (): Promise<void> => {
     const gatewayRecord: Gateway = StubData.gatewayRecord();
     const gateawayRepository = sinon.createStubInstance(GatewayRepository, {
       get: Promise.resolve(gatewayRecord),
@@ -36,18 +34,29 @@ describe('ProveGatewayService.proveGateway()', () => {
       hasPendingOriginMessages: Promise.resolve(true),
     });
 
-    const proof = { encodedAccountValue: 'encodedAccountValue', serializedAccountProof: 'serializedAccountProof' };
+    const proof = {
+      encodedAccountValue: 'encodedAccountValue',
+      serializedAccountProof: 'serializedAccountProof',
+    };
+
     const proofGeneratorStub = sinon.replace(
-      Mosaic.Utils.ProofGenerator.prototype,
+      ProofGenerator.prototype,
       'getOutboxProof',
       sinon.fake.resolves(proof),
     );
 
     const fakeRawTransaction = { status: true };
-    const coGatewayStub = sinon.replace(
-      Mosaic.ContractInteract.EIP20CoGateway.prototype,
-      'proveGatewayRawTx',
-      sinon.fake.resolves(fakeRawTransaction),
+
+    const fakeEIP20CoGateway = {
+      methods: {
+        proveGateway: sinon.fake.returns(fakeRawTransaction),
+      },
+    };
+
+    sinon.replace(
+      interacts,
+      'getEIP20CoGateway',
+      sinon.fake.returns(fakeEIP20CoGateway),
     );
 
     const sendTransactionStub = sinon.replace(
@@ -55,6 +64,7 @@ describe('ProveGatewayService.proveGateway()', () => {
       'sendTransaction',
       sinon.fake.resolves(fakeTransactionHash),
     );
+
     const proveGatewayService = new ProveGatewayService(
       gateawayRepository as any,
       messageRepository as any,
@@ -82,14 +92,14 @@ describe('ProveGatewayService.proveGateway()', () => {
     SpyAssert.assert(
       proofGeneratorStub,
       1,
-      [[gatewayRecord.gatewayAddress, [], blockNumber]],
+      [[gatewayRecord.gatewayAddress, [], blockNumber.toString(10)]],
     );
 
     SpyAssert.assert(
-      coGatewayStub,
+      fakeEIP20CoGateway.methods.proveGateway,
       1,
       [[
-        blockNumber,
+        blockNumber.toString(10),
         proof.encodedAccountValue,
         proof.serializedAccountProof]],
     );
@@ -110,6 +120,7 @@ describe('ProveGatewayService.proveGateway()', () => {
       fakeTransactionHash,
       'Service must return expected transaction hash',
     );
+
     sinon.restore();
   });
 
@@ -148,24 +159,35 @@ describe('ProveGatewayService.proveGateway()', () => {
       hasPendingOriginMessages: Promise.resolve(false),
     });
 
+    const proof = {
+      encodedAccountValue: 'encodedAccountValue',
+      serializedAccountProof: 'serializedAccountProof',
+    };
+
+    const proofGeneratorStub = sinon.replace(
+      ProofGenerator.prototype,
+      'getOutboxProof',
+      sinon.fake.resolves(proof),
+    );
+
     const fakeRawTransaction = { status: true };
-    const coGatewayStub = sinon.replace(
-      Mosaic.ContractInteract.EIP20CoGateway.prototype,
-      'proveGatewayRawTx',
-      sinon.fake.resolves(fakeRawTransaction),
+
+    const fakeEIP20CoGateway = {
+      methods: {
+        proveGateway: sinon.fake.returns(fakeRawTransaction),
+      },
+    };
+
+    sinon.replace(
+      interacts,
+      'getEIP20CoGateway',
+      sinon.fake.returns(fakeEIP20CoGateway),
     );
 
     const sendTransactionStub = sinon.replace(
       Utils,
       'sendTransaction',
       sinon.fake.resolves(fakeTransactionHash),
-    );
-
-    const proof = { encodedAccountValue: 'encodedAccountValue', serializedAccountProof: 'serializedAccountProof' };
-    const proofGeneratorStub = sinon.replace(
-      Mosaic.Utils.ProofGenerator.prototype,
-      'getOutboxProof',
-      sinon.fake.resolves(proof),
     );
 
     const proveGatewayService = new ProveGatewayService(
@@ -204,7 +226,7 @@ describe('ProveGatewayService.proveGateway()', () => {
     );
 
     SpyAssert.assert(
-      coGatewayStub,
+      fakeEIP20CoGateway.methods.proveGateway,
       0,
       [],
     );
