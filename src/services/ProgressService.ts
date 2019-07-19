@@ -120,7 +120,10 @@ export default class ProgressService {
     Logger.debug(`Sending progress mint transaction for message ${message.messageHash}`);
     const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress!);
 
-    assert(gatewayRecord !== null);
+    assert(
+      gatewayRecord !== null,
+      `Gateway record not found for gateway: ${message.gatewayAddress}`
+    );
 
     const eip20CoGateway = mosaicContract.interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,

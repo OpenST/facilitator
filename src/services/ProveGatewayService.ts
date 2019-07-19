@@ -66,7 +66,10 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId
         && auxiliaryChain.lastOriginBlockHeight !== undefined);
 
-    assert(interestedAuxiliaryChainRecord.length <= 1);
+    assert(
+      interestedAuxiliaryChainRecord.length <= 1,
+      `interestedAuxiliaryChainRecord length should be less or equal to 1`,
+    );
 
     if (interestedAuxiliaryChainRecord.length === 1) {
       await this.proveGateway(

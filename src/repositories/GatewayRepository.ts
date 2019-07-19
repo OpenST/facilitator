@@ -153,7 +153,10 @@ export default class GatewayRepository extends Subject<Gateway> {
     const updatedGateway = await this.get(
       gateway.gatewayAddress,
     );
-    assert(updatedGateway !== null);
+    assert(
+      updatedGateway !== null,
+      `Updated Gateway record not found for gateway address: ${gateway.gatewayAddress}`
+    );
 
     this.newUpdate(updatedGateway as Gateway);
 

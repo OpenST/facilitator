@@ -155,7 +155,10 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
     );
     Logger.debug(`Upsert result: ${result}`);
     const stakeRequestOutput = await this.get(stakeRequest.stakeRequestHash);
-    assert(stakeRequestOutput !== null);
+    assert(
+      stakeRequestOutput !== null,
+      `Updated stakeRequest not found for stakeRequestHash: ${stakeRequest.stakeRequestHash}`
+    );
 
     this.newUpdate(stakeRequestOutput as StakeRequest);
 
