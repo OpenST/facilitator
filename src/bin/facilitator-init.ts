@@ -54,6 +54,26 @@ commander
       mandatoryOptionMissing = true;
     }
 
+    if (options.originGraphWs === undefined) {
+      Logger.error('required --originGraphWs <origin-graph-ws>');
+      mandatoryOptionMissing = true;
+    }
+
+    if (options.auxiliaryGraphWs === undefined) {
+      Logger.error('required --auxiliaryGraphWs <auxiliary-graph-ws>');
+      mandatoryOptionMissing = true;
+    }
+
+    if (options.originGraphRpc === undefined) {
+      Logger.error('required --originGraphRpc <origin-graph-rpc>');
+      mandatoryOptionMissing = true;
+    }
+
+    if (options.auxiliaryGraphRpc === undefined) {
+      Logger.error('required --auxiliaryGraphRpc <auxiliary-graph-rpc>');
+      mandatoryOptionMissing = true;
+    }
+
     if (mandatoryOptionMissing) {
       process.exit(1);
     }
