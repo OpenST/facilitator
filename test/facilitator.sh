@@ -74,12 +74,6 @@ function facilitator_init_no_auxiliaryrpc_fail {
  fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
 
-
-#--origin-graph-ws <origin-graph-ws>', 'origi
-#--origin-graph-rpc <origin-graph-rpc>', 'ori
-#--auxiliary-graph-ws <auxiliary-graph-ws>',
-#--auxiliary-graph-rpc <auxiliary-graph-rpc>'
-
 function facilitator_init_no_origin_subgraph_ws {
  fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-rpc 'https://localhost:9999' --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
@@ -98,7 +92,7 @@ function facilitator_init_no_auxiliary_subgraph_rpc {
  info 'creating facilitator config'
  fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' "
 }
-#try_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
+
 # Creates the facilitator-config.json forcefully.
 function facilitator_init_force_pass {
  info "creating facilitator init with --force option"
