@@ -65,8 +65,8 @@ export default class Services {
       repositories.stakeRequestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
+      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
       config.facilitator.chains[config.facilitator.originChain].worker,
     );
 
@@ -74,7 +74,7 @@ export default class Services {
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
+      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
       config.facilitator.chains[config.facilitator.originChain].worker,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
