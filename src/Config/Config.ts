@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import MosaicConfig from '../MosaicConfig';
+import MosaicConfig from './MosaicConfig';
 import Directory from '../Directory';
 import {
   FacilitatorConfigNotFoundException,
@@ -11,6 +11,7 @@ import {
 import * as schema from './FacilitatorConfig.schema.json';
 import Utils from '../Utils';
 import Account from '../Account';
+import Logger from '../Logger';
 
 const Web3 = require('web3');
 
@@ -150,10 +151,12 @@ export class FacilitatorConfig {
     );
     fs.ensureDirSync(configPath);
 
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain.toString());
     fs.writeFileSync(
-      Directory.getFacilitatorConfigPath(chain.toString()),
+      facilitatorConfigPath,
       JSON.stringify(this, null, '    '),
     );
+    Logger.info(`Created facilitator config on path ${facilitatorConfigPath}`);
   }
 
   /**
@@ -223,6 +226,7 @@ export class FacilitatorConfig {
    * @param filePath Absolute path of file.
    */
   private static readConfig(filePath: string) {
+    Logger.debug(`Reading mosaic config from path ${filePath}`);
     const config = Utils.getJsonDataFromPath(filePath);
     FacilitatorConfig.verifySchema(config);
     return new FacilitatorConfig(config);
