@@ -10,7 +10,7 @@ import StubData from '../../test_utils/StubData';
 
 describe('AnchorHandler.persist()', () => {
   const auxiliaryChainId = 123;
-  const anchorAddress = '0x0000000000000000000000000000000000000003';
+  const coAnchorAddress = '0x0000000000000000000000000000000000000003';
   const someOtherAnchor = '0x0000000000000000000000000000000000000004';
   const blockHeight = new BigNumber(10);
   const transactions = [{
@@ -21,12 +21,12 @@ describe('AnchorHandler.persist()', () => {
   it('should save latest block height of interested anchor', async () => {
     const save = sinon.stub();
     const transactionsWithInterestedAnchor = [{
-      contractAddress: anchorAddress,
+      contractAddress: coAnchorAddress,
       _blockHeight: blockHeight.toString(10),
     }];
 
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
-      anchorAddress,
+      coAnchorAddress,
       blockHeight.sub(1),
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
@@ -39,7 +39,7 @@ describe('AnchorHandler.persist()', () => {
     const models = await handler.persist(transactionsWithInterestedAnchor);
 
     const expectedModel = StubData.getAuxiliaryChainRecord(
-      anchorAddress,
+      coAnchorAddress,
       blockHeight,
     );
     assert.equal(models.length, transactionsWithInterestedAnchor.length, 'Number of models must be equal to transactions');
@@ -50,7 +50,7 @@ describe('AnchorHandler.persist()', () => {
   it('should not save latest block height for non interested anchor', async () => {
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
-      anchorAddress,
+      coAnchorAddress,
       blockHeight.sub(1),
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
@@ -69,7 +69,7 @@ describe('AnchorHandler.persist()', () => {
   it('should not save latest block height for interested anchor with lower block height', async () => {
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
-      anchorAddress,
+      coAnchorAddress,
       blockHeight.plus(1),
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
@@ -88,7 +88,7 @@ describe('AnchorHandler.persist()', () => {
   it('should not save latest block height for interested anchor with equal block height', async () => {
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
-      anchorAddress,
+      coAnchorAddress,
       blockHeight,
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,

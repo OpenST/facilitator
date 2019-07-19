@@ -56,7 +56,7 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
 
     let anchorBlockHeight = chainRecord.lastOriginBlockHeight;
     transactions
-      .filter((transaction): boolean => chainRecord.anchorAddress === transaction.contractAddress)
+      .filter((transaction): boolean => chainRecord.coAnchorAddress === transaction.contractAddress)
       .forEach((filteredTransaction): void => {
         if (
           anchorBlockHeight === undefined
