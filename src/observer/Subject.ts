@@ -35,7 +35,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
 
   /** Notifies all observers about change in the subject. */
   public async notify(): Promise<void[]> {
-    Logger.debug(`Notifying observers for total ${this._updates.length} updates `);
+    Logger.debug(`Notifying observers of type: ${typeof this} for total ${this._updates.length} updates.`);
     if (this._updates.length === 0) {
       return [];
     }

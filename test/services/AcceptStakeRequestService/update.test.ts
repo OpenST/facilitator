@@ -210,7 +210,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         stakeRequestC.gasPrice!.toString(10),
         stakeRequestC.gasLimit!.toString(10),
         stakeRequestC.nonce!.toString(10),
-        stakeRequestC.stakerProxy!,
+        stakeRequestC.staker!,
         stakeRequestC.gateway!,
         messageC.hashLock,
       ]],
@@ -284,7 +284,7 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     assert.strictEqual(
       messageC.sender,
-      config.stakeRequestWithNullMessageHashC.stakerProxy,
+      config.stakeRequestWithNullMessageHashC.staker,
     );
 
     assert.strictEqual(
@@ -320,7 +320,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         stakeRequestC.gasPrice!.toString(10),
         stakeRequestC.gasLimit!.toString(10),
         stakeRequestC.nonce!.toString(10),
-        stakeRequestC.stakerProxy!,
+        stakeRequestC.staker!,
         stakeRequestC.gateway!,
         messageC.hashLock,
       ]],

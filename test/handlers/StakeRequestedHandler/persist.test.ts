@@ -21,7 +21,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       gasLimit: '1',
       nonce: '1',
       gateway: '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294',
-      stakerProxy: '0xE1e701FbE4288a38FfFEa3084C826B810c5d5294',
+      staker: '0xE1e701FbE4288a38FfFEa3084C826B810c5d5294',
     }];
 
     const saveStub = sinon.stub();
@@ -40,7 +40,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       new BigNumber(transactions[0].gasLimit),
       new BigNumber(transactions[0].nonce),
       transactions[0].gateway,
-      transactions[0].stakerProxy,
+      transactions[0].staker,
     );
 
     assert.equal(

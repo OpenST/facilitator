@@ -127,7 +127,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async sendAcceptStakeRequestTransaction(
     stakeRequest: StakeRequest, hashLock: string,
   ): Promise<string> {
-    Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.stakerProxy}`);
+    Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.staker}`);
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
     const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
       stakeRequest.amount!.toString(10),
@@ -135,7 +135,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequest.gasPrice!.toString(10),
       stakeRequest.gasLimit!.toString(10),
       stakeRequest.nonce!.toString(10),
-      stakeRequest.stakerProxy!,
+      stakeRequest.staker!,
       stakeRequest.gateway!,
       hashLock,
     );
@@ -156,7 +156,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
     assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.stakerProxy !== undefined);
+    assert(stakeRequest.staker !== undefined);
 
     const message = new Message(
       messageHash,
@@ -167,7 +167,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequest.gasPrice as BigNumber,
       stakeRequest.gasLimit as BigNumber,
       stakeRequest.nonce as BigNumber,
-      stakeRequest.stakerProxy as string,
+      stakeRequest.staker as string,
       MessageDirection.OriginToAuxiliary,
       new BigNumber(0),
       secret,
@@ -232,7 +232,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
           (stakeRequest.nonce as BigNumber).toFixed(),
           (stakeRequest.gasPrice as BigNumber).toFixed(),
           (stakeRequest.gasLimit as BigNumber).toFixed(),
-          stakeRequest.stakerProxy,
+          stakeRequest.staker,
           hashLock,
         ],
       ),

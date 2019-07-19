@@ -69,10 +69,10 @@ const Util = {
       );
     }
 
-    if (stakeRequestInput.stakerProxy !== undefined) {
+    if (stakeRequestInput.staker !== undefined) {
       assert.strictEqual(
-        stakeRequestInput.stakerProxy,
-        stakeRequestOutput.stakerProxy,
+        stakeRequestInput.staker,
+        stakeRequestOutput.staker,
       );
     }
 
