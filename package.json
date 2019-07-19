@@ -36,7 +36,6 @@
   "dependencies": {
     "@openst/mosaic-contracts": "^0.11.0",
     "@openst/mosaic.js": "^0.10.0",
-    "@openst/mosaic-contracts": "^0.11.0",
     "apollo-cache-inmemory": "1.6.2",
     "apollo-client": "2.6.0",
     "apollo-link-http": "1.5.15",
