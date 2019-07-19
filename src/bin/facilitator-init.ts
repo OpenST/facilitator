@@ -8,18 +8,18 @@ import Utils from '../Utils';
 const Web3 = require('web3');
 
 commander
-  .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
+  .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
   .option('-c, --chain-id <chain-id>', 'auxiliary chain id')
-  .option('-op, --origin-password <origin-password>', 'origin chain account password')
-  .option('-ap, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
-  .option('-or, --origin-rpc <origin-rpc>', 'origin chain rpc')
-  .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
-  .option('-ogw, --origin-graph-ws <origin-graph-ws>', 'origin ws subgraph endpoint ')
-  .option('-ogr, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
-  .option('-agw, --auxiliary-graph-ws <auxiliary-graph-ws>', 'auxiliary ws subgraph endpoint')
-  .option('-agr, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
-  .option('-dbp, --db-path <db-path>', 'path where db path is present')
-  .option('-f, --force', 'forcefully override facilitator config')
+  .option('-o, --origin-password <origin-password>', 'origin chain account password')
+  .option('-a, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
+  .option('-r, --origin-rpc <origin-rpc>', 'origin chain rpc')
+  .option('-h, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
+  .option('-e, --origin-graph-ws <origin-graph-ws>', 'origin ws subgraph endpoint ')
+  .option('-g, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
+  .option('-s, --auxiliary-graph-ws <auxiliary-graph-ws>', 'auxiliary ws subgraph endpoint')
+  .option('-i, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
+  .option('-d, --db-path <db-path>', 'path where db path is present')
+  .option('-p, --force', 'forcefully override facilitator config')
   .action((options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
