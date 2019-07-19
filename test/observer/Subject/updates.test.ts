@@ -16,11 +16,9 @@
 
 import 'mocha';
 
-import NumberUpdate from '../NumberUpdate';
-
 import Subject from '../../../src/observer/Subject';
-
 import assert from '../../test_utils/assert';
+import NumberUpdate from '../NumberUpdate';
 
 interface TestConfigInterface {
   subject: Subject<NumberUpdate>;

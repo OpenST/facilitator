@@ -1,8 +1,8 @@
-import * as winston from 'winston';
+import winston from 'winston';
 
-const {MOSAIC_FACILITATOR_LOG_LEVEL} = process.env;
+const { MOSAIC_FACILITATOR_LOG_LEVEL } = process.env;
 export default winston.createLogger({
-  level:  MOSAIC_FACILITATOR_LOG_LEVEL || 'info',
+  level: MOSAIC_FACILITATOR_LOG_LEVEL || 'info',
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.simple(),

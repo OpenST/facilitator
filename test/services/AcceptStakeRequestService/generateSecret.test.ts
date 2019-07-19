@@ -16,11 +16,10 @@
 
 import 'mocha';
 
-import assert from '../../test_utils/assert';
+import * as Web3Utils from 'web3-utils';
 
 import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
-
-const web3utils = require('web3-utils');
+import assert from '../../test_utils/assert';
 
 describe('AcceptStakeRequestService::generateSecret', (): void => {
   it('Checks that secret maches hash lock.', async (): Promise<void> => {
@@ -30,7 +29,7 @@ describe('AcceptStakeRequestService::generateSecret', (): void => {
     } = AcceptStakeRequestService.generateSecret();
 
     assert.strictEqual(
-      web3utils.keccak256(secret),
+      Web3Utils.keccak256(secret),
       hashLock,
       'The secret matches to the hash lock.',
     );

@@ -1,23 +1,29 @@
+/* eslint-disable import/no-unresolved */
+
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import * as assert from 'assert';
+import Web3 from 'web3';
+
+import { interacts } from '@openst/mosaic-contracts';
+import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+import { ProofGenerator } from '@openst/mosaic-proof';
+
+import { AUXILIARY_GAS_PRICE } from '../Constants';
+import Logger from '../Logger';
+import AuxiliaryChain from '../models/AuxiliaryChain';
+import Observer from '../observer/Observer';
 import GatewayRepository from '../repositories/GatewayRepository';
 import { MessageRepository } from '../repositories/MessageRepository';
-import Logger from '../Logger';
 import Utils from '../Utils';
-import { AUXILIARY_GAS_PRICE } from '../Constants';
-import Observer from '../observer/Observer';
-import AuxiliaryChain from '../models/AuxiliaryChain';
-
-const Mosaic = require('@openst/mosaic.js');
 
 export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   private gatewayRepository: GatewayRepository;
 
   private messageRepository: MessageRepository;
 
-  private originWeb3: object;
+  private originWeb3: Web3;
 
-  private auxiliaryWeb3: object;
+  private auxiliaryWeb3: Web3;
 
   private auxiliaryWorkerAddress: string;
 
@@ -40,8 +46,8 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   public constructor(
     gatewayRepository: GatewayRepository,
     messageRepository: MessageRepository,
-    originWeb3: object,
-    auxiliaryWeb3: object,
+    originWeb3: Web3,
+    auxiliaryWeb3: Web3,
     auxiliaryWorkerAddress: string,
     gatewayAddress: string,
     auxiliaryChainId: number,
@@ -112,24 +118,25 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     }
     const { gatewayAddress } = this;
     const coGateway = gatewayRecord.remoteGatewayAddress;
-    const { ProofGenerator } = Mosaic.Utils;
 
     Logger.info(`Generating proof for gateway address ${this.gatewayAddress} at blockHeight ${blockHeight.toString()}`);
-    const proofGenerator = new ProofGenerator(this.originWeb3, this.auxiliaryWeb3);
+    const proofGenerator = new ProofGenerator(this.originWeb3);
     const {
       encodedAccountValue,
       serializedAccountProof,
     } = await proofGenerator.getOutboxProof(
       gatewayAddress,
       [],
-      blockHeight,
+      blockHeight.toString(16),
     );
     Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
+    assert(encodedAccountValue !== undefined);
+    assert(serializedAccountProof !== undefined);
     const transactionHash = await this.prove(
       coGateway!,
       blockHeight,
-      encodedAccountValue,
-      serializedAccountProof,
+      encodedAccountValue as string,
+      serializedAccountProof as string,
     );
 
     Logger.info(`Prove gateway transaction hash ${transactionHash}`);
@@ -152,19 +159,22 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     encodedAccountValue: string,
     serializedAccountProof: string,
   ): Promise<string> {
-    const { EIP20CoGateway } = Mosaic.ContractInteract;
-
-    const eip20CoGateway = new EIP20CoGateway(this.auxiliaryWeb3, ostCoGatewayAddress);
+    const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(
+      this.auxiliaryWeb3,
+      ostCoGatewayAddress,
+    );
 
     const transactionOptions = {
       from: this.auxiliaryWorkerAddress,
       gasPrice: AUXILIARY_GAS_PRICE,
     };
-    const rawTx = await eip20CoGateway.proveGatewayRawTx(
-      lastOriginBlockHeight,
-      encodedAccountValue,
-      serializedAccountProof,
+
+    const rawTx = eip20CoGateway.methods.proveGateway(
+      lastOriginBlockHeight.toString(10),
+      encodedAccountValue as any,
+      serializedAccountProof as any,
     );
+
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,

@@ -1,17 +1,16 @@
-import * as sinon from 'sinon';
+import sinon from 'sinon';
+import Web3 from 'web3';
+
 import { interacts } from '@openst/mosaic-contracts';
-import Utils from '../../../src/Utils';
-import ProgressService from '../../../src/services/ProgressService';
-import {
-  MessageStatus,
-} from '../../../src/repositories/MessageRepository';
-import { ORIGIN_GAS_PRICE, AUXILIARY_GAS_PRICE } from '../../../src/Constants';
+
+import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../../../src/Constants';
 import Message from '../../../src/models/Message';
 import GatewayRepository from '../../../src/repositories/GatewayRepository';
+import { MessageStatus } from '../../../src/repositories/MessageRepository';
+import ProgressService from '../../../src/services/ProgressService';
+import Utils from '../../../src/Utils';
 import SpyAssert from '../../test_utils/SpyAssert';
 import StubData from '../../test_utils/StubData';
-
-const Web3 = require('web3');
 
 describe('ProgressService.update()', () => {
   let coGatewaySpy: any;
@@ -23,8 +22,8 @@ describe('ProgressService.update()', () => {
   let eip20GatewayMockObject: any;
   let progressService: ProgressService;
   let message: any;
-  const originWeb3 = new Web3();
-  const auxiliaryWeb3 = new Web3();
+  const originWeb3 = new Web3(null);
+  const auxiliaryWeb3 = new Web3(null);
   const originWorkerAddress = '0xA1e801AbF4288a38FfFEa3084C826B810c5d5294';
   const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
@@ -94,6 +93,10 @@ describe('ProgressService.update()', () => {
     message.messageHash = '0x4223A868';
     message.hashLock = '0x123AAF';
     message.isValidSecret.callsFake(() => true);
+  });
+
+  afterEach(async (): Promise<void> => {
+    sinon.restore();
   });
 
   it('should progress on origin and auxiliary when source and target status '

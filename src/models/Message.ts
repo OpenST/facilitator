@@ -1,7 +1,8 @@
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import Comparable from '../observer/Comparable';
+import * as web3utils from 'web3-utils';
 
-const web3utils = require('web3-utils');
+import Comparable from '../observer/Comparable';
 
 /**
  * Represents Message model object.
@@ -118,7 +119,9 @@ export default class Message extends Comparable<Message> {
    * Check if hashlock is valid or not.
    */
   public isValidSecret(): boolean {
-    if (web3utils.keccak256(this.secret) === this.hashLock) {
+    assert(this.secret !== undefined);
+
+    if (web3utils.keccak256(this.secret as string) === this.hashLock) {
       return true;
     }
     return false;

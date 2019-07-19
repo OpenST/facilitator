@@ -1,7 +1,7 @@
+import { Config } from '../Config/Config';
 import Repositories from '../repositories/Repositories';
 import AcceptStakeRequestService from './AcceptStakeRequestService';
 import ProveGatewayService from './ProveGatewayService';
-import { Config } from '../Config/Config';
 
 /**
  * This class is container that holds instances of all the services.

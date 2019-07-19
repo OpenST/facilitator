@@ -1,8 +1,9 @@
-import * as path from 'path';
-import * as sqlite from 'sqlite3';
-import * as fs from 'fs-extra';
-import Logger from './Logger';
+import fs from 'fs-extra';
+import path from 'path';
+import sqlite from 'sqlite3';
+
 import Directory from './Directory';
+import Logger from './Logger';
 
 /**
  * It creates db file at the path.

@@ -1,18 +1,15 @@
 
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-
 import BigNumber from 'bignumber.js';
-import SpyAssert from '../../test_utils/SpyAssert';
-import {
-  MessageDirection,
-  MessageRepository, MessageStatus, MessageType,
-} from '../../../src/repositories/MessageRepository';
-import Message from '../../../src/models/Message';
+import sinon from 'sinon';
+import * as web3utils from 'web3-utils';
+
 import StakeProgressHandler from '../../../src/handlers/StakeProgressHandler';
-
-
-const web3utils = require('web3-utils');
+import Message from '../../../src/models/Message';
+import {
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('ProgressStake.persist()', () => {
   const transactions = [{

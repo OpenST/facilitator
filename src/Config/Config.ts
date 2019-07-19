@@ -1,19 +1,18 @@
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import MosaicConfig from './MosaicConfig';
+import path from 'path';
+import Web3 from 'web3';
+
+import Account from '../Account';
 import Directory from '../Directory';
 import {
-  FacilitatorConfigNotFoundException,
-  InvalidFacilitatorConfigException,
+  FacilitatorConfigNotFoundException, InvalidFacilitatorConfigException,
   WorkerPasswordNotFoundException,
 } from '../Exception';
-import * as schema from './FacilitatorConfig.schema.json';
-import Utils from '../Utils';
-import Account from '../Account';
 import Logger from '../Logger';
-
-const Web3 = require('web3');
+import Utils from '../Utils';
+import schema from './FacilitatorConfig.schema.json';
+import MosaicConfig from './MosaicConfig';
 
 // Database password key to read from env.
 const ENV_DB_PASSWORD = 'MOSAIC_FACILITATOR_DB_PASSWORD';
@@ -76,7 +75,7 @@ export class Chain {
   /**
    * Get the password for unlocking worker.
    */
-  get password(): string | undefined {
+  public get password(): string | undefined {
     return process.env[`${ENV_WORKER_PASSWORD_PREFIX}${this.worker}`] || this._password;
   }
 }
@@ -105,7 +104,6 @@ export class FacilitatorConfig {
     this.database = config.database || new DBConfig();
     this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
-    this.assignDerivedParams = this.assignDerivedParams.bind(this);
     this.assignDerivedParams(config);
   }
 
@@ -113,9 +111,9 @@ export class FacilitatorConfig {
    * Assigns derived parameters.
    * @param config JSON config object.
    */
-  private assignDerivedParams(config: any) {
+  private assignDerivedParams(config: any): void {
     const chains = config.chains || {};
-    Object.keys(chains).forEach(async (identifier, _) => {
+    Object.keys(chains).forEach(async (identifier): Promise<void> => {
       this.chains[identifier] = new Chain(
         chains[identifier].rpc,
         chains[identifier].worker,
@@ -213,7 +211,7 @@ export class FacilitatorConfig {
    * This method reads config from file
    * @param filePath Absolute path of file.
    */
-  private static readConfig(filePath: string) {
+  private static readConfig(filePath: string): FacilitatorConfig {
     Logger.debug(`Reading mosaic config from path ${filePath}`);
     const config = Utils.getJsonDataFromPath(filePath);
     FacilitatorConfig.verifySchema(config);
@@ -229,9 +227,9 @@ export class Config {
 
   public mosaic: MosaicConfig;
 
-  private _originWeb3?: any;
+  private _originWeb3?: Web3;
 
-  private _auxiliaryWeb3?: any;
+  private _auxiliaryWeb3?: Web3;
 
   /**
    * It would set mosaic config and facilitator config object.
@@ -249,7 +247,7 @@ export class Config {
   /**
    * Returns web3 provider for origin chain.
    */
-  public get originWeb3(): any {
+  public get originWeb3(): Web3 {
     if (this._originWeb3) {
       return this._originWeb3;
     }
@@ -261,7 +259,7 @@ export class Config {
   /**
    * Returns web3 provider for auxiliary chain.
    */
-  public get auxiliaryWeb3(): any {
+  public get auxiliaryWeb3(): Web3 {
     if (this._auxiliaryWeb3) {
       return this._auxiliaryWeb3;
     }
@@ -274,7 +272,7 @@ export class Config {
    * Create web3 instance.
    * @param chain : chain object for which web3 instance needs to be created
    */
-  public createWeb3Instance(chain: Chain) {
+  public createWeb3Instance(chain: Chain): Web3 {
     if (!chain.password) {
       throw new WorkerPasswordNotFoundException(`password not found for ${chain.worker}`);
     }

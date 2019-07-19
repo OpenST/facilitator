@@ -14,27 +14,28 @@
 //
 // ----------------------------------------------------------------------------
 
+/* eslint-disable import/no-unresolved */
+
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
+import Web3 from 'web3';
+import * as Web3Utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
-import Repositories from '../repositories/Repositories';
+
+import { ORIGIN_GAS_PRICE } from '../Constants';
+import Logger from '../Logger';
+import Message from '../models/Message';
 import StakeRequest from '../models/StakeRequest';
 import Observer from '../observer/Observer';
 import {
-  MessageType, MessageStatus, MessageDirection, MessageRepository,
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
+import Repositories from '../repositories/Repositories';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
-import Message from '../models/Message';
 import Utils from '../Utils';
-import { ORIGIN_GAS_PRICE } from '../Constants';
-import Logger from '../Logger';
-
-import assert = require('assert');
-
-const web3utils = require('web3-utils');
-
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts
@@ -43,7 +44,7 @@ const web3utils = require('web3-utils');
 export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   /* Storage */
 
-  private web3: any;
+  private web3: Web3;
 
   private stakeRequestRepository: StakeRequestRepository;
 
@@ -58,7 +59,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   public constructor(
     repos: Repositories,
-    web3: any,
+    web3: Web3,
     ostComposerAddress: string,
     originWorkerAddress: string,
   ) {
@@ -81,8 +82,8 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   }
 
   public static generateSecret(): {secret: string; hashLock: string} {
-    const secret = web3utils.randomHex(32);
-    const hashLock = web3utils.keccak256(secret);
+    const secret = Web3Utils.randomHex(32);
+    const hashLock = Web3Utils.keccak256(secret);
 
     return {
       secret,
@@ -129,14 +130,23 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   ): Promise<string> {
     Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.stakerProxy}`);
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
+
+    assert(stakeRequest.amount !== undefined);
+    assert(stakeRequest.beneficiary !== undefined);
+    assert(stakeRequest.gasPrice !== undefined);
+    assert(stakeRequest.gasLimit !== undefined);
+    assert(stakeRequest.nonce !== undefined);
+    assert(stakeRequest.stakerProxy !== undefined);
+    assert(stakeRequest.gateway !== undefined);
+
     const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
-      stakeRequest.amount!.toString(10),
-      stakeRequest.beneficiary!,
-      stakeRequest.gasPrice!.toString(10),
-      stakeRequest.gasLimit!.toString(10),
-      stakeRequest.nonce!.toString(10),
-      stakeRequest.stakerProxy!,
-      stakeRequest.gateway!,
+      (stakeRequest.amount as BigNumber).toString(10),
+      (stakeRequest.beneficiary as string),
+      (stakeRequest.gasPrice as BigNumber).toString(10),
+      (stakeRequest.gasLimit as BigNumber).toString(10),
+      (stakeRequest.nonce as BigNumber).toString(10),
+      (stakeRequest.stakerProxy as string),
+      (stakeRequest.gateway as string),
       hashLock,
     );
     return Utils.sendTransaction(rawTx, {
@@ -212,7 +222,8 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
 
     const messageTypeHash = this.web3.utils.keccak256(
-      'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,uint256 gasLimit,address sender,bytes32 hashLock)',
+      'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
+      + 'uint256 gasLimit,address sender,bytes32 hashLock)',
     );
 
     return this.web3.utils.keccak256(

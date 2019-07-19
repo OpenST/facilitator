@@ -1,13 +1,12 @@
 // This is temporary, `MosaicConfig` will be used from mosaic-chains.
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { Validator } from 'jsonschema';
+import path from 'path';
 
 import Directory from '../Directory';
 import { InvalidMosaicConfigException, MosaicConfigNotFoundException } from '../Exception';
 import Logger from '../Logger';
-
-const schema = require('./MosaicConfig.schema.json');
+import schema from './MosaicConfig.schema.json';
 
 /**
  * Hold contract addresses on origin chain independent of auxiliary chain.
