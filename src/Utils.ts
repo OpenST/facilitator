@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import Logger from './Logger';
 
 const Utils = {
   /**
@@ -28,7 +29,8 @@ const Utils = {
       if (txOptions.gas === undefined) {
         txOptions.gas = await tx.estimateGas(txOptions);
       }
-
+      Logger.debug(`Transaction gas estimates  ${txOptions.gas}`);
+      Logger.debug(`Transaction sender ${txOptions.from}`);
       tx.send(txOptions)
         .on('transactionHash', (hash: string): void => onResolve(hash))
         .on('error', (error: Error): void => onReject(error));

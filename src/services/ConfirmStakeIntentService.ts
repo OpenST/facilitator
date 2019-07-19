@@ -140,7 +140,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],
-      gateway.lastRemoteGatewayProvenBlockHeight,
+      gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
     );
 
     const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(

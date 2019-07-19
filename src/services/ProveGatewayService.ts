@@ -130,7 +130,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     } = await proofGenerator.getOutboxProof(
       gatewayAddress,
       [],
-      blockHeight.toString(16),
+      blockHeight.toString(10),
     );
     Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
     assert(encodedAccountValue !== undefined);
