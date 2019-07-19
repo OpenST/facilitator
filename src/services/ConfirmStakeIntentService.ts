@@ -79,7 +79,10 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    */
   public async update(gateway: Gateway[]): Promise<void> {
     Logger.debug('Confirm stake intent service invoked');
-    assert(gateway.length === 1);
+    assert(
+      gateway.length === 1,
+      `There should be only 1 gateway record`
+    );
     const provenGateway: Gateway = gateway[0];
     const messages: Message[] = await this.messageRepository.getMessagesForConfirmation(
       provenGateway.gatewayAddress,

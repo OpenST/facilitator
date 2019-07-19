@@ -210,7 +210,10 @@ export class MessageRepository extends Subject<Message> {
     const updatedMessage = await this.get(
       message.messageHash,
     );
-    assert(updatedMessage !== null);
+    assert(
+      updatedMessage !== null,
+      `Updated message record not found for messageHash: ${message.messageHash}`
+    );
 
     this.newUpdate(updatedMessage as Message);
 

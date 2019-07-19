@@ -135,7 +135,10 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     const updatedAuxiliaryChain = await this.get(
       auxiliaryChain.chainId,
     );
-    assert(updatedAuxiliaryChain !== null);
+    assert(
+      updatedAuxiliaryChain !== null,
+      `Updated auxiliary chain record not found for chain: ${auxiliaryChain.chainId}`
+    );
 
     this.newUpdate(updatedAuxiliaryChain as AuxiliaryChain);
 

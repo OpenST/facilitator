@@ -50,7 +50,7 @@ class StakeRequestModel extends Model {
 
   public readonly gateway!: string;
 
-  public readonly stakerProxy!: string;
+  public readonly staker!: string;
 
   public readonly createdAt!: Date;
 
@@ -120,9 +120,9 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        stakerProxy: {
+        staker: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
       },
       {
@@ -148,8 +148,6 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
    */
   public async save(stakeRequest: StakeRequest): Promise<StakeRequest> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(stakeRequest);
-    Logger.debug(`Defined own propose  ${JSON.stringify(definedOwnProps)}`);
-    Logger.debug(`stakeRequest  ${JSON.stringify(stakeRequest)}`);
     const result = await StakeRequestModel.upsert(
       stakeRequest,
       {
@@ -158,7 +156,10 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
     );
     Logger.debug(`Upsert result: ${result}`);
     const stakeRequestOutput = await this.get(stakeRequest.stakeRequestHash);
-    assert(stakeRequestOutput !== null);
+    assert(
+      stakeRequestOutput !== null,
+      `Updated stakeRequest not found for stakeRequestHash: ${stakeRequest.stakeRequestHash}`
+    );
 
     this.newUpdate(stakeRequestOutput as StakeRequest);
 
@@ -237,7 +238,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
     stakeRequest.gasLimit = new BigNumber(stakeRequestModel.gasLimit);
     stakeRequest.nonce = new BigNumber(stakeRequestModel.nonce);
     stakeRequest.gateway = stakeRequestModel.gateway;
-    stakeRequest.stakerProxy = stakeRequestModel.stakerProxy;
+    stakeRequest.staker = stakeRequestModel.staker;
     stakeRequest.createdAt = stakeRequestModel.createdAt;
     stakeRequest.updatedAt = stakeRequestModel.updatedAt;
 

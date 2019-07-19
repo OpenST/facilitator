@@ -128,7 +128,10 @@ export default class ProgressService {
 
     const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress as string);
 
-    assert(gatewayRecord !== null);
+    assert(
+      gatewayRecord !== null,
+      `Gateway record not found for gateway: ${message.gatewayAddress}`
+    );
 
     const eip20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
