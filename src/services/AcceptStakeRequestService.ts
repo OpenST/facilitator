@@ -128,7 +128,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async sendAcceptStakeRequestTransaction(
     stakeRequest: StakeRequest, hashLock: string,
   ): Promise<string> {
-    Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.staker}`);
+    Logger.debug(`Sending accept request transaction for stakeRequest: ${stakeRequest}`);
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
 
     assert(stakeRequest.amount !== undefined);
