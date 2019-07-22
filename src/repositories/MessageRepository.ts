@@ -124,7 +124,7 @@ export class MessageRepository extends Subject<Message> {
               MessageStatus.Revoked,
             ],
           }),
-          allowNull: false,
+          allowNull: true,
         },
         gasPrice: {
           type: DataTypes.BIGINT,
@@ -290,6 +290,7 @@ export class MessageRepository extends Subject<Message> {
             [Op.lte]: blockHeight,
           },
           sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
           direction: MessageDirection.OriginToAuxiliary,
         },
       },

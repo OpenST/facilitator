@@ -107,6 +107,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       blockHeight,
       this.gatewayAddress,
     );
+    Logger.debug(`Total pending message ${pendingMessages}`);
     if (!pendingMessages) {
       Logger.info(
         `There are no pending messages for gateway ${this.gatewayAddress}.`

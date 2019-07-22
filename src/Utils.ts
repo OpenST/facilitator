@@ -26,11 +26,13 @@ const Utils = {
   async sendTransaction(tx: any, txOption: any): Promise<string> {
     return new Promise(async (onResolve, onReject): Promise<void> => {
       const txOptions = Object.assign({}, txOption);
+      Logger.debug(`Transaction sender ${txOptions.from}`);
       if (txOptions.gas === undefined) {
+        Logger.debug('Estimating gas for the transaction');
         txOptions.gas = await tx.estimateGas(txOptions);
       }
       Logger.debug(`Transaction gas estimates  ${txOptions.gas}`);
-      Logger.debug(`Transaction sender ${txOptions.from}`);
+
       tx.send(txOptions)
         .on('transactionHash', (hash: string): void => onResolve(hash))
         .on('error', (error: Error): void => onReject(error));
