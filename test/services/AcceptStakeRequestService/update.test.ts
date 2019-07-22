@@ -283,7 +283,7 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     assert.strictEqual(
       messageC.sender,
-      config.stakeRequestWithNullMessageHashC.staker,
+      config.stakeRequestWithNullMessageHashC.stakerProxy,
     );
 
     assert.strictEqual(
