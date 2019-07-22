@@ -45,6 +45,7 @@ describe('StakeRequestRepository::save', (): void => {
       new BigNumber('4'),
       'gateway',
       'staker',
+      'stakerProxy',
     );
 
     const stakeRequestResponse = await config.repos.stakeRequestRepository.save(
@@ -82,6 +83,7 @@ describe('StakeRequestRepository::save', (): void => {
       new BigNumber('4'),
       'gateway',
       'staker',
+      'stakerProxy',
     );
 
     await config.repos.stakeRequestRepository.save(
@@ -108,6 +110,7 @@ describe('StakeRequestRepository::save', (): void => {
         stakeRequestInput.nonce,
         stakeRequestUpdateInput.gateway,
         stakeRequestUpdateInput.staker,
+        stakeRequestUpdateInput.stakerProxy,
         stakeRequestInput.messageHash,
       ),
       stakeRequestResponse,
@@ -133,6 +136,7 @@ describe('StakeRequestRepository::save', (): void => {
         stakeRequestInput.nonce,
         stakeRequestUpdateInput.gateway,
         stakeRequestUpdateInput.staker,
+        stakeRequestUpdateInput.stakerProxy,
         stakeRequestInput.messageHash,
       ),
       stakeRequestOutput as StakeRequest,

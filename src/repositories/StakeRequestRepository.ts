@@ -52,6 +52,8 @@ class StakeRequestModel extends Model {
 
   public readonly staker!: string;
 
+  public readonly stakerProxy!: string;
+
   public readonly createdAt!: Date;
 
   public readonly updatedAt!: Date;
@@ -121,6 +123,10 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
           allowNull: false,
         },
         staker: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        stakerProxy: {
           type: DataTypes.STRING,
           allowNull: false,
         },
@@ -239,6 +245,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
     stakeRequest.nonce = new BigNumber(stakeRequestModel.nonce);
     stakeRequest.gateway = stakeRequestModel.gateway;
     stakeRequest.staker = stakeRequestModel.staker;
+    stakeRequest.stakerProxy = stakeRequestModel.stakerProxy;
     stakeRequest.createdAt = stakeRequestModel.createdAt;
     stakeRequest.updatedAt = stakeRequestModel.updatedAt;
 
