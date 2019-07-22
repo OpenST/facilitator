@@ -21,11 +21,11 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import * as Web3Utils from 'web3-utils';
 
-import { interacts } from '@openst/mosaic-contracts';
-import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
-import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
+import {interacts} from '@openst/mosaic-contracts';
+import {OSTComposer} from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
+import {TransactionObject} from '@openst/mosaic-contracts/dist/interacts/types';
 
-import { ORIGIN_GAS_PRICE } from '../Constants';
+import {ORIGIN_GAS_PRICE} from '../Constants';
 import Logger from '../Logger';
 import Message from '../models/Message';
 import StakeRequest from '../models/StakeRequest';
@@ -81,7 +81,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }
 
-  public static generateSecret(): {secret: string; hashLock: string} {
+  public static generateSecret(): { secret: string; hashLock: string } {
     const secret = Web3Utils.randomHex(32);
     const hashLock = Web3Utils.keccak256(secret);
 
@@ -104,7 +104,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   }
 
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
-    const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
+    const {secret, hashLock} = AcceptStakeRequestService.generateSecret();
 
     const transactionHash = await this.sendAcceptStakeRequestTransaction(
       stakeRequest, hashLock,
@@ -207,13 +207,14 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     await this.stakeRequestRepository.save(stakeRequest);
   }
 
-  private calculateMessageHash(stakeRequest: StakeRequest, hashLock: string): string {
+  public calculateMessageHash(stakeRequest: StakeRequest, hashLock: string): string {
     assert(stakeRequest.amount !== undefined);
     assert(stakeRequest.beneficiary !== undefined);
     assert(stakeRequest.gateway !== undefined);
     assert(stakeRequest.nonce !== undefined);
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
+    assert(stakeRequest.stakerProxy !== undefined);
 
     const stakeIntentHash: string = this.calculateStakeIntentHash(
       stakeRequest.amount as BigNumber,
@@ -221,12 +222,16 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequest.gateway as string,
     );
 
-    const messageTypeHash = this.web3.utils.keccak256(
-      'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
-      + 'uint256 gasLimit,address sender,bytes32 hashLock)',
+    const messageTypeHash = this.web3.utils.sha3(
+      this.web3.eth.abi.encodeParameter(
+        'string',
+        'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
+        + 'uint256 gasLimit,address sender,bytes32 hashLock)',
+      )
     );
 
-    return this.web3.utils.keccak256(
+    console.log('messageTypeHash  ',messageTypeHash);
+    return this.web3.utils.sha3(
       this.web3.eth.abi.encodeParameters(
         [
           'bytes32',
@@ -240,10 +245,10 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
         [
           messageTypeHash,
           stakeIntentHash,
-          (stakeRequest.nonce as BigNumber).toFixed(),
-          (stakeRequest.gasPrice as BigNumber).toFixed(),
-          (stakeRequest.gasLimit as BigNumber).toFixed(),
-          stakeRequest.staker,
+          (stakeRequest.nonce as BigNumber).toString(10),
+          (stakeRequest.gasPrice as BigNumber).toString(10),
+          (stakeRequest.gasLimit as BigNumber).toString(10),
+          stakeRequest.stakerProxy,
           hashLock,
         ],
       ),
@@ -255,11 +260,14 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     beneficiary: string,
     gateway: string,
   ): string {
-    const stakeIntentTypeHash = this.web3.utils.keccak256(
+    const stakeIntentTypeHash = this.web3.utils.sha3(
+      this.web3.eth.abi.encodeParameter(
+        'string',
       'StakeIntent(uint256 amount,address beneficiary,address gateway)',
+      )
     );
 
-    return this.web3.utils.keccak256(
+    return this.web3.utils.sha3(
       this.web3.eth.abi.encodeParameters(
         [
           'bytes32',
@@ -269,7 +277,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
         ],
         [
           stakeIntentTypeHash,
-          amount.toFixed(),
+          amount.toString(10),
           beneficiary,
           gateway,
         ],

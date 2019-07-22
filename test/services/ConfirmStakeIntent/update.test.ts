@@ -113,7 +113,11 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       proofGeneratorStub,
       1,
-      [[gateway.gatewayAddress, [message.messageHash], gateway.lastRemoteGatewayProvenBlockHeight]],
+      [[
+        gateway.gatewayAddress,
+        [message.messageHash],
+        gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+      ]],
     );
 
     const transactionOptions = {

@@ -76,6 +76,13 @@ const Util = {
       );
     }
 
+    if (stakeRequestInput.stakerProxy !== undefined) {
+      assert.strictEqual(
+        stakeRequestInput.stakerProxy,
+        stakeRequestOutput.stakerProxy,
+      );
+    }
+
     if (stakeRequestInput.messageHash !== undefined) {
       assert.strictEqual(
         stakeRequestInput.messageHash,
