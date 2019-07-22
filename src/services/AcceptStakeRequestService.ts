@@ -166,7 +166,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
     assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.staker !== undefined);
+    assert(stakeRequest.stakerProxy !== undefined);
 
     const message = new Message(
       messageHash,
@@ -177,7 +177,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequest.gasPrice as BigNumber,
       stakeRequest.gasLimit as BigNumber,
       stakeRequest.nonce as BigNumber,
-      stakeRequest.staker as string,
+      stakeRequest.stakerProxy as string,
       MessageDirection.OriginToAuxiliary,
       new BigNumber(0),
       secret,
