@@ -24,8 +24,10 @@ const Utils = {
    * @param txOption Transaction options.
    */
   async sendTransaction(tx: any, txOption: any): Promise<string> {
+    Logger.debug(`Starting sending transaction`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
       const txOptions = Object.assign({}, txOption);
+      Logger.debug(`Estimating gas`);
       if (txOptions.gas === undefined) {
         txOptions.gas = await tx.estimateGas(txOptions);
       }

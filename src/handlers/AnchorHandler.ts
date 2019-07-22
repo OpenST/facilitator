@@ -73,7 +73,7 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
       return [];
     }
     chainRecord.lastOriginBlockHeight = anchorBlockHeight;
-    Logger.debug(`Anchor handler Chain record   ${chainRecord}`);
+    Logger.debug(`Anchor handler Chain record   ${JSON.stringify(chainRecord)}`);
     await this.auxiliaryChainRepository.save(chainRecord);
     // This is returned in the case when higher latest anchored block height is received.
     return [chainRecord];
