@@ -21,11 +21,11 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import * as Web3Utils from 'web3-utils';
 
-import {interacts} from '@openst/mosaic-contracts';
-import {OSTComposer} from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
-import {TransactionObject} from '@openst/mosaic-contracts/dist/interacts/types';
+import { interacts } from '@openst/mosaic-contracts';
+import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
+import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 
-import {ORIGIN_GAS_PRICE} from '../Constants';
+import { ORIGIN_GAS_PRICE } from '../Constants';
 import Logger from '../Logger';
 import Message from '../models/Message';
 import StakeRequest from '../models/StakeRequest';
@@ -227,10 +227,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
         'string',
         'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
         + 'uint256 gasLimit,address sender,bytes32 hashLock)',
-      )
+      ),
     );
 
-    console.log('messageTypeHash  ',messageTypeHash);
     return this.web3.utils.sha3(
       this.web3.eth.abi.encodeParameters(
         [
@@ -263,8 +262,8 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     const stakeIntentTypeHash = this.web3.utils.sha3(
       this.web3.eth.abi.encodeParameter(
         'string',
-      'StakeIntent(uint256 amount,address beneficiary,address gateway)',
-      )
+        'StakeIntent(uint256 amount,address beneficiary,address gateway)',
+      ),
     );
 
     return this.web3.utils.sha3(
