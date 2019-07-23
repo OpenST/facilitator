@@ -128,7 +128,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async sendAcceptStakeRequestTransaction(
     stakeRequest: StakeRequest, hashLock: string,
   ): Promise<string> {
-    Logger.debug(`Sending accept request transaction for stakeRequest: ${stakeRequest}`);
+    Logger.debug(`Sending accept request transaction for stakeRequest: ${JSON.stringify(stakeRequest)}`);
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
 
     assert(stakeRequest.amount !== undefined);
@@ -209,12 +209,12 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   public calculateMessageHash(stakeRequest: StakeRequest, hashLock: string): string {
     assert(stakeRequest.amount !== undefined);
-    assert(stakeRequest.beneficiary !== undefined);
-    assert(stakeRequest.gateway !== undefined);
+    assert(stakeRequest.beneficiary);
+    assert(stakeRequest.gateway);
     assert(stakeRequest.nonce !== undefined);
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
-    assert(stakeRequest.stakerProxy !== undefined);
+    assert(stakeRequest.stakerProxy);
 
     const stakeIntentHash: string = this.calculateStakeIntentHash(
       stakeRequest.amount as BigNumber,

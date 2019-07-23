@@ -262,6 +262,7 @@ export class MessageRepository extends Subject<Message> {
             [Op.lte]: blockHeight,
           },
           sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
           direction: MessageDirection.OriginToAuxiliary,
         },
 
@@ -312,12 +313,12 @@ export class MessageRepository extends Subject<Message> {
       where: {
         [Op.and]: {
           gatewayAddress,
-          sourceStatus: MessageStatus.Declared,
-          targetStatus: MessageStatus.Undeclared,
-          direction: MessageDirection.OriginToAuxiliary,
           sourceDeclarationBlockHeight: {
             [Op.lte]: blockHeight,
           },
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
+          direction: MessageDirection.OriginToAuxiliary,
         },
       },
     });

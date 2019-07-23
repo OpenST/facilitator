@@ -90,11 +90,11 @@ export default class ProgressService {
       gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    assert(message.hashLock !== undefined);
+    assert(message.secret !== undefined);
 
     const rawTx = eip20Gateway.methods.progressStake(
       message.messageHash,
-      message.hashLock as string,
+      message.secret!,
     );
 
     return Utils.sendTransaction(
@@ -135,7 +135,7 @@ export default class ProgressService {
 
     const rawTx = eip20CoGateway.methods.progressMint(
       message.messageHash,
-      message.hashLock as string,
+      message.secret!,
     );
 
     return Utils.sendTransaction(
