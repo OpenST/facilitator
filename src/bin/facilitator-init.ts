@@ -6,7 +6,7 @@ import { Chain, FacilitatorConfig } from '../Config/Config';
 import DatabaseFileHelper from '../DatabaseFileHelper';
 import Logger from '../Logger';
 import MosaicConfig from '../Config/MosaicConfig';
-// import { Config } from '../Config/Config';
+// import { Config, ENV_WORKER_PASSWORD_PREFIX } from '../Config/Config';
 // import Repositories from '../repositories/Repositories';
 // import SeedData from '../SeedData';
 
@@ -100,6 +100,8 @@ commander
       const account: Account = Account.create(new Web3(null), password);
 
       facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
+      // const envVariableNameForWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${account.address}`;
+      // process.env[envVariableNameForWorkerPassword] = password;
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
