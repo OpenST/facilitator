@@ -26,6 +26,7 @@ import { Config } from './Config/Config';
 import {
   AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
 } from './Config/MosaicConfig';
+import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
 import ContractEntity, { EntityType } from './models/ContractEntity';
 import Gateway from './models/Gateway';
@@ -33,7 +34,7 @@ import AuxiliaryChainRepository from './repositories/AuxiliaryChainRepository';
 import ContractEntityRepository from './repositories/ContractEntityRepository';
 import GatewayRepository, { GatewayType } from './repositories/GatewayRepository';
 
-const ZeroBN = new BigNumber('0');
+const Zero = new BigNumber('0');
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -49,22 +50,27 @@ export default class SeedData {
 
   private contractEntityRepository: ContractEntityRepository;
 
+  private currentTimestamp: BigNumber;
+
   /**
    * @param config Config.
    * @param gatewayRepository GatewayRepository.
    * @param auxiliaryChainRepository AuxiliaryChainRepository.
    * @param contractEntityRepository ContractEntityRepository.
+   * @param currentTimestamp current Timestamp.
    */
   public constructor(
     config: Config,
     gatewayRepository: GatewayRepository,
     auxiliaryChainRepository: AuxiliaryChainRepository,
     contractEntityRepository: ContractEntityRepository,
+    currentTimestamp?: BigNumber,
   ) {
     this.config = config;
     this.gatewayRepository = gatewayRepository;
     this.auxiliaryChainRepository = auxiliaryChainRepository;
     this.contractEntityRepository = contractEntityRepository;
+    this.currentTimestamp = currentTimestamp || Utils.getCurrentTimestamp();
   }
 
   /**
@@ -89,8 +95,8 @@ export default class SeedData {
       this.coGatewayAddress,
       this.anchorAddress,
       this.coAnchorAddress,
-      ZeroBN,
-      ZeroBN,
+      Zero,
+      Zero,
     );
     await this.auxiliaryChainRepository.save(auxiliaryChain);
   }
@@ -122,7 +128,7 @@ export default class SeedData {
       this.anchorAddress,
       gatewayProperties.bounty,
       gatewayProperties.activated,
-      ZeroBN,
+      Zero,
     );
     await this.gatewayRepository.save(originGateway);
   }
@@ -140,7 +146,7 @@ export default class SeedData {
       this.coAnchorAddress,
       await this.getCoGatewayBounty(),
       undefined,
-      ZeroBN,
+      Zero,
     );
     await this.gatewayRepository.save(auxiliaryGateway);
   }
@@ -162,9 +168,6 @@ export default class SeedData {
         EntityType.GatewayProvens,
       ],
     };
-    const currentTimestampInMs = new Date().getTime();
-    const currentTimestampInS = Math.round(currentTimestampInMs/1000);
-    const currentTimestampBn = new BigNumber(currentTimestampInS);
     const promises: any = [];
     const contractAddresses = Object.keys(contractAddressEventTypesMap);
     for (let i = 0; i < contractAddresses.length; i += 1) {
@@ -175,7 +178,7 @@ export default class SeedData {
         promises.push(this.contractEntityRepository.save(new ContractEntity(
           contractAddress,
           eventTypes[j],
-          currentTimestampBn,
+          this.currentTimestamp,
         )));
       }
     }
