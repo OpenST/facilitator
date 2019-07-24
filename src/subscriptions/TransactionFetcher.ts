@@ -62,7 +62,7 @@ export default class TransactionFetcher {
       /* eslint-disable no-await-in-loop */
       // Note: await is needed here because GraphQL doesn't support aggregated count query.
       const graphQueryResult = await this.graphClient.query(fetchQuery, variables);
-      Logger.debug(`Received ${graphQueryResult.data[entity].length} on query response of entity ${entity} `);
+      Logger.debug(`Received ${graphQueryResult.data[entity].length} transactions on query response of entity ${entity} `);
       if (graphQueryResult.data[entity].length === 0) break;
       transactions = transactions.concat(graphQueryResult.data[entity]);
       skip += this.queryLimit;

@@ -47,9 +47,15 @@ export default class TransactionHandler {
           );
         }
         const transactions = bulkTransactions[transactionKind];
-        return handler.persist(transactions);
+        if (transactions.length > 0){
+          return handler.persist(transactions);
+        }
       },
     );
+
+    if (persistPromises.length === 0) {
+      return;
+    }
 
     await Promise.all(persistPromises);
 
