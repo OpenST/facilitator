@@ -1,12 +1,12 @@
 import 'mocha';
 
-import { assert } from 'chai';
-
 import BigNumber from 'bignumber.js';
-import Repositories from '../../../src/repositories/Repositories';
+
 import Message from '../../../src/models/Message';
-import Util from './util';
+import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
+import Util from './util';
 
 interface TestConfigInterface {
   repos: Repositories;

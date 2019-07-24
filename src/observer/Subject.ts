@@ -14,9 +14,9 @@
 //
 // ----------------------------------------------------------------------------
 
-import Observer from './Observer';
-import Comparable from './Comparable';
 import Logger from '../Logger';
+import Comparable from './Comparable';
+import Observer from './Observer';
 
 /**
  * The class enables one-to-many dependency between objects, so that

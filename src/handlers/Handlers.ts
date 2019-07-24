@@ -14,13 +14,13 @@
 //
 // ----------------------------------------------------------------------------
 
-import StakeRequestHandler from './StakeRequestHandler';
 import Repositories from '../repositories/Repositories';
 import AnchorHandler from './AnchorHandler';
-import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
-import ProveGatewayHandler from './ProveGatewayHandler';
 import MintProgressHandler from './MintProgressHandler';
+import ProveGatewayHandler from './ProveGatewayHandler';
+import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
 import StakeProgressHandler from './StakeProgressHandler';
+import StakeRequestHandler from './StakeRequestHandler';
 
 export default class Handlers {
   /**

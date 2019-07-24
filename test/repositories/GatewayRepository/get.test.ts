@@ -1,18 +1,10 @@
 import BigNumber from 'bignumber.js';
 
-import {
-  GatewayType,
-} from '../../../src/repositories/GatewayRepository';
-
-import Repositories from '../../../src/repositories/Repositories';
 import Gateway from '../../../src/models/Gateway';
+import { GatewayType } from '../../../src/repositories/GatewayRepository';
+import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../test_utils/assert';
 import Util from './util';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-
-chai.use(chaiAsPromised);
-const { assert } = chai;
 
 interface TestConfigInterface {
   repos: Repositories;

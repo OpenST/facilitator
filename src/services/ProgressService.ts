@@ -1,21 +1,23 @@
-import * as assert from 'assert';
+import assert from 'assert';
+import Web3 from 'web3';
+
+import { interacts } from '@openst/mosaic-contracts';
+
+import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../Constants';
+import Logger from '../Logger';
+import Gateway from '../models/Gateway';
 import Message from '../models/Message';
+import GatewayRepository from '../repositories/GatewayRepository';
 import { MessageStatus } from '../repositories/MessageRepository';
 import Utils from '../Utils';
-import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../Constants';
-
-import GatewayRepository from '../repositories/GatewayRepository';
-import Logger from '../Logger';
-
-const mosaicContract = require('@openst/mosaic-contracts');
 
 /**
  * It facilitates progress staking and minting.
  */
 export default class ProgressService {
-  private originWeb3: any;
+  private originWeb3: Web3;
 
-  private auxiliaryWeb3: any;
+  private auxiliaryWeb3: Web3;
 
   private gatewayAddress: string;
 
@@ -35,8 +37,8 @@ export default class ProgressService {
    */
   public constructor(
     gatewayRepository: GatewayRepository,
-    originWeb3: any,
-    auxiliaryWeb3: any,
+    originWeb3: Web3,
+    auxiliaryWeb3: Web3,
     gatewayAddress: string,
     originWorkerAddress: string,
     auxWorkerAddress: string,
@@ -89,7 +91,7 @@ export default class ProgressService {
    */
   private async progressStake(message: Message): Promise<string> {
     Logger.debug(`Sending progress stake transaction for message ${message.messageHash}`);
-    const eip20Gateway = mosaicContract.interacts.getEIP20Gateway(
+    const eip20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       this.gatewayAddress,
     );
@@ -97,9 +99,12 @@ export default class ProgressService {
       from: this.originWorkerAddress,
       gasPrice: ORIGIN_GAS_PRICE,
     };
-    const rawTx = await eip20Gateway.methods.progressStake(
+
+    assert(message.hashLock !== undefined);
+
+    const rawTx = eip20Gateway.methods.progressStake(
       message.messageHash,
-      message.hashLock,
+      message.hashLock as string,
     );
 
     return Utils.sendTransaction(
@@ -118,13 +123,16 @@ export default class ProgressService {
    */
   private async progressMint(message: Message): Promise<string> {
     Logger.debug(`Sending progress mint transaction for message ${message.messageHash}`);
-    const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress!);
+
+    assert(message.gatewayAddress !== undefined);
+
+    const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress as string);
 
     assert(gatewayRecord !== null);
 
-    const eip20CoGateway = mosaicContract.interacts.getEIP20CoGateway(
+    const eip20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
-      gatewayRecord!.remoteGatewayAddress,
+      (gatewayRecord as Gateway).remoteGatewayAddress,
     );
 
     const transactionOptions = {
@@ -132,9 +140,9 @@ export default class ProgressService {
       gasPrice: AUXILIARY_GAS_PRICE,
     };
 
-    const rawTx = await eip20CoGateway.methods.progressMint(
+    const rawTx = eip20CoGateway.methods.progressMint(
       message.messageHash,
-      message.hashLock,
+      message.hashLock as string,
     );
 
     return Utils.sendTransaction(

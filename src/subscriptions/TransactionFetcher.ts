@@ -1,7 +1,7 @@
-import GraphClient from './GraphClient';
 import FetchQueries from '../GraphQueries/FetchQueries';
-import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import Logger from '../Logger';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import GraphClient from './GraphClient';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -18,7 +18,10 @@ export default class TransactionFetcher {
    * @param graphClient Graph client object.
    * @param contractEntityRepository ContractEntityRepository.
    */
-  public constructor(graphClient: GraphClient, contractEntityRepository: ContractEntityRepository) {
+  public constructor(
+    graphClient: GraphClient,
+    contractEntityRepository: ContractEntityRepository,
+  ) {
     this.graphClient = graphClient;
     this.contractEntityRepository = contractEntityRepository;
   }
@@ -39,7 +42,8 @@ export default class TransactionFetcher {
     );
 
     if (contractEntityRecord === null || contractEntityRecord.timestamp === null) {
-      throw new Error(`Contract Entity record not found for entity ${entity} and address ${entityRecord.contractAddress}`);
+      throw new Error(`Contract Entity record not found for entity ${entity} `
+        + `and address ${entityRecord.contractAddress}`);
     }
     const uts = contractEntityRecord.timestamp;
     const fetchQuery = FetchQueries[entity];

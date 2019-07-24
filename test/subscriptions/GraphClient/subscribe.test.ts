@@ -1,16 +1,16 @@
-import gql from 'graphql-tag';
-import * as sinon from 'sinon';
-import { Observer } from 'apollo-client/util/Observable';
 import ApolloClient from 'apollo-client';
+import { Observer } from 'apollo-client/util/Observable';
 import BigNumber from 'bignumber.js';
-import assert from '../../test_utils/assert';
+import gql from 'graphql-tag';
+import sinon from 'sinon';
 
-import GraphClient from '../../../src/subscriptions/GraphClient';
-import SpyAssert from '../../test_utils/SpyAssert';
-import TransactionHandler from '../../../src/TransactionHandler';
-import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
-import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
 import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
+import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
+import GraphClient from '../../../src/subscriptions/GraphClient';
+import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import TransactionHandler from '../../../src/TransactionHandler';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;

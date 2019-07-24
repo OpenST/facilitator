@@ -1,9 +1,10 @@
 import { Subscription } from 'apollo-client/util/Observable';
-import GraphClient from './GraphClient';
-import TransactionHandler from '../TransactionHandler';
-import TransactionFetcher from './TransactionFetcher';
-import ContractEntityRepository from '../repositories/ContractEntityRepository';
+
 import Logger from '../Logger';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import TransactionHandler from '../TransactionHandler';
+import GraphClient from './GraphClient';
+import TransactionFetcher from './TransactionFetcher';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -48,7 +49,7 @@ export default class Subscriber {
   /** Subscribes to subscription queries. */
   public async subscribe(): Promise<void[]> {
     const subscriptionPromises = Object.keys(this.subscriptionQueries).map(
-      async entity => {
+      async (entity) => {
         Logger.debug(`Subscribing for entity: ${entity}`);
         return this.graphClient.subscribe(
           this.subscriptionQueries[entity],
@@ -59,7 +60,7 @@ export default class Subscriber {
           Logger.debug(`Subscription done for entity: ${entity}`);
           this.querySubscriptions[entity] = querySubscription;
         });
-      }
+      },
     );
     return Promise.all(subscriptionPromises);
   }

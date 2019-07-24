@@ -1,11 +1,11 @@
-import * as commander from 'commander';
-import Account from '../Account';
-import Logger from '../Logger';
-import DatabaseFileHelper from '../DatabaseFileHelper';
-import { FacilitatorConfig, Chain } from '../Config/Config';
-import Utils from '../Utils';
+import commander from 'commander';
+import Web3 from 'web3';
 
-const Web3 = require('web3');
+import Account from '../Account';
+import { Chain, FacilitatorConfig } from '../Config/Config';
+import DatabaseFileHelper from '../DatabaseFileHelper';
+import Logger from '../Logger';
+import Utils from '../Utils';
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')

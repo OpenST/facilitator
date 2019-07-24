@@ -1,9 +1,10 @@
-import * as sinon from 'sinon';
-import { assert } from 'chai';
+import sinon from 'sinon';
+
 import { Config, FacilitatorConfig } from '../../src/Config/Config';
-import MosaicConfig from '../../src/Config/MosaicConfig';
-import SpyAssert from '../test_utils/SpyAssert';
 import ConfigFactory from '../../src/Config/ConfigFactory';
+import MosaicConfig from '../../src/Config/MosaicConfig';
+import assert from '../test_utils/assert';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('FacilitatorOptionParser.getConfig()', () => {
   const originChain = '2';
@@ -343,15 +344,15 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
     assert.throws(
       () => fs.getConfig(),
-      'origin chain id in mosaic config is different than the one provided'
+      'origin chain id in mosaic config is different than the one provided',
     );
 
     configSpy.restore();
     sinon.restore();
   });
 
-it('should fail when facilitator config and mosaic config is provided but auxiliary ' +
-  'id doesn\'t match', () => {
+  it('should fail when facilitator config and mosaic config is provided but auxiliary '
+  + 'id doesn\'t match', () => {
     const configJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
     const mosaic = JSON.parse(configJson) as MosaicConfig;
     const facilitator = sinon.createStubInstance(FacilitatorConfig);
@@ -368,7 +369,7 @@ it('should fail when facilitator config and mosaic config is provided but auxili
 
     assert.throws(
       () => fs.getConfig(),
-      'origin chain id in mosaic config is different than the one provided'
+      'origin chain id in mosaic config is different than the one provided',
     );
 
     configSpy.restore();

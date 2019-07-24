@@ -1,4 +1,5 @@
-'use strict';
+import Web3 from 'web3';
+import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 
 import Logger from './Logger';
 
@@ -10,7 +11,7 @@ export default class Account {
 
   public readonly address: string;
 
-  public readonly encryptedKeyStore: any;
+  public readonly encryptedKeyStore: EncryptedKeystoreV3Json;
 
   /**
    * Constructor
@@ -19,7 +20,7 @@ export default class Account {
    */
   public constructor(
     address: string,
-    encryptedKeyStore: any,
+    encryptedKeyStore: EncryptedKeystoreV3Json,
   ) {
     this.address = address;
     this.encryptedKeyStore = encryptedKeyStore;
@@ -33,7 +34,7 @@ export default class Account {
    *
    * @returns Account object.
    */
-  public static create(web3: any, password: string): Account {
+  public static create(web3: Web3, password: string): Account {
     const web3Account = web3.eth.accounts.create();
     const encryptedAccount = web3.eth.accounts.encrypt(
       web3Account.privateKey.toString(),
@@ -52,7 +53,7 @@ export default class Account {
    * @param password The password required to unlock the account.
    * @returns `true` if its unlocked otherwise false.
    */
-  public unlock(web3: any, password: string): boolean {
+  public unlock(web3: Web3, password: string): boolean {
     // Unlocking the account and adding it to the local web3 instance so that everything is signed
     // locally when using web3.eth.send
     try {

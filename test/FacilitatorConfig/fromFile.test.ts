@@ -1,11 +1,10 @@
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
+import sinon from 'sinon';
 
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-import Utils from '../../src/Utils';
-
-import SpyAssert from '../test_utils/SpyAssert';
 import { FacilitatorConfig } from '../../src/Config/Config';
+import Utils from '../../src/Utils';
+import assert from '../test_utils/assert';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('FacilitatorConfig.fromFile()', () => {
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';

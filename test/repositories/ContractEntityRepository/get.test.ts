@@ -1,14 +1,9 @@
 import BigNumber from 'bignumber.js';
 
-import Repositories from '../../../src/repositories/Repositories';
 import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
+import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../test_utils/assert';
 import Util from './util';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-
-chai.use(chaiAsPromised);
-const { assert } = chai;
 
 interface TestConfigInterface {
   repos: Repositories;

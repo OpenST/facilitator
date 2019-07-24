@@ -1,13 +1,11 @@
 import BigNumber from 'bignumber.js';
-import assert from '../../test_utils/assert';
+import * as Utils from 'web3-utils';
 
 import ProveGatewayHandler from '../../../src/handlers/ProveGatewayHandler';
 import Gateway from '../../../src/models/Gateway';
-
 import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
-
-const Utils = require('web3-utils');
 
 interface TestConfigInterface {
   repos: Repositories;

@@ -17,11 +17,9 @@
 import 'mocha';
 
 import Repositories from '../../../src/repositories/Repositories';
-
-import Util from './util';
+import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
-
-import assert = require('assert');
+import Util from './util';
 
 interface TestConfigInterface {
   repos: Repositories;

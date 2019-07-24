@@ -1,12 +1,12 @@
-import {
-  DataTypes, Model, InitOptions, Op, fn, col,
-} from 'sequelize';
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import * as assert from 'assert';
-import Subject from '../observer/Subject';
+import {
+  col, DataTypes, fn, InitOptions, Model, Op,
+} from 'sequelize';
 
-import Utils from '../Utils';
 import Message from '../models/Message';
+import Subject from '../observer/Subject';
+import Utils from '../Utils';
 
 /* eslint-disable class-methods-use-this */
 

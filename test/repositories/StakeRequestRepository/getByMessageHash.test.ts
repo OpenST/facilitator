@@ -1,10 +1,12 @@
 import 'mocha';
+
 import BigNumber from 'bignumber.js';
+
 import StakeRequest from '../../../src/models/StakeRequest';
 import Repositories from '../../../src/repositories/Repositories';
-import Util from './util';
 import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
+import Util from './util';
 
 interface TestConfigInterface {
   repos: Repositories;

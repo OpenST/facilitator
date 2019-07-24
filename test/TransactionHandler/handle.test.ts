@@ -1,11 +1,11 @@
-import TransactionHandler from '../../src/TransactionHandler';
+import sinon from 'sinon';
+
 import StakeRequestHandler from '../../src/handlers/StakeRequestHandler';
+import Repositories from '../../src/repositories/Repositories';
+import TransactionHandler from '../../src/TransactionHandler';
+import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
-import Repositories from '../../src/repositories/Repositories';
-import assert from '../test_utils/assert';
-
-import sinon = require('sinon');
 
 describe('TransactionHandler.handle()', (): void => {
   const bulkTransactions = {
