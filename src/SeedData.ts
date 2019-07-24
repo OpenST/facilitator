@@ -162,6 +162,9 @@ export default class SeedData {
         EntityType.GatewayProvens,
       ],
     };
+    const currentTimestampInMs = new Date().getTime();
+    const currentTimestampInS = Math.round(currentTimestampInMs/1000);
+    const currentTimestampBn = new BigNumber(currentTimestampInS);
     const promises: any = [];
     const contractAddresses = Object.keys(contractAddressEventTypesMap);
     for (let i = 0; i < contractAddresses.length; i += 1) {
@@ -172,7 +175,7 @@ export default class SeedData {
         promises.push(this.contractEntityRepository.save(new ContractEntity(
           contractAddress,
           eventTypes[j],
-          ZeroBN,
+          currentTimestampBn,
         )));
       }
     }
