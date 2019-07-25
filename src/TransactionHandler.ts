@@ -34,7 +34,6 @@ export default class TransactionHandler {
    * @param bulkTransactions List of bulkTransactions.
    */
   public async handle(bulkTransactions: any): Promise<void> {
-
     Logger.debug(`BulkTransactions records: ${JSON.stringify(bulkTransactions)}`);
     const persistPromises = Object.keys(bulkTransactions).map(
       async (transactionKind): Promise<any> => {
@@ -47,15 +46,11 @@ export default class TransactionHandler {
           );
         }
         const transactions = bulkTransactions[transactionKind];
-        if (transactions.length > 0){
+        if (transactions.length > 0) {
           return handler.persist(transactions);
         }
       },
     );
-
-    if (persistPromises.length === 0) {
-      return;
-    }
 
     await Promise.all(persistPromises);
 
