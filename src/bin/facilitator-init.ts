@@ -29,8 +29,9 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    if (options.chainId === undefined) {
-      Logger.error('required --chain-id <chain-id>');
+    const auxChainId = options.auxChainId;
+    if (auxChainId === undefined) {
+      Logger.error('required --aux-chain-id <aux-chain-id>');
       mandatoryOptionMissing = true;
     }
 
@@ -79,10 +80,10 @@ commander
     }
 
     if (options.force) {
-      FacilitatorConfig.remove(options.chainId);
+      FacilitatorConfig.remove(auxChainId);
     } else {
       try {
-        if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
+        if (FacilitatorConfig.isFacilitatorConfigPresent(auxChainId)) {
           Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
           process.exit(1);
         }
@@ -91,11 +92,11 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);
+    const facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
 
     // Get origin chain id.
     const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
-    const auxChain = mosaicConfig.auxiliaryChains[options.chainId];
+    const auxChain = mosaicConfig.auxiliaryChains[auxChainId];
     if (auxChain === null || auxChain === undefined) {
       Logger.error('aux chain id is not present in the mosaic config');
       process.exit(1);
@@ -106,7 +107,7 @@ commander
     let { dbPath } = options;
     if (dbPath === undefined || dbPath === null) {
       Logger.info('database path is not provided');
-      dbPath = DatabaseFileHelper.create(options.chainId);
+      dbPath = DatabaseFileHelper.create(auxChainId);
     } else if (DatabaseFileHelper.verify(dbPath)) {
       Logger.info('DB file verified');
     } else {
@@ -116,9 +117,9 @@ commander
 
     facilitatorConfig.database.path = dbPath;
     facilitatorConfig.originChain = originChainId;
-    facilitatorConfig.auxChainId = options.chainId;
+    facilitatorConfig.auxChainId = auxChainId;
     const setFacilitator = (
-      chainid: string,
+      auxChainId: string,
       rpc: string,
       subGraphWs: string,
       subGraphRpc: string,
@@ -126,7 +127,7 @@ commander
     ): void => {
       const account: Account = Account.create(new Web3(''), password);
 
-      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
+      facilitatorConfig.chains[auxChainId] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
@@ -140,20 +141,20 @@ commander
     );
 
     setFacilitator(
-      options.chainId,
+      auxChainId,
       options.auxiliaryRpc,
       options.auxiliaryGraphWs,
       options.auxiliaryGraphRpc,
       options.auxiliaryPassword,
     );
 
-    facilitatorConfig.writeToFacilitatorConfig(options.chainId);
+    facilitatorConfig.writeToFacilitatorConfig(auxChainId);
     Logger.info('facilitator config file is generated');
 
     Logger.info(`👉 worker address for ${originChainId} chain is`
     + `${facilitatorConfig.chains[originChainId].worker}`);
 
-    Logger.info(`👉 worker address for ${options.chainId} chain is`
-      + `${facilitatorConfig.chains[options.chainId].worker}`);
+    Logger.info(`👉 worker address for ${auxChainId} chain is`
+      + `${facilitatorConfig.chains[auxChainId].worker}`);
   })
   .parse(process.argv);
