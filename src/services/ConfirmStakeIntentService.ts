@@ -8,7 +8,7 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../Constants';
+import {AUXILIARY_GAS_PRICE, MESSAGE_BOX_OFFSET} from '../Constants';
 import Logger from '../Logger';
 import Gateway from '../models/Gateway';
 import Message from '../models/Message';
@@ -142,7 +142,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       this.gatewayAddress,
       [message.messageHash],
       gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
-      '7', // todo This shouldn't be hard coded
+      MESSAGE_BOX_OFFSET, // todo This shouldn't be hard coded
     );
 
     Logger.debug(`Generated proof ${JSON.stringify(proofData)}`);

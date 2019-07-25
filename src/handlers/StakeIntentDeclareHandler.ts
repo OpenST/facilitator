@@ -71,7 +71,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Message object to save: ${JSON.stringify(models[i])}`);
+      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 
