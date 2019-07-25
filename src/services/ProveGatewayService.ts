@@ -103,12 +103,12 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       return Promise.reject(new Error('Gateway record does not exist for given gateway'));
     }
 
-    const pendingMessages = await this.messageRepository.hasPendingOriginMessages(
-      blockHeight,
+    const pendingMessages = await this.messageRepository.getMessagesForConfirmation(
       this.gatewayAddress,
+      blockHeight,
     );
-    Logger.debug(`Total pending message ${pendingMessages}`);
-    if (!pendingMessages) {
+    Logger.debug(`Total pending message ${pendingMessages.length}`);
+    if (pendingMessages.length === 0 ) {
       Logger.info(
         `There are no pending messages for gateway ${this.gatewayAddress}.`
         + ' Hence skipping proveGateway',

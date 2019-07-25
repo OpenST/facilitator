@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import BigNumber from 'bignumber.js';
 import Logger from './Logger';
 
 const Utils = {
@@ -51,6 +52,16 @@ const Utils = {
     );
     return nonUndefinedOwnedProps;
   },
+
+  /**
+   * @return Current timestamp as BigNumber object.
+   */
+  getCurrentTimestamp(): BigNumber {
+    const currentTimestampInMs = new Date().getTime();
+    const currentTimestampInS = Math.round(currentTimestampInMs / 1000);
+    return new BigNumber(currentTimestampInS);
+  }
+
 };
 
 export default Utils;

@@ -7,6 +7,7 @@ const FetchQueries: Record<string, string> = {
   + '    gasPrice\n'
   + '    gasLimit\n'
   + '    staker\n'
+  + '    stakerProxy\n'
   + '    gateway\n'
   + '    stakeRequestHash\n'
   + '    nonce\n'

@@ -25,8 +25,6 @@ import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import { MessageModel } from './MessageRepository';
 
-import Logger from "../Logger";
-
 
 /**
  * An interface, that represents a row from a stake request table.
@@ -154,13 +152,12 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
    */
   public async save(stakeRequest: StakeRequest): Promise<StakeRequest> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(stakeRequest);
-    const result = await StakeRequestModel.upsert(
+    await StakeRequestModel.upsert(
       stakeRequest,
       {
         fields: definedOwnProps,
       },
     );
-    Logger.debug(`Upsert result: ${result}`);
     const stakeRequestOutput = await this.get(stakeRequest.stakeRequestHash);
     assert(
       stakeRequestOutput !== null,

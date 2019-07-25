@@ -91,7 +91,7 @@ describe('ProgressService.update()', () => {
     message = sinon.createStubInstance(Message);
     message.gatewayAddress = gatewayAddress;
     message.messageHash = '0x4223A868';
-    message.hashLock = '0x123AAF';
+    message.secret = '0x123AAF';
     message.isValidSecret.callsFake(() => true);
   });
 
@@ -124,13 +124,13 @@ describe('ProgressService.update()', () => {
     SpyAssert.assert(
       progressMintSpy,
       1,
-      [[message.messageHash, message.hashLock]],
+      [[message.messageHash, message.secret]],
     );
 
     SpyAssert.assert(
       progressStakeSpy,
       1,
-      [[message.messageHash, message.hashLock]],
+      [[message.messageHash, message.secret]],
     );
 
     SpyAssert.assert(
