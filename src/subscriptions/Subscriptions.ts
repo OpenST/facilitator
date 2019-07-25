@@ -1,7 +1,6 @@
 import SubscriptionQueries from '../GraphQueries/SubscriptionQueries';
 import Repositories from '../repositories/Repositories';
 import TransactionHandler from '../TransactionHandler';
-import { SubscriptionInfo } from '../types';
 import GraphClient from './GraphClient';
 import Subscriber from './Subscriber';
 import TransactionFetcher from './TransactionFetcher';
@@ -36,7 +35,6 @@ export default class Subscriptions {
     auxiliarySubGraphWs: string,
     auxiliarySubGraphRpc: string,
   ): Promise<Subscriptions> {
-    const subGraphDetails = Subscriptions.getSubscriptionDetails();
     const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
       GraphClient.getClient(
         'http',
@@ -47,7 +45,7 @@ export default class Subscriptions {
     // Subscription to origin subgraph queries
     const originSubscriber = new Subscriber(
       GraphClient.getClient('ws', originSubGraphWs),
-      subGraphDetails.origin.subscriptionQueries,
+      SubscriptionQueries.origin,
       transactionHandler,
       originTransactionFetcher,
       repos.contractEntityRepository,
@@ -59,27 +57,11 @@ export default class Subscriptions {
     );
     const auxiliarySubscriber = new Subscriber(
       GraphClient.getClient('ws', auxiliarySubGraphWs),
-      subGraphDetails.auxiliary.subscriptionQueries,
+      SubscriptionQueries.auxiliary,
       transactionHandler,
       auxiliaryTransactionFetcher,
       repos.contractEntityRepository,
     );
     return new Subscriptions(originSubscriber, auxiliarySubscriber);
-  }
-
-
-  /**
-   * Subgraph details object which contains chain based subscriptionQueries.
-   * @return <any> Object containing chain based subscriptionQueries.
-   */
-  public static getSubscriptionDetails(): SubscriptionInfo {
-    return {
-      origin: {
-        subscriptionQueries: SubscriptionQueries.origin,
-      },
-      auxiliary: {
-        subscriptionQueries: SubscriptionQueries.auxiliary,
-      },
-    };
   }
 }
