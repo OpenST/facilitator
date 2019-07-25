@@ -54,6 +54,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
         const gasLimit = new BigNumber(transaction.gasLimit);
         const nonce = new BigNumber(transaction.nonce);
         const gateway = transaction.gateway as string;
+        const staker = transaction.staker as string;
         const stakerProxy = transaction.stakerProxy as string;
 
         return new StakeRequest(
@@ -64,6 +65,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
           gasLimit,
           nonce,
           gateway,
+          staker,
           stakerProxy,
         );
       },
@@ -71,7 +73,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
+      Logger.debug(`Saving stake request model ${JSON.stringify(models[i])}`);
       savePromises.push(this.stakeRequestRepository.save(models[i]));
     }
 

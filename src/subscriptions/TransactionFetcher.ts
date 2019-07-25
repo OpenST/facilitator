@@ -55,7 +55,6 @@ export default class TransactionFetcher {
       const variables = {
         contractAddress: entityRecord.contractAddress,
         uts,
-        limit: this.queryLimit,
         skip,
       };
 

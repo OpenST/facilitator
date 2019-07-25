@@ -34,7 +34,8 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
     const gatewayAddress = transaction._gateway as string;
     const gateway = await this.GatewayRepository.get(gatewayAddress);
 
-    assert(gateway !== null);
+    assert(gateway !== null, `Gateway record not found for address: ${gatewayAddress}`);
+
     const currentLastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
     if (gateway && gateway.lastRemoteGatewayProvenBlockHeight
       && gateway.lastRemoteGatewayProvenBlockHeight.lt(currentLastRemoteGatewayProvenBlockHeight)) {

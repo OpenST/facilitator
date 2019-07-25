@@ -68,16 +68,6 @@ export default class ProgressService {
           Logger.debug(`Performing progress stake and progress mint for message hash ${message.messageHash}`);
           return Promise.all([this.progressStake(message), this.progressMint(message)]);
         }
-
-        if (message.sourceStatus === MessageStatus.Declared) {
-          Logger.debug(`Performing progress stake for message hash ${message.messageHash}`);
-          return this.progressStake(message);
-        }
-
-        if (message.targetStatus === MessageStatus.Declared) {
-          Logger.debug(`Performing progress mint for message hash ${message.messageHash}`);
-          return this.progressMint(message);
-        }
         return Promise.resolve();
       });
 
@@ -128,7 +118,10 @@ export default class ProgressService {
 
     const gatewayRecord = await this.gatewayRepository.get(message.gatewayAddress as string);
 
-    assert(gatewayRecord !== null);
+    assert(
+      gatewayRecord !== null,
+      `Gateway record not found for gateway: ${message.gatewayAddress}`,
+    );
 
     const eip20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,

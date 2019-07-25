@@ -31,8 +31,6 @@ facilitatorCmd
         options.mosaicConfig,
         options.facilitatorConfig,
       );
-      facilitator.start();
-
       Logger.info('facilitator starting...');
       await facilitator.start();
       Logger.info('facilitator started.');

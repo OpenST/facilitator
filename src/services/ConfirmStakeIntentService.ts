@@ -79,7 +79,10 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    */
   public async update(gateway: Gateway[]): Promise<void> {
     Logger.debug('Confirm stake intent service invoked');
-    assert(gateway.length === 1);
+    assert(
+      gateway.length === 1,
+      'There should be only 1 gateway record',
+    );
     const provenGateway: Gateway = gateway[0];
     const messages: Message[] = await this.messageRepository.getMessagesForConfirmation(
       provenGateway.gatewayAddress,
@@ -134,12 +137,15 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     message: Message,
     gateway: Gateway,
   ): Promise<string> {
+    Logger.debug(`Generation proof for confirm stake intent for gateway ${this.gatewayAddress} anf message hash ${message.messageHash}`);
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],
-      gateway.lastRemoteGatewayProvenBlockHeight,
+      gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+      '7', // todo This shouldn't be hard coded
     );
 
+    Logger.debug(`Generated proof ${JSON.stringify(proofData)}`);
     const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
       this.coGatewayAddress,
@@ -168,7 +174,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       (message.gasPrice as BigNumber).toString(10),
       (message.gasLimit as BigNumber).toString(10),
       (message.hashLock as string),
-      proofData.blockNumber.toString(10),
+      gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
       proofData.storageProof[0].serializedProof,
     );
 

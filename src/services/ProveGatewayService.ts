@@ -72,7 +72,10 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId
         && auxiliaryChain.lastOriginBlockHeight !== undefined);
 
-    assert(interestedAuxiliaryChainRecord.length <= 1);
+    assert(
+      interestedAuxiliaryChainRecord.length <= 1,
+      `interestedAuxiliaryChainRecord length should be less or equal to 1`,
+    );
 
     if (interestedAuxiliaryChainRecord.length === 1) {
       await this.proveGateway(
@@ -104,6 +107,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       blockHeight,
       this.gatewayAddress,
     );
+    Logger.debug(`Total pending message ${pendingMessages}`);
     if (!pendingMessages) {
       Logger.info(
         `There are no pending messages for gateway ${this.gatewayAddress}.`
@@ -127,7 +131,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     } = await proofGenerator.getOutboxProof(
       gatewayAddress,
       [],
-      blockHeight.toString(16),
+      blockHeight.toString(10),
     );
     Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
     assert(encodedAccountValue !== undefined);

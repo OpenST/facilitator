@@ -124,7 +124,7 @@ export class MessageRepository extends Subject<Message> {
               MessageStatus.Revoked,
             ],
           }),
-          allowNull: false,
+          allowNull: true,
         },
         gasPrice: {
           type: DataTypes.BIGINT,
@@ -210,7 +210,10 @@ export class MessageRepository extends Subject<Message> {
     const updatedMessage = await this.get(
       message.messageHash,
     );
-    assert(updatedMessage !== null);
+    assert(
+      updatedMessage !== null,
+      `Updated message record not found for messageHash: ${message.messageHash}`
+    );
 
     this.newUpdate(updatedMessage as Message);
 
@@ -287,6 +290,7 @@ export class MessageRepository extends Subject<Message> {
             [Op.lte]: blockHeight,
           },
           sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
           direction: MessageDirection.OriginToAuxiliary,
         },
       },

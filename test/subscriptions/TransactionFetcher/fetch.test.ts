@@ -40,7 +40,6 @@ describe('TransactionFetcher.fetch()', () => {
     const iterationOneVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
       uts,
-      limit: 100,
       skip: 0,
     };
 
@@ -55,7 +54,6 @@ describe('TransactionFetcher.fetch()', () => {
     const iterationTwoVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
       uts,
-      limit: 100,
       skip: 100,
     };
 
@@ -65,7 +63,6 @@ describe('TransactionFetcher.fetch()', () => {
     const iterationThreeVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
       uts,
-      limit: 100,
       skip: 200,
     };
 

@@ -77,6 +77,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         new BigNumber('14'),
         '0x0000000000000000000000000000000000000002',
         '0x0000000000000000000000000000000000000003',
+        '0x0000000000000000000000000000000000000004',
         'messageHashB',
       ),
       stakeRequestWithNullMessageHashC: new StakeRequest(
@@ -88,12 +89,13 @@ describe('AcceptStakeRequestService::update', (): void => {
         new BigNumber('24'),
         '0x0000000000000000000000000000000000000012',
         '0x0000000000000000000000000000000000000013',
+        '0x0000000000000000000000000000000000000014',
       ),
       service,
       fakeData: {
         secret: '0x1d5b16860e7306df9e2d3ee077d6f3e3c4a4b5b22d2ae6d5adfee6a2147f529c',
         hashLock: '0xa36e17d0a9b4240af1deff571017e108d2c1a40de02d84f419113b1e1f7ad40f',
-        messageHash: '0x15d2b8c03013fe1780d44c7c93b5d03422f88c8d4084568d190d7eb1a9907646',
+        messageHash: '0x0f19c82aafa8d2c9c28b9ae3588422b65b32b8c7c43a54cd857cab6ef527fd45',
       },
     };
 
@@ -207,7 +209,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         stakeRequestC.gasPrice!.toString(10),
         stakeRequestC.gasLimit!.toString(10),
         stakeRequestC.nonce!.toString(10),
-        stakeRequestC.stakerProxy!,
+        stakeRequestC.staker!,
         stakeRequestC.gateway!,
         messageC.hashLock,
       ]],
@@ -317,7 +319,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         stakeRequestC.gasPrice!.toString(10),
         stakeRequestC.gasLimit!.toString(10),
         stakeRequestC.nonce!.toString(10),
-        stakeRequestC.stakerProxy!,
+        stakeRequestC.staker!,
         stakeRequestC.gateway!,
         messageC.hashLock,
       ]],
