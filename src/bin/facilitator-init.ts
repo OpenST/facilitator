@@ -9,7 +9,7 @@ import Utils from '../Utils';
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
-  .option('-c, --chain-id <chain-id>', 'auxiliary chain id')
+  .option('-c, --aux-chain-id <aux-chain-id>', 'auxiliary chain id')
   .option('-o, --origin-password <origin-password>', 'origin chain account password')
   .option('-a, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
   .option('-r, --origin-rpc <origin-rpc>', 'origin chain rpc')
@@ -19,58 +19,58 @@ commander
   .option('-s, --auxiliary-graph-ws <auxiliary-graph-ws>', 'auxiliary ws subgraph endpoint')
   .option('-i, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
   .option('-d, --db-path <db-path>', 'path where db path is present')
-  .option('-p, --force', 'forcefully override facilitator config')
+  .option('-f, --force', 'forcefully override facilitator config')
   .action((options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 
     if (options.mosaicConfig === undefined) {
-      Logger.error('required --mosaicConfig <mosaic-config>');
+      Logger.error('required --mosaic-config <mosaic-config>');
       mandatoryOptionMissing = true;
     }
 
     if (options.chainId === undefined) {
-      Logger.error('required --chainId <chain-id>');
+      Logger.error('required --chain-id <chain-id>');
       mandatoryOptionMissing = true;
     }
 
     if (options.originRpc === undefined) {
-      Logger.error('required --originRpc <origin-rpc>');
+      Logger.error('required --origin-rpc <origin-rpc>');
       mandatoryOptionMissing = true;
     }
 
     if (options.auxiliaryRpc === undefined) {
-      Logger.error('required --auxiliaryRpc <auxiliary-rpc>');
+      Logger.error('required --auxiliary-rpc <auxiliary-rpc>');
       mandatoryOptionMissing = true;
     }
 
     if (options.originPassword === undefined) {
-      Logger.error('required --originPassword <origin-password>');
+      Logger.error('required --origin-password <origin-password>');
       mandatoryOptionMissing = true;
     }
 
     if (options.auxiliaryPassword === undefined) {
-      Logger.error('required --auxiliaryPassword <auxiliary-password>');
+      Logger.error('required --auxiliary-password <auxiliary-password>');
       mandatoryOptionMissing = true;
     }
 
     if (options.originGraphWs === undefined) {
-      Logger.error('required --originGraphWs <origin-graph-ws>');
+      Logger.error('required --origin-graph-ws <origin-graph-ws>');
       mandatoryOptionMissing = true;
     }
 
     if (options.auxiliaryGraphWs === undefined) {
-      Logger.error('required --auxiliaryGraphWs <auxiliary-graph-ws>');
+      Logger.error('required --auxiliary-graph-ws <auxiliary-graph-ws>');
       mandatoryOptionMissing = true;
     }
 
     if (options.originGraphRpc === undefined) {
-      Logger.error('required --originGraphRpc <origin-graph-rpc>');
+      Logger.error('required --origin-graph-rpc <origin-graph-rpc>');
       mandatoryOptionMissing = true;
     }
 
     if (options.auxiliaryGraphRpc === undefined) {
-      Logger.error('required --auxiliaryGraphRpc <auxiliary-graph-rpc>');
+      Logger.error('required --auxiliary-graph-rpc <auxiliary-graph-rpc>');
       mandatoryOptionMissing = true;
     }
 
@@ -124,7 +124,7 @@ commander
       subGraphRpc: string,
       password: string,
     ): void => {
-      const account: Account = Account.create(new Web3(), password);
+      const account: Account = Account.create(new Web3(''), password);
 
       facilitatorConfig.chains[chainid] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
 
