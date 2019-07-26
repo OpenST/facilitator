@@ -20,7 +20,7 @@ export default class StubData {
     new BigNumber('4'),
     'gateway',
     'staker',
-    'stakerProxy'
+    'stakerProxy',
   );
 
   public static auxiliaryChainRecord(

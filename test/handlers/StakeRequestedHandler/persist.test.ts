@@ -20,7 +20,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       nonce: '1',
       gateway: '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294',
       staker: '0xE1e701FbE4288a38FfFEa3084C826B810c5d5294',
-      stakerProxy: '0xF1e701FbE4288a38FfFEa3084C826B810c5d5295'
+      stakerProxy: '0xF1e701FbE4288a38FfFEa3084C826B810c5d5295',
     }];
 
     const saveStub = sinon.stub();
