@@ -220,7 +220,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       [[fakeTransactionHash, {
         from: originWorkerAddress,
         gasPrice: ORIGIN_GAS_PRICE,
-      }]],
+      }, web3]],
     );
   });
 
@@ -330,7 +330,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       [[fakeTransactionHash, {
         from: originWorkerAddress,
         gasPrice: ORIGIN_GAS_PRICE,
-      }]],
+      }, web3]],
     );
   });
 });
