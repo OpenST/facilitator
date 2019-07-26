@@ -15,12 +15,15 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import ContractEntityHandler from './ContractEntityHandler';
+import * as utils from 'web3-utils';
+
+import Logger from '../Logger';
 import Message from '../models/Message';
 import {
   MessageDirection,
   MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
+import ContractEntityHandler from './ContractEntityHandler';
 
 /**
  * This class handles stake progress transactions.
@@ -45,18 +48,20 @@ export default class StakeProgressHandler extends ContractEntityHandler<Message>
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
+    Logger.debug('Persisting Stake progress records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if progress transaction appears first..
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = transaction._staker;
+          message.sender = utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
-          message.gatewayAddress = transaction.contractAddress;
+          message.gatewayAddress = utils.toChecksumAddress(transaction.contractAddress);
           message.sourceStatus = MessageStatus.Undeclared;
+          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
         // Undeclared use case can happen when progress event appears before progress event.
         if (message.sourceStatus === MessageStatus.Undeclared
@@ -70,11 +75,12 @@ export default class StakeProgressHandler extends ContractEntityHandler<Message>
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
+      Logger.debug(`Changing source status to progress for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);
-
+    Logger.debug('Messages saved');
     return models;
   }
 }

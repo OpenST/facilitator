@@ -17,54 +17,50 @@
 import BigNumber from 'bignumber.js';
 import * as utils from 'web3-utils';
 
-import ContractEntityHandler from './ContractEntityHandler';
 import Logger from '../Logger';
 import Message from '../models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
+import ContractEntityHandler from './ContractEntityHandler';
 
 /**
- * This class handles stake intent declared transactions.
+ * This class handles StakeIntentConfirmed event.
  */
-export default class StakeIntentDeclareHandler extends ContractEntityHandler<Message> {
-  /* Storage */
+export default class StakeIntentConfirmHandler extends ContractEntityHandler<Message> {
+  private messageRepository: MessageRepository;
 
-  private readonly messageRepository: MessageRepository;
-
+  /**
+   * @param messageRepository Instance of MessageRepository.
+   */
   public constructor(messageRepository: MessageRepository) {
     super();
-
     this.messageRepository = messageRepository;
   }
 
   /**
-   * This method parses stake intent declare transaction and returns message model object.
-   *
+   * This method parse confirm stake intent transaction and returns Message model object.
    * @param transactions Transaction objects.
-   *
-   * @return Array of instances of message model objects.
+   * @return Array of instances of Message objects.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Started persisting Stake intent declared records');
+    let message: Message | null;
+    Logger.debug('Persisting Stake intent confirm records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
-        let message = await this.messageRepository.get(transaction._messageHash);
-        // This will happen if some other facilitator has accepted the stake request.
+        const messageHash = transaction._messageHash;
+        message = await this.messageRepository.get(messageHash);
         if (message === null) {
           message = new Message(transaction._messageHash);
           message.sender = utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
-          message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
-          message.gatewayAddress = utils.toChecksumAddress(transaction.contractAddress);
-          message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
-          Logger.debug(`Creating message object ${JSON.stringify(message)}`);
+          message.direction = MessageDirection.OriginToAuxiliary;
+          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
-        if (!message.sourceStatus || message.sourceStatus === MessageStatus.Undeclared) {
-          message.sourceStatus = MessageStatus.Declared;
-          Logger.debug(`Change message status to ${MessageStatus.Declared}`);
+        if (message.targetStatus === undefined
+          || message.targetStatus === MessageStatus.Undeclared) {
+          message.targetStatus = MessageStatus.Declared;
         }
         return message;
       },
@@ -72,7 +68,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Message object to save: ${JSON.stringify(models[i])}`);
+      Logger.debug(`Changing target status to declared for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 
