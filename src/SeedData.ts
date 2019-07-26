@@ -16,6 +16,7 @@
 
 /* eslint-disable import/no-unresolved */
 
+import * as utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 
 import { interacts } from '@openst/mosaic-contracts';
@@ -26,6 +27,7 @@ import { Config } from './Config/Config';
 import {
   AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
 } from './Config/MosaicConfig';
+import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
 import ContractEntity, { EntityType } from './models/ContractEntity';
 import Gateway from './models/Gateway';
@@ -33,7 +35,7 @@ import AuxiliaryChainRepository from './repositories/AuxiliaryChainRepository';
 import ContractEntityRepository from './repositories/ContractEntityRepository';
 import GatewayRepository, { GatewayType } from './repositories/GatewayRepository';
 
-const ZeroBN = new BigNumber('0');
+const Zero = new BigNumber('0');
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -49,22 +51,27 @@ export default class SeedData {
 
   private contractEntityRepository: ContractEntityRepository;
 
+  private currentTimestamp: BigNumber;
+
   /**
    * @param config Config.
    * @param gatewayRepository GatewayRepository.
    * @param auxiliaryChainRepository AuxiliaryChainRepository.
    * @param contractEntityRepository ContractEntityRepository.
+   * @param currentTimestamp current Timestamp.
    */
   public constructor(
     config: Config,
     gatewayRepository: GatewayRepository,
     auxiliaryChainRepository: AuxiliaryChainRepository,
     contractEntityRepository: ContractEntityRepository,
+    currentTimestamp?: BigNumber,
   ) {
     this.config = config;
     this.gatewayRepository = gatewayRepository;
     this.auxiliaryChainRepository = auxiliaryChainRepository;
     this.contractEntityRepository = contractEntityRepository;
+    this.currentTimestamp = currentTimestamp || Utils.getCurrentTimestamp();
   }
 
   /**
@@ -89,8 +96,8 @@ export default class SeedData {
       this.coGatewayAddress,
       this.anchorAddress,
       this.coAnchorAddress,
-      ZeroBN,
-      ZeroBN,
+      Zero,
+      Zero,
     );
     await this.auxiliaryChainRepository.save(auxiliaryChain);
   }
@@ -122,7 +129,7 @@ export default class SeedData {
       this.anchorAddress,
       gatewayProperties.bounty,
       gatewayProperties.activated,
-      ZeroBN,
+      Zero,
     );
     await this.gatewayRepository.save(originGateway);
   }
@@ -140,7 +147,7 @@ export default class SeedData {
       this.coAnchorAddress,
       await this.getCoGatewayBounty(),
       undefined,
-      ZeroBN,
+      Zero,
     );
     await this.gatewayRepository.save(auxiliaryGateway);
   }
@@ -165,14 +172,14 @@ export default class SeedData {
     const promises: any = [];
     const contractAddresses = Object.keys(contractAddressEventTypesMap);
     for (let i = 0; i < contractAddresses.length; i += 1) {
-      const contractAddress = contractAddresses[i];
+      const contractAddress = utils.toChecksumAddress(contractAddresses[i]);
       const eventTypes = contractAddressEventTypesMap[contractAddress];
       for (let j = 0; eventTypes.length; j += 1) {
         if (!eventTypes[j]) { break; }
         promises.push(this.contractEntityRepository.save(new ContractEntity(
           contractAddress,
           eventTypes[j],
-          ZeroBN,
+          this.currentTimestamp,
         )));
       }
     }
@@ -197,49 +204,63 @@ export default class SeedData {
    * @return Returns Gateway address.
    */
   private get gatewayAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!;
+    return utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!
+    );
   }
 
   /**
    * @return Returns CoGateway address.
    */
   private get coGatewayAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!;
+    return utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!
+    );
   }
 
   /**
    * @return Returns Anchor address.
    */
   private get anchorAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!;
+    return utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!
+    );
   }
 
   /**
    * @return Returns CoAnchor address.
    */
   private get coAnchorAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!;
+    return utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!
+    );
   }
 
   /**
    * @return Returns OstComposer address.
    */
   private get ostComposerAddress(): string {
-    return this.originChainMosaicConfig.contractAddresses.ostComposerAddress!;
+    return utils.toChecksumAddress(
+      this.originChainMosaicConfig.contractAddresses.ostComposerAddress!
+    );
   }
 
   /**
    * @return Returns OstPrime address.
    */
   private get ostPrimeAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!;
+    return utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!
+    );
   }
 
   /**
    * @return Returns SimpleToken address.
    */
   private get simpleTokenAddress(): string {
-    return this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!;
+    return utils.toChecksumAddress(
+      this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!
+    );
   }
 
   /**

@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
+import * as utils from 'web3-utils';
 
 import Logger from '../Logger';
 import Message from '../models/Message';
@@ -53,11 +54,11 @@ export default class StakeProgressHandler extends ContractEntityHandler<Message>
         // This will happen if progress transaction appears first..
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = transaction._staker;
+          message.sender = utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
-          message.gatewayAddress = transaction.contractAddress;
+          message.gatewayAddress = utils.toChecksumAddress(transaction.contractAddress);
           message.sourceStatus = MessageStatus.Undeclared;
           Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }

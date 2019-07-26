@@ -14,6 +14,8 @@
 //
 // ----------------------------------------------------------------------------
 
+import * as utils from 'web3-utils';
+
 import Logger from '../Logger';
 import Message from '../models/Message';
 import {
@@ -44,14 +46,13 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Persisting Mint progress records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if progress transaction appears first..
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = transaction._staker;
+          message.sender = utils.toChecksumAddress(transaction._staker);
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
           message.targetStatus = MessageStatus.Undeclared;

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import Web3 from 'web3';
+import * as Web3Utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
 
@@ -14,6 +15,7 @@ import SeedData from '../../src/SeedData';
 import AuxiliaryChainRepositoryUtil from '../repositories/AuxiliaryChainRepository/util';
 import ContractEntityRepositoryUtil from '../repositories/ContractEntityRepository/util';
 import GatewayRepositoryUtil from '../repositories/GatewayRepository/util';
+import Utils from '../../src/Utils';
 
 describe('SeedData.populateDb()', (): void => {
   let config: Config; let seedData: SeedData; let
@@ -23,13 +25,14 @@ describe('SeedData.populateDb()', (): void => {
   const originChain = '12346';
   const auxiliaryChainId = 301;
   const zeroBn = new BigNumber('0');
-  const ostComposerAddress = '0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38';
+  const ostComposerAddress = Web3Utils.toChecksumAddress('0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38');
   const ostGatewayAddress = '0x97BA58DBE58898F2B669C56496f46F638DC322d4';
   const ostCoGatewayAddress = '0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227';
   const anchorAddress = '0xaC80704c80AB83512b48314bDfa82f79923C2Fbe';
   const coAnchorAddress = '0xBe26124167E8a350eE806B3ba11Ddb6c8E6dc689';
   const simpleTokenAddress = '0x325f05a75999347b7d8461BaEf274afAE0B8AE1c';
   const ostPrimeAddress = '0x0d3E57044B1B96a257fB2ba3958c1130219A2d55';
+  const currentTimestamp = Utils.getCurrentTimestamp();
 
   /**
    * Verifies data which was inserted in auxiliary_chains table.
@@ -103,7 +106,7 @@ describe('SeedData.populateDb()', (): void => {
     const contractEntity = new ContractEntity(
       ostComposerAddress,
       EntityType.StakeRequesteds,
-      zeroBn,
+      currentTimestamp,
     );
     const contractEntityFromDb = await repositories.contractEntityRepository.get(
       ostComposerAddress,
@@ -125,7 +128,7 @@ describe('SeedData.populateDb()', (): void => {
       const contractEntity = new ContractEntity(
         ostGatewayAddress,
         eventTypes[i],
-        zeroBn,
+        currentTimestamp,
       );
       const promise = repositories.contractEntityRepository.get(
         ostGatewayAddress,
@@ -148,7 +151,7 @@ describe('SeedData.populateDb()', (): void => {
     const contractEntity = new ContractEntity(
       coAnchorAddress,
       EntityType.StateRootAvailables,
-      zeroBn,
+      currentTimestamp,
     );
     const contractEntityFromDb = await repositories.contractEntityRepository.get(
       coAnchorAddress,
@@ -171,7 +174,7 @@ describe('SeedData.populateDb()', (): void => {
       const contractEntity = new ContractEntity(
         ostCoGatewayAddress,
         eventTypes[i],
-        zeroBn,
+        currentTimestamp,
       );
       const promise = repositories.contractEntityRepository.get(
         ostCoGatewayAddress,
@@ -243,6 +246,7 @@ describe('SeedData.populateDb()', (): void => {
       repositories.gatewayRepository,
       repositories.auxiliaryChainRepository,
       repositories.contractEntityRepository,
+      currentTimestamp
     );
   });
 

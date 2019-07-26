@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
+import * as utils from 'web3-utils';
 
 import Logger from '../Logger';
 import StakeRequest from '../models/StakeRequest';
@@ -22,7 +23,7 @@ import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import ContractEntityHandler from './ContractEntityHandler';
 
 /**
- * This class handels stake request transactions.
+ * This class handles stake request transactions.
  */
 export default class StakeRequestHandler extends ContractEntityHandler<StakeRequest> {
   /* Storage */
@@ -47,14 +48,15 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
     Logger.debug('Persisting stake request records');
     const models: StakeRequest[] = transactions.map(
       (transaction): StakeRequest => {
-        const stakeRequestHash = transaction.stakeRequestHash as string;
+        const stakeRequestHash = transaction.stakeRequestHash;
         const amount = new BigNumber(transaction.amount);
-        const beneficiary = transaction.beneficiary as string;
+        const beneficiary = utils.toChecksumAddress(transaction.beneficiary);
         const gasPrice = new BigNumber(transaction.gasPrice);
         const gasLimit = new BigNumber(transaction.gasLimit);
         const nonce = new BigNumber(transaction.nonce);
-        const gateway = transaction.gateway as string;
-        const stakerProxy = transaction.stakerProxy as string;
+        const gateway = utils.toChecksumAddress(transaction.gateway);
+        const staker = utils.toChecksumAddress(transaction.staker);
+        const stakerProxy = utils.toChecksumAddress(transaction.stakerProxy);
 
         return new StakeRequest(
           stakeRequestHash,
@@ -64,6 +66,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
           gasLimit,
           nonce,
           gateway,
+          staker,
           stakerProxy,
         );
       },
@@ -71,7 +74,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
+      Logger.debug(`Saving stake request model ${JSON.stringify(models[i])}`);
       savePromises.push(this.stakeRequestRepository.save(models[i]));
     }
 
