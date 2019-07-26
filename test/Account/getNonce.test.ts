@@ -8,9 +8,6 @@ import SpyAssert from '../test_utils/SpyAssert';
 describe('Account.getNonce', (): void => {
   let dummyInitialNonce: BigNumber;
   let web3MockObject: any;
-  const accountObject: Account = new Account(
-    '0x0000000000000000000000000000000000000001',
-  );
 
   beforeEach((): void => {
     dummyInitialNonce = new BigNumber('1');
@@ -26,8 +23,11 @@ describe('Account.getNonce', (): void => {
   });
 
   it('should return nonce by calling getTransactionCount on web3', async (): Promise<void> => {
+    const accountObject: Account = new Account(
+      '0x0000000000000000000000000000000000000001',
+    );
     const nonce: BigNumber = await accountObject.getNonce(web3MockObject);
-    assert.notStrictEqual(
+    assert.deepEqual(
       nonce,
       dummyInitialNonce,
       'nonce should match',
@@ -40,15 +40,21 @@ describe('Account.getNonce', (): void => {
   });
 
   it('should return incremented nonce from in-memory storage', async (): Promise<void> => {
+    const accountObject: Account = new Account(
+      '0x0000000000000000000000000000000000000002',
+    );
+    // call once to have it fetch nonce from web3
+    await accountObject.getNonce(web3MockObject);
+    // call second time to fetch incremented nonce from in-memory
     const nonce: BigNumber = await accountObject.getNonce(web3MockObject);
-    assert.notStrictEqual(
+    assert.deepEqual(
       nonce,
       dummyInitialNonce.add(1),
       'nonce should match',
     );
     SpyAssert.assert(
       web3MockObject.eth.getTransactionCount,
-      0,
+      1,
       [[accountObject.address, 'pending']],
     );
   });

@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 
 import Logger from './Logger';
 
-// This class variable would be used to persist nonce in-memory
+// This class variable is used to persist nonce in-memory
 const addressNonceMap: Record<string, BigNumber> = {};
 
 /**
@@ -76,7 +76,7 @@ export default class Account {
    * @returns The nonce wrapped in a Promise.
    */
   public async getNonce(web3: Web3): Promise<BigNumber> {
-    if (addressNonceMap[this.address] !== undefined) {
+    if (addressNonceMap[this.address]) {
       addressNonceMap[this.address] = addressNonceMap[this.address].add(1);
     } else {
       const nonce = await web3.eth.getTransactionCount(this.address, 'pending');
