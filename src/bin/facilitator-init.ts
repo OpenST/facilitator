@@ -96,10 +96,10 @@ commander
     facilitatorConfig.database.path = dbPath;
     facilitatorConfig.originChain = originChainId;
     facilitatorConfig.auxChainId = options.chainId;
-    const setFacilitator = (chainid: string, rpc: string, password: string): void => {
+    const setFacilitator = (chainId: string, rpc: string, password: string): void => {
       const account: Account = Account.create(new Web3(null), password);
 
-      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
+      facilitatorConfig.chains[chainId] = new Chain(rpc, account.address);
       // const envVariableNameForWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${account.address}`;
       // process.env[envVariableNameForWorkerPassword] = password;
 

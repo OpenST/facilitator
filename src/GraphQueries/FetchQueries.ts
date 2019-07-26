@@ -1,6 +1,6 @@
 const FetchQueries: Record<string, string> = {
-  stakeRequesteds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!) {\n'
-  + 'stakeRequesteds(orderBy: uts, orderDirection: asc, first: 100, skip: $skip, where:'
+  stakeRequesteds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'stakeRequesteds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    amount\n'
@@ -18,8 +18,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  stakeIntentDeclareds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!) {\n'
-  + 'stakeIntentDeclareds(orderBy: uts, orderDirection: asc, first: 100, skip: $skip, , where:'
+  stakeIntentDeclareds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'stakeIntentDeclareds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, , where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    _messageHash\n'
@@ -32,8 +32,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  stateRootAvailables: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!) {\n'
-  + 'stateRootAvailables(orderBy: uts, orderDirection: asc, first: 100, skip: $skip, where:'
+  stateRootAvailables: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'stateRootAvailables(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    _blockHeight\n'
@@ -44,8 +44,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  gatewayProvens: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!) {\n'
-  + 'gatewayProvens(orderBy: blockNumber, orderDirection: asc, first: 100, skip: $skip, where:'
+  gatewayProvens: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'gatewayProvens(orderBy: blockNumber, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    _gateway\n'
@@ -58,8 +58,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  stakeIntentConfirmeds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!) {\n'
-  + 'stakeIntentConfirmeds(orderBy: uts, orderDirection: asc, first:100, skip: $skip, where:'
+  stakeIntentConfirmeds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'stakeIntentConfirmeds(orderBy: uts, orderDirection: asc, first:$limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    _messageHash\n'
@@ -75,8 +75,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  stakeProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!) {\n'
-  + 'stakeProgresseds(orderBy: uts, orderDirection: asc, first: 100, skip: $skip, where:'
+  stakeProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'stakeProgresseds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
@@ -92,8 +92,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  mintProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!) {\n'
-  + 'mintProgresseds(orderBy: uts, orderDirection: asc, first: 100, skip: $skip, where:'
+  mintProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'mintProgresseds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    _messageHash\n'

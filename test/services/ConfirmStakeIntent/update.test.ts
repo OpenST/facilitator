@@ -226,7 +226,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
         gateway.gatewayAddress,
         [],
         gateway.lastRemoteGatewayProvenBlockHeight,
-        messageOutBoxOffset
+        messageOutBoxOffset,
       ]],
     );
 

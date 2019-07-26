@@ -74,7 +74,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
 
     assert(
       interestedAuxiliaryChainRecord.length <= 1,
-      `interestedAuxiliaryChainRecord length should be less or equal to 1`,
+      'interestedAuxiliaryChainRecord length should be less or equal to 1',
     );
 
     if (interestedAuxiliaryChainRecord.length === 1) {
@@ -108,7 +108,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       blockHeight,
     );
     Logger.debug(`Total pending message ${pendingMessages.length}`);
-    if (pendingMessages.length === 0 ) {
+    if (pendingMessages.length === 0) {
       Logger.info(
         `There are no pending messages for gateway ${this.gatewayAddress}.`
         + ' Hence skipping proveGateway',

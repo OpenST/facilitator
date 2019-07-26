@@ -49,6 +49,7 @@ export default class TransactionHandler {
         if (transactions.length > 0) {
           return handler.persist(transactions);
         }
+        return Promise.resolve();
       },
     );
 

@@ -59,7 +59,7 @@ const Utils = {
     const currentTimestampInMs = new Date().getTime();
     const currentTimestampInS = Math.round(currentTimestampInMs / 1000);
     return new BigNumber(currentTimestampInS);
-  }
+  },
 
 };
 

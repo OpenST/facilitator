@@ -45,7 +45,7 @@ describe('StakeRequestRepository::get', (): void => {
       new BigNumber('4'),
       'gateway',
       'staker',
-      'stakerProxy'
+      'stakerProxy',
     );
 
     await config.repos.stakeRequestRepository.save(

@@ -14,6 +14,8 @@
 //
 // ----------------------------------------------------------------------------
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import 'mocha';
 
 import BigNumber from 'bignumber.js';
