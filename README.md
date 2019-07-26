@@ -11,7 +11,7 @@ A simple run would be the following:
 ```
 
 * Replace `<mosaic-config>` with location where mosaic config is present.
-* Replace `<chain-id>` with auxiliary chain id. 
+* Replace `<aux-chain-id>` with auxiliary chain id. 
 * Replace `<origin-password>` with the password required to encrypt the worker account of origin chain created with this command. It will be required to unlock worker account while starting facilitator.
 * Replace `<auxiliary-password>` with the password required to encrypt the worker account of auxiliary chain created with this command. It will be required to unlock worker account while starting facilitator.
 * Replace `<origin-rpc>` with origin chain's rpc url.

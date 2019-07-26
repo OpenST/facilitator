@@ -119,7 +119,7 @@ commander
     facilitatorConfig.originChain = originChainId;
     facilitatorConfig.auxChainId = auxChainId;
     const setFacilitator = (
-      auxChainId: string,
+      chainId: string,
       rpc: string,
       subGraphWs: string,
       subGraphRpc: string,
@@ -127,7 +127,7 @@ commander
     ): void => {
       const account: Account = Account.create(new Web3(''), password);
 
-      facilitatorConfig.chains[auxChainId] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
+      facilitatorConfig.chains[chainId] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
