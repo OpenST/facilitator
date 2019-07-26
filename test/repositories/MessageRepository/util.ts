@@ -1,5 +1,4 @@
 import Message from '../../../src/models/Message';
-
 import assert from '../../test_utils/assert';
 
 const Util = {

@@ -1,22 +1,19 @@
 
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-
 import BigNumber from 'bignumber.js';
-import SpyAssert from '../../test_utils/SpyAssert';
-import {
-  MessageDirection,
-  MessageRepository, MessageStatus, MessageType,
-} from '../../../src/repositories/MessageRepository';
-import StakeIntentDeclareHandler
-  from '../../../src/handlers/StakeIntentDeclareHandler';
+import sinon from 'sinon';
+import * as Web3Utils from 'web3-utils';
+
+import StakeIntentDeclareHandler from '../../../src/handlers/StakeIntentDeclareHandler';
 import Message from '../../../src/models/Message';
+import {
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
-const web3utils = require('web3-utils');
-
-describe('StakeIntentDeclareHandler.persist()', () => {
+describe('StakeIntentDeclareHandler.persist()', (): void => {
   const transactions = [{
-    _messageHash: web3utils.keccak256('1'),
+    _messageHash: Web3Utils.keccak256('1'),
     _staker: '0x0000000000000000000000000000000000000001',
     _stakerNonce: '1',
     _beneficiary: '0x0000000000000000000000000000000000000002',
@@ -25,7 +22,7 @@ describe('StakeIntentDeclareHandler.persist()', () => {
     blockNumber: '10',
   }];
 
-  it('should change message state to source declared', async () => {
+  it('should change message state to source declared', async (): Promise<void> => {
     const save = sinon.stub();
 
     const mockedRepository = sinon.createStubInstance(MessageRepository,
@@ -48,15 +45,20 @@ describe('StakeIntentDeclareHandler.persist()', () => {
     expectedModel.gatewayAddress = transactions[0].contractAddress;
     expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
+    assert.equal(
+      models.length,
+      transactions.length,
+      'Number of models must be equal to transactions',
+    );
     SpyAssert.assert(save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message state to declared if current status is not undeclared', async () => {
+  it('should not change message state to declared '
+    + 'if current status is not undeclared', async (): Promise<void> => {
     const save = sinon.stub();
 
-    const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
+    const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
     existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
@@ -72,7 +74,11 @@ describe('StakeIntentDeclareHandler.persist()', () => {
     );
     expectedModel.sourceStatus = MessageStatus.Progressed;
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
+    assert.equal(
+      models.length,
+      transactions.length,
+      'Number of models must be equal to transactions',
+    );
     SpyAssert.assert(save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });

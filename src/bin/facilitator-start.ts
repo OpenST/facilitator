@@ -1,7 +1,8 @@
-import * as commander from 'commander';
-import Logger from '../Logger';
-import Facilitator from '../Facilitator';
+import commander from 'commander';
+
 import Container from '../Container';
+import Facilitator from '../Facilitator';
+import Logger from '../Logger';
 
 const facilitatorCmd = commander
   .arguments('[origin_chain] [aux_chain_id]');
@@ -32,9 +33,9 @@ facilitatorCmd
       );
       facilitator.start();
 
-      Logger.info('starting facilitator');
+      Logger.info('facilitator starting...');
       await facilitator.start();
-      Logger.info('facilitator started');
+      Logger.info('facilitator started.');
     } catch (err) {
       Logger.error(err.message);
     }

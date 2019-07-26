@@ -14,19 +14,24 @@
 //
 // ----------------------------------------------------------------------------
 
-import BigNumber from 'bignumber.js';
-import { interacts } from '@openst/mosaic-contracts';
-import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
-import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+/* eslint-disable import/no-unresolved */
 
-import { OriginChain as OriginChainMosaicConfig, AuxiliaryChain as AuxiliaryChainMosaicConfig } from './MosaicConfig';
+import BigNumber from 'bignumber.js';
+
+import { interacts } from '@openst/mosaic-contracts';
+import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
+
 import { Config } from './Config/Config';
-import GatewayRepository, { GatewayType } from './repositories/GatewayRepository';
+import {
+  AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
+} from './Config/MosaicConfig';
+import AuxiliaryChain from './models/AuxiliaryChain';
+import ContractEntity, { EntityType } from './models/ContractEntity';
+import Gateway from './models/Gateway';
 import AuxiliaryChainRepository from './repositories/AuxiliaryChainRepository';
 import ContractEntityRepository from './repositories/ContractEntityRepository';
-import AuxiliaryChain from './models/AuxiliaryChain';
-import Gateway from './models/Gateway';
-import ContractEntity, { EntityType } from './models/ContractEntity';
+import GatewayRepository, { GatewayType } from './repositories/GatewayRepository';
 
 const ZeroBN = new BigNumber('0');
 

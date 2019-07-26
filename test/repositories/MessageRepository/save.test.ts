@@ -1,21 +1,13 @@
 import 'mocha';
+
 import BigNumber from 'bignumber.js';
 
-import Repositories from '../../../src/repositories/Repositories';
-
-import {
-  MessageType,
-  MessageStatus,
-  MessageDirection,
-} from '../../../src/repositories/MessageRepository';
-
 import Message from '../../../src/models/Message';
+import {
+  MessageDirection, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-
-chai.use(chaiAsPromised);
 
 interface TestConfigInterface {
   repos: Repositories;

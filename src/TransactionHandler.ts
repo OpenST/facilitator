@@ -38,15 +38,17 @@ export default class TransactionHandler {
 
     const persistPromises = Object.keys(bulkTransactions).map(
       async (transactionKind): Promise<void> => {
-        Logger.info(`Handling records of kind ${transactionKind}`);
-        Logger.info(`Records: ${JSON.stringify(bulkTransactions)}`);
+        Logger.debug(`Handling records of kind ${transactionKind}`);
+        Logger.debug(`Records: ${JSON.stringify(bulkTransactions)}`);
         const handler = this.handlers[transactionKind];
         if (typeof handler === 'undefined') {
+          Logger.error(`Contract entity handler not found for ${transactionKind}`);
           throw new HandlerNotFoundException(
             `Handler implementation not found for ${transactionKind}`,
           );
         }
         const transactions = bulkTransactions[transactionKind];
+        Logger.debug(`Persisting  ${transactions.length} transaction for kind ${transactionKind}`);
         models[transactionKind] = await handler.persist(transactions);
       },
     );

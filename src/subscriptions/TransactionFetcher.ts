@@ -1,7 +1,7 @@
-import GraphClient from './GraphClient';
 import FetchQueries from '../GraphQueries/FetchQueries';
-import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import Logger from '../Logger';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import GraphClient from './GraphClient';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -18,7 +18,10 @@ export default class TransactionFetcher {
    * @param graphClient Graph client object.
    * @param contractEntityRepository ContractEntityRepository.
    */
-  public constructor(graphClient: GraphClient, contractEntityRepository: ContractEntityRepository) {
+  public constructor(
+    graphClient: GraphClient,
+    contractEntityRepository: ContractEntityRepository,
+  ) {
     this.graphClient = graphClient;
     this.contractEntityRepository = contractEntityRepository;
   }
@@ -39,11 +42,12 @@ export default class TransactionFetcher {
     );
 
     if (contractEntityRecord === null || contractEntityRecord.timestamp === null) {
-      throw new Error(`Contract Entity record not found for entity ${entity} and address ${entityRecord.contractAddress}`);
+      throw new Error(`Contract Entity record not found for entity ${entity} `
+        + `and address ${entityRecord.contractAddress}`);
     }
     const uts = contractEntityRecord.timestamp;
     const fetchQuery = FetchQueries[entity];
-    Logger.info(`Querying records for ${entity} for UTS ${uts}`);
+    Logger.debug(`Querying records for ${entity} for UTS ${uts}`);
     let skip = 0;
     let transactions: object[] = [];
     const response: any = {};
@@ -54,9 +58,12 @@ export default class TransactionFetcher {
         limit: this.queryLimit,
         skip,
       };
+
+      Logger.debug(`Query variables ${JSON.stringify(variables)}`);
       /* eslint-disable no-await-in-loop */
       // Note: await is needed here because GraphQL doesn't support aggregated count query.
       const graphQueryResult = await this.graphClient.query(fetchQuery, variables);
+      Logger.debug(`Received ${graphQueryResult.data[entity].length} on query response of entity ${entity} `);
       if (graphQueryResult.data[entity].length === 0) break;
       transactions = transactions.concat(graphQueryResult.data[entity]);
       skip += this.queryLimit;

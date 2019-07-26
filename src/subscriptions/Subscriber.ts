@@ -1,8 +1,10 @@
 import { Subscription } from 'apollo-client/util/Observable';
-import GraphClient from './GraphClient';
-import TransactionHandler from '../TransactionHandler';
-import TransactionFetcher from './TransactionFetcher';
+
+import Logger from '../Logger';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import TransactionHandler from '../TransactionHandler';
+import GraphClient from './GraphClient';
+import TransactionFetcher from './TransactionFetcher';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -35,7 +37,6 @@ export default class Subscriber {
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
     contractEntityRepository: ContractEntityRepository,
-
   ) {
     this.contractEntityRepository = contractEntityRepository;
     this.querySubscriptions = {};
@@ -46,28 +47,33 @@ export default class Subscriber {
   }
 
   /** Subscribes to subscription queries. */
-  public async subscribe() {
-    Object.keys(this.subscriptionQueries).forEach(async (entity) => {
-      this.querySubscriptions[entity] = await this.graphClient.subscribe(
-        this.subscriptionQueries[entity],
-        this.handler,
-        this.fetcher,
-        this.contractEntityRepository,
-      );
-    });
+  public async subscribe(): Promise<void[]> {
+    const subscriptionPromises = Object.keys(this.subscriptionQueries).map(
+      async (entity) => {
+        Logger.debug(`Subscribing for entity: ${entity}`);
+        return this.graphClient.subscribe(
+          this.subscriptionQueries[entity],
+          this.handler,
+          this.fetcher,
+          this.contractEntityRepository,
+        ).then((querySubscription) => {
+          Logger.debug(`Subscription done for entity: ${entity}`);
+          this.querySubscriptions[entity] = querySubscription;
+        });
+      },
+    );
+    return Promise.all(subscriptionPromises);
   }
 
-  /**
-   * Unsubscribes the query subscribers and deletes the query subscribers object.
-   *
-   * @return {Promise<void>}
-   */
+  /** Unsubscribes the query subscribers and deletes the query subscribers object. */
   public async unsubscribe() {
     Object.keys(this.subscriptionQueries).forEach(async (entity) => {
+      Logger.debug(`Unsubscribing to block chain entity ${entity}`);
       const querySubscription = this.querySubscriptions[entity];
-      await Promise.resolve(querySubscription.unsubscribe());
+      querySubscription.unsubscribe();
+      Logger.debug(`Unsubscribed to block chain entity ${entity}.`);
     });
-    // Deletes all query susbcribers as they are non useful
+    // Deletes all query susbcribers as they are non useful.
     this.querySubscriptions = {};
   }
 }

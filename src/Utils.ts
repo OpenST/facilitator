@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 
 const Utils = {
   /**
@@ -23,15 +23,15 @@ const Utils = {
    * @param txOption Transaction options.
    */
   async sendTransaction(tx: any, txOption: any): Promise<string> {
-    return new Promise(async (onResolve, onReject) => {
+    return new Promise(async (onResolve, onReject): Promise<void> => {
       const txOptions = Object.assign({}, txOption);
       if (txOptions.gas === undefined) {
         txOptions.gas = await tx.estimateGas(txOptions);
       }
 
       tx.send(txOptions)
-        .on('transactionHash', (hash: string) => onResolve(hash))
-        .on('error', (error: Error) => onReject(error));
+        .on('transactionHash', (hash: string): void => onResolve(hash))
+        .on('error', (error: Error): void => onReject(error));
     });
   },
 

@@ -1,25 +1,26 @@
-import * as sinon from 'sinon';
-import { interacts } from '@openst/mosaic-contracts';
-import ConfirmStakeIntentService from '../../../src/services/ConfirmStakeIntentService';
-import StubData from '../../test_utils/StubData';
-import SpyAssert from '../../test_utils/SpyAssert';
-import Message from '../../../src/models/Message';
-import { MessageRepository } from '../../../src/repositories/MessageRepository';
-import Utils from '../../../src/Utils';
-import Gateway from '../../../src/models/Gateway';
-import StakeRequest from '../../../src/models/StakeRequest';
-import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
-import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
+import sinon from 'sinon';
+import Web3 from 'web3';
+import * as web3utils from 'web3-utils';
 
-const Mosaic = require('@openst/mosaic.js');
-const Web3 = require('web3');
-const web3utils = require('web3-utils');
+import { interacts } from '@openst/mosaic-contracts';
+import { ProofGenerator } from '@openst/mosaic-proof';
+
+import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
+import Gateway from '../../../src/models/Gateway';
+import Message from '../../../src/models/Message';
+import StakeRequest from '../../../src/models/StakeRequest';
+import { MessageRepository } from '../../../src/repositories/MessageRepository';
+import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
+import ConfirmStakeIntentService from '../../../src/services/ConfirmStakeIntentService';
+import Utils from '../../../src/Utils';
+import SpyAssert from '../../test_utils/SpyAssert';
+import StubData from '../../test_utils/StubData';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-describe('ConfirmStakeIntentService.update()', () => {
-  const originWeb3 = new Web3();
-  const auxiliaryWeb3 = new Web3();
+describe('ConfirmStakeIntentService.update()', (): void => {
+  const originWeb3 = new Web3(null);
+  const auxiliaryWeb3 = new Web3(null);
   const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
   const coGatewayAddress = '0x0000000000000000000000000000000000000002';
@@ -44,13 +45,13 @@ describe('ConfirmStakeIntentService.update()', () => {
       storageProof: [{ serializedProof: 'storageProof' }],
     };
     proofGeneratorStub = sinon.replace(
-      Mosaic.Utils.ProofGenerator.prototype,
+      ProofGenerator.prototype,
       'getOutboxProof',
       sinon.fake.resolves(proof),
     );
   });
 
-  it('Should react to update on gateway model ', async () => {
+  it('Should react to update on gateway model ', async (): Promise<void> => {
     const messageRepository = sinon.createStubInstance(MessageRepository, {
       getMessagesForConfirmation: Promise.resolve([message]),
     });
@@ -151,7 +152,8 @@ describe('ConfirmStakeIntentService.update()', () => {
     sinon.restore();
   });
 
-  it('Should not do confirmStakeIntent if no messages available to confirm', async () => {
+  it('Should not do confirmStakeIntent if '
+    + 'no messages available to confirm', async (): Promise<void> => {
     const messageRepository = sinon.createStubInstance(MessageRepository, {
       getMessagesForConfirmation: Promise.resolve([]),
     });

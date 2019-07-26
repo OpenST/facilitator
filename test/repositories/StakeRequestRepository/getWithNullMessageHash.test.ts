@@ -15,18 +15,17 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
-import BigNumber from 'bignumber.js';
-import StakeRequest from '../../../src/models/StakeRequest';
-import Repositories from '../../../src/repositories/Repositories';
-import Util from './util';
-import assert from '../../test_utils/assert';
-import Message from '../../../src/models/Message';
-import {
-  MessageDirection,
-  MessageStatus,
-  MessageType,
-} from '../../../src/repositories/MessageRepository';
 
+import BigNumber from 'bignumber.js';
+
+import Message from '../../../src/models/Message';
+import StakeRequest from '../../../src/models/StakeRequest';
+import {
+  MessageDirection, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../test_utils/assert';
+import Util from './util';
 
 interface TestConfigInterface {
   repos: Repositories;

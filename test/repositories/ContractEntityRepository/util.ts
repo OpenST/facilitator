@@ -1,5 +1,5 @@
-import assert from '../../test_utils/assert';
 import ContractEntity from '../../../src/models/ContractEntity';
+import assert from '../../test_utils/assert';
 
 /**
  * It contains common methods used for testing purpose of ContractEntityRepository.

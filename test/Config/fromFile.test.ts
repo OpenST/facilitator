@@ -1,9 +1,9 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-import MosaicConfig from '../../src/MosaicConfig';
-import { Config, FacilitatorConfig } from '../../src/Config/Config';
-import SpyAssert from '../test_utils/SpyAssert';
+import sinon from 'sinon';
 
+import { Config, FacilitatorConfig } from '../../src/Config/Config';
+import MosaicConfig from '../../src/Config/MosaicConfig';
+import assert from '../test_utils/assert';
+import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Config.fromFile()', () => {
   const mosaicConfigPath = 'test/Config/mosaic-config.json';

@@ -1,10 +1,11 @@
-import Facilitator from './Facilitator';
 import ConfigFactory from './Config/ConfigFactory';
+import Facilitator from './Facilitator';
+import Handlers from './handlers/Handlers';
+import Logger from './Logger';
 import Repositories from './repositories/Repositories';
 import Services from './services/Services';
 import Subscriptions from './subscriptions/Subscriptions';
 import TransactionHandler from './TransactionHandler';
-import Handlers from './handlers/Handlers';
 
 export default class Container {
   /**
@@ -21,6 +22,7 @@ export default class Container {
     mosaicConfigPath?: string,
     facilitatorConfigPath?: string,
   ): Promise<Facilitator> {
+    Logger.debug('Reading config file');
     const configFactory: ConfigFactory = new ConfigFactory(
       originChain,
       auxChainId ? Number.parseInt(auxChainId, 10) : undefined,
@@ -28,7 +30,7 @@ export default class Container {
       facilitatorConfigPath,
     );
     const config = configFactory.getConfig();
-
+    Logger.debug('Config loaded successfully.');
     const repositories = await Repositories.create(config.facilitator.database.path);
     const transactionHandler = new TransactionHandler(
       Handlers.create(repositories, config.facilitator.auxChainId),

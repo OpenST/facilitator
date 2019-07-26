@@ -1,4 +1,4 @@
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import Facilitator from '../../src/Facilitator';
 import Subscriber from '../../src/subscriptions/Subscriber';

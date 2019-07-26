@@ -16,15 +16,14 @@
 
 /* eslint-disable class-methods-use-this */
 
-import { DataTypes, Model, InitOptions } from 'sequelize';
+import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { MessageModel } from './MessageRepository';
-import Subject from '../observer/Subject';
+import { DataTypes, InitOptions, Model } from 'sequelize';
+
 import StakeRequest from '../models/StakeRequest';
+import Subject from '../observer/Subject';
 import Utils from '../Utils';
-
-import assert = require('assert');
-
+import { MessageModel } from './MessageRepository';
 
 /**
  * An interface, that represents a row from a stake request table.

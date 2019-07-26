@@ -17,26 +17,25 @@
 import 'mocha';
 
 import BigNumber from 'bignumber.js';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
+import Web3 from 'web3';
+
 import { interacts } from '@openst/mosaic-contracts';
-import StakeRequest from '../../../src/models/StakeRequest';
-import Repositories from '../../../src/repositories/Repositories';
-import {
-  MessageDirection,
-  MessageStatus,
-  MessageType,
-} from '../../../src/repositories/MessageRepository';
+
+import { ORIGIN_GAS_PRICE } from '../../../src/Constants';
 import Message from '../../../src/models/Message';
+import StakeRequest from '../../../src/models/StakeRequest';
+import {
+  MessageDirection, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import Repositories from '../../../src/repositories/Repositories';
 import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
+import Utils from '../../../src/Utils';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
-import Utils from '../../../src/Utils';
-import { ORIGIN_GAS_PRICE } from '../../../src/Constants';
-
-const Web3 = require('web3');
 
 interface TestConfigInterface {
-  web3: any;
+  web3: Web3;
   repos: Repositories;
   stakeRequestWithMessageHashB: StakeRequest;
   stakeRequestWithNullMessageHashC: StakeRequest;
@@ -49,19 +48,17 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-const sandbox = sinon.createSandbox();
-
 describe('AcceptStakeRequestService::update', (): void => {
+  const web3 = new Web3(null);
   let acceptStakeRequestSpy: any;
   let interactsSpy: any;
-  let web3: any;
   const ostComposerAddress = '0x0000000000000000000000000000000000000001';
   const originWorkerAddress = '0x0000000000000000000000000000000000000002';
   let sendTransactionSpy: any;
   const fakeTransactionHash = 'fakeTransactionHash';
+
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
-    web3 = new Web3();
     const service = new AcceptStakeRequestService(
       repos,
       web3,
@@ -100,7 +97,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       },
     };
 
-    sandbox.stub(AcceptStakeRequestService, 'generateSecret').returns({
+    sinon.stub(AcceptStakeRequestService, 'generateSecret').returns({
       secret: config.fakeData.secret,
       hashLock: config.fakeData.hashLock,
     });
@@ -146,6 +143,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       'acceptStakeRequest',
       sinon.fake.returns(fakeTransactionHash),
     );
+
     interactsSpy = sinon.replace(
       interacts,
       'getOSTComposer',
@@ -161,7 +159,6 @@ describe('AcceptStakeRequestService::update', (): void => {
 
   afterEach(async (): Promise<void> => {
     sinon.restore();
-    sandbox.restore();
   });
 
   it('Checks that the stake request repository properly updated.', async (): Promise<void> => {

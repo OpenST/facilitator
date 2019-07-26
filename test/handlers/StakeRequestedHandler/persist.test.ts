@@ -1,20 +1,18 @@
-import { assert } from 'chai';
-import * as sinon from 'sinon';
-
 import BigNumber from 'bignumber.js';
+import sinon from 'sinon';
+import * as Web3Utils from 'web3-utils';
+
 import StakeRequestHandler from '../../../src/handlers/StakeRequestHandler';
 import StakeRequest from '../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
-
+import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
-
-const Utils = require('web3-utils');
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully', async (): Promise<void> => {
     const transactions = [{
       id: '1',
-      stakeRequestHash: Utils.sha3('1'),
+      stakeRequestHash: Web3Utils.sha3('1'),
       amount: '10',
       beneficiary: '0x7f14BcAFdF55a45Fd64384e3496b62Ca8A1B099D',
       gasPrice: '1',

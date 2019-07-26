@@ -1,16 +1,14 @@
 
-import { assert } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
+import * as web3utils from 'web3-utils';
 
-import SpyAssert from '../../test_utils/SpyAssert';
-import {
-  MessageDirection,
-  MessageRepository, MessageStatus, MessageType,
-} from '../../../src/repositories/MessageRepository';
-import Message from '../../../src/models/Message';
 import MintProgressHandler from '../../../src/handlers/MintProgressHandler';
-
-const web3utils = require('web3-utils');
+import Message from '../../../src/models/Message';
+import {
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
+} from '../../../src/repositories/MessageRepository';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('MintProgress.persist()', () => {
   const transactions = [{

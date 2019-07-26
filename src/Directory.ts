@@ -1,6 +1,7 @@
-import * as path from 'path';
-import * as os from 'os';
+import os from 'os';
+import path from 'path';
 
+const MOSAIC_CONFIG_FILE = 'mosaic.json';
 /**
  * Directory provides operations on strings representing directories.
  */
@@ -43,16 +44,6 @@ export default class Directory {
   }
 
   /**
-   * @returns The absolute path to the directory in which we publish mosaic configs.
-   */
-  public static get getPublishMosaicConfigDir(): string {
-    return path.join(
-      Directory.getDefaultMosaicDataDir,
-      'configs',
-    );
-  }
-
-  /**
    * This returns default facilitator config path
    * @param chain Chain Identifier.
    */
@@ -63,4 +54,13 @@ export default class Directory {
       Directory.MOSAIC_FACILITATOR_CONFIG,
     );
   }
+
+  /**
+   * Returns the mosaic json file name.
+   */
+  public static getMosaicFileName(): string {
+    return MOSAIC_CONFIG_FILE;
+  }
+
+
 }
