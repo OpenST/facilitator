@@ -1,6 +1,8 @@
 import fs from 'fs-extra';
 import BigNumber from 'bignumber.js';
+import Web3 from 'web3';
 import Logger from './Logger';
+import Account from './Account';
 
 const Utils = {
   /**
@@ -23,17 +25,22 @@ const Utils = {
    * This method submits a raw transaction and returns transaction hash.
    * @param tx Raw transaction.
    * @param txOption Transaction options.
+   * @param web3 The web3 instance to be used for fetching nonce.
    */
-  async sendTransaction(tx: any, txOption: any): Promise<string> {
+  async sendTransaction(tx: any, txOption: any, web3: Web3): Promise<string> {
     return new Promise(async (onResolve, onReject): Promise<void> => {
       const txOptions = Object.assign({}, txOption);
       Logger.debug(`Transaction sender ${txOptions.from}`);
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
         txOptions.gas = await tx.estimateGas(txOptions);
+        Logger.debug(`Transaction gas estimates  ${txOptions.gas}`);
       }
-      Logger.debug(`Transaction gas estimates  ${txOptions.gas}`);
-
+      if (txOptions.nonce === undefined) {
+        const account: Account = new Account(txOptions.from);
+        txOptions.nonce = await account.getNonce(web3);
+        Logger.debug(`Nonce to be used for transaction sender: ${txOptions.from} is ${txOptions.nonce}`);
+      }
       tx.send(txOptions)
         .on('transactionHash', (hash: string): void => onResolve(hash))
         .on('error', (error: Error): void => onReject(error));
@@ -59,7 +66,7 @@ const Utils = {
     const currentTimestampInMs = new Date().getTime();
     const currentTimestampInS = Math.round(currentTimestampInMs / 1000);
     return new BigNumber(currentTimestampInS);
-  }
+  },
 
 };
 

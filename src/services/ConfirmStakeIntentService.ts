@@ -181,6 +181,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
+      this.auxiliaryWeb3,
     );
   }
 }
