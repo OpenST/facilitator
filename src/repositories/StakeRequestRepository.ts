@@ -25,6 +25,7 @@ import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import { MessageModel } from './MessageRepository';
 
+
 /**
  * An interface, that represents a row from a stake request table.
  *
@@ -46,6 +47,8 @@ class StakeRequestModel extends Model {
   public readonly nonce!: BigNumber;
 
   public readonly gateway!: string;
+
+  public readonly staker!: string;
 
   public readonly stakerProxy!: string;
 
@@ -117,6 +120,10 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
           type: DataTypes.STRING,
           allowNull: false,
         },
+        staker: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
         stakerProxy: {
           type: DataTypes.STRING,
           allowNull: false,
@@ -145,16 +152,17 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
    */
   public async save(stakeRequest: StakeRequest): Promise<StakeRequest> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(stakeRequest);
-
     await StakeRequestModel.upsert(
       stakeRequest,
       {
         fields: definedOwnProps,
       },
     );
-
     const stakeRequestOutput = await this.get(stakeRequest.stakeRequestHash);
-    assert(stakeRequestOutput !== null);
+    assert(
+      stakeRequestOutput !== null,
+      `Updated stakeRequest not found for stakeRequestHash: ${stakeRequest.stakeRequestHash}`,
+    );
 
     this.newUpdate(stakeRequestOutput as StakeRequest);
 
@@ -233,6 +241,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
     stakeRequest.gasLimit = new BigNumber(stakeRequestModel.gasLimit);
     stakeRequest.nonce = new BigNumber(stakeRequestModel.nonce);
     stakeRequest.gateway = stakeRequestModel.gateway;
+    stakeRequest.staker = stakeRequestModel.staker;
     stakeRequest.stakerProxy = stakeRequestModel.stakerProxy;
     stakeRequest.createdAt = stakeRequestModel.createdAt;
     stakeRequest.updatedAt = stakeRequestModel.updatedAt;

@@ -2,6 +2,8 @@ import { FacilitatorStartException } from '../Exception';
 import { Config, FacilitatorConfig } from './Config';
 import MosaicConfig from './MosaicConfig';
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /**
  * This is a factory class to create config.
  */

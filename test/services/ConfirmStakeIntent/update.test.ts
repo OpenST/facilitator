@@ -24,6 +24,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
   const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
   const coGatewayAddress = '0x0000000000000000000000000000000000000002';
+  const messageOutBoxOffset = '7';
   let confirmStakeIntentService: ConfirmStakeIntentService;
   let gateway: Gateway;
   let message: Message;
@@ -113,7 +114,12 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       proofGeneratorStub,
       1,
-      [[gateway.gatewayAddress, [message.messageHash], gateway.lastRemoteGatewayProvenBlockHeight]],
+      [[
+        gateway.gatewayAddress,
+        [message.messageHash],
+        gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+        messageOutBoxOffset,
+      ]],
     );
 
     const transactionOptions = {
@@ -216,7 +222,12 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       proofGeneratorStub,
       0,
-      [[gateway.gatewayAddress, [], gateway.lastRemoteGatewayProvenBlockHeight]],
+      [[
+        gateway.gatewayAddress,
+        [],
+        gateway.lastRemoteGatewayProvenBlockHeight,
+        messageOutBoxOffset,
+      ]],
     );
 
     const transactionOptions = {

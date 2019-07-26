@@ -72,7 +72,10 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       .filter((auxiliaryChain): boolean => auxiliaryChain.chainId === this.auxiliaryChainId
         && auxiliaryChain.lastOriginBlockHeight !== undefined);
 
-    assert(interestedAuxiliaryChainRecord.length <= 1);
+    assert(
+      interestedAuxiliaryChainRecord.length <= 1,
+      'interestedAuxiliaryChainRecord length should be less or equal to 1',
+    );
 
     if (interestedAuxiliaryChainRecord.length === 1) {
       await this.proveGateway(
@@ -100,11 +103,12 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
       return Promise.reject(new Error('Gateway record does not exist for given gateway'));
     }
 
-    const pendingMessages = await this.messageRepository.hasPendingOriginMessages(
-      blockHeight,
+    const pendingMessages = await this.messageRepository.getMessagesForConfirmation(
       this.gatewayAddress,
+      blockHeight,
     );
-    if (!pendingMessages) {
+    Logger.debug(`Total pending message ${pendingMessages.length}`);
+    if (pendingMessages.length === 0) {
       Logger.info(
         `There are no pending messages for gateway ${this.gatewayAddress}.`
         + ' Hence skipping proveGateway',
@@ -127,7 +131,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     } = await proofGenerator.getOutboxProof(
       gatewayAddress,
       [],
-      blockHeight.toString(16),
+      blockHeight.toString(10),
     );
     Logger.info(`Proof generated encodedAccountValue ${encodedAccountValue} and serializedAccountProof ${serializedAccountProof} `);
     assert(encodedAccountValue !== undefined);

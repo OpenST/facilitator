@@ -21,6 +21,7 @@ import ProveGatewayHandler from './ProveGatewayHandler';
 import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
 import StakeProgressHandler from './StakeProgressHandler';
 import StakeRequestHandler from './StakeRequestHandler';
+import StakeIntentConfirmHandler from './StakeIntentConfirmHandler';
 
 export default class Handlers {
   /**
@@ -39,6 +40,7 @@ export default class Handlers {
     gatewayProvens: ProveGatewayHandler;
     stakeProgresseds: StakeProgressHandler;
     mintProgresseds: MintProgressHandler;
+    stakeIntentConfirmeds: StakeIntentConfirmHandler;
   } {
     return {
       stakeRequesteds: new StakeRequestHandler(
@@ -52,6 +54,7 @@ export default class Handlers {
       gatewayProvens: new ProveGatewayHandler(
         repos.gatewayRepository,
       ),
+      stakeIntentConfirmeds: new StakeIntentConfirmHandler(repos.messageRepository),
       stakeProgresseds: new StakeProgressHandler(repos.messageRepository),
       mintProgresseds: new MintProgressHandler(repos.messageRepository),
     };

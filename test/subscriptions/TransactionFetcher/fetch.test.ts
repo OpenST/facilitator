@@ -40,8 +40,8 @@ describe('TransactionFetcher.fetch()', () => {
     const iterationOneVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
       uts,
-      limit: 100,
       skip: 0,
+      limit: 100,
     };
 
     const mockQueryResponseIterationTwo = {
@@ -55,8 +55,8 @@ describe('TransactionFetcher.fetch()', () => {
     const iterationTwoVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
       uts,
-      limit: 100,
       skip: 100,
+      limit: 100,
     };
 
     const mockQueryResponseIterationThree = {
@@ -65,8 +65,8 @@ describe('TransactionFetcher.fetch()', () => {
     const iterationThreeVariables = {
       contractAddress: '0x0000000000000000000000000000000000000022',
       uts,
-      limit: 100,
       skip: 200,
+      limit: 100,
     };
 
     const spyGraphClientQuery = sinon.stub(

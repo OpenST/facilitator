@@ -35,6 +35,8 @@ export default class StakeRequest extends Comparable<StakeRequest> {
 
   public gateway?: string;
 
+  public staker?: string;
+
   public stakerProxy?: string;
 
   public messageHash?: string;
@@ -51,6 +53,7 @@ export default class StakeRequest extends Comparable<StakeRequest> {
     gasLimit?: BigNumber,
     nonce?: BigNumber,
     gateway?: string,
+    staker?: string,
     stakerProxy?: string,
     messageHash?: string,
     createdAt?: Date,
@@ -65,6 +68,7 @@ export default class StakeRequest extends Comparable<StakeRequest> {
     this.gasLimit = gasLimit;
     this.nonce = nonce;
     this.gateway = gateway;
+    this.staker = staker;
     this.stakerProxy = stakerProxy;
     this.messageHash = messageHash;
     this.createdAt = createdAt;
