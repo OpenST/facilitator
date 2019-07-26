@@ -99,7 +99,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
     );
     assert(
       updatedContractEntity !== null,
-      `Updated contract entity record not found for contractAddress: ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`
+      `Updated contract entity record not found for contractAddress: ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`,
     );
 
     this.newUpdate(updatedContractEntity as ContractEntity);

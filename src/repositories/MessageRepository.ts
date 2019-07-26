@@ -212,7 +212,7 @@ export class MessageRepository extends Subject<Message> {
     );
     assert(
       updatedMessage !== null,
-      `Updated message record not found for messageHash: ${message.messageHash}`
+      `Updated message record not found for messageHash: ${message.messageHash}`,
     );
 
     this.newUpdate(updatedMessage as Message);
