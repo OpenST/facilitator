@@ -6,6 +6,8 @@ import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
 import ContractEntityHandler from './ContractEntityHandler';
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /**
  * This class handles GatewayProven transactions and updates lastRemoteGatewayProvenBlockHeight
  * in Gateway model.

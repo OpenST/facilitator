@@ -90,7 +90,7 @@ export default class ProgressService {
       gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    assert(message.secret !== undefined);
+    assert(message.secret !== undefined, 'message secret is undefined');
 
     const rawTx = eip20Gateway.methods.progressStake(
       message.messageHash,

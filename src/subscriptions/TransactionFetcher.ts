@@ -56,6 +56,7 @@ export default class TransactionFetcher {
         contractAddress: entityRecord.contractAddress,
         uts,
         skip,
+        limit: this.queryLimit,
       };
 
       Logger.debug(`Query variables ${JSON.stringify(variables)}`);

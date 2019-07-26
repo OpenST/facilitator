@@ -164,7 +164,8 @@ export default class MosaicConfig {
   }
 
   /**
-   * This method validate json object against mosaic config schema also throws an exception on failure.
+   * This method validate json object against mosaic config schema
+   * also throws an exception on failure.
    * @param jsonObject JSON object to be validated against schema.
    */
   private static validateSchema(jsonObject: any): void {
