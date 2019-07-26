@@ -1,7 +1,7 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import {
-  col, DataTypes, fn, InitOptions, Model, Op,
+  DataTypes, InitOptions, Model, Op,
 } from 'sequelize';
 
 import Message from '../models/Message';
@@ -124,7 +124,7 @@ export class MessageRepository extends Subject<Message> {
               MessageStatus.Revoked,
             ],
           }),
-          allowNull: false,
+          allowNull: true,
         },
         gasPrice: {
           type: DataTypes.BIGINT,
@@ -210,7 +210,10 @@ export class MessageRepository extends Subject<Message> {
     const updatedMessage = await this.get(
       message.messageHash,
     );
-    assert(updatedMessage !== null);
+    assert(
+      updatedMessage !== null,
+      `Updated message record not found for messageHash: ${message.messageHash}`,
+    );
 
     this.newUpdate(updatedMessage as Message);
 
@@ -239,61 +242,6 @@ export class MessageRepository extends Subject<Message> {
   }
 
   /**
-   * This return gateways which has pending stake and mint messages at or below given block.
-   *
-   * @param gateways List of gateway address.
-   * @param blockHeight Height below which pending messages needs to be checked.
-   */
-  public async getGatewaysWithPendingOriginMessages(
-    gateways: string[],
-    blockHeight: BigNumber,
-  ): Promise<string[]> {
-    const messageModels = await MessageModel.findAll({
-      attributes: [[fn('DISTINCT', col('gateway_address')), 'gatewayAddress']],
-      where: {
-        [Op.and]: {
-          gatewayAddress: {
-            [Op.in]: gateways,
-          },
-          sourceDeclarationBlockHeight: {
-            [Op.lte]: blockHeight,
-          },
-          sourceStatus: MessageStatus.Declared,
-          direction: MessageDirection.OriginToAuxiliary,
-        },
-
-      },
-    });
-    return messageModels.map((model: MessageModel) => model.gatewayAddress);
-  }
-
-  /**
-   * This method checks if there are pending messages for a gateway at or below at
-   * given block height.
-   *
-   * @param blockHeight Block height where pending messages needs to be checked.
-   * @param gateway Address of gateway.
-   */
-  public async hasPendingOriginMessages(
-    blockHeight: BigNumber,
-    gateway: string,
-
-  ): Promise<boolean> {
-    return MessageModel.count({
-      where: {
-        [Op.and]: {
-          gatewayAddress: gateway,
-          sourceDeclarationBlockHeight: {
-            [Op.lte]: blockHeight,
-          },
-          sourceStatus: MessageStatus.Declared,
-          direction: MessageDirection.OriginToAuxiliary,
-        },
-      },
-    }).then((count: number) => count > 0);
-  }
-
-  /**
    * This returns stake and mint messages for a given address with sourceStatus declared, target
    * status undeclared below or equal to the given block height.
    *
@@ -308,12 +256,12 @@ export class MessageRepository extends Subject<Message> {
       where: {
         [Op.and]: {
           gatewayAddress,
-          sourceStatus: MessageStatus.Declared,
-          targetStatus: MessageStatus.Undeclared,
-          direction: MessageDirection.OriginToAuxiliary,
           sourceDeclarationBlockHeight: {
             [Op.lte]: blockHeight,
           },
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
+          direction: MessageDirection.OriginToAuxiliary,
         },
       },
     });

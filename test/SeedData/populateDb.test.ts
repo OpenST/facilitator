@@ -206,7 +206,7 @@ describe('SeedData.populateDb()', (): void => {
       methods: {
         activated: sinon.fake.returns({ call: async (): Promise<boolean> => Promise.resolve(true) }),
         bounty: sinon.fake.returns(
-          { call: async (): Promise<BigNumber> => Promise.resolve(new BigNumber(10)) }
+          { call: async (): Promise<BigNumber> => Promise.resolve(new BigNumber(10)) },
         ),
       },
     };
@@ -246,7 +246,7 @@ describe('SeedData.populateDb()', (): void => {
       repositories.gatewayRepository,
       repositories.auxiliaryChainRepository,
       repositories.contractEntityRepository,
-      currentTimestamp
+      currentTimestamp,
     );
   });
 

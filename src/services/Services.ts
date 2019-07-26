@@ -7,6 +7,8 @@ import ProveGatewayService from './ProveGatewayService';
 import ConfirmStakeIntentService from "./ConfirmStakeIntentService";
 import ProgressService from "./ProgressService";
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /**
  * This class is container that holds instances of all the services.
  */
@@ -66,8 +68,9 @@ export default class Services {
       repositories.stakeRequestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
-      utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!),
+      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
+      config.mosaic.auxiliaryChains[auxChainId]
+        .contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
 
@@ -75,7 +78,7 @@ export default class Services {
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
+      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
       config.facilitator.chains[config.facilitator.originChain].worker,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
@@ -84,7 +87,7 @@ export default class Services {
       acceptStakeRequestService,
       proveGatewayService,
       confirmStakeIntentService,
-      progressService
+      progressService,
     );
   }
 }

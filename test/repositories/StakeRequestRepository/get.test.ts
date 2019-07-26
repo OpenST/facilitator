@@ -44,6 +44,7 @@ describe('StakeRequestRepository::get', (): void => {
       new BigNumber('3'),
       new BigNumber('4'),
       'gateway',
+      'staker',
       'stakerProxy',
     );
 

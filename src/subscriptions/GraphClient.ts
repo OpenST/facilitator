@@ -70,7 +70,6 @@ export default class GraphClient {
             string,
             Record<string, any>[]
             > = await fetcher.fetch(response.data);
-            Logger.debug(`Fetched records ${transactions}`);
             await handler.handle(transactions);
             Logger.debug('Updating UTS');
             await GraphClient.updateLatestUTS(

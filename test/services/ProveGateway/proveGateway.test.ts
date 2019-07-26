@@ -31,7 +31,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     });
 
     const messageRepository = sinon.createStubInstance(MessageRepository, {
-      hasPendingOriginMessages: Promise.resolve(true),
+      getMessagesForConfirmation: Promise.resolve([StubData.messageAttributes()]),
     });
 
     const proof = {
@@ -84,9 +84,9 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     );
 
     SpyAssert.assert(
-      messageRepository.hasPendingOriginMessages,
+      messageRepository.getMessagesForConfirmation,
       1,
-      [[blockNumber, gatewayAddress]],
+      [[gatewayAddress, blockNumber]],
     );
 
     SpyAssert.assert(
@@ -156,7 +156,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     });
 
     const messageRepository = sinon.createStubInstance(MessageRepository, {
-      hasPendingOriginMessages: Promise.resolve(false),
+      getMessagesForConfirmation: Promise.resolve([]),
     });
 
     const proof = {
@@ -209,9 +209,9 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     );
 
     SpyAssert.assert(
-      messageRepository.hasPendingOriginMessages,
+      messageRepository.getMessagesForConfirmation,
       1,
-      [[blockNumber, gatewayAddress]],
+      [[gatewayAddress, blockNumber]],
     );
 
     assert.strictEqual(

@@ -5,7 +5,10 @@ import Account from '../Account';
 import { Chain, FacilitatorConfig } from '../Config/Config';
 import DatabaseFileHelper from '../DatabaseFileHelper';
 import Logger from '../Logger';
-import Utils from '../Utils';
+import MosaicConfig from '../Config/MosaicConfig';
+// import { Config, ENV_WORKER_PASSWORD_PREFIX } from '../Config/Config';
+// import Repositories from '../repositories/Repositories';
+// import SeedData from '../SeedData';
 
 commander
   .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -16,7 +19,7 @@ commander
   .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
   .option('-dbp, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forceful override facilitator config')
-  .action((options): void => {
+  .action(async (options): Promise<void> => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 
@@ -70,7 +73,7 @@ commander
     const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);
 
     // Get origin chain id.
-    const mosaicConfig = Utils.getJsonDataFromPath(options.mosaicConfig);
+    const mosaicConfig = MosaicConfig.fromFile(options.mosaicConfig);
     const auxChain = mosaicConfig.auxiliaryChains[options.chainId];
     if (auxChain === null || auxChain === undefined) {
       Logger.error('aux chain id is not present in the mosaic config');
@@ -97,12 +100,24 @@ commander
       const account: Account = Account.create(new Web3(null), password);
 
       facilitatorConfig.chains[chainId] = new Chain(rpc, account.address);
+      // const envVariableNameForWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${account.address}`;
+      // process.env[envVariableNameForWorkerPassword] = password;
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
 
     setFacilitator(originChainId, options.originRpc, options.originPassword);
     setFacilitator(options.chainId, options.auxiliaryRpc, options.auxiliaryPassword);
+
+    // const config = new Config(mosaicConfig, facilitatorConfig);
+    // const repositories = await Repositories.create(config.facilitator.database.path);
+    // const seedData = new SeedData(
+    //   config,
+    //   repositories.gatewayRepository,
+    //   repositories.auxiliaryChainRepository,
+    //   repositories.contractEntityRepository,
+    // );
+    // await seedData.populateDb();
 
     facilitatorConfig.writeToFacilitatorConfig(options.chainId);
     Logger.info('facilitator config file is generated');

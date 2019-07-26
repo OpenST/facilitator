@@ -91,7 +91,7 @@ describe('ProgressService.update()', () => {
     message = sinon.createStubInstance(Message);
     message.gatewayAddress = gatewayAddress;
     message.messageHash = '0x4223A868';
-    message.hashLock = '0x123AAF';
+    message.secret = '0x123AAF';
     message.isValidSecret.callsFake(() => true);
   });
 
@@ -124,13 +124,13 @@ describe('ProgressService.update()', () => {
     SpyAssert.assert(
       progressMintSpy,
       1,
-      [[message.messageHash, message.hashLock]],
+      [[message.messageHash, message.secret]],
     );
 
     SpyAssert.assert(
       progressStakeSpy,
       1,
-      [[message.messageHash, message.hashLock]],
+      [[message.messageHash, message.secret]],
     );
 
     SpyAssert.assert(
@@ -143,91 +143,6 @@ describe('ProgressService.update()', () => {
       gatewaySpy,
       1,
       [[originWeb3, gatewayAddress]],
-    );
-
-    sinon.restore();
-  });
-
-  it('should progress only on origin when source status is declared', async () => {
-    message.sourceStatus = MessageStatus.Declared;
-
-    await progressService.update([message]);
-
-    SpyAssert.assert(
-      utilsSpy,
-      1,
-      [[progressStakeRawTx, { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress }]],
-    );
-
-    SpyAssert.assert(
-      progressStakeSpy,
-      1,
-      [[message.messageHash, message.hashLock]],
-    );
-
-    SpyAssert.assert(
-      progressMintSpy,
-      0,
-      [[]],
-    );
-
-    SpyAssert.assert(
-      gatewaySpy,
-      1,
-      [[originWeb3, gatewayAddress]],
-    );
-
-    SpyAssert.assert(
-      coGatewaySpy,
-      0,
-      [[]],
-    );
-
-    sinon.restore();
-  });
-
-  it('should progress only on auxiliary when target status '
-    + 'is declared', async () => {
-    message.targetStatus = MessageStatus.Declared;
-
-    await progressService.update([message]);
-
-    SpyAssert.assert(
-      gatewayRepository.get,
-      1,
-      [[gatewayAddress]],
-    );
-
-    SpyAssert.assert(
-      utilsSpy,
-      1,
-      [
-        [progressMintRawTx, { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress }],
-      ],
-    );
-
-    SpyAssert.assert(
-      progressMintSpy,
-      1,
-      [[message.messageHash, message.hashLock]],
-    );
-
-    SpyAssert.assert(
-      progressStakeSpy,
-      0,
-      [[]],
-    );
-
-    SpyAssert.assert(
-      coGatewaySpy,
-      1,
-      [[auxiliaryWeb3, coGatewayAddress]],
-    );
-
-    SpyAssert.assert(
-      gatewaySpy,
-      0,
-      [[]],
     );
 
     sinon.restore();

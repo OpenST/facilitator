@@ -40,7 +40,6 @@ export default class Account {
       web3Account.privateKey.toString(),
       password,
     );
-
     const account: Account = new Account(web3Account.address, encryptedAccount);
 
     Logger.info(`created account ${web3Account.address}`);
