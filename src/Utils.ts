@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
+import * as utils from 'web3-utils';
 import Logger from './Logger';
 import Account from './Account';
 
@@ -68,6 +69,14 @@ const Utils = {
     return new BigNumber(currentTimestampInS);
   },
 
+  /**
+   * It provides checksum address using web3.
+   * @param address Address.
+   * @returns It returns checksum address.
+   */
+  toChecksumAddress(address: string): string {
+    return utils.toChecksumAddress(address);
+  },
 };
 
 export default Utils;

@@ -15,7 +15,6 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import * as utils from 'web3-utils';
 import Logger from '../Logger';
 
 import Message from '../models/Message';
@@ -23,6 +22,7 @@ import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
 import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /**
  * This class handles stake intent declared transactions.
@@ -54,11 +54,11 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
         // This will happen if some other facilitator has accepted the stake request.
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = utils.toChecksumAddress(transaction._staker);
+          message.sender = Utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
-          message.gatewayAddress = utils.toChecksumAddress(transaction.contractAddress);
+          message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Creating message object ${JSON.stringify(message)}`);
         }

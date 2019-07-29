@@ -1,11 +1,11 @@
 import assert from 'assert';
-import * as utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 
 import Logger from '../Logger';
 import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
 import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -34,7 +34,7 @@ export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> 
   public async persist(transactions: any[]): Promise<Gateway[]> {
     Logger.debug('Persisting prove gateway records');
     const transaction = transactions[transactions.length - 1];
-    const gatewayAddress = utils.toChecksumAddress(transaction._gateway);
+    const gatewayAddress = Utils.toChecksumAddress(transaction._gateway);
     const gateway = await this.GatewayRepository.get(gatewayAddress);
 
     assert(gateway !== null, `Gateway record not found for address: ${gatewayAddress}`);

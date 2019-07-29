@@ -14,7 +14,6 @@
 //
 // ----------------------------------------------------------------------------
 
-import * as utils from 'web3-utils';
 
 import Logger from '../Logger';
 import Message from '../models/Message';
@@ -22,6 +21,7 @@ import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
 import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /**
  * This class handles mint progress transactions.
@@ -52,7 +52,7 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
         // This will happen if progress transaction appears first..
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = utils.toChecksumAddress(transaction._staker);
+          message.sender = Utils.toChecksumAddress(transaction._staker);
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
           message.targetStatus = MessageStatus.Undeclared;

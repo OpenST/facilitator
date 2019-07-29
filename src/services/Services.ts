@@ -1,11 +1,10 @@
-import utils from 'web3-utils';
-
 import { Config } from '../Config/Config';
 import Repositories from '../repositories/Repositories';
 import AcceptStakeRequestService from './AcceptStakeRequestService';
 import ProveGatewayService from './ProveGatewayService';
-import ConfirmStakeIntentService from "./ConfirmStakeIntentService";
-import ProgressService from "./ProgressService";
+import ConfirmStakeIntentService from './ConfirmStakeIntentService';
+import ProgressService from './ProgressService';
+import Utils from '../Utils';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -48,8 +47,8 @@ export default class Services {
     const acceptStakeRequestService = new AcceptStakeRequestService(
       repositories,
       config.originWeb3,
-      utils.toChecksumAddress(config.mosaic.originChain.contractAddresses.ostComposerAddress!),
-      utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
+      Utils.toChecksumAddress(config.mosaic.originChain.contractAddresses.ostComposerAddress!),
+      Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
     );
     const { auxChainId } = config.facilitator;
     const proveGatewayService = new ProveGatewayService(
@@ -57,9 +56,9 @@ export default class Services {
       repositories.messageRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
+      Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
-      utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
+      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
       auxChainId,
     );
 

@@ -15,12 +15,12 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import * as utils from 'web3-utils';
 
 import Logger from '../Logger';
 import StakeRequest from '../models/StakeRequest';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /**
  * This class handles stake request transactions.
@@ -48,15 +48,15 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
     Logger.debug('Persisting stake request records');
     const models: StakeRequest[] = transactions.map(
       (transaction): StakeRequest => {
-        const stakeRequestHash = transaction.stakeRequestHash;
+        const { stakeRequestHash } = transaction;
         const amount = new BigNumber(transaction.amount);
-        const beneficiary = utils.toChecksumAddress(transaction.beneficiary);
+        const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
         const gasPrice = new BigNumber(transaction.gasPrice);
         const gasLimit = new BigNumber(transaction.gasLimit);
         const nonce = new BigNumber(transaction.nonce);
-        const gateway = utils.toChecksumAddress(transaction.gateway);
-        const staker = utils.toChecksumAddress(transaction.staker);
-        const stakerProxy = utils.toChecksumAddress(transaction.stakerProxy);
+        const gateway = Utils.toChecksumAddress(transaction.gateway);
+        const staker = Utils.toChecksumAddress(transaction.staker);
+        const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
 
         return new StakeRequest(
           stakeRequestHash,

@@ -205,7 +205,7 @@ export default class SeedData {
    */
   private get gatewayAddress(): string {
     return utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!,
     );
   }
 
@@ -214,7 +214,7 @@ export default class SeedData {
    */
   private get coGatewayAddress(): string {
     return utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
     );
   }
 
@@ -223,7 +223,7 @@ export default class SeedData {
    */
   private get anchorAddress(): string {
     return utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!,
     );
   }
 
@@ -232,7 +232,7 @@ export default class SeedData {
    */
   private get coAnchorAddress(): string {
     return utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!,
     );
   }
 
@@ -241,7 +241,7 @@ export default class SeedData {
    */
   private get ostComposerAddress(): string {
     return utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.ostComposerAddress!
+      this.originChainMosaicConfig.contractAddresses.ostComposerAddress!,
     );
   }
 
@@ -250,7 +250,7 @@ export default class SeedData {
    */
   private get ostPrimeAddress(): string {
     return utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!,
     );
   }
 
@@ -259,7 +259,7 @@ export default class SeedData {
    */
   private get simpleTokenAddress(): string {
     return utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!
+      this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!,
     );
   }
 
