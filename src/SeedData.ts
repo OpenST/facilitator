@@ -16,7 +16,6 @@
 
 /* eslint-disable import/no-unresolved */
 
-import * as utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 
 import { interacts } from '@openst/mosaic-contracts';
@@ -172,7 +171,7 @@ export default class SeedData {
     const promises: any = [];
     const contractAddresses = Object.keys(contractAddressEventTypesMap);
     for (let i = 0; i < contractAddresses.length; i += 1) {
-      const contractAddress = utils.toChecksumAddress(contractAddresses[i]);
+      const contractAddress = Utils.toChecksumAddress(contractAddresses[i]);
       const eventTypes = contractAddressEventTypesMap[contractAddress];
       for (let j = 0; eventTypes.length; j += 1) {
         if (!eventTypes[j]) { break; }
@@ -204,7 +203,7 @@ export default class SeedData {
    * @return Returns Gateway address.
    */
   private get gatewayAddress(): string {
-    return utils.toChecksumAddress(
+    return Utils.toChecksumAddress(
       this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!,
     );
   }
@@ -213,7 +212,7 @@ export default class SeedData {
    * @return Returns CoGateway address.
    */
   private get coGatewayAddress(): string {
-    return utils.toChecksumAddress(
+    return Utils.toChecksumAddress(
       this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
     );
   }
@@ -222,7 +221,7 @@ export default class SeedData {
    * @return Returns Anchor address.
    */
   private get anchorAddress(): string {
-    return utils.toChecksumAddress(
+    return Utils.toChecksumAddress(
       this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!,
     );
   }
@@ -231,7 +230,7 @@ export default class SeedData {
    * @return Returns CoAnchor address.
    */
   private get coAnchorAddress(): string {
-    return utils.toChecksumAddress(
+    return Utils.toChecksumAddress(
       this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!,
     );
   }
@@ -240,7 +239,7 @@ export default class SeedData {
    * @return Returns OstComposer address.
    */
   private get ostComposerAddress(): string {
-    return utils.toChecksumAddress(
+    return Utils.toChecksumAddress(
       this.originChainMosaicConfig.contractAddresses.ostComposerAddress!,
     );
   }
@@ -249,7 +248,7 @@ export default class SeedData {
    * @return Returns OstPrime address.
    */
   private get ostPrimeAddress(): string {
-    return utils.toChecksumAddress(
+    return Utils.toChecksumAddress(
       this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!,
     );
   }
@@ -258,7 +257,7 @@ export default class SeedData {
    * @return Returns SimpleToken address.
    */
   private get simpleTokenAddress(): string {
-    return utils.toChecksumAddress(
+    return Utils.toChecksumAddress(
       this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!,
     );
   }
