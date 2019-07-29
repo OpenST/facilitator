@@ -33,7 +33,7 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    const auxChainId = options.auxChainId;
+    const { auxChainId } = options;
     if (auxChainId === undefined) {
       Logger.error('required --aux-chain-id <aux-chain-id>');
       mandatoryOptionMissing = true;

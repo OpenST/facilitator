@@ -34,13 +34,13 @@ describe('StakeRequestedHandler.persist()', (): void => {
     const stakeRequest = new StakeRequest(
       transactions[0].stakeRequestHash,
       new BigNumber(transactions[0].amount),
-      transactions[0].beneficiary,
+      Web3Utils.toChecksumAddress(transactions[0].beneficiary),
       new BigNumber(transactions[0].gasPrice),
       new BigNumber(transactions[0].gasLimit),
       new BigNumber(transactions[0].nonce),
-      transactions[0].gateway,
-      transactions[0].staker,
-      transactions[0].stakerProxy,
+      Web3Utils.toChecksumAddress(transactions[0].gateway),
+      Web3Utils.toChecksumAddress(transactions[0].staker),
+      Web3Utils.toChecksumAddress(transactions[0].stakerProxy),
     );
 
     assert.equal(

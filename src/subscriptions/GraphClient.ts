@@ -14,6 +14,7 @@ import ContractEntity, { EntityType } from '../models/ContractEntity';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import TransactionHandler from '../TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
+import Utils from '../Utils';
 
 /**
  * The class interacts with graph node server for subscription and query.
@@ -112,7 +113,7 @@ export default class GraphClient {
         const currentUTS = new BigNumber(transaction.uts);
         Logger.debug(`Updating UTS to ${currentUTS} for entity ${transactionKind}`);
         const contractEntity = new ContractEntity(
-          contractAddress,
+          Utils.toChecksumAddress(contractAddress),
           transactionKind as EntityType,
           currentUTS,
         );

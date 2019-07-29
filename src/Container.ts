@@ -44,7 +44,7 @@ export default class Container {
       config.facilitator.chains[configOriginChain].subGraphWs,
       config.facilitator.chains[configOriginChain].subGraphRpc,
       config.facilitator.chains[configAuxChainId].subGraphWs,
-      config.facilitator.chains[configAuxChainId].subGraphRpc
+      config.facilitator.chains[configAuxChainId].subGraphRpc,
     );
 
     const services = Services.create(repositories, config);

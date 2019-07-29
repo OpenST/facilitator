@@ -4,6 +4,7 @@ import AcceptStakeRequestService from './AcceptStakeRequestService';
 import ProveGatewayService from './ProveGatewayService';
 import ConfirmStakeIntentService from './ConfirmStakeIntentService';
 import ProgressService from './ProgressService';
+import Utils from '../Utils';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -46,19 +47,18 @@ export default class Services {
     const acceptStakeRequestService = new AcceptStakeRequestService(
       repositories,
       config.originWeb3,
-      config.mosaic.originChain.contractAddresses.ostComposerAddress!,
-      config.facilitator.chains[config.facilitator.originChain].worker,
+      Utils.toChecksumAddress(config.mosaic.originChain.contractAddresses.ostComposerAddress!),
+      Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
     );
-
     const { auxChainId } = config.facilitator;
     const proveGatewayService = new ProveGatewayService(
       repositories.gatewayRepository,
       repositories.messageRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.facilitator.chains[auxChainId].worker,
+      Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
+      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
       auxChainId,
     );
 

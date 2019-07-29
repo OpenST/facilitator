@@ -2,6 +2,7 @@ import FetchQueries from '../GraphQueries/FetchQueries';
 import Logger from '../Logger';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import GraphClient from './GraphClient';
+import Utils from '../Utils';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -36,14 +37,15 @@ export default class TransactionFetcher {
     const entity = (Object.keys(data)[0]);
     const entityRecord = data[entity][0];
 
+    const checkSumContractAddress = Utils.toChecksumAddress(entityRecord.contractAddress);
     const contractEntityRecord = await this.contractEntityRepository.get(
-      entityRecord.contractAddress,
+      checkSumContractAddress,
       entity,
     );
 
     if (contractEntityRecord === null || contractEntityRecord.timestamp === null) {
       throw new Error(`Contract Entity record not found for entity ${entity} `
-        + `and address ${entityRecord.contractAddress}`);
+        + `and address ${checkSumContractAddress}`);
     }
     const uts = contractEntityRecord.timestamp;
     const fetchQuery = FetchQueries[entity];
@@ -53,7 +55,7 @@ export default class TransactionFetcher {
     const response: any = {};
     while (true) {
       const variables = {
-        contractAddress: entityRecord.contractAddress,
+        contractAddress: checkSumContractAddress,
         uts,
         skip,
         limit: this.queryLimit,
