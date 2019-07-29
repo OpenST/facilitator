@@ -29,55 +29,74 @@ function fail_silent {
 # Creates the facilitator-config.json.
 function facilitator_init_pass {
  info 'creating facilitator config'
- try_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645'"
+ try_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
 
 # It fails silently if the command executes succesfully.
 function facilitator_init_fail {
  info "facilitator init should fail as facilitator config already present"
- fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645'"
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
 
 # It fails silently if the command executes successfully.
 function facilitator_init_no_mosaicconfig_fail {
  info "trying facilitator init by not providing mosaic config option"
- fail_silent "./facilitator init --chain-id $auxChainId --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645'"
+ fail_silent "./facilitator init --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
 
 # It fails silently if the command executes successfully.
 function facilitator_init_no_chainid_fail {
  info "trying facilitator init by not providing chain id option"
- fail_silent "./facilitator init --mosaic-config $mosaicConfigPath  --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645'"
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath  --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
 
 # It fails silently if the command executes successfully.
 function facilitator_init_no_originpassword_fail {
  info "trying facilitator init by not providing origin password option"
- fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645'"
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
 
 # It fails silently if the command executes successfully.
 function facilitator_init_no_auxiliarypassword_fail {
  info "trying facilitator init by not providing auxiliary password option"
- fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645'"
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
 }
 
 # It fails silently if the command executes successfully.
 function facilitator_init_no_originrpc_fail {
  info "trying facilitator init by not providing origin rpc option"
- fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --auxiliary-rpc 'https://localhost.com:8645'"
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767'"
 }
 
 # It fails silently if the command executes successfully.
 function facilitator_init_no_auxiliaryrpc_fail {
  info "trying facilitator init by not providing auxiliary rpc option"
- fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545'"
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
+}
+
+function facilitator_init_no_origin_subgraph_ws {
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-rpc 'https://localhost:9999' --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
+}
+
+function facilitator_init_no_origin_subgraph_rpc {
+ info 'creating facilitator config'
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' "
+}
+
+function facilitator_init_no_auxiliary_subgraph_ws {
+ info 'creating facilitator config'
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999' --auxiliary-graph-rpc 'https://localhost:6767' "
+}
+
+function facilitator_init_no_auxiliary_subgraph_rpc {
+ info 'creating facilitator config'
+ fail_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' "
 }
 
 # Creates the facilitator-config.json forcefully.
 function facilitator_init_force_pass {
  info "creating facilitator init with --force option"
- try_silent "./facilitator init --mosaic-config $mosaicConfigPath --chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' -f"
+ try_silent "./facilitator init --mosaic-config $mosaicConfigPath --aux-chain-id $auxChainId --origin-password '123' --auxiliary-password '123' --origin-rpc 'https://localhost.com:8545' --auxiliary-rpc 'https://localhost.com:8645' --origin-graph-ws 'https://localhost:3553' --origin-graph-rpc 'https://localhost:9999'   --auxiliary-graph-ws 'https://localhost:8787' --auxiliary-graph-rpc 'https://localhost:6767' -f "
 }
 
 # If facilitator-config doesn't exists it will exit.
@@ -114,6 +133,10 @@ facilitator_init_no_originpassword_fail
 facilitator_init_no_auxiliarypassword_fail
 facilitator_init_no_auxiliaryrpc_fail
 facilitator_init_no_originrpc_fail
+facilitator_init_no_origin_subgraph_ws
+facilitator_init_no_origin_subgraph_rpc
+facilitator_init_no_auxiliary_subgraph_ws
+facilitator_init_no_auxiliary_subgraph_rpc
 
 remove_facilitator_config
 # Facilitator init will create facilitator-config.json file.
