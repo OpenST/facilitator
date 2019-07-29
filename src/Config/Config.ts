@@ -54,7 +54,7 @@ export class DBConfig {
  */
 export class Chain {
   /** Chain RPC endpoint. */
-  public readonly rpc: string;
+  public readonly nodeRpc: string;
 
   /** Worker address. */
   public readonly worker: string;
@@ -62,14 +62,24 @@ export class Chain {
   /** Worker password. */
   private readonly _password?: string;
 
+  /** Subgraph ws endpoint */
+  public readonly subGraphWs: string;
+
+  /** Subgraph rpc endpoint */
+  public readonly subGraphRpc: string;
+
   public constructor(
-    rpc: string,
+    nodeRpc: string,
     worker: string,
+    subGraphWs: string,
+    subGraphRpc: string,
     password?: string,
   ) {
-    this.rpc = rpc;
+    this.nodeRpc = nodeRpc;
     this.worker = worker;
     this._password = password;
+    this.subGraphWs = subGraphWs;
+    this.subGraphRpc = subGraphRpc;
   }
 
   /**
@@ -115,8 +125,10 @@ export class FacilitatorConfig {
     const chains = config.chains || {};
     Object.keys(chains).forEach(async (identifier): Promise<void> => {
       this.chains[identifier] = new Chain(
-        chains[identifier].rpc,
+        chains[identifier].nodeRpc,
         chains[identifier].worker,
+        chains[identifier].subGraphWs,
+        chains[identifier].subGraphRpc,
       );
       // we have only 2 chains in config
       if (identifier !== this.originChain) {
@@ -277,7 +289,7 @@ export class Config {
       throw new WorkerPasswordNotFoundException(`password not found for ${chain.worker}`);
     }
     const account = new Account(chain.worker, this.facilitator.encryptedAccounts[chain.worker]);
-    const web3 = new Web3(chain.rpc);
+    const web3 = new Web3(chain.nodeRpc);
     account.unlock(web3, chain.password);
     return web3;
   }

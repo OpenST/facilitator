@@ -182,6 +182,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
+      this.auxiliaryWeb3,
     );
   }
 }

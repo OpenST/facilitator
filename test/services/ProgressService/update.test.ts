@@ -116,8 +116,8 @@ describe('ProgressService.update()', () => {
       utilsSpy,
       2,
       [
-        [progressStakeRawTx, { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress }],
-        [progressMintRawTx, { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress }],
+        [progressStakeRawTx, { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress }, originWeb3],
+        [progressMintRawTx, { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress }, auxiliaryWeb3],
       ],
     );
 

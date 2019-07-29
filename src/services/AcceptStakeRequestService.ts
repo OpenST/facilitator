@@ -152,7 +152,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     return Utils.sendTransaction(rawTx, {
       from: this.originWorkerAddress,
       gasPrice: ORIGIN_GAS_PRICE,
-    });
+    }, this.web3);
   }
 
   private async createMessageInRepository(

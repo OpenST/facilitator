@@ -1,7 +1,6 @@
 import SubscriptionQueries from '../GraphQueries/SubscriptionQueries';
 import Repositories from '../repositories/Repositories';
 import TransactionHandler from '../TransactionHandler';
-import { SubscriptionInfo } from '../types';
 import GraphClient from './GraphClient';
 import Subscriber from './Subscriber';
 import TransactionFetcher from './TransactionFetcher';
@@ -31,58 +30,38 @@ export default class Subscriptions {
   public static async create(
     transactionHandler: TransactionHandler,
     repos: Repositories,
+    originSubGraphWs: string,
+    originSubGraphRpc: string,
+    auxiliarySubGraphWs: string,
+    auxiliarySubGraphRpc: string,
   ): Promise<Subscriptions> {
-    const subGraphDetails = Subscriptions.getSubscriptionDetails();
     const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
       GraphClient.getClient(
         'http',
-        subGraphDetails.origin.httpSubGraphEndPoint,
+        originSubGraphRpc,
       ),
       repos.contractEntityRepository,
     );
     // Subscription to origin subgraph queries
     const originSubscriber = new Subscriber(
-      GraphClient.getClient('ws', subGraphDetails.origin.wsSubGraphEndPoint),
-      subGraphDetails.origin.subscriptionQueries,
+      GraphClient.getClient('ws', originSubGraphWs),
+      SubscriptionQueries.origin,
       transactionHandler,
       originTransactionFetcher,
       repos.contractEntityRepository,
     );
     // Subscription to auxiliary subgraph queries
     const auxiliaryTransactionFetcher: TransactionFetcher = new TransactionFetcher(
-      GraphClient.getClient('http', subGraphDetails.auxiliary.httpSubGraphEndPoint),
+      GraphClient.getClient('http', auxiliarySubGraphRpc),
       repos.contractEntityRepository,
     );
     const auxiliarySubscriber = new Subscriber(
-      GraphClient.getClient('ws', subGraphDetails.auxiliary.wsSubGraphEndPoint),
-      subGraphDetails.auxiliary.subscriptionQueries,
+      GraphClient.getClient('ws', auxiliarySubGraphWs),
+      SubscriptionQueries.auxiliary,
       transactionHandler,
       auxiliaryTransactionFetcher,
       repos.contractEntityRepository,
     );
     return new Subscriptions(originSubscriber, auxiliarySubscriber);
-  }
-
-
-  /**
-   * Subgraph details object which contains chain based subGraphEndPoitn & subscriptionQueries.
-   * Note: Replace subGraphEndPoint from Config.ts. It should come from Config:Chain class.
-   * Feel free to add subscription queries.
-   *
-   * @return <any> Object containing chain based subscriptionQueries.
-   */
-  public static getSubscriptionDetails(): SubscriptionInfo {
-    return {
-      origin: {
-        wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
-        httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
-        subscriptionQueries: SubscriptionQueries.origin,
-      },
-      auxiliary: {
-        wsSubGraphEndPoint: 'ws://localhost:8000/subgraphs/name/openst/ost-composer',
-        httpSubGraphEndPoint: 'http://localhost:8000/subgraphs/name/openst/ost-composer',
-        subscriptionQueries: SubscriptionQueries.auxiliary,
-      },
-    };
   }
 }
