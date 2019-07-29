@@ -10,7 +10,7 @@ export enum EntityType {
   StakeIntentDeclareds = 'stakeIntentDeclareds',
   StateRootAvailables = 'stateRootAvailables',
   GatewayProvens = 'gatewayProvens',
-  StakeIntentConfirmeds = 'stateIntentConfirmeds',
+  StakeIntentConfirmeds = 'stakeIntentConfirmeds',
   StakeProgresseds = 'stakeProgresseds',
   MintProgresseds = 'mintProgresseds',
 }

@@ -44,6 +44,7 @@ describe('StakeRequestRepository::save', (): void => {
       new BigNumber('3'),
       new BigNumber('4'),
       'gateway',
+      'staker',
       'stakerProxy',
     );
 
@@ -81,6 +82,7 @@ describe('StakeRequestRepository::save', (): void => {
       new BigNumber('3'),
       new BigNumber('4'),
       'gateway',
+      'staker',
       'stakerProxy',
     );
 
@@ -107,6 +109,7 @@ describe('StakeRequestRepository::save', (): void => {
         stakeRequestInput.gasLimit,
         stakeRequestInput.nonce,
         stakeRequestUpdateInput.gateway,
+        stakeRequestUpdateInput.staker,
         stakeRequestUpdateInput.stakerProxy,
         stakeRequestInput.messageHash,
       ),
@@ -132,6 +135,7 @@ describe('StakeRequestRepository::save', (): void => {
         stakeRequestInput.gasLimit,
         stakeRequestInput.nonce,
         stakeRequestUpdateInput.gateway,
+        stakeRequestUpdateInput.staker,
         stakeRequestUpdateInput.stakerProxy,
         stakeRequestInput.messageHash,
       ),

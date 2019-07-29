@@ -81,7 +81,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }
 
-  public static generateSecret(): {secret: string; hashLock: string} {
+  public static generateSecret(): { secret: string; hashLock: string } {
     const secret = Web3Utils.randomHex(32);
     const hashLock = Web3Utils.keccak256(secret);
 
@@ -136,7 +136,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
     assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.stakerProxy !== undefined);
+    assert(stakeRequest.staker !== undefined);
     assert(stakeRequest.gateway !== undefined);
 
     const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
@@ -145,7 +145,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       (stakeRequest.gasPrice as BigNumber).toString(10),
       (stakeRequest.gasLimit as BigNumber).toString(10),
       (stakeRequest.nonce as BigNumber).toString(10),
-      (stakeRequest.stakerProxy as string),
+      (stakeRequest.staker as string),
       (stakeRequest.gateway as string),
       hashLock,
     );
@@ -209,11 +209,12 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   private calculateMessageHash(stakeRequest: StakeRequest, hashLock: string): string {
     assert(stakeRequest.amount !== undefined);
-    assert(stakeRequest.beneficiary !== undefined);
-    assert(stakeRequest.gateway !== undefined);
+    assert(stakeRequest.beneficiary);
+    assert(stakeRequest.gateway);
     assert(stakeRequest.nonce !== undefined);
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
+    assert(stakeRequest.stakerProxy);
 
     const stakeIntentHash: string = this.calculateStakeIntentHash(
       stakeRequest.amount as BigNumber,
@@ -221,12 +222,15 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequest.gateway as string,
     );
 
-    const messageTypeHash = this.web3.utils.keccak256(
-      'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
-      + 'uint256 gasLimit,address sender,bytes32 hashLock)',
+    const messageTypeHash = this.web3.utils.sha3(
+      this.web3.eth.abi.encodeParameter(
+        'string',
+        'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
+        + 'uint256 gasLimit,address sender,bytes32 hashLock)',
+      ),
     );
 
-    return this.web3.utils.keccak256(
+    return this.web3.utils.sha3(
       this.web3.eth.abi.encodeParameters(
         [
           'bytes32',
@@ -240,9 +244,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
         [
           messageTypeHash,
           stakeIntentHash,
-          (stakeRequest.nonce as BigNumber).toFixed(),
-          (stakeRequest.gasPrice as BigNumber).toFixed(),
-          (stakeRequest.gasLimit as BigNumber).toFixed(),
+          (stakeRequest.nonce as BigNumber).toString(10),
+          (stakeRequest.gasPrice as BigNumber).toString(10),
+          (stakeRequest.gasLimit as BigNumber).toString(10),
           stakeRequest.stakerProxy,
           hashLock,
         ],
@@ -255,11 +259,14 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     beneficiary: string,
     gateway: string,
   ): string {
-    const stakeIntentTypeHash = this.web3.utils.keccak256(
-      'StakeIntent(uint256 amount,address beneficiary,address gateway)',
+    const stakeIntentTypeHash = this.web3.utils.sha3(
+      this.web3.eth.abi.encodeParameter(
+        'string',
+        'StakeIntent(uint256 amount,address beneficiary,address gateway)',
+      ),
     );
 
-    return this.web3.utils.keccak256(
+    return this.web3.utils.sha3(
       this.web3.eth.abi.encodeParameters(
         [
           'bytes32',
@@ -269,7 +276,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
         ],
         [
           stakeIntentTypeHash,
-          amount.toFixed(),
+          amount.toString(10),
           beneficiary,
           gateway,
         ],

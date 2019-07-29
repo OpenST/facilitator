@@ -61,6 +61,4 @@ export default class Directory {
   public static getMosaicFileName(): string {
     return MOSAIC_CONFIG_FILE;
   }
-
-
 }
