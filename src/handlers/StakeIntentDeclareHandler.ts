@@ -52,7 +52,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if some other facilitator has accepted the stake request.
-        if (message === null) {
+        if (!message) {
           message = new Message(transaction._messageHash);
           message.sender = Utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);

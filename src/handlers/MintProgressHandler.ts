@@ -50,7 +50,7 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if progress transaction appears first..
-        if (message === null) {
+        if (!message) {
           message = new Message(transaction._messageHash);
           message.sender = Utils.toChecksumAddress(transaction._staker);
           message.direction = MessageDirection.OriginToAuxiliary;

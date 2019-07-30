@@ -50,7 +50,7 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
       async (transaction): Promise<Message> => {
         const messageHash = transaction._messageHash;
         message = await this.messageRepository.get(messageHash);
-        if (message === null) {
+        if (!message) {
           message = new Message(transaction._messageHash);
           message.sender = Utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
