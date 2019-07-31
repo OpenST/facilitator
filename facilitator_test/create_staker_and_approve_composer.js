@@ -220,8 +220,8 @@ const eip20Abi = [
 ];
 const simpleTokenAddress = '0xae96d2acd01ab795e5942591100f9f23adbe2a2e';
 const ostComposerAddress = '0x4a633b3375a5b9eaa6ddc226ebe2ac832b557746';
-const ostToTransfer = '9';
-const ethTOTransfer = '1000000000000000000';
+const ostToTransfer = '11111111111';
+const ethTOTransfer = '100000000000000000';
 const web3 = new Web3(gethEndpoint);
 
 const reservePrivateKey = '0x9D966E0021308793DDEB9F997710DFCAC0141C8C26BF733996D532EF30631463';

@@ -1,0 +1,12 @@
+{
+  "words": {
+    "error": "color: red;",
+    "info": "color: green;",
+    "debug": "color: blue;"
+  },
+  "lines": {
+    "error": "font-weight: bold;",
+    "info": "font-weight: bold;",
+    "debug": "font-weight: bold;"
+  }
+}

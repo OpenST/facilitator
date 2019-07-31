@@ -4,7 +4,7 @@
   "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
   "scripts": {
     "lint:ts": "eslint src -c .eslintrc.json --ext ts",
-    "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
+    "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/SeedData/populateDb.test.ts",
     "test:facilitator": "./test/facilitator.sh",
     "test": "npm run test:unit && npm run test:facilitator",
     "coverage:report": "nyc report",
@@ -42,6 +42,7 @@
     "apollo-link-ws": "1.0.18",
     "bignumber.js": "4.1.0",
     "commander": "2.20.0",
+    "frontail": "4.6.0",
     "fs-extra": "7.0.1",
     "graphql": "14.3.1",
     "graphql-tag": "2.10.1",
