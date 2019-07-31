@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
+import * as utils from 'web3-utils';
 
 import StakeIntentConfirmHandler from '../../../src/handlers/StakeIntentConfirmHandler';
 import Message from '../../../src/models/Message';
@@ -103,7 +104,7 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
       undefined,
       undefined,
       new BigNumber(transaction[0]._stakerNonce),
-      transaction[0]._staker,
+      utils.toChecksumAddress(transaction[0]._staker),
       transaction[0].direction,
       undefined,
       undefined,

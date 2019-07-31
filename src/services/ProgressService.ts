@@ -90,7 +90,7 @@ export default class ProgressService {
       gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    assert(message.secret !== undefined);
+    assert(message.secret !== undefined, 'message secret is undefined');
 
     const rawTx = eip20Gateway.methods.progressStake(
       message.messageHash,
@@ -100,6 +100,7 @@ export default class ProgressService {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
+      this.originWeb3,
     ).then((txHash) => {
       Logger.debug(`Progress stake transaction hash ${txHash} for message ${message.messageHash}`);
       return txHash;
@@ -141,6 +142,7 @@ export default class ProgressService {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
+      this.auxiliaryWeb3,
     ).then((txHash) => {
       Logger.debug(`Progress mint transaction hash ${txHash} for message ${message.messageHash}`);
       return txHash;

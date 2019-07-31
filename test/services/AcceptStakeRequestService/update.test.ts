@@ -14,6 +14,8 @@
 //
 // ----------------------------------------------------------------------------
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import 'mocha';
 
 import BigNumber from 'bignumber.js';
@@ -153,9 +155,7 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     const someFakeEIP20Token = {
       methods: {
-        approve: () => {
-          return fakeTransactionHash;
-        },
+        approve: () => fakeTransactionHash,
       },
     };
 
@@ -247,14 +247,15 @@ describe('AcceptStakeRequestService::update', (): void => {
     SpyAssert.assert(
       sendTransactionSpy,
       2,
-      [[fakeTransactionHash, {
-        from: originWorkerAddress,
-        gasPrice: ORIGIN_GAS_PRICE,
-      }],
-      [fakeTransactionHash, {
-        from: originWorkerAddress,
-        gasPrice: ORIGIN_GAS_PRICE,
-      }],
+      [
+        [fakeTransactionHash, {
+          from: originWorkerAddress,
+          gasPrice: ORIGIN_GAS_PRICE,
+        }, web3],
+        [fakeTransactionHash, {
+          from: originWorkerAddress,
+          gasPrice: ORIGIN_GAS_PRICE,
+        }, web3],
       ],
     );
   });
@@ -366,11 +367,12 @@ describe('AcceptStakeRequestService::update', (): void => {
         [fakeTransactionHash, {
           from: originWorkerAddress,
           gasPrice: ORIGIN_GAS_PRICE,
-        }],
+        }, web3],
+
         [fakeTransactionHash, {
           from: originWorkerAddress,
           gasPrice: ORIGIN_GAS_PRICE,
-        }],
+        }, web3],
       ],
     );
   });

@@ -1,7 +1,11 @@
 import Web3 from 'web3';
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
+import BigNumber from 'bignumber.js';
 
 import Logger from './Logger';
+
+// This class variable is used to persist nonce in-memory
+const addressNonceMap: Record<string, BigNumber> = {};
 
 /**
  * It provides methods to create, encrypt and unlock accounts.
@@ -11,7 +15,7 @@ export default class Account {
 
   public readonly address: string;
 
-  public readonly encryptedKeyStore: EncryptedKeystoreV3Json;
+  public readonly encryptedKeyStore?: EncryptedKeystoreV3Json;
 
   /**
    * Constructor
@@ -20,7 +24,7 @@ export default class Account {
    */
   public constructor(
     address: string,
-    encryptedKeyStore: EncryptedKeystoreV3Json,
+    encryptedKeyStore?: EncryptedKeystoreV3Json,
   ) {
     this.address = address;
     this.encryptedKeyStore = encryptedKeyStore;
@@ -56,12 +60,28 @@ export default class Account {
     // Unlocking the account and adding it to the local web3 instance so that everything is signed
     // locally when using web3.eth.send
     try {
-      const web3Account = web3.eth.accounts.decrypt(this.encryptedKeyStore, password);
+      const web3Account = web3.eth.accounts.decrypt(this.encryptedKeyStore!, password);
       web3.eth.accounts.wallet.add(web3Account);
       return true;
     } catch (e) {
       Logger.error(`unlock account failed: ${e.message}`);
       return false;
     }
+  }
+
+  /**
+   * Get the current nonce to send the next transaction with this account.
+   * Tries to take pending transactions into account (not full proof).
+   * Once the nonce is fetched from the node, it is cached and increased by 1 for every transaction.
+   * @returns The nonce wrapped in a Promise.
+   */
+  public async getNonce(web3: Web3): Promise<BigNumber> {
+    if (addressNonceMap[this.address]) {
+      addressNonceMap[this.address] = addressNonceMap[this.address].add(1);
+    } else {
+      const nonce = await web3.eth.getTransactionCount(this.address, 'pending');
+      addressNonceMap[this.address] = new BigNumber(nonce);
+    }
+    return addressNonceMap[this.address];
   }
 }

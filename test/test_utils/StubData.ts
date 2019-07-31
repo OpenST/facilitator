@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import * as utils from 'web3-utils';
 
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
@@ -67,13 +68,13 @@ export default class StubData {
     return new Message(
       messageHash,
       MessageType.Stake,
-      gatewayAddress,
+      utils.toChecksumAddress(gatewayAddress),
       MessageStatus.Declared,
       MessageStatus.Undeclared,
       new BigNumber('1'),
       new BigNumber('1'),
       new BigNumber('1'),
-      '0x0000000000000000000000000000000000000002',
+      utils.toChecksumAddress('0x0000000000000000000000000000000000000002'),
       MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight,
     );

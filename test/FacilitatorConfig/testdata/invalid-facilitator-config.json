@@ -7,11 +7,15 @@
     "chains": {
         "301": {
             "worker": "0x5dEe7EdaDf7eabF76873E32bd010390b5b4FE997",
-            "rpc": "https://localhost.com:8645"
+            "nodeRpc": "https://localhost.com:8645",
+            "subGraphWs":"",
+            "subGraphRpc":""
         },
         "12346": {
             "worker": "0x72dD55d7EC97532D34d77Bb57503814d07c6d446",
-            "rpc": "https://localhost.com:8545"
+            "nodeRpc": "https://localhost.com:8545",
+            "subGraphWs":"http://localhost:8000/subgraphs/name/openst/ost-composer",
+            "subGraphRpc":"http://localhost:8000/subgraphs/name/openst/ost-composer"
         }
     },
     "encryptedAccounts": {

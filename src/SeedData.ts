@@ -171,7 +171,7 @@ export default class SeedData {
     const promises: any = [];
     const contractAddresses = Object.keys(contractAddressEventTypesMap);
     for (let i = 0; i < contractAddresses.length; i += 1) {
-      const contractAddress = contractAddresses[i];
+      const contractAddress = Utils.toChecksumAddress(contractAddresses[i]);
       const eventTypes = contractAddressEventTypesMap[contractAddress];
       for (let j = 0; eventTypes.length; j += 1) {
         if (!eventTypes[j]) { break; }
@@ -203,49 +203,63 @@ export default class SeedData {
    * @return Returns Gateway address.
    */
   private get gatewayAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!;
+    return Utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress!,
+    );
   }
 
   /**
    * @return Returns CoGateway address.
    */
   private get coGatewayAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!;
+    return Utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
+    );
   }
 
   /**
    * @return Returns Anchor address.
    */
   private get anchorAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!;
+    return Utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!,
+    );
   }
 
   /**
    * @return Returns CoAnchor address.
    */
   private get coAnchorAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!;
+    return Utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!,
+    );
   }
 
   /**
    * @return Returns OstComposer address.
    */
   private get ostComposerAddress(): string {
-    return this.originChainMosaicConfig.contractAddresses.ostComposerAddress!;
+    return Utils.toChecksumAddress(
+      this.originChainMosaicConfig.contractAddresses.ostComposerAddress!,
+    );
   }
 
   /**
    * @return Returns OstPrime address.
    */
   private get ostPrimeAddress(): string {
-    return this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!;
+    return Utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress!,
+    );
   }
 
   /**
    * @return Returns SimpleToken address.
    */
   private get simpleTokenAddress(): string {
-    return this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!;
+    return Utils.toChecksumAddress(
+      this.originChainMosaicConfig.contractAddresses.simpleTokenAddress!,
+    );
   }
 
   /**

@@ -22,6 +22,7 @@ import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../repositories/MessageRepository';
 import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /**
  * This class handles StakeIntentConfirmed event.
@@ -51,7 +52,7 @@ export default class StakeIntentConfirmHandler extends ContractEntityHandler<Mes
         message = await this.messageRepository.get(messageHash);
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = transaction._staker;
+          message.sender = Utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
           message.type = MessageType.Stake;
           message.direction = MessageDirection.OriginToAuxiliary;

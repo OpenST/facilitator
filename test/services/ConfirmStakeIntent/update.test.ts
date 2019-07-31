@@ -130,7 +130,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       sendTransactionSpy,
       1,
-      [[rawTx, transactionOptions]],
+      [[rawTx, transactionOptions, auxiliaryWeb3]],
     );
 
     SpyAssert.assert(
@@ -226,7 +226,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
         gateway.gatewayAddress,
         [],
         gateway.lastRemoteGatewayProvenBlockHeight,
-        messageOutBoxOffset
+        messageOutBoxOffset,
       ]],
     );
 

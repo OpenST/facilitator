@@ -21,7 +21,7 @@ import ProveGatewayHandler from './ProveGatewayHandler';
 import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
 import StakeProgressHandler from './StakeProgressHandler';
 import StakeRequestHandler from './StakeRequestHandler';
-import StakeIntentConfirmHandler from "./StakeIntentConfirmHandler";
+import StakeIntentConfirmHandler from './StakeIntentConfirmHandler';
 
 export default class Handlers {
   /**

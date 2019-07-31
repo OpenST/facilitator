@@ -105,7 +105,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     await this.approveForBounty(stakeRequest);
-    const {secret, hashLock} = AcceptStakeRequestService.generateSecret();
+    const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
     const transactionHash = await this.sendAcceptStakeRequestTransaction(
       stakeRequest, hashLock,
@@ -145,7 +145,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     Utils.sendTransaction(rawTransaction, {
       from: this.originWorkerAddress,
       gasPrice: ORIGIN_GAS_PRICE,
-    }).then((txHash) => {
+    },
+      this.web3,
+    ).then((txHash) => {
       Logger.info(`Bounty approval transaction hash ${txHash}`);
     });
   }
@@ -182,7 +184,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     return Utils.sendTransaction(rawTx, {
       from: this.originWorkerAddress,
       gasPrice: ORIGIN_GAS_PRICE,
-    });
+    }, this.web3);
   }
 
   private async createMessageInRepository(

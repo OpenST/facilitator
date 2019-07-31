@@ -10,46 +10,72 @@ import MosaicConfig from '../Config/MosaicConfig';
 // import Repositories from '../repositories/Repositories';
 // import SeedData from '../SeedData';
 
+
 commander
-  .option('-mc, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
-  .option('-c, --chain-id <chain-id>', 'auxiliary chain id')
-  .option('-op, --origin-password <origin-password>', 'origin chain account password')
-  .option('-ap, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
-  .option('-or, --origin-rpc <origin-rpc>', 'origin chain rpc')
-  .option('-ar, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
-  .option('-dbp, --db-path <db-path>', 'path where db path is present')
-  .option('-f, --force', 'forceful override facilitator config')
-  .action(async (options): Promise<void> => {
+  .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
+  .option('-c, --aux-chain-id <aux-chain-id>', 'auxiliary chain id')
+  .option('-o, --origin-password <origin-password>', 'origin chain account password')
+  .option('-a, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
+  .option('-r, --origin-rpc <origin-rpc>', 'origin chain rpc')
+  .option('-h, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
+  .option('-e, --origin-graph-ws <origin-graph-ws>', 'origin ws subgraph endpoint ')
+  .option('-g, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
+  .option('-s, --auxiliary-graph-ws <auxiliary-graph-ws>', 'auxiliary ws subgraph endpoint')
+  .option('-i, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
+  .option('-d, --db-path <db-path>', 'path where db path is present')
+  .option('-f, --force', 'forcefully override facilitator config')
+  .action((options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 
     if (options.mosaicConfig === undefined) {
-      Logger.error('required --mosaicConfig <mosaic-config>');
+      Logger.error('required --mosaic-config <mosaic-config>');
       mandatoryOptionMissing = true;
     }
 
-    if (options.chainId === undefined) {
-      Logger.error('required --chainId <chain-id>');
+    const { auxChainId } = options;
+    if (auxChainId === undefined) {
+      Logger.error('required --aux-chain-id <aux-chain-id>');
       mandatoryOptionMissing = true;
     }
 
     if (options.originRpc === undefined) {
-      Logger.error('required --originRpc <origin-rpc>');
+      Logger.error('required --origin-rpc <origin-rpc>');
       mandatoryOptionMissing = true;
     }
 
     if (options.auxiliaryRpc === undefined) {
-      Logger.error('required --auxiliaryRpc <auxiliary-rpc>');
+      Logger.error('required --auxiliary-rpc <auxiliary-rpc>');
       mandatoryOptionMissing = true;
     }
 
     if (options.originPassword === undefined) {
-      Logger.error('required --originPassword <origin-password>');
+      Logger.error('required --origin-password <origin-password>');
       mandatoryOptionMissing = true;
     }
 
     if (options.auxiliaryPassword === undefined) {
-      Logger.error('required --auxiliaryPassword <auxiliary-password>');
+      Logger.error('required --auxiliary-password <auxiliary-password>');
+      mandatoryOptionMissing = true;
+    }
+
+    if (options.originGraphWs === undefined) {
+      Logger.error('required --origin-graph-ws <origin-graph-ws>');
+      mandatoryOptionMissing = true;
+    }
+
+    if (options.auxiliaryGraphWs === undefined) {
+      Logger.error('required --auxiliary-graph-ws <auxiliary-graph-ws>');
+      mandatoryOptionMissing = true;
+    }
+
+    if (options.originGraphRpc === undefined) {
+      Logger.error('required --origin-graph-rpc <origin-graph-rpc>');
+      mandatoryOptionMissing = true;
+    }
+
+    if (options.auxiliaryGraphRpc === undefined) {
+      Logger.error('required --auxiliary-graph-rpc <auxiliary-graph-rpc>');
       mandatoryOptionMissing = true;
     }
 
@@ -58,10 +84,10 @@ commander
     }
 
     if (options.force) {
-      FacilitatorConfig.remove(options.chainId);
+      FacilitatorConfig.remove(auxChainId);
     } else {
       try {
-        if (FacilitatorConfig.isFacilitatorConfigPresent(options.chainId)) {
+        if (FacilitatorConfig.isFacilitatorConfigPresent(auxChainId)) {
           Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
           process.exit(1);
         }
@@ -70,11 +96,11 @@ commander
       }
     }
 
-    const facilitatorConfig = FacilitatorConfig.fromChain(options.chainId);
+    const facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
 
     // Get origin chain id.
     const mosaicConfig = MosaicConfig.fromFile(options.mosaicConfig);
-    const auxChain = mosaicConfig.auxiliaryChains[options.chainId];
+    const auxChain = mosaicConfig.auxiliaryChains[auxChainId];
     if (auxChain === null || auxChain === undefined) {
       Logger.error('aux chain id is not present in the mosaic config');
       process.exit(1);
@@ -85,7 +111,7 @@ commander
     let { dbPath } = options;
     if (dbPath === undefined || dbPath === null) {
       Logger.info('database path is not provided');
-      dbPath = DatabaseFileHelper.create(options.chainId);
+      dbPath = DatabaseFileHelper.create(auxChainId);
     } else if (DatabaseFileHelper.verify(dbPath)) {
       Logger.info('DB file verified');
     } else {
@@ -95,19 +121,38 @@ commander
 
     facilitatorConfig.database.path = dbPath;
     facilitatorConfig.originChain = originChainId;
-    facilitatorConfig.auxChainId = options.chainId;
-    const setFacilitator = (chainid: string, rpc: string, password: string): void => {
-      const account: Account = Account.create(new Web3(null), password);
+    facilitatorConfig.auxChainId = auxChainId;
+    const setFacilitator = (
+      chainId: string,
+      rpc: string,
+      subGraphWs: string,
+      subGraphRpc: string,
+      password: string,
+    ): void => {
+      const account: Account = Account.create(new Web3(''), password);
 
-      facilitatorConfig.chains[chainid] = new Chain(rpc, account.address);
+      facilitatorConfig.chains[chainId] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
       // const envVariableNameForWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${account.address}`;
       // process.env[envVariableNameForWorkerPassword] = password;
 
       facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
     };
 
-    setFacilitator(originChainId, options.originRpc, options.originPassword);
-    setFacilitator(options.chainId, options.auxiliaryRpc, options.auxiliaryPassword);
+    setFacilitator(
+      originChainId,
+      options.originRpc,
+      options.originGraphWs,
+      options.originGraphRpc,
+      options.originPassword,
+    );
+
+    setFacilitator(
+      auxChainId,
+      options.auxiliaryRpc,
+      options.auxiliaryGraphWs,
+      options.auxiliaryGraphRpc,
+      options.auxiliaryPassword,
+    );
 
     // const config = new Config(mosaicConfig, facilitatorConfig);
     // const repositories = await Repositories.create(config.facilitator.database.path);
@@ -119,13 +164,13 @@ commander
     // );
     // await seedData.populateDb();
 
-    facilitatorConfig.writeToFacilitatorConfig(options.chainId);
+    facilitatorConfig.writeToFacilitatorConfig(auxChainId);
     Logger.info('facilitator config file is generated');
 
-    Logger.info(`👉 worker address for ${originChainId} chain is `
+    Logger.info(`👉 worker address for ${originChainId} chain is`
     + `${facilitatorConfig.chains[originChainId].worker}`);
 
-    Logger.info(`👉 worker address for ${options.chainId} chain is `
-      + `${facilitatorConfig.chains[options.chainId].worker}`);
+    Logger.info(`👉 worker address for ${auxChainId} chain is`
+      + `${facilitatorConfig.chains[auxChainId].worker}`);
   })
   .parse(process.argv);

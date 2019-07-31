@@ -20,9 +20,10 @@ import Logger from '../Logger';
 import StakeRequest from '../models/StakeRequest';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /**
- * This class handels stake request transactions.
+ * This class handles stake request transactions.
  */
 export default class StakeRequestHandler extends ContractEntityHandler<StakeRequest> {
   /* Storage */
@@ -47,15 +48,15 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
     Logger.debug('Persisting stake request records');
     const models: StakeRequest[] = transactions.map(
       (transaction): StakeRequest => {
-        const stakeRequestHash = transaction.stakeRequestHash as string;
+        const { stakeRequestHash } = transaction;
         const amount = new BigNumber(transaction.amount);
-        const beneficiary = transaction.beneficiary as string;
+        const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
         const gasPrice = new BigNumber(transaction.gasPrice);
         const gasLimit = new BigNumber(transaction.gasLimit);
         const nonce = new BigNumber(transaction.nonce);
-        const gateway = transaction.gateway as string;
-        const staker = transaction.staker as string;
-        const stakerProxy = transaction.stakerProxy as string;
+        const gateway = Utils.toChecksumAddress(transaction.gateway);
+        const staker = Utils.toChecksumAddress(transaction.staker);
+        const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
 
         return new StakeRequest(
           stakeRequestHash,

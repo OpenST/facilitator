@@ -4,6 +4,9 @@ import AcceptStakeRequestService from './AcceptStakeRequestService';
 import ProveGatewayService from './ProveGatewayService';
 import ConfirmStakeIntentService from './ConfirmStakeIntentService';
 import ProgressService from './ProgressService';
+import Utils from '../Utils';
+
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 /**
  * This class is container that holds instances of all the services.
@@ -44,19 +47,18 @@ export default class Services {
     const acceptStakeRequestService = new AcceptStakeRequestService(
       repositories,
       config.originWeb3,
-      config.mosaic.originChain.contractAddresses.ostComposerAddress!,
-      config.facilitator.chains[config.facilitator.originChain].worker,
+      Utils.toChecksumAddress(config.mosaic.originChain.contractAddresses.ostComposerAddress!),
+      Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
     );
-
     const { auxChainId } = config.facilitator;
     const proveGatewayService = new ProveGatewayService(
       repositories.gatewayRepository,
       repositories.messageRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.facilitator.chains[auxChainId].worker,
+      Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
+      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
       auxChainId,
     );
 
@@ -66,7 +68,8 @@ export default class Services {
       config.originWeb3,
       config.auxiliaryWeb3,
       config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
+      config.mosaic.auxiliaryChains[auxChainId]
+        .contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
 
