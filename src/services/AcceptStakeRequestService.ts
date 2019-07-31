@@ -142,14 +142,12 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       bounty,
     );
 
-    Utils.sendTransaction(rawTransaction, {
+    const txHash = await Utils.sendTransaction(rawTransaction, {
       from: this.originWorkerAddress,
       gasPrice: ORIGIN_GAS_PRICE,
     },
-      this.web3,
-    ).then((txHash) => {
-      Logger.info(`Bounty approval transaction hash ${txHash}`);
-    });
+    this.web3);
+    Logger.info(`Bounty approval transaction hash ${txHash}`);
   }
 
   /**
