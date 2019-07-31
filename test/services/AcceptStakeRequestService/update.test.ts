@@ -140,6 +140,25 @@ describe('AcceptStakeRequestService::update', (): void => {
       },
     };
 
+    const someFakeGatewayInstance = {
+      methods: {
+        bounty: () => ({
+          call: () => '1',
+        }),
+        baseToken: () => ({
+          call: () => '123',
+        }),
+      },
+    };
+
+    const someFakeEIP20Token = {
+      methods: {
+        approve: () => {
+          return fakeTransactionHash;
+        },
+      },
+    };
+
     acceptStakeRequestSpy = sinon.replace(
       someFakeOSTComposerInstance.methods,
       'acceptStakeRequest',
@@ -152,10 +171,21 @@ describe('AcceptStakeRequestService::update', (): void => {
       sinon.fake.returns(someFakeOSTComposerInstance),
     );
 
+    sinon.replace(
+      interacts,
+      'getEIP20Gateway',
+      sinon.fake.returns(someFakeGatewayInstance),
+    );
+
+    sinon.replace(
+      interacts,
+      'getEIP20Token',
+      sinon.fake.returns(someFakeEIP20Token),
+    );
     sendTransactionSpy = sinon.replace(
       Utils,
       'sendTransaction',
-      sinon.fake.returns(fakeTransactionHash),
+      sinon.fake.resolves(fakeTransactionHash),
     );
   });
 
@@ -216,11 +246,16 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
     SpyAssert.assert(
       sendTransactionSpy,
-      1,
+      2,
       [[fakeTransactionHash, {
         from: originWorkerAddress,
         gasPrice: ORIGIN_GAS_PRICE,
-      }]],
+      }],
+      [fakeTransactionHash, {
+        from: originWorkerAddress,
+        gasPrice: ORIGIN_GAS_PRICE,
+      }],
+      ],
     );
   });
 
@@ -326,11 +361,17 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
     SpyAssert.assert(
       sendTransactionSpy,
-      1,
-      [[fakeTransactionHash, {
-        from: originWorkerAddress,
-        gasPrice: ORIGIN_GAS_PRICE,
-      }]],
+      2,
+      [
+        [fakeTransactionHash, {
+          from: originWorkerAddress,
+          gasPrice: ORIGIN_GAS_PRICE,
+        }],
+        [fakeTransactionHash, {
+          from: originWorkerAddress,
+          gasPrice: ORIGIN_GAS_PRICE,
+        }],
+      ],
     );
   });
 });
