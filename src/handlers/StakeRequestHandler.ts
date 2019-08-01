@@ -86,6 +86,8 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
       if (originGatewayAddress === models[i].gateway) {
         Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
         savePromises.push(this.stakeRequestRepository.save(models[i]));
+      } else {
+        Logger.debug(`Gateway address should be ${originGatewayAddress} but found to be: ${models[i].gateway}`);
       }
     }
 
