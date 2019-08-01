@@ -45,6 +45,7 @@ export default class Handlers {
     return {
       stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
+        repos.gatewayRepository,
       ),
       stateRootAvailables: new AnchorHandler(
         repos.auxiliaryChainRepository,

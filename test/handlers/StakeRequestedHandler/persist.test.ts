@@ -7,6 +7,8 @@ import StakeRequest from '../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
+import GatewayRepository from "../../../src/repositories/GatewayRepository";
+import StubData from "../../test_utils/StubData";
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully', async (): Promise<void> => {
@@ -23,11 +25,19 @@ describe('StakeRequestedHandler.persist()', (): void => {
       stakerProxy: '0x0000000000000000000000000000000000000004',
     }];
 
+    const gateway = StubData.gatewayRecord(
+      "goerli",
+      '0x0000000000000000000000000000000000000002'
+    );
+
     const saveStub = sinon.stub();
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {
       save: saveStub as any,
     });
-    const handler = new StakeRequestHandler(sinonMock as any);
+    const gatewayMock = sinon.createStubInstance(GatewayRepository, {
+      getAllByChain: [gateway] as any,
+    });
+    const handler = new StakeRequestHandler(sinonMock as any, gatewayMock as any);
 
     const models = await handler.persist(transactions);
 

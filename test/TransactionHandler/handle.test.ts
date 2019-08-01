@@ -28,7 +28,7 @@ describe('TransactionHandler.handle()', (): void => {
   it('should handle stake request transactions if '
   + 'handler is available', async (): Promise<void> => {
     const aStakeRequest = StubData.getAStakeRequest('123');
-    const stakeRequestedHandler = new StakeRequestHandler(sinon.fake() as any);
+    const stakeRequestedHandler = new StakeRequestHandler(sinon.fake() as any, sinon.fake() as any);
 
     const persistSpy = sinon.replace(
       stakeRequestedHandler,
