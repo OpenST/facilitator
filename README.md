@@ -43,3 +43,11 @@ Facilitator can be started in below two ways :-
 	* If `--mosaic-config` is given then it will read the facilitator config from default path for `<aux-chain-id>` and mosaic-config from `<mosaic-config>` path. Argument `<origin-chain>` and `<aux-chain-id>` should be present in mosaic-config.  
 	* If `--facilitator-config` is given then it will read the mosaic config from default path for `<origin-chain>` and facilitator-config from `<facilitator-config>` path. Argument`<origin-chain>` and `<aux-chain-id>` should be present in it. 
 
+## Setup Log Viewer
+
+Command:
+`
+./node_modules/frontail/bin/frontail <logfile_path_to_view> --ui-highlight --ui-highlight-preset src/LogViewer/frontail_preset.json --host 127.0.0.1 --port 9001 --theme default --daemonize --user dost --password dost
+`
+
+You can see your logs at: http://127.0.0.1:9001/
