@@ -21,6 +21,8 @@ import StakeRequest from '../models/StakeRequest';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import ContractEntityHandler from './ContractEntityHandler';
 import Utils from '../Utils';
+import GatewayRepository from "../repositories/GatewayRepository";
+import Gateway from "../models/Gateway";
 
 /**
  * This class handles stake request transactions.
@@ -29,11 +31,16 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
   /* Storage */
 
   private readonly stakeRequestRepository: StakeRequestRepository;
+  private readonly gatewayRepository: GatewayRepository;
 
-  public constructor(stakeRequestRepository: StakeRequestRepository) {
+  public constructor(
+    stakeRequestRepository: StakeRequestRepository,
+    gatewayRepository: GatewayRepository
+  ) {
     super();
 
     this.stakeRequestRepository = stakeRequestRepository;
+    this.gatewayRepository = gatewayRepository;
   }
 
   /**
@@ -72,10 +79,16 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
       },
     );
 
+    const originGateways: Gateway[] = await this.gatewayRepository.getAllByChain('goerli');
+    const originGatewayAddress = originGateways[0].gatewayAddress;
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
-      savePromises.push(this.stakeRequestRepository.save(models[i]));
+      if (originGatewayAddress === models[i].gateway) {
+        Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
+        savePromises.push(this.stakeRequestRepository.save(models[i]));
+      } else {
+        Logger.debug(`Gateway address should be ${originGatewayAddress} but found to be: ${models[i].gateway}`);
+      }
     }
 
     await Promise.all(savePromises);
