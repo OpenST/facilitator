@@ -30,21 +30,30 @@ export default class Handlers {
    *
    * @param repos Repository container.
    * @param auxChainId ID of auxiliary chain.
+   * @param originChain Origin chain identifier.
+   * @param gatewayAddress Origin chain gateway address.
    * @return Different kinds of transaction handlers.
    */
-  public static create(repos: Repositories, auxChainId: number):
-  {
-    stakeRequesteds: StakeRequestHandler;
-    stateRootAvailables: AnchorHandler;
-    stakeIntentDeclareds: StakeIntentDeclareHandler;
-    gatewayProvens: ProveGatewayHandler;
-    stakeProgresseds: StakeProgressHandler;
-    mintProgresseds: MintProgressHandler;
-    stakeIntentConfirmeds: StakeIntentConfirmHandler;
-  } {
+  public static create(
+    repos: Repositories,
+    auxChainId: number,
+    originChain: string,
+    gatewayAddress: string,
+  ): {
+      stakeRequesteds: StakeRequestHandler;
+      stateRootAvailables: AnchorHandler;
+      stakeIntentDeclareds: StakeIntentDeclareHandler;
+      gatewayProvens: ProveGatewayHandler;
+      stakeProgresseds: StakeProgressHandler;
+      mintProgresseds: MintProgressHandler;
+      stakeIntentConfirmeds: StakeIntentConfirmHandler;
+    } {
     return {
       stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
+        repos.gatewayRepository,
+        originChain,
+        gatewayAddress,
       ),
       stateRootAvailables: new AnchorHandler(
         repos.auxiliaryChainRepository,

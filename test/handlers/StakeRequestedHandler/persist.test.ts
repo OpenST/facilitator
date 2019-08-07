@@ -7,9 +7,13 @@ import StakeRequest from '../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
+import GatewayRepository from '../../../src/repositories/GatewayRepository';
+import StubData from '../../test_utils/StubData';
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully', async (): Promise<void> => {
+    const gatewayAddress = '0x0000000000000000000000000000000000000002';
+    const originChain = '1234';
     const transactions = [{
       id: '1',
       stakeRequestHash: Web3Utils.sha3('1'),
@@ -18,16 +22,29 @@ describe('StakeRequestedHandler.persist()', (): void => {
       gasPrice: '1',
       gasLimit: '1',
       nonce: '1',
-      gateway: '0x0000000000000000000000000000000000000002',
+      gateway: gatewayAddress,
       staker: '0x0000000000000000000000000000000000000003',
       stakerProxy: '0x0000000000000000000000000000000000000004',
     }];
+
+    const gateway = StubData.gatewayRecord(
+      originChain,
+      gatewayAddress,
+    );
 
     const saveStub = sinon.stub();
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {
       save: saveStub as any,
     });
-    const handler = new StakeRequestHandler(sinonMock as any);
+    const gatewayMock = sinon.createStubInstance(GatewayRepository, {
+      getByChainGateway: gateway as any,
+    });
+    const handler = new StakeRequestHandler(
+      sinonMock as any,
+      gatewayMock as any,
+      originChain,
+      gatewayAddress,
+    );
 
     const models = await handler.persist(transactions);
 
