@@ -60,18 +60,17 @@ describe('Gateway::getByChainGateway', (): void => {
 
   it('should return null when querying for non-existing chain',
     async (): Promise<void> => {
+      const getResponse = await config.repos.gatewayRepository.getByChainGateway(
+        'wrong chain',
+        gateway.gatewayAddress,
+      );
 
-    const getResponse = await config.repos.gatewayRepository.getByChainGateway(
-      'wrong chain',
-      gateway.gatewayAddress,
-    );
-
-    assert.strictEqual(
-      getResponse,
-      null,
-      'Wrong chain identifier,',
-    );
-  });
+      assert.strictEqual(
+        getResponse,
+        null,
+        'Wrong chain identifier,',
+      );
+    });
 
   it('should return null when querying for non-existing gateway address',
     async (): Promise<void> => {
@@ -87,5 +86,5 @@ describe('Gateway::getByChainGateway', (): void => {
         null,
         'Non existing gateway address,',
       );
-  });
+    });
 });

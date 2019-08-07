@@ -7,13 +7,13 @@ import StakeRequest from '../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
-import GatewayRepository from "../../../src/repositories/GatewayRepository";
-import StubData from "../../test_utils/StubData";
+import GatewayRepository from '../../../src/repositories/GatewayRepository';
+import StubData from '../../test_utils/StubData';
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully', async (): Promise<void> => {
     const gatewayAddress = '0x0000000000000000000000000000000000000002';
-    const originChain = "goerli";
+    const originChain = '1234';
     const transactions = [{
       id: '1',
       stakeRequestHash: Web3Utils.sha3('1'),
@@ -43,7 +43,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       sinonMock as any,
       gatewayMock as any,
       originChain,
-      gatewayAddress
+      gatewayAddress,
     );
 
     const models = await handler.persist(transactions);
