@@ -142,23 +142,6 @@ describe('AcceptStakeRequestService::update', (): void => {
       },
     };
 
-    const someFakeGatewayInstance = {
-      methods: {
-        bounty: () => ({
-          call: () => '1',
-        }),
-        baseToken: () => ({
-          call: () => '123',
-        }),
-      },
-    };
-
-    const someFakeEIP20Token = {
-      methods: {
-        approve: () => fakeTransactionHash,
-      },
-    };
-
     acceptStakeRequestSpy = sinon.replace(
       someFakeOSTComposerInstance.methods,
       'acceptStakeRequest',
@@ -171,21 +154,10 @@ describe('AcceptStakeRequestService::update', (): void => {
       sinon.fake.returns(someFakeOSTComposerInstance),
     );
 
-    sinon.replace(
-      interacts,
-      'getEIP20Gateway',
-      sinon.fake.returns(someFakeGatewayInstance),
-    );
-
-    sinon.replace(
-      interacts,
-      'getEIP20Token',
-      sinon.fake.returns(someFakeEIP20Token),
-    );
     sendTransactionSpy = sinon.replace(
       Utils,
       'sendTransaction',
-      sinon.fake.resolves(fakeTransactionHash),
+      sinon.fake.returns(fakeTransactionHash),
     );
   });
 
@@ -246,17 +218,11 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
     SpyAssert.assert(
       sendTransactionSpy,
-      2,
-      [
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
-      ],
+      1,
+      [[fakeTransactionHash, {
+        from: originWorkerAddress,
+        gasPrice: ORIGIN_GAS_PRICE,
+      }, web3]],
     );
   });
 
@@ -362,18 +328,11 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
     SpyAssert.assert(
       sendTransactionSpy,
-      2,
-      [
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
-
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
-      ],
+      1,
+      [[fakeTransactionHash, {
+        from: originWorkerAddress,
+        gasPrice: ORIGIN_GAS_PRICE,
+      }, web3]],
     );
   });
 });
