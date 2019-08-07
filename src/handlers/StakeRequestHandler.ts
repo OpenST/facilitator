@@ -21,7 +21,7 @@ import StakeRequest from '../models/StakeRequest';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import ContractEntityHandler from './ContractEntityHandler';
 import Utils from '../Utils';
-import GatewayRepository from "../repositories/GatewayRepository";
+import GatewayRepository from '../repositories/GatewayRepository';
 
 /**
  * This class handles stake request transactions.
@@ -30,8 +30,11 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
   /* Storage */
 
   private readonly stakeRequestRepository: StakeRequestRepository;
+
   private readonly gatewayRepository: GatewayRepository;
+
   private readonly originChain: string;
+
   private readonly gatewayAddress: string;
 
   public constructor(
@@ -64,37 +67,36 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
     Logger.debug(`Persisting stake request records for gateway: ${gatewayRecord!.gatewayAddress}`);
     const models: StakeRequest[] = [];
     transactions.forEach((transaction) => {
-        const { stakeRequestHash } = transaction;
-        const amount = new BigNumber(transaction.amount);
-        const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
-        const gasPrice = new BigNumber(transaction.gasPrice);
-        const gasLimit = new BigNumber(transaction.gasLimit);
-        const nonce = new BigNumber(transaction.nonce);
-        const gateway = Utils.toChecksumAddress(transaction.gateway);
-        const staker = Utils.toChecksumAddress(transaction.staker);
-        const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
+      const { stakeRequestHash } = transaction;
+      const amount = new BigNumber(transaction.amount);
+      const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
+      const gasPrice = new BigNumber(transaction.gasPrice);
+      const gasLimit = new BigNumber(transaction.gasLimit);
+      const nonce = new BigNumber(transaction.nonce);
+      const gateway = Utils.toChecksumAddress(transaction.gateway);
+      const staker = Utils.toChecksumAddress(transaction.staker);
+      const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
 
-        if( gatewayRecord!.gatewayAddress === gateway) {
-          const stakeRequest = new StakeRequest(
-            stakeRequestHash,
-            amount,
-            beneficiary,
-            gasPrice,
-            gasLimit,
-            nonce,
-            gateway,
-            staker,
-            stakerProxy,
-          );
-          models.push(stakeRequest);
-        }
-      },
-    );
+      if (gatewayRecord!.gatewayAddress === gateway) {
+        const stakeRequest = new StakeRequest(
+          stakeRequestHash,
+          amount,
+          beneficiary,
+          gasPrice,
+          gasLimit,
+          nonce,
+          gateway,
+          staker,
+          stakerProxy,
+        );
+        models.push(stakeRequest);
+      }
+    });
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-        Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
-        savePromises.push(this.stakeRequestRepository.save(models[i]));
+      Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
+      savePromises.push(this.stakeRequestRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);

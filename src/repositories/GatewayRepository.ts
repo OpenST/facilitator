@@ -186,6 +186,7 @@ export default class GatewayRepository extends Subject<Gateway> {
    *
    * @param chain Chain identifier.
    * @param gatewayAddress Gateway address.
+   * @returns Gateway object containing values which satisfy the `where` condition.
    */
   public async getByChainGateway(chain: string, gatewayAddress: string): Promise<Gateway | null> {
     const gatewayRecord = await GatewayModel.findOne({

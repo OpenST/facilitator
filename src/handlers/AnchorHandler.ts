@@ -21,7 +21,7 @@ import Logger from '../Logger';
 import AuxiliaryChain from '../models/AuxiliaryChain';
 import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
 import ContractEntityHandler from './ContractEntityHandler';
-import Utils from "../Utils";
+import Utils from '../Utils';
 
 /**
  * This class handles Anchor event
@@ -58,8 +58,8 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
     let anchorBlockHeight = chainRecord.lastOriginBlockHeight;
     transactions
       .filter((transaction): boolean => chainRecord.coAnchorAddress === Utils.toChecksumAddress(
-        transaction.contractAddress)
-      )
+        transaction.contractAddress,
+      ))
       .forEach((filteredTransaction): void => {
         if (
           anchorBlockHeight === undefined

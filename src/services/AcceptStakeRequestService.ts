@@ -121,6 +121,12 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
   }
 
+  /**
+   * Worker approves GatewayComposer with bounty amount.
+   *
+   * @param {StakeRequest} stakeRequest
+   * @return {Promise<void>}
+   */
   private async approveForBounty(stakeRequest: StakeRequest) {
     const eip20GatewayInteract = interacts.getEIP20Gateway(
       this.web3,

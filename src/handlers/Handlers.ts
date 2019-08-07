@@ -40,14 +40,14 @@ export default class Handlers {
     originChain: string,
     gatewayAddress: string,
   ): {
-    stakeRequesteds: StakeRequestHandler;
-    stateRootAvailables: AnchorHandler;
-    stakeIntentDeclareds: StakeIntentDeclareHandler;
-    gatewayProvens: ProveGatewayHandler;
-    stakeProgresseds: StakeProgressHandler;
-    mintProgresseds: MintProgressHandler;
-    stakeIntentConfirmeds: StakeIntentConfirmHandler;
-  } {
+      stakeRequesteds: StakeRequestHandler;
+      stateRootAvailables: AnchorHandler;
+      stakeIntentDeclareds: StakeIntentDeclareHandler;
+      gatewayProvens: ProveGatewayHandler;
+      stakeProgresseds: StakeProgressHandler;
+      mintProgresseds: MintProgressHandler;
+      stakeIntentConfirmeds: StakeIntentConfirmHandler;
+    } {
     return {
       stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
