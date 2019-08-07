@@ -9,7 +9,7 @@ async function whiteListOriginWorker() {
   );
   console.log(`composerOrganizationOwnerAccount address: ${composerOrganizationOwnerAccount.address}`);
   web3.eth.accounts.wallet.add(composerOrganizationOwnerAccount);
-  const workerToWhitelist = '0xC0ea2AFbCf171788cD410e303CdcC5308Ae68777';
+  const workerToWhitelist = '0xFa41c19b901849f439153baE98ad6D44a3a04403';
   const abi = [
     {
       constant: true,

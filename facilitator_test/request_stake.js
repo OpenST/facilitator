@@ -1,13 +1,13 @@
 const Web3 = require('web3');
 
 async function requestStake() {
-  const web3 = new Web3('http://3.214.143.1:40003');
-  const privateKey = '0x46a79808dd793a34e890f3b4f0c0d9be6dacdfefc10f95f86aa79f913481247e';
-  const gatewayAddress = '0x04df90efbedf393361cdf498234af818da14f562';
+  const web3 = new Web3('http://34.244.36.178:40005');
+  const privateKey = '0xc89b8acfc986b5fdf2c3a300c4b7bfc762f29ea69be2904f0cf0cecc6b38aba9';
+  const gatewayAddress = '0x6649c6FF3629aE875b91B6C1551139c9feaA2514';
   const account = web3.eth.accounts.privateKeyToAccount(privateKey);
   console.log('address ', account.address);
   web3.eth.accounts.wallet.add(account);
-  const amountToStake = '11';
+  const amountToStake = '1';
   const nonce = '1';
   const abi = [
     {
@@ -365,7 +365,7 @@ async function requestStake() {
     },
   ];
 
-  const ostComposerAddress = '0x4a633b3375a5b9eaa6ddc226ebe2ac832b557746';
+  const ostComposerAddress = '0xEAA192D486ac5243886a28001E27A68caE5FDE4B';
 
   const contract = new web3.eth.Contract(abi, ostComposerAddress);
   contract.methods.requestStake(
@@ -378,7 +378,7 @@ async function requestStake() {
   )
     .send({
       from: account.address,
-      gasPrice: '0x2E90EDD000',
+      gasPrice: '0x3B9ACA00',
       gas: '3700724',
     }).on('error', (error) => {
       console.log('Error on deployment ', error);
