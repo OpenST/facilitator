@@ -51,6 +51,7 @@ export default class GraphClient {
     fetcher: TransactionFetcher,
     contractEntityRepository: ContractEntityRepository,
   ): Promise<Subscription> {
+    Logger.info(`subscriptionQry: ${subscriptionQry}`);
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
       throw (err);
@@ -66,21 +67,23 @@ export default class GraphClient {
       observable
         .subscribe({
           async next(response: Record<string, any>) {
-            Logger.debug(`Received subscription data ${JSON.stringify(response.data)}`);
-            const transactions: Record<
-            string,
-            Record<string, any>[]
-            > = await fetcher.fetch(response.data);
-            await handler.handle(transactions);
-            Logger.debug('Updating UTS');
-            await GraphClient.updateLatestUTS(
-              transactions,
-              response.data,
-              contractEntityRepository,
-            );
+            try {
+              Logger.debug(`Received subscription data ${JSON.stringify(response.data)}`);
+              const transactions: Record<string,
+                Record<string, any>[]> = await fetcher.fetch(response.data);
+              await handler.handle(transactions);
+              Logger.debug('Updating UTS');
+              await GraphClient.updateLatestUTS(
+                transactions,
+                response.data,
+                contractEntityRepository,
+              );
+            } catch (e) {
+              Logger.error(`Error in observer  ${e} for subscriptionQry: ${subscriptionQry}`);
+            }
           },
           error(err) {
-            Logger.error(err);
+            Logger.error(`Observer error: ${err}`);
           },
         }),
     );
