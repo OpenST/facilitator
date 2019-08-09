@@ -146,6 +146,9 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
       MESSAGE_BOX_OFFSET, // fixme #141
     );
+    if (proofData.storageProof[0].value === '0') {
+      return Promise.reject('Storage proof is invalid');
+    }
 
     Logger.debug(`Generated proof ${JSON.stringify(proofData)}`);
     const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(
