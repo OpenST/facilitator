@@ -147,7 +147,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       MESSAGE_BOX_OFFSET, // fixme #141
     );
     if (proofData.storageProof[0].value === '0') {
-      return Promise.reject('Storage proof is invalid');
+      return Promise.reject(new Error('Storage proof is invalid'));
     }
 
     Logger.debug(`Generated proof ${JSON.stringify(proofData)}`);
