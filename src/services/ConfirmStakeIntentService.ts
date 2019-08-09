@@ -139,7 +139,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     message: Message,
     gateway: Gateway,
   ): Promise<string> {
-    Logger.debug(`Generation proof for confirm stake intent for gateway ${this.gatewayAddress} anf message hash ${message.messageHash}`);
+    Logger.debug(`Generation proof for confirm stake intent for gateway ${this.gatewayAddress} and message hash ${message.messageHash}`);
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],

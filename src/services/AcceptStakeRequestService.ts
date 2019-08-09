@@ -97,7 +97,11 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequests(stakeRequests: StakeRequest[]): Promise<void> {
     const stakeRequestPromises = [];
     for (let i = 0; i < stakeRequests.length; i += 1) {
-      stakeRequestPromises.push(this.acceptStakeRequest(stakeRequests[i]));
+      stakeRequestPromises.push(
+        this.acceptStakeRequest(stakeRequests[i]).catch(function (error: any) {
+          Logger.error('acceptStakeRequestServiceError', error);
+        })
+      );
     }
 
     await Promise.all(stakeRequestPromises);
