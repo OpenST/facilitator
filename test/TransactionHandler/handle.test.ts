@@ -8,6 +8,7 @@ import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
 
 describe('TransactionHandler.handle()', (): void => {
+  const gatewayAddress = '0x0000000000000000000000000000000000000001';
   const bulkTransactions = {
     stakeRequesteds: [
       {
@@ -16,7 +17,7 @@ describe('TransactionHandler.handle()', (): void => {
         beneficiary: '0x79376dc1925ba1e0276473244802287394216a39',
         gasLimit: '2',
         gasPrice: '1',
-        gateway: '0x4e4ea3140f3d4a07e2f054cbabfd1f8038b3b4b0',
+        gateway: gatewayAddress,
         id: '0xa80c3db5089412e553b3b4defc3b3759f56b3a77257be6940251a7a05b5c4fec-0',
         nonce: '1',
         stakeRequestHash: '0xdc67e167a7dd111e4f2c27796ceb89955bb68b995eef3a84aa86b38a5f7cd22c',
@@ -28,13 +29,17 @@ describe('TransactionHandler.handle()', (): void => {
   it('should handle stake request transactions if '
   + 'handler is available', async (): Promise<void> => {
     const aStakeRequest = StubData.getAStakeRequest('123');
-    const stakeRequestedHandler = new StakeRequestHandler(sinon.fake() as any);
+    const stakeRequestedHandler = new StakeRequestHandler(
+      sinon.fake() as any,
+      gatewayAddress,
+    );
 
     const persistSpy = sinon.replace(
       stakeRequestedHandler,
       'persist',
       sinon.fake.resolves([aStakeRequest]),
     );
+
     const handlers = {
       stakeRequesteds: stakeRequestedHandler,
     };

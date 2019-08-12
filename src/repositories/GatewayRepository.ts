@@ -181,7 +181,27 @@ export default class GatewayRepository extends Subject<Gateway> {
     return this.convertToGateway(gatewayModel);
   }
 
-  /* Private Functions */
+  /**
+   * This method returns gateway record based on chain identifier and gateway address.
+   *
+   * @param chain Chain identifier.
+   * @param gatewayAddress Gateway address.
+   * @returns Gateway object containing values which satisfy the `where` condition.
+   */
+  public async getByChainGateway(chain: string, gatewayAddress: string): Promise<Gateway | null> {
+    const gatewayRecord = await GatewayModel.findOne({
+      where: {
+        chain,
+        gatewayAddress,
+      },
+    });
+
+    if (gatewayRecord === null) {
+      return null;
+    }
+
+    return this.convertToGateway(gatewayRecord);
+  }
 
   /**
    * This method returns list of gateway records based on chain identifier.
@@ -199,6 +219,9 @@ export default class GatewayRepository extends Subject<Gateway> {
       return gateway;
     });
   }
+
+
+  /* Private Functions */
 
   /**
    * It converts Gateway db object to Gateway model object.
