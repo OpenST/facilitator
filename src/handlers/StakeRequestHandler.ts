@@ -80,19 +80,20 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
             stakeRequest.blockNumber = blockNumber;
             stakeRequest.messageHash = undefined;
             return stakeRequest;
+          } else {
+            return new StakeRequest(
+              stakeRequestHash,
+              amount,
+              beneficiary,
+              gasPrice,
+              gasLimit,
+              nonce,
+              gateway,
+              staker,
+              stakerProxy,
+              blockNumber,
+            );
           }
-          return new StakeRequest(
-            stakeRequestHash,
-            amount,
-            beneficiary,
-            gasPrice,
-            gasLimit,
-            nonce,
-            gateway,
-            staker,
-            stakerProxy,
-            blockNumber,
-          );
         },
       ));
 
