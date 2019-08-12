@@ -37,7 +37,6 @@ export default class Handlers {
   public static create(
     repos: Repositories,
     auxChainId: number,
-    originChain: string,
     gatewayAddress: string,
   ): {
       stakeRequesteds: StakeRequestHandler;
@@ -51,8 +50,6 @@ export default class Handlers {
     return {
       stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
-        repos.gatewayRepository,
-        originChain,
         gatewayAddress,
       ),
       stateRootAvailables: new AnchorHandler(
