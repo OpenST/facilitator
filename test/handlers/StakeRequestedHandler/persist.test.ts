@@ -9,8 +9,8 @@ import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('StakeRequestedHandler.persist()', (): void => {
-  it('should persist successfully when stakeRequesteds is received first time for' +
-    ' stakeRequestHash', async (): Promise<void> => {
+  it('should persist successfully when stakeRequesteds is received first time for'
+    + ' stakeRequestHash', async (): Promise<void> => {
     const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions = [{
       id: '1',
@@ -60,8 +60,8 @@ describe('StakeRequestedHandler.persist()', (): void => {
     sinon.restore();
   });
 
-  it('should update messageHash as undefined and blockNumber when stakeRequest ' +
-    'is already present', async (): Promise<void> => {
+  it('should update messageHash as undefined and blockNumber when stakeRequest '
+    + 'is already present', async (): Promise<void> => {
     const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions1 = [{
       id: '1',
@@ -144,7 +144,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     assert.deepStrictEqual(models2[0], stakeRequest2);
 
     SpyAssert.assert(sinonMock.get, 2, [
-      [transactions1[0].stakeRequestHash], [transactions2[0].stakeRequestHash]
+      [transactions1[0].stakeRequestHash], [transactions2[0].stakeRequestHash],
     ]);
     sinon.restore();
   });

@@ -62,25 +62,25 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
         transaction.gateway,
       ))
       .map(
-      async (transaction): Promise<StakeRequest> => {
-        const { stakeRequestHash } = transaction;
-        const amount = new BigNumber(transaction.amount);
-        const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
-        const gasPrice = new BigNumber(transaction.gasPrice);
-        const gasLimit = new BigNumber(transaction.gasLimit);
-        const nonce = new BigNumber(transaction.nonce);
-        const gateway = Utils.toChecksumAddress(transaction.gateway);
-        const staker = Utils.toChecksumAddress(transaction.staker);
-        const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
-        const blockNumber = new BigNumber(transaction.blockNumber);
+        async (transaction): Promise<StakeRequest> => {
+          const { stakeRequestHash } = transaction;
+          const amount = new BigNumber(transaction.amount);
+          const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
+          const gasPrice = new BigNumber(transaction.gasPrice);
+          const gasLimit = new BigNumber(transaction.gasLimit);
+          const nonce = new BigNumber(transaction.nonce);
+          const gateway = Utils.toChecksumAddress(transaction.gateway);
+          const staker = Utils.toChecksumAddress(transaction.staker);
+          const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
+          const blockNumber = new BigNumber(transaction.blockNumber);
 
-        let stakeRequest = await this.stakeRequestRepository.get(stakeRequestHash);
-        if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber!)) {
-          Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
-          stakeRequest.blockNumber = blockNumber;
-          stakeRequest.messageHash = undefined;
-          return stakeRequest;
-        } else {
+          const stakeRequest = await this.stakeRequestRepository.get(stakeRequestHash);
+          if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber!)) {
+            Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
+            stakeRequest.blockNumber = blockNumber;
+            stakeRequest.messageHash = undefined;
+            return stakeRequest;
+          }
           return new StakeRequest(
             stakeRequestHash,
             amount,
@@ -93,9 +93,8 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
             stakerProxy,
             blockNumber,
           );
-        }
-      },
-    ));
+        },
+      ));
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
