@@ -62,7 +62,7 @@ export default class GraphClient {
     const observable = this.apolloClient.subscribe({
       query: gqlSubscriptionQry,
       variables: {},
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
     });
     const querySubscriber = await Promise.resolve(
       observable
@@ -79,6 +79,7 @@ export default class GraphClient {
                 response.data,
                 contractEntityRepository,
               );
+              Logger.debug(`Observer flow completed.`);
             } catch (e) {
               Logger.error(`Error in observer  ${e} for subscriptionQry: ${subscriptionQry}`);
             }
@@ -145,7 +146,7 @@ export default class GraphClient {
     const queryResult = await this.apolloClient.query({
       query: gqlQuery,
       variables,
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
     });
 
     return queryResult;
