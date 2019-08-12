@@ -11,6 +11,7 @@ import SpyAssert from '../../test_utils/SpyAssert';
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully when stakeRequesteds is received first time for' +
     ' stakeRequestHash', async (): Promise<void> => {
+    const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions = [{
       id: '1',
       stakeRequestHash: Web3Utils.sha3('1'),
@@ -19,7 +20,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       gasPrice: '1',
       gasLimit: '1',
       nonce: '1',
-      gateway: '0x0000000000000000000000000000000000000002',
+      gateway: gatewayAddress,
       staker: '0x0000000000000000000000000000000000000003',
       stakerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '10',
@@ -29,7 +30,10 @@ describe('StakeRequestedHandler.persist()', (): void => {
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {
       save: saveStub as any,
     });
-    const handler = new StakeRequestHandler(sinonMock as any);
+    const handler = new StakeRequestHandler(
+      sinonMock as any,
+      gatewayAddress,
+    );
 
     const models = await handler.persist(transactions);
 

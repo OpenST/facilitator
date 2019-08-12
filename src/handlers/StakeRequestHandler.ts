@@ -30,10 +30,16 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
 
   private readonly stakeRequestRepository: StakeRequestRepository;
 
-  public constructor(stakeRequestRepository: StakeRequestRepository) {
+  private readonly gatewayAddress: string;
+
+  public constructor(
+    stakeRequestRepository: StakeRequestRepository,
+    gatewayAddress: string,
+  ) {
     super();
 
     this.stakeRequestRepository = stakeRequestRepository;
+    this.gatewayAddress = gatewayAddress;
   }
 
   /**
@@ -50,7 +56,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<StakeRequest[]> {
-    Logger.debug('Persisting stake request records');
+    Logger.debug(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
     const models: StakeRequest[] = await Promise.all(transactions.map(
       async (transaction): Promise<StakeRequest> => {
         const { stakeRequestHash } = transaction;
