@@ -30,7 +30,6 @@ export default class Handlers {
    *
    * @param repos Repository container.
    * @param auxChainId ID of auxiliary chain.
-   * @param originChain Origin chain identifier.
    * @param gatewayAddress Origin chain gateway address.
    * @return Different kinds of transaction handlers.
    */

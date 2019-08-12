@@ -56,8 +56,12 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<StakeRequest[]> {
-    Logger.debug(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
-    const models: StakeRequest[] = await Promise.all(transactions.map(
+    Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
+    const models: StakeRequest[] = await Promise.all(transactions
+      .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
+        transaction.gateway,
+      ))
+      .map(
       async (transaction): Promise<StakeRequest> => {
         const { stakeRequestHash } = transaction;
         const amount = new BigNumber(transaction.amount);
@@ -98,9 +102,9 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
       Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
       savePromises.push(this.stakeRequestRepository.save(models[i]));
     }
+
     await Promise.all(savePromises);
     Logger.debug('Stake requests saved');
-
     return models;
   }
 }

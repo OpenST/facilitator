@@ -62,6 +62,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
 
   it('should update messageHash as undefined and blockNumber when stakeRequest ' +
     'is already present', async (): Promise<void> => {
+    const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions1 = [{
       id: '1',
       stakeRequestHash: Web3Utils.sha3('1'),
@@ -70,7 +71,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       gasPrice: '1',
       gasLimit: '1',
       nonce: '1',
-      gateway: '0x0000000000000000000000000000000000000002',
+      gateway: gatewayAddress,
       staker: '0x0000000000000000000000000000000000000003',
       stakerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '10',
@@ -97,7 +98,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       gasPrice: '1',
       gasLimit: '1',
       nonce: '1',
-      gateway: '0x0000000000000000000000000000000000000002',
+      gateway: gatewayAddress,
       staker: '0x0000000000000000000000000000000000000003',
       stakerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '11',
@@ -116,12 +117,11 @@ describe('StakeRequestedHandler.persist()', (): void => {
       undefined, // Message hash should be undefined.
     );
 
-    const saveStub = sinon.stub();
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {});
-    const handler = new StakeRequestHandler(sinonMock as any);
+    const handler = new StakeRequestHandler(sinonMock as any, gatewayAddress);
 
-    sinonMock.save.onFirstCall().returns(Promise.resolve(saveStub as any));
-    sinonMock.save.onSecondCall().returns(Promise.resolve(saveStub as any));
+    sinonMock.save.onFirstCall().returns(Promise.resolve(sinon.stub() as any));
+    sinonMock.save.onSecondCall().returns(Promise.resolve(sinon.stub() as any));
 
     sinonMock.get.onFirstCall().returns(Promise.resolve(null));
     sinonMock.get.onSecondCall().returns(Promise.resolve(stakeRequest1));
