@@ -36,7 +36,7 @@ export default class Container {
     const handler = Handlers.create(
       repositories,
       config.facilitator.auxChainId,
-     mosaicAuxChain.contractAddresses.origin.ostEIP20GatewayAddress as string,
+      mosaicAuxChain.contractAddresses.origin.ostEIP20GatewayAddress as string,
     );
     const transactionHandler = new TransactionHandler(
       handler,
