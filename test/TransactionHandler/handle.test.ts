@@ -8,8 +8,7 @@ import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
 
 describe('TransactionHandler.handle()', (): void => {
-  const originChain = '1234';
-  const gatewayAddress = '0x4e4ea3140f3d4a07e2f054cbabfd1f8038b3b4b0';
+  const gatewayAddress = '0x0000000000000000000000000000000000000001';
   const bulkTransactions = {
     stakeRequesteds: [
       {
@@ -32,8 +31,6 @@ describe('TransactionHandler.handle()', (): void => {
     const aStakeRequest = StubData.getAStakeRequest('123');
     const stakeRequestedHandler = new StakeRequestHandler(
       sinon.fake() as any,
-      sinon.fake() as any,
-      originChain,
       gatewayAddress,
     );
 

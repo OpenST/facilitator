@@ -21,7 +21,6 @@ import StakeRequest from '../models/StakeRequest';
 import StakeRequestRepository from '../repositories/StakeRequestRepository';
 import ContractEntityHandler from './ContractEntityHandler';
 import Utils from '../Utils';
-import GatewayRepository from '../repositories/GatewayRepository';
 
 /**
  * This class handles stake request transactions.
@@ -31,23 +30,15 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
 
   private readonly stakeRequestRepository: StakeRequestRepository;
 
-  private readonly gatewayRepository: GatewayRepository;
-
-  private readonly originChain: string;
-
   private readonly gatewayAddress: string;
 
   public constructor(
     stakeRequestRepository: StakeRequestRepository,
-    gatewayRepository: GatewayRepository,
-    originChain: string,
     gatewayAddress: string,
   ) {
     super();
 
     this.stakeRequestRepository = stakeRequestRepository;
-    this.gatewayRepository = gatewayRepository;
-    this.originChain = originChain;
     this.gatewayAddress = gatewayAddress;
   }
 
@@ -60,11 +51,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<StakeRequest[]> {
-    const gatewayRecord = await this.gatewayRepository.getByChainGateway(
-      this.originChain,
-      this.gatewayAddress,
-    );
-    Logger.debug(`Persisting stake request records for gateway: ${gatewayRecord!.gatewayAddress}`);
+    Logger.debug(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
     const models: StakeRequest[] = [];
     transactions.forEach((transaction) => {
       const { stakeRequestHash } = transaction;
@@ -77,7 +64,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
       const staker = Utils.toChecksumAddress(transaction.staker);
       const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
 
-      if (gatewayRecord!.gatewayAddress === gateway) {
+      if (this.gatewayAddress === gateway) {
         const stakeRequest = new StakeRequest(
           stakeRequestHash,
           amount,
