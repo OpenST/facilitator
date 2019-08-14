@@ -78,7 +78,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber!)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
-            stakeRequest.messageHash = undefined;
+            stakeRequest.messageHash = null!;
             return stakeRequest;
           } else {
             return new StakeRequest(
