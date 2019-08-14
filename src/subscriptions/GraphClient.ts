@@ -81,7 +81,7 @@ export default class GraphClient {
               );
               Logger.debug(`Observer flow completed.`);
             } catch (e) {
-              Logger.error(`Error in observer  ${e} for subscriptionQry: ${subscriptionQry}`);
+              Logger.error(`Error in observer  ${e}`);
             }
           },
           error(err) {
