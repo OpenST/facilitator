@@ -114,7 +114,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       Web3Utils.toChecksumAddress(transactions2[0].staker),
       Web3Utils.toChecksumAddress(transactions2[0].stakerProxy),
       new BigNumber(transactions2[0].blockNumber),
-      undefined, // Message hash should be undefined.
+      null!, // Message hash should be null.
     );
 
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {});
