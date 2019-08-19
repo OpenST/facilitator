@@ -119,7 +119,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
           Logger.debug(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
           transactionHashes[message.messageHash] = transactionHash;
         }).catch(function (error: any) {
-          Logger.error('confirmStakeIntentServiceError', error);
+          Logger.error('confirmStakeIntentServiceError ', error);
         }));
 
     await Promise.all(promises);

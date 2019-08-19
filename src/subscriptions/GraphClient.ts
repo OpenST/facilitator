@@ -51,7 +51,6 @@ export default class GraphClient {
     fetcher: TransactionFetcher,
     contractEntityRepository: ContractEntityRepository,
   ): Promise<Subscription> {
-    Logger.info(`subscriptionQry: ${subscriptionQry}`);
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
       throw (err);
