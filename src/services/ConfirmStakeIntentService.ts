@@ -118,6 +118,8 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
         .then((transactionHash): void => {
           Logger.debug(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
           transactionHashes[message.messageHash] = transactionHash;
+        }).catch(function (error: any) {
+          Logger.error('confirmStakeIntentServiceError ', error);
         }));
 
     await Promise.all(promises);
@@ -137,13 +139,16 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     message: Message,
     gateway: Gateway,
   ): Promise<string> {
-    Logger.debug(`Generation proof for confirm stake intent for gateway ${this.gatewayAddress} anf message hash ${message.messageHash}`);
+    Logger.debug(`Generation proof for confirm stake intent for gateway ${this.gatewayAddress} and message hash ${message.messageHash}`);
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],
       gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
       MESSAGE_BOX_OFFSET, // fixme #141
     );
+    if (proofData.storageProof[0].value === '0') {
+      return Promise.reject(new Error('Storage proof is invalid'));
+    }
 
     Logger.debug(`Generated proof ${JSON.stringify(proofData)}`);
     const eip20CoGateway: EIP20CoGateway = interacts.getEIP20CoGateway(
