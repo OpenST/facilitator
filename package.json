@@ -10,7 +10,8 @@
     "coverage:report": "nyc report",
     "coverage:unit": "nyc --silent npm run test:unit",
     "coverage:facilitator": "nyc --silent --no-clean npm run test:facilitator",
-    "coverage": "tsc && npm run coverage:unit && npm run coverage:facilitator && npm run coverage:report"
+    "coverage": "tsc && npm run coverage:unit && npm run coverage:facilitator && npm run coverage:report",
+    "log:viewer": "./node_modules/frontail/bin/frontail $LOG_FILE_PATH --ui-highlight --ui-highlight-preset src/LogViewer/frontail_preset.json --host 127.0.0.1 --port 9001 --theme default --daemonize --user '$USERNAME' --password '$PASSWORD'"
   },
   "repository": {
     "type": "git",
