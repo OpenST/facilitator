@@ -97,7 +97,7 @@ export class MessageRepository extends Subject<Message> {
         },
         gatewayAddress: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -113,7 +113,7 @@ export class MessageRepository extends Subject<Message> {
               MessageStatus.Revoked,
             ],
           }),
-          allowNull: false,
+          allowNull: true,
         },
         targetStatus: {
           type: DataTypes.ENUM({
@@ -128,28 +128,28 @@ export class MessageRepository extends Subject<Message> {
         },
         gasPrice: {
           type: DataTypes.BIGINT,
-          allowNull: false,
+          allowNull: true,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
           type: DataTypes.BIGINT,
-          allowNull: false,
+          allowNull: true,
           validate: {
             min: 0,
           },
         },
         nonce: {
           type: DataTypes.BIGINT,
-          allowNull: false,
+          allowNull: true,
           validate: {
             min: 0,
           },
         },
         sender: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
           validate: {
             isAlphanumeric: true,
             len: [42, 42],
@@ -163,19 +163,21 @@ export class MessageRepository extends Subject<Message> {
         },
         sourceDeclarationBlockHeight: {
           type: DataTypes.BIGINT,
-          allowNull: false,
+          allowNull: true,
           validate: {
             min: 0,
           },
         },
         secret: {
           type: DataTypes.STRING,
+          allowNull: true,
           validate: {
             isAlphanumeric: true,
           },
         },
         hashLock: {
           type: DataTypes.STRING,
+          allowNull: true,
           validate: {
             isAlphanumeric: true,
           },

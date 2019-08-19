@@ -47,7 +47,7 @@ Facilitator can be started in below two ways :-
 
 Command:
 `
-./node_modules/frontail/bin/frontail <logfile_path_to_view> --ui-highlight --ui-highlight-preset src/LogViewer/frontail_preset.json --host 127.0.0.1 --port 9001 --theme default --daemonize --user dost --password dost
+./node_modules/frontail/bin/frontail <logfile_path_to_view> --ui-highlight --ui-highlight-preset src/LogViewer/frontail_preset.json --host 127.0.0.1 --port 9001 --theme default --daemonize --user d0st@#542$ --password dos1&(*)12#
 `
 
 You can see your logs at: http://127.0.0.1:9001/
