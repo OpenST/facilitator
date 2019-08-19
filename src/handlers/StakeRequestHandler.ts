@@ -45,10 +45,24 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
   /**
    * This method parse stakeRequest transaction and returns stakeRequest model object.
    *
-   * Note: In case of forking, stakeRequest transaction will be received multiple times.
-   * Check if StakeRequest record is already present in database for that stakeRequestHash. If
-   * it's present update messageHash to be NULL. This will make sure acceptStakeRequest transaction
-   * is retried again.
+   * Note: Forking Handling
+   *
+   * - Facilitator starts by subscribing to origin and auxiliary subgraphs.
+   *
+   * - On receiving first StakeRequested event/entity, entry is created in stake_requests
+   * repository and AcceptStakeRequest service is triggered.
+   *
+   * - AcceptStakeRequest sends acceptStakeRequest transaction.
+   *
+   * - If there is no forking of requestStake transaction, acceptStakeRequest transaction will be
+   * successful.
+   *
+   * - If there is forking of requestStake transaction, StakeRequested event/entity is received
+   * again. Facilitator checks the block number of new StakeRequested event. If block number is
+   * greater than stake_requests repository block number, then message hash is updated and
+   * acceptStakeRequest transaction is sent again.
+   *
+   * - acceptStakeRequest transaction is successful in this case.
    *
    * @param transactions Transaction objects.
    *
