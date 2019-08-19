@@ -60,7 +60,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     sinon.restore();
   });
 
-  it('should update messageHash as undefined and blockNumber when stakeRequest '
+  it('should update messageHash(null) and blockNumber when stakeRequest '
     + 'is already present', async (): Promise<void> => {
     const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions1 = [{
@@ -76,7 +76,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       stakerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '10',
     }];
-    const stakeRequest1 = new StakeRequest(
+    const stakeRequest = new StakeRequest(
       transactions1[0].stakeRequestHash,
       new BigNumber(transactions1[0].amount),
       Web3Utils.toChecksumAddress(transactions1[0].beneficiary),
@@ -103,7 +103,8 @@ describe('StakeRequestedHandler.persist()', (): void => {
       stakerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '11',
     }];
-    const stakeRequest2 = new StakeRequest(
+
+    const stakeRequestWithNullMessageHash = new StakeRequest(
       transactions2[0].stakeRequestHash,
       new BigNumber(transactions2[0].amount),
       Web3Utils.toChecksumAddress(transactions2[0].beneficiary),
@@ -120,13 +121,15 @@ describe('StakeRequestedHandler.persist()', (): void => {
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {});
     const handler = new StakeRequestHandler(sinonMock as any, gatewayAddress);
 
-    sinonMock.save.onFirstCall().returns(Promise.resolve(sinon.stub() as any));
-    sinonMock.save.onSecondCall().returns(Promise.resolve(sinon.stub() as any));
-
-    sinonMock.get.onFirstCall().returns(Promise.resolve(null));
-    sinonMock.get.onSecondCall().returns(Promise.resolve(stakeRequest1));
-
+    sinonMock.get.returns(Promise.resolve(null));
+    sinonMock.save.returns(Promise.resolve(stakeRequest));
     const models1 = await handler.persist(transactions1);
+
+    let stakeRequestWithMessageHash = Object.assign({}, stakeRequest);
+    stakeRequestWithMessageHash.messageHash = 'messageHash';
+
+    sinonMock.get.returns(Promise.resolve(stakeRequestWithMessageHash));
+    sinonMock.save.returns(Promise.resolve(stakeRequestWithNullMessageHash));
     const models2 = await handler.persist(transactions2);
 
     assert.equal(
@@ -141,10 +144,16 @@ describe('StakeRequestedHandler.persist()', (): void => {
       'Number of models must be equal to transactions',
     );
 
-    assert.deepStrictEqual(models2[0], stakeRequest2);
+    assert.deepStrictEqual(models1[0], stakeRequest);
+
+    assert.deepStrictEqual(models2[0], stakeRequestWithNullMessageHash);
 
     SpyAssert.assert(sinonMock.get, 2, [
       [transactions1[0].stakeRequestHash], [transactions2[0].stakeRequestHash],
+    ]);
+
+    SpyAssert.assert(sinonMock.save, 2, [
+      [stakeRequest], [stakeRequestWithNullMessageHash],
     ]);
     sinon.restore();
   });
