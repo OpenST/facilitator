@@ -407,7 +407,7 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      stakeRequest.beneficiary.address,
+      stakeRequest.beneficiary,
       mintProgressed._beneficiary,
       'Incorrect beneficiary address',
     );

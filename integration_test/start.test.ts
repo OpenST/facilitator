@@ -43,7 +43,7 @@ describe('facilitator start', () => {
 
   before(async () => {
     originFunder = '0x40ebe1ce3428b9cbaddbc20af27f1c4780b7d49f'; // originAccounts[3];
-    auxiliaryFunder = '0x275605cba18458f45c67a1a3b8899f481e79bb18'; // auxiliaryAccounts[3]
+    auxiliaryFunder = '0x21bbb3883843611b9b41964c34c5826861f2a7e5'; // auxiliaryAccounts[3]
     utils = new Utils(originWeb3, auxiliaryWeb3, originFunder, auxiliaryFunder, mosaicConfig);
 
     // Initializing facilitator config.
