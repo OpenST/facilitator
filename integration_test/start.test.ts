@@ -8,7 +8,7 @@ import { FacilitatorConfig } from '../src/Config/Config';
 import Utils from './Utils';
 import MosaicConfig from '../src/Config/MosaicConfig';
 import { default as SrcUtils } from '../src/Utils';
-import assert from '../test/test_utils/assert';
+// import assert from '../test/test_utils/assert';
 
 const Web3 = require('web3');
 
@@ -45,7 +45,7 @@ describe('facilitator start', () => {
 
   before(async () => {
     originFunder = '0x40ebe1ce3428b9cbaddbc20af27f1c4780b7d49f'; // originAccounts[3];
-    auxiliaryFunder = '0x41ac401c408456f50b5cd30e79acd01e7e3548cb'; // auxiliaryAccounts[3]
+    auxiliaryFunder = '0x6e26f708182c75ae92e87e3d055d7aa4261b4029'; // auxiliaryAccounts[3]
     utils = new Utils(originWeb3, auxiliaryWeb3, originFunder, auxiliaryFunder, mosaicConfig);
 
     // Initializing facilitator config.
@@ -100,15 +100,11 @@ describe('facilitator start', () => {
   });
 
   it('whitelist origin worker', async () => {
-    const setWorkerReceipt = await utils.whitelistOriginWorker(
+    await utils.whitelistOriginWorker(
       originWorker,
       100000000000,
     );
 
-    console.log('setWorkerReceipt[status] :- ', setWorkerReceipt[status]);
-
-
-    assert.strictEqual(setWorkerReceipt[status], true, 'Receipt status should be true');
   });
 
   it('facilitator start', async () => {
@@ -214,10 +210,7 @@ describe('facilitator start', () => {
         clearInterval(verifyingMintingInterval);
         clearInterval(originAnchorInterval);
 
-        // facilitatorStartChildProcess.kill('SIGINT');
-        // process.kill(-facilitatorStartChildProcess.pid);
-        // process.exit(0);
-        process.kill(facilitatorStartChildProcess.pid, 'SIGINT');
+        process.kill(facilitatorStartChildProcess.pid, 'SIGTERM');
       }
     },
     3000);

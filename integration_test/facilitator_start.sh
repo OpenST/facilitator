@@ -1,16 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-script_name="facilitator child script"
+script_name="facilitator parent script"
 
 function trap_ctrlc ()
 {
 	sig=$1
 
 	echo "sig: ${sig}"
-    # perform cleanup here
-    echo "in ${script_name}"
 
-    echo "Doing cleanup"
+    echo "in ${script_name}"
 
 	kill -${sig} "$child"
     # exit shell script with error code 2
@@ -21,7 +19,8 @@ function trap_ctrlc ()
 trap "trap_ctrlc TERM" TERM
 trap "trap_ctrlc INT" INT
 
-TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./src/bin/facilitator.ts $@ 2>&1 &
+MOSAIC_FACILITATOR_LOG_LEVEL=debug ./facilitator start dev 1000 --mosaic-config './integration_test/mosaic.json' 2>&1 &
 
 child=$!
 wait "$child"
+

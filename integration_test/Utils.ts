@@ -13,6 +13,7 @@ import { MessageStatus } from '../src/repositories/MessageRepository';
 import assert from '../test/test_utils/assert';
 import MosaicConfig from '../src/Config/MosaicConfig';
 import { default as SrcUtils } from '../src/Utils';
+import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 
 const EthUtils = require('ethereumjs-util');
 
@@ -105,6 +106,12 @@ export default class Utils {
     );
   }
 
+  public async getOriginOrganizationInstance(): Promise<Organization> {
+    const organizationAddress = await this.getOrganizationFromOSTComposer();
+
+    return interacts.getOrganization(this.originWeb3, organizationAddress);
+  }
+
   /**
    * It whitelists address of an account.
    * @param worker Address to be whitelisted.
@@ -112,9 +119,7 @@ export default class Utils {
    * @returns Receipt object.
    */
   public async whitelistOriginWorker(worker: string, expirationHeight: number): Promise<any> {
-    const organizationAddress = await this.getOrganizationFromOSTComposer();
-
-    const organizationContractInstance = interacts.getOrganization(this.originWeb3, organizationAddress);
+    const organizationContractInstance = await this.getOriginOrganizationInstance();
 
     const owner = await organizationContractInstance.methods.owner().call();
 
