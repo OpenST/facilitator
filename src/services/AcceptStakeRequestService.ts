@@ -122,6 +122,35 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
   }
 
+  private async approveForBounty(stakeRequest: StakeRequest) {
+    const eip20GatewayInteract = interacts.getEIP20Gateway(
+      this.web3,
+      stakeRequest.gateway,
+    );
+
+    const bounty = await eip20GatewayInteract.methods.bounty().call();
+    if (new BigNumber(bounty).lessThanOrEqualTo(0)) {
+      Logger.debug('Skipping bounty approval for zero bounty');
+      return;
+    }
+    Logger.debug(`Bounty of gateway ${stakeRequest.gateway} is ${bounty}`);
+    const baseToken = await eip20GatewayInteract.methods.baseToken().call();
+
+    const baseTokenInteract = interacts.getEIP20Token(this.web3, baseToken);
+    Logger.debug(`Sending bounty approval transaction for base token ${baseToken}`);
+    const rawTransaction = baseTokenInteract.methods.approve(
+      this.ostComposerAddress,
+      bounty,
+    );
+
+    const txHash = await Utils.sendTransaction(rawTransaction, {
+        from: this.originWorkerAddress,
+        gasPrice: ORIGIN_GAS_PRICE,
+      },
+      this.web3);
+    Logger.info(`Bounty approval transaction hash ${txHash}`);
+  }
+
   /**
    * This method sends accept stake request transaction.
    * @param stakeRequest Stake request object.
@@ -140,8 +169,6 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     assert(stakeRequest.nonce !== undefined);
     assert(stakeRequest.staker !== undefined);
     assert(stakeRequest.gateway !== undefined);
-
-    console.log('from acceptstake service :- ',stakeRequest);
 
     const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
       (stakeRequest.amount as BigNumber).toString(10),
@@ -287,36 +314,4 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       ),
     );
   }
-
-
-  private async approveForBounty(stakeRequest: StakeRequest) {
-    const eip20GatewayInteract = interacts.getEIP20Gateway(
-      this.web3,
-      stakeRequest.gateway,
-    );
-
-     const bounty = await eip20GatewayInteract.methods.bounty().call();
-    if (new BigNumber(bounty).lessThanOrEqualTo(0)) {
-      Logger.debug('Skipping bounty approval for zero bounty');
-      return;
-    }
-    Logger.debug(`Bounty of gateway ${stakeRequest.gateway} is ${bounty}`);
-    const baseToken = await eip20GatewayInteract.methods.baseToken().call();
-
-     const baseTokenInteract = interacts.getEIP20Token(this.web3, baseToken);
-    Logger.debug(`Sending bounty approval transaction for base token ${baseToken}`);
-    const rawTransaction = baseTokenInteract.methods.approve(
-      this.ostComposerAddress,
-      bounty,
-    );
-
-     const txHash = await Utils.sendTransaction(rawTransaction, {
-      from: this.originWorkerAddress,
-      gasPrice: ORIGIN_GAS_PRICE,
-    },
-    this.web3);
-    Logger.info(`Bounty approval transaction hash ${txHash}`);
-  }
-
-
 }
