@@ -14,12 +14,34 @@ import assert from '../test/test_utils/assert';
 import MosaicConfig from '../src/Config/MosaicConfig';
 import { default as SrcUtils } from '../src/Utils';
 import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
+import GraphClient from '../src/subscriptions/GraphClient';
+import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
 
 const EthUtils = require('ethereumjs-util');
 
 const mosaicConfig = MosaicConfig.fromFile(path.join(__dirname, 'mosaic.json'));
 
 const ABIDirectoryPath = path.join(__dirname, 'abi');
+
+const auxSubGraphRpc = 'http://127.0.0.1:11000/subgraphs/name/mosaic/auxiliary-1000';
+
+const fetchQuery = 'query ($contractAddress: Bytes!, $messageHash: Bytes!) {\n'
+  + 'mintProgresseds(orderBy: uts, orderDirection: asc, first: 1, where:'
+  + ' {contractAddress: $contractAddress, _messageHash: $messageHash}) {\n'
+  + '    id\n'
+  + '    _messageHash\n'
+  + '    _staker\n'
+  + '    _beneficiary\n'
+  + '    _stakeAmount\n'
+  + '    _mintedAmount\n'
+  + '    _rewardAmount\n'
+  + '    _proofProgress\n'
+  + '    _unlockSecret\n'
+  + '    contractAddress\n'
+  + '    blockNumber\n'
+  + '    uts\n'
+  + '  }\n'
+  + '}'
 
 /**
  * It contains common helper methods to test facilitator.
@@ -40,6 +62,8 @@ export default class Utils {
   private mintingStatus: boolean = false;
 
   private mosaicConfig: MosaicConfig;
+
+  private messageHash: string | undefined;
 
   /**
    * Constructor for utils class for initialization.
@@ -162,48 +186,33 @@ export default class Utils {
   /**
    * It anchors state root to auxiliary chain's Anchor contract.
    */
-  public async anchorOrigin(auxChainId: number) {
+  public async anchorOrigin(auxChainId: number): Promise<void> {
     console.log('in anchor origin');
-    const organizationInstance = this.getAuxContractInstance('Organization', mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress!);
-    // const organizationInstance = interacts.getOrganization(this.auxiliaryWeb3, mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress);
+    // const organizationInstance = this.getAuxContractInstance('Organization', mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress!);
+    const organizationInstance = interacts.getOrganization(this.auxiliaryWeb3, mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress);
 
-    const anchorInstance = this.getAuxContractInstance('Anchor', mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress!);
+    // const anchorInstance = this.getAuxContractInstance('Anchor', mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress!);
 
-    // const anchorInstance = interacts.getAnchor(this.auxiliaryWeb3,mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress);
+    const anchorInstance = interacts.getAnchor(this.auxiliaryWeb3, mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress);
 
     const currentBlock = await this.originWeb3.eth.getBlock('latest');
 
     const owner = await organizationInstance.methods.owner().call();
 
-    // const anchorStateRootRawTx: TransactionObject<boolean> = await anchorInstance.methods.anchorStateRoot(
-    //   currentBlock.number,
-    //   currentBlock.stateRoot,
-    // );
-    //
-    // const anchorReceipt = await SrcUtils.sendTransaction(
-    //   anchorStateRootRawTx,
-    //   {
-    //     from: owner,
-    //     gasPrice: '0x174876E800',
-    //   },
-    //   this.originWeb3,
-    // );
-
-    // console.log('anchor receipt :- ', anchorReceipt);
-
-    await anchorInstance.methods.anchorStateRoot(
+    const anchorStateRootRawTx: TransactionObject<boolean> = await anchorInstance.methods.anchorStateRoot(
       currentBlock.number,
       currentBlock.stateRoot,
-    ).send(
-      { from: owner, gas: '100000' },
-    ).on('transactionHash', (txHash: string) => {
-      console.log('transaction hash anchor:- ', txHash);
-    }).on('error', (err: Error) => {
-      console.log('Error in anchor:- ', err);
-    })
-      .on('receipt', (receipt: any) => {
-        console.log('receipt of anchor for origin ', receipt.blockNumber);
-      });
+    );
+
+    await SrcUtils.sendTransaction(
+      anchorStateRootRawTx,
+      {
+        from: owner,
+        gasPrice: '0x174876E800',
+      },
+      this.originWeb3,
+    );
+
   }
 
   /**
@@ -272,16 +281,15 @@ export default class Utils {
     repos = await this.getRepositories();
 
     const stakeRequest: StakeRequest | null = await repos.stakeRequestRepository.get(stakeRequestHash);
-    let messageHash: string | undefined = '';
 
     if (stakeRequest !== null) {
-      while (!messageHash) {
+      while (!this.messageHash) {
         await new Promise(done => setTimeout(done, 2000));
         const sr = await repos.stakeRequestRepository.get(stakeRequest.stakeRequestHash);
-        messageHash = sr !== null ? sr.messageHash : undefined;
+        this.messageHash = sr !== null ? sr.messageHash : undefined;
       }
 
-      const message = await repos.messageRepository.get(messageHash);
+      const message = await repos.messageRepository.get(this.messageHash);
 
       switch (this.step) {
         case 1:
@@ -344,13 +352,66 @@ export default class Utils {
     );
   }
 
+  /**
+   * It provides Simple Token contract instance.
+   * @returns Simple token object.
+   */
   public getSimpleTokenInstance(): EIP20Token {
     const { simpleTokenAddress } = mosaicConfig.originChain.contractAddresses;
     const simpletokenInstance: EIP20Token = interacts.getEIP20Token(this.originWeb3, simpleTokenAddress);
     return simpletokenInstance;
   }
 
-  public getOSTComposerInstance() {
+  /**
+   * It provides OSTComposer instance.
+   * @returns OSTComposer object.
+   */
+  public getOSTComposerInstance(): OSTComposer {
     return interacts.getOSTComposer(this.originWeb3, this.ostComposer);
+  }
+
+  /**
+   * It verifies the minted amount, beneficiary in graph client.
+   * @param auxChainId Auxiliary chain id.
+   * @param expectedMintedAmount Expected minted amount.
+   */
+  public async assertMintProgressedInGraphClient(
+    auxChainId: number,
+    expectedMintedAmount: BigNumber,
+    stakeRequest: any
+  ) {
+
+    const graphClient = GraphClient.getClient(
+      'http',
+      auxSubGraphRpc,
+    );
+
+    const variables = {
+      contractAddress: mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      messageHash: this.messageHash,
+    };
+
+    const queryResult = await graphClient.query(fetchQuery, variables);
+
+    const mintProgressed: any = queryResult['data']['mintProgresseds'][0];
+
+    const actualMintedAmount = mintProgressed['_mintedAmount'];
+    assert.strictEqual(
+      expectedMintedAmount.cmp(actualMintedAmount),
+      0,
+      `Expected minted amount is ${expectedMintedAmount} but got ${actualMintedAmount}`,
+    );
+
+    assert.strictEqual(
+      this.messageHash,
+      mintProgressed['_messageHash'],
+      'Incorrect message hash address',
+    );
+
+    assert.strictEqual(
+      stakeRequest.beneficiary,
+      mintProgressed['_beneficiary'],
+      'Incorrect beneficiary address',
+    );
   }
 }

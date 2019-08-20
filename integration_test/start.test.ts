@@ -8,10 +8,8 @@ import { FacilitatorConfig } from '../src/Config/Config';
 import Utils from './Utils';
 import MosaicConfig from '../src/Config/MosaicConfig';
 import { default as SrcUtils } from '../src/Utils';
-// import assert from '../test/test_utils/assert';
 
 const Web3 = require('web3');
-
 
 const facilitatorInit = path.join(__dirname, 'facilitator_init.sh');
 const facilitatorStart = path.join(__dirname, 'facilitator_start.sh');
@@ -45,7 +43,7 @@ describe('facilitator start', () => {
 
   before(async () => {
     originFunder = '0x40ebe1ce3428b9cbaddbc20af27f1c4780b7d49f'; // originAccounts[3];
-    auxiliaryFunder = '0x6e26f708182c75ae92e87e3d055d7aa4261b4029'; // auxiliaryAccounts[3]
+    auxiliaryFunder = '0x275605cba18458f45c67a1a3b8899f481e79bb18'; // auxiliaryAccounts[3]
     utils = new Utils(originWeb3, auxiliaryWeb3, originFunder, auxiliaryFunder, mosaicConfig);
 
     // Initializing facilitator config.
@@ -125,42 +123,12 @@ describe('facilitator start', () => {
 
     stakeRequest.beneficiary = originWeb3.eth.accounts.create('ost');
 
-    // const approveRawTx: TransactionObject<string> = await simpleTokenInstance.methods.approve(
-    //   ostComposer,
-    //    200000,
-    // );
-    //
-    // const approveTxReceipt = await SrcUtils.sendTransaction(
-    //   approveRawTx,
-    //   {
-    //     from: stakerAccount.address,
-    //     gasPrice: '0x174876E800',
-    //   },
-    //   originWeb3,
-    // );
-    //
-
-    // console.log('approveTxReceipt :- ',approveTxReceipt);
     await simpleTokenInstance.methods.approve(ostComposer, 200000).send(
       {
         from: stakerAccount.address,
         gas: 70000,
       },
     );
-
-    // ostComposerInstance.methods.requestStake(
-    //   stakeRequest.amount,
-    //   stakerAccount.address,
-    //   0,
-    //   0,
-    //   1,
-    //   stakeRequest.gateway,
-    // ).send(
-    //   {
-    //     from: stakerAccount.address,
-    //     gas: '1000000',
-    //   },
-    // );
 
     const requestStakeRawTx: TransactionObject<string> = await ostComposerInstance.methods.requestStake(
       stakeRequest.amount,
@@ -205,8 +173,10 @@ describe('facilitator start', () => {
       );
 
       if (mintingStatus) {
-        await utils.assertMintingBalance(stakerAccount.address, new BigNumber(10));
+        const expectedMintedAmount: BigNumber = new BigNumber(10);
+        await utils.assertMintingBalance(stakerAccount.address, expectedMintedAmount);
 
+        await utils.assertMintProgressedInGraphClient(auxChainId, expectedMintedAmount, stakeRequest);
         clearInterval(verifyingMintingInterval);
         clearInterval(originAnchorInterval);
 

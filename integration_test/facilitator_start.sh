@@ -11,9 +11,6 @@ function trap_ctrlc ()
     echo "in ${script_name}"
 
 	kill -${sig} "$child"
-    # exit shell script with error code 2
-    # if omitted, shell script will continue execution
-#    exit 2
 }
 
 trap "trap_ctrlc TERM" TERM
