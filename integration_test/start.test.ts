@@ -102,7 +102,6 @@ describe('facilitator start', () => {
       originWorker,
       100000000000,
     );
-
   });
 
   it('facilitator start', async () => {
@@ -118,10 +117,8 @@ describe('facilitator start', () => {
     stakeRequest.gasLimit = 0;
     stakeRequest.nonce = 1;
     stakeRequest.gateway = mosaicConfig.auxiliaryChains[facilitatorConfig.auxChainId].contractAddresses.origin.ostEIP20GatewayAddress;
-
+    stakeRequest.beneficiary = stakerAccount.address;
     const ostComposerInstance = await utils.getOSTComposerInstance();
-
-    stakeRequest.beneficiary = originWeb3.eth.accounts.create('ost');
 
     await simpleTokenInstance.methods.approve(ostComposer, 200000).send(
       {

@@ -6,6 +6,8 @@ import BigNumber from 'bignumber.js';
 import { interacts } from '@openst/mosaic-contracts';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
+import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
+import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
 import Repositories from '../src/repositories/Repositories';
 import Directory from '../src/Directory';
 import StakeRequest from '../src/models/StakeRequest';
@@ -13,9 +15,7 @@ import { MessageStatus } from '../src/repositories/MessageRepository';
 import assert from '../test/test_utils/assert';
 import MosaicConfig from '../src/Config/MosaicConfig';
 import { default as SrcUtils } from '../src/Utils';
-import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 import GraphClient from '../src/subscriptions/GraphClient';
-import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
 
 const EthUtils = require('ethereumjs-util');
 
@@ -41,7 +41,7 @@ const fetchQuery = 'query ($contractAddress: Bytes!, $messageHash: Bytes!) {\n'
   + '    blockNumber\n'
   + '    uts\n'
   + '  }\n'
-  + '}'
+  + '}';
 
 /**
  * It contains common helper methods to test facilitator.
@@ -212,7 +212,6 @@ export default class Utils {
       },
       this.originWeb3,
     );
-
   }
 
   /**
@@ -378,9 +377,8 @@ export default class Utils {
   public async assertMintProgressedInGraphClient(
     auxChainId: number,
     expectedMintedAmount: BigNumber,
-    stakeRequest: any
+    stakeRequest: any,
   ) {
-
     const graphClient = GraphClient.getClient(
       'http',
       auxSubGraphRpc,
@@ -393,9 +391,9 @@ export default class Utils {
 
     const queryResult = await graphClient.query(fetchQuery, variables);
 
-    const mintProgressed: any = queryResult['data']['mintProgresseds'][0];
+    const mintProgressed: any = queryResult.data.mintProgresseds[0];
 
-    const actualMintedAmount = mintProgressed['_mintedAmount'];
+    const actualMintedAmount = mintProgressed._mintedAmount;
     assert.strictEqual(
       expectedMintedAmount.cmp(actualMintedAmount),
       0,
@@ -404,13 +402,13 @@ export default class Utils {
 
     assert.strictEqual(
       this.messageHash,
-      mintProgressed['_messageHash'],
+      mintProgressed._messageHash,
       'Incorrect message hash address',
     );
 
     assert.strictEqual(
-      stakeRequest.beneficiary,
-      mintProgressed['_beneficiary'],
+      stakeRequest.beneficiary.address,
+      mintProgressed._beneficiary,
       'Incorrect beneficiary address',
     );
   }
