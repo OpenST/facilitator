@@ -70,7 +70,7 @@ export default class GraphClient {
             try {
               Logger.debug(`Received subscription data ${JSON.stringify(response.data)}`);
               const transactions: Record<string,
-                Record<string, any>[]> = await fetcher.fetch(response.data);
+              Record<string, any>[]> = await fetcher.fetch(response.data);
               await handler.handle(transactions);
               Logger.debug('Updating UTS');
               await GraphClient.updateLatestUTS(

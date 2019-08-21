@@ -98,9 +98,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     const stakeRequestPromises = [];
     for (let i = 0; i < stakeRequests.length; i += 1) {
       stakeRequestPromises.push(
-        this.acceptStakeRequest(stakeRequests[i]).catch(function (error: any) {
+        this.acceptStakeRequest(stakeRequests[i]).catch((error) => {
           Logger.error('acceptStakeRequestServiceError', error);
-        })
+        }),
       );
     }
 

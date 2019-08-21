@@ -66,10 +66,10 @@ export default class ProgressService {
         && message.targetStatus === MessageStatus.Declared
         ) {
           Logger.debug(`Performing progress stake and progress mint for message hash ${message.messageHash}`);
-          const progressStakePromise = this.progressStake(message).catch(function (error: any) {
+          const progressStakePromise = this.progressStake(message).catch( (error) => {
             Logger.error('progressStakeError', error);
           });
-          const progressMintPromise = this.progressMint(message).catch(function (error: any) {
+          const progressMintPromise = this.progressMint(message).catch( (error) => {
             Logger.error('progressMintError', error);
           });
           return Promise.all([progressStakePromise, progressMintPromise]);
