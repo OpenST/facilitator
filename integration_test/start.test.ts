@@ -28,22 +28,32 @@ describe('facilitator start', () => {
 
   let facilitatorConfig: FacilitatorConfig;
   let originWorker: string;
-  let auxiliaryWorker: string;
   let utils: Utils;
   let simpleTokenInstance: any;
   let stakerAccount: any;
   let originFunder: string;
   let auxiliaryFunder: string;
-  let originWorkerExport;
   let auxWorkerExport;
   let facilitatorStartChildProcess: ChildProcess;
   let originAnchorInterval: any;
   const stakerERC20Balance = 20000;
-  const stakeRequest = <any>{};
+  let stakeRequest = {
+    amount: new BigNumber(10),
+    gasPrice: new BigNumber(0),
+    gasLimit: new BigNumber(0),
+    nonce: new BigNumber(1),
+    gateway: '',
+    beneficiary: '',
+  };
+
+  const reward = stakeRequest.gasPrice.mul(stakeRequest.gasLimit);
+  const mintedAmount = stakeRequest.amount.sub(reward);
 
   before(async () => {
-    originFunder = '0x40ebe1ce3428b9cbaddbc20af27f1c4780b7d49f'; // originAccounts[3];
-    auxiliaryFunder = '0x21bbb3883843611b9b41964c34c5826861f2a7e5'; // auxiliaryAccounts[3]
+    const originAccounts = await originWeb3.eth.accounts;
+    const auxiliaryAccounts = await originWeb3.eth.accounts;
+    originFunder = originAccounts[4];
+    auxiliaryFunder = auxiliaryAccounts[6];
     utils = new Utils(originWeb3, auxiliaryWeb3, originFunder, auxiliaryFunder, mosaicConfig);
 
     // Initializing facilitator config.
@@ -55,6 +65,7 @@ describe('facilitator start', () => {
 
     stakerAccount = originWeb3.eth.accounts.create('ost');
     originWeb3.eth.accounts.wallet.add(stakerAccount);
+    stakeRequest.beneficiary = stakerAccount.address;
 
     const transferReceipt = await simpleTokenInstance.methods.transfer(
       stakerAccount.address,
@@ -70,16 +81,16 @@ describe('facilitator start', () => {
     await utils.fundETHOnOrigin(stakerAccount.address);
   });
 
-  it('funding origin and aux workers', async () => { // may be break into 2 it's.
+  it('funding origin and aux workers', async () => {
     facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     originWorker = facilitatorConfig.chains[facilitatorConfig.originChain].worker;
-    auxiliaryWorker = facilitatorConfig.chains[facilitatorConfig.auxChainId].worker;
+    let auxiliaryWorker = facilitatorConfig.chains[facilitatorConfig.auxChainId].worker;
 
     await utils.fundETHOnOrigin(originWorker);
 
     await utils.fundOSTPrimeOnAuxiliary(auxiliaryWorker);
 
-    originWorkerExport = exportWorkerPrefix + originWorker;
+    let originWorkerExport = exportWorkerPrefix + originWorker;
     auxWorkerExport = exportWorkerPrefix + auxiliaryWorker;
     process.env[originWorkerExport] = 'origin';
     process.env[auxWorkerExport] = 'auxiliary';
@@ -112,26 +123,23 @@ describe('facilitator start', () => {
   });
 
   it('request stake', async () => {
-    stakeRequest.amount = '10';
-    stakeRequest.gasPrice = 0;
-    stakeRequest.gasLimit = 0;
-    stakeRequest.nonce = 1;
-    stakeRequest.gateway = mosaicConfig.auxiliaryChains[facilitatorConfig.auxChainId].contractAddresses.origin.ostEIP20GatewayAddress;
-    stakeRequest.beneficiary = stakerAccount.address;
     const ostComposerInstance = await utils.getOSTComposerInstance();
 
-    await simpleTokenInstance.methods.approve(ostComposer, 200000).send(
+    const ostComposerApproval = 200000;
+    await simpleTokenInstance.methods.approve(ostComposer, ostComposerApproval).send(
       {
         from: stakerAccount.address,
         gas: 70000,
       },
     );
 
+    stakeRequest.gateway = mosaicConfig.auxiliaryChains[facilitatorConfig.auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!;
+
     const requestStakeRawTx: TransactionObject<string> = await ostComposerInstance.methods.requestStake(
-      stakeRequest.amount,
-      stakerAccount.address,
-      0,
-      0,
+      stakeRequest.amount.toNumber(),
+      stakeRequest.beneficiary,
+      stakeRequest.gasPrice.toNumber(),
+      stakeRequest.gasLimit.toNumber(),
       1,
       stakeRequest.gateway,
     );
@@ -155,7 +163,7 @@ describe('facilitator start', () => {
   it('verification of minting', async () => {
     const stakeRequestHash = utils.getStakeRequestHash({
       amount: stakeRequest.amount,
-      beneficiary: stakerAccount.address,
+      beneficiary: stakeRequest.beneficiary,
       gasPrice: stakeRequest.gasPrice,
       gasLimit: stakeRequest.gasLimit,
       nonce: stakeRequest.nonce,
@@ -170,7 +178,7 @@ describe('facilitator start', () => {
       );
 
       if (mintingStatus) {
-        const expectedMintedAmount: BigNumber = new BigNumber(10);
+        const expectedMintedAmount: BigNumber = new BigNumber(mintedAmount);
         await utils.assertMintingBalance(stakerAccount.address, expectedMintedAmount);
 
         await utils.assertMintProgressedInGraphClient(auxChainId, expectedMintedAmount, stakeRequest);

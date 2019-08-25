@@ -187,11 +187,7 @@ export default class Utils {
    * It anchors state root to auxiliary chain's Anchor contract.
    */
   public async anchorOrigin(auxChainId: number): Promise<void> {
-    console.log('in anchor origin');
-    // const organizationInstance = this.getAuxContractInstance('Organization', mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress!);
     const organizationInstance = interacts.getOrganization(this.auxiliaryWeb3, mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress);
-
-    // const anchorInstance = this.getAuxContractInstance('Anchor', mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress!);
 
     const anchorInstance = interacts.getAnchor(this.auxiliaryWeb3, mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress);
 
@@ -210,7 +206,7 @@ export default class Utils {
         from: owner,
         gasPrice: '0x174876E800',
       },
-      this.originWeb3,
+      this.auxiliaryWeb3,
     );
   }
 
@@ -408,7 +404,7 @@ export default class Utils {
 
     assert.strictEqual(
       stakeRequest.beneficiary,
-      mintProgressed._beneficiary,
+      web3Utils.toChecksumAddress(mintProgressed._beneficiary),
       'Incorrect beneficiary address',
     );
   }
