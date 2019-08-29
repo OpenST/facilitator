@@ -90,13 +90,6 @@ const Util = {
       );
     }
 
-    if (stakeRequestInput.blockNumber !== undefined) {
-      assert.deepStrictEqual(
-        stakeRequestInput.blockNumber,
-        stakeRequestOutput.blockNumber,
-      );
-    }
-
     if (stakeRequestInput.createdAt !== undefined) {
       assert.strictEqual(
         stakeRequestInput.createdAt,

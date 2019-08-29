@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import BigNumber from 'bignumber.js';
 
 import Gateway from '../../../src/models/Gateway';

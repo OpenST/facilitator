@@ -49,7 +49,6 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
         'gateway',
         'stakerB',
         'stakerProxyB',
-        new BigNumber('10'),
         'messageHashB',
       ),
       stakeRequestWithNullMessageHashC: new StakeRequest(
@@ -62,7 +61,6 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
         'gatewayC',
         'stakerC',
         'stakerC',
-        new BigNumber('10'),
       ),
       stakeRequestWithNullMessageHashD: new StakeRequest(
         'stakeRequestHashD',
@@ -74,7 +72,6 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
         'gatewayD',
         'stakerD',
         'stakerD',
-        new BigNumber('10'),
       ),
     };
 

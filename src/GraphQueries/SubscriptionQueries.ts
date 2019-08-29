@@ -1,48 +1,58 @@
-const stateRootAvailableSubscriptionQuery = 'subscription{stateRootAvailables(orderDirection:'
+const stateRootAvailableSubscriptionQuery = 'subscription{stateRootAvailables(orderBy: uts,' +
+  ' orderDirection:'
   + ' desc, first: 1){'
 + '   id'
 + '   contractAddress '
++ '   uts '
 + '  }'
 + '}';
 
 const SubscriptionQueries: Record<string, Record<string, string>> = {
   origin: {
-    stakeRequesteds: 'subscription{stakeRequesteds(orderDirection: desc, first: 1){'
+    stakeRequesteds: 'subscription{stakeRequesteds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
+    + '   uts '
     + '  }'
     + '}',
 
-    stakeIntentDeclareds: 'subscription{stakeIntentDeclareds(orderDirection: desc, first: 1){'
+    stakeIntentDeclareds: 'subscription{stakeIntentDeclareds(orderBy: uts, orderDirection: desc,' +
+    ' first: 1){'
     + '   id'
     + '   contractAddress '
+    + '   uts '
     + '  }'
     + '}',
 
-    stakeProgresseds: 'subscription{stakeProgresseds(orderDirection: desc, first: 1){'
+    stakeProgresseds: 'subscription{stakeProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
+    + '   uts '
     + '  }'
     + '}',
   },
   auxiliary: {
-    stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderDirection: desc, first: 1){'
+    stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderBy: uts, orderDirection:' +
+    ' desc, first: 1){'
     + '   id'
     + '   contractAddress '
+    + '   uts '
     + '  }'
     + '}',
 
     stateRootAvailables: stateRootAvailableSubscriptionQuery,
 
-    mintProgresseds: 'subscription{mintProgresseds(orderDirection: desc, first: 1){'
+    mintProgresseds: 'subscription{mintProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
+    + '   uts '
     + '  }'
     + '}',
 
-    gatewayProvens: 'subscription{gatewayProvens(orderDirection: desc, first: 1){'
+    gatewayProvens: 'subscription{gatewayProvens(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
+    + '   uts '
     + '  }'
     + '}',
 
