@@ -9,7 +9,8 @@ import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('StakeRequestedHandler.persist()', (): void => {
-  it('should persist successfully', async (): Promise<void> => {
+  it('should persist successfully when stakeRequesteds is received first time for'
+    + ' stakeRequestHash', async (): Promise<void> => {
     const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions = [{
       id: '1',
