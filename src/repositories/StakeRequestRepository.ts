@@ -241,6 +241,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
   private convertToStakeRequest(stakeRequestModel: StakeRequestModel): StakeRequest {
     const stakeRequest = new StakeRequest(
       stakeRequestModel.stakeRequestHash,
+      new BigNumber(stakeRequestModel.blockNumber)
     );
 
     stakeRequest.messageHash = stakeRequestModel.messageHash;
@@ -252,7 +253,6 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
     stakeRequest.gateway = stakeRequestModel.gateway;
     stakeRequest.staker = stakeRequestModel.staker;
     stakeRequest.stakerProxy = stakeRequestModel.stakerProxy;
-    stakeRequest.blockNumber = new BigNumber(stakeRequestModel.blockNumber);
     stakeRequest.createdAt = stakeRequestModel.createdAt;
     stakeRequest.updatedAt = stakeRequestModel.updatedAt;
 

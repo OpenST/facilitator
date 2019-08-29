@@ -97,6 +97,7 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
           } else {
             return new StakeRequest(
               stakeRequestHash,
+              blockNumber,
               amount,
               beneficiary,
               gasPrice,
@@ -105,7 +106,6 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
               gateway,
               staker,
               stakerProxy,
-              blockNumber,
             );
           }
         },

@@ -38,6 +38,7 @@ describe('StakeRequestRepository::get', (): void => {
   it('Checks retrieval of an existing stake request.', async (): Promise<void> => {
     const stakeRequestInput = new StakeRequest(
       'stakeRequestHash',
+      new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',
       new BigNumber('2'),
@@ -46,7 +47,6 @@ describe('StakeRequestRepository::get', (): void => {
       'gateway',
       'staker',
       'stakerProxy',
-      new BigNumber('10'),
     );
 
     await config.repos.stakeRequestRepository.save(

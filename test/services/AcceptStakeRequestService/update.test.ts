@@ -72,6 +72,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       repos,
       stakeRequestWithMessageHashB: new StakeRequest(
         'stakeRequestHashB',
+        new BigNumber('10'),
         new BigNumber('11'),
         '0x0000000000000000000000000000000000000001',
         new BigNumber('12'),
@@ -80,11 +81,11 @@ describe('AcceptStakeRequestService::update', (): void => {
         '0x0000000000000000000000000000000000000002',
         '0x0000000000000000000000000000000000000003',
         '0x0000000000000000000000000000000000000004',
-        new BigNumber('10'),
         'messageHashB',
       ),
       stakeRequestWithNullMessageHashC: new StakeRequest(
         'stakeRequestHashC',
+        new BigNumber('10'),
         new BigNumber('21'),
         '0x0000000000000000000000000000000000000011',
         new BigNumber('22'),
@@ -93,7 +94,6 @@ describe('AcceptStakeRequestService::update', (): void => {
         '0x0000000000000000000000000000000000000012',
         '0x0000000000000000000000000000000000000013',
         '0x0000000000000000000000000000000000000014',
-        new BigNumber('10'),
       ),
       service,
       fakeData: {

@@ -40,6 +40,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     const stakeRequest = new StakeRequest(
       transactions[0].stakeRequestHash,
       new BigNumber(transactions[0].amount),
+      new BigNumber(transactions[0].blockNumber),
       Web3Utils.toChecksumAddress(transactions[0].beneficiary),
       new BigNumber(transactions[0].gasPrice),
       new BigNumber(transactions[0].gasLimit),
@@ -47,7 +48,6 @@ describe('StakeRequestedHandler.persist()', (): void => {
       Web3Utils.toChecksumAddress(transactions[0].gateway),
       Web3Utils.toChecksumAddress(transactions[0].staker),
       Web3Utils.toChecksumAddress(transactions[0].stakerProxy),
-      new BigNumber(transactions[0].blockNumber),
     );
 
     assert.equal(
@@ -78,6 +78,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     }];
     const stakeRequest = new StakeRequest(
       transactions1[0].stakeRequestHash,
+      new BigNumber(transactions1[0].blockNumber),
       new BigNumber(transactions1[0].amount),
       Web3Utils.toChecksumAddress(transactions1[0].beneficiary),
       new BigNumber(transactions1[0].gasPrice),
@@ -86,7 +87,6 @@ describe('StakeRequestedHandler.persist()', (): void => {
       Web3Utils.toChecksumAddress(transactions1[0].gateway),
       Web3Utils.toChecksumAddress(transactions1[0].staker),
       Web3Utils.toChecksumAddress(transactions1[0].stakerProxy),
-      new BigNumber(transactions1[0].blockNumber),
     );
 
     // Transaction with higher block number.
@@ -106,6 +106,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
 
     const stakeRequestWithNullMessageHash = new StakeRequest(
       transactions2[0].stakeRequestHash,
+      new BigNumber(transactions2[0].blockNumber),
       new BigNumber(transactions2[0].amount),
       Web3Utils.toChecksumAddress(transactions2[0].beneficiary),
       new BigNumber(transactions2[0].gasPrice),
@@ -114,7 +115,6 @@ describe('StakeRequestedHandler.persist()', (): void => {
       Web3Utils.toChecksumAddress(transactions2[0].gateway),
       Web3Utils.toChecksumAddress(transactions2[0].staker),
       Web3Utils.toChecksumAddress(transactions2[0].stakerProxy),
-      new BigNumber(transactions2[0].blockNumber),
       null!, // Message hash should be null.
     );
 

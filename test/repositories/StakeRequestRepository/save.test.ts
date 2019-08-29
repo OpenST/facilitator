@@ -38,6 +38,7 @@ describe('StakeRequestRepository::save', (): void => {
   it('Checks creation.', async (): Promise<void> => {
     const stakeRequestInput = new StakeRequest(
       'stakeRequestHash',
+      new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',
       new BigNumber('2'),
@@ -46,7 +47,6 @@ describe('StakeRequestRepository::save', (): void => {
       'gateway',
       'staker',
       'stakerProxy',
-      new BigNumber('10'),
     );
 
     const stakeRequestResponse = await config.repos.stakeRequestRepository.save(
@@ -77,6 +77,7 @@ describe('StakeRequestRepository::save', (): void => {
   it('Checks update.', async (): Promise<void> => {
     const stakeRequestInput = new StakeRequest(
       'stakeRequestHash',
+      new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',
       new BigNumber('2'),
@@ -85,7 +86,6 @@ describe('StakeRequestRepository::save', (): void => {
       'gateway',
       'staker',
       'stakerProxy',
-      new BigNumber('10'),
     );
 
     await config.repos.stakeRequestRepository.save(
@@ -94,6 +94,7 @@ describe('StakeRequestRepository::save', (): void => {
 
     const stakeRequestUpdateInput = new StakeRequest(
       'stakeRequestHash',
+      stakeRequestInput.blockNumber,
     );
     stakeRequestUpdateInput.amount = new BigNumber('11');
     stakeRequestUpdateInput.gateway = 'gatewayUpdated';
@@ -105,6 +106,7 @@ describe('StakeRequestRepository::save', (): void => {
     Util.checkInputAgainstOutput(
       new StakeRequest(
         stakeRequestInput.stakeRequestHash,
+        stakeRequestInput.blockNumber,
         stakeRequestUpdateInput.amount,
         stakeRequestInput.beneficiary,
         stakeRequestInput.gasPrice,
@@ -113,7 +115,6 @@ describe('StakeRequestRepository::save', (): void => {
         stakeRequestUpdateInput.gateway,
         stakeRequestUpdateInput.staker,
         stakeRequestUpdateInput.stakerProxy,
-        new BigNumber('10'),
         stakeRequestInput.messageHash,
       ),
       stakeRequestResponse,
@@ -132,6 +133,7 @@ describe('StakeRequestRepository::save', (): void => {
     Util.checkInputAgainstOutput(
       new StakeRequest(
         stakeRequestInput.stakeRequestHash,
+        stakeRequestInput.blockNumber,
         stakeRequestUpdateInput.amount,
         stakeRequestInput.beneficiary,
         stakeRequestInput.gasPrice,
@@ -140,7 +142,6 @@ describe('StakeRequestRepository::save', (): void => {
         stakeRequestUpdateInput.gateway,
         stakeRequestUpdateInput.staker,
         stakeRequestUpdateInput.stakerProxy,
-        new BigNumber('10'),
         stakeRequestInput.messageHash,
       ),
       stakeRequestOutput as StakeRequest,

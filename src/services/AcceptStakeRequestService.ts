@@ -122,6 +122,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     await this.updateMessageHashInStakeRequestRepository(
       stakeRequest.stakeRequestHash,
       messageHash,
+      stakeRequest.blockNumber
     );
   }
 
@@ -232,9 +233,11 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async updateMessageHashInStakeRequestRepository(
     stakeRequestHash: string,
     messageHash: string,
+    blockNumber: BigNumber,
   ): Promise<void> {
     const stakeRequest = new StakeRequest(
       stakeRequestHash,
+      blockNumber,
     );
     stakeRequest.messageHash = messageHash;
     Logger.debug('Updating message hash in stake request repository');
