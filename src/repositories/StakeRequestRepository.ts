@@ -81,6 +81,13 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
           type: DataTypes.STRING,
           primaryKey: true,
         },
+        blockNumber: {
+          type: DataTypes.BIGINT,
+          allowNull: false,
+          validate: {
+            min: 0,
+          },
+        },
         messageHash: {
           type: DataTypes.STRING,
           allowNull: true,
@@ -129,13 +136,6 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
         stakerProxy: {
           type: DataTypes.STRING,
           allowNull: false,
-        },
-        blockNumber: {
-          type: DataTypes.BIGINT,
-          allowNull: true,
-          validate: {
-            min: 0,
-          },
         },
       },
       {
