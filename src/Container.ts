@@ -32,11 +32,11 @@ export default class Container {
     const config = configFactory.getConfig();
     Logger.debug('Config loaded successfully.');
     const repositories = await Repositories.create(config.facilitator.database.path);
-    const mosaicAuxChain = config.mosaic.auxiliaryChains[auxChainId!];
     const handler = Handlers.create(
       repositories,
       config.facilitator.auxChainId,
-      mosaicAuxChain.contractAddresses.origin.ostEIP20GatewayAddress as string,
+      config.mosaic.auxiliaryChains[config.facilitator.auxChainId].contractAddresses.
+        origin.ostEIP20GatewayAddress!,
     );
     const transactionHandler = new TransactionHandler(
       handler,
