@@ -50,8 +50,8 @@ describe('facilitator start', () => {
   const mintedAmount = stakeRequest.amount.sub(reward);
 
   before(async () => {
-    const originAccounts = await originWeb3.eth.accounts;
-    const auxiliaryAccounts = await originWeb3.eth.accounts;
+    const originAccounts = await originWeb3.eth.getAccounts();
+    const auxiliaryAccounts = await originWeb3.eth.getAccounts();
     originFunder = originAccounts[4];
     auxiliaryFunder = auxiliaryAccounts[6];
     utils = new Utils(originWeb3, auxiliaryWeb3, originFunder, auxiliaryFunder, mosaicConfig);

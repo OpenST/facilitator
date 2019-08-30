@@ -1,21 +1,13 @@
 #!/bin/bash
 
-script_name="facilitator child script"
 
 function trap_ctrlc ()
 {
 	sig=$1
 
 	echo "sig: ${sig}"
-    # perform cleanup here
-    echo "in ${script_name}"
-
-    echo "Doing cleanup"
 
 	kill -${sig} "$child"
-    # exit shell script with error code 2
-    # if omitted, shell script will continue execution
-#    exit 2
 }
 
 trap "trap_ctrlc TERM" TERM
