@@ -23,6 +23,8 @@ import Comparable from '../observer/Comparable';
 export default class StakeRequest extends Comparable<StakeRequest> {
   public stakeRequestHash: string;
 
+  public blockNumber: BigNumber;
+
   public amount?: BigNumber;
 
   public beneficiary?: string;
@@ -47,6 +49,7 @@ export default class StakeRequest extends Comparable<StakeRequest> {
 
   public constructor(
     stakeRequestHash: string,
+    blockNumber: BigNumber,
     amount?: BigNumber,
     beneficiary?: string,
     gasPrice?: BigNumber,
@@ -70,6 +73,7 @@ export default class StakeRequest extends Comparable<StakeRequest> {
     this.gateway = gateway;
     this.staker = staker;
     this.stakerProxy = stakerProxy;
+    this.blockNumber = blockNumber;
     this.messageHash = messageHash;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;

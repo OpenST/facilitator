@@ -14,6 +14,7 @@ import {
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
     stakeRequestHash,
+    new BigNumber('10'),
     new BigNumber('1'),
     'beneficiary',
     new BigNumber('2'),
