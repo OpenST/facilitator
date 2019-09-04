@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import StakeRequestHandler from '../../src/handlers/StakeRequestHandler';
+import StakeRequestHandler from '../../src/handlers/stake_and_mint/StakeRequestHandler';
 import Repositories from '../../src/repositories/Repositories';
 import TransactionHandler from '../../src/TransactionHandler';
 import assert from '../test_utils/assert';

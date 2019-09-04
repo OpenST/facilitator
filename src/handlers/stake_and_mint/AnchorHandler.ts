@@ -16,12 +16,12 @@
 
 import BigNumber from 'bignumber.js';
 
-import { AuxiliaryChainRecordNotFoundException } from '../Exception';
-import Logger from '../Logger';
-import AuxiliaryChain from '../models/AuxiliaryChain';
-import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
-import ContractEntityHandler from './ContractEntityHandler';
-import Utils from '../Utils';
+import { AuxiliaryChainRecordNotFoundException } from '../../Exception';
+import Logger from '../../Logger';
+import AuxiliaryChain from '../../models/AuxiliaryChain';
+import AuxiliaryChainRepository from '../../repositories/AuxiliaryChainRepository';
+import ContractEntityHandler from '../ContractEntityHandler';
+import Utils from '../../Utils';
 
 /**
  * This class handles Anchor event

@@ -2,11 +2,11 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
-import StakeRequestHandler from '../../../src/handlers/StakeRequestHandler';
-import StakeRequest from '../../../src/models/StakeRequest';
-import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
+import StakeRequestHandler from '../../../../src/handlers/stake_and_mint/StakeRequestHandler';
+import StakeRequest from '../../../../src/models/StakeRequest';
+import StakeRequestRepository from '../../../../src/repositories/StakeRequestRepository';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully when stakeRequesteds is received first time for'
