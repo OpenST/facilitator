@@ -22,7 +22,7 @@ import StakeIntentDeclaredHandler from './stake_and_mint/StakeIntentDeclaredHand
 import StakeProgressHandler from './stake_and_mint/StakeProgressHandler';
 import StakeRequestHandler from './stake_and_mint/StakeRequestHandler';
 import StakeIntentConfirmHandler from './stake_and_mint/StakeIntentConfirmHandler';
-import RedeemIntentDeclaredHandler from "./redeem_and_unstake/RedeemIntentDeclaredHandler";
+import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
 
 export default class Handlers {
   /**

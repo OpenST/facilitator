@@ -14,22 +14,21 @@
 //
 // ----------------------------------------------------------------------------
 
-import Message from "../../models/Message";
-import Logger from "../../Logger";
-import Utils from "../../Utils";
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
+import Message from '../../models/Message';
+import Logger from '../../Logger';
+import Utils from '../../Utils';
 import {
   MessageDirection,
   MessageRepository, MessageStatus,
-  MessageType
-} from "../../repositories/MessageRepository";
-import ContractEntityHandler from "../ContractEntityHandler";
+  MessageType,
+} from '../../repositories/MessageRepository';
+import ContractEntityHandler from '../ContractEntityHandler';
 
 /**
  * This class handles redeem intent declared transactions.
  */
 export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<Message> {
-
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -82,5 +81,4 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
     Logger.debug('Messages saved');
     return models;
   }
-
 }

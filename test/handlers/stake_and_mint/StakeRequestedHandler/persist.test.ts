@@ -125,7 +125,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     sinonMock.save.returns(Promise.resolve(stakeRequest));
     const models1 = await handler.persist(transactions1);
 
-    let stakeRequestWithMessageHash = Object.assign({}, stakeRequest);
+    const stakeRequestWithMessageHash = Object.assign({}, stakeRequest);
     stakeRequestWithMessageHash.messageHash = 'messageHash';
 
     sinonMock.get.returns(Promise.resolve(stakeRequestWithMessageHash));
