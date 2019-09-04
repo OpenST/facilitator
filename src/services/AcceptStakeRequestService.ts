@@ -97,7 +97,11 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async acceptStakeRequests(stakeRequests: StakeRequest[]): Promise<void> {
     const stakeRequestPromises = [];
     for (let i = 0; i < stakeRequests.length; i += 1) {
-      stakeRequestPromises.push(this.acceptStakeRequest(stakeRequests[i]));
+      stakeRequestPromises.push(
+        this.acceptStakeRequest(stakeRequests[i]).catch((error) => {
+          Logger.error('acceptStakeRequestServiceError', error);
+        }),
+      );
     }
 
     await Promise.all(stakeRequestPromises);
@@ -118,6 +122,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     await this.updateMessageHashInStakeRequestRepository(
       stakeRequest.stakeRequestHash,
       messageHash,
+      stakeRequest.blockNumber
     );
   }
 
@@ -143,10 +148,10 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
 
     const txHash = await Utils.sendTransaction(rawTransaction, {
-      from: this.originWorkerAddress,
-      gasPrice: ORIGIN_GAS_PRICE,
-    },
-    this.web3);
+        from: this.originWorkerAddress,
+        gasPrice: ORIGIN_GAS_PRICE,
+      },
+      this.web3);
     Logger.info(`Bounty approval transaction hash ${txHash}`);
   }
 
@@ -228,9 +233,11 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   private async updateMessageHashInStakeRequestRepository(
     stakeRequestHash: string,
     messageHash: string,
+    blockNumber: BigNumber,
   ): Promise<void> {
     const stakeRequest = new StakeRequest(
       stakeRequestHash,
+      blockNumber,
     );
     stakeRequest.messageHash = messageHash;
     Logger.debug('Updating message hash in stake request repository');

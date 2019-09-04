@@ -64,7 +64,7 @@ export default class Account {
       web3.eth.accounts.wallet.add(web3Account);
       return true;
     } catch (e) {
-      Logger.error(`unlock account failed: ${e.message}`);
+      Logger.error(`unlock account failed for address: ${this.address}, Message ${e.message}`);
       return false;
     }
   }

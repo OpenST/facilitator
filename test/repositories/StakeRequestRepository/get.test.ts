@@ -38,6 +38,7 @@ describe('StakeRequestRepository::get', (): void => {
   it('Checks retrieval of an existing stake request.', async (): Promise<void> => {
     const stakeRequestInput = new StakeRequest(
       'stakeRequestHash',
+      new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',
       new BigNumber('2'),

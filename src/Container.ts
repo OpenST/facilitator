@@ -32,8 +32,14 @@ export default class Container {
     const config = configFactory.getConfig();
     Logger.debug('Config loaded successfully.');
     const repositories = await Repositories.create(config.facilitator.database.path);
+    const handler = Handlers.create(
+      repositories,
+      config.facilitator.auxChainId,
+      config.mosaic.auxiliaryChains[config.facilitator.auxChainId].contractAddresses.
+        origin.ostEIP20GatewayAddress!,
+    );
     const transactionHandler = new TransactionHandler(
-      Handlers.create(repositories, config.facilitator.auxChainId),
+      handler,
       repositories,
     );
     const configOriginChain = config.facilitator.originChain;
