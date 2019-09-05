@@ -1,6 +1,5 @@
 import Web3 from 'web3';
 import * as web3Utils from 'web3-utils';
-import * as fs from 'fs';
 import * as path from 'path';
 import BigNumber from 'bignumber.js';
 import { interacts } from '@openst/mosaic-contracts';
@@ -8,40 +7,32 @@ import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
+import { TransactionReceipt } from 'web3-core';
 import Repositories from '../src/repositories/Repositories';
 import Directory from '../src/Directory';
 import StakeRequest from '../src/models/StakeRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
 import assert from '../test/test_utils/assert';
 import MosaicConfig from '../src/Config/MosaicConfig';
-import { default as SrcUtils } from '../src/Utils';
 import GraphClient from '../src/subscriptions/GraphClient';
+import Queries from './Queries';
 
 const EthUtils = require('ethereumjs-util');
 
 const mosaicConfig = MosaicConfig.fromFile(path.join(__dirname, 'mosaic.json'));
-
-const ABIDirectoryPath = path.join(__dirname, 'abi');
-
 const auxSubGraphRpc = 'http://127.0.0.1:11000/subgraphs/name/mosaic/auxiliary-1000';
 
-const fetchQuery = 'query ($contractAddress: Bytes!, $messageHash: Bytes!) {\n'
-  + 'mintProgresseds(orderBy: uts, orderDirection: asc, first: 1, where:'
-  + ' {contractAddress: $contractAddress, _messageHash: $messageHash}) {\n'
-  + '    id\n'
-  + '    _messageHash\n'
-  + '    _staker\n'
-  + '    _beneficiary\n'
-  + '    _stakeAmount\n'
-  + '    _mintedAmount\n'
-  + '    _rewardAmount\n'
-  + '    _proofProgress\n'
-  + '    _unlockSecret\n'
-  + '    contractAddress\n'
-  + '    blockNumber\n'
-  + '    uts\n'
-  + '  }\n'
-  + '}';
+/**
+ * State of an request.
+ * Default step of an request is Initial.
+ * State of an request is changed to Intermediate when message status is declared on origin chain.
+ * State of an request is changed to Final when message status is declared on origin and aux chain.
+ */
+export enum Step {
+  Initial = '1',
+  Intermediate = '2',
+  Final = '3',
+}
 
 /**
  * It contains common helper methods to test facilitator.
@@ -57,7 +48,7 @@ export default class Utils {
 
   private ostComposer: string;
 
-  private step: number;
+  private step: Step;
 
   private mintingStatus: boolean = false;
 
@@ -86,9 +77,7 @@ export default class Utils {
     this.auxiliaryFunder = auxiliaryFunder;
     this.mosaicConfig = mosaicConfig;
     this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress!;
-    this.step = 1;
-    this.originWeb3.transactionConfirmationBlocks = 6;
-    this.auxiliaryWeb3.transactionConfirmationBlocks = 6;
+    this.step = Step.Initial;
   }
 
   /**
@@ -105,7 +94,10 @@ export default class Utils {
    * @param amountInETH Amount to be funded in ETH. Default is 3.
    * @returns Receipt of eth funding to beneficiary.
    */
-  public async fundETHOnOrigin(beneficiary: string, amountInETH: number = 3): Promise<any> {
+  public async fundETHOnOrigin(
+    beneficiary: string,
+    amountInETH: number = 3,
+  ): Promise<TransactionReceipt> {
     return await this.originWeb3.eth.sendTransaction(
       {
         from: this.originFunder,
@@ -142,34 +134,29 @@ export default class Utils {
    * @param expirationHeight Block number at which address becomes invalid.
    * @returns Receipt object.
    */
-  public async whitelistOriginWorker(worker: string, expirationHeight: number): Promise<any> {
+  public async whitelistOriginWorker(
+    worker: string,
+    expirationHeight: number,
+  ): Promise<TransactionReceipt> {
     const organizationContractInstance = await this.getOriginOrganizationInstance();
 
     const owner = await organizationContractInstance.methods.owner().call();
 
-    const setWorkerRawTx: TransactionObject<void> = await organizationContractInstance.methods.setWorker(
+    const setWorkerRawTx: TransactionObject<void> = await
+    organizationContractInstance.methods.setWorker(
       worker,
       expirationHeight,
     );
 
-    const setWorkerReceipt = await SrcUtils.sendTransaction(
+    const setWorkerReceipt = await this.sendTransaction(
       setWorkerRawTx,
       {
         from: owner,
-        gasPrice: '0x174876E800',
+        gasPrice: await this.originWeb3.eth.getGasPrice(),
       },
-      this.originWeb3,
     );
 
     return setWorkerReceipt;
-  }
-
-  public getAuxContractInstance(contractName: string, contractAddress: string) {
-    const abi = fs.readFileSync(path.join(ABIDirectoryPath, contractName.concat('.json')), 'utf8');
-    return new this.auxiliaryWeb3.eth.Contract(
-      JSON.parse(abi),
-      contractAddress,
-    );
   }
 
   /**
@@ -187,7 +174,10 @@ export default class Utils {
    * It anchors state root to auxiliary chain's Anchor contract.
    */
   public async anchorOrigin(auxChainId: number): Promise<void> {
-    const organizationInstance = interacts.getOrganization(this.auxiliaryWeb3, mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress);
+    const organizationInstance = interacts.getOrganization(
+      this.auxiliaryWeb3,
+      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress,
+    );
 
     const anchorInstance = interacts.getAnchor(this.auxiliaryWeb3, mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress);
 
@@ -200,13 +190,12 @@ export default class Utils {
       currentBlock.stateRoot,
     );
 
-    await SrcUtils.sendTransaction(
+    await this.sendTransaction(
       anchorStateRootRawTx,
       {
         from: owner,
-        gasPrice: '0x174876E800',
+        gasPrice: await this.auxiliaryWeb3.eth.getGasPrice(),
       },
-      this.auxiliaryWeb3,
     );
   }
 
@@ -217,20 +206,19 @@ export default class Utils {
    * @param ostComposer OSTComposer contract address.
    * @returns EIP712 compatible stakerequest hash.
    */
-  public getStakeRequestHash(stakeRequest: any, gateway: string, ostComposer: any): Buffer | Uint8Array {
+  public getStakeRequestHash(stakeRequest: StakeRequest, gateway: string, ostComposer: string): Buffer | Uint8Array {
     const stakeRequestMethod = 'StakeRequest(uint256 amount,address beneficiary,uint256 gasPrice,uint256 gasLimit,uint256 nonce,address staker,address gateway)';
     const encodedTypeHash = web3Utils.sha3(
       this.originWeb3.eth.abi.encodeParameter('string', stakeRequestMethod),
     );
-
     const stakeIntentTypeHash = web3Utils.soliditySha3(
       { type: 'bytes32', value: encodedTypeHash },
-      { type: 'uint256', value: stakeRequest.amount },
-      { type: 'address', value: stakeRequest.beneficiary },
-      { type: 'uint256', value: stakeRequest.gasPrice },
-      { type: 'uint256', value: stakeRequest.gasLimit },
-      { type: 'uint256', value: stakeRequest.nonce },
-      { type: 'address', value: stakeRequest.staker },
+      { type: 'uint256', value: stakeRequest.amount!.toString(10) },
+      { type: 'address', value: stakeRequest.beneficiary! },
+      { type: 'uint256', value: stakeRequest.gasPrice!.toString(10) },
+      { type: 'uint256', value: stakeRequest.gasLimit!.toString(10) },
+      { type: 'uint256', value: stakeRequest.nonce!.toString(10) },
+      { type: 'address', value: stakeRequest.staker! },
       { type: 'address', value: gateway },
     );
 
@@ -263,7 +251,12 @@ export default class Utils {
    * @returns Repositories object.
    */
   private async getRepositories(): Promise<Repositories> {
-    return Repositories.create(path.join(Directory.getDBFilePath('1000'), 'mosaic_facilitator.db'));
+    return Repositories.create(
+      path.join(
+        Directory.getDBFilePath('1000'),
+        'mosaic_facilitator.db',
+      ),
+    );
   }
 
   /**
@@ -272,10 +265,11 @@ export default class Utils {
    * @returns `true` if minting of OSTPrime is done.
    */
   public async verifyMinting(stakeRequestHash: string): Promise<boolean> {
-    let repos: Repositories;
-    repos = await this.getRepositories();
+    const repos: Repositories = await this.getRepositories();
 
-    const stakeRequest: StakeRequest | null = await repos.stakeRequestRepository.get(stakeRequestHash);
+    const stakeRequest: StakeRequest | null = await repos.stakeRequestRepository.get(
+      stakeRequestHash,
+    );
 
     if (stakeRequest !== null) {
       while (!this.messageHash) {
@@ -286,21 +280,30 @@ export default class Utils {
 
       const message = await repos.messageRepository.get(this.messageHash);
 
-      switch (this.step) {
+      switch (parseInt(this.step, 10)) {
         case 1:
-          if (message!.sourceStatus === MessageStatus.Declared && message!.targetStatus === MessageStatus.Undeclared) {
-            this.step = 2;
+          if (
+            message!.sourceStatus === MessageStatus.Declared
+            && message!.targetStatus === MessageStatus.Undeclared
+          ) {
+            this.step = Step.Intermediate;
           }
           break;
 
         case 2:
-          if (message!.sourceStatus === MessageStatus.Declared && message!.targetStatus === MessageStatus.Declared) {
-            this.step = 3;
+          if (
+            message!.sourceStatus === MessageStatus.Declared
+            && message!.targetStatus === MessageStatus.Declared
+          ) {
+            this.step = Step.Final;
           }
           break;
 
         case 3:
-          if (message!.sourceStatus === MessageStatus.Progressed && message!.targetStatus === MessageStatus.Progressed) {
+          if (
+            message!.sourceStatus === MessageStatus.Progressed
+            && message!.targetStatus === MessageStatus.Progressed
+          ) {
             this.mintingStatus = true;
             return true;
           }
@@ -317,7 +320,10 @@ export default class Utils {
    * @param beneficiary Address which received OSTPrime.
    * @param expectedMintedAmount Expected minted amount.
    */
-  public async assertMintingBalance(beneficiary: string, expectedMintedAmount: BigNumber): Promise<void> {
+  public async assertMintingBalance(
+    beneficiary: string,
+    expectedMintedAmount: BigNumber,
+  ): Promise<void> {
     const actualMintedAmount = new BigNumber(await this.auxiliaryWeb3.eth.getBalance(beneficiary));
 
     assert.strictEqual(
@@ -333,7 +339,11 @@ export default class Utils {
    * @param beneficiary Beneficiary of the transfer.
    * @param amount Amount which is transferred to beneficiary.
    */
-  public async verifyERC20Transfer(receipt: any, beneficiary: string, amount: number): Promise<void> {
+  public async verifyERC20Transfer(
+    receipt: TransactionReceipt,
+    beneficiary: string,
+    amount: number,
+  ): Promise<void> {
     assert.strictEqual(receipt.status, true, 'Receipt status should be true');
 
     const simpletokenInstance = this.getSimpleTokenInstance();
@@ -353,7 +363,10 @@ export default class Utils {
    */
   public getSimpleTokenInstance(): EIP20Token {
     const { simpleTokenAddress } = mosaicConfig.originChain.contractAddresses;
-    const simpletokenInstance: EIP20Token = interacts.getEIP20Token(this.originWeb3, simpleTokenAddress);
+    const simpletokenInstance: EIP20Token = interacts.getEIP20Token(
+      this.originWeb3,
+      simpleTokenAddress,
+    );
     return simpletokenInstance;
   }
 
@@ -373,7 +386,7 @@ export default class Utils {
   public async assertMintProgressedInGraphClient(
     auxChainId: number,
     expectedMintedAmount: BigNumber,
-    stakeRequest: any,
+    stakeRequest: StakeRequest,
   ) {
     const graphClient = GraphClient.getClient(
       'http',
@@ -385,7 +398,7 @@ export default class Utils {
       messageHash: this.messageHash,
     };
 
-    const queryResult = await graphClient.query(fetchQuery, variables);
+    const queryResult = await graphClient.query(Queries.auxiliary.mintProgresseds, variables);
 
     const mintProgressed: any = queryResult.data.mintProgresseds[0];
 
@@ -407,5 +420,21 @@ export default class Utils {
       web3Utils.toChecksumAddress(mintProgressed._beneficiary),
       'Incorrect beneficiary address',
     );
+  }
+
+  /**
+   * It sends the transaction to the network and returns receipt for the transaction.
+   * @param tx Transaction object.
+   * @param txOption Transaction options.
+   * @returns Receipt for the transaction.
+   */
+  async sendTransaction(tx: any, txOption: any): Promise<TransactionReceipt> {
+    const txOptions = Object.assign({}, txOption);
+
+    if (txOptions.gas === undefined) {
+      txOptions.gas = await tx.estimateGas(txOptions);
+    }
+
+    return await tx.send(txOptions);
   }
 }

@@ -32,8 +32,6 @@ const Utils = {
     return new Promise(async (onResolve, onReject): Promise<void> => {
       const txOptions = Object.assign({}, txOption);
       Logger.debug(`Transaction sender ${txOptions.from}`);
-      // TODO: remove below. only for dev chain.
-      txOptions.gas = 6000000;
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
         txOptions.gas = await tx.estimateGas(txOptions);

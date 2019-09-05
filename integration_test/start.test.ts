@@ -1,21 +1,28 @@
-import { ChildProcess, execSync, spawn } from 'child_process';
+import { execSync, spawn } from 'child_process';
 import * as path from 'path';
-
 import BigNumber from 'bignumber.js';
+
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
+import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
+import { Account } from 'web3/eth/accounts';
 import { FacilitatorConfig } from '../src/Config/Config';
 
 import Utils from './Utils';
 import MosaicConfig from '../src/Config/MosaicConfig';
-import { default as SrcUtils } from '../src/Utils';
+import StakeRequest from '../src/models/StakeRequest';
 
 const Web3 = require('web3');
 
+import Timeout = NodeJS.Timeout;
+
 const facilitatorInit = path.join(__dirname, 'facilitator_init.sh');
 const facilitatorStart = path.join(__dirname, 'facilitator_start.sh');
+const facilitatorKill = path.join(__dirname, 'kill_facilitator_process.sh');
 
 const originWeb3 = new Web3('http://127.0.0.1:41515');
 const auxiliaryWeb3 = new Web3('http://127.0.0.1:41000');
+originWeb3.transactionConfirmationBlocks = 6;
+auxiliaryWeb3.transactionConfirmationBlocks = 6;
 const exportWorkerPrefix = 'MOSAIC_ADDRESS_PASSW_';
 
 describe('facilitator start', () => {
@@ -29,29 +36,29 @@ describe('facilitator start', () => {
   let facilitatorConfig: FacilitatorConfig;
   let originWorker: string;
   let utils: Utils;
-  let simpleTokenInstance: any;
-  let stakerAccount: any;
+  let simpleTokenInstance: EIP20Token;
+  let stakerAccount: Account;
   let originFunder: string;
   let auxiliaryFunder: string;
   let auxWorkerExport;
-  let facilitatorStartChildProcess: ChildProcess;
-  let originAnchorInterval: any;
-  const stakerERC20Balance = 20000;
-  let stakeRequest = {
-    amount: new BigNumber(10),
-    gasPrice: new BigNumber(0),
-    gasLimit: new BigNumber(0),
-    nonce: new BigNumber(1),
-    gateway: '',
-    beneficiary: '',
-  };
+  let originAnchorInterval: Timeout;
+  const stakerOSTBalance = 20000;
+  const stakeRequest = new StakeRequest(
+    '',
+    new BigNumber(10),
+    '',
+    new BigNumber(0),
+    new BigNumber(0),
+    new BigNumber(1),
+    '',
+  );
 
-  const reward = stakeRequest.gasPrice.mul(stakeRequest.gasLimit);
-  const mintedAmount = stakeRequest.amount.sub(reward);
+  const reward = stakeRequest.gasPrice!.mul(stakeRequest.gasLimit!);
+  const mintedAmount = stakeRequest.amount!.sub(reward);
 
   before(async () => {
     const originAccounts = await originWeb3.eth.getAccounts();
-    const auxiliaryAccounts = await originWeb3.eth.getAccounts();
+    const auxiliaryAccounts = await auxiliaryWeb3.eth.getAccounts();
     originFunder = originAccounts[4];
     auxiliaryFunder = auxiliaryAccounts[6];
     utils = new Utils(originWeb3, auxiliaryWeb3, originFunder, auxiliaryFunder, mosaicConfig);
@@ -62,21 +69,23 @@ describe('facilitator start', () => {
 
   it('fund staker', async () => {
     simpleTokenInstance = utils.getSimpleTokenInstance();
-
-    stakerAccount = originWeb3.eth.accounts.create('ost');
+    stakerAccount = originWeb3.eth.accounts.create('simpletoken');
     originWeb3.eth.accounts.wallet.add(stakerAccount);
     stakeRequest.beneficiary = stakerAccount.address;
 
-    const transferReceipt = await simpleTokenInstance.methods.transfer(
+    const transferRawTx: TransactionObject<boolean> = await simpleTokenInstance.methods.transfer(
       stakerAccount.address,
-      stakerERC20Balance,
-    ).send(
-      {
-        from: originFunder,
-      },
+      stakerOSTBalance,
     );
 
-    await utils.verifyERC20Transfer(transferReceipt, stakerAccount.address, stakerERC20Balance);
+    const transferReceipt = await utils.sendTransaction(
+      transferRawTx,
+      {
+        from: originFunder,
+        gasPrice: await originWeb3.eth.getGasPrice(),
+      },
+    );
+    await utils.verifyERC20Transfer(transferReceipt, stakerAccount.address, stakerOSTBalance);
 
     await utils.fundETHOnOrigin(stakerAccount.address);
   });
@@ -84,27 +93,27 @@ describe('facilitator start', () => {
   it('funding origin and aux workers', async () => {
     facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     originWorker = facilitatorConfig.chains[facilitatorConfig.originChain].worker;
-    let auxiliaryWorker = facilitatorConfig.chains[facilitatorConfig.auxChainId].worker;
-
+    const auxiliaryWorker = facilitatorConfig.chains[facilitatorConfig.auxChainId].worker;
     await utils.fundETHOnOrigin(originWorker);
-
     await utils.fundOSTPrimeOnAuxiliary(auxiliaryWorker);
-
-    let originWorkerExport = exportWorkerPrefix + originWorker;
+    const originWorkerExport = exportWorkerPrefix + originWorker;
     auxWorkerExport = exportWorkerPrefix + auxiliaryWorker;
     process.env[originWorkerExport] = 'origin';
     process.env[auxWorkerExport] = 'auxiliary';
 
     const workerOSTBalance = 500;
-    const transferReceipt = await simpleTokenInstance.methods.transfer(
+
+    const transferRawTx: TransactionObject<boolean> = await simpleTokenInstance.methods.transfer(
       originWorker,
       workerOSTBalance,
-    ).send(
+    );
+    const transferReceipt = await utils.sendTransaction(
+      transferRawTx,
       {
         from: originFunder,
+        gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
-
     await utils.verifyERC20Transfer(transferReceipt, originWorker, workerOSTBalance);
   });
 
@@ -116,41 +125,48 @@ describe('facilitator start', () => {
   });
 
   it('facilitator start', async () => {
-    facilitatorStartChildProcess = spawn(
+    spawn(
       facilitatorStart,
       { stdio: outputOptions },
     );
   });
 
   it('request stake', async () => {
+    stakeRequest.staker = stakerAccount.address;
     const ostComposerInstance = await utils.getOSTComposerInstance();
 
     const ostComposerApproval = 200000;
-    await simpleTokenInstance.methods.approve(ostComposer, ostComposerApproval).send(
+
+    const transferRawTx: TransactionObject<boolean> = await simpleTokenInstance.methods.approve(
+      ostComposer!,
+      ostComposerApproval,
+    );
+
+    await utils.sendTransaction(
+      transferRawTx,
       {
         from: stakerAccount.address,
-        gas: 70000,
+        gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
 
     stakeRequest.gateway = mosaicConfig.auxiliaryChains[facilitatorConfig.auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!;
 
     const requestStakeRawTx: TransactionObject<string> = await ostComposerInstance.methods.requestStake(
-      stakeRequest.amount.toNumber(),
-      stakeRequest.beneficiary,
-      stakeRequest.gasPrice.toNumber(),
-      stakeRequest.gasLimit.toNumber(),
+      stakeRequest.amount!.toNumber(),
+      stakeRequest.beneficiary!,
+      stakeRequest.gasPrice!.toNumber(),
+      stakeRequest.gasLimit!.toNumber(),
       1,
       stakeRequest.gateway,
     );
 
-    await SrcUtils.sendTransaction(
+    await utils.sendTransaction(
       requestStakeRawTx,
       {
         from: stakerAccount.address,
-        gasPrice: '0x174876E800',
+        gasPrice: await originWeb3.eth.getGasPrice(),
       },
-      originWeb3,
     );
   });
 
@@ -161,33 +177,36 @@ describe('facilitator start', () => {
   });
 
   it('verification of minting', async () => {
-    const stakeRequestHash = utils.getStakeRequestHash({
-      amount: stakeRequest.amount,
-      beneficiary: stakeRequest.beneficiary,
-      gasPrice: stakeRequest.gasPrice,
-      gasLimit: stakeRequest.gasLimit,
-      nonce: stakeRequest.nonce,
-      staker: stakerAccount.address,
-    },
-    stakeRequest.gateway,
-    ostComposer);
+    const stakeRequestHash = utils.getStakeRequestHash(
+      stakeRequest,
+      stakeRequest.gateway!,
+      ostComposer!,
+    );
 
-    const verifyingMintingInterval = setInterval(async () => {
-      const mintingStatus = await utils.verifyMinting(
-        stakeRequestHash.toString(),
-      );
+    const mintPromise = new Promise(((resolve) => {
+      const verifyingMintingInterval = setInterval(async () => {
+        const mintingStatus = await utils.verifyMinting(
+          stakeRequestHash.toString(),
+        );
 
-      if (mintingStatus) {
-        const expectedMintedAmount: BigNumber = new BigNumber(mintedAmount);
-        await utils.assertMintingBalance(stakerAccount.address, expectedMintedAmount);
+        if (mintingStatus) {
+          const expectedMintedAmount: BigNumber = new BigNumber(mintedAmount);
+          await utils.assertMintingBalance(stakerAccount.address, expectedMintedAmount);
 
-        await utils.assertMintProgressedInGraphClient(auxChainId, expectedMintedAmount, stakeRequest);
-        clearInterval(verifyingMintingInterval);
-        clearInterval(originAnchorInterval);
+          await utils.assertMintProgressedInGraphClient(
+            auxChainId,
+            expectedMintedAmount,
+            stakeRequest,
+          );
+          clearInterval(verifyingMintingInterval);
+          clearInterval(originAnchorInterval);
+          resolve();
+        }
+      },
+      3000);
+    }));
 
-        process.kill(facilitatorStartChildProcess.pid, 'SIGTERM');
-      }
-    },
-    3000);
+    await mintPromise;
+    execSync(facilitatorKill, { stdio: outputOptions });
   });
 });

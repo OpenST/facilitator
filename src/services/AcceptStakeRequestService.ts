@@ -105,7 +105,6 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
 
   private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
     await this.approveForBounty(stakeRequest);
-
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
     const transactionHash = await this.sendAcceptStakeRequestTransaction(
