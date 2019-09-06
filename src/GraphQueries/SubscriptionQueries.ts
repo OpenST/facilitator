@@ -24,6 +24,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
+    stateRootAvailables: stateRootAvailableSubscriptionQuery,
+
     stakeProgresseds: 'subscription{stakeProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '

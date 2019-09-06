@@ -8,13 +8,13 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../Constants';
-import Logger from '../Logger';
-import AuxiliaryChain from '../models/AuxiliaryChain';
-import Observer from '../observer/Observer';
-import GatewayRepository from '../repositories/GatewayRepository';
-import { MessageRepository } from '../repositories/MessageRepository';
-import Utils from '../Utils';
+import { AUXILIARY_GAS_PRICE } from '../../Constants';
+import Logger from '../../Logger';
+import AuxiliaryChain from '../../models/AuxiliaryChain';
+import Observer from '../../observer/Observer';
+import GatewayRepository from '../../repositories/GatewayRepository';
+import {MessageDirection, MessageRepository} from '../../repositories/MessageRepository';
+import Utils from '../../Utils';
 
 export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   private gatewayRepository: GatewayRepository;
@@ -106,6 +106,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
     const pendingMessages = await this.messageRepository.getMessagesForConfirmation(
       this.gatewayAddress,
       blockHeight,
+      MessageDirection.OriginToAuxiliary,
     );
     Logger.debug(`Total pending message ${pendingMessages.length}`);
     if (pendingMessages.length === 0) {

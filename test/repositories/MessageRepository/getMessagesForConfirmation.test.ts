@@ -7,6 +7,7 @@ import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
 import Util from './util';
+import {MessageDirection} from "../../../src/repositories/MessageRepository";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -52,7 +53,7 @@ describe('MessageRepository::getMessagesForConfirmation', (): void => {
   it('should fetch all messages to be sent for confirmation.', async (): Promise<void> => {
     const gatewayProvenBlockHeight = new BigNumber(200);
     const responseMessages = await config.repos.messageRepository.getMessagesForConfirmation(
-      gatewayAddress, gatewayProvenBlockHeight,
+      gatewayAddress, gatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary,
     );
     Util.assertMessageAttributes(responseMessages[0], message1);
     Util.assertMessageAttributes(responseMessages[1], message2);
@@ -62,7 +63,7 @@ describe('MessageRepository::getMessagesForConfirmation', (): void => {
     const gatewayProvenBlockHeight = new BigNumber(200);
     const invalidGatewayAddress = '0x0000000000000000000000000000000000000099';
     const responseMessages = await config.repos.messageRepository.getMessagesForConfirmation(
-      invalidGatewayAddress, gatewayProvenBlockHeight,
+      invalidGatewayAddress, gatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary,
     );
     assert.deepEqual(
       responseMessages,
@@ -76,7 +77,7 @@ describe('MessageRepository::getMessagesForConfirmation', (): void => {
     + ' .', async (): Promise<void> => {
     const gatewayProvenBlockHeight = new BigNumber(50);
     const responseMessages = await config.repos.messageRepository.getMessagesForConfirmation(
-      gatewayAddress, gatewayProvenBlockHeight,
+      gatewayAddress, gatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary,
     );
 
     assert.deepEqual(
