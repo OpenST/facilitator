@@ -6,13 +6,20 @@ import Comparable from '../observer/Comparable';
  * Entity types of origin and aux chain for which timestamp will be recorded.
  */
 export enum EntityType {
-  StakeRequesteds = 'stakeRequesteds',
-  StakeIntentDeclareds = 'stakeIntentDeclareds',
+  // Common entities
   StateRootAvailables = 'stateRootAvailables',
   GatewayProvens = 'gatewayProvens',
+  // Stake & Mint entities
+  StakeRequesteds = 'stakeRequesteds',
+  StakeIntentDeclareds = 'stakeIntentDeclareds',
   StakeIntentConfirmeds = 'stakeIntentConfirmeds',
   StakeProgresseds = 'stakeProgresseds',
   MintProgresseds = 'mintProgresseds',
+  // Redeem & Unstake entities
+  RedeemIntentDeclareds = 'redeemIntentDeclareds',
+  RedeemIntentConfirmeds = 'redeemIntentConfirmeds',
+  RedeemProgresseds = 'redeemProgresseds',
+  UnstakeProgresseds = 'unstakeProgresseds',
 }
 
 /**

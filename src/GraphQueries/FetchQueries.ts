@@ -1,4 +1,35 @@
 const FetchQueries: Record<string, string> = {
+
+  // Common fetch queries
+
+  stateRootAvailables: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'stateRootAvailables(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
+  + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
+  + '    id\n'
+  + '    _blockHeight\n'
+  + '    _stateRoot\n'
+  + '    contractAddress\n'
+  + '    blockNumber\n'
+  + '    uts\n'
+  + '  }\n'
+  + '}',
+
+  gatewayProvens: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
+  + 'gatewayProvens(orderBy: blockNumber, orderDirection: asc, first: $limit, skip: $skip, where:'
+  + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
+  + '    id\n'
+  + '    _gateway\n'
+  + '    _blockHeight\n'
+  + '    _storageRoot\n'
+  + '    _wasAlreadyProved\n'
+  + '    contractAddress\n'
+  + '    blockNumber\n'
+  + '    uts\n'
+  + '  }\n'
+  + '}',
+
+  // Stake & Mint fetch queries
+
   stakeRequesteds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
   + 'stakeRequesteds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
@@ -26,32 +57,6 @@ const FetchQueries: Record<string, string> = {
   + '    _staker\n'
   + '    _stakerNonce\n'
   + '    _amount\n'
-  + '    contractAddress\n'
-  + '    blockNumber\n'
-  + '    uts\n'
-  + '  }\n'
-  + '}',
-
-  stateRootAvailables: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
-  + 'stateRootAvailables(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
-  + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
-  + '    id\n'
-  + '    _blockHeight\n'
-  + '    _stateRoot\n'
-  + '    contractAddress\n'
-  + '    blockNumber\n'
-  + '    uts\n'
-  + '  }\n'
-  + '}',
-
-  gatewayProvens: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
-  + 'gatewayProvens(orderBy: blockNumber, orderDirection: asc, first: $limit, skip: $skip, where:'
-  + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
-  + '    id\n'
-  + '    _gateway\n'
-  + '    _blockHeight\n'
-  + '    _storageRoot\n'
-  + '    _wasAlreadyProved\n'
   + '    contractAddress\n'
   + '    blockNumber\n'
   + '    uts\n'
@@ -94,6 +99,78 @@ const FetchQueries: Record<string, string> = {
 
   mintProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!) {\n'
   + 'mintProgresseds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
+  + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
+  + '    id\n'
+  + '    _messageHash\n'
+  + '    _staker\n'
+  + '    _beneficiary\n'
+  + '    _stakeAmount\n'
+  + '    _mintedAmount\n'
+  + '    _rewardAmount\n'
+  + '    _proofProgress\n'
+  + '    _unlockSecret\n'
+  + '    contractAddress\n'
+  + '    blockNumber\n'
+  + '    uts\n'
+  + '  }\n'
+  + '}',
+
+  // Redeem & Unstake fetch queries
+
+  redeemIntentDeclareds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:' +
+  ' Int!) {\n'
+  + 'redeemIntentDeclareds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, , where:'
+  + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
+  + '    id\n'
+  + '    _messageHash\n'
+  + '    _staker\n'
+  + '    _stakerNonce\n'
+  + '    _amount\n'
+  + '    contractAddress\n'
+  + '    blockNumber\n'
+  + '    uts\n'
+  + '  }\n'
+  + '}',
+
+  redeemIntentConfirmeds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:' +
+  ' Int!) {\n'
+  + 'redeemIntentConfirmeds(orderBy: uts, orderDirection: asc, first:$limit, skip: $skip, where:'
+  + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
+  + '    id\n'
+  + '    _messageHash\n'
+  + '    _staker\n'
+  + '    _stakerNonce\n'
+  + '    _beneficiary\n'
+  + '    _amount\n'
+  + '    _blockHeight\n'
+  + '    _hashLock\n'
+  + '    contractAddress\n'
+  + '    blockNumber\n'
+  + '    uts\n'
+  + '  }\n'
+  + '}',
+
+  redeemProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!)' +
+  ' {\n'
+  + 'redeemProgresseds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
+  + ' {contractAddress:'
+  + ' $contractAddress, uts_gt: $uts}) {\n'
+  + '    id\n'
+  + '    _messageHash\n'
+  + '    _staker\n'
+  + '    _stakerNonce\n'
+  + '    _amount\n'
+  + '    _proofProgress\n'
+  + '    _unlockSecret\n'
+  + '    contractAddress\n'
+  + '    blockNumber\n'
+  + '    uts\n'
+  + '  }\n'
+  + '}',
+
+  unstakeProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:' +
+  ' Int!) {\n'
+  + 'unstakeProgresseds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    _messageHash\n'

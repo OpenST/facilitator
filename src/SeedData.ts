@@ -158,14 +158,24 @@ export default class SeedData {
     const contractAddressEventTypesMap: Record<string, EntityType[]> = {
       [this.ostComposerAddress]: [EntityType.StakeRequesteds],
       [this.gatewayAddress]: [
+        // Stake & mint entities
         EntityType.StakeIntentDeclareds,
         EntityType.StakeProgresseds,
+        // Redeem & Unstake entities
+        EntityType.RedeemIntentConfirmeds,
+        EntityType.UnstakeProgresseds,
+        EntityType.GatewayProvens,
       ],
       [this.coAnchorAddress]: [EntityType.StateRootAvailables],
+      [this.anchorAddress]: [EntityType.StateRootAvailables],
       [this.coGatewayAddress]: [
+        // Stake & Mint entities
         EntityType.StakeIntentConfirmeds,
         EntityType.MintProgresseds,
         EntityType.GatewayProvens,
+        // Redeem & Unstake entities
+        EntityType.RedeemIntentDeclareds,
+        EntityType.RedeemProgresseds,
       ],
     };
     const promises: any = [];

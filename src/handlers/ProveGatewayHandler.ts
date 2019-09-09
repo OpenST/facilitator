@@ -1,11 +1,11 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
-import Logger from '../../Logger';
-import Gateway from '../../models/Gateway';
-import GatewayRepository from '../../repositories/GatewayRepository';
-import ContractEntityHandler from '../ContractEntityHandler';
-import Utils from '../../Utils';
+import Logger from '../Logger';
+import Gateway from '../models/Gateway';
+import GatewayRepository from '../repositories/GatewayRepository';
+import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
