@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import Repositories from '../repositories/Repositories';
-import AnchorHandler from './stake_and_mint/AnchorHandler';
+import AnchorHandler from './AnchorHandler';
 import MintProgressHandler from './stake_and_mint/MintProgressHandler';
 import ProveGatewayHandler from './stake_and_mint/ProveGatewayHandler';
 import StakeIntentDeclaredHandler from './stake_and_mint/StakeIntentDeclaredHandler';

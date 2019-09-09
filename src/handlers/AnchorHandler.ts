@@ -16,12 +16,12 @@
 
 import BigNumber from 'bignumber.js';
 
-import { AuxiliaryChainRecordNotFoundException } from '../../Exception';
-import Logger from '../../Logger';
-import AuxiliaryChain from '../../models/AuxiliaryChain';
-import AuxiliaryChainRepository from '../../repositories/AuxiliaryChainRepository';
-import ContractEntityHandler from '../ContractEntityHandler';
-import Utils from '../../Utils';
+import { AuxiliaryChainRecordNotFoundException } from '../Exception';
+import Logger from '../Logger';
+import AuxiliaryChain from '../models/AuxiliaryChain';
+import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
+import ContractEntityHandler from './ContractEntityHandler';
+import Utils from '../Utils';
 
 /**
  * This class handles Anchor event
@@ -54,10 +54,18 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
       Logger.error(`Auxiliary chain record not found for chain ${this.auxiliaryChainID}`);
       throw new AuxiliaryChainRecordNotFoundException(`Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`);
     }
-
-    let anchorBlockHeight = chainRecord.lastOriginBlockHeight;
+    let anchorBlockHeight: BigNumber;
+    let anchorAddress: string;
+    const isAuxChainEntity = Utils.toChecksumAddress(transactions[0].contractAddress) === chainRecord.coAnchorAddress;
+    if (isAuxChainEntity) {
+      anchorBlockHeight = chainRecord.lastOriginBlockHeight!;
+      anchorAddress = chainRecord.coAnchorAddress!;
+    } else {
+      anchorBlockHeight = chainRecord.lastAuxiliaryBlockHeight!;
+      anchorAddress = chainRecord.anchorAddress!;
+    }
     transactions
-      .filter((transaction): boolean => chainRecord.coAnchorAddress === Utils.toChecksumAddress(
+      .filter((transaction): boolean => anchorAddress === Utils.toChecksumAddress(
         transaction.contractAddress,
       ))
       .forEach((filteredTransaction): void => {
@@ -75,8 +83,13 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
     if (!hasChanged) {
       return [];
     }
-    chainRecord.lastOriginBlockHeight = anchorBlockHeight;
-    Logger.debug(`Persisting lastOriginBlockHeight to ${anchorBlockHeight}`);
+    if (isAuxChainEntity) {
+      chainRecord.lastOriginBlockHeight = anchorBlockHeight;
+      Logger.debug(`Persisting lastOriginBlockHeight to ${anchorBlockHeight}`);
+    } else {
+      chainRecord.lastAuxiliaryBlockHeight = anchorBlockHeight;
+      Logger.debug(`Persisting lastAuxiliaryBlockHeight to ${anchorBlockHeight}`);
+    }
     await this.auxiliaryChainRepository.save(chainRecord);
     // This is returned in the case when higher latest anchored block height is received.
     return [chainRecord];

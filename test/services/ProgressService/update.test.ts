@@ -7,7 +7,7 @@ import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../../../src/Constants';
 import Message from '../../../src/models/Message';
 import GatewayRepository from '../../../src/repositories/GatewayRepository';
 import { MessageStatus } from '../../../src/repositories/MessageRepository';
-import ProgressService from '../../../src/services/ProgressService';
+import ProgressService from '../../../src/services/stake_and_mint/ProgressService';
 import Utils from '../../../src/Utils';
 import SpyAssert from '../../test_utils/SpyAssert';
 import StubData from '../../test_utils/StubData';

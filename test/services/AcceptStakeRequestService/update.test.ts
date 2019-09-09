@@ -31,7 +31,7 @@ import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../src/repositories/MessageRepository';
 import Repositories from '../../../src/repositories/Repositories';
-import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
+import AcceptStakeRequestService from '../../../src/services/stake_and_mint/AcceptStakeRequestService';
 import Utils from '../../../src/Utils';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';

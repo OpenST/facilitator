@@ -18,7 +18,7 @@ import 'mocha';
 
 import * as Web3Utils from 'web3-utils';
 
-import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
+import AcceptStakeRequestService from '../../../src/services/stake_and_mint/AcceptStakeRequestService';
 import assert from '../../test_utils/assert';
 
 describe('AcceptStakeRequestService::generateSecret', (): void => {

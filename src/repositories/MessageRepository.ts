@@ -249,10 +249,12 @@ export class MessageRepository extends Subject<Message> {
    *
    * @param gatewayAddress Address of the gateway.
    * @param blockHeight Block height at which Gateway is proven.
+   * @param direction origin => aux or aux => origin
    */
   public async getMessagesForConfirmation(
     gatewayAddress: string,
     blockHeight: BigNumber,
+    direction: MessageDirection,
   ): Promise<Message[]> {
     const messageModels = await MessageModel.findAll({
       where: {
@@ -263,7 +265,7 @@ export class MessageRepository extends Subject<Message> {
           },
           sourceStatus: MessageStatus.Declared,
           targetStatus: MessageStatus.Undeclared,
-          direction: MessageDirection.OriginToAuxiliary,
+          direction: direction,
         },
       },
     });

@@ -5,28 +5,28 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
+import {ORIGIN_GAS_PRICE} from '../../../src/Constants';
 import Gateway from '../../../src/models/Gateway';
 import GatewayRepository from '../../../src/repositories/GatewayRepository';
 import {MessageDirection, MessageRepository} from '../../../src/repositories/MessageRepository';
-import ProveGatewayService from '../../../src/services/stake_and_mint/ProveGatewayService';
+import ProveCoGatewayService from '../../../src/services/redeem_and_unstake/ProveCoGatewayService';
 import Utils from '../../../src/Utils';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
 import StubData from '../../test_utils/StubData';
 
-describe('ProveGatewayService.proveGateway()', (): void => {
+describe('ProveCoGatewayService.proveCoGateway()', (): void => {
   const originWeb3 = new Web3(null);
   const auxiliaryWeb3 = new Web3(null);
-  const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
-  const gatewayAddress = '0x0000000000000000000000000000000000000001';
+  const originWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
+  const coGatewayAddress = '0x0000000000000000000000000000000000000001';
   const blockNumber = new BigNumber(2);
   const fakeTransactionHash = 'fakeHash';
   const auxiliaryChainId = 123;
 
   it('should react to block height of new anchor state root', async (): Promise<void> => {
     const gatewayRecord: Gateway = StubData.gatewayRecord();
-    const gateawayRepository = sinon.createStubInstance(GatewayRepository, {
+    const gatewayRepository = sinon.createStubInstance(GatewayRepository, {
       get: Promise.resolve(gatewayRecord),
     });
 
@@ -47,7 +47,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
 
     const fakeRawTransaction = { status: true };
 
-    const fakeEIP20CoGateway = {
+    const fakeEIP20Gateway = {
       methods: {
         proveGateway: sinon.fake.returns(fakeRawTransaction),
       },
@@ -55,8 +55,8 @@ describe('ProveGatewayService.proveGateway()', (): void => {
 
     sinon.replace(
       interacts,
-      'getEIP20CoGateway',
-      sinon.fake.returns(fakeEIP20CoGateway),
+      'getEIP20Gateway',
+      sinon.fake.returns(fakeEIP20Gateway),
     );
 
     const sendTransactionStub = sinon.replace(
@@ -65,28 +65,28 @@ describe('ProveGatewayService.proveGateway()', (): void => {
       sinon.fake.resolves(fakeTransactionHash),
     );
 
-    const proveGatewayService = new ProveGatewayService(
-      gateawayRepository as any,
+    const proveCoGatewayService = new ProveCoGatewayService(
+      gatewayRepository as any,
       messageRepository as any,
       originWeb3,
       auxiliaryWeb3,
-      auxiliaryWorkerAddress,
-      gatewayAddress,
+      originWorkerAddress,
+      coGatewayAddress,
       auxiliaryChainId,
     );
 
-    const response = await proveGatewayService.proveGateway(blockNumber);
+    const response = await proveCoGatewayService.proveCoGateway(blockNumber);
 
     SpyAssert.assert(
-      gateawayRepository.get,
+      gatewayRepository.get,
       1,
-      [[gatewayAddress]],
+      [[coGatewayAddress]],
     );
 
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gatewayAddress, blockNumber, MessageDirection.OriginToAuxiliary]],
+      [[coGatewayAddress, blockNumber, MessageDirection.AuxiliaryToOrigin]],
     );
 
     SpyAssert.assert(
@@ -96,7 +96,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     );
 
     SpyAssert.assert(
-      fakeEIP20CoGateway.methods.proveGateway,
+      fakeEIP20Gateway.methods.proveGateway,
       1,
       [[
         blockNumber.toString(10),
@@ -107,7 +107,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     SpyAssert.assert(
       sendTransactionStub,
       1,
-      [[fakeRawTransaction, { from: auxiliaryWorkerAddress, gasPrice: AUXILIARY_GAS_PRICE }, auxiliaryWeb3]],
+      [[fakeRawTransaction, { from: originWorkerAddress, gasPrice: ORIGIN_GAS_PRICE }, originWeb3]],
     );
 
     assert.strictEqual(
@@ -129,22 +129,22 @@ describe('ProveGatewayService.proveGateway()', (): void => {
       get: Promise.resolve(null),
     });
 
-    const proveGatewayService = new ProveGatewayService(
+    const proveGatewayService = new ProveCoGatewayService(
       gateawayRepository as any,
       sinon.fake() as any,
       originWeb3,
       auxiliaryWeb3,
-      auxiliaryWorkerAddress,
-      gatewayAddress,
+      originWorkerAddress,
+      coGatewayAddress,
       auxiliaryChainId,
     );
 
     await assert.isRejected(
-      proveGatewayService.proveGateway(
+      proveGatewayService.proveCoGateway(
         blockNumber,
       ),
       'Gateway record does not exist for given gateway',
-      'It must fail if gatway record does not exists.',
+      'It must fail if gateway record does not exists.',
     );
     sinon.restore();
   });
@@ -172,7 +172,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
 
     const fakeRawTransaction = { status: true };
 
-    const fakeEIP20CoGateway = {
+    const fakeEIP20Gateway = {
       methods: {
         proveGateway: sinon.fake.returns(fakeRawTransaction),
       },
@@ -180,8 +180,8 @@ describe('ProveGatewayService.proveGateway()', (): void => {
 
     sinon.replace(
       interacts,
-      'getEIP20CoGateway',
-      sinon.fake.returns(fakeEIP20CoGateway),
+      'getEIP20Gateway',
+      sinon.fake.returns(fakeEIP20Gateway),
     );
 
     const sendTransactionStub = sinon.replace(
@@ -190,28 +190,28 @@ describe('ProveGatewayService.proveGateway()', (): void => {
       sinon.fake.resolves(fakeTransactionHash),
     );
 
-    const proveGatewayService = new ProveGatewayService(
+    const proveGatewayService = new ProveCoGatewayService(
       gateawayRepository as any,
       messageRepository as any,
       originWeb3,
       auxiliaryWeb3,
-      auxiliaryWorkerAddress,
-      gatewayAddress,
+      originWorkerAddress,
+      coGatewayAddress,
       auxiliaryChainId,
     );
 
-    const response = await proveGatewayService.proveGateway(blockNumber);
+    const response = await proveGatewayService.proveCoGateway(blockNumber);
 
     SpyAssert.assert(
       gateawayRepository.get,
       1,
-      [[gatewayAddress]],
+      [[coGatewayAddress]],
     );
 
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gatewayAddress, blockNumber, MessageDirection.OriginToAuxiliary]],
+      [[coGatewayAddress, blockNumber, MessageDirection.AuxiliaryToOrigin]],
     );
 
     assert.strictEqual(
@@ -226,7 +226,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     );
 
     SpyAssert.assert(
-      fakeEIP20CoGateway.methods.proveGateway,
+      fakeEIP20Gateway.methods.proveGateway,
       0,
       [],
     );
