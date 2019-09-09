@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import StakeRequestHandler from '../../src/handlers/stake_and_mint/StakeRequestHandler';
+import StakeRequestedHandler from '../../src/handlers/stake_and_mint/StakeRequestedHandler';
 import Repositories from '../../src/repositories/Repositories';
 import TransactionHandler from '../../src/TransactionHandler';
 import assert from '../test_utils/assert';
@@ -29,7 +29,7 @@ describe('TransactionHandler.handle()', (): void => {
   it('should handle stake request transactions if '
   + 'handler is available', async (): Promise<void> => {
     const aStakeRequest = StubData.getAStakeRequest('123');
-    const stakeRequestedHandler = new StakeRequestHandler(
+    const stakeRequestedHandler = new StakeRequestedHandler(
       sinon.fake() as any,
       gatewayAddress,
     );

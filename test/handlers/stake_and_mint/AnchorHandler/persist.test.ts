@@ -2,13 +2,13 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
-import AnchorHandler from '../../../../src/handlers/stake_and_mint/AnchorHandler';
+import StateRootAvailableHandler from '../../../../src/handlers/stake_and_mint/StateRootAvailableHandler';
 import AuxiliaryChainRepository from '../../../../src/repositories/AuxiliaryChainRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
 
-describe('AnchorHandler.persist()', () => {
+describe('StateRootAvailableHandler.persist()', () => {
   const auxiliaryChainId = 123;
   const coAnchorAddress = '0x0000000000000000000000000000000000000003';
   const someOtherAnchor = '0x0000000000000000000000000000000000000004';
@@ -34,7 +34,7 @@ describe('AnchorHandler.persist()', () => {
         save: save as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
-    const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
+    const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
     const models = await handler.persist(transactionsWithInterestedAnchor);
 
@@ -58,7 +58,7 @@ describe('AnchorHandler.persist()', () => {
         save: save as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
-    const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
+    const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
     const models = await handler.persist(transactions);
 
@@ -77,7 +77,7 @@ describe('AnchorHandler.persist()', () => {
         save: save as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
-    const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
+    const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
     const models = await handler.persist(transactions);
 
@@ -96,7 +96,7 @@ describe('AnchorHandler.persist()', () => {
         save: save as any,
         get: Promise.resolve(auxiliaryChainRecord),
       });
-    const handler = new AnchorHandler(sinonMock as any, auxiliaryChainId);
+    const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
     const models = await handler.persist(transactions);
 

@@ -25,7 +25,7 @@ import Utils from '../../Utils';
 /**
  * This class handles stake request transactions.
  */
-export default class StakeRequestHandler extends ContractEntityHandler<StakeRequest> {
+export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequest> {
   /* Storage */
 
   private readonly stakeRequestRepository: StakeRequestRepository;
@@ -92,6 +92,9 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
+            // sequelize skip updating fields whose values are undefined. Null value makes sure
+            // messageHash is updated with NULL in db. null is banged because messageHash is an
+            // optional model field.
             stakeRequest.messageHash = null!;
             return stakeRequest;
           }

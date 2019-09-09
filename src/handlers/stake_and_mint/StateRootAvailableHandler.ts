@@ -26,7 +26,7 @@ import Utils from '../../Utils';
 /**
  * This class handles Anchor event
  */
-export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain> {
+export default class StateRootAvailableHandler extends ContractEntityHandler<AuxiliaryChain> {
   private auxiliaryChainRepository: AuxiliaryChainRepository;
 
   private auxiliaryChainID: number;

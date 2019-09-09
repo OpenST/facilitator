@@ -2,7 +2,7 @@
 import sinon from 'sinon';
 import * as web3utils from 'web3-utils';
 
-import MintProgressHandler from '../../../../src/handlers/stake_and_mint/MintProgressHandler';
+import MintProgressedHandler from '../../../../src/handlers/stake_and_mint/MintProgressedHandler';
 import Message from '../../../../src/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
@@ -32,7 +32,7 @@ describe('MintProgress.persist()', () => {
         save: save as any,
         get: Promise.resolve(null),
       });
-    const handler = new MintProgressHandler(mockedRepository as any);
+    const handler = new MintProgressedHandler(mockedRepository as any);
 
     const models = await handler.persist(transactions);
 
@@ -60,7 +60,7 @@ describe('MintProgress.persist()', () => {
         save: save as any,
         get: Promise.resolve(existingMessageWithProgressStatus),
       });
-    const handler = new MintProgressHandler(mockedRepository as any);
+    const handler = new MintProgressedHandler(mockedRepository as any);
 
     const models = await handler.persist(transactions);
 

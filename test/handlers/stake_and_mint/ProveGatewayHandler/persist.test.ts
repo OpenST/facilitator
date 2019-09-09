@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import * as Utils from 'web3-utils';
 
-import ProveGatewayHandler from '../../../../src/handlers/stake_and_mint/ProveGatewayHandler';
+import GatewayProvenHandler from '../../../../src/handlers/stake_and_mint/GatewayProvenHandler';
 import Gateway from '../../../../src/models/Gateway';
 import Repositories from '../../../../src/repositories/Repositories';
 import assert from '../../../test_utils/assert';
@@ -41,7 +41,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
       uts: new BigNumber('1111'),
     }];
 
-    const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
+    const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
     const updatedGateways = await handler.persist(proveGatewayTransactions);
     const updatedGateway = updatedGateways[0];
 
@@ -66,7 +66,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
       uts: new BigNumber('1111'),
     }];
 
-    const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
+    const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
 
     assert.isRejected(
       handler.persist(proveGatewayTransactions),
@@ -89,7 +89,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
       uts: new BigNumber('1111'),
     }];
 
-    const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
+    const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
     const updatedGateways = await handler.persist(proveGatewayTransactions);
     const updatedGateway = updatedGateways[0];
 
@@ -114,7 +114,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
       uts: new BigNumber('1111'),
     }];
 
-    const handler = new ProveGatewayHandler(config.repos.gatewayRepository);
+    const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
     const updatedGateways = await handler.persist(proveGatewayTransactions);
     const updatedGateway = updatedGateways[0];
 
