@@ -15,13 +15,13 @@
 // ----------------------------------------------------------------------------
 
 
-import Logger from '../Logger';
-import Message from '../models/Message';
+import Logger from '../../Logger';
+import Message from '../../models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../repositories/MessageRepository';
-import ContractEntityHandler from './ContractEntityHandler';
-import Utils from '../Utils';
+} from '../../repositories/MessageRepository';
+import ContractEntityHandler from '../ContractEntityHandler';
+import Utils from '../../Utils';
 
 /**
  * This class handles mint progress transactions.

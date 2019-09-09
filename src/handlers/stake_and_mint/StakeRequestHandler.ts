@@ -16,11 +16,11 @@
 
 import BigNumber from 'bignumber.js';
 
-import Logger from '../Logger';
-import StakeRequest from '../models/StakeRequest';
-import StakeRequestRepository from '../repositories/StakeRequestRepository';
-import ContractEntityHandler from './ContractEntityHandler';
-import Utils from '../Utils';
+import Logger from '../../Logger';
+import StakeRequest from '../../models/StakeRequest';
+import StakeRequestRepository from '../../repositories/StakeRequestRepository';
+import ContractEntityHandler from '../ContractEntityHandler';
+import Utils from '../../Utils';
 
 /**
  * This class handles stake request transactions.
@@ -89,25 +89,24 @@ export default class StakeRequestHandler extends ContractEntityHandler<StakeRequ
           const blockNumber = new BigNumber(transaction.blockNumber);
 
           const stakeRequest = await this.stakeRequestRepository.get(stakeRequestHash);
-          if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber!)) {
+          if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
             stakeRequest.messageHash = null!;
             return stakeRequest;
-          } else {
-            return new StakeRequest(
-              stakeRequestHash,
-              blockNumber,
-              amount,
-              beneficiary,
-              gasPrice,
-              gasLimit,
-              nonce,
-              gateway,
-              staker,
-              stakerProxy,
-            );
           }
+          return new StakeRequest(
+            stakeRequestHash,
+            blockNumber,
+            amount,
+            beneficiary,
+            gasPrice,
+            gasLimit,
+            nonce,
+            gateway,
+            staker,
+            stakerProxy,
+          );
         },
       ));
 

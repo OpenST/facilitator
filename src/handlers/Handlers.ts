@@ -15,13 +15,14 @@
 // ----------------------------------------------------------------------------
 
 import Repositories from '../repositories/Repositories';
-import AnchorHandler from './AnchorHandler';
-import MintProgressHandler from './MintProgressHandler';
-import ProveGatewayHandler from './ProveGatewayHandler';
-import StakeIntentDeclareHandler from './StakeIntentDeclareHandler';
-import StakeProgressHandler from './StakeProgressHandler';
-import StakeRequestHandler from './StakeRequestHandler';
-import StakeIntentConfirmHandler from './StakeIntentConfirmHandler';
+import AnchorHandler from './stake_and_mint/AnchorHandler';
+import MintProgressHandler from './stake_and_mint/MintProgressHandler';
+import ProveGatewayHandler from './stake_and_mint/ProveGatewayHandler';
+import StakeIntentDeclaredHandler from './stake_and_mint/StakeIntentDeclaredHandler';
+import StakeProgressHandler from './stake_and_mint/StakeProgressHandler';
+import StakeRequestHandler from './stake_and_mint/StakeRequestHandler';
+import StakeIntentConfirmHandler from './stake_and_mint/StakeIntentConfirmHandler';
+import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
 
 export default class Handlers {
   /**
@@ -40,13 +41,15 @@ export default class Handlers {
   ): {
       stakeRequesteds: StakeRequestHandler;
       stateRootAvailables: AnchorHandler;
-      stakeIntentDeclareds: StakeIntentDeclareHandler;
+      stakeIntentDeclareds: StakeIntentDeclaredHandler;
       gatewayProvens: ProveGatewayHandler;
       stakeProgresseds: StakeProgressHandler;
       mintProgresseds: MintProgressHandler;
       stakeIntentConfirmeds: StakeIntentConfirmHandler;
+      redeemIntentDeclareds: RedeemIntentDeclaredHandler;
     } {
     return {
+      // Stake and Mint Handlers
       stakeRequesteds: new StakeRequestHandler(
         repos.stakeRequestRepository,
         gatewayAddress,
@@ -55,13 +58,16 @@ export default class Handlers {
         repos.auxiliaryChainRepository,
         auxChainId,
       ),
-      stakeIntentDeclareds: new StakeIntentDeclareHandler(repos.messageRepository),
+      stakeIntentDeclareds: new StakeIntentDeclaredHandler(repos.messageRepository),
       gatewayProvens: new ProveGatewayHandler(
         repos.gatewayRepository,
       ),
       stakeIntentConfirmeds: new StakeIntentConfirmHandler(repos.messageRepository),
       stakeProgresseds: new StakeProgressHandler(repos.messageRepository),
       mintProgresseds: new MintProgressHandler(repos.messageRepository),
+
+      // Redeem and Unstake Handlers
+      redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),
     };
   }
 }
