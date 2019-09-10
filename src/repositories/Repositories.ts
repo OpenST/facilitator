@@ -22,11 +22,14 @@ import ContractEntityRepository from './ContractEntityRepository';
 import GatewayRepository from './GatewayRepository';
 import { MessageRepository } from './MessageRepository';
 import StakeRequestRepository from './StakeRequestRepository';
+import RedeemRequestRepository from "./RedeemRequestRepository";
 
 export default class Repositories {
   /* Storage */
 
   public stakeRequestRepository: StakeRequestRepository;
+
+  public redeemRequestRepository: RedeemRequestRepository;
 
   public auxiliaryChainRepository: AuxiliaryChainRepository;
 
@@ -67,6 +70,7 @@ export default class Repositories {
 
     promises.push(this.messageRepository.notify());
     promises.push(this.stakeRequestRepository.notify());
+    promises.push(this.redeemRequestRepository.notify());
     promises.push(this.auxiliaryChainRepository.notify());
     promises.push(this.gatewayRepository.notify());
     promises.push(this.contractEntityRepository.notify());
@@ -109,9 +113,11 @@ export default class Repositories {
       freezeTableName: true,
     };
 
-    this.messageRepository = new MessageRepository(initOptions);
-
     this.stakeRequestRepository = new StakeRequestRepository(initOptions);
+
+    this.redeemRequestRepository = new RedeemRequestRepository(initOptions);
+
+    this.messageRepository = new MessageRepository(initOptions);
 
     this.auxiliaryChainRepository = new AuxiliaryChainRepository(initOptions);
 
