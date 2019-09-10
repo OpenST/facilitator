@@ -58,69 +58,69 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     async (): Promise<void> => {
       const bulkTransactions = [
         {
-        _messageHash: Web3Utils.keccak256('1'),
-        _redeemer: '0x0000000000000000000000000000000000000001',
-        _redeemerNonce: '1',
-        _beneficiary: '0x0000000000000000000000000000000000000002',
-        _amount: '100',
-        contractAddress: '0x0000000000000000000000000000000000000002',
-        blockNumber: '10',
-      },
-      {
-        _messageHash: Web3Utils.keccak256('2'),
-        _redeemer: '0x0000000000000000000000000000000000000001',
-        _redeemerNonce: '1',
-        _beneficiary: '0x0000000000000000000000000000000000000002',
-        _amount: '100',
-        contractAddress: '0x0000000000000000000000000000000000000002',
-        blockNumber: '10',
-      }];
+          _messageHash: Web3Utils.keccak256('1'),
+          _redeemer: '0x0000000000000000000000000000000000000001',
+          _redeemerNonce: '1',
+          _beneficiary: '0x0000000000000000000000000000000000000002',
+          _amount: '100',
+          contractAddress: '0x0000000000000000000000000000000000000002',
+          blockNumber: '10',
+        },
+        {
+          _messageHash: Web3Utils.keccak256('2'),
+          _redeemer: '0x0000000000000000000000000000000000000001',
+          _redeemerNonce: '1',
+          _beneficiary: '0x0000000000000000000000000000000000000002',
+          _amount: '100',
+          contractAddress: '0x0000000000000000000000000000000000000002',
+          blockNumber: '10',
+        }];
 
-    const save = sinon.stub();
+      const save = sinon.stub();
 
-    const mockedRepository = sinon.createStubInstance(MessageRepository,
-      {
-        save: save as any,
-        get: Promise.resolve(null),
-      });
-    const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+      const mockedRepository = sinon.createStubInstance(MessageRepository,
+        {
+          save: save as any,
+          get: Promise.resolve(null),
+        });
+      const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
 
-    const models = await handler.persist(bulkTransactions);
+      const models = await handler.persist(bulkTransactions);
 
-    const expectedModel1 = new Message(
-      bulkTransactions[0]._messageHash,
-    );
-    expectedModel1.sender = bulkTransactions[0]._redeemer;
-    expectedModel1.nonce = new BigNumber(bulkTransactions[0]._redeemerNonce);
-    expectedModel1.direction = MessageDirection.AuxiliaryToOrigin;
-    expectedModel1.sourceStatus = MessageStatus.Declared;
-    expectedModel1.type = MessageType.Redeem;
-    expectedModel1.gatewayAddress = bulkTransactions[0].contractAddress;
-    expectedModel1.sourceDeclarationBlockHeight = new BigNumber(bulkTransactions[0].blockNumber);
+      const expectedModel1 = new Message(
+        bulkTransactions[0]._messageHash,
+      );
+      expectedModel1.sender = bulkTransactions[0]._redeemer;
+      expectedModel1.nonce = new BigNumber(bulkTransactions[0]._redeemerNonce);
+      expectedModel1.direction = MessageDirection.AuxiliaryToOrigin;
+      expectedModel1.sourceStatus = MessageStatus.Declared;
+      expectedModel1.type = MessageType.Redeem;
+      expectedModel1.gatewayAddress = bulkTransactions[0].contractAddress;
+      expectedModel1.sourceDeclarationBlockHeight = new BigNumber(bulkTransactions[0].blockNumber);
 
-    const expectedModel2 = new Message(
-      bulkTransactions[1]._messageHash,
-    );
-    expectedModel2.sender = bulkTransactions[1]._redeemer;
-    expectedModel2.nonce = new BigNumber(bulkTransactions[1]._redeemerNonce);
-    expectedModel2.direction = MessageDirection.AuxiliaryToOrigin;
-    expectedModel2.sourceStatus = MessageStatus.Declared;
-    expectedModel2.type = MessageType.Redeem;
-    expectedModel2.gatewayAddress = bulkTransactions[1].contractAddress;
-    expectedModel2.sourceDeclarationBlockHeight = new BigNumber(bulkTransactions[1].blockNumber);
+      const expectedModel2 = new Message(
+        bulkTransactions[1]._messageHash,
+      );
+      expectedModel2.sender = bulkTransactions[1]._redeemer;
+      expectedModel2.nonce = new BigNumber(bulkTransactions[1]._redeemerNonce);
+      expectedModel2.direction = MessageDirection.AuxiliaryToOrigin;
+      expectedModel2.sourceStatus = MessageStatus.Declared;
+      expectedModel2.type = MessageType.Redeem;
+      expectedModel2.gatewayAddress = bulkTransactions[1].contractAddress;
+      expectedModel2.sourceDeclarationBlockHeight = new BigNumber(bulkTransactions[1].blockNumber);
 
-    assert.equal(
-      models.length,
-      bulkTransactions.length,
-      'Number of models must be equal to transactions',
-    );
-    SpyAssert.assert(save, 2, [[expectedModel1, expectedModel2]]);
-    SpyAssert.assert(
-      mockedRepository.get,
-      1,
-      [[bulkTransactions[0]._messageHash], [bulkTransactions[1]._messageHash]]
-    );
-  });
+      assert.equal(
+        models.length,
+        bulkTransactions.length,
+        'Number of models must be equal to transactions',
+      );
+      SpyAssert.assert(save, 2, [[expectedModel1, expectedModel2]]);
+      SpyAssert.assert(
+        mockedRepository.get,
+        1,
+        [[bulkTransactions[0]._messageHash], [bulkTransactions[1]._messageHash]],
+      );
+    });
 
   it('should not change message state to declared '
     + 'if current status is not undeclared', async (): Promise<void> => {
