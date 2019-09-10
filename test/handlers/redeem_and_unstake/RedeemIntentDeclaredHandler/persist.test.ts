@@ -114,10 +114,10 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         bulkTransactions.length,
         'Number of models must be equal to transactions',
       );
-      SpyAssert.assert(save, 2, [[expectedModel1, expectedModel2]]);
+      SpyAssert.assert(save, 2, [[expectedModel1], [expectedModel2]]);
       SpyAssert.assert(
         mockedRepository.get,
-        1,
+        2,
         [[bulkTransactions[0]._messageHash], [bulkTransactions[1]._messageHash]],
       );
     });
