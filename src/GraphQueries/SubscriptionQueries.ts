@@ -1,5 +1,5 @@
-const stateRootAvailableSubscriptionQuery = 'subscription{stateRootAvailables(orderBy: uts,' +
-  ' orderDirection:'
+const stateRootAvailableSubscriptionQuery = 'subscription{stateRootAvailables(orderBy: uts,'
+  + ' orderDirection:'
   + ' desc, first: 1){'
 + '   id'
 + '   contractAddress '
@@ -16,8 +16,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
-    stakeIntentDeclareds: 'subscription{stakeIntentDeclareds(orderBy: uts, orderDirection: desc,' +
-    ' first: 1){'
+    stakeIntentDeclareds: 'subscription{stakeIntentDeclareds(orderBy: uts, orderDirection: desc,'
+    + ' first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '
@@ -34,8 +34,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '}',
   },
   auxiliary: {
-    stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderBy: uts, orderDirection:' +
-    ' desc, first: 1){'
+    stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderBy: uts, orderDirection:'
+    + ' desc, first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '

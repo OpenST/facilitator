@@ -13,7 +13,7 @@ import Utils from '../../Utils';
  * This class handles GatewayProven transactions and updates lastRemoteGatewayProvenBlockHeight
  * in Gateway model.
  */
-export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> {
+export default class GatewayProvenHandler extends ContractEntityHandler<Gateway> {
   private readonly GatewayRepository: GatewayRepository;
 
   public constructor(gatewayRepository: GatewayRepository) {

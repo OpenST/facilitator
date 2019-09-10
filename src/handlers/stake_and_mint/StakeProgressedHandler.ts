@@ -14,6 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
+import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
 import Message from '../../models/Message';
@@ -24,9 +25,9 @@ import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
- * This class handles mint progress transactions.
+ * This class handles stake progress transactions.
  */
-export default class MintProgressHandler extends ContractEntityHandler<Message> {
+export default class StakeProgressedHandler extends ContractEntityHandler<Message> {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -38,7 +39,7 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
   }
 
   /**
-   * This method parses progress mint transaction and returns message model object.
+   * This method parses progress stake transaction and returns message model object.
    *
    * @param transactions Transaction objects.
    *
@@ -46,6 +47,7 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
+    Logger.debug('Persisting Stake progress records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -53,15 +55,17 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
         if (message === null) {
           message = new Message(transaction._messageHash);
           message.sender = Utils.toChecksumAddress(transaction._staker);
+          message.nonce = new BigNumber(transaction._stakerNonce);
           message.direction = MessageDirection.OriginToAuxiliary;
           message.type = MessageType.Stake;
-          message.targetStatus = MessageStatus.Undeclared;
+          message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
+          message.sourceStatus = MessageStatus.Undeclared;
           Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
-        // Undeclared use case can happen when progress event appears before declare event.
-        if (message.targetStatus === MessageStatus.Undeclared
-          || message.targetStatus === MessageStatus.Declared) {
-          message.targetStatus = MessageStatus.Progressed;
+        // Undeclared use case can happen when progress event appears before progress event.
+        if (message.sourceStatus === MessageStatus.Undeclared
+          || message.sourceStatus === MessageStatus.Declared) {
+          message.sourceStatus = MessageStatus.Progressed;
         }
         message.secret = transaction._unlockSecret;
         return message;
@@ -70,12 +74,12 @@ export default class MintProgressHandler extends ContractEntityHandler<Message> 
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Changing target status to progress mint for message hash ${models[i].messageHash}`);
+      Logger.debug(`Changing source status to progress for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);
-
+    Logger.debug('Messages saved');
     return models;
   }
 }

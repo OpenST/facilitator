@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
-import StakeRequestHandler from '../../../../src/handlers/stake_and_mint/StakeRequestHandler';
+import StakeRequestedHandler from '../../../../src/handlers/stake_and_mint/StakeRequestedHandler';
 import StakeRequest from '../../../../src/models/StakeRequest';
 import StakeRequestRepository from '../../../../src/repositories/StakeRequestRepository';
 import assert from '../../../test_utils/assert';
@@ -30,7 +30,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {
       save: saveStub as any,
     });
-    const handler = new StakeRequestHandler(
+    const handler = new StakeRequestedHandler(
       sinonMock as any,
       gatewayAddress,
     );
@@ -119,7 +119,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     );
 
     const sinonMock = sinon.createStubInstance(StakeRequestRepository, {});
-    const handler = new StakeRequestHandler(sinonMock as any, gatewayAddress);
+    const handler = new StakeRequestedHandler(sinonMock as any, gatewayAddress);
 
     sinonMock.get.returns(Promise.resolve(null));
     sinonMock.save.returns(Promise.resolve(stakeRequest));
