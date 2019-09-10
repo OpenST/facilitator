@@ -1,30 +1,29 @@
 
+import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as web3utils from 'web3-utils';
 
-import MintProgressHandler from '../../../src/handlers/MintProgressHandler';
-import Message from '../../../src/models/Message';
+import StakeProgressedHandler from '../../../../src/handlers/stake_and_mint/StakeProgressedHandler';
+import Message from '../../../../src/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../../../src/repositories/MessageRepository';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
+} from '../../../../src/repositories/MessageRepository';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
 
-describe('MintProgress.persist()', () => {
+describe('ProgressStake.persist()', () => {
   const transactions = [{
     _messageHash: web3utils.keccak256('1'),
     _staker: '0x0000000000000000000000000000000000000001',
-    _beneficiary: '0x0000000000000000000000000000000000000002',
-    _mintedAmount: '100',
-    _stakeAmount: '100',
-    _rewardAmount: '100',
+    _stakerNonce: '1',
+    _amount: '100',
     contractAddress: '0x0000000000000000000000000000000000000002',
     _proofProgress: 'false',
     _unlockSecret: web3utils.keccak256('2'),
     blockNumber: '10',
   }];
 
-  it('should change message state to target progressed', async () => {
+  it('should change message state to source progressed', async () => {
     const save = sinon.stub();
 
     const mockedRepository = sinon.createStubInstance(MessageRepository,
@@ -32,7 +31,7 @@ describe('MintProgress.persist()', () => {
         save: save as any,
         get: Promise.resolve(null),
       });
-    const handler = new MintProgressHandler(mockedRepository as any);
+    const handler = new StakeProgressedHandler(mockedRepository as any);
 
     const models = await handler.persist(transactions);
 
@@ -40,9 +39,11 @@ describe('MintProgress.persist()', () => {
       transactions[0]._messageHash,
     );
     expectedModel.sender = transactions[0]._staker;
+    expectedModel.nonce = new BigNumber(transactions[0]._stakerNonce);
     expectedModel.direction = MessageDirection.OriginToAuxiliary;
-    expectedModel.targetStatus = MessageStatus.Progressed;
+    expectedModel.sourceStatus = MessageStatus.Progressed;
     expectedModel.type = MessageType.Stake;
+    expectedModel.gatewayAddress = transactions[0].contractAddress;
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
@@ -54,20 +55,20 @@ describe('MintProgress.persist()', () => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
-    existingMessageWithProgressStatus.targetStatus = MessageStatus.Progressed;
+    existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
         save: save as any,
         get: Promise.resolve(existingMessageWithProgressStatus),
       });
-    const handler = new MintProgressHandler(mockedRepository as any);
+    const handler = new StakeProgressedHandler(mockedRepository as any);
 
     const models = await handler.persist(transactions);
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
     );
-    expectedModel.targetStatus = MessageStatus.Progressed;
+    expectedModel.sourceStatus = MessageStatus.Progressed;
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');

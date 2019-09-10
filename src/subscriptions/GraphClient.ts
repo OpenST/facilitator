@@ -78,7 +78,7 @@ export default class GraphClient {
                 response.data,
                 contractEntityRepository,
               );
-              Logger.debug(`Observer flow completed.`);
+              Logger.debug('Observer flow completed.');
             } catch (e) {
               Logger.error(`Error in observer  ${e}`);
             }

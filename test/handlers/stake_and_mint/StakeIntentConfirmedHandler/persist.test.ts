@@ -2,16 +2,16 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as utils from 'web3-utils';
 
-import StakeIntentConfirmHandler from '../../../src/handlers/StakeIntentConfirmHandler';
-import Message from '../../../src/models/Message';
+import StakeIntentConfirmedHandler from '../../../../src/handlers/stake_and_mint/StakeIntentConfirmedHandler';
+import Message from '../../../../src/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../../../src/repositories/MessageRepository';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
+} from '../../../../src/repositories/MessageRepository';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from '../../../test_utils/StubData';
 
-describe('StakeIntentConfirmHandler.persist()', (): void => {
+describe('StakeIntentConfirmedHandler.persist()', (): void => {
   let transactions: any = [];
   let saveStub: any;
   let messageRecord: Message;
@@ -44,7 +44,7 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
   it('should persist successfully when target status is undeclared', async (): Promise<void> => {
     messageRecord.targetStatus = MessageStatus.Undeclared;
 
-    const handler = new StakeIntentConfirmHandler(sinonMessageRepositoryMock);
+    const handler = new StakeIntentConfirmedHandler(sinonMessageRepositoryMock);
 
     const models = await handler.persist(transactions);
 
@@ -61,7 +61,7 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
   it('should persist successfully when target status is undefined', async (): Promise<void> => {
     messageRecord.targetStatus = undefined as unknown as MessageStatus;
 
-    const handler = new StakeIntentConfirmHandler(sinonMessageRepositoryMock);
+    const handler = new StakeIntentConfirmedHandler(sinonMessageRepositoryMock);
 
     const models = await handler.persist(transactions);
 
@@ -91,7 +91,7 @@ describe('StakeIntentConfirmHandler.persist()', (): void => {
       save: save as any,
       get: Promise.resolve(null),
     });
-    const handler = new StakeIntentConfirmHandler(mockMessageRepo as any);
+    const handler = new StakeIntentConfirmedHandler(mockMessageRepo as any);
 
     const models = await handler.persist(transaction);
 

@@ -1,11 +1,11 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
-import Logger from '../Logger';
-import Gateway from '../models/Gateway';
-import GatewayRepository from '../repositories/GatewayRepository';
-import ContractEntityHandler from './ContractEntityHandler';
-import Utils from '../Utils';
+import Logger from '../../Logger';
+import Gateway from '../../models/Gateway';
+import GatewayRepository from '../../repositories/GatewayRepository';
+import ContractEntityHandler from '../ContractEntityHandler';
+import Utils from '../../Utils';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -13,7 +13,7 @@ import Utils from '../Utils';
  * This class handles GatewayProven transactions and updates lastRemoteGatewayProvenBlockHeight
  * in Gateway model.
  */
-export default class ProveGatewayHandler extends ContractEntityHandler<Gateway> {
+export default class GatewayProvenHandler extends ContractEntityHandler<Gateway> {
   private readonly GatewayRepository: GatewayRepository;
 
   public constructor(gatewayRepository: GatewayRepository) {

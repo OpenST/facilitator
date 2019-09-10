@@ -15,19 +15,20 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import Logger from '../Logger';
-
-import Message from '../models/Message';
+import Message from '../../models/Message';
+import Logger from '../../Logger';
+import Utils from '../../Utils';
 import {
-  MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../repositories/MessageRepository';
-import ContractEntityHandler from './ContractEntityHandler';
-import Utils from '../Utils';
+  MessageDirection,
+  MessageRepository, MessageStatus,
+  MessageType,
+} from '../../repositories/MessageRepository';
+import ContractEntityHandler from '../ContractEntityHandler';
 
 /**
- * This class handles stake intent declared transactions.
+ * This class handles redeem intent declared transactions.
  */
-export default class StakeIntentDeclareHandler extends ContractEntityHandler<Message> {
+export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<Message> {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -39,7 +40,7 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
   }
 
   /**
-   * This method parses stake intent declare transaction and returns message model object.
+   * This method parses redeem intent declare transaction and returns message model object.
    *
    * @param transactions Transaction objects.
    *
@@ -47,17 +48,17 @@ export default class StakeIntentDeclareHandler extends ContractEntityHandler<Mes
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Started persisting Stake intent declared records');
+    Logger.debug('Started persisting Redeem intent declared records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
-        // This will happen if some other facilitator has accepted the stake request.
+        // This can happen if some other facilitator has accepted the redeem request.
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = Utils.toChecksumAddress(transaction._staker);
-          message.nonce = new BigNumber(transaction._stakerNonce);
-          message.direction = MessageDirection.OriginToAuxiliary;
-          message.type = MessageType.Stake;
+          message.sender = Utils.toChecksumAddress(transaction._redeemer);
+          message.nonce = new BigNumber(transaction._redeemerNonce);
+          message.direction = MessageDirection.AuxiliaryToOrigin;
+          message.type = MessageType.Redeem;
           message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Creating message object ${JSON.stringify(message)}`);
