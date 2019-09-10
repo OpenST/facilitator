@@ -5,16 +5,16 @@ import * as web3utils from 'web3-utils';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
-import Gateway from '../../../src/models/Gateway';
-import Message from '../../../src/models/Message';
-import StakeRequest from '../../../src/models/StakeRequest';
-import {MessageDirection, MessageRepository} from '../../../src/repositories/MessageRepository';
-import StakeRequestRepository from '../../../src/repositories/StakeRequestRepository';
-import ConfirmStakeIntentService from '../../../src/services/stake_and_mint/ConfirmStakeIntentService';
-import Utils from '../../../src/Utils';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
+import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
+import Gateway from '../../../../src/models/Gateway';
+import Message from '../../../../src/models/Message';
+import StakeRequest from '../../../../src/models/StakeRequest';
+import {MessageDirection, MessageRepository} from '../../../../src/repositories/MessageRepository';
+import StakeRequestRepository from '../../../../src/repositories/StakeRequestRepository';
+import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/ConfirmStakeIntentService';
+import Utils from '../../../../src/Utils';
+import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from '../../../test_utils/StubData';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

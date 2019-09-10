@@ -95,7 +95,7 @@ export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
    *
    * @return Return a promise that resolves to object which tell about success or failure.
    */
-  public async proveCoGateway(
+  private async proveCoGateway(
     blockHeight: BigNumber,
   ): Promise<{ transactionHash: string; message: string}> {
     const gatewayRecord = await this.gatewayRepository.get(this.coGatewayAddress);

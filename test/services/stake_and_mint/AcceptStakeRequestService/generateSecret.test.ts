@@ -18,8 +18,8 @@ import 'mocha';
 
 import * as Web3Utils from 'web3-utils';
 
-import AcceptStakeRequestService from '../../../src/services/stake_and_mint/AcceptStakeRequestService';
-import assert from '../../test_utils/assert';
+import AcceptStakeRequestService from '../../../../src/services/stake_and_mint/AcceptStakeRequestService';
+import assert from '../../../test_utils/assert';
 
 describe('AcceptStakeRequestService::generateSecret', (): void => {
   it('Checks that secret maches hash lock.', async (): Promise<void> => {
