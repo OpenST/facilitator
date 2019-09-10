@@ -1,11 +1,11 @@
 import BigNumber from 'bignumber.js';
 import * as Utils from 'web3-utils';
 
-import GatewayProvenHandler from '../../../../src/handlers/GatewayProvenHandler';
-import Gateway from '../../../../src/models/Gateway';
-import Repositories from '../../../../src/repositories/Repositories';
-import assert from '../../../test_utils/assert';
-import StubData from '../../../test_utils/StubData';
+import GatewayProvenHandler from '../../../src/handlers/GatewayProvenHandler';
+import Gateway from '../../../src/models/Gateway';
+import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../test_utils/assert';
+import StubData from '../../test_utils/StubData';
 
 interface TestConfigInterface {
   repos: Repositories;

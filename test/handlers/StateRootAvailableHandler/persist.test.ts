@@ -2,11 +2,11 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
-import StateRootAvailableHandler from '../../../../src/handlers/StateRootAvailableHandler';
-import AuxiliaryChainRepository from '../../../../src/repositories/AuxiliaryChainRepository';
-import assert from '../../../test_utils/assert';
-import SpyAssert from '../../../test_utils/SpyAssert';
-import StubData from '../../../test_utils/StubData';
+import StateRootAvailableHandler from '../../../src/handlers/StateRootAvailableHandler';
+import AuxiliaryChainRepository from '../../../src/repositories/AuxiliaryChainRepository';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
+import StubData from '../../test_utils/StubData';
 
 describe('StateRootAvailableHandler.persist()', () => {
   const auxiliaryChainId = 123;
