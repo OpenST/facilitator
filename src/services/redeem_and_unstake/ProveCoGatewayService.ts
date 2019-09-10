@@ -7,14 +7,14 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { ORIGIN_GAS_PRICE} from '../../Constants';
+import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
+import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import AuxiliaryChain from '../../models/AuxiliaryChain';
 import Observer from '../../observer/Observer';
 import GatewayRepository from '../../repositories/GatewayRepository';
-import {MessageDirection, MessageRepository} from '../../repositories/MessageRepository';
+import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import Utils from '../../Utils';
-import {EIP20Gateway} from "@openst/mosaic-contracts/dist/interacts/EIP20Gateway";
 
 export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
   private gatewayRepository: GatewayRepository;

@@ -2,16 +2,16 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import Web3 from 'web3';
 
+import { interacts } from '@openst/mosaic-contracts';
+import { ProofGenerator } from '@openst/mosaic-proof';
 import ProveCoGatewayService from '../../../../src/services/redeem_and_unstake/ProveCoGatewayService';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
-import {interacts} from "@openst/mosaic-contracts";
-import GatewayRepository from "../../../../src/repositories/GatewayRepository";
-import {MessageDirection, MessageRepository} from "../../../../src/repositories/MessageRepository";
-import {ProofGenerator} from "@openst/mosaic-proof";
-import Gateway from "../../../../src/models/Gateway";
-import Utils from "../../../../src/Utils";
-import {ORIGIN_GAS_PRICE} from "../../../../src/Constants";
+import GatewayRepository from '../../../../src/repositories/GatewayRepository';
+import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
+import Gateway from '../../../../src/models/Gateway';
+import Utils from '../../../../src/Utils';
+import { ORIGIN_GAS_PRICE } from '../../../../src/Constants';
 
 describe('ProveCoGatewayService.update()', (): void => {
   const originWeb3 = new Web3(null);

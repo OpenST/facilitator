@@ -9,7 +9,7 @@ import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
 import Gateway from '../../../../src/models/Gateway';
 import Message from '../../../../src/models/Message';
 import StakeRequest from '../../../../src/models/StakeRequest';
-import {MessageDirection, MessageRepository} from '../../../../src/repositories/MessageRepository';
+import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
 import StakeRequestRepository from '../../../../src/repositories/StakeRequestRepository';
 import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/ConfirmStakeIntentService';
 import Utils from '../../../../src/Utils';

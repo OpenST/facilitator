@@ -13,7 +13,7 @@ import Logger from '../../Logger';
 import AuxiliaryChain from '../../models/AuxiliaryChain';
 import Observer from '../../observer/Observer';
 import GatewayRepository from '../../repositories/GatewayRepository';
-import {MessageDirection, MessageRepository} from '../../repositories/MessageRepository';
+import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import Utils from '../../Utils';
 
 export default class ProveGatewayService extends Observer<AuxiliaryChain> {

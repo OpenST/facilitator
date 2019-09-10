@@ -14,7 +14,7 @@ import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
 import StakeRequest from '../../models/StakeRequest';
 import Observer from '../../observer/Observer';
-import {MessageDirection, MessageRepository} from '../../repositories/MessageRepository';
+import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import StakeRequestRepository from '../../repositories/StakeRequestRepository';
 import Utils from '../../Utils';
 

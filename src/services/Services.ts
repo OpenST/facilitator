@@ -5,7 +5,7 @@ import ProveGatewayService from './stake_and_mint/ProveGatewayService';
 import ConfirmStakeIntentService from './stake_and_mint/ConfirmStakeIntentService';
 import ProgressService from './stake_and_mint/ProgressService';
 import Utils from '../Utils';
-import ProveCoGatewayService from "./redeem_and_unstake/ProveCoGatewayService";
+import ProveCoGatewayService from './redeem_and_unstake/ProveCoGatewayService';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

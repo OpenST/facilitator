@@ -265,7 +265,7 @@ export class MessageRepository extends Subject<Message> {
           },
           sourceStatus: MessageStatus.Declared,
           targetStatus: MessageStatus.Undeclared,
-          direction: direction,
+          direction,
         },
       },
     });
