@@ -34,13 +34,13 @@ export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
   /**
    *  Constructor
    *
-   * @param gatewayRepository Instance of auxiliary chain repository.
+   * @param gatewayRepository Instance of gateway repository.
    * @param messageRepository Instance of message repository.
    * @param originWeb3 Origin Web3 instance.
    * @param auxiliaryWeb3 Auxiliary Web3 instance.
    * @param originWorkerAddress auxiliary worker address, this should be
    *                               unlocked and added in web3 wallet.
-   * @param gatewayAddress Address of gateway contract on aux chain.
+   * @param coGatewayAddress Address of coGateway contract on aux chain.
    * @param auxiliaryChainId Auxiliary chain Id.
    */
   public constructor(
@@ -86,7 +86,7 @@ export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
 
   /**
    * This method performs prove gateway transaction on origin chain.
-   * This throws erro if auxiliary chain details doesn't exist.
+   * This throws error if gateway details doesn't exist.
    *
    * This method is not intended to use outside this class, it's public
    * temporarily, it will soon be made private.

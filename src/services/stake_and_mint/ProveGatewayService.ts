@@ -34,7 +34,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
   /**
    *  Constructor
    *
-   * @param gatewayRepository Instance of auxiliary chain repository.
+   * @param gatewayRepository Instance of gateway repository.
    * @param messageRepository Instance of message repository.
    * @param originWeb3 Origin Web3 instance.
    * @param auxiliaryWeb3 Auxiliary Web3 instance.
@@ -86,7 +86,7 @@ export default class ProveGatewayService extends Observer<AuxiliaryChain> {
 
   /**
    * This method performs prove gateway transaction on auxiliary chain.
-   * This throws if auxiliary chain details doesn't exist.
+   * This throws error if gateway details doesn't exist.
    *
    * This method is not intended to use outside this class, it's public
    * temporarily, it will soon be made private.
