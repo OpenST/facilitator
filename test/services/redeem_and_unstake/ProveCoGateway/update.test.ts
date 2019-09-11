@@ -229,7 +229,7 @@ describe('ProveCoGatewayService.update()', (): void => {
       new BigNumber(200),
     );
 
-    const proveGatewayStub = sinon.stub(proveCoGatewayService, <any>'proveCoGateway');
+    const proveGatewayStub = sinon.stub(proveCoGatewayService, 'proveCoGateway' as any);
     await proveCoGatewayService.update([auxiliaryChain]);
 
     SpyAssert.assert(proveGatewayStub, 0, [[auxiliaryChain.lastAuxiliaryBlockHeight]]);
@@ -244,7 +244,7 @@ describe('ProveCoGatewayService.update()', (): void => {
       undefined,
     );
 
-    const proveGatewayStub = sinon.stub(proveCoGatewayService, <any>'proveCoGateway');
+    const proveGatewayStub = sinon.stub(proveCoGatewayService, 'proveCoGateway' as any);
     await proveCoGatewayService.update([auxiliaryChain]);
 
     SpyAssert.assert(proveGatewayStub, 0, [auxiliaryChain.lastAuxiliaryBlockHeight]);
