@@ -23,6 +23,7 @@ import StakeProgressedHandler from './stake_and_mint/StakeProgressedHandler';
 import StakeRequestedHandler from './stake_and_mint/StakeRequestedHandler';
 import StakeIntentConfirmedHandler from './stake_and_mint/StakeIntentConfirmedHandler';
 import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
+import RedeemRequestedHandler from "./redeem_and_unstake/RedeemRequestedHandler";
 
 export default class Handlers {
   /**
@@ -32,12 +33,14 @@ export default class Handlers {
    * @param repos Repository container.
    * @param auxChainId ID of auxiliary chain.
    * @param gatewayAddress Origin chain gateway address.
+   * @param cogatewayAddress Auxiliary chain cogateway address.
    * @return Different kinds of transaction handlers.
    */
   public static create(
     repos: Repositories,
     auxChainId: number,
     gatewayAddress: string,
+    cogatewayAddress: string,
   ): {
       stakeRequesteds: StakeRequestedHandler;
       stateRootAvailables: StateRootAvailableHandler;
@@ -46,6 +49,7 @@ export default class Handlers {
       stakeProgresseds: StakeProgressedHandler;
       mintProgresseds: MintProgressedHandler;
       stakeIntentConfirmeds: StakeIntentConfirmedHandler;
+      redeemRequesteds: RedeemRequestedHandler,
       redeemIntentDeclareds: RedeemIntentDeclaredHandler;
     } {
     return {
@@ -67,6 +71,10 @@ export default class Handlers {
       mintProgresseds: new MintProgressedHandler(repos.messageRepository),
 
       // Redeem and Unstake Handlers
+      redeemRequesteds: new RedeemRequestedHandler(
+        repos.redeemRequestRepository,
+        cogatewayAddress,
+      ),
       redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),
     };
   }
