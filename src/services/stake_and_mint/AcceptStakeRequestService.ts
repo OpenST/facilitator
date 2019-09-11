@@ -25,17 +25,17 @@ import { interacts } from '@openst/mosaic-contracts';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 
-import { ORIGIN_GAS_PRICE } from '../Constants';
-import Logger from '../Logger';
-import Message from '../models/Message';
-import StakeRequest from '../models/StakeRequest';
-import Observer from '../observer/Observer';
+import { ORIGIN_GAS_PRICE } from '../../Constants';
+import Logger from '../../Logger';
+import Message from '../../models/Message';
+import StakeRequest from '../../models/StakeRequest';
+import Observer from '../../observer/Observer';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../repositories/MessageRepository';
-import Repositories from '../repositories/Repositories';
-import StakeRequestRepository from '../repositories/StakeRequestRepository';
-import Utils from '../Utils';
+} from '../../repositories/MessageRepository';
+import Repositories from '../../repositories/Repositories';
+import StakeRequestRepository from '../../repositories/StakeRequestRepository';
+import Utils from '../../Utils';
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts

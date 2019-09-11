@@ -5,15 +5,15 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
-import Gateway from '../../../src/models/Gateway';
-import GatewayRepository from '../../../src/repositories/GatewayRepository';
-import { MessageRepository } from '../../../src/repositories/MessageRepository';
-import ProveGatewayService from '../../../src/services/ProveGatewayService';
-import Utils from '../../../src/Utils';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
+import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
+import Gateway from '../../../../src/models/Gateway';
+import GatewayRepository from '../../../../src/repositories/GatewayRepository';
+import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
+import ProveGatewayService from '../../../../src/services/stake_and_mint/ProveGatewayService';
+import Utils from '../../../../src/Utils';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from '../../../test_utils/StubData';
 
 describe('ProveGatewayService.proveGateway()', (): void => {
   const originWeb3 = new Web3(null);
@@ -86,7 +86,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gatewayAddress, blockNumber]],
+      [[gatewayAddress, blockNumber, MessageDirection.OriginToAuxiliary]],
     );
 
     SpyAssert.assert(
@@ -211,7 +211,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gatewayAddress, blockNumber]],
+      [[gatewayAddress, blockNumber, MessageDirection.OriginToAuxiliary]],
     );
 
     assert.strictEqual(

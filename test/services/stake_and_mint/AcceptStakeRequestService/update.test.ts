@@ -24,17 +24,17 @@ import Web3 from 'web3';
 
 import { interacts } from '@openst/mosaic-contracts';
 
-import { ORIGIN_GAS_PRICE } from '../../../src/Constants';
-import Message from '../../../src/models/Message';
-import StakeRequest from '../../../src/models/StakeRequest';
+import { ORIGIN_GAS_PRICE } from '../../../../src/Constants';
+import Message from '../../../../src/models/Message';
+import StakeRequest from '../../../../src/models/StakeRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
-} from '../../../src/repositories/MessageRepository';
-import Repositories from '../../../src/repositories/Repositories';
-import AcceptStakeRequestService from '../../../src/services/AcceptStakeRequestService';
-import Utils from '../../../src/Utils';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
+} from '../../../../src/repositories/MessageRepository';
+import Repositories from '../../../../src/repositories/Repositories';
+import AcceptStakeRequestService from '../../../../src/services/stake_and_mint/AcceptStakeRequestService';
+import Utils from '../../../../src/Utils';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
 
 interface TestConfigInterface {
   web3: Web3;
