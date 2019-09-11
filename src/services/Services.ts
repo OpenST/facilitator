@@ -1,10 +1,11 @@
 import { Config } from '../Config/Config';
 import Repositories from '../repositories/Repositories';
-import AcceptStakeRequestService from './AcceptStakeRequestService';
-import ProveGatewayService from './ProveGatewayService';
-import ConfirmStakeIntentService from './ConfirmStakeIntentService';
-import ProgressService from './ProgressService';
+import AcceptStakeRequestService from './stake_and_mint/AcceptStakeRequestService';
+import ProveGatewayService from './stake_and_mint/ProveGatewayService';
+import ConfirmStakeIntentService from './stake_and_mint/ConfirmStakeIntentService';
+import ProgressService from './stake_and_mint/ProgressService';
 import Utils from '../Utils';
+import ProveCoGatewayService from './redeem_and_unstake/ProveCoGatewayService';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -20,6 +21,8 @@ export default class Services {
 
   public readonly progressService: ProgressService;
 
+  public readonly proveCoGatewayService: ProveCoGatewayService;
+
   /**
    * @param acceptStakeRequestService Instance of accept stake request service.
    * @param proveGatewayService Instance of prove gateway service.
@@ -31,11 +34,13 @@ export default class Services {
     proveGatewayService: ProveGatewayService,
     confirmStakeIntentService: ConfirmStakeIntentService,
     progressService: ProgressService,
+    proveCoGatewayService: ProveCoGatewayService,
   ) {
     this.acceptStakeRequestService = acceptStakeRequestService;
     this.proveGatewayService = proveGatewayService;
     this.confirmStakeIntentService = confirmStakeIntentService;
     this.progressService = progressService;
+    this.proveCoGatewayService = proveCoGatewayService;
   }
 
   /**
@@ -59,6 +64,17 @@ export default class Services {
       Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
       Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
+      auxChainId,
+    );
+
+    const proveCoGatewayService = new ProveCoGatewayService(
+      repositories.gatewayRepository,
+      repositories.messageRepository,
+      config.originWeb3,
+      config.auxiliaryWeb3,
+      Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
+      // This parameter value represents interested CoGateway, for now it's OST prime CoGateway.
+      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!),
       auxChainId,
     );
 
@@ -87,6 +103,7 @@ export default class Services {
       proveGatewayService,
       confirmStakeIntentService,
       progressService,
+      proveCoGatewayService,
     );
   }
 }

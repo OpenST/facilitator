@@ -9,14 +9,14 @@ import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoG
 import { ProofGenerator } from '@openst/mosaic-proof';
 
 import { AUXILIARY_GAS_PRICE, MESSAGE_BOX_OFFSET } from '../Constants';
-import Logger from '../Logger';
-import Gateway from '../models/Gateway';
-import Message from '../models/Message';
-import Request from '../models/Request';
-import Observer from '../observer/Observer';
-import { MessageRepository } from '../repositories/MessageRepository';
-import RequestRepository from '../repositories/RequestRepository';
-import Utils from '../Utils';
+import Logger from '../../Logger';
+import Gateway from '../../models/Gateway';
+import Message from '../../models/Message';
+import Request from '../../models/Request';
+import Observer from '../../observer/Observer';
+import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
+import RequestRepository from '../../repositories/RequestRepository';
+import Utils from '../../Utils';
 
 /**
  * Class collects all non confirmed pending messages and confirms those messages.
@@ -87,6 +87,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     const messages: Message[] = await this.messageRepository.getMessagesForConfirmation(
       provenGateway.gatewayAddress,
       provenGateway.lastRemoteGatewayProvenBlockHeight as BigNumber,
+      MessageDirection.OriginToAuxiliary,
     );
 
     await this.confirmStakeIntent(provenGateway, messages);

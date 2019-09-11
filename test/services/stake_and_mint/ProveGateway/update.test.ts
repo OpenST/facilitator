@@ -2,9 +2,9 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import Web3 from 'web3';
 
-import ProveGatewayService from '../../../src/services/ProveGatewayService';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
+import ProveGatewayService from '../../../../src/services/stake_and_mint/ProveGatewayService';
+import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from '../../../test_utils/StubData';
 
 describe('ProveGatewayService.update()', (): void => {
   const originWeb3 = new Web3(null);

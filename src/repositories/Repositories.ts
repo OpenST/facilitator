@@ -82,6 +82,7 @@ export default class Repositories {
   public attach(services: Services): void {
     this.requestRepository.attach(services.acceptStakeRequestService);
     this.auxiliaryChainRepository.attach(services.proveGatewayService);
+    this.auxiliaryChainRepository.attach(services.proveCoGatewayService);
     this.gatewayRepository.attach(services.confirmStakeIntentService);
     this.messageRepository.attach(services.progressService);
   }

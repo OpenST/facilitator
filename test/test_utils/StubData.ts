@@ -41,6 +41,7 @@ export default class StubData {
   public static auxiliaryChainRecord(
     chainId = 10002,
     lastOriginBlockHeight?: BigNumber,
+    lastAuxiliaryBlockHeight?: BigNumber,
   ): AuxiliaryChain {
     return new AuxiliaryChain(
       chainId,
@@ -50,7 +51,7 @@ export default class StubData {
       '0x0000000000000000000000000000000000000003',
       '0x0000000000000000000000000000000000000004',
       lastOriginBlockHeight,
-      undefined,
+      lastAuxiliaryBlockHeight,
       new Date(),
       new Date(),
 

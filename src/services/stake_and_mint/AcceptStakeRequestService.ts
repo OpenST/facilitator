@@ -25,17 +25,17 @@ import { interacts } from '@openst/mosaic-contracts';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 
-import { ORIGIN_GAS_PRICE } from '../Constants';
-import Logger from '../Logger';
-import Message from '../models/Message';
-import Request from '../models/Request';
-import Observer from '../observer/Observer';
+import { ORIGIN_GAS_PRICE } from '../../Constants';
+import Logger from '../../Logger';
+import Message from '../../models/Message';
+import Request from '../../models/Request';
+import Observer from '../../observer/Observer';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../repositories/MessageRepository';
-import Repositories from '../repositories/Repositories';
-import RequestRepository from '../repositories/RequestRepository';
-import Utils from '../Utils';
+} from '../../repositories/MessageRepository';
+import Repositories from '../../repositories/Repositories';
+import RequestRepository from '../../repositories/RequestRepository';
+import Utils from '../../Utils';
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts
@@ -225,10 +225,10 @@ export default class AcceptStakeRequestService extends Observer<Request> {
   }
 
   /**
-   * Updates the message hash in stake requests' repository after
+   * Updates the message hash in requests' repository after
    * accepting stake request. Accepting stake requests adds a new entry
    * into messages' repository with a message hash. That exact message
-   * hash is updated here in stake requests' repository.
+   * hash is updated here in requests' repository.
    */
   private async updateMessageHashInRequestRepository(
     stakeRequestHash: string,

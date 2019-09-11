@@ -15,9 +15,9 @@
 // ----------------------------------------------------------------------------
 
 import Repositories from '../repositories/Repositories';
-import StateRootAvailableHandler from './stake_and_mint/StateRootAvailableHandler';
+import StateRootAvailableHandler from './StateRootAvailableHandler';
 import MintProgressedHandler from './stake_and_mint/MintProgressedHandler';
-import GatewayProvenHandler from './stake_and_mint/GatewayProvenHandler';
+import GatewayProvenHandler from './GatewayProvenHandler';
 import StakeIntentDeclaredHandler from './stake_and_mint/StakeIntentDeclaredHandler';
 import StakeProgressedHandler from './stake_and_mint/StakeProgressedHandler';
 import StakeRequestedHandler from './stake_and_mint/StakeRequestedHandler';

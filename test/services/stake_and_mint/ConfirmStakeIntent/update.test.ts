@@ -5,16 +5,16 @@ import * as web3utils from 'web3-utils';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../../../src/Constants';
-import Gateway from '../../../src/models/Gateway';
-import Message from '../../../src/models/Message';
-import Request from '../../../src/models/Request';
-import { MessageRepository } from '../../../src/repositories/MessageRepository';
-import RequestRepository from '../../../src/repositories/RequestRepository';
-import ConfirmStakeIntentService from '../../../src/services/ConfirmStakeIntentService';
-import Utils from '../../../src/Utils';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
+import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
+import Gateway from '../../../../src/models/Gateway';
+import Message from '../../../../src/models/Message';
+import Request from '../../../../src/models/Request';
+import { MessageRepository } from '../../../../src/repositories/MessageRepository';
+import RequestRepository from '../../../../src/repositories/RequestRepository';
+import ConfirmStakeIntentService from '../../../../src/services/ConfirmStakeIntentService';
+import Utils from '../../../../src/Utils';
+import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from '../../../test_utils/StubData';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -102,7 +102,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight]],
+      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary]],
     );
 
     SpyAssert.assert(
@@ -210,7 +210,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight]],
+      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary]],
     );
 
     SpyAssert.assert(
