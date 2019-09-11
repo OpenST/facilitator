@@ -88,9 +88,6 @@ export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
    * This method performs prove gateway transaction on origin chain.
    * This throws error if gateway details doesn't exist.
    *
-   * This method is not intended to use outside this class, it's public
-   * temporarily, it will soon be made private.
-   *
    * @param blockHeight Block height at which anchor state root happens.
    *
    * @return Return a promise that resolves to object which tell about success or failure.
