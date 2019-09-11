@@ -8,7 +8,7 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE, MESSAGE_BOX_OFFSET } from '../Constants';
+import { AUXILIARY_GAS_PRICE, MESSAGE_BOX_OFFSET } from '../../Constants';
 import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
