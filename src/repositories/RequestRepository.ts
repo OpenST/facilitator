@@ -34,6 +34,8 @@ import Utils from '../Utils';
 class RequestModel extends Model {
   public readonly requestHash!: string;
 
+  public readonly requestType!: RequestType;
+
   public readonly messageHash!: string;
 
   public readonly amount!: BigNumber;
@@ -60,6 +62,14 @@ class RequestModel extends Model {
 }
 
 /**
+ * Request types which facilitator can process
+ */
+export enum RequestType {
+  Stake = 'stake',
+  Redeem = 'redeem',
+}
+
+/**
  * Stores instances of Request.
  *
  * Class enables creation, update and retrieval of Request objects.
@@ -80,6 +90,12 @@ export default class RequestRepository extends Subject<Request> {
         requestHash: {
           type: DataTypes.STRING,
           primaryKey: true,
+        },
+        requestType: {
+          type: DataTypes.ENUM({
+            values: [RequestType.Stake, RequestType.Redeem],
+          }),
+          allowNull: false,
         },
         blockNumber: {
           type: DataTypes.BIGINT,
@@ -241,6 +257,7 @@ export default class RequestRepository extends Subject<Request> {
   private convertToRequest(requestModel: RequestModel): Request {
     const request = new Request(
       requestModel.requestHash,
+      requestModel.requestType,
       new BigNumber(requestModel.blockNumber),
     );
 

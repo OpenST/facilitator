@@ -26,6 +26,7 @@ import {
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
+import {RequestType} from "../../../src/repositories/RequestRepository";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -41,6 +42,7 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
       repos: await Repositories.create(),
       requestWithMessageHashB: new Request(
         'requestHashB',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('11'),
         'beneficiary',
@@ -54,6 +56,7 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
       ),
       requestWithNullMessageHashC: new Request(
         'requestHashC',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('21'),
         'beneficiaryC',
@@ -66,6 +69,7 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
       ),
       requestWithNullMessageHashD: new Request(
         'requestHashD',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('31'),
         'beneficiary',

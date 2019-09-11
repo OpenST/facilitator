@@ -22,6 +22,7 @@ import Request from '../../../src/models/Request';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
+import {RequestType} from "../../../src/repositories/RequestRepository";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -38,6 +39,7 @@ describe('RequestRepository::get', (): void => {
   it('Checks retrieval of an existing stake/redeem request.', async (): Promise<void> => {
     const requestInput = new Request(
       'requestHash',
+      RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',

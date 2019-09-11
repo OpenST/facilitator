@@ -10,10 +10,12 @@ import { GatewayType } from '../../src/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../src/repositories/MessageRepository';
+import {RequestType} from "../../src/repositories/RequestRepository";
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): Request => new Request(
     stakeRequestHash,
+    RequestType.Stake,
     new BigNumber('10'),
     new BigNumber('1'),
     'beneficiary',
@@ -23,19 +25,6 @@ export default class StubData {
     'gateway',
     'staker',
     'senderProxy',
-  );
-
-  public static getARedeemRequest = (redeemRequestHash: string): Request => new Request(
-    redeemRequestHash,
-    new BigNumber('10'),
-    new BigNumber('1'),
-    'beneficiary',
-    new BigNumber('2'),
-    new BigNumber('3'),
-    new BigNumber('4'),
-    'gateway',
-    'redeemer',
-    'redeemerProxy',
   );
 
   public static auxiliaryChainRecord(

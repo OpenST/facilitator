@@ -53,7 +53,7 @@ export default class Handlers {
       redeemIntentDeclareds: RedeemIntentDeclaredHandler;
     } {
     return {
-      // Stake and Mint Handlers
+      // Stake and Redeem Handlers
       stakeRequesteds: new StakeRequestedHandler(
         repos.requestRepository,
         gatewayAddress,

@@ -34,7 +34,7 @@ import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
 import Repositories from '../../repositories/Repositories';
-import RequestRepository from '../../repositories/RequestRepository';
+import RequestRepository, {RequestType} from '../../repositories/RequestRepository';
 import Utils from '../../Utils';
 
 /**
@@ -237,6 +237,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
   ): Promise<void> {
     const stakeRequest = new Request(
       stakeRequestHash,
+      RequestType.Stake,
       blockNumber,
     );
     stakeRequest.messageHash = messageHash;

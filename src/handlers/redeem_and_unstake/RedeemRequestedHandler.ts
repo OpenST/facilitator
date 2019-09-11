@@ -18,7 +18,7 @@ import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
 import Request from '../../models/Request';
-import RequestRepository from '../../repositories/RequestRepository';
+import RequestRepository, {RequestType} from '../../repositories/RequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
@@ -100,6 +100,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
           }
           return new Request(
             redeemRequestHash,
+            RequestType.Redeem,
             blockNumber,
             amount,
             beneficiary,

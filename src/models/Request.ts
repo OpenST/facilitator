@@ -23,6 +23,8 @@ import Comparable from '../observer/Comparable';
 export default class Request extends Comparable<Request> {
   public requestHash: string;
 
+  public requestType: string;
+
   public blockNumber: BigNumber;
 
   public amount?: BigNumber;
@@ -49,6 +51,7 @@ export default class Request extends Comparable<Request> {
 
   public constructor(
     requestHash: string,
+    requestType: string,
     blockNumber: BigNumber,
     amount?: BigNumber,
     beneficiary?: string,
@@ -65,6 +68,7 @@ export default class Request extends Comparable<Request> {
     super();
 
     this.requestHash = requestHash;
+    this.requestType = requestType;
     this.amount = amount;
     this.beneficiary = beneficiary;
     this.gasPrice = gasPrice;

@@ -35,6 +35,7 @@ import AcceptStakeRequestService from '../../../../src/services/stake_and_mint/A
 import Utils from '../../../../src/Utils';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
+import {RequestType} from "../../../../src/repositories/RequestRepository";
 
 interface TestConfigInterface {
   web3: Web3;
@@ -72,6 +73,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       repos,
       stakeRequestWithMessageHashB: new Request(
         'stakeRequestHashB',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('11'),
         '0x0000000000000000000000000000000000000001',
@@ -85,6 +87,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       ),
       stakeRequestWithNullMessageHashC: new Request(
         'stakeRequestHashC',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('21'),
         '0x0000000000000000000000000000000000000011',

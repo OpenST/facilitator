@@ -4,7 +4,7 @@ import * as Web3Utils from 'web3-utils';
 
 import RedeemRequestedHandler from '../../../../src/handlers/redeem_and_unstake/RedeemRequestedHandler';
 import Request from '../../../../src/models/Request';
-import RequestRepository from '../../../../src/repositories/RequestRepository';
+import RequestRepository, {RequestType} from '../../../../src/repositories/RequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 
@@ -39,6 +39,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
 
     const redeemRequest = new Request(
       transactions[0].redeemRequestHash,
+      RequestType.Redeem,
       new BigNumber(transactions[0].amount),
       new BigNumber(transactions[0].blockNumber),
       Web3Utils.toChecksumAddress(transactions[0].beneficiary),
@@ -78,6 +79,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
     }];
     const redeemRequest = new Request(
       transactions1[0].redeemRequestHash,
+      RequestType.Redeem,
       new BigNumber(transactions1[0].blockNumber),
       new BigNumber(transactions1[0].amount),
       Web3Utils.toChecksumAddress(transactions1[0].beneficiary),
@@ -106,6 +108,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
 
     const redeemRequestWithNullMessageHash = new Request(
       transactions2[0].redeemRequestHash,
+      RequestType.Redeem,
       new BigNumber(transactions2[0].blockNumber),
       new BigNumber(transactions2[0].amount),
       Web3Utils.toChecksumAddress(transactions2[0].beneficiary),

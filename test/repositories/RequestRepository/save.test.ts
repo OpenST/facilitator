@@ -22,6 +22,7 @@ import Request from '../../../src/models/Request';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
+import {RequestType} from "../../../src/repositories/RequestRepository";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -38,6 +39,7 @@ describe('RequestRepository::save', (): void => {
   it('Checks creation.', async (): Promise<void> => {
     const requestInput = new Request(
       'requestHash',
+      RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',
@@ -77,6 +79,7 @@ describe('RequestRepository::save', (): void => {
   it('Checks update.', async (): Promise<void> => {
     const requestInput = new Request(
       'requestHash',
+      RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',
@@ -94,6 +97,7 @@ describe('RequestRepository::save', (): void => {
 
     const requestUpdateInput = new Request(
       'requestHash',
+      RequestType.Stake,
       requestInput.blockNumber,
     );
     requestUpdateInput.amount = new BigNumber('11');
@@ -106,6 +110,7 @@ describe('RequestRepository::save', (): void => {
     Util.checkInputAgainstOutput(
       new Request(
         requestInput.requestHash,
+        RequestType.Stake,
         requestInput.blockNumber,
         requestUpdateInput.amount,
         requestInput.beneficiary,
@@ -133,6 +138,7 @@ describe('RequestRepository::save', (): void => {
     Util.checkInputAgainstOutput(
       new Request(
         requestInput.requestHash,
+        RequestType.Stake,
         requestInput.blockNumber,
         requestUpdateInput.amount,
         requestInput.beneficiary,
