@@ -5,15 +5,14 @@ import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 import Gateway from '../../src/models/Gateway';
 import Message from '../../src/models/Message';
-import StakeRequest from '../../src/models/StakeRequest';
+import Request from '../../src/models/Request';
 import { GatewayType } from '../../src/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../src/repositories/MessageRepository';
-import RedeemRequest from "../../src/models/RedeemRequest";
 
 export default class StubData {
-  public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
+  public static getAStakeRequest = (stakeRequestHash: string): Request => new Request(
     stakeRequestHash,
     new BigNumber('10'),
     new BigNumber('1'),
@@ -23,10 +22,10 @@ export default class StubData {
     new BigNumber('4'),
     'gateway',
     'staker',
-    'stakerProxy',
+    'senderProxy',
   );
 
-  public static getARedeemRequest = (redeemRequestHash: string): RedeemRequest => new RedeemRequest(
+  public static getARedeemRequest = (redeemRequestHash: string): Request => new Request(
     redeemRequestHash,
     new BigNumber('10'),
     new BigNumber('1'),

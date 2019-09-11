@@ -20,8 +20,8 @@ import BigNumber from 'bignumber.js';
 
 import Comparable from '../observer/Comparable';
 
-export default class RedeemRequest extends Comparable<RedeemRequest> {
-  public redeemRequestHash: string;
+export default class Request extends Comparable<Request> {
+  public requestHash: string;
 
   public blockNumber: BigNumber;
 
@@ -35,11 +35,11 @@ export default class RedeemRequest extends Comparable<RedeemRequest> {
 
   public nonce?: BigNumber;
 
-  public cogateway?: string;
+  public gateway?: string;
 
-  public redeemer?: string;
+  public sender?: string;
 
-  public redeemerProxy?: string;
+  public senderProxy?: string;
 
   public messageHash?: string;
 
@@ -48,43 +48,43 @@ export default class RedeemRequest extends Comparable<RedeemRequest> {
   public updatedAt?: Date;
 
   public constructor(
-    stakeRequestHash: string,
+    requestHash: string,
     blockNumber: BigNumber,
     amount?: BigNumber,
     beneficiary?: string,
     gasPrice?: BigNumber,
     gasLimit?: BigNumber,
     nonce?: BigNumber,
-    cogateway?: string,
-    redeemer?: string,
-    redeemerProxy?: string,
+    gateway?: string,
+    sender?: string,
+    senderProxy?: string,
     messageHash?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
     super();
 
-    this.redeemRequestHash = stakeRequestHash;
+    this.requestHash = requestHash;
     this.amount = amount;
     this.beneficiary = beneficiary;
     this.gasPrice = gasPrice;
     this.gasLimit = gasLimit;
     this.nonce = nonce;
-    this.cogateway = cogateway;
-    this.redeemer = redeemer;
-    this.redeemerProxy = redeemerProxy;
+    this.gateway = gateway;
+    this.sender = sender;
+    this.senderProxy = senderProxy;
     this.blockNumber = blockNumber;
     this.messageHash = messageHash;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  public compareTo(other: RedeemRequest): number {
-    if (this.redeemRequestHash > other.redeemRequestHash) {
+  public compareTo(other: Request): number {
+    if (this.requestHash > other.requestHash) {
       return 1;
     }
 
-    if (this.redeemRequestHash < other.redeemRequestHash) {
+    if (this.requestHash < other.requestHash) {
       return -1;
     }
 

@@ -17,66 +17,66 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import RedeemRequest from '../../models/RedeemRequest';
-import RedeemRequestRepository from '../../repositories/RedeemRequestRepository';
+import Request from '../../models/Request';
+import RequestRepository from '../../repositories/RequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
  * This class handles redeem request transactions.
  */
-export default class RedeemRequestedHandler extends ContractEntityHandler<RedeemRequest> {
+export default class RedeemRequestedHandler extends ContractEntityHandler<Request> {
   /* Storage */
 
-  private readonly redeemRequestRepository: RedeemRequestRepository;
+  private readonly requestRepository: RequestRepository;
 
   private readonly cogatewayAddress: string;
 
   public constructor(
-    redeemRequestRepository: RedeemRequestRepository,
+    requestRepository: RequestRepository,
     cogatewayAddress: string,
   ) {
     super();
 
-    this.redeemRequestRepository = redeemRequestRepository;
+    this.requestRepository = requestRepository;
     this.cogatewayAddress = cogatewayAddress;
   }
 
   /**
-   * This method parse redeemRequest transaction and returns redeemRequest model object.
+   * This method parse redeemRequest transaction and returns Request model object.
    *
    * Note: Forking Handling
    *
    * - Facilitator starts by subscribing to origin and auxiliary subgraphs.
    *
-   * - On receiving first RedeemRequested event/entity, entry is created in redeem_requests
+   * - On receiving first RedeemRequested event/entity, entry is created in requests
    * repository and AcceptRedeemRequest service is triggered.
    *
-   * - AcceptRedeemRequest sends acceptRedeemRequest transaction.
+   * - AcceptRedeemRequest service sends acceptRedeemRequest transaction.
    *
    * - If there is no forking of requestRedeem transaction, acceptRedeemRequest transaction will be
    * successful.
    *
    * - If there is forking of requestRedeem transaction, RedeemRequested event/entity is received
    * again. Facilitator checks the block number of new RedeemRequested event. If block number is
-   * greater than redeem_requests repository block number, then message hash is updated and
+   * greater than requests repository block number, then message hash is updated and
    * acceptRedeemRequest transaction is sent again.
    *
    * - acceptRedeemRequest transaction is successful in this case.
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of RedeemRequest objects.
+   * @return Array of instances of Request objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<RedeemRequest[]> {
+  public async persist(transactions: any[]): Promise<Request[]> {
     Logger.info(`Persisting redeem request records for cogateway: ${this.cogatewayAddress}`);
-    const models: RedeemRequest[] = await Promise.all(transactions
+    const models: Request[] = await Promise.all(transactions
       .filter((transaction): boolean => this.cogatewayAddress === Utils.toChecksumAddress(
         transaction.cogateway,
       ))
       .map(
-        async (transaction): Promise<RedeemRequest> => {
+        async (transaction): Promise<Request> => {
           const { redeemRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
@@ -84,11 +84,11 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Redeem
           const gasLimit = new BigNumber(transaction.gasLimit);
           const nonce = new BigNumber(transaction.nonce);
           const cogateway = Utils.toChecksumAddress(transaction.cogateway);
-          const redeemer = Utils.toChecksumAddress(transaction.redeemer);
-          const redeemerProxy = Utils.toChecksumAddress(transaction.redeemerProxy);
+          const sender = Utils.toChecksumAddress(transaction.redeemer);
+          const senderProxy = Utils.toChecksumAddress(transaction.redeemerProxy);
           const blockNumber = new BigNumber(transaction.blockNumber);
 
-          const redeemRequest = await this.redeemRequestRepository.get(redeemRequestHash);
+          const redeemRequest = await this.requestRepository.get(redeemRequestHash);
           if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
             Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
@@ -98,7 +98,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Redeem
             redeemRequest.messageHash = null!;
             return redeemRequest;
           }
-          return new RedeemRequest(
+          return new Request(
             redeemRequestHash,
             blockNumber,
             amount,
@@ -107,16 +107,16 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Redeem
             gasLimit,
             nonce,
             cogateway,
-            redeemer,
-            redeemerProxy,
+            sender,
+            senderProxy,
           );
         },
       ));
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Saving redeem request for hash ${models[i].redeemRequestHash}`);
-      savePromises.push(this.redeemRequestRepository.save(models[i]));
+      Logger.debug(`Saving redeem request for hash ${models[i].requestHash}`);
+      savePromises.push(this.requestRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);

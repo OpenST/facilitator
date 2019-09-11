@@ -26,7 +26,7 @@ import { interacts } from '@openst/mosaic-contracts';
 
 import { ORIGIN_GAS_PRICE } from '../../../src/Constants';
 import Message from '../../../src/models/Message';
-import StakeRequest from '../../../src/models/StakeRequest';
+import Request from '../../../src/models/Request';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../src/repositories/MessageRepository';
@@ -39,8 +39,8 @@ import SpyAssert from '../../test_utils/SpyAssert';
 interface TestConfigInterface {
   web3: Web3;
   repos: Repositories;
-  stakeRequestWithMessageHashB: StakeRequest;
-  stakeRequestWithNullMessageHashC: StakeRequest;
+  stakeRequestWithMessageHashB: Request;
+  stakeRequestWithNullMessageHashC: Request;
   service: AcceptStakeRequestService;
   fakeData: {
     secret: string;
@@ -70,7 +70,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     config = {
       web3,
       repos,
-      stakeRequestWithMessageHashB: new StakeRequest(
+      stakeRequestWithMessageHashB: new Request(
         'stakeRequestHashB',
         new BigNumber('10'),
         new BigNumber('11'),
@@ -83,7 +83,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         '0x0000000000000000000000000000000000000004',
         'messageHashB',
       ),
-      stakeRequestWithNullMessageHashC: new StakeRequest(
+      stakeRequestWithNullMessageHashC: new Request(
         'stakeRequestHashC',
         new BigNumber('10'),
         new BigNumber('21'),
@@ -130,11 +130,11 @@ describe('AcceptStakeRequestService::update', (): void => {
       message,
     );
 
-    await config.repos.stakeRequestRepository.save(
+    await config.repos.requestRepository.save(
       config.stakeRequestWithMessageHashB,
     );
 
-    await config.repos.stakeRequestRepository.save(
+    await config.repos.requestRepository.save(
       config.stakeRequestWithNullMessageHashC,
     );
 
@@ -203,9 +203,9 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     await config.service.update(stakeRequests);
 
-    const stakeRequestC = await config.repos.stakeRequestRepository.get(
-      config.stakeRequestWithNullMessageHashC.stakeRequestHash,
-    ) as StakeRequest;
+    const stakeRequestC = await config.repos.requestRepository.get(
+      config.stakeRequestWithNullMessageHashC.requestHash,
+    ) as Request;
 
     const messageC = await config.repos.messageRepository.get(
       config.fakeData.messageHash,
@@ -241,7 +241,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         stakeRequestC.gasPrice!.toString(10),
         stakeRequestC.gasLimit!.toString(10),
         stakeRequestC.nonce!.toString(10),
-        stakeRequestC.staker!,
+        stakeRequestC.sender!,
         stakeRequestC.gateway!,
         messageC.hashLock,
       ]],
@@ -274,9 +274,9 @@ describe('AcceptStakeRequestService::update', (): void => {
       config.fakeData.messageHash,
     ) as Message;
 
-    const stakeRequestC = await config.repos.stakeRequestRepository.get(
-      config.stakeRequestWithNullMessageHashC.stakeRequestHash,
-    ) as StakeRequest;
+    const stakeRequestC = await config.repos.requestRepository.get(
+      config.stakeRequestWithNullMessageHashC.requestHash,
+    ) as Request;
 
     assert.notStrictEqual(
       messageC,
@@ -321,7 +321,7 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     assert.strictEqual(
       messageC.sender,
-      config.stakeRequestWithNullMessageHashC.stakerProxy,
+      config.stakeRequestWithNullMessageHashC.senderProxy,
     );
 
     assert.strictEqual(
@@ -357,7 +357,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         stakeRequestC.gasPrice!.toString(10),
         stakeRequestC.gasLimit!.toString(10),
         stakeRequestC.nonce!.toString(10),
-        stakeRequestC.staker!,
+        stakeRequestC.sender!,
         stakeRequestC.gateway!,
         messageC.hashLock,
       ]],

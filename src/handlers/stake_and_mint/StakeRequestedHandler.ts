@@ -17,39 +17,39 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import StakeRequest from '../../models/StakeRequest';
-import StakeRequestRepository from '../../repositories/StakeRequestRepository';
+import Request from '../../models/Request';
+import RequestRepository from '../../repositories/RequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
  * This class handles stake request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequest> {
+export default class StakeRequestedHandler extends ContractEntityHandler<Request> {
   /* Storage */
 
-  private readonly stakeRequestRepository: StakeRequestRepository;
+  private readonly requestRepository: RequestRepository;
 
   private readonly gatewayAddress: string;
 
   public constructor(
-    stakeRequestRepository: StakeRequestRepository,
+    requestRepository: RequestRepository,
     gatewayAddress: string,
   ) {
     super();
 
-    this.stakeRequestRepository = stakeRequestRepository;
+    this.requestRepository = requestRepository;
     this.gatewayAddress = gatewayAddress;
   }
 
   /**
-   * This method parse stakeRequest transaction and returns stakeRequest model object.
+   * This method parse stake Request transaction and returns Request model object.
    *
    * Note: Forking Handling
    *
    * - Facilitator starts by subscribing to origin and auxiliary subgraphs.
    *
-   * - On receiving first StakeRequested event/entity, entry is created in stake_requests
+   * - On receiving first StakeRequested event/entity, entry is created in requests
    * repository and AcceptStakeRequest service is triggered.
    *
    * - AcceptStakeRequest sends acceptStakeRequest transaction.
@@ -59,24 +59,24 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    *
    * - If there is forking of requestStake transaction, StakeRequested event/entity is received
    * again. Facilitator checks the block number of new StakeRequested event. If block number is
-   * greater than stake_requests repository block number, then message hash is updated and
+   * greater than requests repository block number, then message hash is updated and
    * acceptStakeRequest transaction is sent again.
    *
    * - acceptStakeRequest transaction is successful in this case.
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of StakeRequest objects.
+   * @return Array of instances of Request objects for stake.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<StakeRequest[]> {
+  public async persist(transactions: any[]): Promise<Request[]> {
     Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
-    const models: StakeRequest[] = await Promise.all(transactions
+    const models: Request[] = await Promise.all(transactions
       .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
         transaction.gateway,
       ))
       .map(
-        async (transaction): Promise<StakeRequest> => {
+        async (transaction): Promise<Request> => {
           const { stakeRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
@@ -84,11 +84,11 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
           const gasLimit = new BigNumber(transaction.gasLimit);
           const nonce = new BigNumber(transaction.nonce);
           const gateway = Utils.toChecksumAddress(transaction.gateway);
-          const staker = Utils.toChecksumAddress(transaction.staker);
-          const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
+          const sender = Utils.toChecksumAddress(transaction.staker);
+          const senderProxy = Utils.toChecksumAddress(transaction.stakerProxy);
           const blockNumber = new BigNumber(transaction.blockNumber);
 
-          const stakeRequest = await this.stakeRequestRepository.get(stakeRequestHash);
+          const stakeRequest = await this.requestRepository.get(stakeRequestHash);
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
@@ -98,7 +98,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
             stakeRequest.messageHash = null!;
             return stakeRequest;
           }
-          return new StakeRequest(
+          return new Request(
             stakeRequestHash,
             blockNumber,
             amount,
@@ -107,16 +107,16 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
             gasLimit,
             nonce,
             gateway,
-            staker,
-            stakerProxy,
+            sender,
+            senderProxy,
           );
         },
       ));
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
-      savePromises.push(this.stakeRequestRepository.save(models[i]));
+      Logger.debug(`Saving stake request for hash ${models[i].requestHash}`);
+      savePromises.push(this.requestRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);
