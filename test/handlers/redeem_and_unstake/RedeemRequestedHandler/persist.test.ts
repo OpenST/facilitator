@@ -118,7 +118,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       Web3Utils.toChecksumAddress(transactions2[0].cogateway),
       Web3Utils.toChecksumAddress(transactions2[0].redeemer),
       Web3Utils.toChecksumAddress(transactions2[0].redeemerProxy),
-      null!, // Message hash should be null.
+      '', // Message hash should be blank.
     );
 
     const sinonMock = sinon.createStubInstance(RequestRepository, {});

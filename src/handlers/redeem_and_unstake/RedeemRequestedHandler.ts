@@ -59,7 +59,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
    *
    * - If there is forking of requestRedeem transaction, RedeemRequested event/entity is received
    * again. Facilitator checks the block number of new RedeemRequested event. If block number is
-   * greater than requests repository block number, then message hash is updated and
+   * greater than requests repository block number, then message hash is updated to blank.
    * acceptRedeemRequest transaction is sent again.
    *
    * - acceptRedeemRequest transaction is successful in this case.
@@ -92,10 +92,9 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
           if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
             Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
-            // sequelize skip updating fields whose values are undefined. Null value makes sure
-            // messageHash is updated with NULL in db. null is banged because messageHash is an
-            // optional model field.
-            redeemRequest.messageHash = null!;
+            // Service checks if messageHash is blank and retries acceptStakeRequest transaction
+            // again.
+            redeemRequest.messageHash = '';
             return redeemRequest;
           }
           return new Request(

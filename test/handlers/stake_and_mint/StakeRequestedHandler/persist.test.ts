@@ -118,7 +118,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       Web3Utils.toChecksumAddress(transactions2[0].gateway),
       Web3Utils.toChecksumAddress(transactions2[0].staker),
       Web3Utils.toChecksumAddress(transactions2[0].stakerProxy),
-      null!, // Message hash should be null.
+      '', // Message hash should be blank string.
     );
 
     const sinonMock = sinon.createStubInstance(RequestRepository, {});

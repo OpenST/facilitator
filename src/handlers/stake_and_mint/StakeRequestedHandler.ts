@@ -59,10 +59,10 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
    *
    * - If there is forking of requestStake transaction, StakeRequested event/entity is received
    * again. Facilitator checks the block number of new StakeRequested event. If block number is
-   * greater than requests repository block number, then message hash is updated and
-   * acceptStakeRequest transaction is sent again.
+   * greater than requests repository block number, then message hash is updated to blank.
+   * Service sends acceptStakeRequest transaction again.
    *
-   * - acceptStakeRequest transaction is successful in this case.
+   * - acceptStakeRequest transaction is successful in this case also.
    *
    * @param transactions Transaction objects.
    *
@@ -92,10 +92,9 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
-            // sequelize skip updating fields whose values are undefined. Null value makes sure
-            // messageHash is updated with NULL in db. null is banged because messageHash is an
-            // optional model field.
-            stakeRequest.messageHash = null!;
+            // Service checks if messageHash is blank and retries acceptStakeRequest transaction
+            // again.
+            stakeRequest.messageHash = '';
             return stakeRequest;
           }
           return new Request(
