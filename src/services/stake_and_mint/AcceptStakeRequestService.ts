@@ -122,7 +122,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     await this.updateMessageHashInStakeRequestRepository(
       stakeRequest.stakeRequestHash,
       messageHash,
-      stakeRequest.blockNumber
+      stakeRequest.blockNumber,
     );
   }
 
@@ -148,10 +148,10 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     );
 
     const txHash = await Utils.sendTransaction(rawTransaction, {
-        from: this.originWorkerAddress,
-        gasPrice: ORIGIN_GAS_PRICE,
-      },
-      this.web3);
+      from: this.originWorkerAddress,
+      gasPrice: ORIGIN_GAS_PRICE,
+    },
+    this.web3);
     Logger.info(`Bounty approval transaction hash ${txHash}`);
   }
 

@@ -7,14 +7,14 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { ORIGIN_GAS_PRICE} from '../../Constants';
+import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
+import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import AuxiliaryChain from '../../models/AuxiliaryChain';
 import Observer from '../../observer/Observer';
 import GatewayRepository from '../../repositories/GatewayRepository';
-import {MessageDirection, MessageRepository} from '../../repositories/MessageRepository';
+import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import Utils from '../../Utils';
-import {EIP20Gateway} from "@openst/mosaic-contracts/dist/interacts/EIP20Gateway";
 
 export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
   private gatewayRepository: GatewayRepository;
@@ -34,13 +34,13 @@ export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
   /**
    *  Constructor
    *
-   * @param gatewayRepository Instance of auxiliary chain repository.
+   * @param gatewayRepository Instance of gateway repository.
    * @param messageRepository Instance of message repository.
    * @param originWeb3 Origin Web3 instance.
    * @param auxiliaryWeb3 Auxiliary Web3 instance.
    * @param originWorkerAddress auxiliary worker address, this should be
    *                               unlocked and added in web3 wallet.
-   * @param gatewayAddress Address of gateway contract on aux chain.
+   * @param coGatewayAddress Address of coGateway contract on aux chain.
    * @param auxiliaryChainId Auxiliary chain Id.
    */
   public constructor(
@@ -86,16 +86,13 @@ export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
 
   /**
    * This method performs prove gateway transaction on origin chain.
-   * This throws erro if auxiliary chain details doesn't exist.
-   *
-   * This method is not intended to use outside this class, it's public
-   * temporarily, it will soon be made private.
+   * This throws error if gateway details doesn't exist.
    *
    * @param blockHeight Block height at which anchor state root happens.
    *
    * @return Return a promise that resolves to object which tell about success or failure.
    */
-  public async proveCoGateway(
+  private async proveCoGateway(
     blockHeight: BigNumber,
   ): Promise<{ transactionHash: string; message: string}> {
     const gatewayRecord = await this.gatewayRepository.get(this.coGatewayAddress);

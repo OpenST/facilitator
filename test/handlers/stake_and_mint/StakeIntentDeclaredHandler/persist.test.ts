@@ -82,4 +82,33 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     SpyAssert.assert(save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
+
+  it('should not change message state to declared '
+    + 'if current status is not undeclared', async (): Promise<void> => {
+    const save = sinon.stub();
+
+    const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
+    existingMessageWithProgressStatus.sourceStatus = MessageStatus.Declared;
+    const mockedRepository = sinon.createStubInstance(MessageRepository,
+      {
+        save: save as any,
+        get: Promise.resolve(existingMessageWithProgressStatus),
+      });
+    const handler = new StakeIntentDeclaredHandler(mockedRepository as any);
+
+    const models = await handler.persist(transactions);
+
+    const expectedModel = new Message(
+      transactions[0]._messageHash,
+    );
+    expectedModel.sourceStatus = MessageStatus.Declared;
+
+    assert.equal(
+      models.length,
+      transactions.length,
+      'Number of models must be equal to transactions',
+    );
+    SpyAssert.assert(save, 1, [[expectedModel]]);
+    SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+  });
 });

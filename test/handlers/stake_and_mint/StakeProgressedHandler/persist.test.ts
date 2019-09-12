@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as web3utils from 'web3-utils';
 
-import StakeProgressHandler from '../../../../src/handlers/stake_and_mint/StakeProgressHandler';
+import StakeProgressedHandler from '../../../../src/handlers/stake_and_mint/StakeProgressedHandler';
 import Message from '../../../../src/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
@@ -31,7 +31,7 @@ describe('ProgressStake.persist()', () => {
         save: save as any,
         get: Promise.resolve(null),
       });
-    const handler = new StakeProgressHandler(mockedRepository as any);
+    const handler = new StakeProgressedHandler(mockedRepository as any);
 
     const models = await handler.persist(transactions);
 
@@ -61,7 +61,7 @@ describe('ProgressStake.persist()', () => {
         save: save as any,
         get: Promise.resolve(existingMessageWithProgressStatus),
       });
-    const handler = new StakeProgressHandler(mockedRepository as any);
+    const handler = new StakeProgressedHandler(mockedRepository as any);
 
     const models = await handler.persist(transactions);
 
