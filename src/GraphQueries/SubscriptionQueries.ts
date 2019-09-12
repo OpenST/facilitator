@@ -78,8 +78,6 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
-    stateRootAvailables: stateRootAvailableSubscriptionQuery,
-
     mintProgresseds: 'subscription{mintProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
