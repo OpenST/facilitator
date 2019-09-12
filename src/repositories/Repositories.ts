@@ -100,6 +100,10 @@ export default class Repositories {
    *                               sequelize will automatically transform all passed model names
    *                               (first parameter of define) into plural.
    *
+   * Note: messageRepository should be initialized before requestRepository because messageHash of
+   * requestRepository is foreign key of messageRepository.
+   * Not following this order fails lot of tests.
+   *
    * @param sequelize Sequelize instance.
    */
   private constructor(sequelize: Sequelize) {
@@ -110,9 +114,8 @@ export default class Repositories {
       freezeTableName: true,
     };
 
-    this.requestRepository = new RequestRepository(initOptions);
-
     this.messageRepository = new MessageRepository(initOptions);
+    this.requestRepository = new RequestRepository(initOptions);
 
     this.auxiliaryChainRepository = new AuxiliaryChainRepository(initOptions);
 

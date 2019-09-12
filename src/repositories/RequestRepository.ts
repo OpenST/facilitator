@@ -23,7 +23,7 @@ import { DataTypes, InitOptions, Model } from 'sequelize';
 import Request from '../models/Request';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
-// import { MessageModel } from './MessageRepository';
+import { MessageModel } from './MessageRepository';
 
 
 /**
@@ -161,7 +161,7 @@ export default class RequestRepository extends Subject<Request> {
       },
     );
 
-    // RequestModel.belongsTo(MessageModel, { foreignKey: 'messageHash' });
+    RequestModel.belongsTo(MessageModel, { foreignKey: 'messageHash' });
   }
 
   /**
