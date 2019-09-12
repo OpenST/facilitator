@@ -80,7 +80,7 @@ export default class Services {
 
     const confirmStakeIntentService = new ConfirmStakeIntentService(
       repositories.messageRepository,
-      repositories.stakeRequestRepository,
+      repositories.requestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
       config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,

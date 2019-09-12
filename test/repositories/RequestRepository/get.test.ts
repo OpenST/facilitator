@@ -18,26 +18,28 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 
-import StakeRequest from '../../../src/models/StakeRequest';
+import Request from '../../../src/models/Request';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
+import { RequestType } from '../../../src/repositories/RequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;
 }
 let config: TestConfigInterface;
 
-describe('StakeRequestRepository::get', (): void => {
+describe('RequestRepository::get', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of an existing stake request.', async (): Promise<void> => {
-    const stakeRequestInput = new StakeRequest(
-      'stakeRequestHash',
+  it('Checks retrieval of an existing stake/redeem request.', async (): Promise<void> => {
+    const requestInput = new Request(
+      'requestHash',
+      RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
       'beneficiary',
@@ -45,37 +47,37 @@ describe('StakeRequestRepository::get', (): void => {
       new BigNumber('3'),
       new BigNumber('4'),
       'gateway',
-      'staker',
-      'stakerProxy',
+      'sender',
+      'senderProxy',
     );
 
-    await config.repos.stakeRequestRepository.save(
-      stakeRequestInput,
+    await config.repos.requestRepository.save(
+      requestInput,
     );
 
-    const stakeRequestOutput = await config.repos.stakeRequestRepository.get(
-      stakeRequestInput.stakeRequestHash,
+    const requestOutput = await config.repos.requestRepository.get(
+      requestInput.requestHash,
     );
 
     assert.notStrictEqual(
-      stakeRequestOutput,
+      requestOutput,
       null,
       'Stake request should exists as it has been just created.',
     );
 
     Util.checkInputAgainstOutput(
-      stakeRequestInput,
-      stakeRequestOutput as StakeRequest,
+      requestInput,
+      requestOutput as Request,
     );
   });
 
   it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const stakeRequest = await config.repos.stakeRequestRepository.get(
+    const request = await config.repos.requestRepository.get(
       'nonExistingHash',
     );
 
     assert.strictEqual(
-      stakeRequest,
+      request,
       null,
       'Stake request with \'nonExistingHash\' does not exist.',
     );

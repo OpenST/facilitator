@@ -56,7 +56,8 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
     }
     let anchorBlockHeight: BigNumber;
     let anchorAddress: string;
-    const isAuxChainEntity = Utils.toChecksumAddress(transactions[0].contractAddress) === chainRecord.coAnchorAddress;
+    const isAuxChainEntity = Utils.toChecksumAddress(transactions[0].contractAddress)
+      === chainRecord.coAnchorAddress;
     if (isAuxChainEntity) {
       anchorBlockHeight = chainRecord.lastOriginBlockHeight!;
       anchorAddress = chainRecord.coAnchorAddress!;
