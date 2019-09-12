@@ -6,6 +6,7 @@ import TransactionHandler from '../../src/TransactionHandler';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
+import { RequestType } from '../../src/repositories/RequestRepository';
 
 describe('TransactionHandler.handle()', (): void => {
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
@@ -28,7 +29,7 @@ describe('TransactionHandler.handle()', (): void => {
 
   it('should handle stake request transactions if '
   + 'handler is available', async (): Promise<void> => {
-    const aStakeRequest = StubData.getAStakeRequest('123');
+    const aStakeRequest = StubData.getARequest('123', RequestType.Stake);
     const stakeRequestedHandler = new StakeRequestedHandler(
       sinon.fake() as any,
       gatewayAddress,

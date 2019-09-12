@@ -117,8 +117,8 @@ const FetchQueries: Record<string, string> = {
 
   // Redeem & Unstake fetch queries
 
-  redeemIntentDeclareds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:' +
-  ' Int!) {\n'
+  redeemIntentDeclareds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:'
+  + ' Int!) {\n'
   + 'redeemIntentDeclareds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, , where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
@@ -132,8 +132,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  redeemIntentConfirmeds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:' +
-  ' Int!) {\n'
+  redeemIntentConfirmeds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:'
+  + ' Int!) {\n'
   + 'redeemIntentConfirmeds(orderBy: uts, orderDirection: asc, first:$limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
@@ -150,8 +150,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  redeemProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!)' +
-  ' {\n'
+  redeemProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit: Int!)'
+  + ' {\n'
   + 'redeemProgresseds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress:'
   + ' $contractAddress, uts_gt: $uts}) {\n'
@@ -168,8 +168,8 @@ const FetchQueries: Record<string, string> = {
   + '  }\n'
   + '}',
 
-  unstakeProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:' +
-  ' Int!) {\n'
+  unstakeProgresseds: 'query ($contractAddress: Bytes!, $uts: BigInt!, $skip: Int!, $limit:'
+  + ' Int!) {\n'
   + 'unstakeProgresseds(orderBy: uts, orderDirection: asc, first: $limit, skip: $skip, where:'
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'

@@ -7,16 +7,16 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import {MESSAGE_BOX_OFFSET, ORIGIN_GAS_PRICE} from '../../Constants';
+import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
+import { MESSAGE_BOX_OFFSET, ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
-import StakeRequest from '../../models/StakeRequest';
+import Request from '../../models/Request';
 import Observer from '../../observer/Observer';
-import {MessageDirection, MessageRepository} from '../../repositories/MessageRepository';
-import StakeRequestRepository from '../../repositories/StakeRequestRepository';
+import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
+import RequestRepository from '../../repositories/RequestRepository';
 import Utils from '../../Utils';
-import {EIP20Gateway} from "@openst/mosaic-contracts/dist/interacts/EIP20Gateway";
 
 /**
  * Class collects all non confirmed pending messages for redeem and confirms those messages.
@@ -24,7 +24,7 @@ import {EIP20Gateway} from "@openst/mosaic-contracts/dist/interacts/EIP20Gateway
 export default class ConfirmRedeemIntentService extends Observer<Gateway> {
   private messageRepository: MessageRepository;
 
-  private stakeRequestRepository: StakeRequestRepository;
+  private requestRepository: RequestRepository;
 
   private originWeb3: Web3;
 
@@ -40,7 +40,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
    * Constructor of class ConfirmRedeemIntentService;
    *
    * @param messageRepository Instance of message repository.
-   * @param stakeRequestRepository Instance of stake request repository.
+   * @param requestRepository Instance of request repository.
    * @param originWeb3 Instance of origin chain web3.
    * @param auxiliaryWeb3 Instance of auxiliary chain web3.
    * @param gatewayAddress Origin chain gateway address.
@@ -49,7 +49,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
    */
   public constructor(
     messageRepository: MessageRepository,
-    stakeRequestRepository: StakeRequestRepository,
+    requestRepository: RequestRepository,
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
     gatewayAddress: string,
@@ -59,7 +59,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     super();
 
     this.messageRepository = messageRepository;
-    this.stakeRequestRepository = stakeRequestRepository;
+    this.requestRepository = requestRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.gatewayAddress = gatewayAddress;
@@ -162,21 +162,21 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
       gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    const stakeRequest = await this.stakeRequestRepository.getByMessageHash(message.messageHash);
-    assert(stakeRequest !== null);
+    const redeemRequest = await this.requestRepository.getByMessageHash(message.messageHash);
+    assert(redeemRequest !== null);
 
     assert(message.nonce !== undefined);
     assert(message.gasPrice !== undefined);
     assert(message.gasLimit !== undefined);
     assert(message.hashLock !== undefined);
-    assert((stakeRequest as StakeRequest).beneficiary !== undefined);
-    assert((stakeRequest as StakeRequest).amount !== undefined);
+    assert((redeemRequest as Request).beneficiary !== undefined);
+    assert((redeemRequest as Request).amount !== undefined);
 
     const rawTx = eip20Gateway.methods.confirmRedeemIntent(
       message.sender as string,
       (message.nonce as BigNumber).toString(10),
-      (stakeRequest as StakeRequest).beneficiary as string,
-      ((stakeRequest as StakeRequest).amount as BigNumber).toString(10),
+      (redeemRequest as Request).beneficiary as string,
+      ((redeemRequest as Request).amount as BigNumber).toString(10),
       (message.gasPrice as BigNumber).toString(10),
       (message.gasLimit as BigNumber).toString(10),
       (message.hashLock as string),

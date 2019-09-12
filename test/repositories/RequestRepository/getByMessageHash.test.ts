@@ -7,6 +7,7 @@ import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
 import Util from './util';
+import { RequestType } from '../../../src/repositories/RequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -31,7 +32,7 @@ describe('RequestRepository::getByMessageHash', (): void => {
       message,
     );
 
-    const request = StubData.getAStakeRequest('requestHash');
+    const request = StubData.getARequest('requestHash', RequestType.Stake);
     request.messageHash = messageHash;
 
     await config.repos.requestRepository.save(

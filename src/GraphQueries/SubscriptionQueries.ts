@@ -47,8 +47,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
 
     gatewayProvens: gatewayProvenSubscriptionQuery,
 
-    redeemIntentConfirmeds: 'subscription{redeemIntentConfirmeds(orderBy: uts, orderDirection:' +
-    ' desc, first: 1){'
+    redeemIntentConfirmeds: 'subscription{redeemIntentConfirmeds(orderBy: uts, orderDirection:'
+    + ' desc, first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '
@@ -70,8 +70,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
 
     gatewayProvens: gatewayProvenSubscriptionQuery,
 
-    stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderBy: uts, orderDirection:' +
-    ' desc, first: 1){'
+    stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderBy: uts, orderDirection:'
+    + ' desc, first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '
@@ -87,8 +87,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
 
     // Redeem & Unstake entities
 
-    redeemIntentDeclareds: 'subscription{redeemIntentDeclareds(orderBy: uts, orderDirection: desc,' +
-    ' first: 1){'
+    redeemIntentDeclareds: 'subscription{redeemIntentDeclareds(orderBy: uts, orderDirection: desc,'
+    + ' first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '
