@@ -9,7 +9,7 @@ import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
 import Gateway from '../../../../src/models/Gateway';
 import Message from '../../../../src/models/Message';
 import Request from '../../../../src/models/Request';
-import {MessageDirection, MessageRepository} from '../../../../src/repositories/MessageRepository';
+import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
 import RequestRepository from '../../../../src/repositories/RequestRepository';
 import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/ConfirmStakeIntentService';
 import Utils from '../../../../src/Utils';
@@ -102,7 +102,12 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary]],
+      [
+        [
+          gateway.gatewayAddress,
+          gateway.lastRemoteGatewayProvenBlockHeight,
+          MessageDirection.OriginToAuxiliary],
+      ],
     );
 
     SpyAssert.assert(
@@ -210,7 +215,13 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary]],
+      [
+        [
+          gateway.gatewayAddress,
+          gateway.lastRemoteGatewayProvenBlockHeight,
+          MessageDirection.OriginToAuxiliary,
+        ],
+      ],
     );
 
     SpyAssert.assert(

@@ -10,7 +10,7 @@ import { GatewayType } from '../../src/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../src/repositories/MessageRepository';
-import {RequestType} from "../../src/repositories/RequestRepository";
+import { RequestType } from '../../src/repositories/RequestRepository';
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): Request => new Request(

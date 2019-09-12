@@ -4,7 +4,7 @@ import * as Web3Utils from 'web3-utils';
 
 import StakeRequestedHandler from '../../../../src/handlers/stake_and_mint/StakeRequestedHandler';
 import Request from '../../../../src/models/Request';
-import RequestRepository, {RequestType} from '../../../../src/repositories/RequestRepository';
+import RequestRepository, { RequestType } from '../../../../src/repositories/RequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 

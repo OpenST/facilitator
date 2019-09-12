@@ -4,7 +4,7 @@ import * as Web3Utils from 'web3-utils';
 
 import RedeemRequestedHandler from '../../../../src/handlers/redeem_and_unstake/RedeemRequestedHandler';
 import Request from '../../../../src/models/Request';
-import RequestRepository, {RequestType} from '../../../../src/repositories/RequestRepository';
+import RequestRepository, { RequestType } from '../../../../src/repositories/RequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 

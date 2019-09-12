@@ -22,7 +22,7 @@ import Request from '../../../src/models/Request';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
-import {RequestType} from "../../../src/repositories/RequestRepository";
+import { RequestType } from '../../../src/repositories/RequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;

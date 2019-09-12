@@ -18,7 +18,7 @@ import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
 import Request from '../../models/Request';
-import RequestRepository, {RequestType} from '../../repositories/RequestRepository';
+import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
@@ -92,8 +92,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
           if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
             Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
-            // Service checks if messageHash is blank and retries acceptStakeRequest transaction
-            // again.
+            // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
             redeemRequest.messageHash = '';
             return redeemRequest;
           }

@@ -117,7 +117,11 @@ describe('ProgressService.update()', () => {
       2,
       [
         [progressStakeRawTx, { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress }, originWeb3],
-        [progressMintRawTx, { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress }, auxiliaryWeb3],
+        [
+          progressMintRawTx,
+          { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
+          auxiliaryWeb3,
+        ],
       ],
     );
 

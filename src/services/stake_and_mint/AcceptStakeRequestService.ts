@@ -34,7 +34,7 @@ import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
 import Repositories from '../../repositories/Repositories';
-import RequestRepository, {RequestType} from '../../repositories/RequestRepository';
+import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
 import Utils from '../../Utils';
 
 /**

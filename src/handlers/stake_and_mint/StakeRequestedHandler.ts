@@ -18,7 +18,7 @@ import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
 import Request from '../../models/Request';
-import RequestRepository, {RequestType} from '../../repositories/RequestRepository';
+import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
@@ -92,8 +92,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
-            // Service checks if messageHash is blank and retries acceptStakeRequest transaction
-            // again.
+            // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
             stakeRequest.messageHash = '';
             return stakeRequest;
           }

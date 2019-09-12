@@ -35,7 +35,7 @@ import AcceptStakeRequestService from '../../../../src/services/stake_and_mint/A
 import Utils from '../../../../src/Utils';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
-import {RequestType} from "../../../../src/repositories/RequestRepository";
+import { RequestType } from '../../../../src/repositories/RequestRepository';
 
 interface TestConfigInterface {
   web3: Web3;

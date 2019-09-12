@@ -23,7 +23,7 @@ import StakeProgressedHandler from './stake_and_mint/StakeProgressedHandler';
 import StakeRequestedHandler from './stake_and_mint/StakeRequestedHandler';
 import StakeIntentConfirmedHandler from './stake_and_mint/StakeIntentConfirmedHandler';
 import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
-import RedeemRequestedHandler from "./redeem_and_unstake/RedeemRequestedHandler";
+import RedeemRequestedHandler from './redeem_and_unstake/RedeemRequestedHandler';
 
 export default class Handlers {
   /**
@@ -49,11 +49,11 @@ export default class Handlers {
       stakeProgresseds: StakeProgressedHandler;
       mintProgresseds: MintProgressedHandler;
       stakeIntentConfirmeds: StakeIntentConfirmedHandler;
-      redeemRequesteds: RedeemRequestedHandler,
+      redeemRequesteds: RedeemRequestedHandler;
       redeemIntentDeclareds: RedeemIntentDeclaredHandler;
     } {
     return {
-      // Stake and Redeem Handlers
+      // Stake and Mint Handlers
       stakeRequesteds: new StakeRequestedHandler(
         repos.requestRepository,
         gatewayAddress,
