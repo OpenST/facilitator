@@ -69,7 +69,9 @@ export default class Services {
       config.auxiliaryWeb3,
       Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
-      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
+      Utils.toChecksumAddress(
+        config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
+      ),
       auxChainId,
     );
 
@@ -80,7 +82,10 @@ export default class Services {
       config.auxiliaryWeb3,
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
       // This parameter value represents interested CoGateway, for now it's OST prime CoGateway.
-      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!),
+      Utils.toChecksumAddress(
+        config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary
+          .ostEIP20CogatewayAddress!,
+      ),
       auxChainId,
     );
 
@@ -108,7 +113,8 @@ export default class Services {
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
+      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary
+        .ostEIP20CogatewayAddress!,
       config.facilitator.chains[config.facilitator.originChain].worker,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );

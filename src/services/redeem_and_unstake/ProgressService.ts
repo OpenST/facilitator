@@ -66,7 +66,7 @@ export default class ProgressService {
         && message.targetStatus === MessageStatus.Declared
         ) {
           Logger.debug(
-            `Performing progress redeem and progress unstake for message hash:${message.messageHash}`
+            `Performing progress redeem and progress unstake for message hash:${message.messageHash}`,
           );
           const progressRedeemPromise = this.progressRedeem(message).catch((error) => {
             Logger.error('progressRedeemError', error);
