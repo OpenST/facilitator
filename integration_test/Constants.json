@@ -1,0 +1,22 @@
+{
+  "auxChainId": "1000",
+  "originChain": "dev",
+  "originWorkerExpirationHeight":"100000000000",
+  "originRpc":"http://127.0.0.1:41515",
+  "originGraphRpc":"http://127.0.0.1:11515/subgraphs/name/mosaic/origin-1000",
+  "originGraphWs":"ws://127.0.0.1:61515/subgraphs/name/mosaic/origin-1000",
+  "auxiliaryRpc":"http://127.0.0.1:41000",
+  "auxiliaryGraphRpc":"http://127.0.0.1:11000/subgraphs/name/mosaic/auxiliary-1000",
+  "auxiliaryGraphWs":"ws://127.0.0.1:61000/subgraphs/name/mosaic/auxiliary-1000",
+  "originWorkerPassword":"origin",
+  "auxiliaryWorkerPassword":"auxiliary",
+  "stakerOSTBalance":"20000",
+  "stakeAmount":"130",
+  "gasPrice":"10",
+  "gasLimit":"4",
+  "workerExpirationHeight":"100000000000",
+  "workerOSTBalance":"500",
+  "testDuration":3,
+  "workerPrefix":"MOSAIC_ADDRESS_PASSW_",
+  "interval":3000
+}
