@@ -119,12 +119,12 @@ describe('ProgressService.update()', () => {
         [
           progressRedeemRawTx,
           { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
-          auxiliaryWeb3
+          auxiliaryWeb3,
         ],
         [
           progressUnstakeRawTx,
           { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress },
-          originWeb3
+          originWeb3,
         ],
       ],
     );
@@ -176,12 +176,12 @@ describe('ProgressService.update()', () => {
         [
           progressRedeemRawTx,
           { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
-          auxiliaryWeb3
+          auxiliaryWeb3,
         ],
         [
           progressUnstakeRawTx,
           { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress },
-          originWeb3
+          originWeb3,
         ],
       ],
     );
@@ -233,12 +233,12 @@ describe('ProgressService.update()', () => {
         [
           progressRedeemRawTx,
           { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
-          auxiliaryWeb3
+          auxiliaryWeb3,
         ],
         [
           progressUnstakeRawTx,
           { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress },
-          originWeb3
+          originWeb3,
         ],
       ],
     );
@@ -290,12 +290,12 @@ describe('ProgressService.update()', () => {
         [
           progressRedeemRawTx,
           { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
-          auxiliaryWeb3
+          auxiliaryWeb3,
         ],
         [
           progressUnstakeRawTx,
           { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress },
-          originWeb3
+          originWeb3,
         ],
       ],
     );
