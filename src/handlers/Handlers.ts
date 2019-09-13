@@ -23,6 +23,7 @@ import StakeProgressedHandler from './stake_and_mint/StakeProgressedHandler';
 import StakeRequestedHandler from './stake_and_mint/StakeRequestedHandler';
 import StakeIntentConfirmedHandler from './stake_and_mint/StakeIntentConfirmedHandler';
 import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
+import RedeemProgressedHandler from './redeem_and_unstake/RedeemProgressedHandler';
 
 export default class Handlers {
   /**
@@ -39,15 +40,16 @@ export default class Handlers {
     auxChainId: number,
     gatewayAddress: string,
   ): {
-      stakeRequesteds: StakeRequestedHandler;
-      stateRootAvailables: StateRootAvailableHandler;
-      stakeIntentDeclareds: StakeIntentDeclaredHandler;
-      gatewayProvens: GatewayProvenHandler;
-      stakeProgresseds: StakeProgressedHandler;
-      mintProgresseds: MintProgressedHandler;
-      stakeIntentConfirmeds: StakeIntentConfirmedHandler;
-      redeemIntentDeclareds: RedeemIntentDeclaredHandler;
-    } {
+    stakeRequesteds: StakeRequestedHandler;
+    stateRootAvailables: StateRootAvailableHandler;
+    stakeIntentDeclareds: StakeIntentDeclaredHandler;
+    gatewayProvens: GatewayProvenHandler;
+    stakeProgresseds: StakeProgressedHandler;
+    mintProgresseds: MintProgressedHandler;
+    stakeIntentConfirmeds: StakeIntentConfirmedHandler;
+    redeemIntentDeclareds: RedeemIntentDeclaredHandler;
+    redeemProgresseds: RedeemProgressedHandler;
+  } {
     return {
       // Stake and Mint Handlers
       stakeRequesteds: new StakeRequestedHandler(
@@ -68,6 +70,7 @@ export default class Handlers {
 
       // Redeem and Unstake Handlers
       redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),
+      redeemProgresseds: new RedeemProgressedHandler(repos.messageRepository),
     };
   }
 }
