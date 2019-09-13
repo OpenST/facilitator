@@ -22,7 +22,8 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     blockNumber: '10',
   }];
 
-  it('should change message state to source declared', async (): Promise<void> => {
+  it('should change message source state to Declared if message does not exist',
+    async (): Promise<void> => {
     const save = sinon.stub();
 
     const mockedRepository = sinon.createStubInstance(MessageRepository,
@@ -54,8 +55,38 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message state to declared '
-    + 'if current status is not undeclared', async (): Promise<void> => {
+  it('should change message source state to Declared if message status is Undeclared',
+    async (): Promise<void> => {
+      const save = sinon.stub();
+
+      const existingMessageWithUndeclaredStatus = new Message(Web3Utils.keccak256('1'));
+      existingMessageWithUndeclaredStatus.sourceStatus = MessageStatus.Undeclared;
+      const mockedRepository = sinon.createStubInstance(MessageRepository,
+        {
+          save: save as any,
+          get: Promise.resolve(existingMessageWithUndeclaredStatus),
+        });
+      const handler = new StakeIntentDeclaredHandler(mockedRepository as any);
+
+      const models = await handler.persist(transactions);
+
+      const expectedModel = new Message(
+        transactions[0]._messageHash,
+      );
+      expectedModel.sourceStatus = MessageStatus.Declared;
+      expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
+
+      assert.equal(
+        models.length,
+        transactions.length,
+        'Number of models must be equal to transactions',
+      );
+      SpyAssert.assert(save, 1, [[expectedModel]]);
+      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+    });
+
+  it('should not change message source state to Declared if current status is Progressed',
+    async (): Promise<void> => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
@@ -83,8 +114,8 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message state to declared '
-    + 'if current status is not undeclared', async (): Promise<void> => {
+  it('should not change message state if current status is already Declared',
+    async (): Promise<void> => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
