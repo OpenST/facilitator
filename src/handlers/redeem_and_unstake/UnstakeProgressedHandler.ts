@@ -52,7 +52,8 @@ export default class UnstakeProgressedHandler extends ContractEntityHandler<Mess
         // This can happen if progress transaction is done by some other facilitator.
         if (message === null) {
           message = new Message(transaction._messageHash);
-          message.sender = Utils.toChecksumAddress(transaction._staker);
+          message.sender = Utils.toChecksumAddress(transaction._redeemer);
+          message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
           message.direction = MessageDirection.AuxiliaryToOrigin;
           message.type = MessageType.Redeem;
           message.targetStatus = MessageStatus.Undeclared;
@@ -71,7 +72,7 @@ export default class UnstakeProgressedHandler extends ContractEntityHandler<Mess
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
       Logger.debug(
-        `Changing target status to progress unstake for message hash ${models[i].messageHash}`
+        `Changing target status to progress unstake for message hash ${models[i].messageHash}`,
       );
       savePromises.push(this.messageRepository.save(models[i]));
     }

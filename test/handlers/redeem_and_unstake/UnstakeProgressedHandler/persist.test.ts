@@ -1,5 +1,3 @@
-
-import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as web3utils from 'web3-utils';
 
@@ -15,9 +13,11 @@ describe('ProgressUnstake.persist()', () => {
   const transactions = [{
     _messageHash: web3utils.keccak256('1'),
     _redeemer: '0x0000000000000000000000000000000000000001',
-    _redeemerNonce: '1',
-    _amount: '100',
-    contractAddress: '0x0000000000000000000000000000000000000002',
+    _beneficiary: '0x0000000000000000000000000000000000000002',
+    _redeemAmount: '100',
+    _unstakeAmount: '400',
+    _rewardAmount: '50',
+    contractAddress: '0x0000000000000000000000000000000000000003',
     _proofProgress: 'false',
     _unlockSecret: web3utils.keccak256('2'),
     blockNumber: '10',
@@ -39,9 +39,8 @@ describe('ProgressUnstake.persist()', () => {
       transactions[0]._messageHash,
     );
     expectedModel.sender = transactions[0]._redeemer;
-    expectedModel.nonce = new BigNumber(transactions[0]._redeemerNonce);
     expectedModel.direction = MessageDirection.AuxiliaryToOrigin;
-    expectedModel.sourceStatus = MessageStatus.Progressed;
+    expectedModel.targetStatus = MessageStatus.Progressed;
     expectedModel.type = MessageType.Redeem;
     expectedModel.gatewayAddress = transactions[0].contractAddress;
     expectedModel.secret = transactions[0]._unlockSecret;
