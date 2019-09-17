@@ -426,6 +426,13 @@ export default class Utils {
       expectedStakeRequest.staker!,
       'Invalid stake address',
     );
+
+    assert.strictEqual(
+      actualStakeRequest.blockNumber!.cmp(expectedStakeRequest.blockNumber!),
+      0,
+      `Expected blocknumber at which stake request is done is `+
+        `${expectedStakeRequest.blockNumber!}  but got ${expectedStakeRequest.blockNumber!},`
+    );
   }
 
   /**

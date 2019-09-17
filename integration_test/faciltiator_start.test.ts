@@ -36,7 +36,8 @@ describe('facilitator start', async () => {
 
   function getStakeRequest(): StakeRequest {
     const stakeRequest = new StakeRequest(
-      '',
+      '', // It will be updated after stake request is done.
+      new BigNumber(0),
       new BigNumber(stakeAmount),
       '',
       new BigNumber(gasPrice),
@@ -266,6 +267,8 @@ describe('facilitator start', async () => {
         gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
+
+    stakeRequest.blockNumber = new BigNumber(receipt.blockNumber);
 
     assert.strictEqual(
       receipt.status,
