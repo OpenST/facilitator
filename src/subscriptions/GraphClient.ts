@@ -61,26 +61,33 @@ export default class GraphClient {
     const observable = this.apolloClient.subscribe({
       query: gqlSubscriptionQry,
       variables: {},
+      fetchPolicy: 'no-cache',
     });
     const querySubscriber = await Promise.resolve(
       observable
         .subscribe({
           async next(response: Record<string, any>) {
-            Logger.debug(`Received subscription data ${JSON.stringify(response.data)}`);
-            const transactions: Record<
-            string,
-            Record<string, any>[]
-            > = await fetcher.fetch(response.data);
-            await handler.handle(transactions);
-            Logger.debug('Updating UTS');
-            await GraphClient.updateLatestUTS(
-              transactions,
-              response.data,
-              contractEntityRepository,
-            );
+            try {
+              Logger.debug(`Received subscription data ${JSON.stringify(response.data)}`);
+              const transactions: Record<string,
+              Record<string, any>[]> = await fetcher.fetch(response.data);
+              await handler.handle(transactions);
+              Logger.debug('Updating UTS');
+              await GraphClient.updateLatestUTS(
+                transactions,
+                response.data,
+                contractEntityRepository,
+              );
+              Logger.debug('Observer flow completed.');
+            } catch (e) {
+              Logger.error(`Error in observer  ${e}`);
+            }
           },
           error(err) {
-            Logger.error(err);
+            Logger.error(`Observer error: ${err}`);
+          },
+          complete() {
+            Logger.info(`Completed subscription flow for subscriptionQry: ${subscriptionQry}`);
           },
         }),
     );
@@ -138,6 +145,7 @@ export default class GraphClient {
     const queryResult = await this.apolloClient.query({
       query: gqlQuery,
       variables,
+      fetchPolicy: 'no-cache',
     });
 
     return queryResult;

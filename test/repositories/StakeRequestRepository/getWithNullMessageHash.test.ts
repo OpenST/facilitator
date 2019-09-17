@@ -41,6 +41,7 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
       repos: await Repositories.create(),
       stakeRequestWithMessageHashB: new StakeRequest(
         'stakeRequestHashB',
+        new BigNumber('10'),
         new BigNumber('11'),
         'beneficiary',
         new BigNumber('12'),
@@ -53,6 +54,7 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
       ),
       stakeRequestWithNullMessageHashC: new StakeRequest(
         'stakeRequestHashC',
+        new BigNumber('10'),
         new BigNumber('21'),
         'beneficiaryC',
         new BigNumber('22'),
@@ -64,6 +66,7 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
       ),
       stakeRequestWithNullMessageHashD: new StakeRequest(
         'stakeRequestHashD',
+        new BigNumber('10'),
         new BigNumber('31'),
         'beneficiary',
         new BigNumber('32'),

@@ -52,6 +52,8 @@ class StakeRequestModel extends Model {
 
   public readonly stakerProxy!: string;
 
+  public readonly blockNumber!: BigNumber;
+
   public readonly createdAt!: Date;
 
   public readonly updatedAt!: Date;
@@ -78,6 +80,13 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
         stakeRequestHash: {
           type: DataTypes.STRING,
           primaryKey: true,
+        },
+        blockNumber: {
+          type: DataTypes.BIGINT,
+          allowNull: false,
+          validate: {
+            min: 0,
+          },
         },
         messageHash: {
           type: DataTypes.STRING,
@@ -232,6 +241,7 @@ export default class StakeRequestRepository extends Subject<StakeRequest> {
   private convertToStakeRequest(stakeRequestModel: StakeRequestModel): StakeRequest {
     const stakeRequest = new StakeRequest(
       stakeRequestModel.stakeRequestHash,
+      new BigNumber(stakeRequestModel.blockNumber),
     );
 
     stakeRequest.messageHash = stakeRequestModel.messageHash;

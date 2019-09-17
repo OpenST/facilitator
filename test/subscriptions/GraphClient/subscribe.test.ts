@@ -46,6 +46,7 @@ describe('GraphClient.subscribe()', () => {
     graphClient = new GraphClient(mockApolloClient);
     subscriptionQry = 'subscription{stakeRequesteds{id}}';
     options = {
+      fetchPolicy: 'no-cache',
       query: gql`${subscriptionQry}`,
       variables: {},
     };

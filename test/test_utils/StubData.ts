@@ -14,6 +14,7 @@ import {
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
     stakeRequestHash,
+    new BigNumber('10'),
     new BigNumber('1'),
     'beneficiary',
     new BigNumber('2'),
@@ -27,6 +28,7 @@ export default class StubData {
   public static auxiliaryChainRecord(
     chainId = 10002,
     lastOriginBlockHeight?: BigNumber,
+    lastAuxiliaryBlockHeight?: BigNumber,
   ): AuxiliaryChain {
     return new AuxiliaryChain(
       chainId,
@@ -36,7 +38,7 @@ export default class StubData {
       '0x0000000000000000000000000000000000000003',
       '0x0000000000000000000000000000000000000004',
       lastOriginBlockHeight,
-      undefined,
+      lastAuxiliaryBlockHeight,
       new Date(),
       new Date(),
 
