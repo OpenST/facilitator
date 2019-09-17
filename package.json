@@ -5,7 +5,7 @@
   "scripts": {
     "lint:ts": "eslint src -c .eslintrc.json --ext ts",
     "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/**/*.test.ts test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
-    "test:integration": "mocha -t 200000 --require ts-node/register --require source-map-support/register --recursive integration_test/**/**/*.test.ts integration_test/**/*.test.ts integration_test/*.test.ts",
+    "test:integration": "mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive integration_test/**/**/*.test.ts integration_test/**/*.test.ts integration_test/*.test.ts",
     "test:facilitator": "./test/facilitator.sh",
     "test": "npm run test:unit && npm run test:integration",
     "coverage:report": "nyc report",
