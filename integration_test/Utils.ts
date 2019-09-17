@@ -13,11 +13,8 @@ import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoG
 import Repositories from '../src/repositories/Repositories';
 import Directory from '../src/Directory';
 import StakeRequest from '../src/models/StakeRequest';
-import { MessageStatus } from '../src/repositories/MessageRepository';
 import assert from '../test/test_utils/assert';
 import MosaicConfig from '../src/Config/MosaicConfig';
-import GraphClient from '../src/subscriptions/GraphClient';
-import Queries from './Queries';
 import { FacilitatorConfig } from '../src/Config/Config';
 import Message from '../src/models/Message';
 import Gateway from '../src/models/Gateway';
@@ -25,7 +22,9 @@ import AuxiliaryChain from '../src/models/AuxiliaryChain';
 import { GatewayType } from '../src/repositories/GatewayRepository';
 import * as Constants from './Constants.json';
 
-const EthUtils = require('ethereumjs-util');
+import * as EthUtils from 'ethereumjs-util';
+
+const workerPrefix = 'MOSAIC_ADDRESS_PASSW_';
 
 /**
  * It contains common helper methods to test facilitator.
@@ -53,11 +52,16 @@ export default class Utils {
    * Constructor for utils class for initialization.
    * @param mosaicConfig Mosaic config object.
    * @param facilitatorConfig Facilitator config object.
+   * @param auxChainId Auxiliary chain id.
+   * @param originFunder Address of the funder on origin chain.
+   * @param auxiliaryFunder Address of the funder on auxiliary chain.
    */
   public constructor(
     mosaicConfig: MosaicConfig,
     facilitatorConfig: FacilitatorConfig,
     auxChainId: number,
+    originFunder: string,
+    auxiliaryFunder: string,
   ) {
     this.facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     this.mosaicConfig = mosaicConfig;
@@ -66,26 +70,42 @@ export default class Utils {
     this.auxiliaryWeb3 = new Web3(facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc);
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
-    this.originFunder = '0x6725a1becba2c74dda4ab86876527d53e36648b4';// this.originWeb3.eth.getAccounts()[4];
-    this.auxiliaryFunder = '0xa3d8a8511316094de9c0916278b3acc96c095996';// this.auxiliaryWeb3.eth.getAccounts()[6];
     this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress!;
+    this.originFunder = originFunder;
+    this.auxiliaryFunder = auxiliaryFunder;
+  }
+
+  /**
+   * It sets the address of funder account on origin chain.
+   * @param originFunder Address of the funder.
+   */
+  public setOriginFunder(originFunder: string): void {
+    this.originFunder = originFunder;
+  }
+
+  /**
+   * It sets the address of funder account on auxiliary chain.
+   * @param auxiliaryFunder Address of the funder.
+   */
+  public setAuxiliaryFunder(auxiliaryFunder: string): void {
+    this.auxiliaryFunder = auxiliaryFunder;
   }
 
   /**
    * It funds ETH on origin chain to beneficiary.
    * @param beneficiary Address of the account who is to be funded.
-   * @param amountInETH Amount to be funded in ETH. Default is 3.
+   * @param amountInETH Amount to be funded in ETH.
    * @returns Receipt of eth funding to beneficiary.
    */
   public async fundEthOnOrigin(
     beneficiary: string,
-    amountInETH: number = 3,
+    amountInETH: BigNumber,
   ): Promise<TransactionReceipt> {
     return this.originWeb3.eth.sendTransaction(
       {
         from: this.originFunder,
         to: beneficiary,
-        value: web3Utils.toWei(web3Utils.toBN(amountInETH)),
+        value: web3Utils.toWei(amountInETH.toString()),
       },
     );
   }
@@ -93,17 +113,18 @@ export default class Utils {
   /**
    * It funds OSTPrime on origin chain to beneficiary.
    * @param beneficiary Address of the account who is to be funded.
+   * @param amountInEth Amount to be funded in ETH.
    * @returns Receipt of eth funding to beneficiary.
    */
   public async fundOSTPrimeOnAuxiliary(
     beneficiary: string,
-    amount: number = 2,
+    amountInEth: BigNumber,
   ): Promise<TransactionReceipt> {
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
         from: this.auxiliaryFunder,
         to: beneficiary,
-        value: web3Utils.toWei(web3Utils.toBN(amount)),
+        value: web3Utils.toWei(amountInEth.toString()),
       },
     );
   }
@@ -126,15 +147,15 @@ export default class Utils {
    */
   public async whitelistOriginWorker(
     worker: string,
-    expirationHeight: number,
+    expirationHeight: string,
   ): Promise<TransactionReceipt> {
     const organizationContractInstance = await this.getOriginOrganizationInstance();
 
     const owner = await organizationContractInstance.methods.owner().call();
 
-    const setWorkerRawTx: TransactionObject<void> = await organizationContractInstance.methods.setWorker(
+    const setWorkerRawTx: TransactionObject<void> = organizationContractInstance.methods.setWorker(
       worker,
-      expirationHeight.toString(),
+      expirationHeight,
     );
 
     const setWorkerReceipt = await this.sendTransaction(
@@ -177,7 +198,7 @@ export default class Utils {
 
     const owner = await organizationInstance.methods.owner().call();
 
-    const anchorStateRootRawTx: TransactionObject<boolean> = await anchorInstance.methods.anchorStateRoot(
+    const anchorStateRootRawTx: TransactionObject<boolean> = anchorInstance.methods.anchorStateRoot(
       currentBlock.number,
       currentBlock.stateRoot,
     );
@@ -258,12 +279,12 @@ export default class Utils {
 
   /**
    * It returns auxiliary chain object for an auxiliary chain.
-   * @param auxChain Name of auxiliary chain.
+   * @param auxChainId Name of auxiliary chain.
    * @returns Auxiliary chain object.
    */
-  public async getAuxiliaryChainFromDb(auxChain: number): Promise<AuxiliaryChain | null> {
+  public async getAuxiliaryChainFromDb(auxChainId: number): Promise<AuxiliaryChain | null> {
     const repos = await this.getRepositories();
-    return await repos.auxiliaryChainRepository.get(auxChain);
+    return repos.auxiliaryChainRepository.get(auxChainId);
   }
 
   /**
@@ -330,13 +351,11 @@ export default class Utils {
       'Incorrect message type',
     );
 
-    if (dbMessage.sourceStatus !== MessageStatus.Undeclared) {
-      assert.strictEqual(
-        dbMessage.hashLock!,
-        expectedMessage.hashLock!,
-        'Hashlock is incorrect',
-      );
-    }
+    assert.strictEqual(
+      dbMessage.hashLock!,
+      expectedMessage.hashLock!,
+      'Hashlock is incorrect',
+    );
 
     assert.strictEqual(
       dbMessage.sourceStatus!,
@@ -566,7 +585,7 @@ export default class Utils {
   public async getStakeRequest(stakeRequestHash: string): Promise<StakeRequest | null> {
     const repos: Repositories = await this.getRepositories();
 
-    return await repos.stakeRequestRepository.get(
+    return repos.stakeRequestRepository.get(
       stakeRequestHash,
     );
   }
@@ -606,9 +625,9 @@ export default class Utils {
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
       this.facilitatorConfig.originChain,
       gatewayType,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!,
-      this.mosaicConfig.originChain.contractAddresses.simpleTokenAddress!,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress!,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      this.mosaicConfig.originChain.contractAddresses.simpleTokenAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
       new BigNumber(bounty),
       activation,
       anchoredBlockNumber,
@@ -644,18 +663,16 @@ export default class Utils {
   public async verifyOSTTransfer(
     receipt: TransactionReceipt,
     beneficiary: string,
-    amount: number,
+    amount: BigNumber,
   ): Promise<void> {
     assert.strictEqual(receipt.status, true, 'Receipt status should be true');
 
     const simpletokenInstance = this.getSimpleTokenInstance();
 
-    const beneficiaryBalance = new BigNumber(
-      await simpletokenInstance.methods.balanceOf(beneficiary).call(),
-    );
+    const beneficiaryBalance = await simpletokenInstance.methods.balanceOf(beneficiary).call();
 
     assert.strictEqual(
-      beneficiaryBalance.cmp(amount),
+      amount.cmp(beneficiaryBalance),
       0,
       `Expected balance is  ${amount} but got ${beneficiaryBalance}`,
     );
@@ -723,24 +740,6 @@ export default class Utils {
     return startTime + durationInSecs;
   }
 
-  public async getTransactionFees(messageHash: string) {
-    const { auxChainId } = this.facilitatorConfig;
-    const graphClient = GraphClient.getClient(
-      'http',
-      this.facilitatorConfig.chains[auxChainId].subGraphRpc,
-    );
-
-    const queryVariable = {
-      messageHash,
-    };
-
-    const queryResult = await graphClient.query(Queries.auxiliary.mintProgresseds, queryVariable);
-
-    const mintProgressed: any = queryResult.data.mintProgresseds[0];
-
-    console.log('in transaction fees :- ', mintProgressed);
-  }
-
   /**
    * It sets environment variables. They are required for facilitator init and start script.
    * @param mosaicConfigPath Path to mosaic config.
@@ -764,11 +763,11 @@ export default class Utils {
   /**
    * It sets the origin and auxiliary worker password in environment.
    */
-  public setWorkerPasswordInEnvironment() {
+  public setWorkerPasswordInEnvironment(): void {
     const originWorker = this.facilitatorConfig.chains[this.facilitatorConfig.originChain].worker;
     const auxiliaryWorker = this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].worker;
-    const originWorkerExport = Constants.workerPrefix + originWorker;
-    const auxWorkerExport = Constants.workerPrefix + auxiliaryWorker;
+    const originWorkerExport = workerPrefix + originWorker;
+    const auxWorkerExport = workerPrefix + auxiliaryWorker;
     process.env[originWorkerExport] = Constants.originWorkerPassword;
     process.env[auxWorkerExport] = Constants.auxiliaryWorkerPassword;
   }

@@ -30,6 +30,22 @@ const facilitatorStart = path.join(__dirname, 'facilitator_start.sh');
 const facilitatorKill = path.join(__dirname, 'kill_facilitator_process.sh');
 
 describe('facilitator start', async () => {
+  const stakeAmount = '130';
+  const gasPrice = '10';
+  const gasLimit = '4';
+
+  function getStakeRequest(): StakeRequest {
+    const stakeRequest = new StakeRequest(
+      '',
+      new BigNumber(stakeAmount),
+      '',
+      new BigNumber(gasPrice),
+      new BigNumber(gasLimit),
+    );
+
+    return stakeRequest;
+  }
+
   let originWeb3: any;
   let auxChainId: number;
   let messageHash: string;
@@ -39,7 +55,7 @@ describe('facilitator start', async () => {
 
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
 
-  const ostComposer: string | undefined = mosaicConfig.originChain.contractAddresses.ostComposerAddress!;
+  const ostComposer: string = mosaicConfig.originChain.contractAddresses.ostComposerAddress!;
 
   const outputOptions = [process.stdout, process.stderr];
 
@@ -49,17 +65,17 @@ describe('facilitator start', async () => {
   let utils: Utils;
   let simpleTokenInstance: EIP20Token;
   let stakerAccount: Account;
-  const { stakerOSTBalance } = Constants;
+  const stakerOSTBalance = '20000';
+  const workerOSTBalance = new BigNumber(500);
+  const amountTobeFundedOnOrigin = new BigNumber(1);
+  const amountTobeFundedOnAuxiliary = new BigNumber(1);
+  const testDuration = 3;
+  const interval = 3000;
+  const workerExpirationHeight = '100000000000';
   let anchoredBlockNumber: number;
-  const stakeRequest = new StakeRequest(
-    '',
-    new BigNumber(Constants.stakeAmount),
-    '',
-    new BigNumber(Constants.gasPrice),
-    new BigNumber(Constants.gasLimit),
-  );
+  const stakeRequest = getStakeRequest();
 
-  const reward = stakeRequest!.gasPrice!.mul(stakeRequest.gasLimit!);
+  const reward = stakeRequest.gasPrice!.mul(stakeRequest.gasLimit!);
   const mintedAmount: BigNumber = stakeRequest.amount!.sub(reward);
 
   before(async () => {
@@ -112,8 +128,16 @@ describe('facilitator start', async () => {
       mosaicConfig,
       facilitatorConfig,
       Number(Constants.auxChainId),
+      '',
+      '',
     );
-    originWeb3 = utils.originWeb3;
+    ({ originWeb3 } = utils);
+
+    const originAccounts = await utils.originWeb3.eth.getAccounts();
+    const auxiliaryAccounts = await utils.auxiliaryWeb3.eth.getAccounts();
+    utils.setOriginFunder(originAccounts[4]);
+    utils.setAuxiliaryFunder(auxiliaryAccounts[6]);
+
     utils.setWorkerPasswordInEnvironment();
     originWorker = facilitatorConfig.chains[facilitatorConfig.originChain].worker;
     auxiliaryWorker = facilitatorConfig.chains[auxChainId].worker;
@@ -137,20 +161,28 @@ describe('facilitator start', async () => {
         gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
-    await utils.verifyOSTTransfer(transferReceipt, stakerAccount.address, Number(stakerOSTBalance));
+    await utils.verifyOSTTransfer(
+      transferReceipt,
+      stakerAccount.address,
+      new BigNumber(stakerOSTBalance),
+    );
 
-    await utils.fundEthOnOrigin(stakerAccount.address);
+    await utils.fundEthOnOrigin(
+      stakerAccount.address,
+      new BigNumber(2),
+    );
   });
 
   it('funding origin and aux workers', async () => {
-    await utils.fundEthOnOrigin(originWorker);
-    await utils.fundOSTPrimeOnAuxiliary(auxiliaryWorker);
-
-    const { workerOSTBalance } = Constants;
+    await utils.fundEthOnOrigin(originWorker, new BigNumber(amountTobeFundedOnOrigin));
+    await utils.fundOSTPrimeOnAuxiliary(
+      auxiliaryWorker,
+      new BigNumber(amountTobeFundedOnAuxiliary),
+    );
 
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.transfer(
       originWorker,
-      workerOSTBalance,
+      workerOSTBalance.toString(),
     );
     const transferReceipt = await utils.sendTransaction(
       transferRawTx,
@@ -159,13 +191,13 @@ describe('facilitator start', async () => {
         gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
-    await utils.verifyOSTTransfer(transferReceipt, originWorker, Number(workerOSTBalance));
+    await utils.verifyOSTTransfer(transferReceipt, originWorker, new BigNumber(workerOSTBalance));
   });
 
   it('whitelist origin worker', async () => {
     const whitelistWorkerReceipt = await utils.whitelistOriginWorker(
       originWorker,
-      Number(Constants.workerExpirationHeight),
+      workerExpirationHeight,
     );
 
     assert.strictEqual(
@@ -174,7 +206,7 @@ describe('facilitator start', async () => {
     );
 
     const organizationInstance: Organization = await utils.getOriginOrganizationInstance();
-    const workerExpirationHeight = new BigNumber(await organizationInstance.methods.workers(
+    const actualExpirationHeight = new BigNumber(await organizationInstance.methods.workers(
       originWorker,
     ).call());
 
@@ -184,10 +216,10 @@ describe('facilitator start', async () => {
     );
 
     assert.strictEqual(
-      workerExpirationHeight.cmp(Constants.workerExpirationHeight),
+      actualExpirationHeight.cmp(workerExpirationHeight),
       0,
-      `Expected worker expiration height is ${Constants.workerExpirationHeight} but`
-              + `got ${workerExpirationHeight}`,
+      `Expected worker expiration height is ${workerExpirationHeight} but`
+              + `got ${actualExpirationHeight}`,
     );
   });
 
@@ -199,8 +231,6 @@ describe('facilitator start', async () => {
   });
 
   it('request stake', async () => {
-    const endTime = utils.getEndTime(Constants.testDuration);
-
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.approve(
       ostComposer,
       stakeRequest.amount!.toString(10),
@@ -226,7 +256,7 @@ describe('facilitator start', async () => {
       stakeRequest.gasPrice!.toString(10),
       stakeRequest.gasLimit!.toString(10),
       stakerNonce,
-      stakeRequest!.gateway!,
+      stakeRequest.gateway!,
     );
 
     const receipt = await utils.sendTransaction(
@@ -244,14 +274,14 @@ describe('facilitator start', async () => {
     );
 
     generatedStakeRequestHash = utils.getStakeRequestHash(
-      stakeRequest!,
-      stakeRequest!.gateway!,
+      stakeRequest,
+      stakeRequest.gateway!,
       ostComposer,
     );
 
     const stakeRequestHash = await ostComposerInstance.methods.stakeRequestHashes(
       stakeRequest.staker,
-      stakeRequest!.gateway!,
+      stakeRequest.gateway!,
     ).call();
 
     assert.strictEqual(
@@ -262,28 +292,34 @@ describe('facilitator start', async () => {
 
     let stakeRequestInterval: NodeJS.Timeout;
     const stakeRequestPromise = new Promise(((resolve, reject) => {
+      const endTime = utils.getEndTime(testDuration);
       stakeRequestInterval = setInterval(async () => {
         const stakeRequestDb: StakeRequest | null = await utils.getStakeRequest(
           generatedStakeRequestHash,
         );
 
         if (stakeRequestDb != null) {
-          utils.assertStakeRequests(stakeRequestDb!, stakeRequest!);
+          utils.assertStakeRequests(stakeRequestDb, stakeRequest);
           resolve();
         }
 
         const currentTime = process.hrtime()[0];
 
         if (currentTime >= endTime) {
-          return reject(new Error(`Test was not completed within ${Constants.testDuration} mins`));
+          return reject(
+            new Error(
+              'Assertion for stake requests table failed as response was not received'
+              + ` within ${testDuration} mins`,
+            ),
+          );
         }
       },
-      Constants.interval);
+      interval);
     }));
 
-    await stakeRequestPromise.then(() => {
+    await stakeRequestPromise.then((): void => {
       clearInterval(stakeRequestInterval);
-    }).catch((err) => {
+    }).catch((err: Error): Error => {
       clearInterval(stakeRequestInterval);
       throw err;
     });
@@ -295,13 +331,14 @@ describe('facilitator start', async () => {
     ).call();
 
     const requestStakePromise = new Promise(((resolve, reject) => {
-      requestStakeInterval = setInterval(async () => {
+      const endTime = utils.getEndTime(testDuration);
+      requestStakeInterval = setInterval(async (): Promise<void> => {
         const stakeRequestDb: StakeRequest | null = await utils.getStakeRequest(
           generatedStakeRequestHash,
         );
 
         if (stakeRequestDb!.messageHash) {
-          messageHash = stakeRequestDb!.messageHash!;
+          messageHash = stakeRequestDb!.messageHash;
           expectedMessage = new Message(
             messageHash,
             MessageType.Stake,
@@ -322,17 +359,19 @@ describe('facilitator start', async () => {
           const message = await gateway.methods.messages(messageHash.toString()).call();
           const gatewayMessageStatus = parseInt(
             await gateway.methods.getOutboxMessageStatus(messageHash).call(),
+            10,
           );
 
           const coGatewayMessageStatus = parseInt(
             await gateway.methods.getOutboxMessageStatus(messageHash).call(),
+            10,
           );
 
           if (
             messageInDb!.sourceStatus === MessageStatus.Undeclared
             && messageInDb!.sourceStatus === MessageStatus.Undeclared
           ) {
-            expectedMessage.hashLock = Utils.ZERO_BYTES32;
+            expectedMessage.hashLock = message.hashLock;
 
             utils.assertMessages(messageInDb!, expectedMessage);
           }
@@ -344,7 +383,7 @@ describe('facilitator start', async () => {
             expectedMessage.hashLock = message.hashLock;
             expectedMessage.sourceStatus = gatewayMessageStatus === 1 ? MessageStatus.Declared : MessageStatus.Undeclared;
             expectedMessage.targetStatus = coGatewayMessageStatus === 1 ? MessageStatus.Undeclared : MessageStatus.Undeclared;
-            utils.assertMessages(messageInDb!, expectedMessage!);
+            utils.assertMessages(messageInDb!, expectedMessage);
 
             resolve();
           }
@@ -353,27 +392,32 @@ describe('facilitator start', async () => {
         const currentTime = process.hrtime()[0];
 
         if (currentTime >= endTime) {
-          return reject(new Error(`Test was not completed within ${Constants.testDuration} mins`));
+          return reject(
+            new Error(
+              'Assertion for messages table while request staking failed as response was not received'
+              + ` within ${testDuration} mins`,
+            ),
+          );
         }
       },
-      Constants.interval);
+      interval);
     }));
 
-    await requestStakePromise.then(() => {
+    await requestStakePromise.then((): void => {
       clearInterval(requestStakeInterval);
-    }).catch((err) => {
+    }).catch((err: Error): Error => {
       clearInterval(requestStakeInterval);
       throw err;
     });
   });
 
   it('verify anchoring', async () => {
-    const endTime = utils.getEndTime(Constants.testDuration);
     anchoredBlockNumber = await utils.anchorOrigin(auxChainId);
 
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {
-      verifyAnchorInterval = setInterval(async () => {
+      const endTime = utils.getEndTime(testDuration);
+      verifyAnchorInterval = setInterval(async (): Promise<void> => {
         const auxiliaryChain: AuxiliaryChain | null = await utils.getAuxiliaryChainFromDb(
           auxChainId,
         );
@@ -384,39 +428,43 @@ describe('facilitator start', async () => {
             auxiliaryChain!.lastAuxiliaryBlockHeight!,
           );
 
-          utils.assertAuxiliaryChain(auxiliaryChain!, expectedAuxiliaryChain!);
+          utils.assertAuxiliaryChain(auxiliaryChain!, expectedAuxiliaryChain);
           resolve();
         }
 
         const currentTime = process.hrtime()[0];
 
         if (currentTime >= endTime) {
-          return reject(new Error(`Test was not completed within ${Constants.testDuration} mins`));
+          return reject(
+            new Error(
+              'Assertion for auxiliary chains table while anchoring failed as'
+              + ` response was not received within ${testDuration} mins`,
+            ),
+          );
         }
       },
-      Constants.interval);
+      interval);
     }));
 
-    await verifyAnchorPromise.then(() => {
+    await verifyAnchorPromise.then((): void => {
       clearInterval(verifyAnchorInterval);
-    }).catch((err) => {
+    }).catch((err: Error): Error => {
       clearInterval(verifyAnchorInterval);
       throw err;
     });
   });
 
   it('target status declared and source status declared', async () => {
-    const endTime = utils.getEndTime(Constants.testDuration);
-
     let declarePromiseInterval: NodeJS.Timeout;
+
     const declarePromise = new Promise(((resolve, reject) => {
-      declarePromiseInterval = setInterval(async () => {
+      const endTime = utils.getEndTime(testDuration);
+      declarePromiseInterval = setInterval(async (): Promise<void> => {
         const coGateway = utils.getEIP20CoGatewayInstance();
 
         const messageStatus = parseInt(
-          await coGateway.methods.getInboxMessageStatus(
-            messageHash,
-          ).call(),
+          await coGateway.methods.getInboxMessageStatus(messageHash).call(),
+          10,
         );
         const messageInGateway = await coGateway.methods.messages(messageHash).call();
         const messageInDb = await utils.getMessageFromDB(messageHash);
@@ -450,35 +498,41 @@ describe('facilitator start', async () => {
 
         const currentTime = process.hrtime()[0];
         if (currentTime >= endTime) {
-          return reject(new Error(`Test was not completed within ${Constants.testDuration} mins`));
+          return reject(
+            new Error(
+              'Assertion for auxiliary chains/messages table failed while anchoring'
+              + ` as response was not received within ${testDuration} mins`,
+            ),
+          );
         }
       },
-      Constants.interval);
+      interval);
     }));
 
-    await declarePromise.then(() => {
+    await declarePromise.then((): void => {
       clearInterval(declarePromiseInterval);
-    }).catch((err) => {
+    }).catch((err: Error): Error => {
       clearInterval(declarePromiseInterval);
       throw err;
     });
   });
 
   it('source status and target status is progressed', async () => {
-    const endTime = utils.getEndTime(Constants.testDuration);
-
     let progressPromiseInterval: NodeJS.Timeout;
     const progressPromise = new Promise(((resolve, reject) => {
-      progressPromiseInterval = setInterval(async () => {
+      const endTime = utils.getEndTime(testDuration);
+      progressPromiseInterval = setInterval(async (): Promise<void> => {
         const eip20Gateway = utils.getEIP20GatewayInstance();
         const eip20Cogateway = utils.getEIP20CoGatewayInstance();
         const eip20GatewayMessageStatus = parseInt(await eip20Gateway.methods.getOutboxMessageStatus(
           messageHash,
-        ).call());
+        ).call(),
+        10);
 
         const eip20CoGatewayMessageStatus = parseInt(await eip20Cogateway.methods.getInboxMessageStatus(
           messageHash,
-        ).call());
+        ).call(),
+        10);
 
         const eip20GatewayMessage = await eip20Gateway.methods.messages(messageHash).call();
         const messageInDb = await utils.getMessageFromDB(messageHash);
@@ -490,8 +544,8 @@ describe('facilitator start', async () => {
           expectedMessage = utils.getMessageStub(eip20GatewayMessage, messageInDb!);
           await utils.assertMintingBalance(stakerAccount.address, mintedAmount);
           expectedMessage.sourceStatus = eip20GatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
-          expectedMessage.targetStatus = eip20CoGatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;;
-          await utils.assertMessages(messageInDb!, expectedMessage);
+          expectedMessage.targetStatus = eip20CoGatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
+          utils.assertMessages(messageInDb!, expectedMessage);
           clearInterval(progressPromiseInterval);
           resolve();
         }
@@ -499,21 +553,26 @@ describe('facilitator start', async () => {
         const currentTime = process.hrtime()[0];
 
         if (currentTime >= endTime) {
-          return reject(new Error(`Test was not completed within ${Constants.testDuration} mins`));
+          return reject(
+            new Error(
+              'Assertion for messages table while progressing message failed'
+              + ` as response was not received within ${testDuration} mins`,
+            ),
+          );
         }
       },
-      Constants.interval);
+      interval);
     }));
 
-    await progressPromise.then(() => {
+    await progressPromise.then((): void => {
       clearInterval(progressPromiseInterval);
-    }).catch((err) => {
+    }).catch((err: Error): Error => {
       clearInterval(progressPromiseInterval);
       throw err;
     });
   });
 
   after(async () => {
-    execSync(facilitatorKill, { stdio: outputOptions });
+    execSync(facilitatorKill, { stdio: outputOptions, env: process.env });
   });
 });

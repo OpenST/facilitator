@@ -2,11 +2,13 @@ import commander from 'commander';
 import Web3 from 'web3';
 
 import Account from '../Account';
-import { Chain, FacilitatorConfig } from '../Config/Config';
+import {
+  Chain, FacilitatorConfig, Config, ENV_WORKER_PASSWORD_PREFIX,
+} from '../Config/Config';
 import DatabaseFileHelper from '../DatabaseFileHelper';
 import Logger from '../Logger';
 import MosaicConfig from '../Config/MosaicConfig';
-import { Config, ENV_WORKER_PASSWORD_PREFIX } from '../Config/Config';
+
 import Repositories from '../repositories/Repositories';
 import SeedData from '../SeedData';
 
