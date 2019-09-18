@@ -20,6 +20,9 @@ import BigNumber from 'bignumber.js';
 
 import Comparable from '../observer/Comparable';
 
+/**
+ * It Represents Request model object. It stores stake and redeem requests.
+ */
 export default class Request extends Comparable<Request> {
   public requestHash: string;
 

@@ -61,7 +61,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
     sinon.restore();
   });
 
-  it('should update messageHash(null) and blockNumber when redeemRequest '
+  it('should update blockNumber and messageHash with blank when redeemRequest '
     + 'is already present', async (): Promise<void> => {
     const cogatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions1 = [{
