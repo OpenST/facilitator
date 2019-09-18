@@ -16,13 +16,13 @@
 
 import BigNumber from 'bignumber.js';
 
-import Request from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/Request';
 import assert from '../../test_utils/assert';
 
 const Util = {
   checkInputAgainstOutput(
-    requestInput: Request,
-    requestOutput: Request,
+    requestInput: MessageTransferRequest,
+    requestOutput: MessageTransferRequest,
   ): void {
     if (requestInput.requestHash !== undefined) {
       assert.strictEqual(

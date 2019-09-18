@@ -28,25 +28,25 @@ import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types
 import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Message from '../../models/Message';
-import Request from '../../models/Request';
+import MessageTransferRequest from '../../models/Request';
 import Observer from '../../observer/Observer';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
 import Repositories from '../../repositories/Repositories';
-import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
+import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts
  * those stake requests in parallel.
  */
-export default class AcceptStakeRequestService extends Observer<Request> {
+export default class AcceptStakeRequestService extends Observer<MessageTransferRequest> {
   /* Storage */
 
   private web3: Web3;
 
-  private requestRepository: RequestRepository;
+  private requestRepository: MessageTransferRequestRepository;
 
   private messageRepository: MessageRepository;
 
@@ -72,10 +72,10 @@ export default class AcceptStakeRequestService extends Observer<Request> {
     this.originWorkerAddress = originWorkerAddress;
   }
 
-  public async update(stakeRequests: Request[]): Promise<void> {
+  public async update(stakeRequests: MessageTransferRequest[]): Promise<void> {
     Logger.debug('Accept stake request service invoked');
     const nonAcceptedStakeRequests = stakeRequests.filter(
-      (stakeRequest: Request): boolean => !stakeRequest.messageHash,
+      (stakeRequest: MessageTransferRequest): boolean => !stakeRequest.messageHash,
     );
 
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
@@ -94,7 +94,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
 
   /* Private Functions */
 
-  private async acceptStakeRequests(stakeRequests: Request[]): Promise<void> {
+  private async acceptStakeRequests(stakeRequests: MessageTransferRequest[]): Promise<void> {
     const stakeRequestPromises = [];
     for (let i = 0; i < stakeRequests.length; i += 1) {
       stakeRequestPromises.push(
@@ -107,7 +107,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
     await Promise.all(stakeRequestPromises);
   }
 
-  private async acceptStakeRequest(stakeRequest: Request): Promise<void> {
+  private async acceptStakeRequest(stakeRequest: MessageTransferRequest): Promise<void> {
     await this.approveForBounty(stakeRequest);
     const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
 
@@ -126,7 +126,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
     );
   }
 
-  private async approveForBounty(stakeRequest: Request) {
+  private async approveForBounty(stakeRequest: MessageTransferRequest) {
     const eip20GatewayInteract = interacts.getEIP20Gateway(
       this.web3,
       stakeRequest.gateway,
@@ -161,7 +161,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
    * @param hashLock Hash lock passed as accept request argument.
    */
   private async sendAcceptStakeRequestTransaction(
-    stakeRequest: Request, hashLock: string,
+    stakeRequest: MessageTransferRequest, hashLock: string,
   ): Promise<string> {
     Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.senderProxy}`);
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
@@ -191,7 +191,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
   }
 
   private async createMessageInRepository(
-    stakeRequest: Request,
+    stakeRequest: MessageTransferRequest,
     secret: string,
     hashLock: string,
   ): Promise<string> {
@@ -235,7 +235,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
     messageHash: string,
     blockNumber: BigNumber,
   ): Promise<void> {
-    const stakeRequest = new Request(
+    const stakeRequest = new MessageTransferRequest(
       stakeRequestHash,
       RequestType.Stake,
       blockNumber,
@@ -245,7 +245,7 @@ export default class AcceptStakeRequestService extends Observer<Request> {
     await this.requestRepository.save(stakeRequest);
   }
 
-  private calculateMessageHash(stakeRequest: Request, hashLock: string): string {
+  private calculateMessageHash(stakeRequest: MessageTransferRequest, hashLock: string): string {
     assert(stakeRequest.amount !== undefined);
     assert(stakeRequest.beneficiary);
     assert(stakeRequest.gateway);

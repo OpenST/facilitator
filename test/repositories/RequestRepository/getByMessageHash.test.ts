@@ -2,7 +2,7 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 
-import Request from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/Request';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
@@ -50,7 +50,7 @@ describe('RequestRepository::getByMessageHash', (): void => {
 
     Util.checkInputAgainstOutput(
       request,
-      requestOutput as Request,
+      requestOutput as MessageTransferRequest,
     );
   });
 

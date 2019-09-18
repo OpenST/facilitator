@@ -21,12 +21,12 @@ import AuxiliaryChainRepository from './AuxiliaryChainRepository';
 import ContractEntityRepository from './ContractEntityRepository';
 import GatewayRepository from './GatewayRepository';
 import { MessageRepository } from './MessageRepository';
-import RequestRepository from './RequestRepository';
+import MessageTransferRequestRepository from './MessageTransferRequestRepository';
 
 export default class Repositories {
   /* Storage */
 
-  public requestRepository: RequestRepository;
+  public requestRepository: MessageTransferRequestRepository;
 
   public auxiliaryChainRepository: AuxiliaryChainRepository;
 
@@ -116,7 +116,7 @@ export default class Repositories {
     };
 
     this.messageRepository = new MessageRepository(initOptions);
-    this.requestRepository = new RequestRepository(initOptions);
+    this.requestRepository = new MessageTransferRequestRepository(initOptions);
 
     this.auxiliaryChainRepository = new AuxiliaryChainRepository(initOptions);
 

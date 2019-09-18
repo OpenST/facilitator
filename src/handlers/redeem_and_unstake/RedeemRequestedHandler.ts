@@ -17,23 +17,23 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import Request from '../../models/Request';
-import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
+import MessageTransferRequest from '../../models/Request';
+import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
  * This class handles redeem request transactions.
  */
-export default class RedeemRequestedHandler extends ContractEntityHandler<Request> {
+export default class RedeemRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
   /* Storage */
 
-  private readonly requestRepository: RequestRepository;
+  private readonly requestRepository: MessageTransferRequestRepository;
 
   private readonly cogatewayAddress: string;
 
   public constructor(
-    requestRepository: RequestRepository,
+    requestRepository: MessageTransferRequestRepository,
     cogatewayAddress: string,
   ) {
     super();
@@ -69,14 +69,14 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
    * @return Array of instances of Request objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Request[]> {
+  public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
     Logger.info(`Persisting redeem request records for cogateway: ${this.cogatewayAddress}`);
-    const models: Request[] = await Promise.all(transactions
+    const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.cogatewayAddress === Utils.toChecksumAddress(
         transaction.cogateway,
       ))
       .map(
-        async (transaction): Promise<Request> => {
+        async (transaction): Promise<MessageTransferRequest> => {
           const { redeemRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
@@ -96,7 +96,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
             redeemRequest.messageHash = '';
             return redeemRequest;
           }
-          return new Request(
+          return new MessageTransferRequest(
             redeemRequestHash,
             RequestType.Redeem,
             blockNumber,

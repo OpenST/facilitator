@@ -17,23 +17,23 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import Request from '../../models/Request';
-import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
+import MessageTransferRequest from '../../models/Request';
+import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
  * This class handles stake request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<Request> {
+export default class StakeRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
   /* Storage */
 
-  private readonly requestRepository: RequestRepository;
+  private readonly requestRepository: MessageTransferRequestRepository;
 
   private readonly gatewayAddress: string;
 
   public constructor(
-    requestRepository: RequestRepository,
+    requestRepository: MessageTransferRequestRepository,
     gatewayAddress: string,
   ) {
     super();
@@ -69,14 +69,14 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
    * @return Array of instances of Request objects for stake.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Request[]> {
+  public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
     Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
-    const models: Request[] = await Promise.all(transactions
+    const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
         transaction.gateway,
       ))
       .map(
-        async (transaction): Promise<Request> => {
+        async (transaction): Promise<MessageTransferRequest> => {
           const { stakeRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
@@ -96,7 +96,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
             stakeRequest.messageHash = '';
             return stakeRequest;
           }
-          return new Request(
+          return new MessageTransferRequest(
             stakeRequestHash,
             RequestType.Stake,
             blockNumber,
