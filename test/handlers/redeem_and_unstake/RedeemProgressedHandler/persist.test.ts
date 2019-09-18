@@ -55,11 +55,36 @@ describe('ProgressRedeem.persist()', () => {
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message state if current status is not undeclared or declared', async () => {
+  it('should not change message state if current status is already progressed', async () => {
+    const save = sinon.stub();
+
+    const existingMessageWithProgressedStatus = new Message(web3utils.keccak256('1'));
+    existingMessageWithProgressedStatus.sourceStatus = MessageStatus.Progressed;
+    const mockedRepository = sinon.createStubInstance(MessageRepository,
+      {
+        save: save as any,
+        get: Promise.resolve(existingMessageWithProgressedStatus),
+      });
+    const handler = new RedeemProgressedHandler(mockedRepository as any);
+
+    const models = await handler.persist(transactions);
+
+    const expectedModel = new Message(
+      transactions[0]._messageHash,
+    );
+    expectedModel.sourceStatus = existingMessageWithProgressedStatus.sourceStatus;
+    expectedModel.secret = transactions[0]._unlockSecret;
+
+    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
+    SpyAssert.assert(save, 1, [[expectedModel]]);
+    SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+  });
+
+  it('should not change message state if current status is not undeclared/declared', async () => {
     const save = sinon.stub();
 
     const existingMessageWithNonUpdatableStatus = new Message(web3utils.keccak256('1'));
-    existingMessageWithNonUpdatableStatus.sourceStatus = MessageStatus.Progressed;
+    existingMessageWithNonUpdatableStatus.sourceStatus = MessageStatus.RevocationDeclared;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
         save: save as any,
