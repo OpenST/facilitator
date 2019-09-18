@@ -41,7 +41,7 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     existingMessageRecord.direction = direction;
 
     sinonMessageRepositoryMock = sinon.createStubInstance(MessageRepository, {
-      save: saveStub,
+      save: Promise.resolve(saveStub),
       get: Promise.resolve(existingMessageRecord),
     });
 
@@ -68,7 +68,7 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     );
 
     assert.deepStrictEqual(models[0], outputMessage);
-    SpyAssert.assert(saveStub, 1, [[outputMessage]]);
+    SpyAssert.assert(sinonMessageRepositoryMock.save, 1, [[outputMessage]]);
   });
 
   it('should persist successfully when target status is undefined', async (): Promise<void> => {
@@ -85,14 +85,14 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     );
 
     assert.deepStrictEqual(models[0], outputMessage);
-    SpyAssert.assert(saveStub, 1, [[outputMessage]]);
+    SpyAssert.assert(sinonMessageRepositoryMock.save, 1, [[outputMessage]]);
   });
 
   it('should create new entry when message is not present', async (): Promise<void> => {
     const save = sinon.stub();
 
     const mockMessageRepo = sinon.createStubInstance(MessageRepository, {
-      save: save as any,
+      save: Promise.resolve(save as any),
       get: Promise.resolve(null),
     });
     const handler = new RedeemntentConfirmedHandler(mockMessageRepo as any);
@@ -124,7 +124,7 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     );
 
     assert.deepStrictEqual(models[0], outputMessage);
-    SpyAssert.assert(save, 1, [[outputMessage]]);
+    SpyAssert.assert(mockMessageRepo.save, 1, [[outputMessage]]);
   });
 
   it('should not change message record if message target status is not Undeclared',
@@ -142,6 +142,6 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
       );
       outputMessage.targetStatus = existingMessageRecord.targetStatus;
       assert.deepStrictEqual(models[0], outputMessage);
-      SpyAssert.assert(saveStub, 1, [[outputMessage]]);
+      SpyAssert.assert(sinonMessageRepositoryMock.save, 1, [[outputMessage]]);
     });
 });
