@@ -2,7 +2,7 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 
-import StakeRequest from '../../../src/models/StakeRequest';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
@@ -13,14 +13,14 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('StakeRequestRepository::getByMessageHash', (): void => {
+describe('MessageTransferRequestRepository::getByMessageHash', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of StakeRequest by messageHash.', async (): Promise<void> => {
+  it('Checks retrieval of MessageTransferRequest by messageHash.', async (): Promise<void> => {
     const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
     const message = StubData.messageAttributes(
       messageHash,
@@ -31,38 +31,38 @@ describe('StakeRequestRepository::getByMessageHash', (): void => {
       message,
     );
 
-    const stakeRequest = StubData.getAStakeRequest('stakeRequestHash');
-    stakeRequest.messageHash = messageHash;
+    const request = StubData.getAStakeRequest('requestHash');
+    request.messageHash = messageHash;
 
-    await config.repos.stakeRequestRepository.save(
-      stakeRequest,
+    await config.repos.messageTransferRequestRepository.save(
+      request,
     );
 
-    const stakeRequestOutput = await config.repos.stakeRequestRepository.getByMessageHash(
+    const requestOutput = await config.repos.messageTransferRequestRepository.getByMessageHash(
       messageHash,
     );
 
     assert.notStrictEqual(
-      stakeRequestOutput,
+      requestOutput,
       null,
-      'Stake request should exists as it has been just created.',
+      'Stake/Redeem request should exists as it has been just created.',
     );
 
     Util.checkInputAgainstOutput(
-      stakeRequest,
-      stakeRequestOutput as StakeRequest,
+      request,
+      requestOutput as MessageTransferRequest,
     );
   });
 
-  it('Checks retrieval of non-existing StakeRequest by messageHash.', async (): Promise<void> => {
-    const stakeRequest = await config.repos.stakeRequestRepository.getByMessageHash(
+  it('Checks retrieval of non-existing MessageTransferRequest by messageHash.', async (): Promise<void> => {
+    const request = await config.repos.messageTransferRequestRepository.getByMessageHash(
       'nonExistingMessageHash',
     );
 
     assert.strictEqual(
-      stakeRequest,
+      request,
       null,
-      'Stake request with \'nonExistingMessageHash\' does not exist.',
+      'MessageTransferRequest with \'nonExistingMessageHash\' does not exist.',
     );
   });
 });

@@ -5,15 +5,17 @@ import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 import Gateway from '../../src/models/Gateway';
 import Message from '../../src/models/Message';
-import StakeRequest from '../../src/models/StakeRequest';
+import MessageTransferRequest from '../../src/models/MessageTransferRequest';
 import { GatewayType } from '../../src/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../src/repositories/MessageRepository';
+import { RequestType } from '../../src/repositories/MessageTransferRequestRepository';
 
 export default class StubData {
-  public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
+  public static getAStakeRequest = (stakeRequestHash: string): MessageTransferRequest => new MessageTransferRequest(
     stakeRequestHash,
+    RequestType.Stake,
     new BigNumber('10'),
     new BigNumber('1'),
     'beneficiary',
@@ -22,7 +24,7 @@ export default class StubData {
     new BigNumber('4'),
     'gateway',
     'staker',
-    'stakerProxy',
+    'senderProxy',
   );
 
   public static auxiliaryChainRecord(

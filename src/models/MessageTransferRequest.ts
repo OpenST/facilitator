@@ -20,8 +20,13 @@ import BigNumber from 'bignumber.js';
 
 import Comparable from '../observer/Comparable';
 
-export default class StakeRequest extends Comparable<StakeRequest> {
-  public stakeRequestHash: string;
+/**
+ * It represents MessageTransferRequest model object. It stores stake and redeem requests.
+ */
+export default class MessageTransferRequest extends Comparable<MessageTransferRequest> {
+  public requestHash: string;
+
+  public requestType: string;
 
   public blockNumber: BigNumber;
 
@@ -37,9 +42,9 @@ export default class StakeRequest extends Comparable<StakeRequest> {
 
   public gateway?: string;
 
-  public staker?: string;
+  public sender?: string;
 
-  public stakerProxy?: string;
+  public senderProxy?: string;
 
   public messageHash?: string;
 
@@ -48,7 +53,8 @@ export default class StakeRequest extends Comparable<StakeRequest> {
   public updatedAt?: Date;
 
   public constructor(
-    stakeRequestHash: string,
+    requestHash: string,
+    requestType: string,
     blockNumber: BigNumber,
     amount?: BigNumber,
     beneficiary?: string,
@@ -56,35 +62,36 @@ export default class StakeRequest extends Comparable<StakeRequest> {
     gasLimit?: BigNumber,
     nonce?: BigNumber,
     gateway?: string,
-    staker?: string,
-    stakerProxy?: string,
+    sender?: string,
+    senderProxy?: string,
     messageHash?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
     super();
 
-    this.stakeRequestHash = stakeRequestHash;
+    this.requestHash = requestHash;
+    this.requestType = requestType;
     this.amount = amount;
     this.beneficiary = beneficiary;
     this.gasPrice = gasPrice;
     this.gasLimit = gasLimit;
     this.nonce = nonce;
     this.gateway = gateway;
-    this.staker = staker;
-    this.stakerProxy = stakerProxy;
+    this.sender = sender;
+    this.senderProxy = senderProxy;
     this.blockNumber = blockNumber;
     this.messageHash = messageHash;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  public compareTo(other: StakeRequest): number {
-    if (this.stakeRequestHash > other.stakeRequestHash) {
+  public compareTo(other: MessageTransferRequest): number {
+    if (this.requestHash > other.requestHash) {
       return 1;
     }
 
-    if (this.stakeRequestHash < other.stakeRequestHash) {
+    if (this.requestHash < other.requestHash) {
       return -1;
     }
 
