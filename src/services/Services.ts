@@ -30,7 +30,8 @@ export default class Services {
    * @param acceptStakeRequestService Instance of accept stake request service.
    * @param proveGatewayService Instance of prove gateway service.
    * @param confirmStakeIntentService Instance of confirm stake intent service.
-   * @param stakeProgressService Instance of progress service.
+   * @param stakeProgressService Instance of stake progress service.
+   * @param redeemProgressService Instance of redeem progress service.
    * @param proveCoGatewayService Instance of prove cogateway service.
    */
   private constructor(

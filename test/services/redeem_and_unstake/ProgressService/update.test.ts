@@ -6,7 +6,7 @@ import { interacts } from '@openst/mosaic-contracts';
 import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../../../../src/Constants';
 import Message from '../../../../src/models/Message';
 import GatewayRepository from '../../../../src/repositories/GatewayRepository';
-import { MessageStatus } from '../../../../src/repositories/MessageRepository';
+import {MessageStatus, MessageType} from '../../../../src/repositories/MessageRepository';
 import ProgressService from '../../../../src/services/redeem_and_unstake/ProgressService';
 import Utils from '../../../../src/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
@@ -17,15 +17,15 @@ describe('ProgressService.update()', () => {
   let gatewaySpy: any;
   let progressRedeemSpy: any;
   let progressUnstakeSpy: any;
-  let utilsSpy: any;
+  let utilsSendTxSpy: any;
   let gatewayRepository: any;
   let eip20CoGatewayMockObject: any;
   let progressService: ProgressService;
   let message: any;
   const originWeb3 = new Web3(null);
   const auxiliaryWeb3 = new Web3(null);
-  const originWorkerAddress = '0xA1e801AbF4288a38FfFEa3084C826B810c5d5294';
-  const auxiliaryWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
+  const originWorkerAddress = '0x0000000000000000000000000000000000000010';
+  const auxiliaryWorkerAddress = '0x0000000000000000000000000000000000000011';
   const gatewayAddress = '0x0000000000000000000000000000000000000002';
   const progressRedeemRawTx = 'progressRedeemRawTx';
   const progressUnstakeRawTx = 'progressUnstakeRawTx';
@@ -82,7 +82,7 @@ describe('ProgressService.update()', () => {
       sinon.fake.returns(eip20GatewayMockObject as any),
     );
 
-    utilsSpy = sinon.replace(
+    utilsSendTxSpy = sinon.replace(
       Utils,
       'sendTransaction',
       sinon.fake.resolves(fakeTransactionHash),
@@ -92,6 +92,7 @@ describe('ProgressService.update()', () => {
     message.gatewayAddress = coGatewayAddress;
     message.messageHash = '0x4223A868';
     message.secret = '0x123AAF';
+    message.type = MessageType.Redeem;
     message.isValidSecret.callsFake(() => true);
   });
 
@@ -113,7 +114,7 @@ describe('ProgressService.update()', () => {
     );
 
     SpyAssert.assert(
-      utilsSpy,
+      utilsSendTxSpy,
       2,
       [
         [
@@ -170,7 +171,7 @@ describe('ProgressService.update()', () => {
     );
 
     SpyAssert.assert(
-      utilsSpy,
+      utilsSendTxSpy,
       0,
       [
         [
@@ -227,7 +228,7 @@ describe('ProgressService.update()', () => {
     );
 
     SpyAssert.assert(
-      utilsSpy,
+      utilsSendTxSpy,
       0,
       [
         [
@@ -270,7 +271,7 @@ describe('ProgressService.update()', () => {
     sinon.restore();
   });
 
-  it('should not progress on origin and auxiliary when secret is not valid', async () => {
+  it('should not progress on origin and auxiliary when secret is invalid', async () => {
     message.sourceStatus = MessageStatus.Declared;
     message.targetStatus = MessageStatus.Declared;
 
@@ -284,7 +285,64 @@ describe('ProgressService.update()', () => {
     );
 
     SpyAssert.assert(
-      utilsSpy,
+      utilsSendTxSpy,
+      0,
+      [
+        [
+          progressRedeemRawTx,
+          { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
+          auxiliaryWeb3,
+        ],
+        [
+          progressUnstakeRawTx,
+          { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress },
+          originWeb3,
+        ],
+      ],
+    );
+
+    SpyAssert.assert(
+      progressRedeemSpy,
+      0,
+      [[message.messageHash, message.secret]],
+    );
+
+    SpyAssert.assert(
+      progressUnstakeSpy,
+      0,
+      [[message.messageHash, message.secret]],
+    );
+
+    SpyAssert.assert(
+      coGatewaySpy,
+      0,
+      [[auxiliaryWeb3, coGatewayAddress]],
+    );
+
+    SpyAssert.assert(
+      gatewaySpy,
+      0,
+      [[originWeb3, gatewayAddress]],
+    );
+
+    sinon.restore();
+  });
+
+  it('should not progress on origin and auxiliary when message type is not redeem', async () => {
+    message.sourceStatus = MessageStatus.Declared;
+    message.targetStatus = MessageStatus.Declared;
+    message.type = MessageType.Stake;
+
+    await progressService.update([message]);
+
+    SpyAssert.assert(
+      gatewayRepository.get,
+      0,
+      [[coGatewayAddress]],
+    );
+
+    SpyAssert.assert(
+      utilsSendTxSpy,
       0,
       [
         [

@@ -8,7 +8,7 @@ import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
 import GatewayRepository from '../../repositories/GatewayRepository';
-import { MessageStatus } from '../../repositories/MessageRepository';
+import {MessageStatus, MessageType} from '../../repositories/MessageRepository';
 import Utils from '../../Utils';
 
 /**
@@ -59,6 +59,7 @@ export default class ProgressService {
     Logger.debug('Progress service invoked');
 
     const progressPromises = messages
+      .filter(message => message.type === MessageType.Redeem)
       .filter(message => message.isValidSecret())
       .map(async (message) => {
         Logger.debug(`Progressing message hash ${message.messageHash}`);
@@ -97,8 +98,6 @@ export default class ProgressService {
       from: this.auxWorkerAddress,
       gasPrice: AUXILIARY_GAS_PRICE,
     };
-
-    assert(message.secret !== undefined, 'message secret is undefined');
 
     const rawTx = eip20CoGateway.methods.progressRedeem(
       message.messageHash,
