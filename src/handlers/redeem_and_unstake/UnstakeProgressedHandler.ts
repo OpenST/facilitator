@@ -46,7 +46,7 @@ export default class UnstakeProgressedHandler extends ContractEntityHandler<Mess
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    const models: Message[] = await Promise.all(transactions.map(
+    const messages: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This can happen if progress transaction is done by some other facilitator.
@@ -70,15 +70,19 @@ export default class UnstakeProgressedHandler extends ContractEntityHandler<Mess
     ));
 
     const savePromises = [];
-    for (let i = 0; i < models.length; i += 1) {
+    for (let i = 0; i < messages.length; i += 1) {
       Logger.debug(
-        `Changing target status to progress unstake for message hash ${models[i].messageHash}`,
+        `Changing target status to progress unstake for message hash ${messages[i].messageHash}`,
       );
-      savePromises.push(this.messageRepository.save(models[i]));
+      savePromises.push(
+        this.messageRepository.save(messages[i]).catch((error) => {
+          Logger.error('UnstakeProgressedHandler Error', error);
+        }),
+      );
     }
 
     await Promise.all(savePromises);
 
-    return models;
+    return messages;
   }
 }

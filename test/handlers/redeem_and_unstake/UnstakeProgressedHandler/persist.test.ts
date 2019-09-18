@@ -50,11 +50,11 @@ describe('ProgressUnstake.persist()', () => {
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message if current status is not undeclared or declared', async () => {
+  it('should not change message record if current status is already progressed', async () => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
-    existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
+    existingMessageWithProgressStatus.targetStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
         save: save as any,
@@ -67,7 +67,32 @@ describe('ProgressUnstake.persist()', () => {
     const expectedModel = new Message(
       transactions[0]._messageHash,
     );
-    expectedModel.sourceStatus = MessageStatus.Progressed;
+    expectedModel.targetStatus = MessageStatus.Progressed;
+    expectedModel.secret = transactions[0]._unlockSecret;
+
+    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
+    SpyAssert.assert(save, 1, [[expectedModel]]);
+    SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+  });
+
+  it('should not change message record if current status is not Declared', async () => {
+    const save = sinon.stub();
+
+    const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
+    existingMessageWithProgressStatus.sourceStatus = MessageStatus.RevocationDeclared;
+    const mockedRepository = sinon.createStubInstance(MessageRepository,
+      {
+        save: save as any,
+        get: Promise.resolve(existingMessageWithProgressStatus),
+      });
+    const handler = new UnstakeProgressedHandler(mockedRepository as any);
+
+    const models = await handler.persist(transactions);
+
+    const expectedModel = new Message(
+      transactions[0]._messageHash,
+    );
+    expectedModel.sourceStatus = existingMessageWithProgressStatus.sourceStatus;
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
