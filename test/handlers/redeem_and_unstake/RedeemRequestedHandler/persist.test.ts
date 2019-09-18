@@ -28,7 +28,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
 
     const saveStub = sinon.stub();
     const sinonMock = sinon.createStubInstance(MessageTransferRequestRepository, {
-      save: saveStub as any,
+      save: Promise.resolve(saveStub as any),
     });
     const handler = new RedeemRequestedHandler(
       sinonMock as any,
@@ -57,7 +57,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       'Number of models must be equal to transactions',
     );
     assert.deepStrictEqual(models[0], redeemRequest);
-    SpyAssert.assert(saveStub, 1, [[redeemRequest]]);
+    SpyAssert.assert(sinonMock.save, 1, [[redeemRequest]]);
     sinon.restore();
   });
 

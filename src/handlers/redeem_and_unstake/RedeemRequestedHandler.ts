@@ -115,7 +115,11 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
       Logger.debug(`Saving redeem request for hash ${models[i].requestHash}`);
-      savePromises.push(this.messageTransferRequestRepository.save(models[i]));
+      savePromises.push(
+        this.messageTransferRequestRepository.save(models[i]).catch((error) => {
+          Logger.error('RedeemRequestedHandler Error', error);
+        })
+      );
     }
 
     await Promise.all(savePromises);
