@@ -13,14 +13,14 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('RequestRepository::getByMessageHash', (): void => {
+describe('MessageTransferRequestRepository::getByMessageHash', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of Request by messageHash.', async (): Promise<void> => {
+  it('Checks retrieval of MessageTransferRequest by messageHash.', async (): Promise<void> => {
     const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
     const message = StubData.messageAttributes(
       messageHash,
@@ -34,11 +34,11 @@ describe('RequestRepository::getByMessageHash', (): void => {
     const request = StubData.getAStakeRequest('requestHash');
     request.messageHash = messageHash;
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       request,
     );
 
-    const requestOutput = await config.repos.requestRepository.getByMessageHash(
+    const requestOutput = await config.repos.messageTransferRequestRepository.getByMessageHash(
       messageHash,
     );
 
@@ -54,15 +54,15 @@ describe('RequestRepository::getByMessageHash', (): void => {
     );
   });
 
-  it('Checks retrieval of non-existing Request by messageHash.', async (): Promise<void> => {
-    const request = await config.repos.requestRepository.getByMessageHash(
+  it('Checks retrieval of non-existing MessageTransferRequest by messageHash.', async (): Promise<void> => {
+    const request = await config.repos.messageTransferRequestRepository.getByMessageHash(
       'nonExistingMessageHash',
     );
 
     assert.strictEqual(
       request,
       null,
-      'Request with \'nonExistingMessageHash\' does not exist.',
+      'MessageTransferRequest with \'nonExistingMessageHash\' does not exist.',
     );
   });
 });

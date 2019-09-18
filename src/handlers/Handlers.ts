@@ -58,7 +58,7 @@ export default class Handlers {
     return {
       // Stake and Mint Handlers
       stakeRequesteds: new StakeRequestedHandler(
-        repos.requestRepository,
+        repos.messageTransferRequestRepository,
         gatewayAddress,
       ),
       stateRootAvailables: new StateRootAvailableHandler(
@@ -75,7 +75,7 @@ export default class Handlers {
 
       // Redeem and Unstake Handlers
       redeemRequesteds: new RedeemRequestedHandler(
-        repos.requestRepository,
+        repos.messageTransferRequestRepository,
         cogatewayAddress,
       ),
       redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),

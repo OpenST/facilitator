@@ -46,7 +46,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
 
   private web3: Web3;
 
-  private requestRepository: MessageTransferRequestRepository;
+  private messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private messageRepository: MessageRepository;
 
@@ -66,7 +66,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     super();
 
     this.web3 = web3;
-    this.requestRepository = repos.requestRepository;
+    this.messageTransferRequestRepository = repos.messageTransferRequestRepository;
     this.messageRepository = repos.messageRepository;
     this.ostComposerAddress = ostComposerAddress;
     this.originWorkerAddress = originWorkerAddress;
@@ -241,8 +241,8 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
       blockNumber,
     );
     stakeRequest.messageHash = messageHash;
-    Logger.debug('Updating message hash in stake request repository');
-    await this.requestRepository.save(stakeRequest);
+    Logger.debug('Updating message hash in message transfer request repository');
+    await this.messageTransferRequestRepository.save(stakeRequest);
   }
 
   private calculateMessageHash(stakeRequest: MessageTransferRequest, hashLock: string): string {

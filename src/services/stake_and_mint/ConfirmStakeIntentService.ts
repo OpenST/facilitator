@@ -24,7 +24,7 @@ import Utils from '../../Utils';
 export default class ConfirmStakeIntentService extends Observer<Gateway> {
   private messageRepository: MessageRepository;
 
-  private requestRepository: MessageTransferRequestRepository;
+  private messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private originWeb3: Web3;
 
@@ -40,7 +40,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    * Constructor of class ConfirmStakeIntentService;
    *
    * @param messageRepository Instance of message repository.
-   * @param requestRepository Instance of stake request repository.
+   * @param messageTransferRequestRepository Instance of message transfer request repository.
    * @param originWeb3 Instance of origin chain web3.
    * @param auxiliaryWeb3 Instance of auxiliary chain web3.
    * @param gatewayAddress Origin chain gateway address.
@@ -49,7 +49,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
    */
   public constructor(
     messageRepository: MessageRepository,
-    requestRepository: MessageTransferRequestRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
     gatewayAddress: string,
@@ -59,7 +59,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     super();
 
     this.messageRepository = messageRepository;
-    this.requestRepository = requestRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.gatewayAddress = gatewayAddress;
@@ -162,7 +162,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       gasPrice: AUXILIARY_GAS_PRICE,
     };
 
-    const stakeRequest = await this.requestRepository.getByMessageHash(message.messageHash);
+    const stakeRequest = await this.messageTransferRequestRepository.getByMessageHash(message.messageHash);
     assert(stakeRequest !== null);
 
     assert(message.nonce !== undefined);

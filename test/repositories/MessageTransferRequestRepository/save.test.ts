@@ -29,7 +29,7 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('RequestRepository::save', (): void => {
+describe('MessageTransferRequestRepository::save', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
@@ -51,7 +51,7 @@ describe('RequestRepository::save', (): void => {
       'senderProxy',
     );
 
-    const requestResponse = await config.repos.requestRepository.save(
+    const requestResponse = await config.repos.messageTransferRequestRepository.save(
       requestInput,
     );
 
@@ -60,7 +60,7 @@ describe('RequestRepository::save', (): void => {
       requestResponse,
     );
 
-    const requestOutput = await config.repos.requestRepository.get(
+    const requestOutput = await config.repos.messageTransferRequestRepository.get(
       requestInput.requestHash,
     );
 
@@ -91,7 +91,7 @@ describe('RequestRepository::save', (): void => {
       'senderProxy',
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       requestInput,
     );
 
@@ -103,7 +103,7 @@ describe('RequestRepository::save', (): void => {
     requestUpdateInput.amount = new BigNumber('11');
     requestUpdateInput.gateway = 'gatewayUpdated';
 
-    const requestResponse = await config.repos.requestRepository.save(
+    const requestResponse = await config.repos.messageTransferRequestRepository.save(
       requestUpdateInput,
     );
 
@@ -125,7 +125,7 @@ describe('RequestRepository::save', (): void => {
       requestResponse,
     );
 
-    const requestOutput = await config.repos.requestRepository.get(
+    const requestOutput = await config.repos.messageTransferRequestRepository.get(
       requestInput.requestHash,
     );
 

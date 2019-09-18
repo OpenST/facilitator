@@ -28,22 +28,22 @@ import Utils from '../../Utils';
 export default class RedeemRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
   /* Storage */
 
-  private readonly requestRepository: MessageTransferRequestRepository;
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private readonly cogatewayAddress: string;
 
   public constructor(
-    requestRepository: MessageTransferRequestRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
     cogatewayAddress: string,
   ) {
     super();
 
-    this.requestRepository = requestRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
     this.cogatewayAddress = cogatewayAddress;
   }
 
   /**
-   * This method parse redeemRequest transaction and returns Request model object.
+   * This method parse redeemRequest transaction and returns MessageTransferRequest model object.
    *
    * Note: Forking Handling
    *
@@ -66,7 +66,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of Request objects.
+   * @return Array of instances of MessageTransferRequest objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
@@ -88,7 +88,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
           const senderProxy = Utils.toChecksumAddress(transaction.redeemerProxy);
           const blockNumber = new BigNumber(transaction.blockNumber);
 
-          const redeemRequest = await this.requestRepository.get(redeemRequestHash);
+          const redeemRequest = await this.messageTransferRequestRepository.get(redeemRequestHash);
           if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
             Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
@@ -115,7 +115,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
       Logger.debug(`Saving redeem request for hash ${models[i].requestHash}`);
-      savePromises.push(this.requestRepository.save(models[i]));
+      savePromises.push(this.messageTransferRequestRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);

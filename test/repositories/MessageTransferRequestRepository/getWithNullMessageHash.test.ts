@@ -36,7 +36,7 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('RequestRepository::getWithNullMessageHash', (): void => {
+describe('MessageTransferRequestRepository::getWithNullMessageHash', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
@@ -128,12 +128,12 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
 
   it('Checks that no request is returned if '
     + 'there no request with null message hash.', async (): Promise<void> => {
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithMessageHashB,
     );
 
     const requests = await config.repos
-      .requestRepository.getWithNullMessageHash();
+      .messageTransferRequestRepository.getWithNullMessageHash();
 
     assert.strictEqual(
       requests.length,
@@ -144,20 +144,20 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
 
   it('Checks that all requests '
     + 'with a null message hash are returned.', async (): Promise<void> => {
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithMessageHashB,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithNullMessageHashC,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithNullMessageHashD,
     );
 
     const requests = await config.repos
-      .requestRepository.getWithNullMessageHash();
+      .messageTransferRequestRepository.getWithNullMessageHash();
 
     assert.strictEqual(
       requests.length,
@@ -173,7 +173,7 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
     assert.notStrictEqual(
       requestOutputC,
       undefined,
-      'Request with the specified hash exists in the array.',
+      'MessageTransferRequest with the specified hash exists in the array.',
     );
 
     Util.checkInputAgainstOutput(
@@ -189,7 +189,7 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
     assert.notStrictEqual(
       requestOutputD,
       undefined,
-      'Request with the specified hash exists in the array.',
+      'MessageTransferRequest with the specified hash exists in the array.',
     );
 
     Util.checkInputAgainstOutput(

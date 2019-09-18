@@ -133,11 +133,11 @@ describe('AcceptStakeRequestService::update', (): void => {
       message,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.stakeRequestWithMessageHashB,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.stakeRequestWithNullMessageHashC,
     );
 
@@ -198,7 +198,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     sinon.restore();
   });
 
-  it('Checks that the stake request repository properly updated.', async (): Promise<void> => {
+  it('Checks that the stake message transfer request repository properly updated.', async (): Promise<void> => {
     const stakeRequests = [
       config.stakeRequestWithMessageHashB,
       config.stakeRequestWithNullMessageHashC,
@@ -206,7 +206,7 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     await config.service.update(stakeRequests);
 
-    const stakeRequestC = await config.repos.requestRepository.get(
+    const stakeRequestC = await config.repos.messageTransferRequestRepository.get(
       config.stakeRequestWithNullMessageHashC.requestHash,
     ) as MessageTransferRequest;
 
@@ -277,7 +277,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       config.fakeData.messageHash,
     ) as Message;
 
-    const stakeRequestC = await config.repos.requestRepository.get(
+    const stakeRequestC = await config.repos.messageTransferRequestRepository.get(
       config.stakeRequestWithNullMessageHashC.requestHash,
     ) as MessageTransferRequest;
 

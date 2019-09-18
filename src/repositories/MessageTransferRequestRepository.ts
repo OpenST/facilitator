@@ -195,8 +195,8 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
   }
 
   /**
-   * Returns a stake/redeem request with the specified stake/redeem request's hash or
-   * null if there is no.
+   * Returns a stake/redeem message transfer request with the specified stake/redeem request's
+   * hash or null if there is no.
    *
    * @param requestHash Request's hash to retrieve.
    *

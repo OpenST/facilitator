@@ -57,7 +57,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       getMessagesForConfirmation: Promise.resolve([message]),
     });
 
-    const requestRepository = sinon.createStubInstance(MessageTransferRequestRepository, {
+    const messageTransferRequestRepository = sinon.createStubInstance(MessageTransferRequestRepository, {
       getByMessageHash: Promise.resolve(stakeRequest),
     });
 
@@ -89,7 +89,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
 
     confirmStakeIntentService = new ConfirmStakeIntentService(
       messageRepository as any,
-      requestRepository as any,
+      messageTransferRequestRepository as any,
       originWeb3,
       auxiliaryWeb3,
       gatewayAddress,
@@ -111,7 +111,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     );
 
     SpyAssert.assert(
-      requestRepository.getByMessageHash,
+      messageTransferRequestRepository.getByMessageHash,
       1,
       [[message.messageHash]],
     );
@@ -169,7 +169,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       getMessagesForConfirmation: Promise.resolve([]),
     });
 
-    const requestRepository = sinon.createStubInstance(MessageTransferRequestRepository, {
+    const messageTransferRequestRepository = sinon.createStubInstance(MessageTransferRequestRepository, {
       getByMessageHash: Promise.resolve(null),
     });
 
@@ -202,7 +202,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
 
     confirmStakeIntentService = new ConfirmStakeIntentService(
       messageRepository as any,
-      requestRepository as any,
+      messageTransferRequestRepository as any,
       originWeb3,
       auxiliaryWeb3,
       gatewayAddress,
@@ -225,7 +225,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     );
 
     SpyAssert.assert(
-      requestRepository.getByMessageHash,
+      messageTransferRequestRepository.getByMessageHash,
       0,
       [[]],
     );
