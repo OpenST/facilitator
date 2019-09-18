@@ -7,7 +7,7 @@ import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
 import Util from './util';
-import { RequestType } from '../../../src/repositories/RequestRepository';
+import { RequestType } from '../../../src/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;

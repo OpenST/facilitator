@@ -12,10 +12,10 @@ import { MESSAGE_BOX_OFFSET, ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
-import Request from '../../models/Request';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 import Observer from '../../observer/Observer';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
-import RequestRepository from '../../repositories/RequestRepository';
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
 
 /**
@@ -24,7 +24,7 @@ import Utils from '../../Utils';
 export default class ConfirmRedeemIntentService extends Observer<Gateway> {
   private messageRepository: MessageRepository;
 
-  private requestRepository: RequestRepository;
+  private messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private originWeb3: Web3;
 
@@ -40,7 +40,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
    * Constructor of class ConfirmRedeemIntentService;
    *
    * @param messageRepository Instance of message repository.
-   * @param requestRepository Instance of request repository.
+   * @param messageTransferRequestRepository Instance of request repository.
    * @param originWeb3 Instance of origin chain web3.
    * @param auxiliaryWeb3 Instance of auxiliary chain web3.
    * @param gatewayAddress Origin chain gateway address.
@@ -49,7 +49,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
    */
   public constructor(
     messageRepository: MessageRepository,
-    requestRepository: RequestRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
     gatewayAddress: string,
@@ -59,7 +59,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     super();
 
     this.messageRepository = messageRepository;
-    this.requestRepository = requestRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.gatewayAddress = gatewayAddress;
@@ -162,21 +162,21 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
       gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    const redeemRequest = await this.requestRepository.getByMessageHash(message.messageHash);
+    const redeemRequest = await this.messageTransferRequestRepository.getByMessageHash(message.messageHash);
     assert(redeemRequest !== null);
 
     assert(message.nonce !== undefined);
     assert(message.gasPrice !== undefined);
     assert(message.gasLimit !== undefined);
     assert(message.hashLock !== undefined);
-    assert((redeemRequest as Request).beneficiary !== undefined);
-    assert((redeemRequest as Request).amount !== undefined);
+    assert((redeemRequest as MessageTransferRequest).beneficiary !== undefined);
+    assert((redeemRequest as MessageTransferRequest).amount !== undefined);
 
     const rawTx = eip20Gateway.methods.confirmRedeemIntent(
       message.sender as string,
       (message.nonce as BigNumber).toString(10),
-      (redeemRequest as Request).beneficiary as string,
-      ((redeemRequest as Request).amount as BigNumber).toString(10),
+      (redeemRequest as MessageTransferRequest).beneficiary as string,
+      ((redeemRequest as MessageTransferRequest).amount as BigNumber).toString(10),
       (message.gasPrice as BigNumber).toString(10),
       (message.gasLimit as BigNumber).toString(10),
       (message.hashLock as string),

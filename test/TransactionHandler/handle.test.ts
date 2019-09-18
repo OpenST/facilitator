@@ -6,7 +6,7 @@ import TransactionHandler from '../../src/TransactionHandler';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 import StubData from '../test_utils/StubData';
-import { RequestType } from '../../src/repositories/RequestRepository';
+import { RequestType } from '../../src/repositories/MessageTransferRequestRepository';
 
 describe('TransactionHandler.handle()', (): void => {
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
