@@ -127,7 +127,7 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     SpyAssert.assert(save, 1, [[outputMessage]]);
   });
 
-  it('should not change message state if message target state is not Undeclared',
+  it('should not change message record if message target status is not Undeclared',
     async (): Promise<void> => {
       existingMessageRecord.targetStatus = MessageStatus.RevocationDeclared;
 
