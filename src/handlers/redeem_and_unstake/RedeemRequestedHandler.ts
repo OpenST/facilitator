@@ -23,89 +23,89 @@ import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
- * This class handles stake request transactions.
+ * This class handles redeem request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
+export default class RedeemRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
   /* Storage */
 
   private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
 
-  private readonly gatewayAddress: string;
+  private readonly cogatewayAddress: string;
 
   public constructor(
     messageTransferRequestRepository: MessageTransferRequestRepository,
-    gatewayAddress: string,
+    cogatewayAddress: string,
   ) {
     super();
 
     this.messageTransferRequestRepository = messageTransferRequestRepository;
-    this.gatewayAddress = gatewayAddress;
+    this.cogatewayAddress = cogatewayAddress;
   }
 
   /**
-   * This method parse stake Request transaction and returns MessageTransferRequest model object.
+   * This method parse redeemRequest transaction and returns MessageTransferRequest model object.
    *
    * Note: Forking Handling
    *
    * - Facilitator starts by subscribing to origin and auxiliary subgraphs.
    *
-   * - On receiving first StakeRequested event/entity, entry is created in requests
-   * repository and AcceptStakeRequest service is triggered.
+   * - On receiving first RedeemRequested event/entity, entry is created in requests
+   * repository and AcceptRedeemRequest service is triggered.
    *
-   * - AcceptStakeRequest sends acceptStakeRequest transaction.
+   * - AcceptRedeemRequest service sends acceptRedeemRequest transaction.
    *
-   * - If there is no forking of requestStake transaction, acceptStakeRequest transaction will be
+   * - If there is no forking of requestRedeem transaction, acceptRedeemRequest transaction will be
    * successful.
    *
-   * - If there is forking of requestStake transaction, StakeRequested event/entity is received
-   * again. Facilitator checks the block number of new StakeRequested event. If block number is
+   * - If there is forking of requestRedeem transaction, RedeemRequested event/entity is received
+   * again. Facilitator checks the block number of new RedeemRequested event. If block number is
    * greater than requests repository block number, then message hash is updated to blank.
-   * Service sends acceptStakeRequest transaction again.
+   * acceptRedeemRequest transaction is sent again.
    *
-   * - acceptStakeRequest transaction is successful in this case also.
+   * - acceptRedeemRequest transaction is successful in this case.
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of MessageTransferRequest objects for stake.
+   * @return Array of instances of MessageTransferRequest objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
-    Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
+    Logger.info(`Persisting redeem request records for cogateway: ${this.cogatewayAddress}`);
     const models: MessageTransferRequest[] = await Promise.all(transactions
-      .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
-        transaction.gateway,
+      .filter((transaction): boolean => this.cogatewayAddress === Utils.toChecksumAddress(
+        transaction.cogateway,
       ))
       .map(
         async (transaction): Promise<MessageTransferRequest> => {
-          const { stakeRequestHash } = transaction;
+          const { redeemRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
           const gasPrice = new BigNumber(transaction.gasPrice);
           const gasLimit = new BigNumber(transaction.gasLimit);
           const nonce = new BigNumber(transaction.nonce);
-          const gateway = Utils.toChecksumAddress(transaction.gateway);
-          const sender = Utils.toChecksumAddress(transaction.staker);
-          const senderProxy = Utils.toChecksumAddress(transaction.stakerProxy);
+          const cogateway = Utils.toChecksumAddress(transaction.cogateway);
+          const sender = Utils.toChecksumAddress(transaction.redeemer);
+          const senderProxy = Utils.toChecksumAddress(transaction.redeemerProxy);
           const blockNumber = new BigNumber(transaction.blockNumber);
 
-          const stakeRequest = await this.messageTransferRequestRepository.get(stakeRequestHash);
-          if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
-            Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
-            stakeRequest.blockNumber = blockNumber;
+          const redeemRequest = await this.messageTransferRequestRepository.get(redeemRequestHash);
+          if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
+            Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
+            redeemRequest.blockNumber = blockNumber;
             // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
-            stakeRequest.messageHash = '';
-            return stakeRequest;
+            redeemRequest.messageHash = '';
+            return redeemRequest;
           }
           return new MessageTransferRequest(
-            stakeRequestHash,
-            RequestType.Stake,
+            redeemRequestHash,
+            RequestType.Redeem,
             blockNumber,
             amount,
             beneficiary,
             gasPrice,
             gasLimit,
             nonce,
-            gateway,
+            cogateway,
             sender,
             senderProxy,
           );
@@ -114,12 +114,16 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Saving stake request for hash ${models[i].requestHash}`);
-      savePromises.push(this.messageTransferRequestRepository.save(models[i]));
+      Logger.debug(`Saving redeem request for hash ${models[i].requestHash}`);
+      savePromises.push(
+        this.messageTransferRequestRepository.save(models[i]).catch((error) => {
+          Logger.error('RedeemRequestedHandler Error', error);
+        })
+      );
     }
 
     await Promise.all(savePromises);
-    Logger.debug('Stake requests saved');
+    Logger.debug('Redeem requests saved');
     return models;
   }
 }
