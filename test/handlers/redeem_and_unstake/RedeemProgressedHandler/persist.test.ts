@@ -58,12 +58,12 @@ describe('ProgressRedeem.persist()', () => {
   it('should not change message state if current status is not undeclared or declared', async () => {
     const save = sinon.stub();
 
-    const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
-    existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
+    const existingMessageWithNonUpdatableStatus = new Message(web3utils.keccak256('1'));
+    existingMessageWithNonUpdatableStatus.sourceStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
         save: save as any,
-        get: Promise.resolve(existingMessageWithProgressStatus),
+        get: Promise.resolve(existingMessageWithNonUpdatableStatus),
       });
     const handler = new RedeemProgressedHandler(mockedRepository as any);
 
@@ -72,7 +72,7 @@ describe('ProgressRedeem.persist()', () => {
     const expectedModel = new Message(
       transactions[0]._messageHash,
     );
-    expectedModel.sourceStatus = MessageStatus.Progressed;
+    expectedModel.sourceStatus = existingMessageWithNonUpdatableStatus.sourceStatus;
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
