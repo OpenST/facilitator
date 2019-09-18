@@ -19,7 +19,7 @@ import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import Message from '../../../src/models/Message';
-import MessageTransferRequest from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../src/repositories/MessageRepository';

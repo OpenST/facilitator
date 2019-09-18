@@ -20,7 +20,7 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
-import MessageTransferRequest from '../models/Request';
+import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import { MessageModel } from './MessageRepository';

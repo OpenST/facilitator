@@ -12,7 +12,7 @@ import { AUXILIARY_GAS_PRICE, MESSAGE_BOX_OFFSET } from '../../Constants';
 import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
-import MessageTransferRequest from '../../models/Request';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 import Observer from '../../observer/Observer';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';

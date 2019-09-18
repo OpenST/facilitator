@@ -16,7 +16,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import MessageTransferRequest from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import assert from '../../test_utils/assert';
 
 const Util = {

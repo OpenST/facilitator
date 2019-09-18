@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
 import StakeRequestedHandler from '../../../../src/handlers/stake_and_mint/StakeRequestedHandler';
-import MessageTransferRequest from '../../../../src/models/Request';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
 import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';

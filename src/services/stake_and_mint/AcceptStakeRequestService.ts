@@ -28,7 +28,7 @@ import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types
 import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Message from '../../models/Message';
-import MessageTransferRequest from '../../models/Request';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 import Observer from '../../observer/Observer';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,

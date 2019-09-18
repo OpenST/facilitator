@@ -8,7 +8,7 @@ import { ProofGenerator } from '@openst/mosaic-proof';
 import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
 import Gateway from '../../../../src/models/Gateway';
 import Message from '../../../../src/models/Message';
-import MessageTransferRequest from '../../../../src/models/Request';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
 import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
 import MessageTransferRequestRepository from '../../../../src/repositories/MessageTransferRequestRepository';
 import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/ConfirmStakeIntentService';

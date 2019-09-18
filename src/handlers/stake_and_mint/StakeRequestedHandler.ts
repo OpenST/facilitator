@@ -17,7 +17,7 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import MessageTransferRequest from '../../models/Request';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';

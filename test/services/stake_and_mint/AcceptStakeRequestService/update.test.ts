@@ -26,7 +26,7 @@ import { interacts } from '@openst/mosaic-contracts';
 
 import { ORIGIN_GAS_PRICE } from '../../../../src/Constants';
 import Message from '../../../../src/models/Message';
-import MessageTransferRequest from '../../../../src/models/Request';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../../src/repositories/MessageRepository';
