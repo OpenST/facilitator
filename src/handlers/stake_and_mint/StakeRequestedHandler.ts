@@ -17,33 +17,33 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import Request from '../../models/Request';
-import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
+import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
  * This class handles stake request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<Request> {
+export default class StakeRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
   /* Storage */
 
-  private readonly requestRepository: RequestRepository;
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private readonly gatewayAddress: string;
 
   public constructor(
-    requestRepository: RequestRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
     gatewayAddress: string,
   ) {
     super();
 
-    this.requestRepository = requestRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
     this.gatewayAddress = gatewayAddress;
   }
 
   /**
-   * This method parse stake Request transaction and returns Request model object.
+   * This method parse stake Request transaction and returns MessageTransferRequest model object.
    *
    * Note: Forking Handling
    *
@@ -66,17 +66,17 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of Request objects for stake.
+   * @return Array of instances of MessageTransferRequest objects for stake.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Request[]> {
+  public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
     Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
-    const models: Request[] = await Promise.all(transactions
+    const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
         transaction.gateway,
       ))
       .map(
-        async (transaction): Promise<Request> => {
+        async (transaction): Promise<MessageTransferRequest> => {
           const { stakeRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
@@ -88,7 +88,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
           const senderProxy = Utils.toChecksumAddress(transaction.stakerProxy);
           const blockNumber = new BigNumber(transaction.blockNumber);
 
-          const stakeRequest = await this.requestRepository.get(stakeRequestHash);
+          const stakeRequest = await this.messageTransferRequestRepository.get(stakeRequestHash);
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
@@ -96,7 +96,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
             stakeRequest.messageHash = '';
             return stakeRequest;
           }
-          return new Request(
+          return new MessageTransferRequest(
             stakeRequestHash,
             RequestType.Stake,
             blockNumber,
@@ -115,7 +115,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Request
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
       Logger.debug(`Saving stake request for hash ${models[i].requestHash}`);
-      savePromises.push(this.requestRepository.save(models[i]));
+      savePromises.push(this.messageTransferRequestRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);

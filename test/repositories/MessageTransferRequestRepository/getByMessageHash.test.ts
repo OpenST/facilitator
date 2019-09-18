@@ -2,7 +2,7 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 
-import Request from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import StubData from '../../test_utils/StubData';
@@ -14,14 +14,14 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('RequestRepository::getByMessageHash', (): void => {
+describe('MessageTransferRequestRepository::getByMessageHash', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of Request by messageHash.', async (): Promise<void> => {
+  it('Checks retrieval of MessageTransferRequest by messageHash.', async (): Promise<void> => {
     const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
     const message = StubData.messageAttributes(
       messageHash,
@@ -35,11 +35,11 @@ describe('RequestRepository::getByMessageHash', (): void => {
     const request = StubData.getARequest('requestHash', RequestType.Stake);
     request.messageHash = messageHash;
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       request,
     );
 
-    const requestOutput = await config.repos.requestRepository.getByMessageHash(
+    const requestOutput = await config.repos.messageTransferRequestRepository.getByMessageHash(
       messageHash,
     );
 
@@ -51,19 +51,19 @@ describe('RequestRepository::getByMessageHash', (): void => {
 
     Util.checkInputAgainstOutput(
       request,
-      requestOutput as Request,
+      requestOutput as MessageTransferRequest,
     );
   });
 
-  it('Checks retrieval of non-existing Request by messageHash.', async (): Promise<void> => {
-    const request = await config.repos.requestRepository.getByMessageHash(
+  it('Checks retrieval of non-existing MessageTransferRequest by messageHash.', async (): Promise<void> => {
+    const request = await config.repos.messageTransferRequestRepository.getByMessageHash(
       'nonExistingMessageHash',
     );
 
     assert.strictEqual(
       request,
       null,
-      'Request with \'nonExistingMessageHash\' does not exist.',
+      'MessageTransferRequest with \'nonExistingMessageHash\' does not exist.',
     );
   });
 });

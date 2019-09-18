@@ -12,14 +12,14 @@ import { MessageStatus, MessageType } from '../../repositories/MessageRepository
 import Utils from '../../Utils';
 
 /**
- * It facilitates progress staking and minting.
+ * It facilitates progress redeeming and unstaking.
  */
 export default class ProgressService {
   private originWeb3: Web3;
 
   private auxiliaryWeb3: Web3;
 
-  private gatewayAddress: string;
+  private coGatewayAddress: string;
 
   private originWorkerAddress: string;
 
@@ -31,7 +31,7 @@ export default class ProgressService {
    * @param gatewayRepository Instance of GatewayRepository.
    * @param originWeb3 Origin chain web3 object.
    * @param auxiliaryWeb3 Auxiliary chain web3 object.
-   * @param gatewayAddress Address of gateway contract.
+   * @param coGatewayAddress Address of coGateway contract.
    * @param originWorkerAddress Origin chain worker address.
    * @param auxWorkerAddress Auxiliary chain worker address.
    */
@@ -39,14 +39,14 @@ export default class ProgressService {
     gatewayRepository: GatewayRepository,
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
-    gatewayAddress: string,
+    coGatewayAddress: string,
     originWorkerAddress: string,
     auxWorkerAddress: string,
   ) {
     this.gatewayRepository = gatewayRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
-    this.gatewayAddress = gatewayAddress;
+    this.coGatewayAddress = coGatewayAddress;
     this.originWorkerAddress = originWorkerAddress;
     this.auxWorkerAddress = auxWorkerAddress;
   }
@@ -59,20 +59,22 @@ export default class ProgressService {
     Logger.debug('Progress service invoked');
 
     const progressPromises = messages
-      .filter(message => (message.type === MessageType.Stake) && message.isValidSecret())
+      .filter(message => (message.type === MessageType.Redeem) && message.isValidSecret())
       .map(async (message) => {
         Logger.debug(`Progressing message hash ${message.messageHash}`);
         if (message.sourceStatus === MessageStatus.Declared
         && message.targetStatus === MessageStatus.Declared
         ) {
-          Logger.debug(`Performing progress stake and progress mint for message hash ${message.messageHash}`);
-          const progressStakePromise = this.progressStake(message).catch((error) => {
-            Logger.error('progressStakeError', error);
+          Logger.debug(
+            `Performing progress redeem and progress unstake for message hash:${message.messageHash}`,
+          );
+          const progressRedeemPromise = this.progressRedeem(message).catch((error) => {
+            Logger.error('progressRedeemError', error);
           });
-          const progressMintPromise = this.progressMint(message).catch((error) => {
-            Logger.error('progressMintError', error);
+          const progressUnstakePromise = this.progressUnstake(message).catch((error) => {
+            Logger.error('progressUnstakeError', error);
           });
-          return Promise.all([progressStakePromise, progressMintPromise]);
+          return Promise.all([progressRedeemPromise, progressUnstakePromise]);
         }
         return Promise.resolve();
       });
@@ -81,24 +83,22 @@ export default class ProgressService {
   }
 
   /**
-   * This is a private method which uses mosaic-contracts to make progressStake transaction.
+   * This is a private method which uses mosaic-contracts to make progressRedeem transaction.
    * @param message Message model object.
    * @returns Promise which resolves to transaction hash.
    */
-  private async progressStake(message: Message): Promise<string> {
-    Logger.debug(`Sending progress stake transaction for message ${message.messageHash}`);
-    const eip20Gateway = interacts.getEIP20Gateway(
-      this.originWeb3,
-      this.gatewayAddress,
+  private async progressRedeem(message: Message): Promise<string> {
+    Logger.debug(`Sending progress redeem transaction for message ${message.messageHash}`);
+    const eip20CoGateway = interacts.getEIP20CoGateway(
+      this.auxiliaryWeb3,
+      this.coGatewayAddress,
     );
     const transactionOptions = {
-      from: this.originWorkerAddress,
-      gasPrice: ORIGIN_GAS_PRICE,
+      from: this.auxWorkerAddress,
+      gasPrice: AUXILIARY_GAS_PRICE,
     };
 
-    assert(message.secret !== undefined, 'message secret is undefined');
-
-    const rawTx = eip20Gateway.methods.progressStake(
+    const rawTx = eip20CoGateway.methods.progressRedeem(
       message.messageHash,
       message.secret!,
     );
@@ -106,20 +106,20 @@ export default class ProgressService {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
-      this.originWeb3,
+      this.auxiliaryWeb3,
     ).then((txHash) => {
-      Logger.debug(`Progress stake transaction hash ${txHash} for message ${message.messageHash}`);
+      Logger.debug(`Progress redeem transaction hash ${txHash} for message ${message.messageHash}`);
       return txHash;
     });
   }
 
   /**
-   * This is a private method which uses mosaic-contracts to make progressMint transaction.
+   * This is a private method which uses mosaic-contracts to make progressUnstake transaction.
    * @param message Message model object.
    * @returns Promise which resolves to transaction hash.
    */
-  private async progressMint(message: Message): Promise<string> {
-    Logger.debug(`Sending progress mint transaction for message ${message.messageHash}`);
+  private async progressUnstake(message: Message): Promise<string> {
+    Logger.debug(`Sending progress unstake transaction for message ${message.messageHash}`);
 
     assert(message.gatewayAddress !== undefined);
 
@@ -130,17 +130,17 @@ export default class ProgressService {
       `Gateway record not found for gateway: ${message.gatewayAddress}`,
     );
 
-    const eip20CoGateway = interacts.getEIP20CoGateway(
-      this.auxiliaryWeb3,
+    const eip20Gateway = interacts.getEIP20Gateway(
+      this.originWeb3,
       (gatewayRecord as Gateway).remoteGatewayAddress,
     );
 
     const transactionOptions = {
-      from: this.auxWorkerAddress,
-      gasPrice: AUXILIARY_GAS_PRICE,
+      from: this.originWorkerAddress,
+      gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    const rawTx = eip20CoGateway.methods.progressMint(
+    const rawTx = eip20Gateway.methods.progressUnstake(
       message.messageHash,
       message.secret!,
     );
@@ -148,9 +148,9 @@ export default class ProgressService {
     return Utils.sendTransaction(
       rawTx,
       transactionOptions,
-      this.auxiliaryWeb3,
+      this.originWeb3,
     ).then((txHash) => {
-      Logger.debug(`Progress mint transaction hash ${txHash} for message ${message.messageHash}`);
+      Logger.debug(`Progress unstake transaction hash ${txHash} for message ${message.messageHash}`);
       return txHash;
     });
   }

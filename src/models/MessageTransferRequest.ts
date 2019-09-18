@@ -20,7 +20,10 @@ import BigNumber from 'bignumber.js';
 
 import Comparable from '../observer/Comparable';
 
-export default class Request extends Comparable<Request> {
+/**
+ * It represents MessageTransferRequest model object. It stores stake and redeem requests.
+ */
+export default class MessageTransferRequest extends Comparable<MessageTransferRequest> {
   public requestHash: string;
 
   public requestType: string;
@@ -83,7 +86,7 @@ export default class Request extends Comparable<Request> {
     this.updatedAt = updatedAt;
   }
 
-  public compareTo(other: Request): number {
+  public compareTo(other: MessageTransferRequest): number {
     if (this.requestHash > other.requestHash) {
       return 1;
     }

@@ -5,16 +5,16 @@ import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 import Gateway from '../../src/models/Gateway';
 import Message from '../../src/models/Message';
-import Request from '../../src/models/Request';
+import MessageTransferRequest from '../../src/models/MessageTransferRequest';
 import { GatewayType } from '../../src/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../src/repositories/MessageRepository';
-import { RequestType } from '../../src/repositories/RequestRepository';
+import { RequestType } from '../../src/repositories/MessageTransferRequestRepository';
 
 export default class StubData {
-  public static getARequest = (requestHash: string, requestType = RequestType.Stake): Request =>
-    new Request(
+  public static getAStakeRequest = (requestHash: string, requestType = RequestType.Stake): MessageTransferRequest =>
+    new MessageTransferRequest(
     requestHash,
     requestType,
     new BigNumber('10'),

@@ -17,33 +17,33 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import Request from '../../models/Request';
-import RequestRepository, { RequestType } from '../../repositories/RequestRepository';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
+import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
  * This class handles redeem request transactions.
  */
-export default class RedeemRequestedHandler extends ContractEntityHandler<Request> {
+export default class RedeemRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
   /* Storage */
 
-  private readonly requestRepository: RequestRepository;
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private readonly cogatewayAddress: string;
 
   public constructor(
-    requestRepository: RequestRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
     cogatewayAddress: string,
   ) {
     super();
 
-    this.requestRepository = requestRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
     this.cogatewayAddress = cogatewayAddress;
   }
 
   /**
-   * This method parse redeemRequest transaction and returns Request model object.
+   * This method parse redeemRequest transaction and returns MessageTransferRequest model object.
    *
    * Note: Forking Handling
    *
@@ -66,17 +66,17 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of Request objects.
+   * @return Array of instances of MessageTransferRequest objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Request[]> {
+  public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
     Logger.info(`Persisting redeem request records for cogateway: ${this.cogatewayAddress}`);
-    const models: Request[] = await Promise.all(transactions
+    const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.cogatewayAddress === Utils.toChecksumAddress(
         transaction.cogateway,
       ))
       .map(
-        async (transaction): Promise<Request> => {
+        async (transaction): Promise<MessageTransferRequest> => {
           const { redeemRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
@@ -88,7 +88,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
           const senderProxy = Utils.toChecksumAddress(transaction.redeemerProxy);
           const blockNumber = new BigNumber(transaction.blockNumber);
 
-          const redeemRequest = await this.requestRepository.get(redeemRequestHash);
+          const redeemRequest = await this.messageTransferRequestRepository.get(redeemRequestHash);
           if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
             Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
@@ -96,7 +96,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
             redeemRequest.messageHash = '';
             return redeemRequest;
           }
-          return new Request(
+          return new MessageTransferRequest(
             redeemRequestHash,
             RequestType.Redeem,
             blockNumber,
@@ -115,7 +115,11 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Reques
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
       Logger.debug(`Saving redeem request for hash ${models[i].requestHash}`);
-      savePromises.push(this.requestRepository.save(models[i]));
+      savePromises.push(
+        this.messageTransferRequestRepository.save(models[i]).catch((error) => {
+          Logger.error('RedeemRequestedHandler Error', error);
+        })
+      );
     }
 
     await Promise.all(savePromises);

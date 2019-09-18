@@ -19,28 +19,28 @@ import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import Message from '../../../src/models/Message';
-import Request from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../src/repositories/MessageRepository';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
-import { RequestType } from '../../../src/repositories/RequestRepository';
+import { RequestType } from '../../../src/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;
-  requestWithMessageHashB: Request;
-  requestWithNullMessageHashC: Request;
-  requestWithNullMessageHashD: Request;
+  requestWithMessageHashB: MessageTransferRequest;
+  requestWithNullMessageHashC: MessageTransferRequest;
+  requestWithNullMessageHashD: MessageTransferRequest;
 }
 let config: TestConfigInterface;
 
-describe('RequestRepository::getWithNullMessageHash', (): void => {
+describe('MessageTransferRequestRepository::getWithNullMessageHash', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
-      requestWithMessageHashB: new Request(
+      requestWithMessageHashB: new MessageTransferRequest(
         'requestHashB',
         RequestType.Stake,
         new BigNumber('10'),
@@ -54,7 +54,7 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
         'senderProxyB',
         'messageHashB',
       ),
-      requestWithNullMessageHashC: new Request(
+      requestWithNullMessageHashC: new MessageTransferRequest(
         'requestHashC',
         RequestType.Stake,
         new BigNumber('10'),
@@ -67,7 +67,7 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
         'senderC',
         'senderC',
       ),
-      requestWithNullMessageHashD: new Request(
+      requestWithNullMessageHashD: new MessageTransferRequest(
         'requestHashD',
         RequestType.Stake,
         new BigNumber('10'),
@@ -128,12 +128,12 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
 
   it('Checks that no request is returned if '
     + 'there no request with null message hash.', async (): Promise<void> => {
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithMessageHashB,
     );
 
     const requests = await config.repos
-      .requestRepository.getWithNullMessageHash();
+      .messageTransferRequestRepository.getWithNullMessageHash();
 
     assert.strictEqual(
       requests.length,
@@ -144,20 +144,20 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
 
   it('Checks that all requests '
     + 'with a null message hash are returned.', async (): Promise<void> => {
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithMessageHashB,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithNullMessageHashC,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.requestWithNullMessageHashD,
     );
 
     const requests = await config.repos
-      .requestRepository.getWithNullMessageHash();
+      .messageTransferRequestRepository.getWithNullMessageHash();
 
     assert.strictEqual(
       requests.length,
@@ -166,35 +166,35 @@ describe('RequestRepository::getWithNullMessageHash', (): void => {
     );
 
     const requestOutputC = requests.find(
-      (s: Request): boolean => s.requestHash
+      (s: MessageTransferRequest): boolean => s.requestHash
         === config.requestWithNullMessageHashC.requestHash,
     );
 
     assert.notStrictEqual(
       requestOutputC,
       undefined,
-      'Request with the specified hash exists in the array.',
+      'MessageTransferRequest with the specified hash exists in the array.',
     );
 
     Util.checkInputAgainstOutput(
       config.requestWithNullMessageHashC,
-      requestOutputC as Request,
+      requestOutputC as MessageTransferRequest,
     );
 
     const requestOutputD = requests.find(
-      (s: Request): boolean => s.requestHash
+      (s: MessageTransferRequest): boolean => s.requestHash
         === config.requestWithNullMessageHashD.requestHash,
     );
 
     assert.notStrictEqual(
       requestOutputD,
       undefined,
-      'Request with the specified hash exists in the array.',
+      'MessageTransferRequest with the specified hash exists in the array.',
     );
 
     Util.checkInputAgainstOutput(
       config.requestWithNullMessageHashD,
-      requestOutputD as Request,
+      requestOutputD as MessageTransferRequest,
     );
   });
 });

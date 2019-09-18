@@ -26,7 +26,7 @@ import { interacts } from '@openst/mosaic-contracts';
 
 import { ORIGIN_GAS_PRICE } from '../../../../src/Constants';
 import Message from '../../../../src/models/Message';
-import Request from '../../../../src/models/Request';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../../src/repositories/MessageRepository';
@@ -35,13 +35,13 @@ import AcceptStakeRequestService from '../../../../src/services/stake_and_mint/A
 import Utils from '../../../../src/Utils';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
-import { RequestType } from '../../../../src/repositories/RequestRepository';
+import { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {
   web3: Web3;
   repos: Repositories;
-  stakeRequestWithMessageHashB: Request;
-  stakeRequestWithNullMessageHashC: Request;
+  stakeRequestWithMessageHashB: MessageTransferRequest;
+  stakeRequestWithNullMessageHashC: MessageTransferRequest;
   service: AcceptStakeRequestService;
   fakeData: {
     secret: string;
@@ -71,7 +71,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     config = {
       web3,
       repos,
-      stakeRequestWithMessageHashB: new Request(
+      stakeRequestWithMessageHashB: new MessageTransferRequest(
         'stakeRequestHashB',
         RequestType.Stake,
         new BigNumber('10'),
@@ -85,7 +85,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         '0x0000000000000000000000000000000000000004',
         'messageHashB',
       ),
-      stakeRequestWithNullMessageHashC: new Request(
+      stakeRequestWithNullMessageHashC: new MessageTransferRequest(
         'stakeRequestHashC',
         RequestType.Stake,
         new BigNumber('10'),
@@ -133,11 +133,11 @@ describe('AcceptStakeRequestService::update', (): void => {
       message,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.stakeRequestWithMessageHashB,
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       config.stakeRequestWithNullMessageHashC,
     );
 
@@ -198,7 +198,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     sinon.restore();
   });
 
-  it('Checks that the stake request repository properly updated.', async (): Promise<void> => {
+  it('Checks that the stake message transfer request repository properly updated.', async (): Promise<void> => {
     const stakeRequests = [
       config.stakeRequestWithMessageHashB,
       config.stakeRequestWithNullMessageHashC,
@@ -206,9 +206,9 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     await config.service.update(stakeRequests);
 
-    const stakeRequestC = await config.repos.requestRepository.get(
+    const stakeRequestC = await config.repos.messageTransferRequestRepository.get(
       config.stakeRequestWithNullMessageHashC.requestHash,
-    ) as Request;
+    ) as MessageTransferRequest;
 
     const messageC = await config.repos.messageRepository.get(
       config.fakeData.messageHash,
@@ -277,9 +277,9 @@ describe('AcceptStakeRequestService::update', (): void => {
       config.fakeData.messageHash,
     ) as Message;
 
-    const stakeRequestC = await config.repos.requestRepository.get(
+    const stakeRequestC = await config.repos.messageTransferRequestRepository.get(
       config.stakeRequestWithNullMessageHashC.requestHash,
-    ) as Request;
+    ) as MessageTransferRequest;
 
     assert.notStrictEqual(
       messageC,

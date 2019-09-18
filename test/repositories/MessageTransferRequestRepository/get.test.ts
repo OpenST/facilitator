@@ -18,26 +18,26 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 
-import Request from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
-import { RequestType } from '../../../src/repositories/RequestRepository';
+import { RequestType } from '../../../src/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;
 }
 let config: TestConfigInterface;
 
-describe('RequestRepository::get', (): void => {
+describe('MessageTransferRequestRepository::get', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of an existing stake/redeem request.', async (): Promise<void> => {
-    const requestInput = new Request(
+  it('Checks retrieval of an existing message transfer stake/redeem request.', async (): Promise<void> => {
+    const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
       new BigNumber('10'),
@@ -51,11 +51,11 @@ describe('RequestRepository::get', (): void => {
       'senderProxy',
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       requestInput,
     );
 
-    const requestOutput = await config.repos.requestRepository.get(
+    const requestOutput = await config.repos.messageTransferRequestRepository.get(
       requestInput.requestHash,
     );
 
@@ -67,12 +67,12 @@ describe('RequestRepository::get', (): void => {
 
     Util.checkInputAgainstOutput(
       requestInput,
-      requestOutput as Request,
+      requestOutput as MessageTransferRequest,
     );
   });
 
   it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const request = await config.repos.requestRepository.get(
+    const request = await config.repos.messageTransferRequestRepository.get(
       'nonExistingHash',
     );
 

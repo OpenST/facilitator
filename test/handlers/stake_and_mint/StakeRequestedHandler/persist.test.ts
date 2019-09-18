@@ -3,8 +3,8 @@ import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
 import StakeRequestedHandler from '../../../../src/handlers/stake_and_mint/StakeRequestedHandler';
-import Request from '../../../../src/models/Request';
-import RequestRepository, { RequestType } from '../../../../src/repositories/RequestRepository';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
+import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 
@@ -27,7 +27,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     }];
 
     const saveStub = sinon.stub();
-    const sinonMock = sinon.createStubInstance(RequestRepository, {
+    const sinonMock = sinon.createStubInstance(MessageTransferRequestRepository, {
       save: saveStub as any,
     });
     const handler = new StakeRequestedHandler(
@@ -37,7 +37,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
 
     const models = await handler.persist(transactions);
 
-    const stakeRequest = new Request(
+    const stakeRequest = new MessageTransferRequest(
       transactions[0].stakeRequestHash,
       RequestType.Stake,
       new BigNumber(transactions[0].amount),
@@ -77,7 +77,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       stakerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '10',
     }];
-    const stakeRequest = new Request(
+    const stakeRequest = new MessageTransferRequest(
       transactions1[0].stakeRequestHash,
       RequestType.Stake,
       new BigNumber(transactions1[0].blockNumber),
@@ -106,7 +106,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       blockNumber: '11',
     }];
 
-    const stakeRequestWithNullMessageHash = new Request(
+    const stakeRequestWithNullMessageHash = new MessageTransferRequest(
       transactions2[0].stakeRequestHash,
       RequestType.Stake,
       new BigNumber(transactions2[0].blockNumber),
@@ -121,7 +121,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       '', // Message hash should be blank string.
     );
 
-    const sinonMock = sinon.createStubInstance(RequestRepository, {});
+    const sinonMock = sinon.createStubInstance(MessageTransferRequestRepository, {});
     const handler = new StakeRequestedHandler(sinonMock as any, gatewayAddress);
 
     sinonMock.get.returns(Promise.resolve(null));

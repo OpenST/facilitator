@@ -20,18 +20,18 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
-import Request from '../models/Request';
+import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import { MessageModel } from './MessageRepository';
 
 
 /**
- * An interface, that represents a row for requests(stake/redeem) table.
+ * An interface, that represents a row for MessageTransferRequest(stake/redeem) table.
  *
  * See: http://docs.sequelizejs.com/manual/typescript.html#usage
  */
-class RequestModel extends Model {
+class MessageTransferRequestModel extends Model {
   public readonly requestHash!: string;
 
   public readonly requestType!: RequestType;
@@ -70,12 +70,12 @@ export enum RequestType {
 }
 
 /**
- * Stores instances of Request.
+ * Stores instances of MessageTransferRequest.
  *
- * Class enables creation, update and retrieval of Request objects.
+ * Class enables creation, update and retrieval of MessageTransferRequest objects for stake/redeem.
  * On construction it initializes underlying database model.
  */
-export default class RequestRepository extends Subject<Request> {
+export default class MessageTransferRequestRepository extends Subject<MessageTransferRequest> {
   /* Public Functions */
 
   /**
@@ -85,7 +85,7 @@ export default class RequestRepository extends Subject<Request> {
   public constructor(initOptions: InitOptions) {
     super();
 
-    RequestModel.init(
+    MessageTransferRequestModel.init(
       {
         requestHash: {
           type: DataTypes.STRING,
@@ -156,12 +156,12 @@ export default class RequestRepository extends Subject<Request> {
       },
       {
         ...initOptions,
-        modelName: 'Request',
+        modelName: 'MessageTransferRequest',
         tableName: 'requests',
       },
     );
 
-    RequestModel.belongsTo(MessageModel, { foreignKey: 'messageHash' });
+    MessageTransferRequestModel.belongsTo(MessageModel, { foreignKey: 'messageHash' });
   }
 
   /**
@@ -175,9 +175,9 @@ export default class RequestRepository extends Subject<Request> {
    *
    * @returns Newly created or updated stake/redeem request object (with all saved fields).
    */
-  public async save(request: Request): Promise<Request> {
+  public async save(request: MessageTransferRequest): Promise<MessageTransferRequest> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(request);
-    await RequestModel.upsert(
+    await MessageTransferRequestModel.upsert(
       request,
       {
         fields: definedOwnProps,
@@ -189,21 +189,21 @@ export default class RequestRepository extends Subject<Request> {
       `Updated request not found for requestHash: ${request.requestHash}`,
     );
 
-    this.newUpdate(requestOutput as Request);
+    this.newUpdate(requestOutput as MessageTransferRequest);
 
-    return requestOutput as Request;
+    return requestOutput as MessageTransferRequest;
   }
 
   /**
-   * Returns a stake/redeem request with the specified stake/redeem request's hash or
-   * null if there is no.
+   * Returns a stake/redeem message transfer request with the specified stake/redeem request's
+   * hash or null if there is no.
    *
    * @param requestHash Request's hash to retrieve.
    *
-   * @return Request object if exists, otherwise null.
+   * @return MessageTransferRequest object if exists, otherwise null.
    */
-  public async get(requestHash: string): Promise<Request | null> {
-    const requestModel = await RequestModel.findOne({
+  public async get(requestHash: string): Promise<MessageTransferRequest | null> {
+    const requestModel = await MessageTransferRequestModel.findOne({
       where: {
         requestHash,
       },
@@ -222,10 +222,10 @@ export default class RequestRepository extends Subject<Request> {
    *
    * @param messageHash Message hash to be used for retrieval.
    *
-   * @return Request object if exists, otherwise null.
+   * @return MessageTransferRequest object if exists, otherwise null.
    */
-  public async getByMessageHash(messageHash: string): Promise<Request | null> {
-    const requestModel = await RequestModel.findOne({
+  public async getByMessageHash(messageHash: string): Promise<MessageTransferRequest | null> {
+    const requestModel = await MessageTransferRequestModel.findOne({
       where: {
         messageHash,
       },
@@ -241,8 +241,8 @@ export default class RequestRepository extends Subject<Request> {
   /**
    * Gets all stake/redeem requests with a null message hash.
    */
-  public async getWithNullMessageHash(): Promise<Request[]> {
-    const requestModels: RequestModel[] = await RequestModel.findAll({
+  public async getWithNullMessageHash(): Promise<MessageTransferRequest[]> {
+    const requestModels: MessageTransferRequestModel[] = await MessageTransferRequestModel.findAll({
       where: {
         messageHash: null,
       },
@@ -254,8 +254,8 @@ export default class RequestRepository extends Subject<Request> {
 
   /* Private Functions */
 
-  private convertToRequest(requestModel: RequestModel): Request {
-    const request = new Request(
+  private convertToRequest(requestModel: MessageTransferRequestModel): MessageTransferRequest {
+    const request = new MessageTransferRequest(
       requestModel.requestHash,
       requestModel.requestType,
       new BigNumber(requestModel.blockNumber),
@@ -276,8 +276,8 @@ export default class RequestRepository extends Subject<Request> {
     return request;
   }
 
-  private convertToRequests(requestModels: RequestModel[]): Request[] {
-    const requests: Request[] = [];
+  private convertToRequests(requestModels: MessageTransferRequestModel[]): MessageTransferRequest[] {
+    const requests: MessageTransferRequest[] = [];
     for (let i = 0; i < requestModels.length; i += 1) {
       requests.push(this.convertToRequest(requestModels[i]));
     }

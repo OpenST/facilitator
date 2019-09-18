@@ -3,8 +3,8 @@ import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
 import RedeemRequestedHandler from '../../../../src/handlers/redeem_and_unstake/RedeemRequestedHandler';
-import Request from '../../../../src/models/Request';
-import RequestRepository, { RequestType } from '../../../../src/repositories/RequestRepository';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
+import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 
@@ -27,8 +27,8 @@ describe('RedeemRequestedHandler.persist()', (): void => {
     }];
 
     const saveStub = sinon.stub();
-    const sinonMock = sinon.createStubInstance(RequestRepository, {
-      save: saveStub as any,
+    const sinonMock = sinon.createStubInstance(MessageTransferRequestRepository, {
+      save: Promise.resolve(saveStub as any),
     });
     const handler = new RedeemRequestedHandler(
       sinonMock as any,
@@ -37,7 +37,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
 
     const models = await handler.persist(transactions);
 
-    const redeemRequest = new Request(
+    const redeemRequest = new MessageTransferRequest(
       transactions[0].redeemRequestHash,
       RequestType.Redeem,
       new BigNumber(transactions[0].amount),
@@ -57,11 +57,11 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       'Number of models must be equal to transactions',
     );
     assert.deepStrictEqual(models[0], redeemRequest);
-    SpyAssert.assert(saveStub, 1, [[redeemRequest]]);
+    SpyAssert.assert(sinonMock.save, 1, [[redeemRequest]]);
     sinon.restore();
   });
 
-  it('should update messageHash(null) and blockNumber when redeemRequest '
+  it('should update blockNumber and messageHash with blank when redeemRequest '
     + 'is already present', async (): Promise<void> => {
     const cogatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions1 = [{
@@ -77,7 +77,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       redeemerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '10',
     }];
-    const redeemRequest = new Request(
+    const redeemRequest = new MessageTransferRequest(
       transactions1[0].redeemRequestHash,
       RequestType.Redeem,
       new BigNumber(transactions1[0].blockNumber),
@@ -106,7 +106,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       blockNumber: '11',
     }];
 
-    const redeemRequestWithNullMessageHash = new Request(
+    const redeemRequestWithNullMessageHash = new MessageTransferRequest(
       transactions2[0].redeemRequestHash,
       RequestType.Redeem,
       new BigNumber(transactions2[0].blockNumber),
@@ -121,7 +121,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       '', // Message hash should be blank.
     );
 
-    const sinonMock = sinon.createStubInstance(RequestRepository, {});
+    const sinonMock = sinon.createStubInstance(MessageTransferRequestRepository, {});
     const handler = new RedeemRequestedHandler(sinonMock as any, cogatewayAddress);
 
     sinonMock.get.returns(Promise.resolve(null));

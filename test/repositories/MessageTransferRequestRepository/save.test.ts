@@ -18,18 +18,18 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 
-import Request from '../../../src/models/Request';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
-import { RequestType } from '../../../src/repositories/RequestRepository';
+import { RequestType } from '../../../src/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;
 }
 let config: TestConfigInterface;
 
-describe('RequestRepository::save', (): void => {
+describe('MessageTransferRequestRepository::save', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
@@ -37,7 +37,7 @@ describe('RequestRepository::save', (): void => {
   });
 
   it('Checks creation.', async (): Promise<void> => {
-    const requestInput = new Request(
+    const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
       new BigNumber('10'),
@@ -51,7 +51,7 @@ describe('RequestRepository::save', (): void => {
       'senderProxy',
     );
 
-    const requestResponse = await config.repos.requestRepository.save(
+    const requestResponse = await config.repos.messageTransferRequestRepository.save(
       requestInput,
     );
 
@@ -60,7 +60,7 @@ describe('RequestRepository::save', (): void => {
       requestResponse,
     );
 
-    const requestOutput = await config.repos.requestRepository.get(
+    const requestOutput = await config.repos.messageTransferRequestRepository.get(
       requestInput.requestHash,
     );
 
@@ -72,12 +72,12 @@ describe('RequestRepository::save', (): void => {
 
     Util.checkInputAgainstOutput(
       requestInput,
-      requestOutput as Request,
+      requestOutput as MessageTransferRequest,
     );
   });
 
   it('Checks update.', async (): Promise<void> => {
-    const requestInput = new Request(
+    const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
       new BigNumber('10'),
@@ -91,11 +91,11 @@ describe('RequestRepository::save', (): void => {
       'senderProxy',
     );
 
-    await config.repos.requestRepository.save(
+    await config.repos.messageTransferRequestRepository.save(
       requestInput,
     );
 
-    const requestUpdateInput = new Request(
+    const requestUpdateInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
       requestInput.blockNumber,
@@ -103,12 +103,12 @@ describe('RequestRepository::save', (): void => {
     requestUpdateInput.amount = new BigNumber('11');
     requestUpdateInput.gateway = 'gatewayUpdated';
 
-    const requestResponse = await config.repos.requestRepository.save(
+    const requestResponse = await config.repos.messageTransferRequestRepository.save(
       requestUpdateInput,
     );
 
     Util.checkInputAgainstOutput(
-      new Request(
+      new MessageTransferRequest(
         requestInput.requestHash,
         RequestType.Stake,
         requestInput.blockNumber,
@@ -125,7 +125,7 @@ describe('RequestRepository::save', (): void => {
       requestResponse,
     );
 
-    const requestOutput = await config.repos.requestRepository.get(
+    const requestOutput = await config.repos.messageTransferRequestRepository.get(
       requestInput.requestHash,
     );
 
@@ -136,7 +136,7 @@ describe('RequestRepository::save', (): void => {
     );
 
     Util.checkInputAgainstOutput(
-      new Request(
+      new MessageTransferRequest(
         requestInput.requestHash,
         RequestType.Stake,
         requestInput.blockNumber,
@@ -150,7 +150,7 @@ describe('RequestRepository::save', (): void => {
         requestUpdateInput.senderProxy,
         requestInput.messageHash,
       ),
-      requestOutput as Request,
+      requestOutput as MessageTransferRequest,
     );
   });
 });
