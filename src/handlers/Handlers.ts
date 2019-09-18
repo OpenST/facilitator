@@ -22,10 +22,10 @@ import StakeIntentDeclaredHandler from './stake_and_mint/StakeIntentDeclaredHand
 import StakeProgressedHandler from './stake_and_mint/StakeProgressedHandler';
 import StakeRequestedHandler from './stake_and_mint/StakeRequestedHandler';
 import StakeIntentConfirmedHandler from './stake_and_mint/StakeIntentConfirmedHandler';
+import RedeemRequestedHandler from './redeem_and_unstake/RedeemRequestedHandler';
 import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
 import RedeemIntentConfirmedHandler from './redeem_and_unstake/RedeemIntentConfirmedHandler';
 import RedeemProgressedHandler from './redeem_and_unstake/RedeemProgressedHandler';
-
 
 export default class Handlers {
   /**
@@ -35,12 +35,14 @@ export default class Handlers {
    * @param repos Repository container.
    * @param auxChainId ID of auxiliary chain.
    * @param gatewayAddress Origin chain gateway address.
+   * @param cogatewayAddress Auxiliary chain cogateway address.
    * @return Different kinds of transaction handlers.
    */
   public static create(
     repos: Repositories,
     auxChainId: number,
     gatewayAddress: string,
+    cogatewayAddress: string,
   ): {
       stakeRequesteds: StakeRequestedHandler;
       stateRootAvailables: StateRootAvailableHandler;
@@ -49,6 +51,7 @@ export default class Handlers {
       stakeProgresseds: StakeProgressedHandler;
       mintProgresseds: MintProgressedHandler;
       stakeIntentConfirmeds: StakeIntentConfirmedHandler;
+      redeemRequesteds: RedeemRequestedHandler;
       redeemIntentDeclareds: RedeemIntentDeclaredHandler;
       redeemIntentConfirmeds: RedeemIntentConfirmedHandler;
       redeemProgresseds: RedeemProgressedHandler;
@@ -56,7 +59,7 @@ export default class Handlers {
     return {
       // Stake and Mint Handlers
       stakeRequesteds: new StakeRequestedHandler(
-        repos.stakeRequestRepository,
+        repos.messageTransferRequestRepository,
         gatewayAddress,
       ),
       stateRootAvailables: new StateRootAvailableHandler(
@@ -72,6 +75,10 @@ export default class Handlers {
       mintProgresseds: new MintProgressedHandler(repos.messageRepository),
 
       // Redeem and Unstake Handlers
+      redeemRequesteds: new RedeemRequestedHandler(
+        repos.messageTransferRequestRepository,
+        cogatewayAddress,
+      ),
       redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),
       redeemIntentConfirmeds: new RedeemIntentConfirmedHandler(repos.messageRepository),
       redeemProgresseds: new RedeemProgressedHandler(repos.messageRepository),

@@ -77,7 +77,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
    * If a contract entity does not exist, it creates, otherwise updates.
    *
    * Function ignores (does not set to null) undefined (optional) fields
-   * from the passed stake request object.
+   * from the passed contract entity object.
    *
    * @param contractEntity Contract entity object to update.
    *
