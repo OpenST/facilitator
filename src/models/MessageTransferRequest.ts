@@ -21,7 +21,7 @@ import BigNumber from 'bignumber.js';
 import Comparable from '../observer/Comparable';
 
 /**
- * It Represents MessageTransferRequest model object. It stores stake and redeem requests.
+ * It represents MessageTransferRequest model object. It stores stake and redeem requests.
  */
 export default class MessageTransferRequest extends Comparable<MessageTransferRequest> {
   public requestHash: string;
