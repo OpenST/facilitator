@@ -6,7 +6,7 @@ import { interacts } from '@openst/mosaic-contracts';
 import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../../../../src/Constants';
 import Message from '../../../../src/models/Message';
 import GatewayRepository from '../../../../src/repositories/GatewayRepository';
-import {MessageStatus, MessageType} from '../../../../src/repositories/MessageRepository';
+import { MessageStatus, MessageType } from '../../../../src/repositories/MessageRepository';
 import ProgressService from '../../../../src/services/redeem_and_unstake/ProgressService';
 import Utils from '../../../../src/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
