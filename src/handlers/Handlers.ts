@@ -23,7 +23,7 @@ import StakeProgressedHandler from './stake_and_mint/StakeProgressedHandler';
 import StakeRequestedHandler from './stake_and_mint/StakeRequestedHandler';
 import StakeIntentConfirmedHandler from './stake_and_mint/StakeIntentConfirmedHandler';
 import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
-import RedeemIntentConfirmedHandler from "./redeem_and_unstake/RedeemIntentConfirmedHandler";
+import RedeemIntentConfirmedHandler from './redeem_and_unstake/RedeemIntentConfirmedHandler';
 import RedeemProgressedHandler from './redeem_and_unstake/RedeemProgressedHandler';
 
 

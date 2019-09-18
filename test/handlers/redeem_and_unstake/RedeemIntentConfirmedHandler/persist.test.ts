@@ -17,8 +17,8 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
   let existingMessageRecord: Message;
   let outputMessage: Message;
   let sinonMessageRepositoryMock: any;
-  let type: MessageType = MessageType.Redeem;
-  let direction: MessageDirection = MessageDirection.AuxiliaryToOrigin;
+  const type: MessageType = MessageType.Redeem;
+  const direction: MessageDirection = MessageDirection.AuxiliaryToOrigin;
   beforeEach(async () => {
     transactions = [{
       id: '1',
@@ -126,4 +126,22 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     assert.deepStrictEqual(models[0], outputMessage);
     SpyAssert.assert(save, 1, [[outputMessage]]);
   });
+
+  it('should not change message state if message target state is not Undeclared',
+    async (): Promise<void> => {
+      existingMessageRecord.targetStatus = MessageStatus.RevocationDeclared;
+
+      const handler = new RedeemntentConfirmedHandler(sinonMessageRepositoryMock);
+
+      const models = await handler.persist(transactions);
+
+      assert.equal(
+        models.length,
+        transactions.length,
+        'Number of models must be equal to transactions',
+      );
+      outputMessage.targetStatus = existingMessageRecord.targetStatus;
+      assert.deepStrictEqual(models[0], outputMessage);
+      SpyAssert.assert(saveStub, 1, [[outputMessage]]);
+    });
 });

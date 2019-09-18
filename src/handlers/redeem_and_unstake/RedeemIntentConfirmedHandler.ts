@@ -73,7 +73,11 @@ export default class RedeemIntentConfirmedHandler extends ContractEntityHandler<
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
       Logger.debug(`Changing target status to declared for message hash ${models[i].messageHash}`);
-      savePromises.push(this.messageRepository.save(models[i]));
+      savePromises.push(
+        this.messageRepository.save(models[i]).catch((error) => {
+          Logger.error('RedeemIntentConfirmedHandler error', error);
+        }),
+      );
     }
 
     await Promise.all(savePromises);
