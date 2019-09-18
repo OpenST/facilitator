@@ -84,7 +84,8 @@ export default class Repositories {
     this.auxiliaryChainRepository.attach(services.proveGatewayService);
     this.auxiliaryChainRepository.attach(services.proveCoGatewayService);
     this.gatewayRepository.attach(services.confirmStakeIntentService);
-    this.messageRepository.attach(services.progressService);
+    this.messageRepository.attach(services.stakeProgressService);
+    this.messageRepository.attach(services.redeemProgressService);
   }
 
   /* Private Functions */
