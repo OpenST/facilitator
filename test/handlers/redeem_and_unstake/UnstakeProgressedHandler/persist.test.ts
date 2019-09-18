@@ -28,7 +28,7 @@ describe('ProgressUnstake.persist()', () => {
 
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
-        save: save as any,
+        save: Promise.resolve(save as any),
         get: Promise.resolve(null),
       });
     const handler = new UnstakeProgressedHandler(mockedRepository as any);
@@ -46,7 +46,7 @@ describe('ProgressUnstake.persist()', () => {
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
-    SpyAssert.assert(save, 1, [[expectedModel]]);
+    SpyAssert.assert(mockedRepository.save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
@@ -57,7 +57,7 @@ describe('ProgressUnstake.persist()', () => {
     existingMessageWithProgressStatus.targetStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
-        save: save as any,
+        save: Promise.resolve(save as any),
         get: Promise.resolve(existingMessageWithProgressStatus),
       });
     const handler = new UnstakeProgressedHandler(mockedRepository as any);
@@ -71,7 +71,7 @@ describe('ProgressUnstake.persist()', () => {
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
-    SpyAssert.assert(save, 1, [[expectedModel]]);
+    SpyAssert.assert(mockedRepository.save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
@@ -82,7 +82,7 @@ describe('ProgressUnstake.persist()', () => {
     existingMessageWithProgressStatus.sourceStatus = MessageStatus.RevocationDeclared;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
-        save: save as any,
+        save: Promise.resolve(save as any),
         get: Promise.resolve(existingMessageWithProgressStatus),
       });
     const handler = new UnstakeProgressedHandler(mockedRepository as any);
@@ -96,7 +96,7 @@ describe('ProgressUnstake.persist()', () => {
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
-    SpyAssert.assert(save, 1, [[expectedModel]]);
+    SpyAssert.assert(mockedRepository.save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 });
