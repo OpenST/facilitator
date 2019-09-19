@@ -26,6 +26,7 @@ describe('SeedData.populateDb()', (): void => {
   const auxiliaryChainId = 301;
   const zeroBn = new BigNumber('0');
   const ostComposerAddress = Web3Utils.toChecksumAddress('0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38');
+  const redeemPoolAddress = Web3Utils.toChecksumAddress('0x4c8ba8caecb60c67d69605a772ae1bb9a732fb39');
   const ostGatewayAddress = '0x97BA58DBE58898F2B669C56496f46F638DC322d4';
   const ostCoGatewayAddress = '0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227';
   const anchorAddress = '0xaC80704c80AB83512b48314bDfa82f79923C2Fbe';
@@ -116,12 +117,31 @@ describe('SeedData.populateDb()', (): void => {
   }
 
   /**
+   * Verifies data which was inserted for RedeemPool related events in contract_entities table.
+   */
+  async function verifyRedeemPoolRelatedContractEntities(): Promise<void> {
+    const contractEntity = new ContractEntity(
+      redeemPoolAddress,
+      EntityType.RedeemRequesteds,
+      currentTimestamp,
+    );
+    const contractEntityFromDb = await repositories.contractEntityRepository.get(
+      redeemPoolAddress,
+      EntityType.RedeemRequesteds,
+    );
+    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+  }
+
+  /**
    * Verifies data which was inserted for Gateway related events in contract_entities table.
    */
   async function verifyGatewayRelatedContractEntities(): Promise<void> {
     const eventTypes = [
       EntityType.StakeIntentDeclareds,
       EntityType.StakeProgresseds,
+      EntityType.RedeemIntentConfirmeds,
+      EntityType.UnstakeProgresseds,
+      EntityType.GatewayProvens,
     ];
     const promises = [];
     for (let i = 0; i < eventTypes.length; i += 1) {
@@ -161,6 +181,22 @@ describe('SeedData.populateDb()', (): void => {
   }
 
   /**
+   * Verifies data which was inserted for Origin Anchor related events in contract_entities table.
+   */
+  async function verifyOriginAnchorRelatedContractEntities(): Promise<void> {
+    const contractEntity = new ContractEntity(
+      anchorAddress,
+      EntityType.StateRootAvailables,
+      currentTimestamp,
+    );
+    const contractEntityFromDb = await repositories.contractEntityRepository.get(
+      anchorAddress,
+      EntityType.StateRootAvailables,
+    );
+    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+  }
+
+  /**
    * Verifies data which was inserted for CoGateway related events in contract_entities table.
    */
   async function verifyCoGatewayRelatedContractEntities(): Promise<void> {
@@ -168,6 +204,8 @@ describe('SeedData.populateDb()', (): void => {
       EntityType.StakeIntentConfirmeds,
       EntityType.MintProgresseds,
       EntityType.GatewayProvens,
+      EntityType.RedeemIntentDeclareds,
+      EntityType.RedeemProgresseds,
     ];
     const promises = [];
     for (let i = 0; i < eventTypes.length; i += 1) {
@@ -195,8 +233,10 @@ describe('SeedData.populateDb()', (): void => {
    */
   async function verifyDataInContractEntitiesTable(): Promise<void> {
     await verifyOstComposerRelatedContractEntities();
+    await verifyRedeemPoolRelatedContractEntities();
     await verifyGatewayRelatedContractEntities();
     await verifyAuxiliaryAnchorRelatedContractEntities();
+    await verifyOriginAnchorRelatedContractEntities();
     await verifyCoGatewayRelatedContractEntities();
   }
 

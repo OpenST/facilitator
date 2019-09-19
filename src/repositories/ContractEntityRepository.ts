@@ -49,13 +49,21 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
           primaryKey: true,
           type: DataTypes.ENUM({
             values: [
+              // Common
+              EntityType.StateRootAvailables,
+              EntityType.GatewayProvens,
+              // Stake & Mint
               EntityType.StakeIntentDeclareds,
               EntityType.StakeRequesteds,
-              EntityType.StateRootAvailables,
               EntityType.StakeIntentConfirmeds,
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
-              EntityType.GatewayProvens,
+              // Redeem & Unstake
+              EntityType.RedeemRequesteds,
+              EntityType.RedeemIntentDeclareds,
+              EntityType.RedeemIntentConfirmeds,
+              EntityType.RedeemProgresseds,
+              EntityType.UnstakeProgresseds,
             ],
           }),
         },
