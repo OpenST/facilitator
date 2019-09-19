@@ -53,6 +53,10 @@
         "ostEIP20CogatewayAddress": {
           "$ref": "#/definitions/Address",
           "description": "Address of cogateway contract on auxiliary chain"
+        },
+        "redeemPoolAddress": {
+          "$ref": "#/definitions/Address",
+          "description": "Address of redeem pool contract on auxiliary chain"
         }
       },
       "required": [
@@ -151,9 +155,7 @@
       "required": [
         "gatewayLibAddress",
         "merklePatriciaLibAddress",
-        "messageBusAddress",
-        "simpleTokenAddress",
-        "ostComposerAddress"
+        "messageBusAddress"
       ],
       "title": "OriginChainContractAddresses",
       "description": "Contract addresses on origin chain"

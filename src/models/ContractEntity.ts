@@ -16,6 +16,7 @@ export enum EntityType {
   StakeProgresseds = 'stakeProgresseds',
   MintProgresseds = 'mintProgresseds',
   // Redeem & Unstake entities
+  RedeemRequesteds = 'redeemRequesteds',
   RedeemIntentDeclareds = 'redeemIntentDeclareds',
   RedeemIntentConfirmeds = 'redeemIntentConfirmeds',
   RedeemProgresseds = 'redeemProgresseds',

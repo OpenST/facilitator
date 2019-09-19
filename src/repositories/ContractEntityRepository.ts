@@ -59,6 +59,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
               // Redeem & Unstake entities
+              EntityType.RedeemRequesteds,
               EntityType.RedeemIntentDeclareds,
               EntityType.RedeemIntentConfirmeds,
               EntityType.RedeemProgresseds,

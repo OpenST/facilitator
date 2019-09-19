@@ -157,6 +157,7 @@ export default class SeedData {
   private async populateContractEntityTable(): Promise<void> {
     const contractAddressEventTypesMap: Record<string, EntityType[]> = {
       [this.ostComposerAddress]: [EntityType.StakeRequesteds],
+      [this.redeemPoolAddress]: [EntityType.RedeemRequesteds],
       [this.gatewayAddress]: [
         // Stake & mint entities
         EntityType.StakeIntentDeclareds,
@@ -251,6 +252,12 @@ export default class SeedData {
   private get ostComposerAddress(): string {
     return Utils.toChecksumAddress(
       this.originChainMosaicConfig.contractAddresses.ostComposerAddress!,
+    );
+  }
+
+  private get redeemPoolAddress(): string {
+    return Utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.redeemPoolAddress!,
     );
   }
 
