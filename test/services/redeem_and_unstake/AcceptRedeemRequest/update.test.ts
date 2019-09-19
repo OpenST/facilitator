@@ -24,14 +24,14 @@ import Web3 from 'web3';
 
 import { interacts } from '@openst/mosaic-contracts';
 
-import { ORIGIN_GAS_PRICE } from '../../../../src/Constants';
+import {AUXILIARY_GAS_PRICE} from '../../../../src/Constants';
 import Message from '../../../../src/models/Message';
 import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../../src/repositories/MessageRepository';
 import Repositories from '../../../../src/repositories/Repositories';
-import AcceptStakeRequestService from '../../../../src/services/stake_and_mint/AcceptStakeRequestService';
+import AcceptRedeemRequestService from '../../../../src/services/redeem_and_unstake/AcceptRedeemRequestService';
 import Utils from '../../../../src/Utils';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
@@ -40,9 +40,9 @@ import { RequestType } from '../../../../src/repositories/MessageTransferRequest
 interface TestConfigInterface {
   web3: Web3;
   repos: Repositories;
-  stakeRequestWithMessageHashB: MessageTransferRequest;
-  stakeRequestWithNullMessageHashC: MessageTransferRequest;
-  service: AcceptStakeRequestService;
+  redeemRequestWithMessageHashB: MessageTransferRequest;
+  redeemRequestWithNullMessageHashC: MessageTransferRequest;
+  service: AcceptRedeemRequestService;
   fakeData: {
     secret: string;
     hashLock: string;
@@ -51,29 +51,31 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('AcceptStakeRequestService::update', (): void => {
+describe('AcceptRedeemRequestService::update', (): void => {
   const web3 = new Web3(null);
-  let acceptStakeRequestSpy: any;
+  let acceptRedeemRequestSpy: any;
   let interactsSpy: any;
-  const ostComposerAddress = '0x0000000000000000000000000000000000000001';
-  const originWorkerAddress = '0x0000000000000000000000000000000000000002';
+  const redeemPoolAddress = '0x0000000000000000000000000000000000000001';
+  const auxiliaryWorkerAddress = '0x0000000000000000000000000000000000000002';
   let sendTransactionSpy: any;
   const fakeTransactionHash = 'fakeTransactionHash';
+  let bountyAmount: string;
+  let someFakeCoGatewayInstance: any;
 
   beforeEach(async (): Promise<void> => {
     const repos = await Repositories.create();
-    const service = new AcceptStakeRequestService(
+    const service = new AcceptRedeemRequestService(
       repos,
       web3,
-      ostComposerAddress,
-      originWorkerAddress,
+      redeemPoolAddress,
+      auxiliaryWorkerAddress,
     );
     config = {
       web3,
       repos,
-      stakeRequestWithMessageHashB: new MessageTransferRequest(
-        'stakeRequestHashB',
-        RequestType.Stake,
+      redeemRequestWithMessageHashB: new MessageTransferRequest(
+        'redeemRequestHashB',
+        RequestType.Redeem,
         new BigNumber('10'),
         new BigNumber('11'),
         '0x0000000000000000000000000000000000000001',
@@ -85,9 +87,9 @@ describe('AcceptStakeRequestService::update', (): void => {
         '0x0000000000000000000000000000000000000004',
         'messageHashB',
       ),
-      stakeRequestWithNullMessageHashC: new MessageTransferRequest(
-        'stakeRequestHashC',
-        RequestType.Stake,
+      redeemRequestWithNullMessageHashC: new MessageTransferRequest(
+        'redeemRequestHashC',
+        RequestType.Redeem,
         new BigNumber('10'),
         new BigNumber('21'),
         '0x0000000000000000000000000000000000000011',
@@ -102,18 +104,18 @@ describe('AcceptStakeRequestService::update', (): void => {
       fakeData: {
         secret: '0x1d5b16860e7306df9e2d3ee077d6f3e3c4a4b5b22d2ae6d5adfee6a2147f529c',
         hashLock: '0xa36e17d0a9b4240af1deff571017e108d2c1a40de02d84f419113b1e1f7ad40f',
-        messageHash: '0x0f19c82aafa8d2c9c28b9ae3588422b65b32b8c7c43a54cd857cab6ef527fd45',
+        messageHash: '0x36deaf17137e7edc5e5581abe632fe6ff510f87733947ca93c229b8a495f48b8',
       },
     };
 
-    sinon.stub(AcceptStakeRequestService, 'generateSecret').returns({
+    sinon.stub(AcceptRedeemRequestService, 'generateSecret').returns({
       secret: config.fakeData.secret,
       hashLock: config.fakeData.hashLock,
     });
 
     const message = new Message(
-      config.stakeRequestWithMessageHashB.messageHash as string,
-      MessageType.Stake,
+      config.redeemRequestWithMessageHashB.messageHash as string,
+      MessageType.Redeem,
       '0x0000000000000000000000000000000000000001',
       MessageStatus.Declared,
       MessageStatus.Undeclared,
@@ -121,7 +123,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       new BigNumber('1'),
       new BigNumber('1'),
       '0x0000000000000000000000000000000000000002',
-      MessageDirection.OriginToAuxiliary,
+      MessageDirection.AuxiliaryToOrigin,
       new BigNumber('1'),
       '0x00000000000000000000000000000000000000000000000000000000000000001',
       '0x00000000000000000000000000000000000000000000000000000000000000002',
@@ -134,59 +136,46 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
 
     await config.repos.messageTransferRequestRepository.save(
-      config.stakeRequestWithMessageHashB,
+      config.redeemRequestWithMessageHashB,
     );
 
     await config.repos.messageTransferRequestRepository.save(
-      config.stakeRequestWithNullMessageHashC,
+      config.redeemRequestWithNullMessageHashC,
     );
 
-    const someFakeOSTComposerInstance = {
+    const someFakeRedeemPoolInstance = {
       methods: {
         acceptRedeemRequest: () => {},
       },
     };
 
-    const someFakeGatewayInstance = {
+    bountyAmount = '1';
+    someFakeCoGatewayInstance = {
       methods: {
         bounty: () => ({
-          call: () => '1',
-        }),
-        baseToken: () => ({
-          call: () => '123',
+          call: () => bountyAmount,
         }),
       },
     };
 
-    const someFakeEIP20Token = {
-      methods: {
-        approve: () => fakeTransactionHash,
-      },
-    };
-
-    acceptStakeRequestSpy = sinon.replace(
-      someFakeOSTComposerInstance.methods,
+    acceptRedeemRequestSpy = sinon.replace(
+      someFakeRedeemPoolInstance.methods,
       'acceptRedeemRequest',
       sinon.fake.returns(fakeTransactionHash),
     );
 
     interactsSpy = sinon.replace(
       interacts,
-      'getOSTComposer',
-      sinon.fake.returns(someFakeOSTComposerInstance),
+      'getRedeemPool',
+      sinon.fake.returns(someFakeRedeemPoolInstance),
     );
 
     sinon.replace(
       interacts,
-      'getEIP20Gateway',
-      sinon.fake.returns(someFakeGatewayInstance),
+      'getEIP20CoGateway',
+      sinon.fake.returns(someFakeCoGatewayInstance),
     );
 
-    sinon.replace(
-      interacts,
-      'getEIP20Token',
-      sinon.fake.returns(someFakeEIP20Token),
-    );
     sendTransactionSpy = sinon.replace(
       Utils,
       'sendTransaction',
@@ -198,16 +187,17 @@ describe('AcceptStakeRequestService::update', (): void => {
     sinon.restore();
   });
 
-  it('Checks that the stake message transfer request repository properly updated.', async (): Promise<void> => {
-    const stakeRequests = [
-      config.stakeRequestWithMessageHashB,
-      config.stakeRequestWithNullMessageHashC,
+  it('Checks that the redeem message transfer request repository properly updated.',
+    async (): Promise<void> => {
+    const redeemRequests = [
+      config.redeemRequestWithMessageHashB,
+      config.redeemRequestWithNullMessageHashC,
     ];
 
-    await config.service.update(stakeRequests);
+    await config.service.update(redeemRequests);
 
-    const stakeRequestC = await config.repos.messageTransferRequestRepository.get(
-      config.stakeRequestWithNullMessageHashC.requestHash,
+    const redeemRequestC = await config.repos.messageTransferRequestRepository.get(
+      config.redeemRequestWithNullMessageHashC.requestHash,
     ) as MessageTransferRequest;
 
     const messageC = await config.repos.messageRepository.get(
@@ -215,9 +205,9 @@ describe('AcceptStakeRequestService::update', (): void => {
     ) as Message;
 
     assert.notStrictEqual(
-      stakeRequestC,
+      redeemRequestC,
       null,
-      'Stake request exists in repository.',
+      'Redeem request exists in repository.',
     );
 
     // Here we check against pre-calculated message hash (using fake data).
@@ -227,58 +217,59 @@ describe('AcceptStakeRequestService::update', (): void => {
     // should be updated also. This catch (sync between message hash calculations
     // in js and contract layer) is going to be taken care by integration test.
     assert.strictEqual(
-      stakeRequestC.messageHash,
+      redeemRequestC.messageHash,
       config.fakeData.messageHash,
     );
     SpyAssert.assert(
       interactsSpy,
       1,
-      [[web3, ostComposerAddress]],
+      [[web3, redeemPoolAddress]],
     );
     SpyAssert.assert(
-      acceptStakeRequestSpy,
+      acceptRedeemRequestSpy,
       1,
       [[
-        stakeRequestC.amount!.toString(10),
-        stakeRequestC.beneficiary!,
-        stakeRequestC.gasPrice!.toString(10),
-        stakeRequestC.gasLimit!.toString(10),
-        stakeRequestC.nonce!.toString(10),
-        stakeRequestC.sender!,
-        stakeRequestC.gateway!,
+        redeemRequestC.amount!.toString(10),
+        redeemRequestC.beneficiary!,
+        redeemRequestC.gasPrice!.toString(10),
+        redeemRequestC.gasLimit!.toString(10),
+        redeemRequestC.nonce!.toString(10),
+        redeemRequestC.sender!,
+        redeemRequestC.gateway!,
         messageC.hashLock,
       ]],
     );
     SpyAssert.assert(
       sendTransactionSpy,
-      2,
+      1,
       [
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
+        [
+          fakeTransactionHash,
+          {
+            from: auxiliaryWorkerAddress,
+            gasPrice: AUXILIARY_GAS_PRICE,
+            value: bountyAmount,
+          },
+          web3,
+        ],
       ],
     );
   });
 
   it('Checks that the message repository is properly updated.', async (): Promise<void> => {
-    const stakeRequests = [
-      config.stakeRequestWithMessageHashB,
-      config.stakeRequestWithNullMessageHashC,
+    const redeemRequests = [
+      config.redeemRequestWithMessageHashB,
+      config.redeemRequestWithNullMessageHashC,
     ];
 
-    await config.service.update(stakeRequests);
+    await config.service.update(redeemRequests);
 
     const messageC = await config.repos.messageRepository.get(
       config.fakeData.messageHash,
     ) as Message;
 
-    const stakeRequestC = await config.repos.messageTransferRequestRepository.get(
-      config.stakeRequestWithNullMessageHashC.requestHash,
+    const redeemRequestC = await config.repos.messageTransferRequestRepository.get(
+      config.redeemRequestWithNullMessageHashC.requestHash,
     ) as MessageTransferRequest;
 
     assert.notStrictEqual(
@@ -289,12 +280,12 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     assert.strictEqual(
       messageC.type,
-      MessageType.Stake,
+      MessageType.Redeem,
     );
 
     assert.strictEqual(
       messageC.gatewayAddress,
-      config.stakeRequestWithNullMessageHashC.gateway,
+      config.redeemRequestWithNullMessageHashC.gateway,
     );
 
     assert.strictEqual(
@@ -308,28 +299,28 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
 
     assert.strictEqual(
-      messageC.gasPrice!.comparedTo(config.stakeRequestWithNullMessageHashC.gasPrice as BigNumber),
+      messageC.gasPrice!.comparedTo(config.redeemRequestWithNullMessageHashC.gasPrice as BigNumber),
       0,
     );
 
     assert.strictEqual(
-      messageC.gasLimit!.comparedTo(config.stakeRequestWithNullMessageHashC.gasLimit as BigNumber),
+      messageC.gasLimit!.comparedTo(config.redeemRequestWithNullMessageHashC.gasLimit as BigNumber),
       0,
     );
 
     assert.strictEqual(
-      messageC.nonce!.comparedTo(config.stakeRequestWithNullMessageHashC.nonce as BigNumber),
+      messageC.nonce!.comparedTo(config.redeemRequestWithNullMessageHashC.nonce as BigNumber),
       0,
     );
 
     assert.strictEqual(
       messageC.sender,
-      config.stakeRequestWithNullMessageHashC.senderProxy,
+      config.redeemRequestWithNullMessageHashC.senderProxy,
     );
 
     assert.strictEqual(
       messageC.direction,
-      MessageDirection.OriginToAuxiliary,
+      MessageDirection.AuxiliaryToOrigin,
     );
 
     assert.strictEqual(
@@ -349,54 +340,54 @@ describe('AcceptStakeRequestService::update', (): void => {
     SpyAssert.assert(
       interactsSpy,
       1,
-      [[web3, ostComposerAddress]],
+      [[web3, redeemPoolAddress]],
     );
     SpyAssert.assert(
-      acceptStakeRequestSpy,
+      acceptRedeemRequestSpy,
       1,
       [[
-        stakeRequestC.amount!.toString(10),
-        stakeRequestC.beneficiary!,
-        stakeRequestC.gasPrice!.toString(10),
-        stakeRequestC.gasLimit!.toString(10),
-        stakeRequestC.nonce!.toString(10),
-        stakeRequestC.sender!,
-        stakeRequestC.gateway!,
+        redeemRequestC.amount!.toString(10),
+        redeemRequestC.beneficiary!,
+        redeemRequestC.gasPrice!.toString(10),
+        redeemRequestC.gasLimit!.toString(10),
+        redeemRequestC.nonce!.toString(10),
+        redeemRequestC.sender!,
+        redeemRequestC.gateway!,
         messageC.hashLock,
       ]],
     );
     SpyAssert.assert(
       sendTransactionSpy,
-      2,
+      1,
       [
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
-
-        [fakeTransactionHash, {
-          from: originWorkerAddress,
-          gasPrice: ORIGIN_GAS_PRICE,
-        }, web3],
+        [
+          fakeTransactionHash,
+          {
+            from: auxiliaryWorkerAddress,
+            gasPrice: AUXILIARY_GAS_PRICE,
+            value: bountyAmount,
+          },
+          web3
+        ],
       ],
     );
   });
 
-  it('Should not react if request type is not stake.', async (): Promise<void> => {
-    config.stakeRequestWithNullMessageHashC.requestType = RequestType.Redeem;
-    const stakeRequests = [
-      config.stakeRequestWithNullMessageHashC,
+  it('should not react if request type is not redeem.', async (): Promise<void> => {
+    config.redeemRequestWithNullMessageHashC.requestType = RequestType.Stake;
+    const redeemRequests = [
+      config.redeemRequestWithNullMessageHashC,
     ];
 
-    await config.service.update(stakeRequests);
+    await config.service.update(redeemRequests);
 
     SpyAssert.assert(
       interactsSpy,
       0,
-      [[web3, ostComposerAddress]],
+      [[web3, redeemPoolAddress]],
     );
     SpyAssert.assert(
-      acceptStakeRequestSpy,
+      acceptRedeemRequestSpy,
       0,
       [[]],
     );

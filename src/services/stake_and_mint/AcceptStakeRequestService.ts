@@ -75,7 +75,8 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
   public async update(stakeRequests: MessageTransferRequest[]): Promise<void> {
     Logger.debug('Accept stake request service invoked');
     const nonAcceptedStakeRequests = stakeRequests.filter(
-      (stakeRequest: MessageTransferRequest): boolean => !stakeRequest.messageHash,
+      (stakeRequest: MessageTransferRequest): boolean =>
+        (stakeRequest.requestType === RequestType.Stake) && !stakeRequest.messageHash,
     );
 
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
@@ -119,7 +120,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
       stakeRequest, secret, hashLock,
     );
 
-    await this.updateMessageHashInRequestRepository(
+    await this.updateMessageHash(
       stakeRequest.requestHash,
       messageHash,
       stakeRequest.blockNumber,
@@ -230,7 +231,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
    * into messages' repository with a message hash. That exact message
    * hash is updated here in requests' repository.
    */
-  private async updateMessageHashInRequestRepository(
+  private async updateMessageHash(
     stakeRequestHash: string,
     messageHash: string,
     blockNumber: BigNumber,
