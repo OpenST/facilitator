@@ -124,7 +124,11 @@ describe('ProveGatewayService.proveGateway()', (): void => {
     SpyAssert.assert(
       sendTransactionStub,
       1,
-      [[fakeRawTransaction, { from: auxiliaryWorkerAddress, gasPrice: AUXILIARY_GAS_PRICE }, auxiliaryWeb3]],
+      [[
+        fakeRawTransaction,
+        { from: auxiliaryWorkerAddress, gasPrice: AUXILIARY_GAS_PRICE },
+        auxiliaryWeb3
+      ]],
     );
 
     assert.strictEqual(

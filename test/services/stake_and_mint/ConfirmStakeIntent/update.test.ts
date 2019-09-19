@@ -74,7 +74,8 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       getMessagesForConfirmation: Promise.resolve([message]),
     });
 
-    const messageTransferRequestRepository = sinon.createStubInstance(MessageTransferRequestRepository, {
+    const messageTransferRequestRepository = sinon.createStubInstance(
+      MessageTransferRequestRepository, {
       getByMessageHash: Promise.resolve(stakeRequest),
     });
 
@@ -186,7 +187,8 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       getMessagesForConfirmation: Promise.resolve([]),
     });
 
-    const messageTransferRequestRepository = sinon.createStubInstance(MessageTransferRequestRepository, {
+    const messageTransferRequestRepository = sinon.createStubInstance(
+      MessageTransferRequestRepository, {
       getByMessageHash: Promise.resolve(null),
     });
 
