@@ -26,6 +26,7 @@ import RedeemRequestedHandler from './redeem_and_unstake/RedeemRequestedHandler'
 import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
 import RedeemIntentConfirmedHandler from './redeem_and_unstake/RedeemIntentConfirmedHandler';
 import RedeemProgressedHandler from './redeem_and_unstake/RedeemProgressedHandler';
+import UnstakeProgressedHandler from './redeem_and_unstake/UnstakeProgressedHandler';
 
 export default class Handlers {
   /**
@@ -55,6 +56,7 @@ export default class Handlers {
       redeemIntentDeclareds: RedeemIntentDeclaredHandler;
       redeemIntentConfirmeds: RedeemIntentConfirmedHandler;
       redeemProgresseds: RedeemProgressedHandler;
+      unstakeProgresseds: UnstakeProgressedHandler;
     } {
     return {
       // Stake and Mint Handlers
@@ -82,6 +84,7 @@ export default class Handlers {
       redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),
       redeemIntentConfirmeds: new RedeemIntentConfirmedHandler(repos.messageRepository),
       redeemProgresseds: new RedeemProgressedHandler(repos.messageRepository),
+      unstakeProgresseds: new UnstakeProgressedHandler(repos.messageRepository),
     };
   }
 }
