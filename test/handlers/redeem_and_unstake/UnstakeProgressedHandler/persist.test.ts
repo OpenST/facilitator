@@ -50,7 +50,7 @@ describe('ProgressUnstake.persist()', () => {
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message record if current status is already progressed', async () => {
+  it('should not change message record state if current status is already progressed', async () => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
@@ -75,11 +75,11 @@ describe('ProgressUnstake.persist()', () => {
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message record if current status is not Declared', async () => {
+  it('should not change message record state if current status is not Declared', async () => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
-    existingMessageWithProgressStatus.sourceStatus = MessageStatus.RevocationDeclared;
+    existingMessageWithProgressStatus.targetStatus = MessageStatus.RevocationDeclared;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
         save: Promise.resolve(save as any),
@@ -92,7 +92,7 @@ describe('ProgressUnstake.persist()', () => {
     const expectedModel = new Message(
       transactions[0]._messageHash,
     );
-    expectedModel.sourceStatus = existingMessageWithProgressStatus.sourceStatus;
+    expectedModel.targetStatus = existingMessageWithProgressStatus.targetStatus;
     expectedModel.secret = transactions[0]._unlockSecret;
 
     assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
