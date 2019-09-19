@@ -24,7 +24,7 @@ export default class Facilitator {
 
   /** Starts the facilitator by subscribing to subscription queries. */
   public async start(): Promise<void> {
-    this.subscribeToSubGraphs();
+    await this.subscribeToSubGraphs();
     this.handle = setInterval(
       async () => this.restartSubscription(),
       SUBSCRIPTION_RESTART_DURATION,
