@@ -21,12 +21,12 @@ import AuxiliaryChainRepository from './AuxiliaryChainRepository';
 import ContractEntityRepository from './ContractEntityRepository';
 import GatewayRepository from './GatewayRepository';
 import { MessageRepository } from './MessageRepository';
-import StakeRequestRepository from './StakeRequestRepository';
+import MessageTransferRequestRepository from './MessageTransferRequestRepository';
 
 export default class Repositories {
   /* Storage */
 
-  public stakeRequestRepository: StakeRequestRepository;
+  public messageTransferRequestRepository: MessageTransferRequestRepository;
 
   public auxiliaryChainRepository: AuxiliaryChainRepository;
 
@@ -66,7 +66,7 @@ export default class Repositories {
     const promises = [];
 
     promises.push(this.messageRepository.notify());
-    promises.push(this.stakeRequestRepository.notify());
+    promises.push(this.messageTransferRequestRepository.notify());
     promises.push(this.auxiliaryChainRepository.notify());
     promises.push(this.gatewayRepository.notify());
     promises.push(this.contractEntityRepository.notify());
@@ -80,11 +80,12 @@ export default class Repositories {
    * @param services Service container.
    */
   public attach(services: Services): void {
-    this.stakeRequestRepository.attach(services.acceptStakeRequestService);
+    this.messageTransferRequestRepository.attach(services.acceptStakeRequestService);
     this.auxiliaryChainRepository.attach(services.proveGatewayService);
     this.auxiliaryChainRepository.attach(services.proveCoGatewayService);
     this.gatewayRepository.attach(services.confirmStakeIntentService);
-    this.messageRepository.attach(services.progressService);
+    this.messageRepository.attach(services.stakeProgressService);
+    this.messageRepository.attach(services.redeemProgressService);
   }
 
   /* Private Functions */
@@ -95,10 +96,14 @@ export default class Repositories {
    *    - underscored: true -- Sets field option for all attributes of all models
    *                           to snake cased name.
    *    - timestamps: true -- Adds timestamps attributes (createdAt and updatedAt) to all
-   *                          objects (StakeRequest, etc) of all repositories.
+   *                          objects (MessageTransferRequest, etc) of all repositories.
    *    - freezeTableName: true -- Disables the modification of table names; by default
    *                               sequelize will automatically transform all passed model names
    *                               (first parameter of define) into plural.
+   *
+   * Note: messageRepository should be initialized before messageTransferRequestRepository because messageHash of
+   * messageTransferRequestRepository is foreign key of messageRepository.
+   * Not following this order fails lot of tests.
    *
    * @param sequelize Sequelize instance.
    */
@@ -111,8 +116,7 @@ export default class Repositories {
     };
 
     this.messageRepository = new MessageRepository(initOptions);
-
-    this.stakeRequestRepository = new StakeRequestRepository(initOptions);
+    this.messageTransferRequestRepository = new MessageTransferRequestRepository(initOptions);
 
     this.auxiliaryChainRepository = new AuxiliaryChainRepository(initOptions);
 

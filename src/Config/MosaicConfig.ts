@@ -68,6 +68,8 @@ export class AuxiliaryContracts {
   public ostCoGatewayOrganizationAddress?: Address;
 
   public ostEIP20CogatewayAddress?: Address;
+
+  public redeemPoolAddress?: Address;
 }
 
 /**
