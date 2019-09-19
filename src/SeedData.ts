@@ -157,15 +157,26 @@ export default class SeedData {
   private async populateContractEntityTable(): Promise<void> {
     const contractAddressEventTypesMap: Record<string, EntityType[]> = {
       [this.ostComposerAddress]: [EntityType.StakeRequesteds],
+      [this.redeemPoolAddress]: [EntityType.RedeemRequesteds],
       [this.gatewayAddress]: [
+        // Stake & mint entities
         EntityType.StakeIntentDeclareds,
         EntityType.StakeProgresseds,
+        // Redeem & Unstake entities
+        EntityType.RedeemIntentConfirmeds,
+        EntityType.UnstakeProgresseds,
+        EntityType.GatewayProvens,
       ],
       [this.coAnchorAddress]: [EntityType.StateRootAvailables],
+      [this.anchorAddress]: [EntityType.StateRootAvailables],
       [this.coGatewayAddress]: [
+        // Stake & Mint entities
         EntityType.StakeIntentConfirmeds,
         EntityType.MintProgresseds,
         EntityType.GatewayProvens,
+        // Redeem & Unstake entities
+        EntityType.RedeemIntentDeclareds,
+        EntityType.RedeemProgresseds,
       ],
     };
     const promises: any = [];
@@ -241,6 +252,12 @@ export default class SeedData {
   private get ostComposerAddress(): string {
     return Utils.toChecksumAddress(
       this.originChainMosaicConfig.contractAddresses.ostComposerAddress!,
+    );
+  }
+
+  private get redeemPoolAddress(): string {
+    return Utils.toChecksumAddress(
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.redeemPoolAddress!,
     );
   }
 
