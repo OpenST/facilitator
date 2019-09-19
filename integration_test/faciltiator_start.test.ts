@@ -1,11 +1,13 @@
 import { execSync, spawn, spawnSync } from 'child_process';
 import * as path from 'path';
 import BigNumber from 'bignumber.js';
+import fs from 'fs-extra';
 
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import { Account } from 'web3/eth/accounts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
+import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 import { FacilitatorConfig } from '../src/Config/Config';
 import { GatewayType } from '../src/repositories/GatewayRepository';
@@ -24,6 +26,7 @@ import {
 import * as Constants from './Constants.json';
 import assert from '../test/test_utils/assert';
 import AuxiliaryChain from '../src/models/AuxiliaryChain';
+import Directory from '../src/Directory';
 
 const facilitatorInit = path.join(__dirname, 'facilitator_init.sh');
 const facilitatorStart = path.join(__dirname, 'facilitator_start.sh');
@@ -33,21 +36,8 @@ describe('facilitator start', async () => {
   const stakeAmount = '130';
   const gasPrice = '10';
   const gasLimit = '4';
-
-  function getStakeRequest(): StakeRequest {
-    const stakeRequest = new StakeRequest(
-      '', // It will be updated after stake request is done.
-      new BigNumber(0),
-      new BigNumber(stakeAmount),
-      '',
-      new BigNumber(gasPrice),
-      new BigNumber(gasLimit),
-    );
-
-    return stakeRequest;
-  }
-
   let originWeb3: any;
+  let auxiliaryWeb3: any;
   let auxChainId: number;
   let messageHash: string;
   let generatedStakeRequestHash: string;
@@ -74,19 +64,18 @@ describe('facilitator start', async () => {
   const interval = 3000;
   const workerExpirationHeight = '100000000000';
   let anchoredBlockNumber: number;
-  const stakeRequest = getStakeRequest();
-
-  const reward = stakeRequest.gasPrice!.mul(stakeRequest.gasLimit!);
-  const mintedAmount: BigNumber = stakeRequest.amount!.sub(reward);
+  let stakeRequest: StakeRequest;
 
   before(async () => {
     Utils.setEnvironment(mosaicConfigPath);
   });
 
   it('facilitator init', async () => {
-    spawnSync(facilitatorInit, { stdio: outputOptions, env: process.env });
-
     auxChainId = Number(Constants.auxChainId);
+    // Removing facilitator config.
+    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));
+
+    spawnSync(facilitatorInit, { stdio: outputOptions, env: process.env });
     facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
 
     assert.strictEqual(
@@ -129,13 +118,11 @@ describe('facilitator start', async () => {
       mosaicConfig,
       facilitatorConfig,
       Number(Constants.auxChainId),
-      '',
-      '',
     );
-    ({ originWeb3 } = utils);
+    ({ originWeb3, auxiliaryWeb3 } = utils);
 
-    const originAccounts = await utils.originWeb3.eth.getAccounts();
-    const auxiliaryAccounts = await utils.auxiliaryWeb3.eth.getAccounts();
+    const originAccounts = await originWeb3.eth.getAccounts();
+    const auxiliaryAccounts = await auxiliaryWeb3.eth.getAccounts();
     utils.setOriginFunder(originAccounts[4]);
     utils.setAuxiliaryFunder(auxiliaryAccounts[6]);
 
@@ -148,7 +135,6 @@ describe('facilitator start', async () => {
     simpleTokenInstance = utils.getSimpleTokenInstance();
     stakerAccount = originWeb3.eth.accounts.create('facilitatortest');
     originWeb3.eth.accounts.wallet.add(stakerAccount);
-    stakeRequest.beneficiary = stakerAccount.address;
 
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.transfer(
       stakerAccount.address,
@@ -232,6 +218,25 @@ describe('facilitator start', async () => {
   });
 
   it('request stake', async () => {
+
+    stakeRequest = new StakeRequest(
+      '',
+      new BigNumber(0), // It will be updated after stake request is done.
+      new BigNumber(stakeAmount),
+      auxiliaryWeb3.eth.accounts.create('beneficiary').address,
+      new BigNumber(gasPrice),
+      new BigNumber(gasLimit),
+      new BigNumber(await utils.getGatewayNonce(stakerAccount.address)),
+      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
+      stakerAccount.address,
+    );
+
+    generatedStakeRequestHash = utils.getStakeRequestHash(
+      stakeRequest,
+      stakeRequest.gateway!,
+      ostComposer,
+    );
+
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.approve(
       ostComposer,
       stakeRequest.amount!.toString(10),
@@ -246,17 +251,13 @@ describe('facilitator start', async () => {
       },
     );
 
-    stakeRequest.gateway = mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress;
-    const stakerNonce = await utils.getGatewayNonce(stakeRequest.staker);
-    stakeRequest.nonce = new BigNumber(stakerNonce);
-
     const ostComposerInstance = utils.getOSTComposerInstance();
     const requestStakeRawTx: TransactionObject<string> = ostComposerInstance.methods.requestStake(
       stakeRequest.amount!.toString(10),
       stakeRequest.beneficiary!,
       stakeRequest.gasPrice!.toString(10),
       stakeRequest.gasLimit!.toString(10),
-      stakerNonce,
+      stakeRequest.nonce!.toString(10),
       stakeRequest.gateway!,
     );
 
@@ -274,12 +275,6 @@ describe('facilitator start', async () => {
       receipt.status,
       true,
       'stake request receipt status should be true',
-    );
-
-    generatedStakeRequestHash = utils.getStakeRequestHash(
-      stakeRequest,
-      stakeRequest.gateway!,
-      ostComposer,
     );
 
     const stakeRequestHash = await ostComposerInstance.methods.stakeRequestHashes(
@@ -359,6 +354,7 @@ describe('facilitator start', async () => {
           const messageInDb = await utils.getMessageFromDB(messageHash);
 
           const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
+          const coGateway: EIP20CoGateway = utils.getEIP20CoGatewayInstance();
           const message = await gateway.methods.messages(messageHash.toString()).call();
           const gatewayMessageStatus = parseInt(
             await gateway.methods.getOutboxMessageStatus(messageHash).call(),
@@ -366,13 +362,13 @@ describe('facilitator start', async () => {
           );
 
           const coGatewayMessageStatus = parseInt(
-            await gateway.methods.getOutboxMessageStatus(messageHash).call(),
+            await coGateway.methods.getInboxMessageStatus(messageHash).call(),
             10,
           );
 
           if (
             messageInDb!.sourceStatus === MessageStatus.Undeclared
-            && messageInDb!.sourceStatus === MessageStatus.Undeclared
+            && messageInDb!.targetStatus === MessageStatus.Undeclared
           ) {
             expectedMessage.hashLock = message.hashLock;
 
@@ -385,7 +381,17 @@ describe('facilitator start', async () => {
           ) {
             expectedMessage.hashLock = message.hashLock;
             expectedMessage.sourceStatus = gatewayMessageStatus === 1 ? MessageStatus.Declared : MessageStatus.Undeclared;
-            expectedMessage.targetStatus = coGatewayMessageStatus === 1 ? MessageStatus.Undeclared : MessageStatus.Undeclared;
+
+            if(coGatewayMessageStatus === 1) {
+              expectedMessage.targetStatus = MessageStatus.Declared;
+            }
+            else if(coGatewayMessageStatus === 2) {
+              expectedMessage.targetStatus = MessageStatus.Progressed;
+            }
+            else {
+              expectedMessage.targetStatus = MessageStatus.Undeclared;
+            }
+
             utils.assertMessages(messageInDb!, expectedMessage);
 
             resolve();
@@ -539,13 +545,15 @@ describe('facilitator start', async () => {
 
         const eip20GatewayMessage = await eip20Gateway.methods.messages(messageHash).call();
         const messageInDb = await utils.getMessageFromDB(messageHash);
+        const reward = stakeRequest.gasPrice!.mul(stakeRequest.gasLimit!);
+        const mintedAmount: BigNumber = stakeRequest.amount!.sub(reward);
 
         if (
           messageInDb!.sourceStatus === MessageStatus.Progressed
           && messageInDb!.targetStatus === MessageStatus.Progressed
         ) {
           expectedMessage = utils.getMessageStub(eip20GatewayMessage, messageInDb!);
-          await utils.assertMintingBalance(stakerAccount.address, mintedAmount);
+          await utils.assertMintingBalance(stakeRequest.beneficiary!, mintedAmount);
           expectedMessage.sourceStatus = eip20GatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
           expectedMessage.targetStatus = eip20CoGatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
           utils.assertMessages(messageInDb!, expectedMessage);
@@ -577,5 +585,6 @@ describe('facilitator start', async () => {
 
   after(async () => {
     execSync(facilitatorKill, { stdio: outputOptions, env: process.env });
+    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));
   });
 });

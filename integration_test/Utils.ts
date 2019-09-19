@@ -34,17 +34,15 @@ export default class Utils {
 
   public auxiliaryWeb3: Web3;
 
-  public originFunder: string;
+  public originFunder?: string;
 
-  public auxiliaryFunder: string;
+  public auxiliaryFunder?: string;
 
   private ostComposer: string;
 
   public mosaicConfig: MosaicConfig;
 
   public facilitatorConfig: FacilitatorConfig;
-
-  public static ZERO_BYTES32 = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
   public originChain: string;
 
@@ -60,8 +58,6 @@ export default class Utils {
     mosaicConfig: MosaicConfig,
     facilitatorConfig: FacilitatorConfig,
     auxChainId: number,
-    originFunder: string,
-    auxiliaryFunder: string,
   ) {
     this.facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     this.mosaicConfig = mosaicConfig;
@@ -71,8 +67,6 @@ export default class Utils {
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress!;
-    this.originFunder = originFunder;
-    this.auxiliaryFunder = auxiliaryFunder;
   }
 
   /**
@@ -103,7 +97,7 @@ export default class Utils {
   ): Promise<TransactionReceipt> {
     return this.originWeb3.eth.sendTransaction(
       {
-        from: this.originFunder,
+        from: this.originFunder!,
         to: beneficiary,
         value: web3Utils.toWei(amountInETH.toString()),
       },
@@ -122,7 +116,7 @@ export default class Utils {
   ): Promise<TransactionReceipt> {
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
-        from: this.auxiliaryFunder,
+        from: this.auxiliaryFunder!,
         to: beneficiary,
         value: web3Utils.toWei(amountInEth.toString()),
       },
@@ -515,8 +509,7 @@ export default class Utils {
     lastOriginBlockHeight: BigNumber,
     lastAuxiliaryBlockHeight: BigNumber,
   ): AuxiliaryChain {
-    const { auxChainId } = this.facilitatorConfig;
-    const { originChain } = this.facilitatorConfig;
+    const { originChain, auxChainId } = this.facilitatorConfig;
     const auxiliaryChain = new AuxiliaryChain(
       auxChainId,
       originChain,
