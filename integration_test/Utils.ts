@@ -51,8 +51,6 @@ export default class Utils {
    * @param mosaicConfig Mosaic config object.
    * @param facilitatorConfig Facilitator config object.
    * @param auxChainId Auxiliary chain id.
-   * @param originFunder Address of the funder on origin chain.
-   * @param auxiliaryFunder Address of the funder on auxiliary chain.
    */
   public constructor(
     mosaicConfig: MosaicConfig,
@@ -175,7 +173,8 @@ export default class Utils {
   }
 
   /**
-   * It anchors state root to auxiliary chain's Anchor contract.
+   * It anchors state root to auxiliary chain's anchor contract.
+   * @param auxChainId Identifier for the auxiliary chain.
    */
   public async anchorOrigin(auxChainId: number): Promise<number> {
     const organizationInstance = interacts.getOrganization(
@@ -282,12 +281,12 @@ export default class Utils {
   }
 
   /**
-   * It returns stub object.
+   * It provides Message stub object.
    * @param messageFromContract Message from gateway contract.
    * @param message Message object
    * @returns Message object.
    */
-  public getMessageStub(
+  public static getMessageStub(
     messageFromContract: any,
     message: Message,
   ): Message {
@@ -302,70 +301,70 @@ export default class Utils {
 
   /**
    * Asserts the expected message data with the entry in messages table.
-   * @param dbMessage Message object representing db state.
+   * @param actualStakeRequest Message object representing db state.
    * @param expectedStakeRequest Expected stake request object.
    */
-  public assertMessages(
-    dbMessage: Message,
-    expectedMessage: Message,
+  public static assertMessages(
+    actualStakeRequest: Message,
+    expectedStakeRequest: Message,
   ): void {
     assert.strictEqual(
-      dbMessage.nonce!.cmp(expectedMessage.nonce!),
+      actualStakeRequest.nonce!.cmp(expectedStakeRequest.nonce!),
       0,
-      `Expected nonce value is ${dbMessage.nonce!} but got ${expectedMessage.nonce!}`,
+      `Expected nonce value is ${actualStakeRequest.nonce!} but got ${expectedStakeRequest.nonce!}`,
     );
 
     assert.strictEqual(
-      dbMessage.gatewayAddress!,
-      expectedMessage.gatewayAddress!,
+      actualStakeRequest.gatewayAddress!,
+      expectedStakeRequest.gatewayAddress!,
       'Incorrect gateway address',
     );
 
     assert.strictEqual(
-      dbMessage.gasLimit!.cmp(expectedMessage.gasLimit!),
+      actualStakeRequest.gasLimit!.cmp(expectedStakeRequest.gasLimit!),
       0,
-      `Expected gas limit is ${expectedMessage.gasLimit!} but got ${dbMessage.gasLimit!}`,
+      `Expected gas limit is ${expectedStakeRequest.gasLimit!} but got ${actualStakeRequest.gasLimit!}`,
     );
 
     assert.strictEqual(
-      dbMessage.gasPrice!.cmp(expectedMessage.gasPrice!),
+      actualStakeRequest.gasPrice!.cmp(expectedStakeRequest.gasPrice!),
       0,
-      `Expected gas price is ${expectedMessage.gasPrice!} but got ${dbMessage.gasPrice!}`,
+      `Expected gas price is ${expectedStakeRequest.gasPrice!} but got ${actualStakeRequest.gasPrice!}`,
     );
 
     assert.strictEqual(
-      dbMessage.direction,
-      expectedMessage.direction,
+      actualStakeRequest.direction,
+      expectedStakeRequest.direction,
       'Incorrect message direction',
     );
 
     assert.strictEqual(
-      dbMessage.type!,
-      expectedMessage.type!,
+      actualStakeRequest.type!,
+      expectedStakeRequest.type!,
       'Incorrect message type',
     );
 
     assert.strictEqual(
-      dbMessage.hashLock!,
-      expectedMessage.hashLock!,
+      actualStakeRequest.hashLock!,
+      expectedStakeRequest.hashLock!,
       'Hashlock is incorrect',
     );
 
     assert.strictEqual(
-      dbMessage.sourceStatus!,
-      expectedMessage.sourceStatus!,
+      actualStakeRequest.sourceStatus!,
+      expectedStakeRequest.sourceStatus!,
       'Source status is incorrect',
     );
 
     assert.strictEqual(
-      dbMessage.targetStatus!,
-      expectedMessage.targetStatus!,
+      actualStakeRequest.targetStatus!,
+      expectedStakeRequest.targetStatus!,
       'Target status is incorrect',
     );
 
     assert.strictEqual(
-      dbMessage.sender!,
-      expectedMessage.sender!,
+      actualStakeRequest.sender!,
+      expectedStakeRequest.sender!,
       'Sender address is incorrect',
     );
   }
@@ -375,7 +374,7 @@ export default class Utils {
    * @param actualStakeRequest StakeRequest object representing db state.
    * @param expectedStakeRequest Expected stake request object.
    */
-  public assertStakeRequests(
+  public static assertStakeRequests(
     actualStakeRequest: StakeRequest,
     expectedStakeRequest: StakeRequest,
   ): void {
@@ -451,7 +450,7 @@ export default class Utils {
    * @param actualGateway Object representing gateway in db.
    * @param expectedGateway Expected gateway object.
    */
-  public assertGateway(actualGateway: Gateway, expectedGateway: Gateway): void {
+  public static assertGateway(actualGateway: Gateway, expectedGateway: Gateway): void {
     assert.strictEqual(
       actualGateway.gatewayAddress,
       expectedGateway.gatewayAddress,
@@ -529,7 +528,7 @@ export default class Utils {
    * @param actualAuxiliaryChain Auxiliary chain object representing DB state.
    * @param expectedAuxiliaryChain Expected auxiliary chain object.
    */
-  public assertAuxiliaryChain(
+  public static assertAuxiliaryChain(
     actualAuxiliaryChain: AuxiliaryChain,
     expectedAuxiliaryChain: AuxiliaryChain,
   ): void {
@@ -655,7 +654,7 @@ export default class Utils {
   }
 
   /**
-   * It verifies the ERC2O token transfer.
+   * It verifies the ERC2O token transfer. Beneficiary address is always newly created one.
    * @param receipt Receipt of ERC20 transfer.
    * @param beneficiary Beneficiary of the transfer.
    * @param amount Amount which is transferred to beneficiary.
@@ -734,7 +733,7 @@ export default class Utils {
    * @param durationInMins Duration in mins.
    * @returns End Time in secs.
    */
-  public getEndTime(durationInMins: number): number {
+  public static getEndTime(durationInMins: number): number {
     const durationInSecs = durationInMins * 60;
     const startTime = process.hrtime()[0];
     return startTime + durationInSecs;

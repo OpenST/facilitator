@@ -2,10 +2,11 @@ import { execSync, spawn, spawnSync } from 'child_process';
 import * as path from 'path';
 import BigNumber from 'bignumber.js';
 import fs from 'fs-extra';
+import Web3 from 'web3';
 
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
-import { Account } from 'web3/eth/accounts';
+import { Account } from 'web3-eth-accounts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
@@ -36,8 +37,8 @@ describe('facilitator start', async () => {
   const stakeAmount = '130';
   const gasPrice = '10';
   const gasLimit = '4';
-  let originWeb3: any;
-  let auxiliaryWeb3: any;
+  let originWeb3: Web3;
+  let auxiliaryWeb3: Web3;
   let auxChainId: number;
   let messageHash: string;
   let generatedStakeRequestHash: string;
@@ -226,7 +227,7 @@ describe('facilitator start', async () => {
       auxiliaryWeb3.eth.accounts.create('beneficiary').address,
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
-      new BigNumber(await utils.getGatewayNonce(stakerAccount.address)),
+      new BigNumber(1),
       mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
       stakerAccount.address,
     );
@@ -290,14 +291,14 @@ describe('facilitator start', async () => {
 
     let stakeRequestInterval: NodeJS.Timeout;
     const stakeRequestPromise = new Promise(((resolve, reject) => {
-      const endTime = utils.getEndTime(testDuration);
+      const endTime = Utils.getEndTime(testDuration);
       stakeRequestInterval = setInterval(async () => {
         const stakeRequestDb: StakeRequest | null = await utils.getStakeRequest(
           generatedStakeRequestHash,
         );
 
         if (stakeRequestDb != null) {
-          utils.assertStakeRequests(stakeRequestDb, stakeRequest);
+          Utils.assertStakeRequests(stakeRequestDb, stakeRequest);
           resolve();
         }
 
@@ -329,7 +330,7 @@ describe('facilitator start', async () => {
     ).call();
 
     const requestStakePromise = new Promise(((resolve, reject) => {
-      const endTime = utils.getEndTime(testDuration);
+      const endTime = Utils.getEndTime(testDuration);
       requestStakeInterval = setInterval(async (): Promise<void> => {
         const stakeRequestDb: StakeRequest | null = await utils.getStakeRequest(
           generatedStakeRequestHash,
@@ -392,7 +393,7 @@ describe('facilitator start', async () => {
               expectedMessage.targetStatus = MessageStatus.Undeclared;
             }
 
-            utils.assertMessages(messageInDb!, expectedMessage);
+            Utils.assertMessages(messageInDb!, expectedMessage);
 
             resolve();
           }
@@ -425,7 +426,7 @@ describe('facilitator start', async () => {
 
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {
-      const endTime = utils.getEndTime(testDuration);
+      const endTime = Utils.getEndTime(testDuration);
       verifyAnchorInterval = setInterval(async (): Promise<void> => {
         const auxiliaryChain: AuxiliaryChain | null = await utils.getAuxiliaryChainFromDb(
           auxChainId,
@@ -437,7 +438,7 @@ describe('facilitator start', async () => {
             auxiliaryChain!.lastAuxiliaryBlockHeight!,
           );
 
-          utils.assertAuxiliaryChain(auxiliaryChain!, expectedAuxiliaryChain);
+          Utils.assertAuxiliaryChain(auxiliaryChain!, expectedAuxiliaryChain);
           resolve();
         }
 
@@ -467,7 +468,7 @@ describe('facilitator start', async () => {
     let declarePromiseInterval: NodeJS.Timeout;
 
     const declarePromise = new Promise(((resolve, reject) => {
-      const endTime = utils.getEndTime(testDuration);
+      const endTime = Utils.getEndTime(testDuration);
       declarePromiseInterval = setInterval(async (): Promise<void> => {
         const coGateway = utils.getEIP20CoGatewayInstance();
 
@@ -484,7 +485,7 @@ describe('facilitator start', async () => {
         ) {
           expectedMessage.targetStatus = messageStatus === 1 ? MessageStatus.Declared : MessageStatus.Undeclared;
 
-          expectedMessage = utils.getMessageStub(messageInGateway, messageInDb!);
+          expectedMessage = Utils.getMessageStub(messageInGateway, messageInDb!);
 
           utils.assertMessages(messageInDb!, expectedMessage);
 
@@ -501,7 +502,7 @@ describe('facilitator start', async () => {
             new BigNumber(anchoredBlockNumber),
           );
 
-          utils.assertGateway(gateways!, expectedGateway);
+          Utils.assertGateway(gateways!, expectedGateway);
           resolve();
         }
 
@@ -529,7 +530,7 @@ describe('facilitator start', async () => {
   it('source status and target status is progressed', async () => {
     let progressPromiseInterval: NodeJS.Timeout;
     const progressPromise = new Promise(((resolve, reject) => {
-      const endTime = utils.getEndTime(testDuration);
+      const endTime = Utils.getEndTime(testDuration);
       progressPromiseInterval = setInterval(async (): Promise<void> => {
         const eip20Gateway = utils.getEIP20GatewayInstance();
         const eip20Cogateway = utils.getEIP20CoGatewayInstance();
@@ -552,7 +553,7 @@ describe('facilitator start', async () => {
           messageInDb!.sourceStatus === MessageStatus.Progressed
           && messageInDb!.targetStatus === MessageStatus.Progressed
         ) {
-          expectedMessage = utils.getMessageStub(eip20GatewayMessage, messageInDb!);
+          expectedMessage = Utils.getMessageStub(eip20GatewayMessage, messageInDb!);
           await utils.assertMintingBalance(stakeRequest.beneficiary!, mintedAmount);
           expectedMessage.sourceStatus = eip20GatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
           expectedMessage.targetStatus = eip20CoGatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
