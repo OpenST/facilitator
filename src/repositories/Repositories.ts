@@ -101,8 +101,8 @@ export default class Repositories {
    *                               sequelize will automatically transform all passed model names
    *                               (first parameter of define) into plural.
    *
-   * Note: messageRepository should be initialized before messageTransferRequestRepository because messageHash of
-   * messageTransferRequestRepository is foreign key of messageRepository.
+   * Note: messageRepository should be initialized before messageTransferRequestRepository because
+   * messageHash of messageTransferRequestRepository is foreign key of messageRepository.
    * Not following this order fails lot of tests.
    *
    * @param sequelize Sequelize instance.

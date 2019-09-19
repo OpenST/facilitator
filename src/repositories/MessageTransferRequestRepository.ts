@@ -276,7 +276,8 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
     return request;
   }
 
-  private convertToRequests(requestModels: MessageTransferRequestModel[]): MessageTransferRequest[] {
+  private convertToRequests(requestModels: MessageTransferRequestModel[]):
+  MessageTransferRequest[] {
     const requests: MessageTransferRequest[] = [];
     for (let i = 0; i < requestModels.length; i += 1) {
       requests.push(this.convertToRequest(requestModels[i]));
