@@ -154,60 +154,10 @@ describe('ProgressService.update()', () => {
   });
 
   it('should not progress on origin and auxiliary when secret is inavlid', async () => {
-      message.sourceStatus = MessageStatus.Declared;
-      message.targetStatus = MessageStatus.Declared;
-
-      message.isValidSecret.callsFake(() => false);
-
-      await progressService.update([message]);
-
-      SpyAssert.assert(
-        gatewayRepository.get,
-        0,
-        [[gatewayAddress]],
-      );
-
-      SpyAssert.assert(
-        utilsSpy,
-        0,
-        [
-          [progressStakeRawTx, { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress }, originWeb3],
-          [progressMintRawTx, { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress }, auxiliaryWeb3],
-        ],
-      );
-
-      SpyAssert.assert(
-        progressMintSpy,
-        0,
-        [[message.messageHash, message.secret]],
-      );
-
-      SpyAssert.assert(
-        progressStakeSpy,
-        0,
-        [[message.messageHash, message.secret]],
-      );
-
-      SpyAssert.assert(
-        coGatewaySpy,
-        0,
-        [[auxiliaryWeb3, coGatewayAddress]],
-      );
-
-      SpyAssert.assert(
-        gatewaySpy,
-        0,
-        [[originWeb3, gatewayAddress]],
-      );
-
-      sinon.restore();
-    });
-
-  it('should not progress on origin and auxiliary when message type is not stake ',
-    async () => {
     message.sourceStatus = MessageStatus.Declared;
     message.targetStatus = MessageStatus.Declared;
-    message.type = MessageType.Redeem;
+
+    message.isValidSecret.callsFake(() => false);
 
     await progressService.update([message]);
 
@@ -252,4 +202,54 @@ describe('ProgressService.update()', () => {
 
     sinon.restore();
   });
+
+  it('should not progress on origin and auxiliary when message type is not stake ',
+    async () => {
+      message.sourceStatus = MessageStatus.Declared;
+      message.targetStatus = MessageStatus.Declared;
+      message.type = MessageType.Redeem;
+
+      await progressService.update([message]);
+
+      SpyAssert.assert(
+        gatewayRepository.get,
+        0,
+        [[gatewayAddress]],
+      );
+
+      SpyAssert.assert(
+        utilsSpy,
+        0,
+        [
+          [progressStakeRawTx, { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress }, originWeb3],
+          [progressMintRawTx, { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress }, auxiliaryWeb3],
+        ],
+      );
+
+      SpyAssert.assert(
+        progressMintSpy,
+        0,
+        [[message.messageHash, message.secret]],
+      );
+
+      SpyAssert.assert(
+        progressStakeSpy,
+        0,
+        [[message.messageHash, message.secret]],
+      );
+
+      SpyAssert.assert(
+        coGatewaySpy,
+        0,
+        [[auxiliaryWeb3, coGatewayAddress]],
+      );
+
+      SpyAssert.assert(
+        gatewaySpy,
+        0,
+        [[originWeb3, gatewayAddress]],
+      );
+
+      sinon.restore();
+    });
 });
