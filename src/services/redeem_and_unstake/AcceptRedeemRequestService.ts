@@ -14,6 +14,8 @@
 //
 // ----------------------------------------------------------------------------
 
+/* eslint-disable import/no-unresolved */
+
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import * as Web3Utils from 'web3-utils';
@@ -21,7 +23,8 @@ import * as Web3Utils from 'web3-utils';
 import { interacts } from '@openst/mosaic-contracts';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 
-import {AUXILIARY_GAS_PRICE} from '../../Constants';
+import { RedeemPool } from '@openst/mosaic-contracts/dist/interacts/RedeemPool';
+import { AUXILIARY_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
@@ -32,7 +35,6 @@ import {
 import Repositories from '../../repositories/Repositories';
 import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
-import {RedeemPool} from "@openst/mosaic-contracts/dist/interacts/RedeemPool";
 
 /**
  * Class collects all non accepted redeem requests on a trigger and accepts
@@ -171,7 +173,7 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
    * @param hashLock Hash lock passed in accept request argument.
    */
   private async sendAcceptRedeemRequestTransaction(
-    redeemRequest: MessageTransferRequest, hashLock: string
+    redeemRequest: MessageTransferRequest, hashLock: string,
   ): Promise<string> {
     Logger.debug(`Sending accept request transaction for redeemer proxy ${redeemRequest.senderProxy}`);
     const redeemPool: RedeemPool = interacts.getRedeemPool(this.web3, this.redeemPoolAddress);
