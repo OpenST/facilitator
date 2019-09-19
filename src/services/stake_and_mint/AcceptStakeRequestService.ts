@@ -78,7 +78,6 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
       (stakeRequest: MessageTransferRequest): boolean =>
         (stakeRequest.requestType === RequestType.Stake) && !stakeRequest.messageHash,
     );
-
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }
 

@@ -143,7 +143,7 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     const someFakeOSTComposerInstance = {
       methods: {
-        acceptRedeemRequest: () => {},
+        acceptStakeRequest: () => {},
       },
     };
 
@@ -166,7 +166,7 @@ describe('AcceptStakeRequestService::update', (): void => {
 
     acceptStakeRequestSpy = sinon.replace(
       someFakeOSTComposerInstance.methods,
-      'acceptRedeemRequest',
+      'acceptStakeRequest',
       sinon.fake.returns(fakeTransactionHash),
     );
 
