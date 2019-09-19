@@ -179,7 +179,9 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       gasPrice: AUXILIARY_GAS_PRICE,
     };
 
-    const stakeRequest = await this.messageTransferRequestRepository.getByMessageHash(message.messageHash);
+    const stakeRequest = await this.messageTransferRequestRepository.getByMessageHash(
+      message.messageHash,
+    );
     assert(stakeRequest !== null);
 
     assert(message.nonce !== undefined);
