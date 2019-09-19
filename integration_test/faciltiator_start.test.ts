@@ -373,7 +373,7 @@ describe('facilitator start', async () => {
           ) {
             expectedMessage.hashLock = message.hashLock;
 
-            utils.assertMessages(messageInDb!, expectedMessage);
+            Utils.assertMessages(messageInDb!, expectedMessage);
           }
 
           if (
@@ -487,7 +487,7 @@ describe('facilitator start', async () => {
 
           expectedMessage = Utils.getMessageStub(messageInGateway, messageInDb!);
 
-          utils.assertMessages(messageInDb!, expectedMessage);
+          Utils.assertMessages(messageInDb!, expectedMessage);
 
           const eip20GatewayAddress = mosaicConfig.auxiliaryChains[facilitatorConfig.auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!;
           const gateways = await utils.getGateway(eip20GatewayAddress);
@@ -557,7 +557,7 @@ describe('facilitator start', async () => {
           await utils.assertMintingBalance(stakeRequest.beneficiary!, mintedAmount);
           expectedMessage.sourceStatus = eip20GatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
           expectedMessage.targetStatus = eip20CoGatewayMessageStatus === 2 ? MessageStatus.Progressed : MessageStatus.Undeclared;
-          utils.assertMessages(messageInDb!, expectedMessage);
+          Utils.assertMessages(messageInDb!, expectedMessage);
           clearInterval(progressPromiseInterval);
           resolve();
         }
