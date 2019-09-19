@@ -15,59 +15,56 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import Message from '../../models/Message';
+
 import Logger from '../../Logger';
-import Utils from '../../Utils';
+import Message from '../../models/Message';
 import {
-  MessageDirection,
-  MessageRepository, MessageStatus,
-  MessageType,
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
+import Utils from '../../Utils';
 
 /**
- * This class handles redeem intent declared transactions.
+ * This class handles RedeemIntentConfirmed event.
  */
-export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<Message> {
-  /* Storage */
+export default class RedeemIntentConfirmedHandler extends ContractEntityHandler<Message> {
+  private messageRepository: MessageRepository;
 
-  private readonly messageRepository: MessageRepository;
-
+  /**
+   * @param messageRepository Instance of MessageRepository.
+   */
   public constructor(messageRepository: MessageRepository) {
     super();
-
     this.messageRepository = messageRepository;
   }
 
   /**
-   * This method parses redeem intent declare transaction and returns message model object.
+   * This method parse confirm redeem intent transaction and returns Message model object.
    *
    * @param transactions Transaction objects.
-   *
-   * @return Array of instances of message model objects.
+   * @return Array of instances of Message objects.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Started persisting Redeem intent declared records');
+    let message: Message | null;
+    Logger.debug('Persisting Stake intent confirm records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
-        let message = await this.messageRepository.get(transaction._messageHash);
-        // This can happen if some other facilitator has accepted the redeem request.
+        const messageHash = transaction._messageHash;
+        message = await this.messageRepository.get(messageHash);
         if (message === null) {
           message = new Message(transaction._messageHash);
+          message.gatewayAddress = transaction.contractAddress;
           message.sender = Utils.toChecksumAddress(transaction._redeemer);
           message.nonce = new BigNumber(transaction._redeemerNonce);
-          message.direction = MessageDirection.AuxiliaryToOrigin;
           message.type = MessageType.Redeem;
-          message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
-          message.sourceStatus = MessageStatus.Undeclared;
-          message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
-          Logger.debug(`Creating message object ${JSON.stringify(message)}`);
+          message.targetStatus = MessageStatus.Undeclared;
+          message.direction = MessageDirection.AuxiliaryToOrigin;
+          message.hashLock = transaction._hashLock;
+          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
-        if (message.sourceStatus === MessageStatus.Undeclared) {
-          message.sourceStatus = MessageStatus.Declared;
-          message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
-          Logger.debug(`Change message status to ${MessageStatus.Declared}`);
+        if (message.targetStatus === undefined
+          || message.targetStatus === MessageStatus.Undeclared) {
+          message.targetStatus = MessageStatus.Declared;
         }
         return message;
       },
@@ -75,8 +72,12 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
-      savePromises.push(this.messageRepository.save(models[i]));
+      Logger.debug(`Changing target status to declared for message hash ${models[i].messageHash}`);
+      savePromises.push(
+        this.messageRepository.save(models[i]).catch((error) => {
+          Logger.error('RedeemIntentConfirmedHandler error', error);
+        }),
+      );
     }
 
     await Promise.all(savePromises);

@@ -13,7 +13,8 @@ import Utils from '../Utils';
 /**
  * An interface, that represents a row from a messages table.
  *
- * MessageModel has been exported so that StakeRequestRepository::StakeRequestModel can make
+ * MessageModel has been exported so that
+ * MessageTransferRequestRepository::MessageTransferRequestModel can make
  * belongsTo association. It's recommended to not use MessageModel for external use. Use
  * models/Message.ts to represent Message model objects.
  */
