@@ -16,7 +16,7 @@ function stop_chains {
 echo stopping $originChain chain
 ./node_modules/.bin/mosaic stop $originChain
 
-echo starting $auxiliaryChain chain
+echo stopping $auxiliaryChain chain
 ./node_modules/.bin/mosaic stop $auxiliaryChain
 }
 
