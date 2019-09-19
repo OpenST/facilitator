@@ -15,20 +15,19 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import Message from '../../models/Message';
+
 import Logger from '../../Logger';
-import Utils from '../../Utils';
+import Message from '../../models/Message';
 import {
-  MessageDirection,
-  MessageRepository, MessageStatus,
-  MessageType,
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
+import Utils from '../../Utils';
 
 /**
- * This class handles redeem intent declared transactions.
+ * This class handles redeem progress transactions.
  */
-export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<Message> {
+export default class RedeemProgressedHandler extends ContractEntityHandler<Message> {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -40,7 +39,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
   }
 
   /**
-   * This method parses redeem intent declare transaction and returns message model object.
+   * This method parses progress redeem transaction and returns message model object.
    *
    * @param transactions Transaction objects.
    *
@@ -48,11 +47,11 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Started persisting Redeem intent declared records');
+    Logger.debug('Persisting Redeem progress records');
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
-        // This can happen if some other facilitator has accepted the redeem request.
+        // This can happen if progress transaction is received first from graph node.
         if (message === null) {
           message = new Message(transaction._messageHash);
           message.sender = Utils.toChecksumAddress(transaction._redeemer);
@@ -61,21 +60,21 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
           message.type = MessageType.Redeem;
           message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
           message.sourceStatus = MessageStatus.Undeclared;
-          message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
-          Logger.debug(`Creating message object ${JSON.stringify(message)}`);
+          Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
-        if (message.sourceStatus === MessageStatus.Undeclared) {
-          message.sourceStatus = MessageStatus.Declared;
-          message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
-          Logger.debug(`Change message status to ${MessageStatus.Declared}`);
+        // Undeclared use case can happen when progress event appears before confirmRedeem event.
+        if (message.sourceStatus === MessageStatus.Undeclared
+          || message.sourceStatus === MessageStatus.Declared) {
+          message.sourceStatus = MessageStatus.Progressed;
         }
+        message.secret = transaction._unlockSecret;
         return message;
       },
     ));
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
+      Logger.debug(`Changing source status to progress for message hash ${models[i].messageHash}`);
       savePromises.push(this.messageRepository.save(models[i]));
     }
 

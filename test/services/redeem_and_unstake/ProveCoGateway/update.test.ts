@@ -100,7 +100,7 @@ describe('ProveCoGatewayService.update()', (): void => {
       sinon.fake.resolves(fakeTransactionHash),
     );
 
-    const proveCoGatewayService = new ProveCoGatewayService(
+    const proveCoGatewayServiceInstance = new ProveCoGatewayService(
       gatewayRepository as any,
       messageRepository as any,
       originWeb3,
@@ -110,7 +110,7 @@ describe('ProveCoGatewayService.update()', (): void => {
       auxiliaryChainId,
     );
 
-    await proveCoGatewayService.update([auxiliaryChain]);
+    await proveCoGatewayServiceInstance.update([auxiliaryChain]);
 
     SpyAssert.assert(
       gatewayRepository.get,
@@ -195,7 +195,7 @@ describe('ProveCoGatewayService.update()', (): void => {
       sinon.fake.resolves(fakeTransactionHash),
     );
 
-    const proveGatewayService = new ProveCoGatewayService(
+    const proveGatewayServiceInstance = new ProveCoGatewayService(
       gateawayRepository as any,
       messageRepository as any,
       originWeb3,
@@ -205,7 +205,7 @@ describe('ProveCoGatewayService.update()', (): void => {
       auxiliaryChainId,
     );
 
-    await proveGatewayService.update([auxiliaryChain]);
+    await proveGatewayServiceInstance.update([auxiliaryChain]);
 
     SpyAssert.assert(
       gateawayRepository.get,
