@@ -127,7 +127,7 @@ describe('ProveGatewayService.proveGateway()', (): void => {
       [[
         fakeRawTransaction,
         { from: auxiliaryWorkerAddress, gasPrice: AUXILIARY_GAS_PRICE },
-        auxiliaryWeb3
+        auxiliaryWeb3,
       ]],
     );
 

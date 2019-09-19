@@ -31,7 +31,7 @@ import { RequestType } from '../../src/repositories/MessageTransferRequestReposi
 
 export default class StubData {
   public static getAStakeRequest = (stakeRequestHash: string):
-    MessageTransferRequest => new MessageTransferRequest(
+  MessageTransferRequest => new MessageTransferRequest(
     stakeRequestHash,
     RequestType.Stake,
     new BigNumber('10'),

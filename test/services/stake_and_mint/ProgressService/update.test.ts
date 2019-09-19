@@ -192,7 +192,7 @@ describe('ProgressService.update()', () => {
         [
           progressMintRawTx,
           { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
-          auxiliaryWeb3
+          auxiliaryWeb3,
         ],
       ],
     );
@@ -245,12 +245,12 @@ describe('ProgressService.update()', () => {
           [
             progressStakeRawTx,
             { gasPrice: ORIGIN_GAS_PRICE, from: originWorkerAddress },
-            originWeb3
+            originWeb3,
           ],
           [
             progressMintRawTx,
             { gasPrice: AUXILIARY_GAS_PRICE, from: auxiliaryWorkerAddress },
-            auxiliaryWeb3
+            auxiliaryWeb3,
           ],
         ],
       );

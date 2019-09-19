@@ -222,9 +222,10 @@ describe('SeedData.populateDb()', (): void => {
     web3 = new Web3(null);
     const eip20GatewayMockObject = {
       methods: {
-        activated: sinon.fake.returns({ call:
-            async (): Promise<boolean> => Promise.resolve(true) }
-            ),
+        activated: sinon.fake.returns({
+          call:
+            async (): Promise<boolean> => Promise.resolve(true),
+        }),
         bounty: sinon.fake.returns(
           { call: async (): Promise<BigNumber> => Promise.resolve(new BigNumber(10)) },
         ),

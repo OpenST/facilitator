@@ -76,8 +76,9 @@ describe('ConfirmStakeIntentService.update()', (): void => {
 
     const messageTransferRequestRepository = sinon.createStubInstance(
       MessageTransferRequestRepository, {
-      getByMessageHash: Promise.resolve(stakeRequest),
-    });
+        getByMessageHash: Promise.resolve(stakeRequest),
+      },
+    );
 
     const eip20CoGatewayMockInstance = {
       methods: {
@@ -189,8 +190,9 @@ describe('ConfirmStakeIntentService.update()', (): void => {
 
     const messageTransferRequestRepository = sinon.createStubInstance(
       MessageTransferRequestRepository, {
-      getByMessageHash: Promise.resolve(null),
-    });
+        getByMessageHash: Promise.resolve(null),
+      },
+    );
 
 
     const eip20CoGatewayMockInstance = {
