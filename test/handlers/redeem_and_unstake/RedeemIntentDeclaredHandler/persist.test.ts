@@ -24,36 +24,36 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
   it('should change message source state to declared if message does not exist',
     async (): Promise<void> => {
-    const save = sinon.stub();
+      const save = sinon.stub();
 
-    const mockedRepository = sinon.createStubInstance(MessageRepository,
-      {
-        save: save as any,
-        get: Promise.resolve(null),
-      });
-    const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+      const mockedRepository = sinon.createStubInstance(MessageRepository,
+        {
+          save: save as any,
+          get: Promise.resolve(null),
+        });
+      const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
 
-    const models = await handler.persist(transactions);
+      const models = await handler.persist(transactions);
 
-    const expectedModel = new Message(
-      transactions[0]._messageHash,
-    );
-    expectedModel.sender = transactions[0]._redeemer;
-    expectedModel.nonce = new BigNumber(transactions[0]._redeemerNonce);
-    expectedModel.direction = MessageDirection.AuxiliaryToOrigin;
-    expectedModel.sourceStatus = MessageStatus.Declared;
-    expectedModel.type = MessageType.Redeem;
-    expectedModel.gatewayAddress = transactions[0].contractAddress;
-    expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
+      const expectedModel = new Message(
+        transactions[0]._messageHash,
+      );
+      expectedModel.sender = transactions[0]._redeemer;
+      expectedModel.nonce = new BigNumber(transactions[0]._redeemerNonce);
+      expectedModel.direction = MessageDirection.AuxiliaryToOrigin;
+      expectedModel.sourceStatus = MessageStatus.Declared;
+      expectedModel.type = MessageType.Redeem;
+      expectedModel.gatewayAddress = transactions[0].contractAddress;
+      expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-    SpyAssert.assert(save, 1, [[expectedModel]]);
-    SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
-  });
+      assert.equal(
+        models.length,
+        transactions.length,
+        'Number of models must be equal to transactions',
+      );
+      SpyAssert.assert(save, 1, [[expectedModel]]);
+      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+    });
 
   it('should change message source state to Declared if message status is UnDeclared',
     async (): Promise<void> => {
@@ -185,30 +185,30 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
   it('should not update anything if current message state is already Declared',
     async (): Promise<void> => {
-    const save = sinon.stub();
+      const save = sinon.stub();
 
-    const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
-    existingMessageWithProgressStatus.sourceStatus = MessageStatus.Declared;
-    const mockedRepository = sinon.createStubInstance(MessageRepository,
-      {
-        save: save as any,
-        get: Promise.resolve(existingMessageWithProgressStatus),
-      });
-    const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+      const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
+      existingMessageWithProgressStatus.sourceStatus = MessageStatus.Declared;
+      const mockedRepository = sinon.createStubInstance(MessageRepository,
+        {
+          save: save as any,
+          get: Promise.resolve(existingMessageWithProgressStatus),
+        });
+      const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
 
-    const models = await handler.persist(transactions);
+      const models = await handler.persist(transactions);
 
-    const expectedModel = new Message(
-      transactions[0]._messageHash,
-    );
-    expectedModel.sourceStatus = MessageStatus.Declared;
+      const expectedModel = new Message(
+        transactions[0]._messageHash,
+      );
+      expectedModel.sourceStatus = MessageStatus.Declared;
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-    SpyAssert.assert(save, 1, [[expectedModel]]);
-    SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
-  });
+      assert.equal(
+        models.length,
+        transactions.length,
+        'Number of models must be equal to transactions',
+      );
+      SpyAssert.assert(save, 1, [[expectedModel]]);
+      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+    });
 });

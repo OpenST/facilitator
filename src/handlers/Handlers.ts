@@ -24,6 +24,7 @@ import StakeRequestedHandler from './stake_and_mint/StakeRequestedHandler';
 import StakeIntentConfirmedHandler from './stake_and_mint/StakeIntentConfirmedHandler';
 import RedeemRequestedHandler from './redeem_and_unstake/RedeemRequestedHandler';
 import RedeemIntentDeclaredHandler from './redeem_and_unstake/RedeemIntentDeclaredHandler';
+import RedeemIntentConfirmedHandler from './redeem_and_unstake/RedeemIntentConfirmedHandler';
 import RedeemProgressedHandler from './redeem_and_unstake/RedeemProgressedHandler';
 import UnstakeProgressedHandler from './redeem_and_unstake/UnstakeProgressedHandler';
 
@@ -53,8 +54,9 @@ export default class Handlers {
       stakeIntentConfirmeds: StakeIntentConfirmedHandler;
       redeemRequesteds: RedeemRequestedHandler;
       redeemIntentDeclareds: RedeemIntentDeclaredHandler;
-      unstakeProgresseds: UnstakeProgressedHandler;
+      redeemIntentConfirmeds: RedeemIntentConfirmedHandler;
       redeemProgresseds: RedeemProgressedHandler;
+      unstakeProgresseds: UnstakeProgressedHandler;
     } {
     return {
       // Stake and Mint Handlers
@@ -80,8 +82,9 @@ export default class Handlers {
         cogatewayAddress,
       ),
       redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),
-      unstakeProgresseds: new UnstakeProgressedHandler(repos.messageRepository),
+      redeemIntentConfirmeds: new RedeemIntentConfirmedHandler(repos.messageRepository),
       redeemProgresseds: new RedeemProgressedHandler(repos.messageRepository),
+      unstakeProgresseds: new UnstakeProgressedHandler(repos.messageRepository),
     };
   }
 }
