@@ -10,7 +10,7 @@ export default class Facilitator {
 
   private auxiliarySubscriber: Subscriber;
 
-  private handle: NodeJS.Timer | null;
+  private subscriptionRestartHandle: NodeJS.Timer | null;
 
   /**
    * @param originSubscriber Origin subscriber instance.
@@ -19,13 +19,13 @@ export default class Facilitator {
   public constructor(originSubscriber: Subscriber, auxiliarySubscriber: Subscriber) {
     this.originSubscriber = originSubscriber;
     this.auxiliarySubscriber = auxiliarySubscriber;
-    this.handle = null;
+    this.subscriptionRestartHandle = null;
   }
 
   /** Starts the facilitator by subscribing to subscription queries. */
   public async start(): Promise<void> {
     await this.subscribeToSubGraphs();
-    this.handle = setInterval(
+    this.subscriptionRestartHandle = setInterval(
       async () => this.restartSubscription(),
       SUBSCRIPTION_RESTART_DURATION,
     );
@@ -37,7 +37,7 @@ export default class Facilitator {
    */
   public async stop(): Promise<void> {
     await this.unsubscribeToSubGraphs();
-    clearInterval(this.handle!);
+    clearInterval(this.subscriptionRestartHandle!);
   }
 
   // It restarts the subscription
