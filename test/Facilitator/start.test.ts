@@ -20,5 +20,5 @@ describe('Facilitator.start()', (): void => {
     SpyAssert.assert(auxiliarySubscriber.subscribe, 1, [[]]);
     clock.restore();
     sinon.restore();
-  })
+  });
 });
