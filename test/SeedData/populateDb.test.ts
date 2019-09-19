@@ -1,3 +1,20 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import Web3 from 'web3';
@@ -165,7 +182,8 @@ describe('SeedData.populateDb()', (): void => {
   }
 
   /**
-   * Verifies data which was inserted for Auxiliary Anchor related events in contract_entities table.
+   * Verifies data which was inserted for Auxiliary Anchor related events in
+   * contract_entities table.
    */
   async function verifyAuxiliaryAnchorRelatedContractEntities(): Promise<void> {
     const contractEntity = new ContractEntity(
@@ -244,7 +262,10 @@ describe('SeedData.populateDb()', (): void => {
     web3 = new Web3(null);
     const eip20GatewayMockObject = {
       methods: {
-        activated: sinon.fake.returns({ call: async (): Promise<boolean> => Promise.resolve(true) }),
+        activated: sinon.fake.returns({
+          call:
+            async (): Promise<boolean> => Promise.resolve(true),
+        }),
         bounty: sinon.fake.returns(
           { call: async (): Promise<BigNumber> => Promise.resolve(new BigNumber(10)) },
         ),

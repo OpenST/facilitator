@@ -118,7 +118,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
       savePromises.push(
         this.messageTransferRequestRepository.save(models[i]).catch((error) => {
           Logger.error('RedeemRequestedHandler Error', error);
-        })
+        }),
       );
     }
 
