@@ -9,6 +9,7 @@ describe('Facilitator.start()', (): void => {
     const originSubscriber = sinon.createStubInstance(Subscriber);
     const auxiliarySubscriber = sinon.createStubInstance(Subscriber);
 
+    // Overrides infinite loop of setInterval
     const clock = sinon.useFakeTimers();
     const facilitator = new Facilitator(
       originSubscriber as any,
