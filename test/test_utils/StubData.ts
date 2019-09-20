@@ -30,8 +30,10 @@ import {
 import { RequestType } from '../../src/repositories/MessageTransferRequestRepository';
 
 export default class StubData {
-  public static getARequest = (requestHash: string, requestType = RequestType.Stake): MessageTransferRequest =>
-    new MessageTransferRequest(
+  public static getAMessageTransferRequest = (
+    requestHash: string,
+    requestType = RequestType.Stake,
+  ): MessageTransferRequest => new MessageTransferRequest(
     requestHash,
     requestType,
     new BigNumber('10'),

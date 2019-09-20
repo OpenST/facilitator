@@ -18,9 +18,10 @@
 import fs from 'fs-extra';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import * as utils from 'web3-utils';
+import * as Web3Utils from 'web3-utils';
 import Logger from './Logger';
 import Account from './Account';
+import MessageTransferRequest from './models/MessageTransferRequest';
 
 const Utils = {
   /**
@@ -92,7 +93,68 @@ const Utils = {
    * @returns It returns checksum address.
    */
   toChecksumAddress(address: string): string {
-    return utils.toChecksumAddress(address);
+    return Web3Utils.toChecksumAddress(address);
+  },
+
+  /**
+   * Generates and returns hashlock and secret.
+   */
+  generateSecret(): { secret: string; hashLock: string } {
+    const secret = Web3Utils.randomHex(32);
+    const hashLock = Web3Utils.keccak256(secret);
+
+    return {
+      secret,
+      hashLock,
+    };
+  },
+
+  /**
+   * It pre-calculates message hash.
+   *
+   * @param web3 Web3 instance.
+   * @param messageTransferRequest Redeem request object.
+   * @param hashLock Hash lock of acceptRedeem transaction.
+   * @param intentHash Stake/Redeem intent hash.
+   *
+   * @return Returns message hash.
+   */
+  calculateMessageHash(
+    web3: Web3,
+    messageTransferRequest: MessageTransferRequest,
+    hashLock: string,
+    intentHash: string,
+  ): string {
+    const messageTypeHash = web3.utils.sha3(
+      web3.eth.abi.encodeParameter(
+        'string',
+        'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
+      + 'uint256 gasLimit,address sender,bytes32 hashLock)',
+      ),
+    );
+
+    return web3.utils.sha3(
+      web3.eth.abi.encodeParameters(
+        [
+          'bytes32',
+          'bytes32',
+          'uint256',
+          'uint256',
+          'uint256',
+          'address',
+          'bytes32',
+        ],
+        [
+          messageTypeHash,
+          intentHash,
+          (messageTransferRequest.nonce as BigNumber).toString(10),
+          (messageTransferRequest.gasPrice as BigNumber).toString(10),
+          (messageTransferRequest.gasLimit as BigNumber).toString(10),
+          messageTransferRequest.senderProxy,
+          hashLock,
+        ],
+      ),
+    );
   },
 };
 

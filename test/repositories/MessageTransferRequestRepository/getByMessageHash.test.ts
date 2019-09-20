@@ -49,7 +49,7 @@ describe('MessageTransferRequestRepository::getByMessageHash', (): void => {
       message,
     );
 
-    const request = StubData.getARequest('requestHash', RequestType.Stake);
+    const request = StubData.getAMessageTransferRequest('requestHash', RequestType.Stake);
     request.messageHash = messageHash;
 
     await config.repos.messageTransferRequestRepository.save(

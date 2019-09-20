@@ -1,3 +1,19 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
 /* eslint-disable import/no-unresolved */
 
 import assert from 'assert';
@@ -162,15 +178,9 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
       gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    const redeemRequest = await this.messageTransferRequestRepository.getByMessageHash(message.messageHash);
-    assert(redeemRequest !== null);
-
-    assert(message.nonce !== undefined);
-    assert(message.gasPrice !== undefined);
-    assert(message.gasLimit !== undefined);
-    assert(message.hashLock !== undefined);
-    assert((redeemRequest as MessageTransferRequest).beneficiary !== undefined);
-    assert((redeemRequest as MessageTransferRequest).amount !== undefined);
+    const redeemRequest = await this.messageTransferRequestRepository.getByMessageHash(
+      message.messageHash,
+    );
 
     const rawTx = eip20Gateway.methods.confirmRedeemIntent(
       message.sender as string,
