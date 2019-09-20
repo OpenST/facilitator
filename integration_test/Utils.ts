@@ -12,7 +12,6 @@ import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gatew
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import Repositories from '../src/repositories/Repositories';
 import Directory from '../src/Directory';
-import StakeRequest from '../src/models/StakeRequest';
 import assert from '../test/test_utils/assert';
 import MosaicConfig from '../src/Config/MosaicConfig';
 import { FacilitatorConfig } from '../src/Config/Config';
@@ -23,6 +22,8 @@ import { GatewayType } from '../src/repositories/GatewayRepository';
 import * as Constants from './Constants.json';
 
 import * as EthUtils from 'ethereumjs-util';
+import MessageTransferRequest from '../src/models/MessageTransferRequest';
+import { MessageStatus } from '../src/repositories/MessageRepository';
 
 const workerPrefix = 'MOSAIC_ADDRESS_PASSW_';
 
@@ -208,13 +209,13 @@ export default class Utils {
 
   /**
    * It provides stake request hash.
-   * @param stakeRequest It represents stake request object.
+   * @param messageTransferRequest It represents message transfer request object.
    * @param gateway Gateway address on which request stake is to be done.
    * @param ostComposer OSTComposer contract address.
    * @returns EIP712 compatible stakerequest hash.
    */
   public getStakeRequestHash(
-    stakeRequest: StakeRequest,
+    messageTransferRequest: MessageTransferRequest,
     gateway: string,
     ostComposer: string,
   ): string {
@@ -224,12 +225,12 @@ export default class Utils {
     );
     const stakeIntentTypeHash = web3Utils.soliditySha3(
       { type: 'bytes32', value: encodedTypeHash },
-      { type: 'uint256', value: stakeRequest.amount!.toString(10) },
-      { type: 'address', value: stakeRequest.beneficiary! },
-      { type: 'uint256', value: stakeRequest.gasPrice!.toString(10) },
-      { type: 'uint256', value: stakeRequest.gasLimit!.toString(10) },
-      { type: 'uint256', value: stakeRequest.nonce!.toString(10) },
-      { type: 'address', value: stakeRequest.staker! },
+      { type: 'uint256', value: messageTransferRequest.amount!.toString(10) },
+      { type: 'address', value: messageTransferRequest.beneficiary! },
+      { type: 'uint256', value: messageTransferRequest.gasPrice!.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.gasLimit!.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.nonce!.toString(10) },
+      { type: 'address', value: messageTransferRequest.sender! },
       { type: 'address', value: gateway },
     );
 
@@ -301,130 +302,120 @@ export default class Utils {
 
   /**
    * Asserts the expected message data with the entry in messages table.
-   * @param actualStakeRequest Message object representing db state.
-   * @param expectedStakeRequest Expected stake request object.
+   * @param actualObject Message object representing db state.
+   * @param expectedObject Expected stake request object.
    */
   public static assertMessages(
-    actualStakeRequest: Message,
-    expectedStakeRequest: Message,
+    actualObject: Message,
+    expectedObject: Message,
   ): void {
     assert.strictEqual(
-      actualStakeRequest.nonce!.cmp(expectedStakeRequest.nonce!),
+      actualObject.nonce!.cmp(expectedObject.nonce!),
       0,
-      `Expected nonce value is ${actualStakeRequest.nonce!} but got ${expectedStakeRequest.nonce!}`,
+      `Expected nonce value is ${actualObject.nonce!} but got ${expectedObject.nonce!}`,
     );
 
     assert.strictEqual(
-      actualStakeRequest.gatewayAddress!,
-      expectedStakeRequest.gatewayAddress!,
+      actualObject.gatewayAddress!,
+      expectedObject.gatewayAddress!,
       'Incorrect gateway address',
     );
 
     assert.strictEqual(
-      actualStakeRequest.gasLimit!.cmp(expectedStakeRequest.gasLimit!),
+      actualObject.gasLimit!.cmp(expectedObject.gasLimit!),
       0,
-      `Expected gas limit is ${expectedStakeRequest.gasLimit!} but got ${actualStakeRequest.gasLimit!}`,
+      `Expected gas limit is ${expectedObject.gasLimit!} but got ${actualObject.gasLimit!}`,
     );
 
     assert.strictEqual(
-      actualStakeRequest.gasPrice!.cmp(expectedStakeRequest.gasPrice!),
+      actualObject.gasPrice!.cmp(expectedObject.gasPrice!),
       0,
-      `Expected gas price is ${expectedStakeRequest.gasPrice!} but got ${actualStakeRequest.gasPrice!}`,
+      `Expected gas price is ${expectedObject.gasPrice!} but got ${actualObject.gasPrice!}`,
     );
 
     assert.strictEqual(
-      actualStakeRequest.direction,
-      expectedStakeRequest.direction,
+      actualObject.direction,
+      expectedObject.direction,
       'Incorrect message direction',
     );
 
     assert.strictEqual(
-      actualStakeRequest.type!,
-      expectedStakeRequest.type!,
+      actualObject.type!,
+      expectedObject.type!,
       'Incorrect message type',
     );
 
-    assert.strictEqual(
-      actualStakeRequest.hashLock!,
-      expectedStakeRequest.hashLock!,
-      'Hashlock is incorrect',
-    );
+    if(actualObject.sourceStatus !== MessageStatus.Undeclared) {
+      assert.strictEqual(
+        actualObject.hashLock!,
+        expectedObject.hashLock!,
+        'Hashlock is incorrect',
+      );
+    }
 
     assert.strictEqual(
-      actualStakeRequest.sourceStatus!,
-      expectedStakeRequest.sourceStatus!,
-      'Source status is incorrect',
-    );
-
-    assert.strictEqual(
-      actualStakeRequest.targetStatus!,
-      expectedStakeRequest.targetStatus!,
-      'Target status is incorrect',
-    );
-
-    assert.strictEqual(
-      actualStakeRequest.sender!,
-      expectedStakeRequest.sender!,
+      actualObject.sender!,
+      expectedObject.sender!,
       'Sender address is incorrect',
     );
   }
 
   /**
    * Asserts the expected stake request data with the entry in stakerequests table.
-   * @param actualStakeRequest StakeRequest object representing db state.
-   * @param expectedStakeRequest Expected stake request object.
+   * @param actualObject MessageTransferRequest object representing db state.
+   * @param expectedObject Expected stake request object.
    */
   public static assertStakeRequests(
-    actualStakeRequest: StakeRequest,
-    expectedStakeRequest: StakeRequest,
+    actualObject: MessageTransferRequest,
+    expectedObject: MessageTransferRequest,
   ): void {
     assert.strictEqual(
-      actualStakeRequest.amount!.cmp(expectedStakeRequest.amount!),
+      actualObject.amount!.cmp(expectedObject.amount!),
       0,
-      `Expected amount is ${expectedStakeRequest.amount} but got ${actualStakeRequest.amount}`,
+      `Expected amount is ${expectedObject.amount} but got ${actualObject.amount}`,
     );
 
     assert.strictEqual(
-      actualStakeRequest.nonce!.cmp(expectedStakeRequest.nonce!),
+      actualObject.nonce!.cmp(expectedObject.nonce!),
       0,
-      `Expected amount is ${expectedStakeRequest.nonce!} but got ${actualStakeRequest.nonce!}`,
+      `Expected amount is ${expectedObject.nonce!} but got ${actualObject.nonce!}`,
     );
 
     assert.strictEqual(
-      actualStakeRequest.gasPrice!.cmp(expectedStakeRequest.gasPrice!),
+      actualObject.gasPrice!.cmp(expectedObject.gasPrice!),
       0,
-      `Expected amount is ${expectedStakeRequest.gasPrice!} but got ${actualStakeRequest.gasPrice!}`,
+      `Expected amount is ${expectedObject.gasPrice!} but got ${actualObject.gasPrice!}`,
     );
 
     assert.strictEqual(
-      actualStakeRequest.gasLimit!.cmp(expectedStakeRequest.gasLimit!),
+      actualObject.gasLimit!.cmp(expectedObject.gasLimit!),
       0,
-      `Expected amount is ${expectedStakeRequest.gasLimit!} but got ${actualStakeRequest.gasLimit!}`,
+      `Expected amount is ${expectedObject.gasLimit!} but got ${actualObject.gasLimit!}`,
     );
 
     assert.strictEqual(
-      actualStakeRequest.beneficiary!,
-      expectedStakeRequest.beneficiary!,
+      actualObject.beneficiary!,
+      expectedObject.beneficiary!,
       'Invalid beneficiary address',
     );
 
     assert.strictEqual(
-      actualStakeRequest.gateway!,
-      expectedStakeRequest.gateway!,
+      actualObject.gateway!,
+      expectedObject.gateway!,
       'Invalid gateway address',
     );
 
     assert.strictEqual(
-      actualStakeRequest.staker!,
-      expectedStakeRequest.staker!,
+      actualObject.sender!,
+      expectedObject.sender!,
       'Invalid stake address',
     );
 
     assert.strictEqual(
-      actualStakeRequest.blockNumber!.cmp(expectedStakeRequest.blockNumber!),
+      actualObject.blockNumber!.cmp(expectedObject.blockNumber!),
       0,
       `Expected blocknumber at which stake request is done is `+
-        `${expectedStakeRequest.blockNumber!}  but got ${expectedStakeRequest.blockNumber!},`
+        `${expectedObject.blockNumber!}  but got ${expectedObject.blockNumber!},`
     );
   }
 
@@ -581,10 +572,10 @@ export default class Utils {
    * @param stakeRequestHash Stake request hash for an stake.
    * @returns StakeRequest object corresponding to stakeRequestHash.
    */
-  public async getStakeRequest(stakeRequestHash: string): Promise<StakeRequest | null> {
+  public async getMessageTransferRequest(stakeRequestHash: string): Promise<MessageTransferRequest | null> {
     const repos: Repositories = await this.getRepositories();
 
-    return repos.stakeRequestRepository.get(
+    return repos.messageTransferRequestRepository.get(
       stakeRequestHash,
     );
   }
@@ -644,6 +635,7 @@ export default class Utils {
     beneficiary: string,
     expectedMintedAmount: BigNumber,
   ): Promise<void> {
+    console.log('in assertMintingBalance');
     const actualMintedAmount = new BigNumber(await this.auxiliaryWeb3.eth.getBalance(beneficiary));
 
     assert.strictEqual(
@@ -795,5 +787,104 @@ export default class Utils {
     }
 
     return tx.send(txOptions);
+  }
+
+  /**
+   * It verifies whether source status is declared and target status is undeclared in db.
+   * @param messageObject Instance of message object.
+   * @returns `true` if source status is declared and target status is undeclared in db otherwise
+   *           false.
+   */
+  public static isSourceDeclaredTargetUndeclaredInDb(
+    messageObject: Message,
+  ): boolean {
+    return (
+      messageObject!.sourceStatus === MessageStatus.Declared &&
+      messageObject!.targetStatus ===  MessageStatus.Undeclared
+    );
+  }
+
+  /**
+   * It verifies whether source status is declared and target status is declared in db.
+   * @param messageObject Instance of message object.
+   * @returns `true` if source status is declared and target status is declared in db otherwise
+   *           false.
+   */
+  public static isSourceDeclaredTargetDeclaredInDb(
+    messageObject: Message,
+  ): boolean {
+    return (
+      messageObject!.sourceStatus === MessageStatus.Declared &&
+      messageObject!.targetStatus ===  MessageStatus.Declared
+    );
+  }
+
+  /**
+   * It verifies whether source status is declared and target status is progressed in db.
+   * @param messageObject Instance of message object.
+   * @returns `true` if source status is declared and target status is progressed in db otherwise
+   *           false.
+   */
+  public static isSourceDeclaredTargetProgressedInDb(
+    messageObject: Message,
+  ): boolean {
+    return (
+      messageObject!.sourceStatus === MessageStatus.Declared &&
+      messageObject!.targetStatus ===  MessageStatus.Progressed
+    );
+  }
+
+  /**
+   * It verifies whether source status is progressed and target status is declared in db.
+   * @param messageObject Instance of message object.
+   * @returns `true` if source status is progressed and target status is declared in db otherwise
+   *           false.
+   */
+  public static isSourceProgressedTargetDeclaredInDb(
+    messageObject: Message,
+  ): boolean {
+    return (
+      messageObject!.sourceStatus === MessageStatus.Progressed &&
+      messageObject!.targetStatus ===  MessageStatus.Declared
+    );
+  }
+
+  /**
+   * It verifies whether source status is progressed and target status is progressed in db.
+   * @param messageObject Instance of message object.
+   * @returns `true` if source status is progressed and target status is progressed in db otherwise
+   *           false.
+   */
+  public static isSourceProgressedTargetProgressedInDb(
+    messageObject: Message,
+  ): boolean {
+    return (
+      messageObject!.sourceStatus === MessageStatus.Progressed &&
+      messageObject!.targetStatus ===  MessageStatus.Progressed
+    );
+  }
+
+  /**
+   * It provides string equivalent of the message status.
+   * @param key Key value for which string equivalent is required.
+   * @returns String representation of the key if present otherwise empty.
+   */
+  public static getEnumValue(key: string): string {
+    console.log('key in getEnumValue :- ',key);
+    let status: string = '';
+    switch (key) {
+      case '0':
+        status = 'undeclared';
+        break;
+      case '1':
+        status = 'declared';
+        break;
+      case '2':
+        status ='progressed';
+        break;
+      default:
+        break;
+    }
+    return status;
   }
 }
