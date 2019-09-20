@@ -215,6 +215,8 @@ describe('facilitator start', async () => {
       facilitatorStart,
       { stdio: outputOptions, env: process.env },
     );
+    // Note: added to start facilitator
+    await new Promise(done => setTimeout(done, 20000));
   });
 
   it('request stake', async () => {
