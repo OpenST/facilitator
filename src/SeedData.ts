@@ -22,10 +22,10 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 
-import { Config } from './Config/Config';
 import {
   AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
-} from "@openst/mosaic-chains/lib/src/Config/MosaicConfig";
+} from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import { Config } from './Config/Config';
 import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
 import ContractEntity, { EntityType } from './models/ContractEntity';

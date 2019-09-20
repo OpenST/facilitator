@@ -17,8 +17,8 @@
 
 import sinon from 'sinon';
 
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config } from '../../src/Config/Config';
-import MosaicConfig from "@openst/mosaic-chains/lib/src/Config/MosaicConfig";
 import assert from '../test_utils/assert';
 
 describe('Config.constructor()', () => {
