@@ -18,7 +18,6 @@
 
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import * as Web3Utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
@@ -93,19 +92,6 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     await this.acceptRedeemRequests(nonAcceptedRedeemRequests);
   }
 
-  /**
-   * Generates and returns hashlock and secret.
-   */
-  public static generateSecret(): { secret: string; hashLock: string } {
-    const secret = Web3Utils.randomHex(32);
-    const hashLock = Web3Utils.keccak256(secret);
-
-    return {
-      secret,
-      hashLock,
-    };
-  }
-
 
   /* Private Functions */
 
@@ -133,7 +119,7 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
    * @param redeemRequest Redeem request object.
    */
   private async acceptRedeemRequest(redeemRequest: MessageTransferRequest): Promise<void> {
-    const { secret, hashLock } = AcceptRedeemRequestService.generateSecret();
+    const { secret, hashLock } = Utils.generateSecret();
 
     const transactionHash = await this.sendAcceptRedeemRequestTransaction(
       redeemRequest, hashLock,
@@ -208,7 +194,17 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     secret: string,
     hashLock: string,
   ): Promise<string> {
-    const messageHash = this.calculateMessageHash(redeemRequest, hashLock);
+    const redeemIntentHash = this.calculateRedeemIntentHash(
+      redeemRequest.amount!,
+      redeemRequest.beneficiary!,
+      redeemRequest.gateway!,
+    );
+    const messageHash = Utils.calculateMessageHash(
+      this.web3,
+      redeemRequest,
+      hashLock,
+      redeemIntentHash
+    );
     Logger.debug(`Creating message for message hash ${messageHash}`);
 
     const message = new Message(
@@ -237,6 +233,10 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
    * accepting redeem request. Accepting redeem requests adds a new entry
    * into messages' repository with a message hash. That exact message
    * hash is updated here in messageTransferRequest repository.
+   *
+   * @param redeemRequestHash Redeem request hash.
+   * @param messageHash Message hash of redeem request.
+   * @param blockNumber Block number at which requestRedeem got executed.
    */
   private async updateMessageHash(
     redeemRequestHash: string,
@@ -254,52 +254,8 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
   }
 
   /**
-   * It pre-calculates message hash.
-   * @param redeemRequest Redeem request object.
-   * @param hashLock Hash lock of acceptRedeem transaction.
-   * @return Returns message hash.
-   */
-  private calculateMessageHash(redeemRequest: MessageTransferRequest, hashLock: string): string {
-    const redeemIntentHash: string = this.calculateRedeemIntentHash(
-      redeemRequest.amount as BigNumber,
-      redeemRequest.beneficiary as string,
-      redeemRequest.gateway as string,
-    );
-
-    const messageTypeHash = this.web3.utils.sha3(
-      this.web3.eth.abi.encodeParameter(
-        'string',
-        'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
-        + 'uint256 gasLimit,address sender,bytes32 hashLock)',
-      ),
-    );
-
-    return this.web3.utils.sha3(
-      this.web3.eth.abi.encodeParameters(
-        [
-          'bytes32',
-          'bytes32',
-          'uint256',
-          'uint256',
-          'uint256',
-          'address',
-          'bytes32',
-        ],
-        [
-          messageTypeHash,
-          redeemIntentHash,
-          (redeemRequest.nonce as BigNumber).toString(10),
-          (redeemRequest.gasPrice as BigNumber).toString(10),
-          (redeemRequest.gasLimit as BigNumber).toString(10),
-          redeemRequest.senderProxy,
-          hashLock,
-        ],
-      ),
-    );
-  }
-
-  /**
    * Calculates redeem intent hash.
+   *
    * @param amount Beneficiary amount.
    * @param beneficiary Beneficiary address.
    * @param cogateway CoGateway contract address.

@@ -18,15 +18,15 @@ import 'mocha';
 
 import * as Web3Utils from 'web3-utils';
 
-import AcceptRedeemRequestService from '../../../../src/services/redeem_and_unstake/AcceptRedeemRequestService';
-import assert from '../../../test_utils/assert';
+import Utils from "../../src/Utils";
+import * as assert from "assert";
 
 describe('AcceptRedeemRequestService::generateSecret', (): void => {
   it('Checks that secret maches hash lock.', async (): Promise<void> => {
     const {
       secret,
       hashLock,
-    } = AcceptRedeemRequestService.generateSecret();
+    } = Utils.generateSecret();
 
     assert.strictEqual(
       Web3Utils.keccak256(secret),
@@ -38,15 +38,15 @@ describe('AcceptRedeemRequestService::generateSecret', (): void => {
   it('Checks that generated secret is different.', async (): Promise<void> => {
     const {
       secret: secret1,
-    } = AcceptRedeemRequestService.generateSecret();
+    } = Utils.generateSecret();
 
     const {
       secret: secret2,
-    } = AcceptRedeemRequestService.generateSecret();
+    } = Utils.generateSecret();
 
     const {
       secret: secret3,
-    } = AcceptRedeemRequestService.generateSecret();
+    } = Utils.generateSecret();
 
     assert.notStrictEqual(
       secret1,

@@ -19,7 +19,6 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import * as Web3Utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
@@ -81,16 +80,6 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }
 
-  public static generateSecret(): { secret: string; hashLock: string } {
-    const secret = Web3Utils.randomHex(32);
-    const hashLock = Web3Utils.keccak256(secret);
-
-    return {
-      secret,
-      hashLock,
-    };
-  }
-
 
   /* Private Functions */
 
@@ -109,7 +98,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
 
   private async acceptStakeRequest(stakeRequest: MessageTransferRequest): Promise<void> {
     await this.approveForBounty(stakeRequest);
-    const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
+    const { secret, hashLock } = Utils.generateSecret();
 
     const transactionHash = await this.sendAcceptStakeRequestTransaction(
       stakeRequest, hashLock,
@@ -195,13 +184,17 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     secret: string,
     hashLock: string,
   ): Promise<string> {
-    const messageHash = this.calculateMessageHash(stakeRequest, hashLock);
-    Logger.debug(`Creating message for message hash ${messageHash}`);
-    assert(stakeRequest.gateway !== undefined);
-    assert(stakeRequest.gasPrice !== undefined);
-    assert(stakeRequest.gasLimit !== undefined);
-    assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.senderProxy !== undefined);
+    const stakeIntentHash = this.calculateStakeIntentHash(
+      stakeRequest.amount!,
+      stakeRequest.beneficiary!,
+      stakeRequest.gateway!,
+    );
+    const messageHash = Utils.calculateMessageHash(
+      this.web3,
+      stakeRequest,
+      hashLock,
+      stakeIntentHash
+    );
 
     const message = new Message(
       messageHash,
@@ -245,53 +238,14 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     await this.messageTransferRequestRepository.save(stakeRequest);
   }
 
-  private calculateMessageHash(stakeRequest: MessageTransferRequest, hashLock: string): string {
-    assert(stakeRequest.amount !== undefined);
-    assert(stakeRequest.beneficiary);
-    assert(stakeRequest.gateway);
-    assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.gasPrice !== undefined);
-    assert(stakeRequest.gasLimit !== undefined);
-    assert(stakeRequest.senderProxy);
-
-    const stakeIntentHash: string = this.calculateStakeIntentHash(
-      stakeRequest.amount as BigNumber,
-      stakeRequest.beneficiary as string,
-      stakeRequest.gateway as string,
-    );
-
-    const messageTypeHash = this.web3.utils.sha3(
-      this.web3.eth.abi.encodeParameter(
-        'string',
-        'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
-        + 'uint256 gasLimit,address sender,bytes32 hashLock)',
-      ),
-    );
-
-    return this.web3.utils.sha3(
-      this.web3.eth.abi.encodeParameters(
-        [
-          'bytes32',
-          'bytes32',
-          'uint256',
-          'uint256',
-          'uint256',
-          'address',
-          'bytes32',
-        ],
-        [
-          messageTypeHash,
-          stakeIntentHash,
-          (stakeRequest.nonce as BigNumber).toString(10),
-          (stakeRequest.gasPrice as BigNumber).toString(10),
-          (stakeRequest.gasLimit as BigNumber).toString(10),
-          stakeRequest.senderProxy,
-          hashLock,
-        ],
-      ),
-    );
-  }
-
+  /**
+   * Calculates stake intent hash.
+   *
+   * @param amount Beneficiary amount.
+   * @param beneficiary Beneficiary address.
+   * @param cogateway Gateway contract address.
+   * @return Returns Redeem intent hash.
+   */
   private calculateStakeIntentHash(
     amount: BigNumber,
     beneficiary: string,

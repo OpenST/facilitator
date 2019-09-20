@@ -87,6 +87,7 @@ export default class Repositories {
     this.messageRepository.attach(services.stakeProgressService);
 
     // Redeem & Unstake services attach
+    this.messageTransferRequestRepository.attach(services.acceptRedeemRequestService);
     this.auxiliaryChainRepository.attach(services.proveCoGatewayService);
     this.gatewayRepository.attach(services.confirmRedeemIntentService);
     this.messageRepository.attach(services.redeemProgressService);

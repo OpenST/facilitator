@@ -106,7 +106,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       },
     };
 
-    sinon.stub(AcceptStakeRequestService, 'generateSecret').returns({
+    sinon.stub(Utils, 'generateSecret').returns({
       secret: config.fakeData.secret,
       hashLock: config.fakeData.hashLock,
     });

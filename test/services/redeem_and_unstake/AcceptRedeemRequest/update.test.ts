@@ -108,7 +108,7 @@ describe('AcceptRedeemRequestService::update', (): void => {
       },
     };
 
-    sinon.stub(AcceptRedeemRequestService, 'generateSecret').returns({
+    sinon.stub(Utils, 'generateSecret').returns({
       secret: config.fakeData.secret,
       hashLock: config.fakeData.hashLock,
     });
