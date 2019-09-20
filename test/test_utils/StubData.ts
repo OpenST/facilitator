@@ -32,7 +32,7 @@ import { RequestType } from '../../src/repositories/MessageTransferRequestReposi
 export default class StubData {
   public static getARequest = (
     requestHash: string,
-    requestType = RequestType.Stake
+    requestType = RequestType.Stake,
   ): MessageTransferRequest => new MessageTransferRequest(
     requestHash,
     requestType,

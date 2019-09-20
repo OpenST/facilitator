@@ -179,7 +179,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     };
 
     const redeemRequest = await this.messageTransferRequestRepository.getByMessageHash(
-      message.messageHash
+      message.messageHash,
     );
 
     const rawTx = eip20Gateway.methods.confirmRedeemIntent(
