@@ -43,7 +43,8 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
   }
 
   /**
-   * This method parse stake MessageTransferRequest transaction and returns MessageTransferRequest model object.
+   * This method parse stake MessageTransferRequest transaction and returns
+   * MessageTransferRequest model object.
    *
    * Note: Forking Handling
    *

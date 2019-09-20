@@ -203,7 +203,7 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
       this.web3,
       redeemRequest,
       hashLock,
-      redeemIntentHash
+      redeemIntentHash,
     );
     Logger.debug(`Creating message for message hash ${messageHash}`);
 

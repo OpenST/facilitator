@@ -72,8 +72,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
-    unstakeProgresseds: 'subscription{unstakeProgresseds(orderBy: uts, orderDirection: desc,' +
-    ' first: 1){'
+    unstakeProgresseds: 'subscription{unstakeProgresseds(orderBy: uts, orderDirection: desc,'
+    + ' first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '

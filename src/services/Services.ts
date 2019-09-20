@@ -25,7 +25,7 @@ import RedeemProgressService from './redeem_and_unstake/ProgressService';
 import Utils from '../Utils';
 import ProveCoGatewayService from './redeem_and_unstake/ProveCoGatewayService';
 import ConfirmRedeemIntentService from './redeem_and_unstake/ConfirmRedeemIntentService';
-import AcceptRedeemRequestService from "./redeem_and_unstake/AcceptRedeemRequestService";
+import AcceptRedeemRequestService from './redeem_and_unstake/AcceptRedeemRequestService';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -33,7 +33,6 @@ import AcceptRedeemRequestService from "./redeem_and_unstake/AcceptRedeemRequest
  * This class is container that holds instances of all the services.
  */
 export default class Services {
-
   // Stake & Mint services
   public readonly acceptStakeRequestService: AcceptStakeRequestService;
 
@@ -138,8 +137,8 @@ export default class Services {
     const acceptRedeemRequestService = new AcceptRedeemRequestService(
       repositories,
       config.auxiliaryWeb3,
-      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].
-        contractAddresses.auxiliary.redeemPoolAddress!),
+      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId]
+        .contractAddresses.auxiliary.redeemPoolAddress!),
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.auxChainId].worker),
     );
 

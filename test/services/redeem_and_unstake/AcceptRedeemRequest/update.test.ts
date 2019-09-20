@@ -24,7 +24,7 @@ import Web3 from 'web3';
 
 import { interacts } from '@openst/mosaic-contracts';
 
-import {AUXILIARY_GAS_PRICE} from '../../../../src/Constants';
+import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
 import Message from '../../../../src/models/Message';
 import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
 import {
@@ -189,72 +189,72 @@ describe('AcceptRedeemRequestService::update', (): void => {
 
   it('Checks that the redeem message transfer request repository properly updated.',
     async (): Promise<void> => {
-    const redeemRequests = [
-      config.redeemRequestWithMessageHashB,
-      config.redeemRequestWithNullMessageHashC,
-    ];
+      const redeemRequests = [
+        config.redeemRequestWithMessageHashB,
+        config.redeemRequestWithNullMessageHashC,
+      ];
 
-    await config.service.update(redeemRequests);
+      await config.service.update(redeemRequests);
 
-    const redeemRequestC = await config.repos.messageTransferRequestRepository.get(
-      config.redeemRequestWithNullMessageHashC.requestHash,
-    ) as MessageTransferRequest;
+      const redeemRequestC = await config.repos.messageTransferRequestRepository.get(
+        config.redeemRequestWithNullMessageHashC.requestHash,
+      ) as MessageTransferRequest;
 
-    const messageC = await config.repos.messageRepository.get(
-      config.fakeData.messageHash,
-    ) as Message;
+      const messageC = await config.repos.messageRepository.get(
+        config.fakeData.messageHash,
+      ) as Message;
 
-    assert.notStrictEqual(
-      redeemRequestC,
-      null,
-      'Redeem request exists in repository.',
-    );
+      assert.notStrictEqual(
+        redeemRequestC,
+        null,
+        'Redeem request exists in repository.',
+      );
 
-    // Here we check against pre-calculated message hash (using fake data).
-    // This is a sanity check. It would fail if there is a semantic change
-    // in hash calculation. This should not happen in general. However,
-    // if it's intended, the message hash calculation in corresponding contract
-    // should be updated also. This catch (sync between message hash calculations
-    // in js and contract layer) is going to be taken care by integration test.
-    assert.strictEqual(
-      redeemRequestC.messageHash,
-      config.fakeData.messageHash,
-    );
-    SpyAssert.assert(
-      interactsSpy,
-      1,
-      [[web3, redeemPoolAddress]],
-    );
-    SpyAssert.assert(
-      acceptRedeemRequestSpy,
-      1,
-      [[
-        redeemRequestC.amount!.toString(10),
-        redeemRequestC.beneficiary!,
-        redeemRequestC.gasPrice!.toString(10),
-        redeemRequestC.gasLimit!.toString(10),
-        redeemRequestC.nonce!.toString(10),
-        redeemRequestC.sender!,
-        redeemRequestC.gateway!,
-        messageC.hashLock,
-      ]],
-    );
-    SpyAssert.assert(
-      sendTransactionSpy,
-      1,
-      [
+      // Here we check against pre-calculated message hash (using fake data).
+      // This is a sanity check. It would fail if there is a semantic change
+      // in hash calculation. This should not happen in general. However,
+      // if it's intended, the message hash calculation in corresponding contract
+      // should be updated also. This catch (sync between message hash calculations
+      // in js and contract layer) is going to be taken care by integration test.
+      assert.strictEqual(
+        redeemRequestC.messageHash,
+        config.fakeData.messageHash,
+      );
+      SpyAssert.assert(
+        interactsSpy,
+        1,
+        [[web3, redeemPoolAddress]],
+      );
+      SpyAssert.assert(
+        acceptRedeemRequestSpy,
+        1,
+        [[
+          redeemRequestC.amount!.toString(10),
+          redeemRequestC.beneficiary!,
+          redeemRequestC.gasPrice!.toString(10),
+          redeemRequestC.gasLimit!.toString(10),
+          redeemRequestC.nonce!.toString(10),
+          redeemRequestC.sender!,
+          redeemRequestC.gateway!,
+          messageC.hashLock,
+        ]],
+      );
+      SpyAssert.assert(
+        sendTransactionSpy,
+        1,
         [
-          fakeTransactionHash,
-          {
-            from: auxiliaryWorkerAddress,
-            gasPrice: AUXILIARY_GAS_PRICE,
-            value: bountyAmount,
-          },
-          web3,
+          [
+            fakeTransactionHash,
+            {
+              from: auxiliaryWorkerAddress,
+              gasPrice: AUXILIARY_GAS_PRICE,
+              value: bountyAmount,
+            },
+            web3,
+          ],
         ],
-      ],
-    );
-  });
+      );
+    });
 
   it('Checks that the message repository is properly updated.', async (): Promise<void> => {
     const redeemRequests = [
@@ -367,7 +367,7 @@ describe('AcceptRedeemRequestService::update', (): void => {
             gasPrice: AUXILIARY_GAS_PRICE,
             value: bountyAmount,
           },
-          web3
+          web3,
         ],
       ],
     );

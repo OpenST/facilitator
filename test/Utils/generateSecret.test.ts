@@ -18,8 +18,8 @@ import 'mocha';
 
 import * as Web3Utils from 'web3-utils';
 
-import Utils from "../../src/Utils";
-import * as assert from "assert";
+import * as assert from 'assert';
+import Utils from '../../src/Utils';
 
 describe('AcceptRedeemRequestService::generateSecret', (): void => {
   it('Checks that secret maches hash lock.', async (): Promise<void> => {

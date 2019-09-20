@@ -178,15 +178,9 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
       gasPrice: ORIGIN_GAS_PRICE,
     };
 
-    const redeemRequest = await this.messageTransferRequestRepository.getByMessageHash(message.messageHash);
-    assert(redeemRequest !== null);
-
-    assert(message.nonce !== undefined);
-    assert(message.gasPrice !== undefined);
-    assert(message.gasLimit !== undefined);
-    assert(message.hashLock !== undefined);
-    assert((redeemRequest as MessageTransferRequest).beneficiary !== undefined);
-    assert((redeemRequest as MessageTransferRequest).amount !== undefined);
+    const redeemRequest = await this.messageTransferRequestRepository.getByMessageHash(
+      message.messageHash
+    );
 
     const rawTx = eip20Gateway.methods.confirmRedeemIntent(
       message.sender as string,

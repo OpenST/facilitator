@@ -193,7 +193,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
       this.web3,
       stakeRequest,
       hashLock,
-      stakeIntentHash
+      stakeIntentHash,
     );
 
     const message = new Message(
