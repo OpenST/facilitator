@@ -46,7 +46,7 @@ describe('TransactionHandler.handle()', (): void => {
 
   it('should handle stake request transactions if '
   + 'handler is available', async (): Promise<void> => {
-    const aStakeRequest = StubData.getARequest('123', RequestType.Stake);
+    const aStakeRequest = StubData.getAMessageTransferRequest('123', RequestType.Stake);
     const stakeRequestedHandler = new StakeRequestedHandler(
       sinon.fake() as any,
       gatewayAddress,

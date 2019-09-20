@@ -54,7 +54,7 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
     message = StubData.messageAttributes();
     message.secret = 'secret';
     message.hashLock = web3utils.keccak256(message.secret);
-    redeemRequest = StubData.getARequest('requestHash', RequestType.Redeem);
+    redeemRequest = StubData.getAMessageTransferRequest('requestHash', RequestType.Redeem);
     // Foreign key linking
     redeemRequest.messageHash = message.messageHash;
 

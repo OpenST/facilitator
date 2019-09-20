@@ -54,7 +54,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     message = StubData.messageAttributes();
     message.secret = 'secret';
     message.hashLock = web3utils.keccak256(message.secret);
-    stakeRequest = StubData.getARequest('requestHash', RequestType.Stake);
+    stakeRequest = StubData.getAMessageTransferRequest('requestHash', RequestType.Stake);
     // Foreign key linking
     stakeRequest.messageHash = message.messageHash;
 
