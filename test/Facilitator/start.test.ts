@@ -26,6 +26,8 @@ describe('Facilitator.start()', (): void => {
     const originSubscriber = sinon.createStubInstance(Subscriber);
     const auxiliarySubscriber = sinon.createStubInstance(Subscriber);
 
+    // Overrides infinite loop of setInterval
+    const clock = sinon.useFakeTimers();
     const facilitator = new Facilitator(
       originSubscriber as any,
       auxiliarySubscriber as any,
@@ -33,5 +35,7 @@ describe('Facilitator.start()', (): void => {
     await facilitator.start();
     SpyAssert.assert(originSubscriber.subscribe, 1, [[]]);
     SpyAssert.assert(auxiliarySubscriber.subscribe, 1, [[]]);
+    clock.restore();
+    sinon.restore();
   });
 });
