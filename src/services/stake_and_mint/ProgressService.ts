@@ -1,3 +1,20 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import assert from 'assert';
 import Web3 from 'web3';
 
@@ -8,7 +25,7 @@ import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
 import GatewayRepository from '../../repositories/GatewayRepository';
-import { MessageStatus } from '../../repositories/MessageRepository';
+import { MessageStatus, MessageType } from '../../repositories/MessageRepository';
 import Utils from '../../Utils';
 
 /**
@@ -59,7 +76,7 @@ export default class ProgressService {
     Logger.debug('Progress service invoked');
 
     const progressPromises = messages
-      .filter(message => message.isValidSecret())
+      .filter(message => (message.type === MessageType.Stake) && message.isValidSecret())
       .map(async (message) => {
         Logger.debug(`Progressing message hash ${message.messageHash}`);
         if (message.sourceStatus === MessageStatus.Declared

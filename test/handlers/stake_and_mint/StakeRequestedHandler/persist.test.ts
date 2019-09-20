@@ -1,16 +1,33 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
 import StakeRequestedHandler from '../../../../src/handlers/stake_and_mint/StakeRequestedHandler';
-import StakeRequest from '../../../../src/models/StakeRequest';
-import StakeRequestRepository from '../../../../src/repositories/StakeRequestRepository';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
+import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully when stakeRequesteds is received first time for'
-    + ' stakeRequestHash', async (): Promise<void> => {
+    + ' requestHash', async (): Promise<void> => {
     const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions = [{
       id: '1',
@@ -27,7 +44,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
     }];
 
     const saveStub = sinon.stub();
-    const sinonMock = sinon.createStubInstance(StakeRequestRepository, {
+    const sinonMock = sinon.createStubInstance(MessageTransferRequestRepository, {
       save: saveStub as any,
     });
     const handler = new StakeRequestedHandler(
@@ -37,8 +54,9 @@ describe('StakeRequestedHandler.persist()', (): void => {
 
     const models = await handler.persist(transactions);
 
-    const stakeRequest = new StakeRequest(
+    const stakeRequest = new MessageTransferRequest(
       transactions[0].stakeRequestHash,
+      RequestType.Stake,
       new BigNumber(transactions[0].amount),
       new BigNumber(transactions[0].blockNumber),
       Web3Utils.toChecksumAddress(transactions[0].beneficiary),
@@ -76,8 +94,9 @@ describe('StakeRequestedHandler.persist()', (): void => {
       stakerProxy: '0x0000000000000000000000000000000000000004',
       blockNumber: '10',
     }];
-    const stakeRequest = new StakeRequest(
+    const stakeRequest = new MessageTransferRequest(
       transactions1[0].stakeRequestHash,
+      RequestType.Stake,
       new BigNumber(transactions1[0].blockNumber),
       new BigNumber(transactions1[0].amount),
       Web3Utils.toChecksumAddress(transactions1[0].beneficiary),
@@ -104,8 +123,9 @@ describe('StakeRequestedHandler.persist()', (): void => {
       blockNumber: '11',
     }];
 
-    const stakeRequestWithNullMessageHash = new StakeRequest(
+    const stakeRequestWithNullMessageHash = new MessageTransferRequest(
       transactions2[0].stakeRequestHash,
+      RequestType.Stake,
       new BigNumber(transactions2[0].blockNumber),
       new BigNumber(transactions2[0].amount),
       Web3Utils.toChecksumAddress(transactions2[0].beneficiary),
@@ -115,10 +135,10 @@ describe('StakeRequestedHandler.persist()', (): void => {
       Web3Utils.toChecksumAddress(transactions2[0].gateway),
       Web3Utils.toChecksumAddress(transactions2[0].staker),
       Web3Utils.toChecksumAddress(transactions2[0].stakerProxy),
-      null!, // Message hash should be null.
+      '', // Message hash should be blank string.
     );
 
-    const sinonMock = sinon.createStubInstance(StakeRequestRepository, {});
+    const sinonMock = sinon.createStubInstance(MessageTransferRequestRepository, {});
     const handler = new StakeRequestedHandler(sinonMock as any, gatewayAddress);
 
     sinonMock.get.returns(Promise.resolve(null));

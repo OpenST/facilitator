@@ -1,3 +1,20 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import {
@@ -49,13 +66,21 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
           primaryKey: true,
           type: DataTypes.ENUM({
             values: [
-              EntityType.StakeIntentDeclareds,
-              EntityType.StakeRequesteds,
+              // Common entities
+              EntityType.GatewayProvens,
               EntityType.StateRootAvailables,
+              // Stake & Mint Entities
+              EntityType.StakeRequesteds,
+              EntityType.StakeIntentDeclareds,
               EntityType.StakeIntentConfirmeds,
               EntityType.StakeProgresseds,
               EntityType.MintProgresseds,
-              EntityType.GatewayProvens,
+              // Redeem & Unstake entities
+              EntityType.RedeemRequesteds,
+              EntityType.RedeemIntentDeclareds,
+              EntityType.RedeemIntentConfirmeds,
+              EntityType.RedeemProgresseds,
+              EntityType.UnstakeProgresseds,
             ],
           }),
         },
@@ -77,7 +102,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
    * If a contract entity does not exist, it creates, otherwise updates.
    *
    * Function ignores (does not set to null) undefined (optional) fields
-   * from the passed stake request object.
+   * from the passed contract entity object.
    *
    * @param contractEntity Contract entity object to update.
    *

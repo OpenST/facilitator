@@ -60,11 +60,13 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
           message.direction = MessageDirection.AuxiliaryToOrigin;
           message.type = MessageType.Redeem;
           message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
+          message.sourceStatus = MessageStatus.Undeclared;
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Creating message object ${JSON.stringify(message)}`);
         }
-        if (!message.sourceStatus || message.sourceStatus === MessageStatus.Undeclared) {
+        if (message.sourceStatus === MessageStatus.Undeclared) {
           message.sourceStatus = MessageStatus.Declared;
+          message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
         return message;

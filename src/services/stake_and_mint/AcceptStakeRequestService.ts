@@ -19,7 +19,6 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import * as Web3Utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
@@ -28,25 +27,25 @@ import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types
 import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Message from '../../models/Message';
-import StakeRequest from '../../models/StakeRequest';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 import Observer from '../../observer/Observer';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
 import Repositories from '../../repositories/Repositories';
-import StakeRequestRepository from '../../repositories/StakeRequestRepository';
+import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
 
 /**
  * Class collects all non accepted stake requests on a trigger and accepts
  * those stake requests in parallel.
  */
-export default class AcceptStakeRequestService extends Observer<StakeRequest> {
+export default class AcceptStakeRequestService extends Observer<MessageTransferRequest> {
   /* Storage */
 
   private web3: Web3;
 
-  private stakeRequestRepository: StakeRequestRepository;
+  private messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private messageRepository: MessageRepository;
 
@@ -66,35 +65,25 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     super();
 
     this.web3 = web3;
-    this.stakeRequestRepository = repos.stakeRequestRepository;
+    this.messageTransferRequestRepository = repos.messageTransferRequestRepository;
     this.messageRepository = repos.messageRepository;
     this.ostComposerAddress = ostComposerAddress;
     this.originWorkerAddress = originWorkerAddress;
   }
 
-  public async update(stakeRequests: StakeRequest[]): Promise<void> {
+  public async update(stakeRequests: MessageTransferRequest[]): Promise<void> {
     Logger.debug('Accept stake request service invoked');
     const nonAcceptedStakeRequests = stakeRequests.filter(
-      (stakeRequest: StakeRequest): boolean => !stakeRequest.messageHash,
+      (stakeRequest: MessageTransferRequest): boolean =>
+        (stakeRequest.requestType === RequestType.Stake) && !stakeRequest.messageHash,
     );
-
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
-  }
-
-  public static generateSecret(): { secret: string; hashLock: string } {
-    const secret = Web3Utils.randomHex(32);
-    const hashLock = Web3Utils.keccak256(secret);
-
-    return {
-      secret,
-      hashLock,
-    };
   }
 
 
   /* Private Functions */
 
-  private async acceptStakeRequests(stakeRequests: StakeRequest[]): Promise<void> {
+  private async acceptStakeRequests(stakeRequests: MessageTransferRequest[]): Promise<void> {
     const stakeRequestPromises = [];
     for (let i = 0; i < stakeRequests.length; i += 1) {
       stakeRequestPromises.push(
@@ -107,9 +96,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     await Promise.all(stakeRequestPromises);
   }
 
-  private async acceptStakeRequest(stakeRequest: StakeRequest): Promise<void> {
+  private async acceptStakeRequest(stakeRequest: MessageTransferRequest): Promise<void> {
     await this.approveForBounty(stakeRequest);
-    const { secret, hashLock } = AcceptStakeRequestService.generateSecret();
+    const { secret, hashLock } = Utils.generateSecret();
 
     const transactionHash = await this.sendAcceptStakeRequestTransaction(
       stakeRequest, hashLock,
@@ -119,14 +108,14 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequest, secret, hashLock,
     );
 
-    await this.updateMessageHashInStakeRequestRepository(
-      stakeRequest.stakeRequestHash,
+    await this.updateMessageHash(
+      stakeRequest.requestHash,
       messageHash,
       stakeRequest.blockNumber,
     );
   }
 
-  private async approveForBounty(stakeRequest: StakeRequest) {
+  private async approveForBounty(stakeRequest: MessageTransferRequest) {
     const eip20GatewayInteract = interacts.getEIP20Gateway(
       this.web3,
       stakeRequest.gateway,
@@ -161,9 +150,9 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
    * @param hashLock Hash lock passed as accept request argument.
    */
   private async sendAcceptStakeRequestTransaction(
-    stakeRequest: StakeRequest, hashLock: string,
+    stakeRequest: MessageTransferRequest, hashLock: string,
   ): Promise<string> {
-    Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.stakerProxy}`);
+    Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.senderProxy}`);
     const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
 
     assert(stakeRequest.amount !== undefined);
@@ -171,7 +160,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
     assert(stakeRequest.gasPrice !== undefined);
     assert(stakeRequest.gasLimit !== undefined);
     assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.staker !== undefined);
+    assert(stakeRequest.sender !== undefined);
     assert(stakeRequest.gateway !== undefined);
 
     const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
@@ -180,7 +169,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       (stakeRequest.gasPrice as BigNumber).toString(10),
       (stakeRequest.gasLimit as BigNumber).toString(10),
       (stakeRequest.nonce as BigNumber).toString(10),
-      (stakeRequest.staker as string),
+      (stakeRequest.sender as string),
       (stakeRequest.gateway as string),
       hashLock,
     );
@@ -191,17 +180,21 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   }
 
   private async createMessageInRepository(
-    stakeRequest: StakeRequest,
+    stakeRequest: MessageTransferRequest,
     secret: string,
     hashLock: string,
   ): Promise<string> {
-    const messageHash = this.calculateMessageHash(stakeRequest, hashLock);
-    Logger.debug(`Creating message for message hash ${messageHash}`);
-    assert(stakeRequest.gateway !== undefined);
-    assert(stakeRequest.gasPrice !== undefined);
-    assert(stakeRequest.gasLimit !== undefined);
-    assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.stakerProxy !== undefined);
+    const stakeIntentHash = this.calculateStakeIntentHash(
+      stakeRequest.amount!,
+      stakeRequest.beneficiary!,
+      stakeRequest.gateway!,
+    );
+    const messageHash = Utils.calculateMessageHash(
+      this.web3,
+      stakeRequest,
+      hashLock,
+      stakeIntentHash,
+    );
 
     const message = new Message(
       messageHash,
@@ -212,7 +205,7 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
       stakeRequest.gasPrice as BigNumber,
       stakeRequest.gasLimit as BigNumber,
       stakeRequest.nonce as BigNumber,
-      stakeRequest.stakerProxy as string,
+      stakeRequest.senderProxy as string,
       MessageDirection.OriginToAuxiliary,
       new BigNumber(0),
       secret,
@@ -225,72 +218,34 @@ export default class AcceptStakeRequestService extends Observer<StakeRequest> {
   }
 
   /**
-   * Updates the message hash in stake requests' repository after
+   * Updates the message hash in requests' repository after
    * accepting stake request. Accepting stake requests adds a new entry
    * into messages' repository with a message hash. That exact message
-   * hash is updated here in stake requests' repository.
+   * hash is updated here in requests' repository.
    */
-  private async updateMessageHashInStakeRequestRepository(
+  private async updateMessageHash(
     stakeRequestHash: string,
     messageHash: string,
     blockNumber: BigNumber,
   ): Promise<void> {
-    const stakeRequest = new StakeRequest(
+    const stakeRequest = new MessageTransferRequest(
       stakeRequestHash,
+      RequestType.Stake,
       blockNumber,
     );
     stakeRequest.messageHash = messageHash;
-    Logger.debug('Updating message hash in stake request repository');
-    await this.stakeRequestRepository.save(stakeRequest);
+    Logger.debug('Updating message hash in message transfer request repository');
+    await this.messageTransferRequestRepository.save(stakeRequest);
   }
 
-  private calculateMessageHash(stakeRequest: StakeRequest, hashLock: string): string {
-    assert(stakeRequest.amount !== undefined);
-    assert(stakeRequest.beneficiary);
-    assert(stakeRequest.gateway);
-    assert(stakeRequest.nonce !== undefined);
-    assert(stakeRequest.gasPrice !== undefined);
-    assert(stakeRequest.gasLimit !== undefined);
-    assert(stakeRequest.stakerProxy);
-
-    const stakeIntentHash: string = this.calculateStakeIntentHash(
-      stakeRequest.amount as BigNumber,
-      stakeRequest.beneficiary as string,
-      stakeRequest.gateway as string,
-    );
-
-    const messageTypeHash = this.web3.utils.sha3(
-      this.web3.eth.abi.encodeParameter(
-        'string',
-        'Message(bytes32 intentHash,uint256 nonce,uint256 gasPrice,'
-        + 'uint256 gasLimit,address sender,bytes32 hashLock)',
-      ),
-    );
-
-    return this.web3.utils.sha3(
-      this.web3.eth.abi.encodeParameters(
-        [
-          'bytes32',
-          'bytes32',
-          'uint256',
-          'uint256',
-          'uint256',
-          'address',
-          'bytes32',
-        ],
-        [
-          messageTypeHash,
-          stakeIntentHash,
-          (stakeRequest.nonce as BigNumber).toString(10),
-          (stakeRequest.gasPrice as BigNumber).toString(10),
-          (stakeRequest.gasLimit as BigNumber).toString(10),
-          stakeRequest.stakerProxy,
-          hashLock,
-        ],
-      ),
-    );
-  }
-
+  /**
+   * Calculates stake intent hash.
+   *
+   * @param amount Beneficiary amount.
+   * @param beneficiary Beneficiary address.
+   * @param cogateway Gateway contract address.
+   * @return Returns Redeem intent hash.
+   */
   private calculateStakeIntentHash(
     amount: BigNumber,
     beneficiary: string,
