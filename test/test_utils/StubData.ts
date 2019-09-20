@@ -30,10 +30,10 @@ import {
 import { RequestType } from '../../src/repositories/MessageTransferRequestRepository';
 
 export default class StubData {
-  public static getAStakeRequest = (stakeRequestHash: string):
-  MessageTransferRequest => new MessageTransferRequest(
-    stakeRequestHash,
-    RequestType.Stake,
+  public static getARequest = (requestHash: string, requestType = RequestType.Stake): MessageTransferRequest =>
+    new MessageTransferRequest(
+    requestHash,
+    requestType,
     new BigNumber('10'),
     new BigNumber('1'),
     'beneficiary',
@@ -41,7 +41,7 @@ export default class StubData {
     new BigNumber('3'),
     new BigNumber('4'),
     'gateway',
-    'staker',
+    'sender',
     'senderProxy',
   );
 
@@ -68,10 +68,11 @@ export default class StubData {
   public static gatewayRecord(
     chain = '1234',
     gatewayAddress = '0x0000000000000000000000000000000000000001',
+    gatewayType = GatewayType.Origin,
   ): Gateway {
     return new Gateway(gatewayAddress,
       chain,
-      GatewayType.Origin,
+      gatewayType,
       '0x0000000000000000000000000000000000000002',
       '0x0000000000000000000000000000000000000004',
       '0x0000000000000000000000000000000000000003',
