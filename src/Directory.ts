@@ -18,7 +18,6 @@
 import os from 'os';
 import path from 'path';
 
-const MOSAIC_CONFIG_FILE = 'mosaic.json';
 /**
  * Directory provides operations on strings representing directories.
  */
@@ -51,16 +50,6 @@ export default class Directory {
   }
 
   /**
-   * @returns The absolute path to the directory in which we store mosaic data.
-   */
-  public static get getDefaultMosaicDataDir(): string {
-    return path.join(
-      os.homedir(),
-      '.mosaic',
-    );
-  }
-
-  /**
    * This returns default facilitator config path
    * @param chain Chain Identifier.
    */
@@ -70,12 +59,5 @@ export default class Directory {
       chain,
       Directory.MOSAIC_FACILITATOR_CONFIG,
     );
-  }
-
-  /**
-   * Returns the mosaic json file name.
-   */
-  public static getMosaicFileName(): string {
-    return MOSAIC_CONFIG_FILE;
   }
 }
