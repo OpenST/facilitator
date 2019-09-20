@@ -17,39 +17,39 @@
 import BigNumber from 'bignumber.js';
 
 import Logger from '../../Logger';
-import StakeRequest from '../../models/StakeRequest';
-import StakeRequestRepository from '../../repositories/StakeRequestRepository';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
+import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
 
 /**
  * This class handles stake request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<StakeRequest> {
+export default class StakeRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
   /* Storage */
 
-  private readonly stakeRequestRepository: StakeRequestRepository;
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
 
   private readonly gatewayAddress: string;
 
   public constructor(
-    stakeRequestRepository: StakeRequestRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
     gatewayAddress: string,
   ) {
     super();
 
-    this.stakeRequestRepository = stakeRequestRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
     this.gatewayAddress = gatewayAddress;
   }
 
   /**
-   * This method parse stakeRequest transaction and returns stakeRequest model object.
+   * This method parse stake Request transaction and returns MessageTransferRequest model object.
    *
    * Note: Forking Handling
    *
    * - Facilitator starts by subscribing to origin and auxiliary subgraphs.
    *
-   * - On receiving first StakeRequested event/entity, entry is created in stake_requests
+   * - On receiving first StakeRequested event/entity, entry is created in requests
    * repository and AcceptStakeRequest service is triggered.
    *
    * - AcceptStakeRequest sends acceptStakeRequest transaction.
@@ -59,24 +59,24 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
    *
    * - If there is forking of requestStake transaction, StakeRequested event/entity is received
    * again. Facilitator checks the block number of new StakeRequested event. If block number is
-   * greater than stake_requests repository block number, then message hash is updated and
-   * acceptStakeRequest transaction is sent again.
+   * greater than requests repository block number, then message hash is updated to blank.
+   * Service sends acceptStakeRequest transaction again.
    *
-   * - acceptStakeRequest transaction is successful in this case.
+   * - acceptStakeRequest transaction is successful in this case also.
    *
    * @param transactions Transaction objects.
    *
-   * @return Array of instances of StakeRequest objects.
+   * @return Array of instances of MessageTransferRequest objects for stake.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<StakeRequest[]> {
+  public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
     Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
-    const models: StakeRequest[] = await Promise.all(transactions
+    const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
         transaction.gateway,
       ))
       .map(
-        async (transaction): Promise<StakeRequest> => {
+        async (transaction): Promise<MessageTransferRequest> => {
           const { stakeRequestHash } = transaction;
           const amount = new BigNumber(transaction.amount);
           const beneficiary = Utils.toChecksumAddress(transaction.beneficiary);
@@ -84,22 +84,21 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
           const gasLimit = new BigNumber(transaction.gasLimit);
           const nonce = new BigNumber(transaction.nonce);
           const gateway = Utils.toChecksumAddress(transaction.gateway);
-          const staker = Utils.toChecksumAddress(transaction.staker);
-          const stakerProxy = Utils.toChecksumAddress(transaction.stakerProxy);
+          const sender = Utils.toChecksumAddress(transaction.staker);
+          const senderProxy = Utils.toChecksumAddress(transaction.stakerProxy);
           const blockNumber = new BigNumber(transaction.blockNumber);
 
-          const stakeRequest = await this.stakeRequestRepository.get(stakeRequestHash);
+          const stakeRequest = await this.messageTransferRequestRepository.get(stakeRequestHash);
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
-            // sequelize skip updating fields whose values are undefined. Null value makes sure
-            // messageHash is updated with NULL in db. null is banged because messageHash is an
-            // optional model field.
-            stakeRequest.messageHash = null!;
+            // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
+            stakeRequest.messageHash = '';
             return stakeRequest;
           }
-          return new StakeRequest(
+          return new MessageTransferRequest(
             stakeRequestHash,
+            RequestType.Stake,
             blockNumber,
             amount,
             beneficiary,
@@ -107,16 +106,16 @@ export default class StakeRequestedHandler extends ContractEntityHandler<StakeRe
             gasLimit,
             nonce,
             gateway,
-            staker,
-            stakerProxy,
+            sender,
+            senderProxy,
           );
         },
       ));
 
     const savePromises = [];
     for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Saving stake request for hash ${models[i].stakeRequestHash}`);
-      savePromises.push(this.stakeRequestRepository.save(models[i]));
+      Logger.debug(`Saving stake request for hash ${models[i].requestHash}`);
+      savePromises.push(this.messageTransferRequestRepository.save(models[i]));
     }
 
     await Promise.all(savePromises);

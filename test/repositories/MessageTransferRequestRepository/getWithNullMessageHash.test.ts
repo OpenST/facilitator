@@ -19,28 +19,30 @@ import 'mocha';
 import BigNumber from 'bignumber.js';
 
 import Message from '../../../src/models/Message';
-import StakeRequest from '../../../src/models/StakeRequest';
+import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../src/repositories/MessageRepository';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
+import { RequestType } from '../../../src/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {
   repos: Repositories;
-  stakeRequestWithMessageHashB: StakeRequest;
-  stakeRequestWithNullMessageHashC: StakeRequest;
-  stakeRequestWithNullMessageHashD: StakeRequest;
+  requestWithMessageHashB: MessageTransferRequest;
+  requestWithNullMessageHashC: MessageTransferRequest;
+  requestWithNullMessageHashD: MessageTransferRequest;
 }
 let config: TestConfigInterface;
 
-describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
+describe('MessageTransferRequestRepository::getWithNullMessageHash', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
-      stakeRequestWithMessageHashB: new StakeRequest(
-        'stakeRequestHashB',
+      requestWithMessageHashB: new MessageTransferRequest(
+        'requestHashB',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('11'),
         'beneficiary',
@@ -48,12 +50,13 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
         new BigNumber('13'),
         new BigNumber('14'),
         'gateway',
-        'stakerB',
-        'stakerProxyB',
+        'senderB',
+        'senderProxyB',
         'messageHashB',
       ),
-      stakeRequestWithNullMessageHashC: new StakeRequest(
-        'stakeRequestHashC',
+      requestWithNullMessageHashC: new MessageTransferRequest(
+        'requestHashC',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('21'),
         'beneficiaryC',
@@ -61,11 +64,12 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
         new BigNumber('23'),
         new BigNumber('24'),
         'gatewayC',
-        'stakerC',
-        'stakerC',
+        'senderC',
+        'senderC',
       ),
-      stakeRequestWithNullMessageHashD: new StakeRequest(
-        'stakeRequestHashD',
+      requestWithNullMessageHashD: new MessageTransferRequest(
+        'requestHashD',
+        RequestType.Stake,
         new BigNumber('10'),
         new BigNumber('31'),
         'beneficiary',
@@ -73,12 +77,12 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
         new BigNumber('33'),
         new BigNumber('34'),
         'gatewayD',
-        'stakerD',
-        'stakerD',
+        'senderD',
+        'senderD',
       ),
     };
 
-    const messageHash = config.stakeRequestWithMessageHashB.messageHash as string;
+    const messageHash = config.requestWithMessageHashB.messageHash as string;
     const type = MessageType.Stake;
     const gatewayAddress = '0x0000000000000000000000000000000000000001';
     const sourceStatus = MessageStatus.Declared;
@@ -112,85 +116,85 @@ describe('StakeRequestRepository::getWithNullMessageHash', (): void => {
       updatedAt,
     );
 
-    // We create a message with config.stakeRequestWithMessageHashB.messageHash
-    // to be able to create an entry in stake requests repository with that
-    // message hash. Saving a stake request with non-null message hash
-    // in the stake request repository is only possible if that message hash
+    // We create a message with config.requestWithMessageHashB.messageHash
+    // to be able to create an entry in requests repository with that
+    // message hash. Saving a request with non-null message hash
+    // in the request repository is only possible if that message hash
     // exists in message repository. This is a foreign key requirement.
     await config.repos.messageRepository.save(
       message,
     );
   });
 
-  it('Checks that no stake request is returned if '
-    + 'there no stake request with null message hash.', async (): Promise<void> => {
-    await config.repos.stakeRequestRepository.save(
-      config.stakeRequestWithMessageHashB,
+  it('Checks that no request is returned if '
+    + 'there no request with null message hash.', async (): Promise<void> => {
+    await config.repos.messageTransferRequestRepository.save(
+      config.requestWithMessageHashB,
     );
 
-    const stakeRequests = await config.repos
-      .stakeRequestRepository.getWithNullMessageHash();
+    const requests = await config.repos
+      .messageTransferRequestRepository.getWithNullMessageHash();
 
     assert.strictEqual(
-      stakeRequests.length,
+      requests.length,
       0,
-      'There is no stake request with null message hash.',
+      'There is no request with null message hash.',
     );
   });
 
-  it('Checks that all stake requests '
+  it('Checks that all requests '
     + 'with a null message hash are returned.', async (): Promise<void> => {
-    await config.repos.stakeRequestRepository.save(
-      config.stakeRequestWithMessageHashB,
+    await config.repos.messageTransferRequestRepository.save(
+      config.requestWithMessageHashB,
     );
 
-    await config.repos.stakeRequestRepository.save(
-      config.stakeRequestWithNullMessageHashC,
+    await config.repos.messageTransferRequestRepository.save(
+      config.requestWithNullMessageHashC,
     );
 
-    await config.repos.stakeRequestRepository.save(
-      config.stakeRequestWithNullMessageHashD,
+    await config.repos.messageTransferRequestRepository.save(
+      config.requestWithNullMessageHashD,
     );
 
-    const stakeRequests = await config.repos
-      .stakeRequestRepository.getWithNullMessageHash();
+    const requests = await config.repos
+      .messageTransferRequestRepository.getWithNullMessageHash();
 
     assert.strictEqual(
-      stakeRequests.length,
+      requests.length,
       2,
-      'There is two stake request with null message hash.',
+      'There is two requests with null message hash.',
     );
 
-    const stakeRequestOutputC = stakeRequests.find(
-      (s: StakeRequest): boolean => s.stakeRequestHash
-        === config.stakeRequestWithNullMessageHashC.stakeRequestHash,
-    );
-
-    assert.notStrictEqual(
-      stakeRequestOutputC,
-      undefined,
-      'Stake request with the specified hash exists in the array.',
-    );
-
-    Util.checkInputAgainstOutput(
-      config.stakeRequestWithNullMessageHashC,
-      stakeRequestOutputC as StakeRequest,
-    );
-
-    const stakeRequestOutputD = stakeRequests.find(
-      (s: StakeRequest): boolean => s.stakeRequestHash
-        === config.stakeRequestWithNullMessageHashD.stakeRequestHash,
+    const requestOutputC = requests.find(
+      (s: MessageTransferRequest): boolean => s.requestHash
+        === config.requestWithNullMessageHashC.requestHash,
     );
 
     assert.notStrictEqual(
-      stakeRequestOutputD,
+      requestOutputC,
       undefined,
-      'Stake request with the specified hash exists in the array.',
+      'MessageTransferRequest with the specified hash exists in the array.',
     );
 
     Util.checkInputAgainstOutput(
-      config.stakeRequestWithNullMessageHashD,
-      stakeRequestOutputD as StakeRequest,
+      config.requestWithNullMessageHashC,
+      requestOutputC as MessageTransferRequest,
+    );
+
+    const requestOutputD = requests.find(
+      (s: MessageTransferRequest): boolean => s.requestHash
+        === config.requestWithNullMessageHashD.requestHash,
+    );
+
+    assert.notStrictEqual(
+      requestOutputD,
+      undefined,
+      'MessageTransferRequest with the specified hash exists in the array.',
+    );
+
+    Util.checkInputAgainstOutput(
+      config.requestWithNullMessageHashD,
+      requestOutputD as MessageTransferRequest,
     );
   });
 });

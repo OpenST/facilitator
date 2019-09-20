@@ -1,9 +1,27 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import { Config } from '../Config/Config';
 import Repositories from '../repositories/Repositories';
 import AcceptStakeRequestService from './stake_and_mint/AcceptStakeRequestService';
 import ProveGatewayService from './stake_and_mint/ProveGatewayService';
 import ConfirmStakeIntentService from './stake_and_mint/ConfirmStakeIntentService';
-import ProgressService from './stake_and_mint/ProgressService';
+import StakeProgressService from './stake_and_mint/ProgressService';
+import RedeemProgressService from './redeem_and_unstake/ProgressService';
 import Utils from '../Utils';
 import ProveCoGatewayService from './redeem_and_unstake/ProveCoGatewayService';
 
@@ -19,7 +37,9 @@ export default class Services {
 
   public readonly confirmStakeIntentService: ConfirmStakeIntentService;
 
-  public readonly progressService: ProgressService;
+  public readonly stakeProgressService: StakeProgressService;
+
+  public readonly redeemProgressService: RedeemProgressService;
 
   public readonly proveCoGatewayService: ProveCoGatewayService;
 
@@ -27,19 +47,23 @@ export default class Services {
    * @param acceptStakeRequestService Instance of accept stake request service.
    * @param proveGatewayService Instance of prove gateway service.
    * @param confirmStakeIntentService Instance of confirm stake intent service.
-   * @param progressService Instance of progress service.
+   * @param stakeProgressService Instance of stake progress service.
+   * @param redeemProgressService Instance of redeem progress service.
+   * @param proveCoGatewayService Instance of prove cogateway service.
    */
   private constructor(
     acceptStakeRequestService: AcceptStakeRequestService,
     proveGatewayService: ProveGatewayService,
     confirmStakeIntentService: ConfirmStakeIntentService,
-    progressService: ProgressService,
+    stakeProgressService: StakeProgressService,
+    redeemProgressService: RedeemProgressService,
     proveCoGatewayService: ProveCoGatewayService,
   ) {
     this.acceptStakeRequestService = acceptStakeRequestService;
     this.proveGatewayService = proveGatewayService;
     this.confirmStakeIntentService = confirmStakeIntentService;
-    this.progressService = progressService;
+    this.stakeProgressService = stakeProgressService;
+    this.redeemProgressService = redeemProgressService;
     this.proveCoGatewayService = proveCoGatewayService;
   }
 
@@ -63,7 +87,9 @@ export default class Services {
       config.auxiliaryWeb3,
       Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
-      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!),
+      Utils.toChecksumAddress(
+        config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
+      ),
       auxChainId,
     );
 
@@ -74,13 +100,16 @@ export default class Services {
       config.auxiliaryWeb3,
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
       // This parameter value represents interested CoGateway, for now it's OST prime CoGateway.
-      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress!),
+      Utils.toChecksumAddress(
+        config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary
+          .ostEIP20CogatewayAddress!,
+      ),
       auxChainId,
     );
 
     const confirmStakeIntentService = new ConfirmStakeIntentService(
       repositories.messageRepository,
-      repositories.stakeRequestRepository,
+      repositories.messageTransferRequestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
       config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
@@ -89,7 +118,7 @@ export default class Services {
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
 
-    const progressService = new ProgressService(
+    const stakeProgressService = new StakeProgressService(
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
@@ -98,11 +127,22 @@ export default class Services {
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
 
+    const redeemProgressService = new RedeemProgressService(
+      repositories.gatewayRepository,
+      config.originWeb3,
+      config.auxiliaryWeb3,
+      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary
+        .ostEIP20CogatewayAddress!,
+      config.facilitator.chains[config.facilitator.originChain].worker,
+      config.facilitator.chains[config.facilitator.auxChainId].worker,
+    );
+
     return new Services(
       acceptStakeRequestService,
       proveGatewayService,
       confirmStakeIntentService,
-      progressService,
+      stakeProgressService,
+      redeemProgressService,
       proveCoGatewayService,
     );
   }

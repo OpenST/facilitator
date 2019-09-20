@@ -1,3 +1,20 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import sinon from 'sinon';
 import Web3 from 'web3';
 import * as web3utils from 'web3-utils';
@@ -8,9 +25,9 @@ import { ProofGenerator } from '@openst/mosaic-proof';
 import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
 import Gateway from '../../../../src/models/Gateway';
 import Message from '../../../../src/models/Message';
-import StakeRequest from '../../../../src/models/StakeRequest';
+import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
 import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
-import StakeRequestRepository from '../../../../src/repositories/StakeRequestRepository';
+import MessageTransferRequestRepository from '../../../../src/repositories/MessageTransferRequestRepository';
 import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/ConfirmStakeIntentService';
 import Utils from '../../../../src/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
@@ -28,7 +45,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
   let confirmStakeIntentService: ConfirmStakeIntentService;
   let gateway: Gateway;
   let message: Message;
-  let stakeRequest: StakeRequest;
+  let stakeRequest: MessageTransferRequest;
   let proof: any;
   let proofGeneratorStub: any;
 
@@ -37,7 +54,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     message = StubData.messageAttributes();
     message.secret = 'secret';
     message.hashLock = web3utils.keccak256(message.secret);
-    stakeRequest = StubData.getAStakeRequest('stakeRequestHash');
+    stakeRequest = StubData.getAStakeRequest('requestHash');
     // Foreign key linking
     stakeRequest.messageHash = message.messageHash;
 
@@ -57,9 +74,11 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       getMessagesForConfirmation: Promise.resolve([message]),
     });
 
-    const stakeRequestRepository = sinon.createStubInstance(StakeRequestRepository, {
-      getByMessageHash: Promise.resolve(stakeRequest),
-    });
+    const messageTransferRequestRepository = sinon.createStubInstance(
+      MessageTransferRequestRepository, {
+        getByMessageHash: Promise.resolve(stakeRequest),
+      },
+    );
 
     const eip20CoGatewayMockInstance = {
       methods: {
@@ -89,7 +108,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
 
     confirmStakeIntentService = new ConfirmStakeIntentService(
       messageRepository as any,
-      stakeRequestRepository as any,
+      messageTransferRequestRepository as any,
       originWeb3,
       auxiliaryWeb3,
       gatewayAddress,
@@ -102,11 +121,16 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary]],
+      [
+        [
+          gateway.gatewayAddress,
+          gateway.lastRemoteGatewayProvenBlockHeight,
+          MessageDirection.OriginToAuxiliary],
+      ],
     );
 
     SpyAssert.assert(
-      stakeRequestRepository.getByMessageHash,
+      messageTransferRequestRepository.getByMessageHash,
       1,
       [[message.messageHash]],
     );
@@ -164,9 +188,11 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       getMessagesForConfirmation: Promise.resolve([]),
     });
 
-    const stakeRequestRepository = sinon.createStubInstance(StakeRequestRepository, {
-      getByMessageHash: Promise.resolve(null),
-    });
+    const messageTransferRequestRepository = sinon.createStubInstance(
+      MessageTransferRequestRepository, {
+        getByMessageHash: Promise.resolve(null),
+      },
+    );
 
 
     const eip20CoGatewayMockInstance = {
@@ -197,7 +223,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
 
     confirmStakeIntentService = new ConfirmStakeIntentService(
       messageRepository as any,
-      stakeRequestRepository as any,
+      messageTransferRequestRepository as any,
       originWeb3,
       auxiliaryWeb3,
       gatewayAddress,
@@ -210,11 +236,17 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       messageRepository.getMessagesForConfirmation,
       1,
-      [[gateway.gatewayAddress, gateway.lastRemoteGatewayProvenBlockHeight, MessageDirection.OriginToAuxiliary]],
+      [
+        [
+          gateway.gatewayAddress,
+          gateway.lastRemoteGatewayProvenBlockHeight,
+          MessageDirection.OriginToAuxiliary,
+        ],
+      ],
     );
 
     SpyAssert.assert(
-      stakeRequestRepository.getByMessageHash,
+      messageTransferRequestRepository.getByMessageHash,
       0,
       [[]],
     );

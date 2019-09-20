@@ -1,3 +1,20 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import BigNumber from 'bignumber.js';
 import * as utils from 'web3-utils';
 
@@ -5,15 +22,18 @@ import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 import Gateway from '../../src/models/Gateway';
 import Message from '../../src/models/Message';
-import StakeRequest from '../../src/models/StakeRequest';
+import MessageTransferRequest from '../../src/models/MessageTransferRequest';
 import { GatewayType } from '../../src/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../src/repositories/MessageRepository';
+import { RequestType } from '../../src/repositories/MessageTransferRequestRepository';
 
 export default class StubData {
-  public static getAStakeRequest = (stakeRequestHash: string): StakeRequest => new StakeRequest(
+  public static getAStakeRequest = (stakeRequestHash: string):
+  MessageTransferRequest => new MessageTransferRequest(
     stakeRequestHash,
+    RequestType.Stake,
     new BigNumber('10'),
     new BigNumber('1'),
     'beneficiary',
@@ -22,7 +42,7 @@ export default class StubData {
     new BigNumber('4'),
     'gateway',
     'staker',
-    'stakerProxy',
+    'senderProxy',
   );
 
   public static auxiliaryChainRecord(
