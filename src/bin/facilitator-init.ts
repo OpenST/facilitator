@@ -22,7 +22,7 @@ import Account from '../Account';
 import { Chain, FacilitatorConfig } from '../Config/Config';
 import DatabaseFileHelper from '../DatabaseFileHelper';
 import Logger from '../Logger';
-import MosaicConfig from '../Config/MosaicConfig';
+import MosaicConfig from "@openst/mosaic-chains/lib/src/Config/MosaicConfig";
 // import { Config, ENV_WORKER_PASSWORD_PREFIX } from '../Config/Config';
 // import Repositories from '../repositories/Repositories';
 // import SeedData from '../SeedData';

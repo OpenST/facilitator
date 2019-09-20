@@ -25,7 +25,7 @@ import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gatew
 import { Config } from './Config/Config';
 import {
   AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
-} from './Config/MosaicConfig';
+} from "@openst/mosaic-chains/lib/src/Config/MosaicConfig";
 import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
 import ContractEntity, { EntityType } from './models/ContractEntity';
