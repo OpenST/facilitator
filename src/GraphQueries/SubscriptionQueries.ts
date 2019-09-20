@@ -24,8 +24,18 @@ const stateRootAvailableSubscriptionQuery = 'subscription{stateRootAvailables(or
 + '  }'
 + '}';
 
+const gatewayProvenSubscriptionQuery = 'subscription{gatewayProvens(orderBy: uts, orderDirection: desc, first: 1){'
++ '   id'
++ '   contractAddress '
++ '   uts '
++ '  }'
++ '}';
+
 const SubscriptionQueries: Record<string, Record<string, string>> = {
   origin: {
+
+    // Stake & Mint entities in origin
+
     stakeRequesteds: 'subscription{stakeRequesteds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
@@ -41,9 +51,29 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
+    stakeProgresseds: 'subscription{stakeProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
+    // Redeem & Unstake entities
+
     stateRootAvailables: stateRootAvailableSubscriptionQuery,
 
-    stakeProgresseds: 'subscription{stakeProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
+    gatewayProvens: gatewayProvenSubscriptionQuery,
+
+    redeemIntentConfirmeds: 'subscription{redeemIntentConfirmeds(orderBy: uts, orderDirection:'
+    + ' desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
+    unstakeProgresseds: 'subscription{unstakeProgresseds(orderBy: uts, orderDirection: desc,'
+    + ' first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '
@@ -51,6 +81,20 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '}',
   },
   auxiliary: {
+
+    // Stake & Mint entities in auxiliary
+
+    redeemRequesteds: 'subscription{redeemRequesteds(orderBy: uts, orderDirection: desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
+    stateRootAvailables: stateRootAvailableSubscriptionQuery,
+
+    gatewayProvens: gatewayProvenSubscriptionQuery,
+
     stakeIntentConfirmeds: 'subscription{stakeIntentConfirmeds(orderBy: uts, orderDirection:'
     + ' desc, first: 1){'
     + '   id'
@@ -59,8 +103,6 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
-    stateRootAvailables: stateRootAvailableSubscriptionQuery,
-
     mintProgresseds: 'subscription{mintProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
@@ -68,7 +110,17 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
-    gatewayProvens: 'subscription{gatewayProvens(orderBy: uts, orderDirection: desc, first: 1){'
+    // Redeem & Unstake entities
+
+    redeemIntentDeclareds: 'subscription{redeemIntentDeclareds(orderBy: uts, orderDirection: desc,'
+    + ' first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
+    redeemProgresseds: 'subscription{redeemProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '
@@ -76,7 +128,6 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '}',
 
   },
-
 };
 
 export default SubscriptionQueries;

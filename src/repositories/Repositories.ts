@@ -80,11 +80,16 @@ export default class Repositories {
    * @param services Service container.
    */
   public attach(services: Services): void {
+    // Stake & Mint services attach
     this.messageTransferRequestRepository.attach(services.acceptStakeRequestService);
     this.auxiliaryChainRepository.attach(services.proveGatewayService);
-    this.auxiliaryChainRepository.attach(services.proveCoGatewayService);
     this.gatewayRepository.attach(services.confirmStakeIntentService);
     this.messageRepository.attach(services.stakeProgressService);
+
+    // Redeem & Unstake services attach
+    this.messageTransferRequestRepository.attach(services.acceptRedeemRequestService);
+    this.auxiliaryChainRepository.attach(services.proveCoGatewayService);
+    this.gatewayRepository.attach(services.confirmRedeemIntentService);
     this.messageRepository.attach(services.redeemProgressService);
   }
 
