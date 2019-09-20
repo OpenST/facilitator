@@ -270,8 +270,6 @@ describe('facilitator start', async () => {
       },
     );
 
-    console.log('receipt :- ',receipt);
-
     messageTransferRequest.blockNumber = new BigNumber(receipt.blockNumber);
 
     assert.strictEqual(
@@ -489,32 +487,33 @@ describe('facilitator start', async () => {
       const endTime = Utils.getEndTime(testDuration * 2);
       progressMintingInterval = setInterval(async (): Promise<void> => {
         const eip20CoGateway = utils.getEIP20CoGatewayInstance();
-        const eip20CoGatewayMessageStatus = Utils.getEnumValue(
-          await eip20CoGateway.methods.getInboxMessageStatus(
-            messageHash,
-          ).call(),
+
+        const eip20CoGatewayMessageStatus = Utils.getEnumValue(parseInt(
+            await eip20CoGateway.methods.getInboxMessageStatus(
+              messageHash,
+            ).call(),
+          ),
         );
-        // const messageInCoGateway = await eip20CoGateway.methods.messages(messageHash).call();
 
         const eip20Gateway = utils.getEIP20GatewayInstance();
-        const eip20GatewayMessageStatus = Utils.getEnumValue(
-          await eip20Gateway.methods.getOutboxMessageStatus(
-            messageHash,
-          ).call()
+        const eip20GatewayMessageStatus = Utils.getEnumValue(parseInt(
+            await eip20Gateway.methods.getOutboxMessageStatus(
+              messageHash,
+            ).call()
+          ),
         );
-        // const messageInGateway = await eip20Gateway.methods.messages(messageHash).call();
+
+        const messageInGateway = await eip20Gateway.methods.messages(messageHash).call();
 
         const messageInDb = await utils.getMessageFromDB(messageHash);
 
-        // expectedMessage = Utils.getMessageStub(messageInGateway, expectedMessage!);
-        console.log('expectedMessage :- ',expectedMessage);
-        console.log('eip20GatewayMessageStatus :- ',eip20GatewayMessageStatus);
-        console.log('eip20CoGatewayMessageStatus :- ',eip20CoGatewayMessageStatus);
+        expectedMessage = Utils.getMessageStub(messageInGateway, expectedMessage!);
+
         if(
           eip20GatewayMessageStatus === MessageStatus.Declared &&
           eip20CoGatewayMessageStatus === MessageStatus.Undeclared
         ) {
-          if(Utils.isSourceDeclaredTargetUndeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetUndeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -530,7 +529,7 @@ describe('facilitator start', async () => {
           eip20GatewayMessageStatus === MessageStatus.Declared &&
           eip20CoGatewayMessageStatus === MessageStatus.Declared
         ) {
-          if(Utils.isSourceDeclaredTargetUndeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetUndeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -541,7 +540,7 @@ describe('facilitator start', async () => {
               reject(e);
             }
           }
-          if(Utils.isSourceDeclaredTargetDeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -558,7 +557,7 @@ describe('facilitator start', async () => {
           eip20CoGatewayMessageStatus === MessageStatus.Progressed
         ) {
 
-          if(Utils.isSourceDeclaredTargetDeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -570,7 +569,7 @@ describe('facilitator start', async () => {
             }
           }
 
-          if(Utils.isSourceDeclaredTargetProgressedInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetProgressed(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -588,7 +587,7 @@ describe('facilitator start', async () => {
           eip20CoGatewayMessageStatus === MessageStatus.Declared
         ) {
 
-          if(Utils.isSourceDeclaredTargetDeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -600,7 +599,7 @@ describe('facilitator start', async () => {
             }
           }
 
-          if(Utils.isSourceProgressedTargetDeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceProgressedTargetDeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -618,7 +617,7 @@ describe('facilitator start', async () => {
           eip20CoGatewayMessageStatus === MessageStatus.Progressed
         ) {
 
-          if(Utils.isSourceDeclaredTargetDeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -630,7 +629,7 @@ describe('facilitator start', async () => {
             }
           }
 
-          if(Utils.isSourceProgressedTargetDeclaredInDb(messageInDb!)) {
+          if(Utils.isSourceProgressedTargetDeclared(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -642,7 +641,7 @@ describe('facilitator start', async () => {
             }
           }
 
-          if(Utils.isSourceDeclaredTargetProgressedInDb(messageInDb!)) {
+          if(Utils.isSourceDeclaredTargetProgressed(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -654,7 +653,7 @@ describe('facilitator start', async () => {
             }
           }
 
-          if(Utils.isSourceProgressedTargetProgressedInDb(messageInDb!)) {
+          if(Utils.isSourceProgressedTargetProgressed(messageInDb!)) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -677,40 +676,14 @@ describe('facilitator start', async () => {
           );
         }
 
-
-        // if (
-        //   messageInDb!.targetStatus === MessageStatus.Declared
-        //   && messageInDb!.sourceStatus === MessageStatus.Declared
-        // ) {
-        //   expectedMessage.targetStatus = eip20CoGatewayMessageStatus === 1 ? MessageStatus.Declared : MessageStatus.Undeclared;
-        //
-        //   expectedMessage = Utils.getMessageStub(messageInGateway, messageInDb!);
-        //
-        //   Utils.assertMessages(messageInDb!, expectedMessage);
-        //
-        //   const eip20GatewayAddress = mosaicConfig.auxiliaryChains[facilitatorConfig.auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!;
-        //   const gateways = await utils.getGateway(eip20GatewayAddress);
-        //
-        //   const eip20GatewayInstance = utils.getEIP20GatewayInstance();
-        //   const bounty = await eip20GatewayInstance.methods.bounty().call();
-        //   const activation = await eip20GatewayInstance.methods.activated().call();
-        //   const expectedGateway = utils.getGatewayStub(
-        //     bounty,
-        //     activation,
-        //     GatewayType.Origin,
-        //     new BigNumber(anchoredBlockNumber),
-        //   );
-        //
-        //   Utils.assertGateway(gateways!, expectedGateway);
-        //   resolve();
-        // }
-
         const currentTime = process.hrtime()[0];
         if (currentTime >= endTime) {
           return reject(
             new Error(
-              'Assertion for auxiliary chains/messages table failed while anchoring'
-              + ` as response was not received within ${testDuration} mins`,
+              'Time out while verifying progress minting of message. Source status at db is' +
+              `${messageInDb!.sourceStatus} and Target status at db is ${messageInDb!.targetStatus}` +
+              `EIP20Gateway status is ${eip20GatewayMessageStatus} and EIP20CoGateway status is` +
+              `${eip20CoGatewayMessageStatus}`,
             ),
           );
         }

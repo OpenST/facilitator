@@ -635,7 +635,6 @@ export default class Utils {
     beneficiary: string,
     expectedMintedAmount: BigNumber,
   ): Promise<void> {
-    console.log('in assertMintingBalance');
     const actualMintedAmount = new BigNumber(await this.auxiliaryWeb3.eth.getBalance(beneficiary));
 
     assert.strictEqual(
@@ -795,7 +794,7 @@ export default class Utils {
    * @returns `true` if source status is declared and target status is undeclared in db otherwise
    *           false.
    */
-  public static isSourceDeclaredTargetUndeclaredInDb(
+  public static isSourceDeclaredTargetUndeclared(
     messageObject: Message,
   ): boolean {
     return (
@@ -810,7 +809,7 @@ export default class Utils {
    * @returns `true` if source status is declared and target status is declared in db otherwise
    *           false.
    */
-  public static isSourceDeclaredTargetDeclaredInDb(
+  public static isSourceDeclaredTargetDeclared(
     messageObject: Message,
   ): boolean {
     return (
@@ -825,7 +824,7 @@ export default class Utils {
    * @returns `true` if source status is declared and target status is progressed in db otherwise
    *           false.
    */
-  public static isSourceDeclaredTargetProgressedInDb(
+  public static isSourceDeclaredTargetProgressed(
     messageObject: Message,
   ): boolean {
     return (
@@ -840,7 +839,7 @@ export default class Utils {
    * @returns `true` if source status is progressed and target status is declared in db otherwise
    *           false.
    */
-  public static isSourceProgressedTargetDeclaredInDb(
+  public static isSourceProgressedTargetDeclared(
     messageObject: Message,
   ): boolean {
     return (
@@ -855,7 +854,7 @@ export default class Utils {
    * @returns `true` if source status is progressed and target status is progressed in db otherwise
    *           false.
    */
-  public static isSourceProgressedTargetProgressedInDb(
+  public static isSourceProgressedTargetProgressed(
     messageObject: Message,
   ): boolean {
     return (
@@ -869,17 +868,16 @@ export default class Utils {
    * @param key Key value for which string equivalent is required.
    * @returns String representation of the key if present otherwise empty.
    */
-  public static getEnumValue(key: string): string {
-    console.log('key in getEnumValue :- ',key);
+  public static getEnumValue(key: number): string {
     let status: string = '';
     switch (key) {
-      case '0':
+      case 0:
         status = 'undeclared';
         break;
-      case '1':
+      case 1:
         status = 'declared';
         break;
-      case '2':
+      case 2:
         status ='progressed';
         break;
       default:
