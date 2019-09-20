@@ -24,7 +24,7 @@ import StakeProgressService from './stake_and_mint/ProgressService';
 import RedeemProgressService from './redeem_and_unstake/ProgressService';
 import Utils from '../Utils';
 import ProveCoGatewayService from './redeem_and_unstake/ProveCoGatewayService';
-import ConfirmRedeemIntentService from "./redeem_and_unstake/ConfirmRedeemIntentService";
+import ConfirmRedeemIntentService from './redeem_and_unstake/ConfirmRedeemIntentService';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
