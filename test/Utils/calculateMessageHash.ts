@@ -38,7 +38,7 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('AcceptRedeemRequestService::update', (): void => {
+describe('Utils::calculateMessageHash', (): void => {
   const web3 = new Web3(null);
   beforeEach(async (): Promise<void> => {
     config = {
