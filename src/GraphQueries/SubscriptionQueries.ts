@@ -72,7 +72,8 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
     + '  }'
     + '}',
 
-    unstakeProgresseds: 'subscription{stakeProgresseds(orderBy: uts, orderDirection: desc, first: 1){'
+    unstakeProgresseds: 'subscription{unstakeProgresseds(orderBy: uts, orderDirection: desc,' +
+    ' first: 1){'
     + '   id'
     + '   contractAddress '
     + '   uts '
@@ -82,6 +83,13 @@ const SubscriptionQueries: Record<string, Record<string, string>> = {
   auxiliary: {
 
     // Stake & Mint entities in auxiliary
+
+    redeemRequesteds: 'subscription{redeemRequesteds(orderBy: uts, orderDirection: desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
 
     stateRootAvailables: stateRootAvailableSubscriptionQuery,
 

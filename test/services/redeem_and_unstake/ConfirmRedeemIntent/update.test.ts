@@ -22,7 +22,7 @@ import { GatewayType } from '../../../../src/repositories/GatewayRepository';
 describe('ConfirmRedeemIntentService.update()', (): void => {
   const originWeb3 = new Web3(null);
   const auxiliaryWeb3 = new Web3(null);
-  const originWorkerAddress = '0xF1e701FbE4288a38FfFEa3084C826B810c5d5294';
+  const originWorkerAddress = '0x0000000000000000000000000000000000000013';
   const coGatewayAddress = '0x0000000000000000000000000000000000000003';
   const remoteGatewayAddress = '0x0000000000000000000000000000000000000002';
   const messageOutBoxOffset = '7';
