@@ -364,59 +364,63 @@ describe('facilitator start', async () => {
           const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
           const coGateway: EIP20CoGateway = utils.getEIP20CoGatewayInstance();
           const message = await gateway.methods.messages(messageHash.toString()).call();
-          const gatewayMessageStatus = parseInt(
-            await gateway.methods.getOutboxMessageStatus(messageHash).call(),
-            10,
+          const eip20GatewayMessageStatus = Utils.getEnumValue(
+            parseInt(
+              await gateway.methods.getOutboxMessageStatus(messageHash).call(),
+              10,
+            ),
           );
 
-          const coGatewayMessageStatus = parseInt(
-            await coGateway.methods.getInboxMessageStatus(messageHash).call(),
-            10,
+          const eip20CoGatewayMessageStatus = Utils.getEnumValue(
+            parseInt(
+              await coGateway.methods.getInboxMessageStatus(messageHash).call(),
+              10,
+            ),
           );
 
           if (
-            messageInDb!.sourceStatus === MessageStatus.Undeclared
-            && messageInDb!.targetStatus === MessageStatus.Undeclared
+            eip20GatewayMessageStatus === MessageStatus.Undeclared &&
+            eip20CoGatewayMessageStatus === MessageStatus.Undeclared
           ) {
-            expectedMessage.hashLock = message.hashLock;
-
-            try{
-              Utils.assertMessages(messageInDb!, expectedMessage);
-            } catch (e) {
-              reject(e);
+              if(
+                messageInDb!.sourceStatus === MessageStatus.Undeclared &&
+                messageInDb!.targetStatus === MessageStatus.Undeclared
+              ) {
+                try {
+                  Utils.assertMessages(messageInDb!, expectedMessage);
+                } catch (e) {
+                  reject(e);
+                }
+              }
             }
-          }
+            else if (
+                eip20GatewayMessageStatus === MessageStatus.Declared &&
+                eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+              ) {
+                if(Utils.isSourceDeclaredTargetUndeclared(messageInDb!)) {
+                expectedMessage.hashLock = message.hashLock;
 
-          if (
-            messageInDb!.sourceStatus === MessageStatus.Declared
-            && messageInDb!.targetStatus === MessageStatus.Undeclared
-          ) {
-            expectedMessage.hashLock = message.hashLock;
-            expectedMessage.sourceStatus = gatewayMessageStatus === 1 ? MessageStatus.Declared : MessageStatus.Undeclared;
-
-            if(coGatewayMessageStatus === 1) {
-              expectedMessage.targetStatus = MessageStatus.Declared;
-            }
-            else if(coGatewayMessageStatus === 2) {
-              expectedMessage.targetStatus = MessageStatus.Progressed;
-            }
+                  try {
+                    Utils.assertMessages(messageInDb!, expectedMessage);
+                  } catch (e) {
+                    reject(e);
+                  }
+                  resolve();
+                }
+              }
             else {
-              expectedMessage.targetStatus = MessageStatus.Undeclared;
-            }
-
-            try{
-              Utils.assertMessages(messageInDb!, expectedMessage);
-            }catch (e) {
-              reject(e);
-            }
-            resolve();
+            reject(
+              `Message status for source in db is ${messageInDb!.sourceStatus} but in ` +
+              `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is ` +
+              `${messageInDb!.sourceStatus} but got ${eip20CoGatewayMessageStatus}`,
+            );
           }
         }
 
         const currentTime = process.hrtime()[0];
 
         if (currentTime >= endTime) {
-          return reject(
+          reject(
             new Error(
               'Assertion for messages table while request staking failed as response was not received'
               + ` within ${testDuration} mins`,
@@ -531,18 +535,10 @@ describe('facilitator start', async () => {
           eip20GatewayMessageStatus === MessageStatus.Declared &&
           eip20CoGatewayMessageStatus === MessageStatus.Declared
         ) {
-          if(Utils.isSourceDeclaredTargetUndeclared(messageInDb!)) {
-            try {
-              Utils.assertMessages(
-                messageInDb!,
-                expectedMessage,
-              );
-            }
-            catch(e) {
-              reject(e);
-            }
-          }
-          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
+          if(
+            Utils.isSourceDeclaredTargetUndeclared(messageInDb!) ||
+            Utils.isSourceDeclaredTargetDeclared(messageInDb!)
+          ) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -559,19 +555,10 @@ describe('facilitator start', async () => {
           eip20CoGatewayMessageStatus === MessageStatus.Progressed
         ) {
 
-          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
-            try {
-              Utils.assertMessages(
-                messageInDb!,
-                expectedMessage,
-              );
-            }
-            catch(e) {
-              reject(e);
-            }
-          }
-
-          if(Utils.isSourceDeclaredTargetProgressed(messageInDb!)) {
+          if(
+            Utils.isSourceDeclaredTargetDeclared(messageInDb!) ||
+            Utils.isSourceDeclaredTargetProgressed(messageInDb!)
+          ) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -589,19 +576,10 @@ describe('facilitator start', async () => {
           eip20CoGatewayMessageStatus === MessageStatus.Declared
         ) {
 
-          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
-            try {
-              Utils.assertMessages(
-                messageInDb!,
-                expectedMessage,
-              );
-            }
-            catch(e) {
-              reject(e);
-            }
-          }
-
-          if(Utils.isSourceProgressedTargetDeclared(messageInDb!)) {
+          if(
+            Utils.isSourceDeclaredTargetDeclared(messageInDb!) ||
+            Utils.isSourceProgressedTargetDeclared(messageInDb!)
+          ) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -619,31 +597,11 @@ describe('facilitator start', async () => {
           eip20CoGatewayMessageStatus === MessageStatus.Progressed
         ) {
 
-          if(Utils.isSourceDeclaredTargetDeclared(messageInDb!)) {
-            try {
-              Utils.assertMessages(
-                messageInDb!,
-                expectedMessage,
-              );
-            }
-            catch(e) {
-              reject(e);
-            }
-          }
-
-          if(Utils.isSourceProgressedTargetDeclared(messageInDb!)) {
-            try {
-              Utils.assertMessages(
-                messageInDb!,
-                expectedMessage,
-              );
-            }
-            catch(e) {
-              reject(e);
-            }
-          }
-
-          if(Utils.isSourceDeclaredTargetProgressed(messageInDb!)) {
+          if(
+            Utils.isSourceProgressedTargetDeclared(messageInDb!) ||
+            Utils.isSourceDeclaredTargetProgressed(messageInDb!) ||
+            Utils.isSourceDeclaredTargetDeclared(messageInDb!)
+          ) {
             try {
               Utils.assertMessages(
                 messageInDb!,
@@ -672,7 +630,8 @@ describe('facilitator start', async () => {
           }
         }
         else {
-          reject(`Message status for source in db is ${messageInDb!.sourceStatus} but in ` +
+          reject(
+            `Message status for source in db is ${messageInDb!.sourceStatus} but in ` +
             `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is ` +
             `${messageInDb!.sourceStatus} but got ${eip20CoGatewayMessageStatus}`,
           );
