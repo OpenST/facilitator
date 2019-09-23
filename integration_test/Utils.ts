@@ -789,6 +789,21 @@ export default class Utils {
   }
 
   /**
+   * It verifies whether source status is undeclared and target status is undeclared in db.
+   * @param messageObject Instance of message object.
+   * @returns `true` if source status is undeclared and target status is undeclared in db otherwise
+   *           false.
+   */
+  public static isSourceUndeclaredTargetUndeclared(
+    messageObject: Message,
+  ): boolean {
+    return (
+      messageObject!.sourceStatus === MessageStatus.Undeclared &&
+      messageObject!.targetStatus ===  MessageStatus.Undeclared
+    );
+  }
+
+  /**
    * It verifies whether source status is declared and target status is undeclared in db.
    * @param messageObject Instance of message object.
    * @returns `true` if source status is declared and target status is undeclared in db otherwise
