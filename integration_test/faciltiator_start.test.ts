@@ -13,7 +13,7 @@ import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organizati
 import { FacilitatorConfig } from '../src/Config/Config';
 
 import Utils from './Utils';
-import MosaicConfig from '../src/Config/MosaicConfig';
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 
 import Message from '../src/models/Message';

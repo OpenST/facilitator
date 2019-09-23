@@ -13,7 +13,7 @@ import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoG
 import Repositories from '../src/repositories/Repositories';
 import Directory from '../src/Directory';
 import assert from '../test/test_utils/assert';
-import MosaicConfig from '../src/Config/MosaicConfig';
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { FacilitatorConfig } from '../src/Config/Config';
 import Message from '../src/models/Message';
 import Gateway from '../src/models/Gateway';
