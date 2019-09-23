@@ -20,6 +20,7 @@ import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import path from 'path';
 import Web3 from 'web3';
 
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import Account from '../Account';
 import Directory from '../Directory';
 import {
@@ -29,7 +30,6 @@ import {
 import Logger from '../Logger';
 import Utils from '../Utils';
 import schema from './FacilitatorConfig.schema.json';
-import MosaicConfig from './MosaicConfig';
 
 // Database password key to read from env.
 const ENV_DB_PASSWORD = 'MOSAIC_FACILITATOR_DB_PASSWORD';

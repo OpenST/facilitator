@@ -17,9 +17,9 @@
 
 import sinon from 'sinon';
 
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import ConfigFactory from '../../src/Config/ConfigFactory';
-import MosaicConfig from '../../src/Config/MosaicConfig';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 

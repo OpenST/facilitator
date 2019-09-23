@@ -15,9 +15,9 @@
 // ----------------------------------------------------------------------------
 
 
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { FacilitatorStartException } from '../Exception';
 import { Config, FacilitatorConfig } from './Config';
-import MosaicConfig from './MosaicConfig';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
