@@ -900,4 +900,67 @@ export default class Utils {
     }
     return status;
   }
+
+  /**
+   * It verifies the status of message on gatway and cogateway with the status in db.
+   * @param eip20GatewayMessageStatus Status of message on gateway.
+   * @param eip20CoGatewayMessageStatus Status of message on cogateway.
+   * @param messageObject Message object.
+   * @returns returns true if any the condition is satisfied otherwise false.
+   */
+  public static isMessageStatusValid(
+    eip20GatewayMessageStatus: string,
+    eip20CoGatewayMessageStatus: string,
+    messageObject: Message,
+  ): boolean {
+    if (
+      eip20GatewayMessageStatus === MessageStatus.Declared
+      && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+      && Utils.isSourceDeclaredTargetUndeclared(messageObject)
+    ) {
+      return true;
+    }
+    if (
+      eip20GatewayMessageStatus === MessageStatus.Declared
+      && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+      && Utils.isSourceDeclaredTargetUndeclared(messageObject)
+    ) {
+      return true;
+    }
+    if (
+      eip20GatewayMessageStatus === MessageStatus.Declared
+      && eip20CoGatewayMessageStatus === MessageStatus.Declared
+      && (Utils.isSourceDeclaredTargetUndeclared(messageObject)
+      || Utils.isSourceDeclaredTargetDeclared(messageObject))
+    ) {
+      return true;
+    }
+    if (
+      eip20GatewayMessageStatus === MessageStatus.Declared
+      && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+      && (Utils.isSourceDeclaredTargetDeclared(messageObject)
+      || Utils.isSourceDeclaredTargetProgressed(messageObject))
+    ) {
+      return true;
+    }
+    if (
+      eip20GatewayMessageStatus === MessageStatus.Progressed
+      && eip20CoGatewayMessageStatus === MessageStatus.Declared
+      && (Utils.isSourceDeclaredTargetDeclared(messageObject)
+      || Utils.isSourceProgressedTargetDeclared(messageObject))
+    ) {
+      return true;
+    }
+    if (
+      eip20GatewayMessageStatus === MessageStatus.Progressed
+      && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+      && (Utils.isSourceProgressedTargetDeclared(messageObject)
+      || Utils.isSourceDeclaredTargetProgressed(messageObject)
+      || Utils.isSourceDeclaredTargetDeclared(messageObject))
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 }

@@ -502,65 +502,18 @@ describe('facilitator start', async (): Promise<void> => {
 
         expectedMessage = Utils.getMessageStub(messageInGateway, expectedMessage!);
         try {
-          if (
-            eip20GatewayMessageStatus === MessageStatus.Declared
-            && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
-            && Utils.isSourceDeclaredTargetUndeclared(messageInDb!)
-          ) {
-            Utils.assertMessages(
-              messageInDb!,
-              expectedMessage,
-            );
-          } else if (
-            eip20GatewayMessageStatus === MessageStatus.Declared
-            && eip20CoGatewayMessageStatus === MessageStatus.Declared
-            && (Utils.isSourceDeclaredTargetUndeclared(messageInDb!)
-              || Utils.isSourceDeclaredTargetDeclared(messageInDb!))
-          ) {
-            Utils.assertMessages(
-              messageInDb!,
-              expectedMessage,
-            );
-          } else if (
-            eip20GatewayMessageStatus === MessageStatus.Declared
-            && eip20CoGatewayMessageStatus === MessageStatus.Progressed
-            && (Utils.isSourceDeclaredTargetDeclared(messageInDb!)
-              || Utils.isSourceDeclaredTargetProgressed(messageInDb!))
-          ) {
-            Utils.assertMessages(
-              messageInDb!,
-              expectedMessage,
-            );
-          } else if (
-            eip20GatewayMessageStatus === MessageStatus.Progressed
-            && eip20CoGatewayMessageStatus === MessageStatus.Declared
-            && (Utils.isSourceDeclaredTargetDeclared(messageInDb!)
-              || Utils.isSourceProgressedTargetDeclared(messageInDb!))
-          ) {
-            Utils.assertMessages(
-              messageInDb!,
-              expectedMessage,
-            );
-          } else if (
-            eip20GatewayMessageStatus === MessageStatus.Progressed
-            && eip20CoGatewayMessageStatus === MessageStatus.Progressed
-            && (Utils.isSourceProgressedTargetDeclared(messageInDb!)
-              || Utils.isSourceDeclaredTargetProgressed(messageInDb!)
-              || Utils.isSourceDeclaredTargetDeclared(messageInDb!))
-          ) {
-            Utils.assertMessages(
-              messageInDb!,
-              expectedMessage,
-            );
+          if (Utils.isMessageStatusValid(
+            eip20GatewayMessageStatus,
+            eip20CoGatewayMessageStatus,
+            messageInDb!,
+          )) {
+            Utils.assertMessages(messageInDb!, expectedMessage);
           } else if (
             eip20GatewayMessageStatus === MessageStatus.Progressed
             && eip20CoGatewayMessageStatus === MessageStatus.Progressed
             && Utils.isSourceProgressedTargetProgressed(messageInDb!)
           ) {
-            Utils.assertMessages(
-              messageInDb!,
-              expectedMessage,
-            );
+            Utils.assertMessages(messageInDb!, expectedMessage);
             const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
             const mintedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
             await utils.assertMintingBalance(messageTransferRequest.beneficiary!, mintedAmount);
