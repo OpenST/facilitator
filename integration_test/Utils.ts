@@ -10,10 +10,11 @@ import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer
 import { TransactionReceipt } from 'web3-core';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import * as EthUtils from 'ethereumjs-util';
 import Repositories from '../src/repositories/Repositories';
 import Directory from '../src/Directory';
 import assert from '../test/test_utils/assert';
-import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { FacilitatorConfig } from '../src/Config/Config';
 import Message from '../src/models/Message';
 import Gateway from '../src/models/Gateway';
@@ -21,7 +22,6 @@ import AuxiliaryChain from '../src/models/AuxiliaryChain';
 import { GatewayType } from '../src/repositories/GatewayRepository';
 import * as Constants from './Constants.json';
 
-import * as EthUtils from 'ethereumjs-util';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
 
@@ -65,7 +65,7 @@ export default class Utils {
     this.auxiliaryWeb3 = new Web3(facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc);
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
-    this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress!;
+    this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress;
   }
 
   /**
@@ -151,7 +151,7 @@ export default class Utils {
       expirationHeight,
     );
 
-    const setWorkerReceipt = await this.sendTransaction(
+    const setWorkerReceipt = await Utils.sendTransaction(
       setWorkerRawTx,
       {
         from: owner,
@@ -197,7 +197,7 @@ export default class Utils {
       currentBlock.stateRoot,
     );
 
-    await this.sendTransaction(
+    await Utils.sendTransaction(
       anchorStateRootRawTx,
       {
         from: owner,
@@ -345,7 +345,7 @@ export default class Utils {
       'Incorrect message type',
     );
 
-    if(actualObject.sourceStatus !== MessageStatus.Undeclared) {
+    if (actualObject.sourceStatus !== MessageStatus.Undeclared) {
       assert.strictEqual(
         actualObject.hashLock!,
         expectedObject.hashLock!,
@@ -412,10 +412,10 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualObject.blockNumber!.cmp(expectedObject.blockNumber!),
+      actualObject.blockNumber.cmp(expectedObject.blockNumber),
       0,
-      `Expected blocknumber at which stake request is done is `+
-        `${expectedObject.blockNumber!}  but got ${expectedObject.blockNumber!},`
+      'Expected blocknumber at which stake request is done is '
+        + `${expectedObject.blockNumber}  but got ${expectedObject.blockNumber},`,
     );
   }
 
@@ -612,7 +612,7 @@ export default class Utils {
   ): Gateway {
     const { auxChainId } = this.facilitatorConfig;
     const gateway: Gateway = new Gateway(
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress!,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
       this.facilitatorConfig.originChain,
       gatewayType,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
@@ -778,7 +778,7 @@ export default class Utils {
    * @param txOption Transaction options.
    * @returns Receipt for the transaction.
    */
-  public async sendTransaction(tx: any, txOption: any): Promise<TransactionReceipt> {
+  public static async sendTransaction(tx: any, txOption: any): Promise<TransactionReceipt> {
     const txOptions = Object.assign({}, txOption);
 
     if (txOptions.gas === undefined) {
@@ -798,8 +798,8 @@ export default class Utils {
     messageObject: Message,
   ): boolean {
     return (
-      messageObject!.sourceStatus === MessageStatus.Undeclared &&
-      messageObject!.targetStatus ===  MessageStatus.Undeclared
+      messageObject.sourceStatus === MessageStatus.Undeclared
+      && messageObject.targetStatus === MessageStatus.Undeclared
     );
   }
 
@@ -813,8 +813,8 @@ export default class Utils {
     messageObject: Message,
   ): boolean {
     return (
-      messageObject!.sourceStatus === MessageStatus.Declared &&
-      messageObject!.targetStatus ===  MessageStatus.Undeclared
+      messageObject.sourceStatus === MessageStatus.Declared
+      && messageObject.targetStatus === MessageStatus.Undeclared
     );
   }
 
@@ -828,8 +828,8 @@ export default class Utils {
     messageObject: Message,
   ): boolean {
     return (
-      messageObject!.sourceStatus === MessageStatus.Declared &&
-      messageObject!.targetStatus ===  MessageStatus.Declared
+      messageObject.sourceStatus === MessageStatus.Declared
+      && messageObject.targetStatus === MessageStatus.Declared
     );
   }
 
@@ -843,8 +843,8 @@ export default class Utils {
     messageObject: Message,
   ): boolean {
     return (
-      messageObject!.sourceStatus === MessageStatus.Declared &&
-      messageObject!.targetStatus ===  MessageStatus.Progressed
+      messageObject.sourceStatus === MessageStatus.Declared
+      && messageObject.targetStatus === MessageStatus.Progressed
     );
   }
 
@@ -858,8 +858,8 @@ export default class Utils {
     messageObject: Message,
   ): boolean {
     return (
-      messageObject!.sourceStatus === MessageStatus.Progressed &&
-      messageObject!.targetStatus ===  MessageStatus.Declared
+      messageObject.sourceStatus === MessageStatus.Progressed
+      && messageObject.targetStatus === MessageStatus.Declared
     );
   }
 
@@ -873,8 +873,8 @@ export default class Utils {
     messageObject: Message,
   ): boolean {
     return (
-      messageObject!.sourceStatus === MessageStatus.Progressed &&
-      messageObject!.targetStatus ===  MessageStatus.Progressed
+      messageObject.sourceStatus === MessageStatus.Progressed
+      && messageObject.targetStatus === MessageStatus.Progressed
     );
   }
 
@@ -884,7 +884,7 @@ export default class Utils {
    * @returns String representation of the key if present otherwise empty.
    */
   public static getEnumValue(key: number): string {
-    let status: string = '';
+    let status = '';
     switch (key) {
       case 0:
         status = 'undeclared';
@@ -893,7 +893,7 @@ export default class Utils {
         status = 'declared';
         break;
       case 2:
-        status ='progressed';
+        status = 'progressed';
         break;
       default:
         break;
