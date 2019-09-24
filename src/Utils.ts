@@ -52,7 +52,10 @@ const Utils = {
       Logger.debug(`Transaction sender ${txOptions.from}`);
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
-        txOptions.gas = await tx.estimateGas(txOptions);
+        txOptions.gas = await tx.estimateGas(txOptions).catch((e: Error) => {
+          Logger.error('Error on estimating gas, using default value  ', e);
+          return 6000000;
+        });
         Logger.debug(`Transaction gas estimates  ${txOptions.gas}`);
       }
       if (txOptions.nonce === undefined) {
