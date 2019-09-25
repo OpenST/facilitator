@@ -2,6 +2,7 @@
   "auxChainId": "1000",
   "originChain": "dev",
   "originWorkerExpirationHeight":"100000000000",
+  "auxiliaryWorkerExpirationHeight":"100000000000",
   "originRpc":"http://127.0.0.1:41515",
   "originGraphRpc":"http://127.0.0.1:11515/subgraphs/name/mosaic/origin-1000",
   "originGraphWs":"ws://127.0.0.1:61515/subgraphs/name/mosaic/origin-1000",

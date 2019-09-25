@@ -21,7 +21,7 @@ import Gateway from '../src/models/Gateway';
 import AuxiliaryChain from '../src/models/AuxiliaryChain';
 import { GatewayType } from '../src/repositories/GatewayRepository';
 import * as Constants from './Constants.json';
-
+import SharedStorage from './SharedStorage';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
 
@@ -35,11 +35,9 @@ export default class Utils {
 
   public auxiliaryWeb3: Web3;
 
-  public originFunder?: string;
-
-  public auxiliaryFunder?: string;
-
   private ostComposer: string;
+
+  private redeemPool: string;
 
   public mosaicConfig: MosaicConfig;
 
@@ -66,22 +64,7 @@ export default class Utils {
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress;
-  }
-
-  /**
-   * It sets the address of funder account on origin chain.
-   * @param originFunder Address of the funder.
-   */
-  public setOriginFunder(originFunder: string): void {
-    this.originFunder = originFunder;
-  }
-
-  /**
-   * It sets the address of funder account on auxiliary chain.
-   * @param auxiliaryFunder Address of the funder.
-   */
-  public setAuxiliaryFunder(auxiliaryFunder: string): void {
-    this.auxiliaryFunder = auxiliaryFunder;
+    this.redeemPool = this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.redeemPoolAddress;
   }
 
   /**
@@ -96,7 +79,7 @@ export default class Utils {
   ): Promise<TransactionReceipt> {
     return this.originWeb3.eth.sendTransaction(
       {
-        from: this.originFunder!,
+        from: SharedStorage.getOriginFunder(),
         to: beneficiary,
         value: web3Utils.toWei(amountInETH.toString()),
       },
@@ -115,7 +98,7 @@ export default class Utils {
   ): Promise<TransactionReceipt> {
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
-        from: this.auxiliaryFunder!,
+        from: SharedStorage.getAuxiliaryFunder(),
         to: beneficiary,
         value: web3Utils.toWei(amountInEth.toString()),
       },
@@ -123,26 +106,77 @@ export default class Utils {
   }
 
   /**
-   * It provides organization contract instance.
+   * It provides origin organization contract instance.
    * @returns Organization instance.
    */
   public async getOriginOrganizationInstance(): Promise<Organization> {
     const organizationAddress = await this.getOrganizationFromOSTComposer();
-
     return interacts.getOrganization(this.originWeb3, organizationAddress);
   }
 
   /**
+   * It provides auxiliary organization contract instance.
+   * @returns Organization instance.
+   */
+  public async getAuxiliaryOrganizationInstance(): Promise<Organization> {
+    const organizationAddress = await this.getOrganizationFromRedeemPool();
+    return interacts.getOrganization(this.auxiliaryWeb3, organizationAddress);
+  }
+
+  /**
    * It whitelists address of an account.
+   * @param organizationContractInstance organization contract instance
    * @param worker Address to be whitelisted.
    * @param expirationHeight Block number at which address becomes invalid.
    * @returns Receipt object.
    */
   public async whitelistOriginWorker(
+    organizationContractInstance: Organization,
     worker: string,
     expirationHeight: string,
   ): Promise<TransactionReceipt> {
-    const organizationContractInstance = await this.getOriginOrganizationInstance();
+    return this.whitelistWorker(
+      this.originWeb3,
+      organizationContractInstance,
+      worker,
+      expirationHeight
+    )
+  }
+
+  /**
+   * It whitelists address of an account.
+   * @param organizationContractInstance organization contract instance
+   * @param worker Address to be whitelisted.
+   * @param expirationHeight Block number at which address becomes invalid.
+   * @returns Receipt object.
+   */
+  public async whitelistAuxiliaryWorker(
+    organizationContractInstance: Organization,
+    worker: string,
+    expirationHeight: string,
+  ): Promise<TransactionReceipt> {
+    return this.whitelistWorker(
+      this.auxiliaryWeb3,
+      organizationContractInstance,
+      worker,
+      expirationHeight
+    )
+  }
+
+  /**
+   * It whitelists address of an account.
+   * @param web3 web3Instance
+   * @param organizationContractInstance organization contract instance
+   * @param worker Address to be whitelisted.
+   * @param expirationHeight Block number at which address becomes invalid.
+   * @returns Receipt object.
+   */
+  private async whitelistWorker(
+    web3: Web3,
+    organizationContractInstance: Organization,
+    worker: string,
+    expirationHeight: string,
+  ): Promise<TransactionReceipt> {
 
     const owner = await organizationContractInstance.methods.owner().call();
 
@@ -151,15 +185,13 @@ export default class Utils {
       expirationHeight,
     );
 
-    const setWorkerReceipt = await Utils.sendTransaction(
+    return Utils.sendTransaction(
       setWorkerRawTx,
       {
         from: owner,
-        gasPrice: await this.originWeb3.eth.getGasPrice(),
+        gasPrice: await web3.eth.getGasPrice(),
       },
     );
-
-    return setWorkerReceipt;
   }
 
   /**
@@ -168,9 +200,16 @@ export default class Utils {
    */
   public async getOrganizationFromOSTComposer(): Promise<string> {
     const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.ostComposer);
-    const organizationAddress = await ostComposerInstance.methods.organization().call();
+    return await ostComposerInstance.methods.organization().call();;
+  }
 
-    return organizationAddress;
+  /**
+   * It provides organization contract used in RedeemPool.
+   * @returns Organization contract address.
+   */
+  public async getOrganizationFromRedeemPool(): Promise<string> {
+    const redeemPoolInstance = interacts.getRedeemPool(this.auxiliaryWeb3, this.redeemPool);
+    return await redeemPoolInstance.methods.organization().call();
   }
 
   /**
@@ -785,7 +824,13 @@ export default class Utils {
       txOptions.gas = await tx.estimateGas(txOptions);
     }
 
-    return tx.send(txOptions);
+    return new Promise(async (onResolve, onReject): Promise<void> => {
+      tx.send(txOptions)
+        .on('transactionHash', (hash: string): any => console.log(`txHash: ${hash}`))
+        .on('receipt', (receipt: TransactionReceipt): void => onResolve(receipt))
+        .on('error', (error: Error): void => onReject(error));
+    });
+
   }
 
   /**
