@@ -259,10 +259,10 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
       requestModel.requestHash,
       requestModel.requestType,
       new BigNumber(requestModel.blockNumber),
+      new BigNumber(requestModel.amount),
     );
 
     request.messageHash = requestModel.messageHash;
-    request.amount = new BigNumber(requestModel.amount);
     request.beneficiary = requestModel.beneficiary;
     request.gasPrice = new BigNumber(requestModel.gasPrice);
     request.gasLimit = new BigNumber(requestModel.gasLimit);

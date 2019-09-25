@@ -130,9 +130,8 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     );
 
     await this.updateMessageHash(
-      redeemRequest.requestHash,
+      redeemRequest,
       messageHash,
-      redeemRequest.blockNumber,
     );
   }
 
@@ -234,20 +233,14 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
    * into messages' repository with a message hash. That exact message
    * hash is updated here in messageTransferRequest repository.
    *
-   * @param redeemRequestHash Redeem request hash.
+   * @param redeemRequest Redeem request hash.
    * @param messageHash Message hash of redeem request.
    * @param blockNumber Block number at which requestRedeem got executed.
    */
   private async updateMessageHash(
-    redeemRequestHash: string,
+    redeemRequest: MessageTransferRequest,
     messageHash: string,
-    blockNumber: BigNumber,
   ): Promise<void> {
-    const redeemRequest = new MessageTransferRequest(
-      redeemRequestHash,
-      RequestType.Redeem,
-      blockNumber,
-    );
     redeemRequest.messageHash = messageHash;
     Logger.debug('Updating message hash in message transfer request repository');
     await this.messageTransferRequestRepository.save(redeemRequest);

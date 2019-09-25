@@ -109,9 +109,8 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     );
 
     await this.updateMessageHash(
-      stakeRequest.requestHash,
+      stakeRequest,
       messageHash,
-      stakeRequest.blockNumber,
     );
   }
 
@@ -224,15 +223,9 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
    * hash is updated here in requests' repository.
    */
   private async updateMessageHash(
-    stakeRequestHash: string,
+    stakeRequest: MessageTransferRequest,
     messageHash: string,
-    blockNumber: BigNumber,
   ): Promise<void> {
-    const stakeRequest = new MessageTransferRequest(
-      stakeRequestHash,
-      RequestType.Stake,
-      blockNumber,
-    );
     stakeRequest.messageHash = messageHash;
     Logger.debug('Updating message hash in message transfer request repository');
     await this.messageTransferRequestRepository.save(stakeRequest);
