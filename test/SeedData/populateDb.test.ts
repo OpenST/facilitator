@@ -85,6 +85,7 @@ describe('SeedData.populateDb()', (): void => {
       simpleTokenAddress,
       anchorAddress,
       zeroBn,
+      zeroBn,
       true,
     );
     const gatewayFromDb = await repositories.gatewayRepository.get(ostGatewayAddress);
@@ -103,7 +104,7 @@ describe('SeedData.populateDb()', (): void => {
       ostPrimeAddress,
       coAnchorAddress,
       zeroBn,
-      undefined,
+      zeroBn,
     );
     const gatewayFromDb = await repositories.gatewayRepository.get(ostCoGatewayAddress);
     GatewayRepositoryUtil.assertGatewayAttributes(gateway, gatewayFromDb as Gateway);

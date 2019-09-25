@@ -79,8 +79,8 @@ export default class StubData {
       '0x0000000000000000000000000000000000000004',
       '0x0000000000000000000000000000000000000003',
       new BigNumber('1'),
-      true,
       new BigNumber('5'),
+      true,
       new Date(),
       new Date());
   }

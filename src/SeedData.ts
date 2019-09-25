@@ -127,8 +127,8 @@ export default class SeedData {
       this.simpleTokenAddress,
       this.anchorAddress,
       gatewayProperties.bounty,
-      gatewayProperties.activated,
       Zero,
+      gatewayProperties.activated,
     );
     await this.gatewayRepository.save(originGateway);
   }
@@ -145,8 +145,8 @@ export default class SeedData {
       this.ostPrimeAddress,
       this.coAnchorAddress,
       await this.getCoGatewayBounty(),
-      undefined,
       Zero,
+      undefined,
     );
     await this.gatewayRepository.save(auxiliaryGateway);
   }

@@ -56,8 +56,8 @@ describe('Gateway::get', (): void => {
       tokenAddress,
       anchorAddress,
       bounty,
-      activation,
       lastRemoteGatewayProvenBlockHeight,
+      activation,
       createdAt,
       updatedAt,
     );
