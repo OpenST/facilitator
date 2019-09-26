@@ -106,6 +106,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       requestInput.nonce,
       'gateway',
       'sender',
+      'senderProxy'
     );
 
     const requestResponse = await config.repos.messageTransferRequestRepository.save(

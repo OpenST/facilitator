@@ -266,10 +266,10 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
       new BigNumber(requestModel.nonce),
       requestModel.gateway,
       requestModel.sender,
+      requestModel.senderProxy,
     );
 
     request.messageHash = requestModel.messageHash;
-    request.senderProxy = requestModel.senderProxy;
     request.createdAt = requestModel.createdAt;
     request.updatedAt = requestModel.updatedAt;
 
