@@ -140,18 +140,35 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
    * @returns Newly created or updated AuxiliaryChain object.
    */
   public async save(auxiliaryChain: AuxiliaryChain): Promise<AuxiliaryChain> {
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(auxiliaryChain);
-
-    await AuxiliaryChainModel.upsert(
-      auxiliaryChain,
+    const auxiliaryChainObj = await AuxiliaryChainModel.findOne(
       {
-        fields: definedOwnProps,
+        where: {
+          chainId: auxiliaryChain.chainId,
+        },
       },
     );
 
-    const updatedAuxiliaryChain = await this.get(
-      auxiliaryChain.chainId,
-    );
+    let updatedAuxiliaryChain: AuxiliaryChain | null;
+    if (auxiliaryChainObj === null) {
+      updatedAuxiliaryChain = this.convertToAuxiliaryChain(await AuxiliaryChainModel.create(
+        auxiliaryChain,
+      ));
+    } else {
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(auxiliaryChain);
+      await AuxiliaryChainModel.update(
+        auxiliaryChain,
+        {
+          where: {
+            chainId: auxiliaryChain.chainId,
+          },
+          fields: definedOwnProps,
+        },
+      );
+      updatedAuxiliaryChain = await this.get(
+        auxiliaryChain.chainId,
+      );
+    }
+
     assert(
       updatedAuxiliaryChain !== null,
       `Updated auxiliary chain record not found for chain: ${auxiliaryChain.chainId}`,

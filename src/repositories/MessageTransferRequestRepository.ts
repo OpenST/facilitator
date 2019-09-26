@@ -176,14 +176,35 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
    * @returns Newly created or updated stake/redeem request object (with all saved fields).
    */
   public async save(request: MessageTransferRequest): Promise<MessageTransferRequest> {
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(request);
-    await MessageTransferRequestModel.upsert(
-      request,
+    const messageTransferRequestModelObj = await MessageTransferRequestModel.findOne(
       {
-        fields: definedOwnProps,
+        where: {
+          requestHash: request.requestHash,
+        },
       },
     );
-    const requestOutput = await this.get(request.requestHash);
+
+    let requestOutput: MessageTransferRequest | null;
+    if (messageTransferRequestModelObj === null) {
+      requestOutput = this.convertToRequest(await MessageTransferRequestModel.create(
+        request,
+      ));
+    } else {
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(request);
+      await MessageTransferRequestModel.update(
+        request,
+        {
+          where: {
+            requestHash: request.requestHash,
+          },
+          fields: definedOwnProps,
+        },
+      );
+      requestOutput = await this.get(
+        request.requestHash,
+      );
+    }
+
     assert(
       requestOutput !== null,
       `Updated request not found for requestHash: ${request.requestHash}`,

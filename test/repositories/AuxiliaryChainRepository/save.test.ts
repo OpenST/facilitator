@@ -93,6 +93,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
       auxiliaryChain,
     );
 
+    auxiliaryChain.originChainName = 'goerli';
     const updatedAuxiliaryChain = await config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
     );

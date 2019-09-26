@@ -156,18 +156,35 @@ export default class GatewayRepository extends Subject<Gateway> {
    * @returns Newly created or updated gateway object.
    */
   public async save(gateway: Gateway): Promise<Gateway> {
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(gateway);
-
-    await GatewayModel.upsert(
-      gateway,
+    const gatewayModelObj = await GatewayModel.findOne(
       {
-        fields: definedOwnProps,
+        where: {
+          gatewayAddress: gateway.gatewayAddress,
+        },
       },
     );
 
-    const updatedGateway = await this.get(
-      gateway.gatewayAddress,
-    );
+    let updatedGateway: Gateway|null;
+    if (gatewayModelObj === null) {
+      updatedGateway = this.convertToGateway(await GatewayModel.create(
+        gateway,
+      ));
+    } else {
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(gateway);
+      await GatewayModel.update(
+        gateway,
+        {
+          where: {
+            gatewayAddress: gateway.gatewayAddress,
+          },
+          fields: definedOwnProps,
+        },
+      );
+      updatedGateway = await this.get(
+        gateway.gatewayAddress,
+      );
+    }
+
     assert(
       updatedGateway !== null,
       `Updated Gateway record not found for gateway address: ${gateway.gatewayAddress}`,
