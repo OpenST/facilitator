@@ -40,9 +40,9 @@ export default class MessageTransferRequest extends Comparable<MessageTransferRe
 
   public nonce: BigNumber;
 
-  public gateway?: string;
+  public gateway: string;
 
-  public sender?: string;
+  public sender: string;
 
   public senderProxy?: string;
 
@@ -61,8 +61,8 @@ export default class MessageTransferRequest extends Comparable<MessageTransferRe
     gasPrice: BigNumber,
     gasLimit: BigNumber,
     nonce: BigNumber,
-    gateway?: string,
-    sender?: string,
+    gateway: string,
+    sender: string,
     senderProxy?: string,
     messageHash?: string,
     createdAt?: Date,

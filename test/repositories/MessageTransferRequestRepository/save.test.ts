@@ -104,8 +104,9 @@ describe('MessageTransferRequestRepository::save', (): void => {
       requestInput.gasPrice,
       requestInput.gasLimit,
       requestInput.nonce,
+      'gateway',
+      'sender',
     );
-    requestUpdateInput.gateway = 'gatewayUpdated';
 
     const requestResponse = await config.repos.messageTransferRequestRepository.save(
       requestUpdateInput,
