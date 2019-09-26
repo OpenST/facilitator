@@ -150,9 +150,9 @@ const Utils = {
         [
           messageTypeHash,
           intentHash,
-          (messageTransferRequest.nonce as BigNumber).toString(10),
-          (messageTransferRequest.gasPrice as BigNumber).toString(10),
-          (messageTransferRequest.gasLimit as BigNumber).toString(10),
+          (messageTransferRequest.nonce).toString(10),
+          (messageTransferRequest.gasPrice).toString(10),
+          (messageTransferRequest.gasLimit).toString(10),
           messageTransferRequest.senderProxy,
           hashLock,
         ],

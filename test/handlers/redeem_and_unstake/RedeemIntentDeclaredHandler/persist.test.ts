@@ -54,7 +54,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       const expectedModel = new Message(
         transactions[0]._messageHash,
         MessageType.Redeem,
-        MessageDirection.AuxiliaryToOrigin
+        MessageDirection.AuxiliaryToOrigin,
       );
       expectedModel.sender = transactions[0]._redeemer;
       expectedModel.nonce = new BigNumber(transactions[0]._redeemerNonce);

@@ -114,7 +114,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       const existingMessageWithProgressStatus = new Message(
         Web3Utils.keccak256('1'),
         MessageType.Stake,
-        MessageDirection.OriginToAuxiliary
+        MessageDirection.OriginToAuxiliary,
       );
       existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
       const mockedRepository = sinon.createStubInstance(MessageRepository,

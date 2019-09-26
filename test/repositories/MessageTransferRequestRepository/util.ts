@@ -14,8 +14,6 @@
 //
 // ----------------------------------------------------------------------------
 
-import BigNumber from 'bignumber.js';
-
 import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import assert from '../../test_utils/assert';
 
@@ -33,7 +31,7 @@ const Util = {
 
     if (requestInput.amount !== undefined) {
       assert.isOk(
-        requestInput.amount.comparedTo(requestOutput.amount as BigNumber) === 0,
+        requestInput.amount.comparedTo(requestOutput.amount) === 0,
       );
     }
 
@@ -46,19 +44,19 @@ const Util = {
 
     if (requestInput.gasPrice !== undefined) {
       assert.isOk(
-        requestInput.gasPrice.comparedTo(requestOutput.gasPrice as BigNumber) === 0,
+        requestInput.gasPrice.comparedTo(requestOutput.gasPrice) === 0,
       );
     }
 
     if (requestInput.gasLimit !== undefined) {
       assert.isOk(
-        requestInput.gasLimit.comparedTo(requestOutput.gasLimit as BigNumber) === 0,
+        requestInput.gasLimit.comparedTo(requestOutput.gasLimit) === 0,
       );
     }
 
     if (requestInput.nonce !== undefined) {
       assert.isOk(
-        requestInput.nonce.comparedTo(requestOutput.nonce as BigNumber) === 0,
+        requestInput.nonce.comparedTo(requestOutput.nonce) === 0,
       );
     }
 

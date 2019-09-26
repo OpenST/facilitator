@@ -164,13 +164,13 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     const redeemPool: RedeemPool = interacts.getRedeemPool(this.web3, this.redeemPoolAddress);
 
     const rawTx: TransactionObject<string> = redeemPool.methods.acceptRedeemRequest(
-      (redeemRequest.amount as BigNumber).toString(10),
-      (redeemRequest.beneficiary as string),
-      (redeemRequest.gasPrice as BigNumber).toString(10),
-      (redeemRequest.gasLimit as BigNumber).toString(10),
-      (redeemRequest.nonce as BigNumber).toString(10),
-      (redeemRequest.sender as string),
-      (redeemRequest.gateway as string),
+      (redeemRequest.amount).toString(10),
+      (redeemRequest.beneficiary),
+      (redeemRequest.gasPrice).toString(10),
+      (redeemRequest.gasLimit).toString(10),
+      (redeemRequest.nonce).toString(10),
+      (redeemRequest.sender),
+      (redeemRequest.gateway),
       hashLock,
     );
     const bounty = await this.getBountyAmount(redeemRequest);
@@ -194,9 +194,9 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     hashLock: string,
   ): Promise<string> {
     const redeemIntentHash = this.calculateRedeemIntentHash(
-      redeemRequest.amount!,
-      redeemRequest.beneficiary!,
-      redeemRequest.gateway!,
+      redeemRequest.amount,
+      redeemRequest.beneficiary,
+      redeemRequest.gateway,
     );
     const messageHash = Utils.calculateMessageHash(
       this.web3,
@@ -210,13 +210,13 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
       messageHash,
       MessageType.Redeem,
       MessageDirection.AuxiliaryToOrigin,
-      redeemRequest.gateway as string,
+      redeemRequest.gateway,
       MessageStatus.Undeclared,
       MessageStatus.Undeclared,
-      redeemRequest.gasPrice as BigNumber,
-      redeemRequest.gasLimit as BigNumber,
-      redeemRequest.nonce as BigNumber,
-      redeemRequest.senderProxy as string,
+      redeemRequest.gasPrice,
+      redeemRequest.gasLimit,
+      redeemRequest.nonce,
+      redeemRequest.senderProxy,
       new BigNumber(0),
       secret,
       hashLock,

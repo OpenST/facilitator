@@ -163,13 +163,13 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     assert(stakeRequest.gateway !== undefined);
 
     const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
-      (stakeRequest.amount as BigNumber).toString(10),
-      (stakeRequest.beneficiary as string),
-      (stakeRequest.gasPrice as BigNumber).toString(10),
-      (stakeRequest.gasLimit as BigNumber).toString(10),
-      (stakeRequest.nonce as BigNumber).toString(10),
-      (stakeRequest.sender as string),
-      (stakeRequest.gateway as string),
+      (stakeRequest.amount).toString(10),
+      (stakeRequest.beneficiary),
+      (stakeRequest.gasPrice).toString(10),
+      (stakeRequest.gasLimit).toString(10),
+      (stakeRequest.nonce).toString(10),
+      (stakeRequest.sender),
+      (stakeRequest.gateway),
       hashLock,
     );
     return Utils.sendTransaction(rawTx, {
@@ -184,9 +184,9 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     hashLock: string,
   ): Promise<string> {
     const stakeIntentHash = this.calculateStakeIntentHash(
-      stakeRequest.amount!,
-      stakeRequest.beneficiary!,
-      stakeRequest.gateway!,
+      stakeRequest.amount,
+      stakeRequest.beneficiary,
+      stakeRequest.gateway,
     );
     const messageHash = Utils.calculateMessageHash(
       this.web3,
@@ -199,13 +199,13 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
       messageHash,
       MessageType.Stake,
       MessageDirection.OriginToAuxiliary,
-      stakeRequest.gateway as string,
+      stakeRequest.gateway,
       MessageStatus.Undeclared,
       MessageStatus.Undeclared,
-      stakeRequest.gasPrice as BigNumber,
-      stakeRequest.gasLimit as BigNumber,
-      stakeRequest.nonce as BigNumber,
-      stakeRequest.senderProxy as string,
+      stakeRequest.gasPrice,
+      stakeRequest.gasLimit,
+      stakeRequest.nonce,
+      stakeRequest.senderProxy,
       new BigNumber(0),
       secret,
       hashLock,

@@ -76,8 +76,8 @@ describe('ProgressRedeem.persist()', () => {
     const existingMessageWithProgressedStatus = new Message(
       web3utils.keccak256('1'),
       MessageType.Redeem,
-      MessageDirection.AuxiliaryToOrigin
-     );
+      MessageDirection.AuxiliaryToOrigin,
+    );
     existingMessageWithProgressedStatus.sourceStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {

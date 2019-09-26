@@ -69,7 +69,7 @@ describe('Gateway::getByChainGateway', (): void => {
 
   it('should pass when retrieving Gateway model', async (): Promise<void> => {
     const getResponse = await config.repos.gatewayRepository.getByChainGateway(
-      gateway.chain!,
+      gateway.chain,
       gateway.gatewayAddress,
     );
 
@@ -95,7 +95,7 @@ describe('Gateway::getByChainGateway', (): void => {
       const nonExistingGatewayAddress = '0x0000000000000000000000000000000000000033';
 
       const getResponse = await config.repos.gatewayRepository.getByChainGateway(
-        gateway.chain!,
+        gateway.chain,
         nonExistingGatewayAddress,
       );
 

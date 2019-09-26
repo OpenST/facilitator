@@ -150,7 +150,7 @@ export default class ProveCoGatewayService extends Observer<AuxiliaryChain> {
     assert(encodedAccountValue !== undefined);
     assert(serializedAccountProof !== undefined);
     const transactionHash = await this.prove(
-      gateway!,
+      gateway,
       blockHeight,
       encodedAccountValue as string,
       serializedAccountProof as string,

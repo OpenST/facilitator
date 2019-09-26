@@ -19,13 +19,13 @@ import * as web3utils from 'web3-utils';
 
 import Message from '../../../src/models/Message';
 import assert from '../../test_utils/assert';
-import {MessageDirection, MessageType} from "../../../src/repositories/MessageRepository";
+import { MessageDirection, MessageType } from '../../../src/repositories/MessageRepository';
 
 describe('AuxiliaryChain::get', (): void => {
   const message = new Message(
     '0x000000000000000000000000000000000000000000000000000001',
     MessageType.Stake,
-    MessageDirection.OriginToAuxiliary
+    MessageDirection.OriginToAuxiliary,
   );
 
   message.secret = '1';

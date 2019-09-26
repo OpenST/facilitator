@@ -239,13 +239,13 @@ describe('AcceptStakeRequestService::update', (): void => {
       acceptStakeRequestSpy,
       1,
       [[
-        stakeRequestC.amount!.toString(10),
-        stakeRequestC.beneficiary!,
-        stakeRequestC.gasPrice!.toString(10),
-        stakeRequestC.gasLimit!.toString(10),
-        stakeRequestC.nonce!.toString(10),
-        stakeRequestC.sender!,
-        stakeRequestC.gateway!,
+        stakeRequestC.amount.toString(10),
+        stakeRequestC.beneficiary,
+        stakeRequestC.gasPrice.toString(10),
+        stakeRequestC.gasLimit.toString(10),
+        stakeRequestC.nonce.toString(10),
+        stakeRequestC.sender,
+        stakeRequestC.gateway,
         messageC.hashLock,
       ]],
     );
@@ -308,17 +308,17 @@ describe('AcceptStakeRequestService::update', (): void => {
     );
 
     assert.strictEqual(
-      messageC.gasPrice!.comparedTo(config.stakeRequestWithNullMessageHashC.gasPrice as BigNumber),
+      messageC.gasPrice!.comparedTo(config.stakeRequestWithNullMessageHashC.gasPrice),
       0,
     );
 
     assert.strictEqual(
-      messageC.gasLimit!.comparedTo(config.stakeRequestWithNullMessageHashC.gasLimit as BigNumber),
+      messageC.gasLimit!.comparedTo(config.stakeRequestWithNullMessageHashC.gasLimit),
       0,
     );
 
     assert.strictEqual(
-      messageC.nonce!.comparedTo(config.stakeRequestWithNullMessageHashC.nonce as BigNumber),
+      messageC.nonce!.comparedTo(config.stakeRequestWithNullMessageHashC.nonce),
       0,
     );
 
@@ -355,13 +355,13 @@ describe('AcceptStakeRequestService::update', (): void => {
       acceptStakeRequestSpy,
       1,
       [[
-        stakeRequestC.amount!.toString(10),
-        stakeRequestC.beneficiary!,
-        stakeRequestC.gasPrice!.toString(10),
-        stakeRequestC.gasLimit!.toString(10),
-        stakeRequestC.nonce!.toString(10),
-        stakeRequestC.sender!,
-        stakeRequestC.gateway!,
+        stakeRequestC.amount.toString(10),
+        stakeRequestC.beneficiary,
+        stakeRequestC.gasPrice.toString(10),
+        stakeRequestC.gasLimit.toString(10),
+        stakeRequestC.nonce.toString(10),
+        stakeRequestC.sender,
+        stakeRequestC.gateway,
         messageC.hashLock,
       ]],
     );

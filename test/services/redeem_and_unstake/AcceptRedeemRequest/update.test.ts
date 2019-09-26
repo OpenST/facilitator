@@ -229,13 +229,13 @@ describe('AcceptRedeemRequestService::update', (): void => {
         acceptRedeemRequestSpy,
         1,
         [[
-          redeemRequestC.amount!.toString(10),
-          redeemRequestC.beneficiary!,
-          redeemRequestC.gasPrice!.toString(10),
-          redeemRequestC.gasLimit!.toString(10),
-          redeemRequestC.nonce!.toString(10),
-          redeemRequestC.sender!,
-          redeemRequestC.gateway!,
+          redeemRequestC.amount.toString(10),
+          redeemRequestC.beneficiary,
+          redeemRequestC.gasPrice.toString(10),
+          redeemRequestC.gasLimit.toString(10),
+          redeemRequestC.nonce.toString(10),
+          redeemRequestC.sender,
+          redeemRequestC.gateway,
           messageC.hashLock,
         ]],
       );
@@ -299,17 +299,17 @@ describe('AcceptRedeemRequestService::update', (): void => {
     );
 
     assert.strictEqual(
-      messageC.gasPrice!.comparedTo(config.redeemRequestWithNullMessageHashC.gasPrice as BigNumber),
+      messageC.gasPrice!.comparedTo(config.redeemRequestWithNullMessageHashC.gasPrice),
       0,
     );
 
     assert.strictEqual(
-      messageC.gasLimit!.comparedTo(config.redeemRequestWithNullMessageHashC.gasLimit as BigNumber),
+      messageC.gasLimit!.comparedTo(config.redeemRequestWithNullMessageHashC.gasLimit),
       0,
     );
 
     assert.strictEqual(
-      messageC.nonce!.comparedTo(config.redeemRequestWithNullMessageHashC.nonce as BigNumber),
+      messageC.nonce!.comparedTo(config.redeemRequestWithNullMessageHashC.nonce),
       0,
     );
 
@@ -346,13 +346,13 @@ describe('AcceptRedeemRequestService::update', (): void => {
       acceptRedeemRequestSpy,
       1,
       [[
-        redeemRequestC.amount!.toString(10),
-        redeemRequestC.beneficiary!,
-        redeemRequestC.gasPrice!.toString(10),
-        redeemRequestC.gasLimit!.toString(10),
-        redeemRequestC.nonce!.toString(10),
-        redeemRequestC.sender!,
-        redeemRequestC.gateway!,
+        redeemRequestC.amount.toString(10),
+        redeemRequestC.beneficiary,
+        redeemRequestC.gasPrice.toString(10),
+        redeemRequestC.gasLimit.toString(10),
+        redeemRequestC.nonce.toString(10),
+        redeemRequestC.sender,
+        redeemRequestC.gateway,
         messageC.hashLock,
       ]],
     );
