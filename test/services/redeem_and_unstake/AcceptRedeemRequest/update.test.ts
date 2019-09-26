@@ -116,6 +116,7 @@ describe('AcceptRedeemRequestService::update', (): void => {
     const message = new Message(
       config.redeemRequestWithMessageHashB.messageHash as string,
       MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
       '0x0000000000000000000000000000000000000001',
       MessageStatus.Declared,
       MessageStatus.Undeclared,
@@ -123,7 +124,6 @@ describe('AcceptRedeemRequestService::update', (): void => {
       new BigNumber('1'),
       new BigNumber('1'),
       '0x0000000000000000000000000000000000000002',
-      MessageDirection.AuxiliaryToOrigin,
       new BigNumber('1'),
       '0x00000000000000000000000000000000000000000000000000000000000000001',
       '0x00000000000000000000000000000000000000000000000000000000000000002',

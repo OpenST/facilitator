@@ -114,6 +114,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     const message = new Message(
       config.stakeRequestWithMessageHashB.messageHash as string,
       MessageType.Stake,
+      MessageDirection.OriginToAuxiliary,
       '0x0000000000000000000000000000000000000001',
       MessageStatus.Declared,
       MessageStatus.Undeclared,
@@ -121,7 +122,6 @@ describe('AcceptStakeRequestService::update', (): void => {
       new BigNumber('1'),
       new BigNumber('1'),
       '0x0000000000000000000000000000000000000002',
-      MessageDirection.OriginToAuxiliary,
       new BigNumber('1'),
       '0x00000000000000000000000000000000000000000000000000000000000000001',
       '0x00000000000000000000000000000000000000000000000000000000000000002',

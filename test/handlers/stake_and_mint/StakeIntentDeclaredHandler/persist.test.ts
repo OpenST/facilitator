@@ -53,12 +53,12 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary,
       );
       expectedModel.sender = transactions[0]._staker;
       expectedModel.nonce = new BigNumber(transactions[0]._stakerNonce);
-      expectedModel.direction = MessageDirection.OriginToAuxiliary;
       expectedModel.sourceStatus = MessageStatus.Declared;
-      expectedModel.type = MessageType.Stake;
       expectedModel.gatewayAddress = transactions[0].contractAddress;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
@@ -75,7 +75,11 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     async (): Promise<void> => {
       const save = sinon.stub();
 
-      const existingMessageWithUndeclaredStatus = new Message(Web3Utils.keccak256('1'));
+      const existingMessageWithUndeclaredStatus = new Message(
+        Web3Utils.keccak256('1'),
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary,
+      );
       existingMessageWithUndeclaredStatus.sourceStatus = MessageStatus.Undeclared;
       const mockedRepository = sinon.createStubInstance(MessageRepository,
         {
@@ -88,6 +92,8 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary,
       );
       expectedModel.sourceStatus = MessageStatus.Declared;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
@@ -105,7 +111,11 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     async (): Promise<void> => {
       const save = sinon.stub();
 
-      const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
+      const existingMessageWithProgressStatus = new Message(
+        Web3Utils.keccak256('1'),
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary
+      );
       existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
       const mockedRepository = sinon.createStubInstance(MessageRepository,
         {
@@ -118,6 +128,8 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary,
       );
       expectedModel.sourceStatus = MessageStatus.Progressed;
 
@@ -134,7 +146,11 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     async (): Promise<void> => {
       const save = sinon.stub();
 
-      const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
+      const existingMessageWithProgressStatus = new Message(
+        Web3Utils.keccak256('1'),
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary,
+      );
       existingMessageWithProgressStatus.sourceStatus = MessageStatus.Declared;
       const mockedRepository = sinon.createStubInstance(MessageRepository,
         {
@@ -147,6 +163,8 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary,
       );
       expectedModel.sourceStatus = MessageStatus.Declared;
 

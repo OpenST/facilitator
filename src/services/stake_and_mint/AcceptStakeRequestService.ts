@@ -198,6 +198,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     const message = new Message(
       messageHash,
       MessageType.Stake,
+      MessageDirection.OriginToAuxiliary,
       stakeRequest.gateway as string,
       MessageStatus.Undeclared,
       MessageStatus.Undeclared,
@@ -205,7 +206,6 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
       stakeRequest.gasLimit as BigNumber,
       stakeRequest.nonce as BigNumber,
       stakeRequest.senderProxy as string,
-      MessageDirection.OriginToAuxiliary,
       new BigNumber(0),
       secret,
       hashLock,

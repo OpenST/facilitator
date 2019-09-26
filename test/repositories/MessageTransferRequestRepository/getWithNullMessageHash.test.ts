@@ -101,6 +101,7 @@ describe('MessageTransferRequestRepository::getWithNullMessageHash', (): void =>
     const message = new Message(
       messageHash,
       type,
+      direction,
       gatewayAddress,
       sourceStatus,
       targetStatus,
@@ -108,7 +109,6 @@ describe('MessageTransferRequestRepository::getWithNullMessageHash', (): void =>
       gasLimit,
       nonce,
       sender,
-      direction,
       sourceDeclarationBlockHeight,
       secret,
       hashLock,

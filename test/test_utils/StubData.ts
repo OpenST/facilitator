@@ -93,6 +93,7 @@ export default class StubData {
     return new Message(
       messageHash,
       MessageType.Stake,
+      MessageDirection.OriginToAuxiliary,
       utils.toChecksumAddress(gatewayAddress),
       MessageStatus.Declared,
       MessageStatus.Undeclared,
@@ -100,7 +101,6 @@ export default class StubData {
       new BigNumber('1'),
       new BigNumber('1'),
       utils.toChecksumAddress('0x0000000000000000000000000000000000000002'),
-      MessageDirection.OriginToAuxiliary,
       sourceDeclarationBlockHeight,
     );
   }

@@ -53,11 +53,13 @@ export default class StakeProgressedHandler extends ContractEntityHandler<Messag
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if progress transaction appears first..
         if (message === null) {
-          message = new Message(transaction._messageHash);
+          message = new Message(
+            transaction._messageHash,
+            MessageType.Stake,
+            MessageDirection.OriginToAuxiliary,
+          );
           message.sender = Utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
-          message.direction = MessageDirection.OriginToAuxiliary;
-          message.type = MessageType.Stake;
           message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
           message.sourceStatus = MessageStatus.Undeclared;
           Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);

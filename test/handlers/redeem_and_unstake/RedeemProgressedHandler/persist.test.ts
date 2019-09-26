@@ -52,12 +52,12 @@ describe('ProgressRedeem.persist()', () => {
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
     );
     expectedModel.sender = transactions[0]._redeemer;
     expectedModel.nonce = new BigNumber(transactions[0]._redeemerNonce);
-    expectedModel.direction = MessageDirection.AuxiliaryToOrigin;
     expectedModel.sourceStatus = MessageStatus.Progressed;
-    expectedModel.type = MessageType.Redeem;
     expectedModel.gatewayAddress = transactions[0].contractAddress;
     expectedModel.secret = transactions[0]._unlockSecret;
 
@@ -73,7 +73,11 @@ describe('ProgressRedeem.persist()', () => {
   it('should not change message state if current status is already progressed', async () => {
     const save = sinon.stub();
 
-    const existingMessageWithProgressedStatus = new Message(web3utils.keccak256('1'));
+    const existingMessageWithProgressedStatus = new Message(
+      web3utils.keccak256('1'),
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin
+     );
     existingMessageWithProgressedStatus.sourceStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
@@ -86,6 +90,8 @@ describe('ProgressRedeem.persist()', () => {
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
     );
     expectedModel.sourceStatus = existingMessageWithProgressedStatus.sourceStatus;
     expectedModel.secret = transactions[0]._unlockSecret;
@@ -98,7 +104,11 @@ describe('ProgressRedeem.persist()', () => {
   it('should not change message state if current status is not undeclared/declared', async () => {
     const save = sinon.stub();
 
-    const existingMessageWithNonUpdatableStatus = new Message(web3utils.keccak256('1'));
+    const existingMessageWithNonUpdatableStatus = new Message(
+      web3utils.keccak256('1'),
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
+    );
     existingMessageWithNonUpdatableStatus.sourceStatus = MessageStatus.RevocationDeclared;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
@@ -111,6 +121,8 @@ describe('ProgressRedeem.persist()', () => {
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
     );
     expectedModel.sourceStatus = existingMessageWithNonUpdatableStatus.sourceStatus;
     expectedModel.secret = transactions[0]._unlockSecret;

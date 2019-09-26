@@ -347,6 +347,7 @@ describe('facilitator start', async (): Promise<void> => {
           expectedMessage = new Message(
             messageHash!,
             MessageType.Stake,
+            MessageDirection.OriginToAuxiliary,
             messageTransferRequest.gateway,
             MessageStatus.Undeclared,
             MessageStatus.Undeclared,
@@ -354,7 +355,6 @@ describe('facilitator start', async (): Promise<void> => {
             messageTransferRequest.gasLimit,
             messageTransferRequest.nonce,
             messageTransferRequest.senderProxy,
-            MessageDirection.OriginToAuxiliary,
             new BigNumber(0),
             '',
           );

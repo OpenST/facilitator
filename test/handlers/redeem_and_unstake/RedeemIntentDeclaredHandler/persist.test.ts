@@ -53,12 +53,12 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin
       );
       expectedModel.sender = transactions[0]._redeemer;
       expectedModel.nonce = new BigNumber(transactions[0]._redeemerNonce);
-      expectedModel.direction = MessageDirection.AuxiliaryToOrigin;
       expectedModel.sourceStatus = MessageStatus.Declared;
-      expectedModel.type = MessageType.Redeem;
       expectedModel.gatewayAddress = transactions[0].contractAddress;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
@@ -75,7 +75,11 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     async (): Promise<void> => {
       const save = sinon.stub();
 
-      const existingMessageWithUndeclaredStatus = new Message(Web3Utils.keccak256('1'));
+      const existingMessageWithUndeclaredStatus = new Message(
+        Web3Utils.keccak256('1'),
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin,
+      );
       existingMessageWithUndeclaredStatus.sourceStatus = MessageStatus.Undeclared;
 
       const mockedRepository = sinon.createStubInstance(MessageRepository,
@@ -89,6 +93,8 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin,
       );
       expectedModel.sourceStatus = MessageStatus.Declared;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
@@ -137,23 +143,23 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel1 = new Message(
         bulkTransactions[0]._messageHash,
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin,
       );
       expectedModel1.sender = bulkTransactions[0]._redeemer;
       expectedModel1.nonce = new BigNumber(bulkTransactions[0]._redeemerNonce);
-      expectedModel1.direction = MessageDirection.AuxiliaryToOrigin;
       expectedModel1.sourceStatus = MessageStatus.Declared;
-      expectedModel1.type = MessageType.Redeem;
       expectedModel1.gatewayAddress = bulkTransactions[0].contractAddress;
       expectedModel1.sourceDeclarationBlockHeight = new BigNumber(bulkTransactions[0].blockNumber);
 
       const expectedModel2 = new Message(
         bulkTransactions[1]._messageHash,
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin,
       );
       expectedModel2.sender = bulkTransactions[1]._redeemer;
       expectedModel2.nonce = new BigNumber(bulkTransactions[1]._redeemerNonce);
-      expectedModel2.direction = MessageDirection.AuxiliaryToOrigin;
       expectedModel2.sourceStatus = MessageStatus.Declared;
-      expectedModel2.type = MessageType.Redeem;
       expectedModel2.gatewayAddress = bulkTransactions[1].contractAddress;
       expectedModel2.sourceDeclarationBlockHeight = new BigNumber(bulkTransactions[1].blockNumber);
 
@@ -174,7 +180,11 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     + 'if current status is Progressed', async (): Promise<void> => {
     const save = sinon.stub();
 
-    const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
+    const existingMessageWithProgressStatus = new Message(
+      Web3Utils.keccak256('1'),
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
+    );
     existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
@@ -187,6 +197,8 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
     );
     expectedModel.sourceStatus = MessageStatus.Progressed;
 
@@ -203,7 +215,11 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     async (): Promise<void> => {
       const save = sinon.stub();
 
-      const existingMessageWithProgressStatus = new Message(Web3Utils.keccak256('1'));
+      const existingMessageWithProgressStatus = new Message(
+        Web3Utils.keccak256('1'),
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin,
+      );
       existingMessageWithProgressStatus.sourceStatus = MessageStatus.Declared;
       const mockedRepository = sinon.createStubInstance(MessageRepository,
         {
@@ -216,6 +232,8 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin,
       );
       expectedModel.sourceStatus = MessageStatus.Declared;
 

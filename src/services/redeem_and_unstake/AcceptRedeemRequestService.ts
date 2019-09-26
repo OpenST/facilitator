@@ -209,6 +209,7 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     const message = new Message(
       messageHash,
       MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
       redeemRequest.gateway as string,
       MessageStatus.Undeclared,
       MessageStatus.Undeclared,
@@ -216,7 +217,6 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
       redeemRequest.gasLimit as BigNumber,
       redeemRequest.nonce as BigNumber,
       redeemRequest.senderProxy as string,
-      MessageDirection.AuxiliaryToOrigin,
       new BigNumber(0),
       secret,
       hashLock,
