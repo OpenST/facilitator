@@ -100,6 +100,10 @@ describe('MessageTransferRequestRepository::save', (): void => {
       RequestType.Stake,
       requestInput.blockNumber,
       new BigNumber('11'),
+      requestInput.beneficiary,
+      requestInput.gasPrice,
+      requestInput.gasLimit,
+      requestInput.nonce,
     );
     requestUpdateInput.gateway = 'gatewayUpdated';
 
