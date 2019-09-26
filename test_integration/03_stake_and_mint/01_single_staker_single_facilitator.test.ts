@@ -31,9 +31,8 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   const stakerOSTBalance = '20000';
   const testDuration = 3;
   const interval = 3000;
-  let auxChainId: number = parseInt(Constants.auxChainId);
+  const auxChainId: number = Number(Constants.auxChainId);
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
-  let facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   const ostComposer: string = mosaicConfig.originChain.contractAddresses.ostComposerAddress;
 
@@ -49,13 +48,13 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   let messageTransferRequest: MessageTransferRequest;
 
   before(async () => {
+    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     utils = new Utils(
       mosaicConfig,
       facilitatorConfig,
       auxChainId,
     );
     ({ originWeb3, auxiliaryWeb3 } = utils);
-
     simpleTokenInstance = utils.getSimpleTokenInstance();
   });
 

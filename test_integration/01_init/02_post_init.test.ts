@@ -17,11 +17,10 @@ describe('facilitator post init', async (): Promise<void> => {
 
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
-  let auxChainId: number = parseInt(Constants.auxChainId);
+  const auxChainId: number = Number(Constants.auxChainId);
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
 
-  let facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
   const OSTToBeFundedToWorkerForBounty = new BigNumber(500);
   const amountTobeFundedOnOrigin = new BigNumber(1);
   const amountTobeFundedOnAuxiliary = new BigNumber(1);
@@ -68,6 +67,7 @@ describe('facilitator post init', async (): Promise<void> => {
 
   before(async () => {
 
+    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     utils = new Utils(
       mosaicConfig,
       facilitatorConfig,

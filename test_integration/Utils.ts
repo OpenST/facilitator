@@ -200,7 +200,7 @@ export default class Utils {
    */
   public async getOrganizationFromOSTComposer(): Promise<string> {
     const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.ostComposer);
-    return await ostComposerInstance.methods.organization().call();;
+    return await ostComposerInstance.methods.organization().call();
   }
 
   /**
