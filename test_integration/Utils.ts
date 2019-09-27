@@ -7,9 +7,11 @@ import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
+import { RedeemPool } from '@openst/mosaic-contracts/dist/interacts/RedeemPool';
 import { TransactionReceipt } from 'web3-core';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import * as EthUtils from 'ethereumjs-util';
 import Repositories from '../src/repositories/Repositories';
@@ -39,6 +41,8 @@ export default class Utils {
 
   private redeemPool: string;
 
+  private ostPrime: string;
+
   public mosaicConfig: MosaicConfig;
 
   public facilitatorConfig: FacilitatorConfig;
@@ -65,6 +69,7 @@ export default class Utils {
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress;
     this.redeemPool = this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.redeemPoolAddress;
+    this.ostPrime = this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostPrimeAddress;
   }
 
   /**
@@ -96,6 +101,7 @@ export default class Utils {
     beneficiary: string,
     amountInEth: BigNumber,
   ): Promise<TransactionReceipt> {
+    console.log('STPrime funder affredd', SharedStorage.getAuxiliaryFunder());
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
         from: SharedStorage.getAuxiliaryFunder(),
@@ -247,6 +253,41 @@ export default class Utils {
   }
 
   /**
+   * It anchors state root to origin chain's anchor contract.
+   * @param auxChainId Identifier for the auxiliary chain.
+   */
+  public async anchorAuxiliary(auxChainId: number): Promise<number> {
+    const organizationInstance = interacts.getOrganization(
+      this.originWeb3,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorOrganizationAddress,
+    );
+    const owner = await organizationInstance.methods.owner().call();
+    console.log('org owner', owner);
+
+    const anchorInstance = interacts.getAnchor(
+      this.originWeb3,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
+    );
+
+    const currentBlock = await this.auxiliaryWeb3.eth.getBlock('latest');
+    console.log('currentBlock', currentBlock);
+
+    const anchorStateRootRawTx: TransactionObject<boolean> = anchorInstance.methods.anchorStateRoot(
+      currentBlock.number,
+      currentBlock.stateRoot,
+    );
+
+    await Utils.sendTransaction(
+      anchorStateRootRawTx,
+      {
+        from: owner,
+        gasPrice: await this.originWeb3.eth.getGasPrice(),
+      },
+    );
+    return currentBlock.number;
+  }
+
+  /**
    * It provides stake request hash.
    * @param messageTransferRequest It represents message transfer request object.
    * @param gateway Gateway address on which request stake is to be done.
@@ -290,6 +331,57 @@ export default class Utils {
           Buffer.from('01', 'hex'),
           EthUtils.toBuffer(DOMAIN_SEPARATOR),
           EthUtils.toBuffer(stakeIntentTypeHash),
+        ],
+      ),
+    );
+
+    return EthUtils.bufferToHex(eip712TypeData);
+  }
+
+  /**
+   * It provides redeem request hash.
+   * @param messageTransferRequest It represents message transfer request object.
+   * @param cogateway CoGateway address on which request redeem is to be done.
+   * @param redeemPool RedeemPool contract address.
+   * @returns EIP712 compatible stakerequest hash.
+   */
+  public getRedeemRequestHash(
+    messageTransferRequest: MessageTransferRequest,
+    cogateway: string,
+    redeemPool: string,
+  ): string {
+    const redeemRequestMethod = 'RedeemRequest(uint256 amount,address beneficiary,uint256 gasPrice,uint256 gasLimit,uint256 nonce,address redeemer,address cogateway)';
+    const encodedTypeHash = web3Utils.sha3(
+      this.auxiliaryWeb3.eth.abi.encodeParameter('string', redeemRequestMethod),
+    );
+    const redeemIntentTypeHash = web3Utils.soliditySha3(
+      { type: 'bytes32', value: encodedTypeHash },
+      { type: 'uint256', value: messageTransferRequest.amount!.toString(10) },
+      { type: 'address', value: messageTransferRequest.beneficiary! },
+      { type: 'uint256', value: messageTransferRequest.gasPrice!.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.gasLimit!.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.nonce!.toString(10) },
+      { type: 'address', value: messageTransferRequest.sender! },
+      { type: 'address', value: cogateway },
+    );
+
+    const EIP712_DOMAIN_TYPEHASH = web3Utils.soliditySha3(
+      'EIP712Domain(address verifyingContract)',
+    );
+    const DOMAIN_SEPARATOR = web3Utils.soliditySha3(
+      this.auxiliaryWeb3.eth.abi.encodeParameters(
+        ['bytes32', 'address'],
+        [EIP712_DOMAIN_TYPEHASH, redeemPool],
+      ),
+    );
+
+    const eip712TypeData = EthUtils.keccak(
+      Buffer.concat(
+        [
+          Buffer.from('19', 'hex'),
+          Buffer.from('01', 'hex'),
+          EthUtils.toBuffer(DOMAIN_SEPARATOR),
+          EthUtils.toBuffer(redeemIntentTypeHash),
         ],
       ),
     );
@@ -400,11 +492,11 @@ export default class Utils {
   }
 
   /**
-   * Asserts the expected stake request data with the entry in stakerequests table.
+   * Asserts the expected message transfer request data with the entry in stakerequests table.
    * @param actualObject MessageTransferRequest object representing db state.
    * @param expectedObject Expected stake request object.
    */
-  public static assertStakeRequests(
+  public static assertMessageTransferRequests(
     actualObject: MessageTransferRequest,
     expectedObject: MessageTransferRequest,
   ): void {
@@ -608,14 +700,14 @@ export default class Utils {
 
   /**
    * It provides StakeRequest model object for an gateway.
-   * @param stakeRequestHash Stake request hash for an stake.
+   * @param messageTransferRequestHash Stake request hash for an stake.
    * @returns StakeRequest object corresponding to stakeRequestHash.
    */
-  public async getMessageTransferRequest(stakeRequestHash: string): Promise<MessageTransferRequest | null> {
+  public async getMessageTransferRequest(messageTransferRequestHash: string): Promise<MessageTransferRequest | null> {
     const repos: Repositories = await this.getRepositories();
 
     return repos.messageTransferRequestRepository.get(
-      stakeRequestHash,
+      messageTransferRequestHash,
     );
   }
 
@@ -684,6 +776,26 @@ export default class Utils {
   }
 
   /**
+   * It asserts unstaked balance of beneficiary at origin chain.
+   * @param beneficiary Address which received OST.
+   * @param expectedAmount Expected minted amount.
+   */
+  public async assertUnstakedBalance(
+    beneficiary: string,
+    expectedAmount: BigNumber,
+  ): Promise<void> {
+
+    const simpletokenInstance = this.getSimpleTokenInstance();
+    const actualUnstakedAmount = await simpletokenInstance.methods.balanceOf(beneficiary).call();
+
+    assert.strictEqual(
+      new BigNumber(actualUnstakedAmount).cmp(expectedAmount),
+      0,
+      `Expected unStaked balance is ${expectedAmount} but got ${actualUnstakedAmount}`,
+    );
+  }
+
+  /**
    * It verifies the ERC2O token transfer. Beneficiary address is always newly created one.
    * @param receipt Receipt of ERC20 transfer.
    * @param beneficiary Beneficiary of the transfer.
@@ -697,7 +809,6 @@ export default class Utils {
     assert.strictEqual(receipt.status, true, 'Receipt status should be true');
 
     const simpletokenInstance = this.getSimpleTokenInstance();
-
     const beneficiaryBalance = await simpletokenInstance.methods.balanceOf(beneficiary).call();
 
     assert.strictEqual(
@@ -751,11 +862,31 @@ export default class Utils {
   }
 
   /**
+   * It provides Simple Token Prime contract instance.
+   * @returns Simple token Prime object.
+   */
+  public getSimpleTokenPrimeInstance(): OSTPrime {
+    const simpletokenPrimeInstance: OSTPrime = interacts.getOSTPrime(
+      this.auxiliaryWeb3,
+      this.ostPrime,
+    );
+    return simpletokenPrimeInstance;
+  }
+
+  /**
    * It provides OSTComposer instance.
    * @returns OSTComposer object.
    */
   public getOSTComposerInstance(): OSTComposer {
     return interacts.getOSTComposer(this.originWeb3, this.ostComposer);
+  }
+
+  /**
+   * It provides RedeemPool instance.
+   * @returns RedeemPool object.
+   */
+  public getRedeemPoolInstance(): RedeemPool {
+    return interacts.getRedeemPool(this.auxiliaryWeb3, this.redeemPool);
   }
 
   /**
@@ -948,57 +1079,57 @@ export default class Utils {
 
   /**
    * It verifies the status of message on gatway and cogateway with the status in db.
-   * @param eip20GatewayMessageStatus Status of message on gateway.
-   * @param eip20CoGatewayMessageStatus Status of message on cogateway.
+   * @param sourceMessageStatus Status of message on gateway.
+   * @param destinationMessageStatus Status of message on cogateway.
    * @param messageObject Message object.
    * @returns returns true if any the condition is satisfied otherwise false.
    */
   public static isMessageStatusValid(
-    eip20GatewayMessageStatus: string,
-    eip20CoGatewayMessageStatus: string,
+    sourceMessageStatus: string,
+    destinationMessageStatus: string,
     messageObject: Message,
   ): boolean {
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Undeclared
       && Utils.isSourceDeclaredTargetUndeclared(messageObject)
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Undeclared
       && Utils.isSourceDeclaredTargetUndeclared(messageObject)
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Declared
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Declared
       && (Utils.isSourceDeclaredTargetUndeclared(messageObject)
       || Utils.isSourceDeclaredTargetDeclared(messageObject))
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Progressed
       && (Utils.isSourceDeclaredTargetDeclared(messageObject)
       || Utils.isSourceDeclaredTargetProgressed(messageObject))
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Progressed
-      && eip20CoGatewayMessageStatus === MessageStatus.Declared
+      sourceMessageStatus === MessageStatus.Progressed
+      && destinationMessageStatus === MessageStatus.Declared
       && (Utils.isSourceDeclaredTargetDeclared(messageObject)
       || Utils.isSourceProgressedTargetDeclared(messageObject))
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Progressed
-      && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+      sourceMessageStatus === MessageStatus.Progressed
+      && destinationMessageStatus === MessageStatus.Progressed
       && (Utils.isSourceProgressedTargetDeclared(messageObject)
       || Utils.isSourceDeclaredTargetProgressed(messageObject)
       || Utils.isSourceDeclaredTargetDeclared(messageObject))
@@ -1008,4 +1139,14 @@ export default class Utils {
 
     return false;
   }
+
+  /**
+   * Convert amount to wei's
+   * @param amount
+   * @return wei amount
+   */
+  public convertToWei(amount: string) {
+    return web3Utils.toWei(amount.toString())
+  }
+
 }

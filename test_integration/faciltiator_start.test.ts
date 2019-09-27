@@ -301,7 +301,7 @@
 //
 //         if (messageTransferRequestDb != null) {
 //           try {
-//             Utils.assertStakeRequests(messageTransferRequestDb, messageTransferRequest);
+//             Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
 //           } catch (e) {
 //             reject(e);
 //           }

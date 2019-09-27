@@ -169,7 +169,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
 
           if (messageTransferRequestDb != null) {
             try {
-              Utils.assertStakeRequests(messageTransferRequestDb, messageTransferRequest);
+              Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
             } catch (e) {
               reject(e);
             }

@@ -39,7 +39,7 @@
   "dependencies": {
     "@openst/mosaic-contracts": "^0.12.0",
     "@openst/mosaic-proof": "^0.1.0-alpha.1",
-    "@openst/mosaic-chains": "^0.1.0-alpha.3",
+    "@openst/mosaic-chains": "https://github.com/puneet-khushwani-eth/mosaic-chains.git#master",
     "apollo-cache-inmemory": "1.6.2",
     "apollo-client": "2.6.0",
     "apollo-link-http": "1.5.15",

@@ -139,8 +139,4 @@ describe('facilitator post init', async (): Promise<void> => {
     await utils.verifyOSTTransfer(transferReceipt, originWorker, new BigNumber(OSTToBeFundedToWorkerForBounty));
   });
 
-  after(async (): Promise<void> => {
-
-  });
-
 });

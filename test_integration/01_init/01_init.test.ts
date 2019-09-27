@@ -66,8 +66,4 @@ describe('facilitator init', async (): Promise<void> => {
 
   });
 
-  after(async (): Promise<void> => {
-
-  });
-
 });

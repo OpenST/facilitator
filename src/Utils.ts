@@ -63,6 +63,7 @@ const Utils = {
         txOptions.nonce = await account.getNonce(web3);
         Logger.debug(`Nonce to be used for transaction sender: ${txOptions.from} is ${txOptions.nonce}`);
       }
+      console.log('balance of sender', txOptions.from, await web3.eth.getBalance(txOptions.from), await web3.eth.getBlockNumber());
       tx.send(txOptions)
         .on('transactionHash', (hash: string): void => onResolve(hash))
         .on('error', (error: Error): void => onReject(error));
