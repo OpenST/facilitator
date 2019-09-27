@@ -8,8 +8,13 @@ function start_chains {
 echo starting $originChain chain
 ./node_modules/.bin/mosaic start $originChain
 
+sleep 20
+
 echo starting $auxiliaryChain chain
 ./node_modules/.bin/mosaic start $auxiliaryChain
+
+sleep 20
+
 }
 
 function stop_chains {
