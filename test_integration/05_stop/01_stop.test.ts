@@ -1,12 +1,12 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import fs from "fs-extra";
+import fs from 'fs-extra';
 import Directory from '../../src/Directory';
 import * as Constants from '../Constants.json';
+
 const facilitatorKill = path.join(__dirname, '../kill_facilitator_process.sh');
 
 describe('facilitator stop', async (): Promise<void> => {
-
   it('facilitator stop', async (): Promise<void> => {
     execSync(
       facilitatorKill,
@@ -14,5 +14,4 @@ describe('facilitator stop', async (): Promise<void> => {
     );
     fs.removeSync(Directory.getFacilitatorConfigPath(Constants.auxChainId.toString()));
   });
-
 });

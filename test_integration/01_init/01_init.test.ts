@@ -11,7 +11,6 @@ import Directory from '../../src/Directory';
 const facilitatorInit = path.join(__dirname, '../facilitator_init.sh');
 
 describe('facilitator init', async (): Promise<void> => {
-
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   let facilitatorConfig: FacilitatorConfig;
   const outputOptions = [process.stdout, process.stderr];
@@ -21,7 +20,7 @@ describe('facilitator init', async (): Promise<void> => {
   });
 
   it('facilitator init', async (): Promise<void> => {
-    const auxChainId: number = Number(Constants.auxChainId);
+    const auxChainId = Number(Constants.auxChainId);
     // Removing facilitator config.
     fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));
 
@@ -63,7 +62,5 @@ describe('facilitator init', async (): Promise<void> => {
       Constants.originGraphRpc,
       'Invalid auxiliary graph rpc',
     );
-
   });
-
 });

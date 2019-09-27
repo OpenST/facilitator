@@ -68,8 +68,10 @@ export default class Utils {
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress;
-    this.redeemPool = this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.redeemPoolAddress;
-    this.ostPrime = this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostPrimeAddress;
+    this.redeemPool = this.mosaicConfig.auxiliaryChains[auxChainId]
+      .contractAddresses.auxiliary.redeemPoolAddress;
+    this.ostPrime = this.mosaicConfig.auxiliaryChains[auxChainId]
+      .contractAddresses.auxiliary.ostPrimeAddress;
   }
 
   /**
@@ -145,8 +147,8 @@ export default class Utils {
       this.originWeb3,
       organizationContractInstance,
       worker,
-      expirationHeight
-    )
+      expirationHeight,
+    );
   }
 
   /**
@@ -165,8 +167,8 @@ export default class Utils {
       this.auxiliaryWeb3,
       organizationContractInstance,
       worker,
-      expirationHeight
-    )
+      expirationHeight,
+    );
   }
 
   /**
@@ -183,7 +185,6 @@ export default class Utils {
     worker: string,
     expirationHeight: string,
   ): Promise<TransactionReceipt> {
-
     const owner = await organizationContractInstance.methods.owner().call();
 
     const setWorkerRawTx: TransactionObject<void> = organizationContractInstance.methods.setWorker(
@@ -225,7 +226,8 @@ export default class Utils {
   public async anchorOrigin(auxChainId: number): Promise<number> {
     const organizationInstance = interacts.getOrganization(
       this.auxiliaryWeb3,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .auxiliary.anchorOrganizationAddress,
     );
 
     const anchorInstance = interacts.getAnchor(
@@ -259,7 +261,8 @@ export default class Utils {
   public async anchorAuxiliary(auxChainId: number): Promise<number> {
     const organizationInstance = interacts.getOrganization(
       this.originWeb3,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorOrganizationAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .origin.anchorOrganizationAddress,
     );
     const owner = await organizationInstance.methods.owner().call();
     console.log('org owner', owner);
@@ -634,8 +637,10 @@ export default class Utils {
     const auxiliaryChain = new AuxiliaryChain(
       auxChainId,
       originChain,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .origin.ostEIP20GatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .auxiliary.ostEIP20CogatewayAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
       lastOriginBlockHeight,
@@ -655,7 +660,8 @@ export default class Utils {
     expectedAuxiliaryChain: AuxiliaryChain,
   ): void {
     assert.strictEqual(
-      actualAuxiliaryChain.lastOriginBlockHeight!.cmp(expectedAuxiliaryChain.lastOriginBlockHeight!),
+      actualAuxiliaryChain.lastOriginBlockHeight!
+        .cmp(expectedAuxiliaryChain.lastOriginBlockHeight!),
       0,
       `Expected last origin block height is ${expectedAuxiliaryChain.lastOriginBlockHeight} but `
       + `got ${actualAuxiliaryChain.lastOriginBlockHeight}`,
@@ -703,7 +709,8 @@ export default class Utils {
    * @param messageTransferRequestHash Stake request hash for an stake.
    * @returns StakeRequest object corresponding to stakeRequestHash.
    */
-  public async getMessageTransferRequest(messageTransferRequestHash: string): Promise<MessageTransferRequest | null> {
+  public async getMessageTransferRequest(messageTransferRequestHash: string):
+  Promise<MessageTransferRequest | null> {
     const repos: Repositories = await this.getRepositories();
 
     return repos.messageTransferRequestRepository.get(
@@ -746,7 +753,8 @@ export default class Utils {
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
       this.facilitatorConfig.originChain,
       gatewayType,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .auxiliary.ostEIP20CogatewayAddress,
       this.mosaicConfig.originChain.contractAddresses.simpleTokenAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
       new BigNumber(bounty),
@@ -784,7 +792,6 @@ export default class Utils {
     beneficiary: string,
     expectedAmount: BigNumber,
   ): Promise<void> {
-
     const simpletokenInstance = this.getSimpleTokenInstance();
     const actualUnstakedAmount = await simpletokenInstance.methods.balanceOf(beneficiary).call();
 
@@ -825,7 +832,8 @@ export default class Utils {
   public getEIP20GatewayInstance(): EIP20Gateway {
     const {
       ostEIP20GatewayAddress,
-    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId].contractAddresses.origin;
+    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId]
+      .contractAddresses.origin;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       ostEIP20GatewayAddress,
@@ -840,7 +848,8 @@ export default class Utils {
   public getEIP20CoGatewayInstance(): EIP20CoGateway {
     const {
       ostEIP20CogatewayAddress,
-    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId].contractAddresses.auxiliary;
+    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId]
+      .contractAddresses.auxiliary;
     const eip20CoGatewayInstance: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
       ostEIP20CogatewayAddress,
@@ -961,7 +970,6 @@ export default class Utils {
         .on('receipt', (receipt: TransactionReceipt): void => onResolve(receipt))
         .on('error', (error: Error): void => onReject(error));
     });
-
   }
 
   /**
@@ -1145,8 +1153,7 @@ export default class Utils {
    * @param amount
    * @return wei amount
    */
-  public convertToWei(amount: string) {
-    return web3Utils.toWei(amount.toString())
+  public static convertToWei(amount: string) {
+    return web3Utils.toWei(amount.toString());
   }
-
 }

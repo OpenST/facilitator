@@ -39,7 +39,6 @@ const dataMap: Record<string, any> = {};
  * Can be used to share some data across test case files
  */
 export default class SharedStorage {
-
   public static getOriginFunder(): string {
     return SharedStorage.get(SharedStorage.originFunderKey);
   }
@@ -56,20 +55,19 @@ export default class SharedStorage {
     return SharedStorage.set(SharedStorage.auxiliaryFunderKey, value);
   }
 
-  private static get(key: string):any {
+  private static get(key: string): any {
     return dataMap[key];
   }
 
-  private static set(key: string, value: any):void {
+  private static set(key: string, value: any): void {
     dataMap[key] = value;
   }
 
   private static get originFunderKey(): string {
-    return 'ORIGIN_FUNDER'
+    return 'ORIGIN_FUNDER';
   }
 
   private static get auxiliaryFunderKey(): string {
-    return 'AUXILIARY_FUNDER'
+    return 'AUXILIARY_FUNDER';
   }
-
 }

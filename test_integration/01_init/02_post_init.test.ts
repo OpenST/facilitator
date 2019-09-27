@@ -5,19 +5,18 @@ import Web3 from 'web3';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
+import { TransactionReceipt } from 'web3-core';
 import { FacilitatorConfig } from '../../src/Config/Config';
 import Utils from '../Utils';
 import * as Constants from '../Constants.json';
 import assert from '../../test/test_utils/assert';
-import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
-import { TransactionReceipt } from 'web3-core';
-import SharedStorage from "../SharedStorage";
+import SharedStorage from '../SharedStorage';
 
 describe('facilitator post init', async (): Promise<void> => {
-
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
-  const auxChainId: number = Number(Constants.auxChainId);
+  const auxChainId = Number(Constants.auxChainId);
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
 
@@ -40,9 +39,8 @@ describe('facilitator post init', async (): Promise<void> => {
     whitelistWorkerReceipt: TransactionReceipt,
     organizationInstance: Organization,
     address: string,
-    expirationHeight: string
+    expirationHeight: string,
   ) {
-
     assert.strictEqual(
       whitelistWorkerReceipt.status,
       true,
@@ -66,7 +64,6 @@ describe('facilitator post init', async (): Promise<void> => {
   }
 
   before(async () => {
-
     const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     utils = new Utils(
       mosaicConfig,
@@ -85,7 +82,6 @@ describe('facilitator post init', async (): Promise<void> => {
 
     const auxiliaryAccounts = await auxiliaryWeb3.eth.getAccounts();
     SharedStorage.setAuxiliaryFunder(auxiliaryAccounts[6]);
-
   });
 
   it('whitelist origin worker', async () => {
@@ -93,13 +89,13 @@ describe('facilitator post init', async (): Promise<void> => {
     const txReceipt = await utils.whitelistOriginWorker(
       organizationInstance,
       originWorker,
-      Constants.originWorkerExpirationHeight
+      Constants.originWorkerExpirationHeight,
     );
     await assertWorkerWhitelisting(
       txReceipt,
       organizationInstance,
       originWorker,
-      Constants.originWorkerExpirationHeight
+      Constants.originWorkerExpirationHeight,
     );
   });
 
@@ -108,13 +104,13 @@ describe('facilitator post init', async (): Promise<void> => {
     const txReceipt = await utils.whitelistAuxiliaryWorker(
       organizationInstance,
       auxiliaryWorker,
-      Constants.auxiliaryWorkerExpirationHeight
+      Constants.auxiliaryWorkerExpirationHeight,
     );
     await assertWorkerWhitelisting(
       txReceipt,
       organizationInstance,
       auxiliaryWorker,
-      Constants.auxiliaryWorkerExpirationHeight
+      Constants.auxiliaryWorkerExpirationHeight,
     );
   });
 
@@ -124,7 +120,7 @@ describe('facilitator post init', async (): Promise<void> => {
       auxiliaryWorker,
       new BigNumber(amountTobeFundedOnAuxiliary),
     );
-    let simpleTokenInstance: EIP20Token =  utils.getSimpleTokenInstance();
+    const simpleTokenInstance: EIP20Token = utils.getSimpleTokenInstance();
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.transfer(
       originWorker,
       OSTToBeFundedToWorkerForBounty.toString(),
@@ -136,7 +132,10 @@ describe('facilitator post init', async (): Promise<void> => {
         gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
-    await utils.verifyOSTTransfer(transferReceipt, originWorker, new BigNumber(OSTToBeFundedToWorkerForBounty));
+    await utils.verifyOSTTransfer(
+      transferReceipt,
+      originWorker,
+      new BigNumber(OSTToBeFundedToWorkerForBounty),
+    );
   });
-
 });

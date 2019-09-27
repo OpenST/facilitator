@@ -21,8 +21,8 @@ import {
 } from '../../src/repositories/MessageRepository';
 import assert from '../../test/test_utils/assert';
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
-import SharedStorage from "../SharedStorage";
-import {FacilitatorConfig} from "../../src/Config/Config";
+import SharedStorage from '../SharedStorage';
+import { FacilitatorConfig } from '../../src/Config/Config';
 
 describe('stake and mint with single staker & facilitator process', async (): Promise<void> => {
   const stakeAmount = '130';
@@ -31,7 +31,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   const stakerOSTBalance = '20000';
   const testDuration = 3;
   const interval = 3000;
-  const auxChainId: number = Number(Constants.auxChainId);
+  const auxChainId = Number(Constants.auxChainId);
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   const ostComposer: string = mosaicConfig.originChain.contractAddresses.ostComposerAddress;
@@ -59,7 +59,6 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   });
 
   it('fund staker', async (): Promise<void> => {
-
     stakerAccount = originWeb3.eth.accounts.create('facilitatortest');
     originWeb3.eth.accounts.wallet.add(stakerAccount);
 
@@ -162,32 +161,32 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     const stakeRequestPromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);
       stakeRequestInterval = setInterval(async () => {
-          const messageTransferRequestDb: MessageTransferRequest | null = await
-            utils.getMessageTransferRequest(
-              generatedStakeRequestHash,
-            );
+        const messageTransferRequestDb: MessageTransferRequest | null = await
+        utils.getMessageTransferRequest(
+          generatedStakeRequestHash,
+        );
 
-          if (messageTransferRequestDb != null) {
-            try {
-              Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
-            } catch (e) {
-              reject(e);
-            }
-            resolve();
+        if (messageTransferRequestDb != null) {
+          try {
+            Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
+          } catch (e) {
+            reject(e);
           }
+          resolve();
+        }
 
-          const currentTime = process.hrtime()[0];
+        const currentTime = process.hrtime()[0];
 
-          if (currentTime >= endTime) {
-            reject(
-              new Error(
-                'Assertion for stake requests table failed as response was not received'
+        if (currentTime >= endTime) {
+          reject(
+            new Error(
+              'Assertion for stake requests table failed as response was not received'
                 + ` within ${testDuration} mins`,
-              ),
-            );
-          }
-        },
-        interval);
+            ),
+          );
+        }
+      },
+      interval);
     }));
 
     await stakeRequestPromise.then((): void => {
@@ -206,85 +205,85 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     const requestStakePromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);
       requestStakeInterval = setInterval(async (): Promise<void> => {
-          const stakeRequestDb: MessageTransferRequest | null = await utils.getMessageTransferRequest(
-            generatedStakeRequestHash,
+        const stakeRequestDb: MessageTransferRequest | null = await utils.getMessageTransferRequest(
+          generatedStakeRequestHash,
+        );
+
+        if (stakeRequestDb!.messageHash) {
+          ({ messageHash } = stakeRequestDb!);
+          expectedMessage = new Message(
+            messageHash!,
+            MessageType.Stake,
+            messageTransferRequest.gateway,
+            MessageStatus.Undeclared,
+            MessageStatus.Undeclared,
+            messageTransferRequest.gasPrice,
+            messageTransferRequest.gasLimit,
+            messageTransferRequest.nonce,
+            messageTransferRequest.senderProxy,
+            MessageDirection.OriginToAuxiliary,
+            new BigNumber(0),
+            '',
+          );
+          const messageInDb = await utils.getMessageFromDB(messageHash);
+
+          const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
+          const coGateway: EIP20CoGateway = utils.getEIP20CoGatewayInstance();
+          const message = await gateway.methods.messages(messageHash!.toString()).call();
+          const eip20GatewayMessageStatus = Utils.getEnumValue(
+            parseInt(
+              await gateway.methods.getOutboxMessageStatus(messageHash!).call(),
+              10,
+            ),
           );
 
-          if (stakeRequestDb!.messageHash) {
-            ({ messageHash } = stakeRequestDb!);
-            expectedMessage = new Message(
-              messageHash!,
-              MessageType.Stake,
-              messageTransferRequest.gateway,
-              MessageStatus.Undeclared,
-              MessageStatus.Undeclared,
-              messageTransferRequest.gasPrice,
-              messageTransferRequest.gasLimit,
-              messageTransferRequest.nonce,
-              messageTransferRequest.senderProxy,
-              MessageDirection.OriginToAuxiliary,
-              new BigNumber(0),
-              '',
-            );
-            const messageInDb = await utils.getMessageFromDB(messageHash);
-
-            const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
-            const coGateway: EIP20CoGateway = utils.getEIP20CoGatewayInstance();
-            const message = await gateway.methods.messages(messageHash!.toString()).call();
-            const eip20GatewayMessageStatus = Utils.getEnumValue(
-              parseInt(
-                await gateway.methods.getOutboxMessageStatus(messageHash!).call(),
-                10,
-              ),
-            );
-
-            const eip20CoGatewayMessageStatus = Utils.getEnumValue(
-              parseInt(
-                await coGateway.methods.getInboxMessageStatus(messageHash!).call(),
-                10,
-              ),
-            );
-            try {
-              if (
-                eip20GatewayMessageStatus === MessageStatus.Undeclared
+          const eip20CoGatewayMessageStatus = Utils.getEnumValue(
+            parseInt(
+              await coGateway.methods.getInboxMessageStatus(messageHash!).call(),
+              10,
+            ),
+          );
+          try {
+            if (
+              eip20GatewayMessageStatus === MessageStatus.Undeclared
                 && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
                 && Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)
-              ) {
-                Utils.assertMessages(messageInDb!, expectedMessage);
-              } else if (
-                eip20GatewayMessageStatus === MessageStatus.Declared
+            ) {
+              Utils.assertMessages(messageInDb!, expectedMessage);
+            } else if (
+              eip20GatewayMessageStatus === MessageStatus.Declared
                 && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
-              ) {
-                if (Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)) {
-                  Utils.assertMessages(messageInDb!, expectedMessage);
-                } else {
-                  expectedMessage.hashLock = message.hashLock;
-                  Utils.assertMessages(messageInDb!, expectedMessage);
-                  resolve();
-                }
+            ) {
+              if (Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)) {
+                Utils.assertMessages(messageInDb!, expectedMessage);
               } else {
-                throw new Error(
-                  `Message status for source in db is ${messageInDb!.sourceStatus} but in `
+                expectedMessage.hashLock = message.hashLock;
+                Utils.assertMessages(messageInDb!, expectedMessage);
+                resolve();
+              }
+            } else {
+              throw new Error(
+                `Message status for source in db is ${messageInDb!.sourceStatus} but in `
                   + `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
                   + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
-                );
-              }
-            } catch (e) {
-              reject(e);
-            }
-            const currentTime = process.hrtime()[0];
-
-            if (currentTime >= endTime) {
-              reject(
-                new Error(
-                  'Assertion for messages table while request staking failed as response was not received'
-                  + ` within ${testDuration} mins`,
-                ),
               );
             }
+          } catch (e) {
+            reject(e);
           }
-        },
-        interval);
+          const currentTime = process.hrtime()[0];
+
+          if (currentTime >= endTime) {
+            reject(
+              new Error(
+                'Assertion for messages table while request staking failed as response was not received'
+                  + ` within ${testDuration} mins`,
+              ),
+            );
+          }
+        }
+      },
+      interval);
     }));
 
     await requestStakePromise.then((): void => {
@@ -302,35 +301,35 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     const verifyAnchorPromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);
       verifyAnchorInterval = setInterval(async (): Promise<void> => {
-          const auxiliaryChain: AuxiliaryChain | null = await utils.getAuxiliaryChainFromDb(
-            auxChainId,
+        const auxiliaryChain: AuxiliaryChain | null = await utils.getAuxiliaryChainFromDb(
+          auxChainId,
+        );
+
+        if (auxiliaryChain!.lastOriginBlockHeight!.cmp(anchoredBlockNumber) === 0) {
+          const expectedAuxiliaryChain = utils.getAuxiliaryChainStub(
+            new BigNumber(anchoredBlockNumber),
+            auxiliaryChain!.lastAuxiliaryBlockHeight!,
           );
-
-          if (auxiliaryChain!.lastOriginBlockHeight!.cmp(anchoredBlockNumber) === 0) {
-            const expectedAuxiliaryChain = utils.getAuxiliaryChainStub(
-              new BigNumber(anchoredBlockNumber),
-              auxiliaryChain!.lastAuxiliaryBlockHeight!,
-            );
-            try {
-              Utils.assertAuxiliaryChain(auxiliaryChain!, expectedAuxiliaryChain);
-            } catch (e) {
-              reject(e);
-            }
-            resolve();
+          try {
+            Utils.assertAuxiliaryChain(auxiliaryChain!, expectedAuxiliaryChain);
+          } catch (e) {
+            reject(e);
           }
+          resolve();
+        }
 
-          const currentTime = process.hrtime()[0];
+        const currentTime = process.hrtime()[0];
 
-          if (currentTime >= endTime) {
-            reject(
-              new Error(
-                'Assertion for auxiliary chains table while anchoring failed as'
+        if (currentTime >= endTime) {
+          reject(
+            new Error(
+              'Assertion for auxiliary chains table while anchoring failed as'
                 + ` response was not received within ${testDuration} mins`,
-              ),
-            );
-          }
-        },
-        interval);
+            ),
+          );
+        }
+      },
+      interval);
     }));
 
     await verifyAnchorPromise.then((): void => {
@@ -347,69 +346,69 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     const progressMinting = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration * 2);
       progressMintingInterval = setInterval(async (): Promise<void> => {
-          const eip20CoGateway = utils.getEIP20CoGatewayInstance();
+        const eip20CoGateway = utils.getEIP20CoGatewayInstance();
 
-          const eip20CoGatewayMessageStatus = Utils.getEnumValue(parseInt(
-            await eip20CoGateway.methods.getInboxMessageStatus(
-              messageHash!,
-            ).call(),
-            10,
-          ));
+        const eip20CoGatewayMessageStatus = Utils.getEnumValue(parseInt(
+          await eip20CoGateway.methods.getInboxMessageStatus(
+            messageHash!,
+          ).call(),
+          10,
+        ));
 
-          const eip20Gateway = utils.getEIP20GatewayInstance();
-          const eip20GatewayMessageStatus = Utils.getEnumValue(parseInt(
-            await eip20Gateway.methods.getOutboxMessageStatus(
-              messageHash!,
-            ).call(),
-            10,
-          ));
+        const eip20Gateway = utils.getEIP20GatewayInstance();
+        const eip20GatewayMessageStatus = Utils.getEnumValue(parseInt(
+          await eip20Gateway.methods.getOutboxMessageStatus(
+            messageHash!,
+          ).call(),
+          10,
+        ));
 
-          const messageInGateway = await eip20Gateway.methods.messages(messageHash!).call();
+        const messageInGateway = await eip20Gateway.methods.messages(messageHash!).call();
 
-          const messageInDb = await utils.getMessageFromDB(messageHash);
+        const messageInDb = await utils.getMessageFromDB(messageHash);
 
-          expectedMessage = Utils.getMessageStub(messageInGateway, expectedMessage!);
-          try {
-            if (Utils.isMessageStatusValid(
-              eip20GatewayMessageStatus,
-              eip20CoGatewayMessageStatus,
-              messageInDb!,
-            )) {
-              Utils.assertMessages(messageInDb!, expectedMessage);
-            } else if (
-              eip20GatewayMessageStatus === MessageStatus.Progressed
+        expectedMessage = Utils.getMessageStub(messageInGateway, expectedMessage!);
+        try {
+          if (Utils.isMessageStatusValid(
+            eip20GatewayMessageStatus,
+            eip20CoGatewayMessageStatus,
+            messageInDb!,
+          )) {
+            Utils.assertMessages(messageInDb!, expectedMessage);
+          } else if (
+            eip20GatewayMessageStatus === MessageStatus.Progressed
               && eip20CoGatewayMessageStatus === MessageStatus.Progressed
               && Utils.isSourceProgressedTargetProgressed(messageInDb!)
-            ) {
-              Utils.assertMessages(messageInDb!, expectedMessage);
-              const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
-              const mintedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
-              await utils.assertMintingBalance(messageTransferRequest.beneficiary!, mintedAmount);
-              resolve();
-            } else {
-              throw new Error(
-                `Message status for source in db is ${messageInDb!.sourceStatus} but in `
+          ) {
+            Utils.assertMessages(messageInDb!, expectedMessage);
+            const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
+            const mintedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
+            await utils.assertMintingBalance(messageTransferRequest.beneficiary!, mintedAmount);
+            resolve();
+          } else {
+            throw new Error(
+              `Message status for source in db is ${messageInDb!.sourceStatus} but in `
                 + `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
                 + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
-              );
-            }
-          } catch (e) {
-            reject(e);
+            );
           }
+        } catch (e) {
+          reject(e);
+        }
 
-          const currentTime = process.hrtime()[0];
-          if (currentTime >= endTime) {
-            reject(
-              new Error(
-                'Time out while verifying progress minting of message. Source status at db is'
+        const currentTime = process.hrtime()[0];
+        if (currentTime >= endTime) {
+          reject(
+            new Error(
+              'Time out while verifying progress minting of message. Source status at db is'
                 + `${messageInDb!.sourceStatus} and Target status at db is ${messageInDb!.targetStatus}`
                 + `EIP20Gateway status is ${eip20GatewayMessageStatus} and EIP20CoGateway status is`
                 + `${eip20CoGatewayMessageStatus}`,
-              ),
-            );
-          }
-        },
-        interval);
+            ),
+          );
+        }
+      },
+      interval);
     }));
 
     await progressMinting.then((): void => {
@@ -419,9 +418,4 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       throw err;
     });
   });
-
-  after(async (): Promise<void> => {
-
-  });
-
 });
