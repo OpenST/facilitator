@@ -206,6 +206,9 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
 
     const assertMessagePromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);
+      const coGateway: EIP20CoGateway = utils.getEIP20CoGatewayInstance();
+      const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
+
       assertMessageInterval = setInterval(async (): Promise<void> => {
           const redeemRequestDb: MessageTransferRequest | null = await utils.getMessageTransferRequest(
             preGeneratedRedeemRequestHash,
@@ -228,10 +231,9 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
               '',
             );
             const messageInDb = await utils.getMessageFromDB(messageHash);
+            const message = await coGateway.methods.messages(messageHash!.toString()).call();
+            console.log('messageFromCoGateway', message);
 
-            const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
-            const coGateway: EIP20CoGateway = utils.getEIP20CoGatewayInstance();
-            const message = await gateway.methods.messages(messageHash!.toString()).call();
             const eip20CoGatewayMessageStatus = Utils.getEnumValue(
               parseInt(
                 await coGateway.methods.getOutboxMessageStatus(messageHash!).call(),
@@ -257,7 +259,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
               ) {
                 if (Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)) {
                   Utils.assertMessages(messageInDb!, expectedMessage);
-                } else {
+                } else if (Utils.isSourceDeclaredTargetUndeclared(messageInDb)) {
                   expectedMessage.hashLock = message.hashLock;
                   Utils.assertMessages(messageInDb!, expectedMessage);
                   resolve();
@@ -341,83 +343,84 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     });
   });
 
-  // it('verify progress minting', async (): Promise<void> => {
-  //   let progressUnstakingInterval: NodeJS.Timeout;
-  //
-  //   const progressUnstaking = new Promise(((resolve, reject) => {
-  //     const endTime = Utils.getEndTime(testDuration * 2);
-  //     progressUnstakingInterval = setInterval(async (): Promise<void> => {
-  //         const eip20CoGateway = utils.getEIP20CoGatewayInstance();
-  //
-  //         const eip20CoGatewayMessageStatus = Utils.getEnumValue(parseInt(
-  //           await eip20CoGateway.methods.getOutboxMessageStatus(
-  //             messageHash!,
-  //           ).call(),
-  //           10,
-  //         ));
-  //
-  //         const eip20Gateway = utils.getEIP20GatewayInstance();
-  //         const eip20GatewayMessageStatus = Utils.getEnumValue(parseInt(
-  //           await eip20Gateway.methods.getInboxMessageStatus(
-  //             messageHash!,
-  //           ).call(),
-  //           10,
-  //         ));
-  //
-  //         const messageInCoGateway = await eip20CoGateway.methods.messages(messageHash!).call();
-  //
-  //         const messageInDb = await utils.getMessageFromDB(messageHash);
-  //
-  //         expectedMessage = Utils.getMessageStub(messageInCoGateway, expectedMessage!);
-  //         try {
-  //           if (Utils.isMessageStatusValid(
-  //             eip20CoGatewayMessageStatus,
-  //             eip20GatewayMessageStatus,
-  //             messageInDb!,
-  //           )) {
-  //             Utils.assertMessages(messageInDb!, expectedMessage);
-  //           } else if (
-  //             eip20GatewayMessageStatus === MessageStatus.Progressed
-  //             && eip20CoGatewayMessageStatus === MessageStatus.Progressed
-  //             && Utils.isSourceProgressedTargetProgressed(messageInDb!)
-  //           ) {
-  //             Utils.assertMessages(messageInDb!, expectedMessage);
-  //             const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
-  //             const redeemedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
-  //             await utils.assertUnstakedBalance(messageTransferRequest.beneficiary!, redeemedAmount);
-  //             resolve();
-  //           } else {
-  //             throw new Error(
-  //               `Message status for source in db is ${messageInDb!.sourceStatus} but in `
-  //               + `eip20CoGateway is ${eip20CoGatewayMessageStatus} and Message status for target in db is `
-  //               + `${messageInDb!.targetStatus} but got ${eip20GatewayMessageStatus}`,
-  //             );
-  //           }
-  //         } catch (e) {
-  //           reject(e);
-  //         }
-  //
-  //         const currentTime = process.hrtime()[0];
-  //         if (currentTime >= endTime) {
-  //           reject(
-  //             new Error(
-  //               'Time out while verifying progress minting of message. Source status at db is'
-  //               + `${messageInDb!.sourceStatus} and Target status at db is ${messageInDb!.targetStatus}`
-  //               + `EIP20Gateway status is ${eip20GatewayMessageStatus} and EIP20CoGateway status is`
-  //               + `${eip20CoGatewayMessageStatus}`,
-  //             ),
-  //           );
-  //         }
-  //       },
-  //       interval);
-  //   }));
-  //
-  //   await progressUnstaking.then((): void => {
-  //     clearInterval(progressUnstakingInterval);
-  //   }).catch((err: Error): Error => {
-  //     clearInterval(progressUnstakingInterval);
-  //     throw err;
-  //   });
-  // });
+  it('verify progress unstaking', async (): Promise<void> => {
+    let progressUnstakingInterval: NodeJS.Timeout;
+
+    const progressUnstaking = new Promise(((resolve, reject) => {
+      const endTime = Utils.getEndTime(testDuration * 2);
+      const eip20CoGateway = utils.getEIP20CoGatewayInstance();
+      const eip20Gateway = utils.getEIP20GatewayInstance();
+
+      progressUnstakingInterval = setInterval(async (): Promise<void> => {
+
+          const eip20CoGatewayMessageStatus = Utils.getEnumValue(parseInt(
+            await eip20CoGateway.methods.getOutboxMessageStatus(
+              messageHash!,
+            ).call(),
+            10,
+          ));
+
+          const eip20GatewayMessageStatus = Utils.getEnumValue(parseInt(
+            await eip20Gateway.methods.getInboxMessageStatus(
+              messageHash!,
+            ).call(),
+            10,
+          ));
+
+          const messageInCoGateway = await eip20CoGateway.methods.messages(messageHash!).call();
+
+          const messageInDb = await utils.getMessageFromDB(messageHash);
+
+          expectedMessage = Utils.getMessageStub(messageInCoGateway, expectedMessage!);
+          try {
+            if (Utils.isMessageStatusValid(
+              eip20CoGatewayMessageStatus,
+              eip20GatewayMessageStatus,
+              messageInDb!,
+            )) {
+              Utils.assertMessages(messageInDb!, expectedMessage);
+            } else if (
+              eip20GatewayMessageStatus === MessageStatus.Progressed
+              && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+              && Utils.isSourceProgressedTargetProgressed(messageInDb!)
+            ) {
+              Utils.assertMessages(messageInDb!, expectedMessage);
+              const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
+              const redeemedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
+              await utils.assertUnstakedBalance(messageTransferRequest.beneficiary!, redeemedAmount);
+              resolve();
+            } else {
+              throw new Error(
+                `Message status for source in db is ${messageInDb!.sourceStatus} but in `
+                + `eip20CoGateway is ${eip20CoGatewayMessageStatus} and Message status for target in db is `
+                + `${messageInDb!.targetStatus} but got ${eip20GatewayMessageStatus}`,
+              );
+            }
+          } catch (e) {
+            reject(e);
+          }
+
+          const currentTime = process.hrtime()[0];
+          if (currentTime >= endTime) {
+            reject(
+              new Error(
+                'Time out while verifying progress minting of message. Source status at db is'
+                + `${messageInDb!.sourceStatus} and Target status at db is ${messageInDb!.targetStatus}`
+                + `EIP20Gateway status is ${eip20GatewayMessageStatus} and EIP20CoGateway status is`
+                + `${eip20CoGatewayMessageStatus}`,
+              ),
+            );
+          }
+        },
+        interval);
+    }));
+
+    await progressUnstaking.then((): void => {
+      clearInterval(progressUnstakingInterval);
+    }).catch((err: Error): Error => {
+      clearInterval(progressUnstakingInterval);
+      throw err;
+    });
+  });
 
 });
