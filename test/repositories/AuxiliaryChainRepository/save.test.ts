@@ -20,6 +20,7 @@ import BigNumber from 'bignumber.js';
 import AuxiliaryChain from '../../../src/models/AuxiliaryChain';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
+import assert from "../../test_utils/assert";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -99,5 +100,50 @@ describe('AuxiliaryChainRepository::save', (): void => {
     );
 
     Util.assertAuxiliaryChainAttributes(updatedAuxiliaryChain, auxiliaryChain);
+  });
+
+  it('should fail when ostGatewayAddress is null', async (): Promise<void> => {
+    const invalidGatewayAddress = 'AuxiliaryChain.ostGatewayAddress cannot be null';
+    const auxiliaryChain = new AuxiliaryChain(
+      chainId,
+      originChainName,
+      null!,
+      ostCoGatewayAddress,
+      anchorAddress,
+      coAnchorAddress,
+      lastOriginBlockHeight,
+      lastAuxiliaryBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(config.repos.auxiliaryChainRepository.save(
+      auxiliaryChain,
+    ),
+      `${invalidGatewayAddress}`,
+    );
+  });
+
+  it('should fail when ostGatewayAddress is undefined', async (): Promise<void> => {
+    const invalidGatewayAddress = 'AuxiliaryChain.ostGatewayAddress cannot be null';
+    const auxiliaryChain = new AuxiliaryChain(
+      chainId,
+      originChainName,
+      undefined,
+      ostCoGatewayAddress,
+      anchorAddress,
+      coAnchorAddress,
+      lastOriginBlockHeight,
+      lastAuxiliaryBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.auxiliaryChainRepository.save(
+        auxiliaryChain,
+      ),
+      `${invalidGatewayAddress}`,
+    );
   });
 });

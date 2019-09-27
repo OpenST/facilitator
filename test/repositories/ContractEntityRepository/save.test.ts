@@ -85,4 +85,34 @@ describe('ContractEntityRepository::save', (): void => {
       `${invalidEntityType}`,
     );
   });
+
+  it('should fail when timestamp is null', async (): Promise<void> => {
+    const invalidTimeStamp = 'ContractEntity.timestamp cannot be null';
+    const contractEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000002',
+      EntityType.StakeRequesteds,
+      null!,
+      createdAt,
+    );
+
+    assert.isRejected(
+      config.repos.contractEntityRepository.save(contractEntity),
+      `${invalidTimeStamp}`,
+    );
+  });
+
+  it('should fail when timestamp is undefined', async (): Promise<void> => {
+    const invalidTimeStamp = 'ContractEntity.timestamp cannot be null';
+    const contractEntity = new ContractEntity(
+      '0x0000000000000000000000000000000000000002',
+      EntityType.StakeRequesteds,
+      undefined,
+      createdAt,
+    );
+
+    assert.isRejected(
+      config.repos.contractEntityRepository.save(contractEntity),
+      `${invalidTimeStamp}`,
+    );
+  });
 });

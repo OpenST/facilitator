@@ -21,6 +21,7 @@ import Gateway from '../../../src/models/Gateway';
 import { GatewayType } from '../../../src/repositories/GatewayRepository';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
+import assert from "../../test_utils/assert";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -106,4 +107,53 @@ describe('GatewayRepository::save', (): void => {
 
     Util.assertGatewayAttributes(updatedGateway, gateway);
   });
+
+  it('should fail when remote gateway address is null', async (): Promise<void> => {
+    const invalidRemoteGatewayAddress = 'Gateway.remoteGatewayAddress cannot be null';
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      null!,
+      tokenAddress,
+      anchorAddress,
+      bounty,
+      activation,
+      lastRemoteGatewayProvenBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.gatewayRepository.save(
+      gateway,
+    ),
+      `${invalidRemoteGatewayAddress}`,
+    );
+  });
+
+  it('should fail when remote gateway address is undefined', async (): Promise<void> => {
+    const invalidRemoteGatewayAddress = 'Gateway.remoteGatewayAddress cannot be null';
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      undefined,
+      tokenAddress,
+      anchorAddress,
+      bounty,
+      activation,
+      lastRemoteGatewayProvenBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.gatewayRepository.save(
+      gateway,
+    ),
+      `${invalidRemoteGatewayAddress}`,
+    );
+  });
+
 });

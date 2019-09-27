@@ -153,4 +153,53 @@ describe('MessageTransferRequestRepository::save', (): void => {
       requestOutput as MessageTransferRequest,
     );
   });
+
+
+   it('should fail when gateway address is null', async (): Promise<void> => {
+    const invalidGatewayAddress = 'MessageTransferRequest.gateway cannot be null';
+    const requestInput = new MessageTransferRequest(
+      'requestHash',
+      RequestType.Stake,
+      new BigNumber('10'),
+      new BigNumber('1'),
+      'beneficiary',
+      new BigNumber('2'),
+      new BigNumber('3'),
+      new BigNumber('4'),
+      null!,
+      'sender',
+      'senderProxy',
+    );
+
+    assert.isRejected(
+      config.repos.messageTransferRequestRepository.save(
+      requestInput,
+    ),
+      `${invalidGatewayAddress}`,
+    );
+  });
+
+   it('should fail when gateway address is undefined', async (): Promise<void> => {
+    const invalidGatewayAddress = 'MessageTransferRequest.gateway cannot be null';
+    const requestInput = new MessageTransferRequest(
+      'requestHash',
+      RequestType.Stake,
+      new BigNumber('10'),
+      new BigNumber('1'),
+      'beneficiary',
+      new BigNumber('2'),
+      new BigNumber('3'),
+      new BigNumber('4'),
+      undefined,
+      'sender',
+      'senderProxy',
+    );
+
+    assert.isRejected(
+      config.repos.messageTransferRequestRepository.save(
+      requestInput,
+    ),
+      `${invalidGatewayAddress}`,
+    );
+  });
 });
