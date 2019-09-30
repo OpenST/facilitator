@@ -171,8 +171,8 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
         redeemRequest.amount!.toString(),
         message.gasPrice!.toString(),
         message.gasLimit!.toString(),
-        message.hashLock!,
         proof!.blockNumber!.toString(),
+        message.hashLock!,
         proof!.storageProof[0].serializedProof,
       ]],
     );
