@@ -99,7 +99,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
 
   it('request redeem', async (): Promise<void> => {
     messageTransferRequest = new MessageTransferRequest(
-      '',
+      '', // would be filled later
       MessageType.Redeem,
       new BigNumber(0), // It will be updated after redeem request is done.
       new BigNumber(redeemAmount),
@@ -109,6 +109,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       new BigNumber(1),
       mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
       redeemerAccount.address,
+      '' // would be filled later
     );
 
     preGeneratedRedeemRequestHash = utils.getRedeemRequestHash(
@@ -215,6 +216,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
           expectedMessage = new Message(
             messageHash!,
             MessageType.Redeem,
+            MessageDirection.AuxiliaryToOrigin,
             messageTransferRequest.gateway,
             MessageStatus.Undeclared,
             MessageStatus.Undeclared,
@@ -222,7 +224,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
             messageTransferRequest.gasLimit,
             messageTransferRequest.nonce,
             messageTransferRequest.senderProxy,
-            MessageDirection.AuxiliaryToOrigin,
             new BigNumber(0),
             '',
           );
