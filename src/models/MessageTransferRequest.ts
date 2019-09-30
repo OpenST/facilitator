@@ -30,21 +30,21 @@ export default class MessageTransferRequest extends Comparable<MessageTransferRe
 
   public blockNumber: BigNumber;
 
-  public amount?: BigNumber;
+  public amount: BigNumber;
 
-  public beneficiary?: string;
+  public beneficiary: string;
 
-  public gasPrice?: BigNumber;
+  public gasPrice: BigNumber;
 
-  public gasLimit?: BigNumber;
+  public gasLimit: BigNumber;
 
-  public nonce?: BigNumber;
+  public nonce: BigNumber;
 
-  public gateway?: string;
+  public gateway: string;
 
-  public sender?: string;
+  public sender: string;
 
-  public senderProxy?: string;
+  public senderProxy: string;
 
   public messageHash?: string;
 
@@ -56,14 +56,14 @@ export default class MessageTransferRequest extends Comparable<MessageTransferRe
     requestHash: string,
     requestType: string,
     blockNumber: BigNumber,
-    amount?: BigNumber,
-    beneficiary?: string,
-    gasPrice?: BigNumber,
-    gasLimit?: BigNumber,
-    nonce?: BigNumber,
-    gateway?: string,
-    sender?: string,
-    senderProxy?: string,
+    amount: BigNumber,
+    beneficiary: string,
+    gasPrice: BigNumber,
+    gasLimit: BigNumber,
+    nonce: BigNumber,
+    gateway: string,
+    sender: string,
+    senderProxy: string,
     messageHash?: string,
     createdAt?: Date,
     updatedAt?: Date,

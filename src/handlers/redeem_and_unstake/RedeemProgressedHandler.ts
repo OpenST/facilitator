@@ -53,11 +53,13 @@ export default class RedeemProgressedHandler extends ContractEntityHandler<Messa
         let message = await this.messageRepository.get(transaction._messageHash);
         // This can happen if progress transaction is received first from graph node.
         if (message === null) {
-          message = new Message(transaction._messageHash);
+          message = new Message(
+            transaction._messageHash,
+            MessageType.Redeem,
+            MessageDirection.AuxiliaryToOrigin,
+          );
           message.sender = Utils.toChecksumAddress(transaction._redeemer);
           message.nonce = new BigNumber(transaction._redeemerNonce);
-          message.direction = MessageDirection.AuxiliaryToOrigin;
-          message.type = MessageType.Redeem;
           message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
           message.sourceStatus = MessageStatus.Undeclared;
           Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);

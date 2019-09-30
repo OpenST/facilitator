@@ -48,7 +48,7 @@ export default class ContractEntity extends Comparable<ContractEntity> {
 
   public entityType: EntityType;
 
-  public timestamp?: BigNumber;
+  public timestamp: BigNumber;
 
   public createdAt?: Date;
 
@@ -65,7 +65,7 @@ export default class ContractEntity extends Comparable<ContractEntity> {
   public constructor(
     contractAddress: string,
     entityType: EntityType,
-    timestamp?: BigNumber,
+    timestamp: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
   ) {

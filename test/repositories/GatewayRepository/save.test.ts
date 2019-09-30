@@ -67,8 +67,8 @@ describe('GatewayRepository::save', (): void => {
       tokenAddress,
       anchorAddress,
       bounty,
-      activation,
       lastRemoteGatewayProvenBlockHeight,
+      activation,
       createdAt,
       updatedAt,
     );
@@ -88,8 +88,8 @@ describe('GatewayRepository::save', (): void => {
       tokenAddress,
       anchorAddress,
       bounty,
-      activation,
       lastRemoteGatewayProvenBlockHeight,
+      activation,
       createdAt,
       updatedAt,
     );

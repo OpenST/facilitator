@@ -25,21 +25,21 @@ import Comparable from '../observer/Comparable';
 export default class Gateway extends Comparable<Gateway> {
   public gatewayAddress: string;
 
-  public chain?: string;
+  public chain: string;
 
-  public gatewayType?: string;
+  public gatewayType: string;
 
-  public remoteGatewayAddress?: string;
+  public remoteGatewayAddress: string;
 
-  public tokenAddress?: string;
+  public tokenAddress: string;
 
-  public anchorAddress?: string;
+  public anchorAddress: string;
 
-  public bounty?: BigNumber;
+  public bounty: BigNumber;
+
+  public lastRemoteGatewayProvenBlockHeight: BigNumber;
 
   public activation?: boolean;
-
-  public lastRemoteGatewayProvenBlockHeight?: BigNumber;
 
   public createdAt?: Date;
 
@@ -57,21 +57,21 @@ export default class Gateway extends Comparable<Gateway> {
    * @param anchorAddress Anchor contract address.
    * @param bounty The amount that facilitator will stakes to initiate the
    *               stake process..
-   * @param activation Gateway is activated or not.
    * @param lastRemoteGatewayProvenBlockHeight Last block height at which block height was proven.
+   * @param activation Gateway is activated or not.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */
   public constructor(
     gatewayAddress: string,
-    chain?: string,
-    gatewayType?: string,
-    remoteGatewayAddress?: string,
-    tokenAddress?: string,
-    anchorAddress?: string,
-    bounty?: BigNumber,
+    chain: string,
+    gatewayType: string,
+    remoteGatewayAddress: string,
+    tokenAddress: string,
+    anchorAddress: string,
+    bounty: BigNumber,
+    lastRemoteGatewayProvenBlockHeight: BigNumber,
     activation?: boolean,
-    lastRemoteGatewayProvenBlockHeight?: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
@@ -83,8 +83,8 @@ export default class Gateway extends Comparable<Gateway> {
     this.tokenAddress = tokenAddress;
     this.anchorAddress = anchorAddress;
     this.bounty = bounty;
-    this.activation = activation;
     this.lastRemoteGatewayProvenBlockHeight = lastRemoteGatewayProvenBlockHeight;
+    this.activation = activation;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }

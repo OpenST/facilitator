@@ -51,11 +51,13 @@ export default class StakeIntentConfirmedHandler extends ContractEntityHandler<M
         const messageHash = transaction._messageHash;
         message = await this.messageRepository.get(messageHash);
         if (message === null) {
-          message = new Message(transaction._messageHash);
+          message = new Message(
+            transaction._messageHash,
+            MessageType.Stake,
+            MessageDirection.OriginToAuxiliary,
+          );
           message.sender = Utils.toChecksumAddress(transaction._staker);
           message.nonce = new BigNumber(transaction._stakerNonce);
-          message.type = MessageType.Stake;
-          message.direction = MessageDirection.OriginToAuxiliary;
           Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }
         if (message.targetStatus === undefined
