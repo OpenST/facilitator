@@ -27,7 +27,9 @@ import Comparable from '../observer/Comparable';
 export default class Message extends Comparable<Message> {
   public messageHash: string;
 
-  public type?: string;
+  public type: string;
+
+  public direction: string;
 
   public gatewayAddress?: string;
 
@@ -42,8 +44,6 @@ export default class Message extends Comparable<Message> {
   public nonce?: BigNumber;
 
   public sender?: string;
-
-  public direction?: string;
 
   public sourceDeclarationBlockHeight?: BigNumber;
 
@@ -60,6 +60,7 @@ export default class Message extends Comparable<Message> {
    *
    * @param messageHash Message hash is unique for each request.
    * @param type Type of the message stake/redeem.
+   * @param direction o2a or a2o direction.
    * @param gatewayAddress Gateway contract address.
    * @param sourceStatus Status of source.
    * @param targetStatus Status of target.
@@ -67,7 +68,6 @@ export default class Message extends Comparable<Message> {
    * @param gasLimit Gas limit that staker is ready to pay.
    * @param nonce Nonce of the staker address.
    * @param sender Staker address.
-   * @param direction o2a or a2o direction.
    * @param sourceDeclarationBlockHeight Source block height at which message wa declared.
    * @param secret Unlock secret for the hashLock provide by the staker while initiating the stake.
    * @param hashLock Hash Lock provided by the facilitator.
@@ -76,7 +76,8 @@ export default class Message extends Comparable<Message> {
    */
   public constructor(
     messageHash: string,
-    type?: string,
+    type: string,
+    direction: string,
     gatewayAddress?: string,
     sourceStatus?: string,
     targetStatus?: string,
@@ -84,7 +85,6 @@ export default class Message extends Comparable<Message> {
     gasLimit?: BigNumber,
     nonce?: BigNumber,
     sender?: string,
-    direction?: string,
     sourceDeclarationBlockHeight?: BigNumber,
     secret?: string,
     hashLock?: string,
@@ -94,6 +94,7 @@ export default class Message extends Comparable<Message> {
     super();
     this.messageHash = messageHash;
     this.type = type;
+    this.direction = direction;
     this.gatewayAddress = gatewayAddress;
     this.sourceStatus = sourceStatus;
     this.targetStatus = targetStatus;
@@ -101,7 +102,6 @@ export default class Message extends Comparable<Message> {
     this.gasLimit = gasLimit;
     this.nonce = nonce;
     this.sender = sender;
-    this.direction = direction;
     this.sourceDeclarationBlockHeight = sourceDeclarationBlockHeight;
     this.secret = secret;
     this.hashLock = hashLock;

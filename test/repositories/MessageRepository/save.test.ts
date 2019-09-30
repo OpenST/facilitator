@@ -74,6 +74,7 @@ describe('MessageRepository::save', (): void => {
     const message = new Message(
       messageHash,
       type,
+      direction,
       gatewayAddress,
       sourceStatus,
       targetStatus,
@@ -81,7 +82,6 @@ describe('MessageRepository::save', (): void => {
       gasLimit,
       nonce,
       sender,
-      direction,
       sourceDeclarationBlockHeight,
       secret,
       hashLock,
@@ -99,6 +99,7 @@ describe('MessageRepository::save', (): void => {
     const message = new Message(
       messageHash,
       type,
+      direction,
       gatewayAddress,
       sourceStatus,
       targetStatus,
@@ -106,7 +107,6 @@ describe('MessageRepository::save', (): void => {
       gasLimit,
       nonce,
       sender,
-      direction,
       sourceDeclarationBlockHeight,
       secret,
       hashLock,

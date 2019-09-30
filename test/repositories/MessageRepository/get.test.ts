@@ -59,6 +59,7 @@ describe('Message::get', (): void => {
     message = new Message(
       messageHash,
       type,
+      direction,
       gatewayAddress,
       sourceStatus,
       targetStatus,
@@ -66,7 +67,6 @@ describe('Message::get', (): void => {
       gasLimit,
       nonce,
       sender,
-      direction,
       sourceDeclarationBlockHeight,
       secret,
       hashLock,

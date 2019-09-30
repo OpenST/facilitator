@@ -52,13 +52,15 @@ export default class RedeemIntentConfirmedHandler extends ContractEntityHandler<
         const messageHash = transaction._messageHash;
         message = await this.messageRepository.get(messageHash);
         if (message === null) {
-          message = new Message(transaction._messageHash);
+          message = new Message(
+            transaction._messageHash,
+            MessageType.Redeem,
+            MessageDirection.AuxiliaryToOrigin,
+          );
           message.gatewayAddress = transaction.contractAddress;
           message.sender = Utils.toChecksumAddress(transaction._redeemer);
           message.nonce = new BigNumber(transaction._redeemerNonce);
-          message.type = MessageType.Redeem;
           message.targetStatus = MessageStatus.Undeclared;
-          message.direction = MessageDirection.AuxiliaryToOrigin;
           message.hashLock = transaction._hashLock;
           Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }

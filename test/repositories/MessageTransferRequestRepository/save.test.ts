@@ -99,9 +99,15 @@ describe('MessageTransferRequestRepository::save', (): void => {
       'requestHash',
       RequestType.Stake,
       requestInput.blockNumber,
+      new BigNumber('11'),
+      requestInput.beneficiary,
+      requestInput.gasPrice,
+      requestInput.gasLimit,
+      requestInput.nonce,
+      'gateway',
+      'sender',
+      'senderProxy',
     );
-    requestUpdateInput.amount = new BigNumber('11');
-    requestUpdateInput.gateway = 'gatewayUpdated';
 
     const requestResponse = await config.repos.messageTransferRequestRepository.save(
       requestUpdateInput,

@@ -43,7 +43,7 @@ commander
   .option('-i, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
   .option('-d, --db-path <db-path>', 'path where db path is present')
   .option('-f, --force', 'forcefully override facilitator config')
-  .action(async(options) => {
+  .action(async (options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 

@@ -98,6 +98,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       new BigNumber(1),
       mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
       stakerAccount.address,
+      '0x0000000000000000000000000000000000000001',
     );
 
     generatedStakeRequestHash = utils.getStakeRequestHash(
@@ -214,6 +215,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
           expectedMessage = new Message(
             messageHash!,
             MessageType.Stake,
+            MessageDirection.OriginToAuxiliary,
             messageTransferRequest.gateway,
             MessageStatus.Undeclared,
             MessageStatus.Undeclared,
@@ -221,7 +223,6 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
             messageTransferRequest.gasLimit,
             messageTransferRequest.nonce,
             messageTransferRequest.senderProxy,
-            MessageDirection.OriginToAuxiliary,
             new BigNumber(0),
             '',
           );
