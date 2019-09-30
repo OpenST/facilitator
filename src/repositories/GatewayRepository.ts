@@ -256,8 +256,8 @@ export default class GatewayRepository extends Subject<Gateway> {
       gatewayModel.tokenAddress,
       gatewayModel.anchorAddress,
       new BigNumber(gatewayModel.bounty),
-      gatewayModel.activation,
       new BigNumber(gatewayModel.lastRemoteGatewayProvenBlockHeight),
+      gatewayModel.activation,
       gatewayModel.createdAt,
       gatewayModel.updatedAt,
     );

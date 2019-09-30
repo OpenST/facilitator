@@ -139,7 +139,7 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
       [[
         gateway.gatewayAddress,
         [message.messageHash],
-        gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+        gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
         messageOutBoxOffset,
       ]],
     );
@@ -167,8 +167,8 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
       [[
         message.sender!,
         message.nonce!.toString(),
-        redeemRequest.beneficiary!,
-        redeemRequest.amount!.toString(),
+        redeemRequest.beneficiary,
+        redeemRequest.amount.toString(),
         message.gasPrice!.toString(),
         message.gasLimit!.toString(),
         message.hashLock!,
@@ -281,8 +281,8 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
       [[
         message.sender!,
         message.nonce!.toString(10),
-        redeemRequest.beneficiary!,
-        redeemRequest.amount!.toString(10),
+        redeemRequest.beneficiary,
+        redeemRequest.amount.toString(10),
         message.gasPrice!.toString(10),
         message.gasLimit!.toString(10),
         message.hashLock!,

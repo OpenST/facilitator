@@ -115,6 +115,7 @@ describe('StakeIntentConfirmedHandler.persist()', (): void => {
     const messageInstance = new Message(
       transaction[0]._messageHash,
       MessageType.Stake,
+      transaction[0].direction,
       undefined,
       undefined,
       MessageStatus.Declared,
@@ -122,7 +123,6 @@ describe('StakeIntentConfirmedHandler.persist()', (): void => {
       undefined,
       new BigNumber(transaction[0]._stakerNonce),
       utils.toChecksumAddress(transaction[0]._staker),
-      transaction[0].direction,
       undefined,
       undefined,
       undefined,

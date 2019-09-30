@@ -54,11 +54,13 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
         let message = await this.messageRepository.get(transaction._messageHash);
         // This can happen if some other facilitator has accepted the redeem request.
         if (message === null) {
-          message = new Message(transaction._messageHash);
+          message = new Message(
+            transaction._messageHash,
+            MessageType.Redeem,
+            MessageDirection.AuxiliaryToOrigin,
+          );
           message.sender = Utils.toChecksumAddress(transaction._redeemer);
           message.nonce = new BigNumber(transaction._redeemerNonce);
-          message.direction = MessageDirection.AuxiliaryToOrigin;
-          message.type = MessageType.Redeem;
           message.gatewayAddress = Utils.toChecksumAddress(transaction.contractAddress);
           message.sourceStatus = MessageStatus.Undeclared;
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);

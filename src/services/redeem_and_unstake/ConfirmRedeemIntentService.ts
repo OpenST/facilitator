@@ -102,7 +102,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     const provenGateway: Gateway = gateway[0];
     const messages: Message[] = await this.messageRepository.getMessagesForConfirmation(
       provenGateway.gatewayAddress,
-      provenGateway.lastRemoteGatewayProvenBlockHeight as BigNumber,
+      provenGateway.lastRemoteGatewayProvenBlockHeight,
       MessageDirection.AuxiliaryToOrigin,
     );
 
@@ -160,7 +160,7 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     const proofData = await proofGenerator.getOutboxProof(
       this.coGatewayAddress,
       [message.messageHash],
-      gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+      gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
       MESSAGE_BOX_OFFSET, // fixme #141
     );
     if (proofData.storageProof[0].value === '0') {
@@ -185,12 +185,12 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     const rawTx = eip20Gateway.methods.confirmRedeemIntent(
       message.sender as string,
       (message.nonce as BigNumber).toString(10),
-      (redeemRequest as MessageTransferRequest).beneficiary as string,
-      ((redeemRequest as MessageTransferRequest).amount as BigNumber).toString(10),
+      (redeemRequest as MessageTransferRequest).beneficiary,
+      ((redeemRequest as MessageTransferRequest).amount).toString(10),
       (message.gasPrice as BigNumber).toString(10),
       (message.gasLimit as BigNumber).toString(10),
       (message.hashLock as string),
-      gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+      gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
       proofData.storageProof[0].serializedProof,
     );
 

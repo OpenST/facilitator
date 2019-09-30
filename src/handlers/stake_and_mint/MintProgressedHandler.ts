@@ -51,10 +51,12 @@ export default class MintProgressedHandler extends ContractEntityHandler<Message
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if progress transaction appears first..
         if (message === null) {
-          message = new Message(transaction._messageHash);
+          message = new Message(
+            transaction._messageHash,
+            MessageType.Stake,
+            MessageDirection.OriginToAuxiliary,
+          );
           message.sender = Utils.toChecksumAddress(transaction._staker);
-          message.direction = MessageDirection.OriginToAuxiliary;
-          message.type = MessageType.Stake;
           message.targetStatus = MessageStatus.Undeclared;
           Logger.debug(`Creating a new message for message hash ${transaction._messageHash}`);
         }

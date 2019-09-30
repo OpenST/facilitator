@@ -618,8 +618,8 @@ export default class Utils {
       this.mosaicConfig.originChain.contractAddresses.valueTokenAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
       new BigNumber(bounty),
-      activation,
       anchoredBlockNumber,
+      activation,
     );
 
     return gateway;

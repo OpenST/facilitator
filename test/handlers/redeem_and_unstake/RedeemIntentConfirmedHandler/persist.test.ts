@@ -118,6 +118,7 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     const outputMessage = new Message(
       transactions[0]._messageHash,
       type,
+      direction,
       transactions[0].contractAddress,
       undefined,
       MessageStatus.Declared,
@@ -125,7 +126,6 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
       undefined,
       new BigNumber(transactions[0]._redeemerNonce),
       utils.toChecksumAddress(transactions[0]._redeemer),
-      direction,
       undefined,
       undefined,
       transactions[0]._hashLock,

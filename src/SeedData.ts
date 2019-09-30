@@ -127,8 +127,8 @@ export default class SeedData {
       this.valueTokenAddress,
       this.anchorAddress,
       gatewayProperties.bounty,
-      gatewayProperties.activated,
       Zero,
+      gatewayProperties.activated,
     );
     await this.gatewayRepository.save(originGateway);
   }
@@ -145,8 +145,8 @@ export default class SeedData {
       this.utilityTokenAddress,
       this.coAnchorAddress,
       await this.getCoGatewayBounty(),
-      undefined,
       Zero,
+      undefined,
     );
     await this.gatewayRepository.save(auxiliaryGateway);
   }
@@ -215,7 +215,7 @@ export default class SeedData {
    */
   private get gatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.eip20GatewayAddress!,
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.eip20GatewayAddress,
     );
   }
 
@@ -233,7 +233,7 @@ export default class SeedData {
    */
   private get anchorAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress!,
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress,
     );
   }
 
@@ -242,7 +242,7 @@ export default class SeedData {
    */
   private get coAnchorAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress!,
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress,
     );
   }
 
@@ -251,13 +251,13 @@ export default class SeedData {
    */
   private get stakePoolAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.stakePoolAddress!,
+      this.originChainMosaicConfig.contractAddresses.stakePoolAddress,
     );
   }
 
   private get redeemPoolAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.redeemPoolAddress!,
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.redeemPoolAddress,
     );
   }
 
@@ -266,7 +266,7 @@ export default class SeedData {
    */
   private get utilityTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.utilityTokenAddress!,
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.utilityTokenAddress,
     );
   }
 
@@ -275,7 +275,7 @@ export default class SeedData {
    */
   private get valueTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.valueTokenAddress!,
+      this.originChainMosaicConfig.contractAddresses.valueTokenAddress,
     );
   }
 

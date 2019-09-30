@@ -60,10 +60,10 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
       === chainRecord.coAnchorAddress;
     if (isAuxChainEntity) {
       anchorBlockHeight = chainRecord.lastOriginBlockHeight!;
-      anchorAddress = chainRecord.coAnchorAddress!;
+      anchorAddress = chainRecord.coAnchorAddress;
     } else {
       anchorBlockHeight = chainRecord.lastAuxiliaryBlockHeight!;
-      anchorAddress = chainRecord.anchorAddress!;
+      anchorAddress = chainRecord.anchorAddress;
     }
     transactions
       .filter((transaction): boolean => anchorAddress === Utils.toChecksumAddress(

@@ -231,6 +231,7 @@ describe('facilitator start', async (): Promise<void> => {
       new BigNumber(1),
       mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.eip20GatewayAddress,
       stakerAccount.address,
+      '0x0000000000000000000000000000000000000001',
     );
 
     generatedStakeRequestHash = utils.getStakeRequestHash(
@@ -347,6 +348,7 @@ describe('facilitator start', async (): Promise<void> => {
           expectedMessage = new Message(
             messageHash!,
             MessageType.Stake,
+            MessageDirection.OriginToAuxiliary,
             messageTransferRequest.gateway,
             MessageStatus.Undeclared,
             MessageStatus.Undeclared,
@@ -354,7 +356,6 @@ describe('facilitator start', async (): Promise<void> => {
             messageTransferRequest.gasLimit,
             messageTransferRequest.nonce,
             messageTransferRequest.senderProxy,
-            MessageDirection.OriginToAuxiliary,
             new BigNumber(0),
             '',
           );

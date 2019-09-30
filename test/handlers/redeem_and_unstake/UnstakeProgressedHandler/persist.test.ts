@@ -53,11 +53,11 @@ describe('ProgressUnstake.persist()', () => {
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
     );
     expectedModel.sender = transactions[0]._redeemer;
-    expectedModel.direction = MessageDirection.AuxiliaryToOrigin;
     expectedModel.targetStatus = MessageStatus.Progressed;
-    expectedModel.type = MessageType.Redeem;
     expectedModel.gatewayAddress = transactions[0].contractAddress;
     expectedModel.secret = transactions[0]._unlockSecret;
 
@@ -69,7 +69,11 @@ describe('ProgressUnstake.persist()', () => {
   it('should not change message record state if current status is already progressed', async () => {
     const save = sinon.stub();
 
-    const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
+    const existingMessageWithProgressStatus = new Message(
+      web3utils.keccak256('1'),
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
+    );
     existingMessageWithProgressStatus.targetStatus = MessageStatus.Progressed;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
@@ -82,6 +86,8 @@ describe('ProgressUnstake.persist()', () => {
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
     );
     expectedModel.targetStatus = MessageStatus.Progressed;
     expectedModel.secret = transactions[0]._unlockSecret;
@@ -94,7 +100,11 @@ describe('ProgressUnstake.persist()', () => {
   it('should not change message record state if current status is not Declared', async () => {
     const save = sinon.stub();
 
-    const existingMessageWithProgressStatus = new Message(web3utils.keccak256('1'));
+    const existingMessageWithProgressStatus = new Message(
+      web3utils.keccak256('1'),
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
+    );
     existingMessageWithProgressStatus.targetStatus = MessageStatus.RevocationDeclared;
     const mockedRepository = sinon.createStubInstance(MessageRepository,
       {
@@ -107,6 +117,8 @@ describe('ProgressUnstake.persist()', () => {
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
+      MessageType.Redeem,
+      MessageDirection.AuxiliaryToOrigin,
     );
     expectedModel.targetStatus = existingMessageWithProgressStatus.targetStatus;
     expectedModel.secret = transactions[0]._unlockSecret;
