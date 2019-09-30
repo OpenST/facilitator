@@ -46,7 +46,7 @@ describe('facilitator start', async (): Promise<void> => {
 
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
 
-  const ostComposer: string = mosaicConfig.originChain.contractAddresses.ostComposerAddress;
+  const stakePool: string = mosaicConfig.originChain.contractAddresses.stakePoolAddress;
 
   const outputOptions = [process.stdout, process.stderr];
 
@@ -229,18 +229,18 @@ describe('facilitator start', async (): Promise<void> => {
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
       new BigNumber(1),
-      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
+      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.eip20GatewayAddress,
       stakerAccount.address,
     );
 
     generatedStakeRequestHash = utils.getStakeRequestHash(
       messageTransferRequest,
       messageTransferRequest.gateway!,
-      ostComposer,
+      stakePool,
     );
 
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.approve(
-      ostComposer,
+      stakePool,
       messageTransferRequest.amount!.toString(10),
     );
 
@@ -253,7 +253,7 @@ describe('facilitator start', async (): Promise<void> => {
       },
     );
 
-    const ostComposerInstance = utils.getOSTComposerInstance();
+    const ostComposerInstance = utils.getStakePoolInstance();
     const requestStakeRawTx: TransactionObject<string> = ostComposerInstance.methods.requestStake(
       messageTransferRequest.amount!.toString(10),
       messageTransferRequest.beneficiary!,

@@ -26,7 +26,6 @@ import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
 
 const workerPrefix = 'MOSAIC_ADDRESS_PASSW_';
-
 /**
  * It contains common helper methods to test facilitator.
  */
@@ -39,7 +38,7 @@ export default class Utils {
 
   public auxiliaryFunder?: string;
 
-  private ostComposer: string;
+  private stakePool: string;
 
   public mosaicConfig: MosaicConfig;
 
@@ -65,7 +64,7 @@ export default class Utils {
     this.auxiliaryWeb3 = new Web3(facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc);
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
-    this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress;
+    this.stakePool = this.mosaicConfig.originChain.contractAddresses.stakePoolAddress;
   }
 
   /**
@@ -163,11 +162,11 @@ export default class Utils {
   }
 
   /**
-   * It provides organization contract used in OSTComposer.
+   * It provides organization contract used in StakePool.
    * @returns Organization contract address.
    */
   public async getOrganizationFromOSTComposer(): Promise<string> {
-    const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.ostComposer);
+    const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.stakePool);
     const organizationAddress = await ostComposerInstance.methods.organization().call();
 
     return organizationAddress;
@@ -211,13 +210,13 @@ export default class Utils {
    * It provides stake request hash.
    * @param messageTransferRequest It represents message transfer request object.
    * @param gateway Gateway address on which request stake is to be done.
-   * @param ostComposer OSTComposer contract address.
+   * @param stakePool StakePool contract address.
    * @returns EIP712 compatible stakerequest hash.
    */
   public getStakeRequestHash(
     messageTransferRequest: MessageTransferRequest,
     gateway: string,
-    ostComposer: string,
+    stakePool: string,
   ): string {
     const stakeRequestMethod = 'StakeRequest(uint256 amount,address beneficiary,uint256 gasPrice,uint256 gasLimit,uint256 nonce,address staker,address gateway)';
     const encodedTypeHash = web3Utils.sha3(
@@ -240,7 +239,7 @@ export default class Utils {
     const DOMAIN_SEPARATOR = web3Utils.soliditySha3(
       this.originWeb3.eth.abi.encodeParameters(
         ['bytes32', 'address'],
-        [EIP712_DOMAIN_TYPEHASH, ostComposer],
+        [EIP712_DOMAIN_TYPEHASH, stakePool],
       ),
     );
 
@@ -503,8 +502,8 @@ export default class Utils {
     const auxiliaryChain = new AuxiliaryChain(
       auxChainId,
       originChain,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.eip20GatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.eip20CogatewayAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
       lastOriginBlockHeight,
@@ -612,11 +611,11 @@ export default class Utils {
   ): Gateway {
     const { auxChainId } = this.facilitatorConfig;
     const gateway: Gateway = new Gateway(
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.eip20GatewayAddress,
       this.facilitatorConfig.originChain,
       gatewayType,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
-      this.mosaicConfig.originChain.contractAddresses.simpleTokenAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.eip20CogatewayAddress,
+      this.mosaicConfig.originChain.contractAddresses.valueTokenAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
       new BigNumber(bounty),
       activation,
@@ -674,11 +673,11 @@ export default class Utils {
    */
   public getEIP20GatewayInstance(): EIP20Gateway {
     const {
-      ostEIP20GatewayAddress,
+      eip20GatewayAddress,
     } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId].contractAddresses.origin;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
-      ostEIP20GatewayAddress,
+      eip20GatewayAddress,
     );
     return eip20GatewayInstance;
   }
@@ -689,11 +688,11 @@ export default class Utils {
    */
   public getEIP20CoGatewayInstance(): EIP20CoGateway {
     const {
-      ostEIP20CogatewayAddress,
+      eip20CogatewayAddress,
     } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId].contractAddresses.auxiliary;
     const eip20CoGatewayInstance: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
-      ostEIP20CogatewayAddress,
+      eip20CogatewayAddress,
     );
     return eip20CoGatewayInstance;
   }
@@ -703,20 +702,20 @@ export default class Utils {
    * @returns Simple token object.
    */
   public getSimpleTokenInstance(): EIP20Token {
-    const { simpleTokenAddress } = this.mosaicConfig.originChain.contractAddresses;
-    const simpletokenInstance: EIP20Token = interacts.getEIP20Token(
+    const { valueTokenAddress } = this.mosaicConfig.originChain.contractAddresses;
+    const valueTokenInstance: EIP20Token = interacts.getEIP20Token(
       this.originWeb3,
-      simpleTokenAddress,
+      valueTokenAddress,
     );
-    return simpletokenInstance;
+    return valueTokenInstance;
   }
 
   /**
-   * It provides OSTComposer instance.
-   * @returns OSTComposer object.
+   * It provides stakePool instance.
+   * @returns stakePool object.
    */
-  public getOSTComposerInstance(): OSTComposer {
-    return interacts.getOSTComposer(this.originWeb3, this.ostComposer);
+  public getStakePoolInstance(): OSTComposer {
+    return interacts.getOSTComposer(this.originWeb3, this.stakePool);
   }
 
   /**

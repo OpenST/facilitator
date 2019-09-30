@@ -53,9 +53,9 @@ export default class Container {
       repositories,
       config.facilitator.auxChainId,
       config.mosaic.auxiliaryChains[config.facilitator.auxChainId].contractAddresses
-        .origin.ostEIP20GatewayAddress!,
+        .origin.eip20GatewayAddress!,
       config.mosaic.auxiliaryChains[config.facilitator.auxChainId].contractAddresses
-        .auxiliary.ostEIP20CogatewayAddress!,
+        .auxiliary.eip20CogatewayAddress!,
     );
     const transactionHandler = new TransactionHandler(
       handler,
