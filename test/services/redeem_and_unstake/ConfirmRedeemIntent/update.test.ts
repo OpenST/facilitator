@@ -177,7 +177,6 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
       ]],
     );
 
-    sinon.restore();
   });
 
   it('Should not do confirmRedeemIntent if '
@@ -291,6 +290,10 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
       ]],
     );
 
+  });
+
+  afterEach(async (): Promise<void> => {
     sinon.restore();
   });
+
 });
