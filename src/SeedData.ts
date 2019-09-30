@@ -224,7 +224,7 @@ export default class SeedData {
    */
   private get coGatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.eip20CogatewayAddress!,
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.eip20CogatewayAddress,
     );
   }
 
