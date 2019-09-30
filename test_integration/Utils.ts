@@ -21,7 +21,6 @@ import { FacilitatorConfig } from '../src/Config/Config';
 import Message from '../src/models/Message';
 import Gateway from '../src/models/Gateway';
 import AuxiliaryChain from '../src/models/AuxiliaryChain';
-import { GatewayType } from '../src/repositories/GatewayRepository';
 import * as Constants from './Constants.json';
 import SharedStorage from './SharedStorage';
 import Logger from '../src/Logger';
@@ -730,37 +729,6 @@ export default class Utils {
     }
 
     return message;
-  }
-
-  /**
-   * It provides gateway stub object.
-   * @param bounty Bounty for processing the stake and mint.
-   * @param activation Activation status of the gateway.
-   * @param gatewayType Type of the gateway.
-   * @param anchoredBlockNumber Blockheight at which anchoring is done.
-   * @returns Gateway stub object.
-   */
-  public getGatewayStub(
-    bounty: string,
-    activation: boolean,
-    gatewayType: GatewayType,
-    anchoredBlockNumber: BigNumber,
-  ): Gateway {
-    const { auxChainId } = this.facilitatorConfig;
-    const gateway: Gateway = new Gateway(
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      this.facilitatorConfig.originChain,
-      gatewayType,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
-        .auxiliary.ostEIP20CogatewayAddress,
-      this.mosaicConfig.originChain.contractAddresses.simpleTokenAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
-      new BigNumber(bounty),
-      anchoredBlockNumber,
-      activation,
-    );
-
-    return gateway;
   }
 
   /**
