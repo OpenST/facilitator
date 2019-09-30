@@ -24,6 +24,7 @@ import AuxiliaryChain from '../src/models/AuxiliaryChain';
 import { GatewayType } from '../src/repositories/GatewayRepository';
 import * as Constants from './Constants.json';
 import SharedStorage from './SharedStorage';
+import Logger from '../src/Logger';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
 
@@ -103,7 +104,6 @@ export default class Utils {
     beneficiary: string,
     amountInEth: BigNumber,
   ): Promise<TransactionReceipt> {
-    console.log('STPrime funder affredd', SharedStorage.getAuxiliaryFunder());
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
         from: SharedStorage.getAuxiliaryFunder(),
@@ -265,7 +265,6 @@ export default class Utils {
         .origin.anchorOrganizationAddress,
     );
     const owner = await organizationInstance.methods.owner().call();
-    console.log('org owner', owner);
 
     const anchorInstance = interacts.getAnchor(
       this.originWeb3,
@@ -273,7 +272,6 @@ export default class Utils {
     );
 
     const currentBlock = await this.auxiliaryWeb3.eth.getBlock('latest');
-    console.log('currentBlock', currentBlock);
 
     const anchorStateRootRawTx: TransactionObject<boolean> = anchorInstance.methods.anchorStateRoot(
       currentBlock.number,
@@ -794,7 +792,6 @@ export default class Utils {
   ): Promise<void> {
     const simpletokenInstance = this.getSimpleTokenInstance();
     const actualUnstakedAmount = await simpletokenInstance.methods.balanceOf(beneficiary).call();
-
     assert.strictEqual(
       new BigNumber(actualUnstakedAmount).cmp(expectedAmount),
       0,
@@ -966,7 +963,7 @@ export default class Utils {
 
     return new Promise(async (onResolve, onReject): Promise<void> => {
       tx.send(txOptions)
-        .on('transactionHash', (hash: string): any => console.log(`txHash: ${hash}`))
+        .on('transactionHash', (hash: string): any => Logger.debug(`submitted txHash: ${hash}`))
         .on('receipt', (receipt: TransactionReceipt): void => onResolve(receipt))
         .on('error', (error: Error): void => onReject(error));
     });

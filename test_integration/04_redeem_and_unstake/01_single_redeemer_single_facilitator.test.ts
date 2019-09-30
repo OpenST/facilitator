@@ -21,6 +21,7 @@ import {
 import assert from '../../test/test_utils/assert';
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import { FacilitatorConfig } from '../../src/Config/Config';
+import Logger from '../../src/Logger';
 
 describe('redeem and unstake with single redeemer & facilitator process', async (): Promise<void> => {
   const redeemAmount = '130';
@@ -57,7 +58,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   it('fund redeemer', async (): Promise<void> => {
     redeemerAccount = auxiliaryWeb3.eth.accounts.create('redeemTest');
     auxiliaryWeb3.eth.accounts.wallet.add(redeemerAccount);
-    console.log('redeemerAccount', redeemerAccount.address);
 
     const ostPrimeAmountToBeFunded = '0.1'; // OSTPrime unit
     const ostPrimeAmountToBeFundedInWei = Utils.convertToWei(ostPrimeAmountToBeFunded).toString();
@@ -70,8 +70,8 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
 
     const simpleTokenPrimeInstance: OSTPrime = utils.getSimpleTokenPrimeInstance();
 
-    console.log('wrapping!!!');
     // Wrap OSTPrime
+    Logger.debug('submitting wrapping OSTPrime tx.');
     const wrapRawTx: TransactionObject<boolean> = simpleTokenPrimeInstance.methods.wrap();
     await Utils.sendTransaction(
       wrapRawTx,
@@ -82,8 +82,8 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       },
     );
 
-    console.log('approving!!!');
     // Approve OSTPrime
+    Logger.debug('submitting approving wrapped OSTPrime tx.');
     const approveRawTx: TransactionObject<boolean> = simpleTokenPrimeInstance.methods.approve(
       redeemPool,
       ostPrimeAmountToBeFundedInWei,
@@ -116,6 +116,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       messageTransferRequest.gateway!,
       redeemPool,
     );
+    Logger.debug('preGeneratedRedeemRequestHash', preGeneratedRedeemRequestHash);
 
     const redeemPoolInstance = utils.getRedeemPoolInstance();
     const requestRedeemRawTx: TransactionObject<string> = redeemPoolInstance.methods.requestRedeem(
@@ -126,7 +127,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       messageTransferRequest.nonce!.toString(10),
       messageTransferRequest.gateway!,
     );
-    console.log('messageTransferRequest', messageTransferRequest);
+
     const receipt = await Utils.sendTransaction(
       requestRedeemRawTx,
       {
@@ -154,8 +155,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       'Incorrect redeem request hash',
     );
 
-    console.log('preGeneratedRedeemRequestHash', preGeneratedRedeemRequestHash);
-
     let assertMessageTransferRequestInterval: NodeJS.Timeout;
     const assertMessageTransferRequestPromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);
@@ -167,8 +166,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
 
         if (messageTransferRequestDb != null) {
           try {
-            console.log('messageTransferRequest', messageTransferRequest);
-            console.log('messageTransferRequestDb', messageTransferRequestDb);
             Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
           } catch (e) {
             reject(e);
@@ -231,7 +228,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
           );
           const messageInDb = await utils.getMessageFromDB(messageHash);
           const message = await coGateway.methods.messages(messageHash!.toString()).call();
-          console.log('messageFromCoGateway', message);
 
           const eip20CoGatewayMessageStatus = Utils.getEnumValue(
             parseInt(
@@ -298,7 +294,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
 
   it('verify anchoring', async (): Promise<void> => {
     anchoredBlockNumber = await utils.anchorAuxiliary(auxChainId);
-    await new Promise(done => setTimeout(done, 60000));
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);
@@ -306,7 +301,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
         const auxiliaryChain: AuxiliaryChain | null = await utils.getAuxiliaryChainFromDb(
           auxChainId,
         );
-
         if (auxiliaryChain!.lastAuxiliaryBlockHeight!.cmp(anchoredBlockNumber) === 0) {
           const expectedAuxiliaryChain = utils.getAuxiliaryChainStub(
             auxiliaryChain!.lastOriginBlockHeight!,
@@ -364,7 +358,9 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
           ).call(),
           10,
         ));
-
+        Logger.debug('Verifying if message statuses are valid');
+        Logger.debug('eip20CoGatewayMessageStatus: ', eip20CoGatewayMessageStatus);
+        Logger.debug('eip20GatewayMessageStatus: ', eip20GatewayMessageStatus);
         const messageInCoGateway = await eip20CoGateway.methods.messages(messageHash!).call();
 
         const messageInDb = await utils.getMessageFromDB(messageHash);
@@ -385,6 +381,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
             Utils.assertMessages(messageInDb!, expectedMessage);
             const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
             const redeemedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
+            Logger.debug('Verifying is redeemer OST balance is: ', redeemedAmount.toString(10));
             await utils.assertUnstakedBalance(messageTransferRequest.beneficiary!, redeemedAmount);
             resolve();
           } else {
