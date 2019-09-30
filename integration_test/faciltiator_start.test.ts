@@ -231,7 +231,7 @@ describe('facilitator start', async (): Promise<void> => {
       new BigNumber(1),
       mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
       stakerAccount.address,
-      'senderProxy'
+      '0x0000000000000000000000000000000000000001',
     );
 
     generatedStakeRequestHash = utils.getStakeRequestHash(
