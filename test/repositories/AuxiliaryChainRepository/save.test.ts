@@ -129,7 +129,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      undefined,
+      undefined!,
       ostCoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
@@ -153,7 +153,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
 
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
-      undefined,
+      undefined!,
       '0xacd142',
       '0x123',
       '0x24A3f',

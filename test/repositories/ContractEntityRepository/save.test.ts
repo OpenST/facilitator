@@ -106,7 +106,7 @@ describe('ContractEntityRepository::save', (): void => {
     const contractEntity = new ContractEntity(
       '0x0000000000000000000000000000000000000002',
       EntityType.StakeRequesteds,
-      undefined,
+      undefined!,
       createdAt,
     );
 
