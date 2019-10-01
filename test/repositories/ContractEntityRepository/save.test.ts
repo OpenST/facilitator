@@ -80,7 +80,7 @@ describe('ContractEntityRepository::save', (): void => {
       createdAt,
     );
 
-    assert.isRejected(
+    await assert.isRejected(
       config.repos.contractEntityRepository.save(contractEntity),
       `${invalidEntityType}`,
     );
@@ -95,7 +95,7 @@ describe('ContractEntityRepository::save', (): void => {
       createdAt,
     );
 
-    assert.isRejected(
+    await assert.isRejected(
       config.repos.contractEntityRepository.save(contractEntity),
       `${invalidTimeStamp}`,
     );
@@ -110,7 +110,7 @@ describe('ContractEntityRepository::save', (): void => {
       createdAt,
     );
 
-    assert.isRejected(
+    await assert.isRejected(
       config.repos.contractEntityRepository.save(contractEntity),
       `${invalidTimeStamp}`,
     );

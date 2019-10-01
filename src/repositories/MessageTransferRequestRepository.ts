@@ -119,6 +119,10 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
         beneficiary: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
         gasPrice: {
           type: DataTypes.BIGINT,
@@ -144,14 +148,26 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
         gateway: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
         sender: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
         senderProxy: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
       },
       {

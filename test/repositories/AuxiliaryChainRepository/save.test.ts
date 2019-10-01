@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 import AuxiliaryChain from '../../../src/models/AuxiliaryChain';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
-import assert from "../../test_utils/assert";
+import assert, { assertErrorMessages } from "../../test_utils/assert";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -145,5 +145,41 @@ describe('AuxiliaryChainRepository::save', (): void => {
       ),
       `${invalidGatewayAddress}`,
     );
+  });
+
+
+  it('should fail when parameters are undefined', async (): Promise<void> => {
+    // It is used to test for multiple validations failure.
+
+    const auxiliaryChain = new AuxiliaryChain(
+      chainId,
+      undefined,
+      '0xacd142',
+      '0x123',
+      '0x24A3f',
+      '0xd32fe3',
+      lastOriginBlockHeight,
+      lastAuxiliaryBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.auxiliaryChainRepository.save(
+        auxiliaryChain,
+      ),
+    );
+
+    try {
+      await config.repos.auxiliaryChainRepository.save(auxiliaryChain);
+    } catch (error) {
+      assertErrorMessages(error.errors, [
+        'AuxiliaryChain.originChainName cannot be null',
+        'Validation len on ostGatewayAddress failed',
+        'Validation len on ostCoGatewayAddress failed',
+        'Validation len on anchorAddress failed',
+        'Validation len on coAnchorAddress failed',
+      ]);
+    }
   });
 });

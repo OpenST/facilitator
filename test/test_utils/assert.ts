@@ -19,4 +19,22 @@ import chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const { assert } = chai;
 
+export function assertErrorMessages(errorObject: any, messages: any) {
+    assert.strictEqual(
+      errorObject.length,
+      messages.length,
+      `Error object has ${errorObject.length} errors but number of messages to be` +
+      `asserted is ${messages.length}`,
+    );
+
+    errorObject.forEach(function (value: any, index: number) {
+
+      assert.strictEqual(
+        value.message,
+        messages[index],
+      );
+
+    });
+  }
+
 export default assert;

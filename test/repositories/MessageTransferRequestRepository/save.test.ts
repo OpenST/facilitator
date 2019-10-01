@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 
 import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import Repositories from '../../../src/repositories/Repositories';
-import assert from '../../test_utils/assert';
+import assert, { assertErrorMessages } from '../../test_utils/assert';
 import Util from './util';
 import { RequestType } from '../../../src/repositories/MessageTransferRequestRepository';
 
@@ -30,6 +30,11 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('MessageTransferRequestRepository::save', (): void => {
+  const gatewayAddress = '0x0000000000000000000000000000000000000001';
+  const beneficiary = '0x0000000000000000000000000000000000000002';
+  const sender = '0x0000000000000000000000000000000000000003';
+  const senderProxy = '0x0000000000000000000000000000000000000004';
+
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
@@ -42,13 +47,13 @@ describe('MessageTransferRequestRepository::save', (): void => {
       RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
-      'beneficiary',
+      beneficiary,
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
-      'gateway',
-      'sender',
-      'senderProxy',
+      gatewayAddress,
+      sender,
+      senderProxy,
     );
 
     const requestResponse = await config.repos.messageTransferRequestRepository.save(
@@ -82,13 +87,13 @@ describe('MessageTransferRequestRepository::save', (): void => {
       RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
-      'beneficiary',
+      beneficiary,
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
-      'gateway',
-      'sender',
-      'senderProxy',
+      gatewayAddress,
+      sender,
+      senderProxy,
     );
 
     await config.repos.messageTransferRequestRepository.save(
@@ -101,7 +106,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       requestInput.blockNumber,
     );
     requestUpdateInput.amount = new BigNumber('11');
-    requestUpdateInput.gateway = 'gatewayUpdated';
+    requestUpdateInput.gateway = '0x0000000000000000000000000000000000000009';
 
     const requestResponse = await config.repos.messageTransferRequestRepository.save(
       requestUpdateInput,
@@ -162,13 +167,13 @@ describe('MessageTransferRequestRepository::save', (): void => {
       RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
-      'beneficiary',
+      beneficiary,
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
       null!,
-      'sender',
-      'senderProxy',
+      sender,
+      senderProxy,
     );
 
     assert.isRejected(
@@ -186,13 +191,13 @@ describe('MessageTransferRequestRepository::save', (): void => {
       RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
-      'beneficiary',
+      beneficiary,
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
       undefined,
-      'sender',
-      'senderProxy',
+      sender,
+      senderProxy,
     );
 
     assert.isRejected(
@@ -202,4 +207,43 @@ describe('MessageTransferRequestRepository::save', (): void => {
       `${invalidGatewayAddress}`,
     );
   });
+
+  it('should fail when parameters are undefined', async (): Promise<void> => {
+    // It is used to test when multiple validations failed.
+
+    const requestInput = new MessageTransferRequest(
+      'requestHash',
+      RequestType.Stake,
+      new BigNumber('10'),
+      new BigNumber('1'),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      '0xe34w5',
+      '0xe234q',
+      '0x1234',
+    );
+
+    assert.isRejected(
+        config.repos.messageTransferRequestRepository.save(
+        requestInput,
+      ),
+    );
+
+    try {
+      await config.repos.messageTransferRequestRepository.save(requestInput);
+    } catch (error) {
+      assertErrorMessages(error.errors, [
+        'MessageTransferRequest.beneficiary cannot be null',
+        'MessageTransferRequest.gasPrice cannot be null',
+        'MessageTransferRequest.gasLimit cannot be null',
+        'MessageTransferRequest.nonce cannot be null',
+        'Validation len on gateway failed',
+        'Validation len on sender failed',
+        'Validation len on senderProxy failed',
+      ]);
+    }
+  });
+
 });
