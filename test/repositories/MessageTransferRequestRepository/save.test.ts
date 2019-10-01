@@ -104,6 +104,14 @@ describe('MessageTransferRequestRepository::save', (): void => {
       'requestHash',
       RequestType.Stake,
       requestInput.blockNumber,
+      new BigNumber('11'),
+      requestInput.beneficiary,
+      requestInput.gasPrice,
+      requestInput.gasLimit,
+      requestInput.nonce,
+      gatewayAddress,
+      sender,
+      senderProxy,
     );
     requestUpdateInput.amount = new BigNumber('11');
     requestUpdateInput.gateway = '0x0000000000000000000000000000000000000009';

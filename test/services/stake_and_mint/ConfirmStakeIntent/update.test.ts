@@ -141,7 +141,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       [[
         gateway.gatewayAddress,
         [message.messageHash],
-        gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+        gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
         messageOutBoxOffset,
       ]],
     );
@@ -169,8 +169,8 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       [[
         message.sender!,
         message.nonce!.toString(),
-        stakeRequest.beneficiary!,
-        stakeRequest.amount!.toString(),
+        stakeRequest.beneficiary,
+        stakeRequest.amount.toString(),
         message.gasPrice!.toString(),
         message.gasLimit!.toString(),
         message.hashLock!,
@@ -285,8 +285,8 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       [[
         message.sender!,
         message.nonce!.toString(10),
-        stakeRequest.beneficiary!,
-        stakeRequest.amount!.toString(10),
+        stakeRequest.beneficiary,
+        stakeRequest.amount.toString(10),
         message.gasPrice!.toString(10),
         message.gasLimit!.toString(10),
         message.hashLock!,

@@ -113,6 +113,12 @@ export class MessageRepository extends Subject<Message> {
           }),
           allowNull: false,
         },
+        direction: {
+          type: DataTypes.ENUM({
+            values: [MessageDirection.OriginToAuxiliary, MessageDirection.AuxiliaryToOrigin],
+          }),
+          allowNull: false,
+        },
         gatewayAddress: {
           type: DataTypes.STRING,
           allowNull: true,
@@ -172,12 +178,6 @@ export class MessageRepository extends Subject<Message> {
             isAlphanumeric: true,
             len: [42, 42],
           },
-        },
-        direction: {
-          type: DataTypes.ENUM({
-            values: [MessageDirection.OriginToAuxiliary, MessageDirection.AuxiliaryToOrigin],
-          }),
-          allowNull: false,
         },
         sourceDeclarationBlockHeight: {
           type: DataTypes.BIGINT,
@@ -324,6 +324,7 @@ export class MessageRepository extends Subject<Message> {
     return new Message(
       messageModel.messageHash,
       messageModel.type,
+      messageModel.direction,
       messageModel.gatewayAddress,
       messageModel.sourceStatus,
       messageModel.targetStatus,
@@ -331,7 +332,6 @@ export class MessageRepository extends Subject<Message> {
       new BigNumber(messageModel.gasLimit),
       new BigNumber(messageModel.nonce),
       messageModel.sender,
-      messageModel.direction,
       new BigNumber(messageModel.sourceDeclarationBlockHeight),
       messageModel.secret,
       messageModel.hashLock,

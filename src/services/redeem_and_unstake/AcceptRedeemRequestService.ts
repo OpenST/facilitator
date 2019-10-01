@@ -130,9 +130,8 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     );
 
     await this.updateMessageHash(
-      redeemRequest.requestHash,
+      redeemRequest,
       messageHash,
-      redeemRequest.blockNumber,
     );
   }
 
@@ -165,13 +164,13 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     const redeemPool: RedeemPool = interacts.getRedeemPool(this.web3, this.redeemPoolAddress);
 
     const rawTx: TransactionObject<string> = redeemPool.methods.acceptRedeemRequest(
-      (redeemRequest.amount as BigNumber).toString(10),
-      (redeemRequest.beneficiary as string),
-      (redeemRequest.gasPrice as BigNumber).toString(10),
-      (redeemRequest.gasLimit as BigNumber).toString(10),
-      (redeemRequest.nonce as BigNumber).toString(10),
-      (redeemRequest.sender as string),
-      (redeemRequest.gateway as string),
+      (redeemRequest.amount).toString(10),
+      (redeemRequest.beneficiary),
+      (redeemRequest.gasPrice).toString(10),
+      (redeemRequest.gasLimit).toString(10),
+      (redeemRequest.nonce).toString(10),
+      (redeemRequest.sender),
+      (redeemRequest.gateway),
       hashLock,
     );
     const bounty = await this.getBountyAmount(redeemRequest);
@@ -195,9 +194,9 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     hashLock: string,
   ): Promise<string> {
     const redeemIntentHash = this.calculateRedeemIntentHash(
-      redeemRequest.amount!,
-      redeemRequest.beneficiary!,
-      redeemRequest.gateway!,
+      redeemRequest.amount,
+      redeemRequest.beneficiary,
+      redeemRequest.gateway,
     );
     const messageHash = Utils.calculateMessageHash(
       this.web3,
@@ -210,14 +209,14 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
     const message = new Message(
       messageHash,
       MessageType.Redeem,
-      redeemRequest.gateway as string,
-      MessageStatus.Undeclared,
-      MessageStatus.Undeclared,
-      redeemRequest.gasPrice as BigNumber,
-      redeemRequest.gasLimit as BigNumber,
-      redeemRequest.nonce as BigNumber,
-      redeemRequest.senderProxy as string,
       MessageDirection.AuxiliaryToOrigin,
+      redeemRequest.gateway,
+      MessageStatus.Undeclared,
+      MessageStatus.Undeclared,
+      redeemRequest.gasPrice,
+      redeemRequest.gasLimit,
+      redeemRequest.nonce,
+      redeemRequest.senderProxy,
       new BigNumber(0),
       secret,
       hashLock,
@@ -234,20 +233,14 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
    * into messages' repository with a message hash. That exact message
    * hash is updated here in messageTransferRequest repository.
    *
-   * @param redeemRequestHash Redeem request hash.
+   * @param redeemRequest Redeem request hash.
    * @param messageHash Message hash of redeem request.
    * @param blockNumber Block number at which requestRedeem got executed.
    */
   private async updateMessageHash(
-    redeemRequestHash: string,
+    redeemRequest: MessageTransferRequest,
     messageHash: string,
-    blockNumber: BigNumber,
   ): Promise<void> {
-    const redeemRequest = new MessageTransferRequest(
-      redeemRequestHash,
-      RequestType.Redeem,
-      blockNumber,
-    );
     redeemRequest.messageHash = messageHash;
     Logger.debug('Updating message hash in message transfer request repository');
     await this.messageTransferRequestRepository.save(redeemRequest);

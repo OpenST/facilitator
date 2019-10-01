@@ -103,7 +103,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     const provenGateway: Gateway = gateway[0];
     const messages: Message[] = await this.messageRepository.getMessagesForConfirmation(
       provenGateway.gatewayAddress,
-      provenGateway.lastRemoteGatewayProvenBlockHeight as BigNumber,
+      provenGateway.lastRemoteGatewayProvenBlockHeight,
       MessageDirection.OriginToAuxiliary,
     );
 
@@ -161,7 +161,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],
-      gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+      gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
       MESSAGE_BOX_OFFSET, // fixme #141
     );
     if (proofData.storageProof[0].value === '0') {
@@ -194,12 +194,12 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     const rawTx = eip20CoGateway.methods.confirmStakeIntent(
       message.sender as string,
       (message.nonce as BigNumber).toString(10),
-      (stakeRequest as MessageTransferRequest).beneficiary as string,
-      ((stakeRequest as MessageTransferRequest).amount as BigNumber).toString(10),
+      (stakeRequest as MessageTransferRequest).beneficiary,
+      ((stakeRequest as MessageTransferRequest).amount).toString(10),
       (message.gasPrice as BigNumber).toString(10),
       (message.gasLimit as BigNumber).toString(10),
       (message.hashLock as string),
-      gateway.lastRemoteGatewayProvenBlockHeight!.toString(10),
+      gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
       proofData.storageProof[0].serializedProof,
     );
 
