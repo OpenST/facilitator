@@ -84,7 +84,7 @@ describe('facilitator post init', async (): Promise<void> => {
     SharedStorage.setAuxiliaryFunder(auxiliaryAccounts[6]);
   });
 
-  it('whitelist origin worker', async () => {
+  it('should whitelist origin worker', async () => {
     const organizationInstance = await utils.getOriginOrganizationInstance();
     const txReceipt = await utils.whitelistOriginWorker(
       organizationInstance,
@@ -99,7 +99,7 @@ describe('facilitator post init', async (): Promise<void> => {
     );
   });
 
-  it('whitelist auxiliary worker', async () => {
+  it('should whitelist auxiliary worker', async () => {
     const organizationInstance = await utils.getAuxiliaryOrganizationInstance();
     const txReceipt = await utils.whitelistAuxiliaryWorker(
       organizationInstance,
@@ -114,7 +114,7 @@ describe('facilitator post init', async (): Promise<void> => {
     );
   });
 
-  it('funding origin and aux workers', async (): Promise<void> => {
+  it('validates funding of origin and aux workers', async (): Promise<void> => {
     await utils.fundEthOnOrigin(originWorker, new BigNumber(amountTobeFundedOnOrigin));
     await utils.fundOSTPrimeOnAuxiliary(
       auxiliaryWorker,

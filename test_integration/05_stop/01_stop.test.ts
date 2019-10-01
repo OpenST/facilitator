@@ -7,7 +7,7 @@ import * as Constants from '../Constants.json';
 const facilitatorKill = path.join(__dirname, '../kill_facilitator_process.sh');
 
 describe('facilitator stop', async (): Promise<void> => {
-  it('facilitator stop', async (): Promise<void> => {
+  it('should stop facilitator', async (): Promise<void> => {
     execSync(
       facilitatorKill,
       { stdio: [process.stdout, process.stderr], env: process.env },

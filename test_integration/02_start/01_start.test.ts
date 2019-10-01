@@ -4,7 +4,7 @@ import * as path from 'path';
 const facilitatorStart = path.join(__dirname, '../facilitator_start.sh');
 
 describe('facilitator start', async (): Promise<void> => {
-  it('facilitator start', async (): Promise<void> => {
+  it('should start facilitator', async (): Promise<void> => {
     spawn(
       facilitatorStart,
       { stdio: [process.stdout, process.stderr], env: process.env },

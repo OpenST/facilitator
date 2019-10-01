@@ -58,7 +58,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     simpleTokenInstance = utils.getSimpleTokenInstance();
   });
 
-  it('fund staker', async (): Promise<void> => {
+  it('should fund staker', async (): Promise<void> => {
     stakerAccount = originWeb3.eth.accounts.create('facilitatortest');
     originWeb3.eth.accounts.wallet.add(stakerAccount);
 
@@ -86,7 +86,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     );
   });
 
-  it('request stake', async (): Promise<void> => {
+  it('should perform and verify request stake', async (): Promise<void> => {
     messageTransferRequest = new MessageTransferRequest(
       '',
       MessageType.Stake,
@@ -265,7 +265,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
             } else {
               throw new Error(
                 `Message status for source in db is ${messageInDb!.sourceStatus} but in `
-                  + `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
+                  + `eip20Gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
                   + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
               );
             }
@@ -295,7 +295,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     });
   });
 
-  it('verify anchoring', async (): Promise<void> => {
+  it('should verify anchoring', async (): Promise<void> => {
     anchoredBlockNumber = await utils.anchorOrigin(auxChainId);
 
     let verifyAnchorInterval: NodeJS.Timeout;
@@ -341,7 +341,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     });
   });
 
-  it('verify progress minting', async (): Promise<void> => {
+  it('should verify progress minting', async (): Promise<void> => {
     let progressMintingInterval: NodeJS.Timeout;
 
     const progressMinting = new Promise(((resolve, reject) => {
@@ -389,7 +389,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
           } else {
             throw new Error(
               `Message status for source in db is ${messageInDb!.sourceStatus} but in `
-                + `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
+                + `eip20Gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
                 + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
             );
           }

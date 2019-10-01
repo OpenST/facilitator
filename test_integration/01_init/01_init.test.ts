@@ -19,7 +19,7 @@ describe('facilitator init', async (): Promise<void> => {
     Utils.setEnvironment(mosaicConfigPath);
   });
 
-  it('facilitator init', async (): Promise<void> => {
+  it('Validates facilitator init', async (): Promise<void> => {
     const auxChainId = Number(Constants.auxChainId);
     // Removing facilitator config.
     fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));

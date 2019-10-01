@@ -55,7 +55,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     ({ originWeb3, auxiliaryWeb3 } = utils);
   });
 
-  it('fund redeemer', async (): Promise<void> => {
+  it('should fund redeemer', async (): Promise<void> => {
     redeemerAccount = auxiliaryWeb3.eth.accounts.create('redeemTest');
     auxiliaryWeb3.eth.accounts.wallet.add(redeemerAccount);
 
@@ -97,7 +97,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     );
   });
 
-  it('request redeem', async (): Promise<void> => {
+  it('should perform & validate request redeem', async (): Promise<void> => {
     messageTransferRequest = new MessageTransferRequest(
       '', // would be filled later
       MessageType.Redeem,
@@ -293,7 +293,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     });
   });
 
-  it('verify anchoring', async (): Promise<void> => {
+  it('should verify anchoring', async (): Promise<void> => {
     anchoredBlockNumber = await utils.anchorAuxiliary(auxChainId);
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {
@@ -337,7 +337,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     });
   });
 
-  it('verify progress unstaking', async (): Promise<void> => {
+  it('should verify progress unstaking', async (): Promise<void> => {
     let progressUnstakingInterval: NodeJS.Timeout;
 
     const progressUnstaking = new Promise(((resolve, reject) => {
