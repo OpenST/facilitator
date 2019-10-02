@@ -9,7 +9,7 @@ import Utils from '../Utils';
 import * as Constants from '../Constants.json';
 import assert from '../../test/test_utils/assert';
 
-describe('facilitator post init', async (): Promise<void> => {
+describe('should whitelist facilitator workers for origin & auxiliary', async (): Promise<void> => {
   const auxChainId = Number(Constants.auxChainId);
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
