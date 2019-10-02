@@ -1,7 +1,5 @@
-import { execSync, spawn, spawnSync } from 'child_process';
 import * as path from 'path';
 import BigNumber from 'bignumber.js';
-import fs from 'fs-extra';
 import Web3 from 'web3';
 
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
@@ -9,130 +7,58 @@ import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import { Account } from 'web3-eth-accounts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
-import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
-import { FacilitatorConfig } from '../src/Config/Config';
+import * as Constants from '../Constants.json';
+import Utils from '../Utils';
+import MessageTransferRequest from '../../src/models/MessageTransferRequest';
 
-import Utils from './Utils';
-import MessageTransferRequest from '../src/models/MessageTransferRequest';
-
-import Message from '../src/models/Message';
+import Message from '../../src/models/Message';
 
 import {
   MessageDirection,
   MessageStatus,
   MessageType,
-} from '../src/repositories/MessageRepository';
-import * as Constants from './Constants.json';
-import assert from '../test/test_utils/assert';
-import AuxiliaryChain from '../src/models/AuxiliaryChain';
-import Directory from '../src/Directory';
+} from '../../src/repositories/MessageRepository';
+import assert from '../../test/test_utils/assert';
+import AuxiliaryChain from '../../src/models/AuxiliaryChain';
+import SharedStorage from '../SharedStorage';
+import { FacilitatorConfig } from '../../src/Config/Config';
 
-const facilitatorInit = path.join(__dirname, 'facilitator_init.sh');
-const facilitatorStart = path.join(__dirname, 'facilitator_start.sh');
-const facilitatorKill = path.join(__dirname, 'kill_facilitator_process.sh');
-
-describe('facilitator start', async (): Promise<void> => {
+describe('stake and mint with single staker & facilitator process', async (): Promise<void> => {
   const stakeAmount = '130';
   const gasPrice = '10';
   const gasLimit = '4';
-  let originWeb3: Web3;
-  let auxiliaryWeb3: Web3;
-  let auxChainId: number;
-  let messageHash: string | undefined;
-  let generatedStakeRequestHash: string;
-  let expectedMessage: Message;
-  const mosaicConfigPath = path.join(__dirname, 'mosaic.json');
-
+  const stakerOSTBalance = '20000';
+  const testDuration = 3;
+  const interval = 3000;
+  const auxChainId = Number(Constants.auxChainId);
+  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
-
   const ostComposer: string = mosaicConfig.originChain.contractAddresses.ostComposerAddress;
 
-  const outputOptions = [process.stdout, process.stderr];
-
-  let facilitatorConfig: FacilitatorConfig;
-  let originWorker: string;
-  let auxiliaryWorker: string;
+  let originWeb3: Web3;
+  let auxiliaryWeb3: Web3;
   let utils: Utils;
   let simpleTokenInstance: EIP20Token;
   let stakerAccount: Account;
-  const stakerOSTBalance = '20000';
-  const workerOSTBalance = new BigNumber(500);
-  const amountTobeFundedOnOrigin = new BigNumber(1);
-  const amountTobeFundedOnAuxiliary = new BigNumber(1);
-  const testDuration = 3;
-  const interval = 3000;
-  const workerExpirationHeight = '100000000000';
+  let messageHash: string | undefined;
+  let generatedStakeRequestHash: string;
+  let expectedMessage: Message;
   let anchoredBlockNumber: number;
   let messageTransferRequest: MessageTransferRequest;
 
   before(async () => {
-    Utils.setEnvironment(mosaicConfigPath);
-  });
-
-  it('facilitator init', async (): Promise<void> => {
-    auxChainId = Number(Constants.auxChainId);
-    // Removing facilitator config.
-    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));
-
-    spawnSync(facilitatorInit, { stdio: outputOptions, env: process.env });
-    facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-
-    assert.strictEqual(
-      facilitatorConfig.auxChainId,
-      Number(Constants.auxChainId),
-      'Invalid aux chain id',
-    );
-
-    assert.strictEqual(
-      facilitatorConfig.originChain,
-      Constants.originChain,
-      'Invalid origin chain id',
-    );
-
-    assert.strictEqual(
-      facilitatorConfig.chains[facilitatorConfig.originChain].nodeRpc,
-      Constants.originRpc,
-      'Invalid origin rpc',
-    );
-
-    assert.strictEqual(
-      facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc,
-      Constants.auxiliaryRpc,
-      'Invalid auxiliary rpc',
-    );
-
-    assert.strictEqual(
-      facilitatorConfig.chains[facilitatorConfig.auxChainId].subGraphRpc,
-      Constants.auxiliaryGraphRpc,
-      'Invalid auxiliary graph rpc',
-    );
-
-    assert.strictEqual(
-      facilitatorConfig.chains[facilitatorConfig.originChain].subGraphRpc,
-      Constants.originGraphRpc,
-      'Invalid auxiliary graph rpc',
-    );
-
+    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     utils = new Utils(
       mosaicConfig,
       facilitatorConfig,
-      Number(Constants.auxChainId),
+      auxChainId,
     );
     ({ originWeb3, auxiliaryWeb3 } = utils);
-
-    const originAccounts = await originWeb3.eth.getAccounts();
-    const auxiliaryAccounts = await auxiliaryWeb3.eth.getAccounts();
-    utils.setOriginFunder(originAccounts[4]);
-    utils.setAuxiliaryFunder(auxiliaryAccounts[6]);
-
-    utils.setWorkerPasswordInEnvironment();
-    originWorker = facilitatorConfig.chains[facilitatorConfig.originChain].worker;
-    auxiliaryWorker = facilitatorConfig.chains[auxChainId].worker;
+    simpleTokenInstance = utils.getSimpleTokenInstance();
   });
 
-  it('fund staker', async (): Promise<void> => {
-    simpleTokenInstance = utils.getSimpleTokenInstance();
+  it('should fund staker', async (): Promise<void> => {
     stakerAccount = originWeb3.eth.accounts.create('facilitatortest');
     originWeb3.eth.accounts.wallet.add(stakerAccount);
 
@@ -144,7 +70,7 @@ describe('facilitator start', async (): Promise<void> => {
     const transferReceipt = await Utils.sendTransaction(
       transferRawTx,
       {
-        from: utils.originFunder,
+        from: SharedStorage.getOriginFunder(),
         gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
@@ -160,66 +86,7 @@ describe('facilitator start', async (): Promise<void> => {
     );
   });
 
-  it('funding origin and aux workers', async (): Promise<void> => {
-    await utils.fundEthOnOrigin(originWorker, new BigNumber(amountTobeFundedOnOrigin));
-    await utils.fundOSTPrimeOnAuxiliary(
-      auxiliaryWorker,
-      new BigNumber(amountTobeFundedOnAuxiliary),
-    );
-
-    const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.transfer(
-      originWorker,
-      workerOSTBalance.toString(),
-    );
-    const transferReceipt = await Utils.sendTransaction(
-      transferRawTx,
-      {
-        from: utils.originFunder,
-        gasPrice: await originWeb3.eth.getGasPrice(),
-      },
-    );
-    await utils.verifyOSTTransfer(transferReceipt, originWorker, new BigNumber(workerOSTBalance));
-  });
-
-  it('whitelist origin worker', async () => {
-    const whitelistWorkerReceipt = await utils.whitelistOriginWorker(
-      originWorker,
-      workerExpirationHeight,
-    );
-
-    assert.strictEqual(
-      whitelistWorkerReceipt.status,
-      true,
-    );
-
-    const organizationInstance: Organization = await utils.getOriginOrganizationInstance();
-    const actualExpirationHeight = new BigNumber(await organizationInstance.methods.workers(
-      originWorker,
-    ).call());
-
-    assert.strictEqual(
-      await organizationInstance.methods.isWorker(originWorker).call(),
-      true,
-    );
-
-    assert.strictEqual(
-      actualExpirationHeight.cmp(workerExpirationHeight),
-      0,
-      `Expected worker expiration height is ${workerExpirationHeight} but`
-              + `got ${actualExpirationHeight}`,
-    );
-  });
-
-  it('facilitator start', async (): Promise<void> => {
-    spawn(
-      facilitatorStart,
-      { stdio: outputOptions, env: process.env },
-    );
-    // Note: Ensuring that facilitator starts and then we do stake requests.
-    await new Promise(done => setTimeout(done, 20000));
-  });
-
-  it('request stake', async (): Promise<void> => {
+  it('should perform and verify request stake', async (): Promise<void> => {
     messageTransferRequest = new MessageTransferRequest(
       '',
       MessageType.Stake,
@@ -302,7 +169,7 @@ describe('facilitator start', async (): Promise<void> => {
 
         if (messageTransferRequestDb != null) {
           try {
-            Utils.assertStakeRequests(messageTransferRequestDb, messageTransferRequest);
+            Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
           } catch (e) {
             reject(e);
           }
@@ -315,7 +182,7 @@ describe('facilitator start', async (): Promise<void> => {
           reject(
             new Error(
               'Assertion for stake requests table failed as response was not received'
-              + ` within ${testDuration} mins`,
+                + ` within ${testDuration} mins`,
             ),
           );
         }
@@ -380,13 +247,13 @@ describe('facilitator start', async (): Promise<void> => {
           try {
             if (
               eip20GatewayMessageStatus === MessageStatus.Undeclared
-              && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
-              && Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)
+                && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+                && Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)
             ) {
               Utils.assertMessages(messageInDb!, expectedMessage);
             } else if (
               eip20GatewayMessageStatus === MessageStatus.Declared
-              && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+                && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
             ) {
               if (Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)) {
                 Utils.assertMessages(messageInDb!, expectedMessage);
@@ -398,8 +265,8 @@ describe('facilitator start', async (): Promise<void> => {
             } else {
               throw new Error(
                 `Message status for source in db is ${messageInDb!.sourceStatus} but in `
-                + `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
-                + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
+                  + `eip20Gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
+                  + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
               );
             }
           } catch (e) {
@@ -411,7 +278,7 @@ describe('facilitator start', async (): Promise<void> => {
             reject(
               new Error(
                 'Assertion for messages table while request staking failed as response was not received'
-                + ` within ${testDuration} mins`,
+                  + ` within ${testDuration} mins`,
               ),
             );
           }
@@ -428,7 +295,7 @@ describe('facilitator start', async (): Promise<void> => {
     });
   });
 
-  it('verify anchoring', async (): Promise<void> => {
+  it('should verify anchoring', async (): Promise<void> => {
     anchoredBlockNumber = await utils.anchorOrigin(auxChainId);
 
     let verifyAnchorInterval: NodeJS.Timeout;
@@ -458,7 +325,7 @@ describe('facilitator start', async (): Promise<void> => {
           reject(
             new Error(
               'Assertion for auxiliary chains table while anchoring failed as'
-              + ` response was not received within ${testDuration} mins`,
+                + ` response was not received within ${testDuration} mins`,
             ),
           );
         }
@@ -474,7 +341,7 @@ describe('facilitator start', async (): Promise<void> => {
     });
   });
 
-  it('verify progress minting', async (): Promise<void> => {
+  it('should verify progress minting', async (): Promise<void> => {
     let progressMintingInterval: NodeJS.Timeout;
 
     const progressMinting = new Promise(((resolve, reject) => {
@@ -511,8 +378,8 @@ describe('facilitator start', async (): Promise<void> => {
             Utils.assertMessages(messageInDb!, expectedMessage);
           } else if (
             eip20GatewayMessageStatus === MessageStatus.Progressed
-            && eip20CoGatewayMessageStatus === MessageStatus.Progressed
-            && Utils.isSourceProgressedTargetProgressed(messageInDb!)
+              && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+              && Utils.isSourceProgressedTargetProgressed(messageInDb!)
           ) {
             Utils.assertMessages(messageInDb!, expectedMessage);
             const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
@@ -522,8 +389,8 @@ describe('facilitator start', async (): Promise<void> => {
           } else {
             throw new Error(
               `Message status for source in db is ${messageInDb!.sourceStatus} but in `
-              + `eip20gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
-              + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
+                + `eip20Gateway is ${eip20GatewayMessageStatus} and Message status for target in db is `
+                + `${messageInDb!.targetStatus} but got ${eip20CoGatewayMessageStatus}`,
             );
           }
         } catch (e) {
@@ -535,9 +402,9 @@ describe('facilitator start', async (): Promise<void> => {
           reject(
             new Error(
               'Time out while verifying progress minting of message. Source status at db is'
-              + `${messageInDb!.sourceStatus} and Target status at db is ${messageInDb!.targetStatus}`
-              + `EIP20Gateway status is ${eip20GatewayMessageStatus} and EIP20CoGateway status is`
-              + `${eip20CoGatewayMessageStatus}`,
+                + `${messageInDb!.sourceStatus} and Target status at db is ${messageInDb!.targetStatus}`
+                + `EIP20Gateway status is ${eip20GatewayMessageStatus} and EIP20CoGateway status is`
+                + `${eip20CoGatewayMessageStatus}`,
             ),
           );
         }
@@ -551,10 +418,5 @@ describe('facilitator start', async (): Promise<void> => {
       clearInterval(progressMintingInterval);
       throw err;
     });
-  });
-
-  after(async (): Promise<void> => {
-    execSync(facilitatorKill, { stdio: outputOptions, env: process.env });
-    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));
   });
 });

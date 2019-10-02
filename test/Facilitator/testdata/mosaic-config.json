@@ -30,7 +30,7 @@
                     "gatewayLibAddress": "0x9511525a52DB3aAd1271616104337e7eC5d99690",
                     "messageBusAddress": "0x48A535C2452D04D21214B1b1e3757AcA58fda833",
                     "merklePatriciaLibAddress": "0xcA0422cB2428369E3ba577ec11d5bc1daB9a7f19",
-                    "redeemPoolAddress": "0x4c8ba8caecb60c67d69605a772ae1bb9a732fb39"
+                    "redeemPoolAddress": "0x8bA9C19BeacBB3eF85E1Df57ceef1Df922F2D87F"
                 }
             },
             "chainId": 301,

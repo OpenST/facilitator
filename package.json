@@ -5,15 +5,15 @@
   "scripts": {
     "lint:ts": "eslint src -c .eslintrc.json --ext ts",
     "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/**/*.test.ts test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
-    "test:integration": "npm run devchain:start && mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive integration_test/**/**/*.test.ts integration_test/**/*.test.ts integration_test/*.test.ts && npm run devchain:stop",
+    "test:integration": "npm run devchain:start && mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:facilitator": "./test/facilitator.sh",
     "test": "npm run test:unit && npm run test:integration",
     "coverage:report": "nyc report",
     "coverage:unit": "nyc --silent npm run test:unit",
     "coverage:facilitator": "nyc --silent --no-clean npm run test:facilitator",
     "coverage": "tsc && npm run coverage:unit && npm run coverage:facilitator && npm run coverage:report",
-    "devchain:start": "bash ./integration_test/devchains.sh start",
-    "devchain:stop": "bash ./integration_test/devchains.sh stop"
+    "devchain:start": "bash ./test_integration/devchains.sh start",
+    "devchain:stop": "bash ./test_integration/devchains.sh stop"
   },
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@openst/mosaic-contracts": "^0.12.0",
     "@openst/mosaic-proof": "^0.1.0-alpha.1",
-    "@openst/mosaic-chains": "^0.1.0-alpha.2",
+    "@openst/mosaic-chains": "^0.1.0-alpha.4",
     "apollo-cache-inmemory": "1.6.2",
     "apollo-client": "2.6.0",
     "apollo-link-http": "1.5.15",
@@ -94,8 +94,7 @@
     "nyc": "14.1.1",
     "sinon": "7.3.2",
     "source-map-support": "0.5.12",
-    "ts-node": "8.0.3",
-    "@openst/mosaic-chains": "^0.1.0-alpha.1"
+    "ts-node": "8.0.3"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",

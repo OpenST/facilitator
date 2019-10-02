@@ -67,7 +67,7 @@ export default class Message extends Comparable<Message> {
    * @param gasPrice Gas price that staker is ready to pay to get the stake and mint process done.
    * @param gasLimit Gas limit that staker is ready to pay.
    * @param nonce Nonce of the staker address.
-   * @param sender Staker address.
+   * @param sender staker's / redeemer's proxy address (from StakePool/RedeemPool contract).
    * @param sourceDeclarationBlockHeight Source block height at which message wa declared.
    * @param secret Unlock secret for the hashLock provide by the staker while initiating the stake.
    * @param hashLock Hash Lock provided by the facilitator.

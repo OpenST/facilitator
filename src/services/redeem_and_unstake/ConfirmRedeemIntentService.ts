@@ -189,8 +189,8 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
       ((redeemRequest as MessageTransferRequest).amount).toString(10),
       (message.gasPrice as BigNumber).toString(10),
       (message.gasLimit as BigNumber).toString(10),
-      (message.hashLock as string),
       gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
+      (message.hashLock as string),
       proofData.storageProof[0].serializedProof,
     );
 

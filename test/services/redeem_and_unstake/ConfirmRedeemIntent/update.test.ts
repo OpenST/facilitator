@@ -171,13 +171,12 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
         redeemRequest.amount.toString(),
         message.gasPrice!.toString(),
         message.gasLimit!.toString(),
-        message.hashLock!,
         proof!.blockNumber!.toString(),
+        message.hashLock!,
         proof!.storageProof[0].serializedProof,
       ]],
     );
 
-    sinon.restore();
   });
 
   it('Should not do confirmRedeemIntent if '
@@ -291,6 +290,10 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
       ]],
     );
 
+  });
+
+  afterEach(async (): Promise<void> => {
     sinon.restore();
   });
+
 });

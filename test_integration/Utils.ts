@@ -7,9 +7,11 @@ import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer';
+import { RedeemPool } from '@openst/mosaic-contracts/dist/interacts/RedeemPool';
 import { TransactionReceipt } from 'web3-core';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
+import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import * as EthUtils from 'ethereumjs-util';
 import Repositories from '../src/repositories/Repositories';
@@ -19,9 +21,9 @@ import { FacilitatorConfig } from '../src/Config/Config';
 import Message from '../src/models/Message';
 import Gateway from '../src/models/Gateway';
 import AuxiliaryChain from '../src/models/AuxiliaryChain';
-import { GatewayType } from '../src/repositories/GatewayRepository';
 import * as Constants from './Constants.json';
-
+import SharedStorage from './SharedStorage';
+import Logger from '../src/Logger';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
 
@@ -35,11 +37,11 @@ export default class Utils {
 
   public auxiliaryWeb3: Web3;
 
-  public originFunder?: string;
-
-  public auxiliaryFunder?: string;
-
   private ostComposer: string;
+
+  private redeemPool: string;
+
+  private ostPrime: string;
 
   public mosaicConfig: MosaicConfig;
 
@@ -66,22 +68,10 @@ export default class Utils {
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress;
-  }
-
-  /**
-   * It sets the address of funder account on origin chain.
-   * @param originFunder Address of the funder.
-   */
-  public setOriginFunder(originFunder: string): void {
-    this.originFunder = originFunder;
-  }
-
-  /**
-   * It sets the address of funder account on auxiliary chain.
-   * @param auxiliaryFunder Address of the funder.
-   */
-  public setAuxiliaryFunder(auxiliaryFunder: string): void {
-    this.auxiliaryFunder = auxiliaryFunder;
+    this.redeemPool = this.mosaicConfig.auxiliaryChains[auxChainId]
+      .contractAddresses.auxiliary.redeemPoolAddress;
+    this.ostPrime = this.mosaicConfig.auxiliaryChains[auxChainId]
+      .contractAddresses.auxiliary.ostPrimeAddress;
   }
 
   /**
@@ -96,7 +86,7 @@ export default class Utils {
   ): Promise<TransactionReceipt> {
     return this.originWeb3.eth.sendTransaction(
       {
-        from: this.originFunder!,
+        from: SharedStorage.getOriginFunder(),
         to: beneficiary,
         value: web3Utils.toWei(amountInETH.toString()),
       },
@@ -115,7 +105,7 @@ export default class Utils {
   ): Promise<TransactionReceipt> {
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
-        from: this.auxiliaryFunder!,
+        from: SharedStorage.getAuxiliaryFunder(),
         to: beneficiary,
         value: web3Utils.toWei(amountInEth.toString()),
       },
@@ -123,27 +113,77 @@ export default class Utils {
   }
 
   /**
-   * It provides organization contract instance.
+   * It provides origin organization contract instance.
    * @returns Organization instance.
    */
   public async getOriginOrganizationInstance(): Promise<Organization> {
     const organizationAddress = await this.getOrganizationFromOSTComposer();
-
     return interacts.getOrganization(this.originWeb3, organizationAddress);
   }
 
   /**
+   * It provides auxiliary organization contract instance.
+   * @returns Organization instance.
+   */
+  public async getAuxiliaryOrganizationInstance(): Promise<Organization> {
+    const organizationAddress = await this.getOrganizationFromRedeemPool();
+    return interacts.getOrganization(this.auxiliaryWeb3, organizationAddress);
+  }
+
+  /**
    * It whitelists address of an account.
+   * @param organizationContractInstance organization contract instance
    * @param worker Address to be whitelisted.
    * @param expirationHeight Block number at which address becomes invalid.
    * @returns Receipt object.
    */
   public async whitelistOriginWorker(
+    organizationContractInstance: Organization,
     worker: string,
     expirationHeight: string,
   ): Promise<TransactionReceipt> {
-    const organizationContractInstance = await this.getOriginOrganizationInstance();
+    return this.whitelistWorker(
+      this.originWeb3,
+      organizationContractInstance,
+      worker,
+      expirationHeight,
+    );
+  }
 
+  /**
+   * It whitelists address of an account.
+   * @param organizationContractInstance organization contract instance
+   * @param worker Address to be whitelisted.
+   * @param expirationHeight Block number at which address becomes invalid.
+   * @returns Receipt object.
+   */
+  public async whitelistAuxiliaryWorker(
+    organizationContractInstance: Organization,
+    worker: string,
+    expirationHeight: string,
+  ): Promise<TransactionReceipt> {
+    return this.whitelistWorker(
+      this.auxiliaryWeb3,
+      organizationContractInstance,
+      worker,
+      expirationHeight,
+    );
+  }
+
+  /**
+   * It whitelists address of an account.
+   * @param web3 web3Instance
+   * @param organizationContractInstance organization contract instance
+   * @param worker Address to be whitelisted.
+   * @param expirationHeight Block number at which address becomes invalid.
+   * @returns Receipt object.
+   */
+  private async whitelistWorker(
+    web3: Web3,
+    organizationContractInstance: Organization,
+    worker: string,
+    expirationHeight: string,
+  ): Promise<TransactionReceipt> {
     const owner = await organizationContractInstance.methods.owner().call();
 
     const setWorkerRawTx: TransactionObject<void> = organizationContractInstance.methods.setWorker(
@@ -151,15 +191,13 @@ export default class Utils {
       expirationHeight,
     );
 
-    const setWorkerReceipt = await Utils.sendTransaction(
+    return Utils.sendTransaction(
       setWorkerRawTx,
       {
         from: owner,
-        gasPrice: await this.originWeb3.eth.getGasPrice(),
+        gasPrice: await web3.eth.getGasPrice(),
       },
     );
-
-    return setWorkerReceipt;
   }
 
   /**
@@ -168,9 +206,16 @@ export default class Utils {
    */
   public async getOrganizationFromOSTComposer(): Promise<string> {
     const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.ostComposer);
-    const organizationAddress = await ostComposerInstance.methods.organization().call();
+    return await ostComposerInstance.methods.organization().call();
+  }
 
-    return organizationAddress;
+  /**
+   * It provides organization contract used in RedeemPool.
+   * @returns Organization contract address.
+   */
+  public async getOrganizationFromRedeemPool(): Promise<string> {
+    const redeemPoolInstance = interacts.getRedeemPool(this.auxiliaryWeb3, this.redeemPool);
+    return await redeemPoolInstance.methods.organization().call();
   }
 
   /**
@@ -180,7 +225,8 @@ export default class Utils {
   public async anchorOrigin(auxChainId: number): Promise<number> {
     const organizationInstance = interacts.getOrganization(
       this.auxiliaryWeb3,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .auxiliary.anchorOrganizationAddress,
     );
 
     const anchorInstance = interacts.getAnchor(
@@ -202,6 +248,40 @@ export default class Utils {
       {
         from: owner,
         gasPrice: await this.auxiliaryWeb3.eth.getGasPrice(),
+      },
+    );
+    return currentBlock.number;
+  }
+
+  /**
+   * It anchors state root to origin chain's anchor contract.
+   * @param auxChainId Identifier for the auxiliary chain.
+   */
+  public async anchorAuxiliary(auxChainId: number): Promise<number> {
+    const organizationInstance = interacts.getOrganization(
+      this.originWeb3,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .origin.anchorOrganizationAddress,
+    );
+    const owner = await organizationInstance.methods.owner().call();
+
+    const anchorInstance = interacts.getAnchor(
+      this.originWeb3,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
+    );
+
+    const currentBlock = await this.auxiliaryWeb3.eth.getBlock('latest');
+
+    const anchorStateRootRawTx: TransactionObject<boolean> = anchorInstance.methods.anchorStateRoot(
+      currentBlock.number,
+      currentBlock.stateRoot,
+    );
+
+    await Utils.sendTransaction(
+      anchorStateRootRawTx,
+      {
+        from: owner,
+        gasPrice: await this.originWeb3.eth.getGasPrice(),
       },
     );
     return currentBlock.number;
@@ -251,6 +331,57 @@ export default class Utils {
           Buffer.from('01', 'hex'),
           EthUtils.toBuffer(DOMAIN_SEPARATOR),
           EthUtils.toBuffer(stakeIntentTypeHash),
+        ],
+      ),
+    );
+
+    return EthUtils.bufferToHex(eip712TypeData);
+  }
+
+  /**
+   * It provides redeem request hash.
+   * @param messageTransferRequest It represents message transfer request object.
+   * @param cogateway CoGateway address on which request redeem is to be done.
+   * @param redeemPool RedeemPool contract address.
+   * @returns EIP712 compatible stakerequest hash.
+   */
+  public getRedeemRequestHash(
+    messageTransferRequest: MessageTransferRequest,
+    cogateway: string,
+    redeemPool: string,
+  ): string {
+    const redeemRequestMethod = 'RedeemRequest(uint256 amount,address beneficiary,uint256 gasPrice,uint256 gasLimit,uint256 nonce,address redeemer,address cogateway)';
+    const encodedTypeHash = web3Utils.sha3(
+      this.auxiliaryWeb3.eth.abi.encodeParameter('string', redeemRequestMethod),
+    );
+    const redeemIntentTypeHash = web3Utils.soliditySha3(
+      { type: 'bytes32', value: encodedTypeHash },
+      { type: 'uint256', value: messageTransferRequest.amount!.toString(10) },
+      { type: 'address', value: messageTransferRequest.beneficiary! },
+      { type: 'uint256', value: messageTransferRequest.gasPrice!.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.gasLimit!.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.nonce!.toString(10) },
+      { type: 'address', value: messageTransferRequest.sender! },
+      { type: 'address', value: cogateway },
+    );
+
+    const EIP712_DOMAIN_TYPEHASH = web3Utils.soliditySha3(
+      'EIP712Domain(address verifyingContract)',
+    );
+    const DOMAIN_SEPARATOR = web3Utils.soliditySha3(
+      this.auxiliaryWeb3.eth.abi.encodeParameters(
+        ['bytes32', 'address'],
+        [EIP712_DOMAIN_TYPEHASH, redeemPool],
+      ),
+    );
+
+    const eip712TypeData = EthUtils.keccak(
+      Buffer.concat(
+        [
+          Buffer.from('19', 'hex'),
+          Buffer.from('01', 'hex'),
+          EthUtils.toBuffer(DOMAIN_SEPARATOR),
+          EthUtils.toBuffer(redeemIntentTypeHash),
         ],
       ),
     );
@@ -361,11 +492,11 @@ export default class Utils {
   }
 
   /**
-   * Asserts the expected stake request data with the entry in stakerequests table.
+   * Asserts the expected message transfer request data with the entry in stakerequests table.
    * @param actualObject MessageTransferRequest object representing db state.
    * @param expectedObject Expected stake request object.
    */
-  public static assertStakeRequests(
+  public static assertMessageTransferRequests(
     actualObject: MessageTransferRequest,
     expectedObject: MessageTransferRequest,
   ): void {
@@ -503,8 +634,10 @@ export default class Utils {
     const auxiliaryChain = new AuxiliaryChain(
       auxChainId,
       originChain,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .origin.ostEIP20GatewayAddress,
+      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
+        .auxiliary.ostEIP20CogatewayAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
       this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
       lastOriginBlockHeight,
@@ -524,7 +657,8 @@ export default class Utils {
     expectedAuxiliaryChain: AuxiliaryChain,
   ): void {
     assert.strictEqual(
-      actualAuxiliaryChain.lastOriginBlockHeight!.cmp(expectedAuxiliaryChain.lastOriginBlockHeight!),
+      actualAuxiliaryChain.lastOriginBlockHeight!
+        .cmp(expectedAuxiliaryChain.lastOriginBlockHeight!),
       0,
       `Expected last origin block height is ${expectedAuxiliaryChain.lastOriginBlockHeight} but `
       + `got ${actualAuxiliaryChain.lastOriginBlockHeight}`,
@@ -569,14 +703,15 @@ export default class Utils {
 
   /**
    * It provides StakeRequest model object for an gateway.
-   * @param stakeRequestHash Stake request hash for an stake.
+   * @param messageTransferRequestHash Stake request hash for an stake.
    * @returns StakeRequest object corresponding to stakeRequestHash.
    */
-  public async getMessageTransferRequest(stakeRequestHash: string): Promise<MessageTransferRequest | null> {
+  public async getMessageTransferRequest(messageTransferRequestHash: string):
+  Promise<MessageTransferRequest | null> {
     const repos: Repositories = await this.getRepositories();
 
     return repos.messageTransferRequestRepository.get(
-      stakeRequestHash,
+      messageTransferRequestHash,
     );
   }
 
@@ -594,36 +729,6 @@ export default class Utils {
     }
 
     return message;
-  }
-
-  /**
-   * It provides gateway stub object.
-   * @param bounty Bounty for processing the stake and mint.
-   * @param activation Activation status of the gateway.
-   * @param gatewayType Type of the gateway.
-   * @param anchoredBlockNumber Blockheight at which anchoring is done.
-   * @returns Gateway stub object.
-   */
-  public getGatewayStub(
-    bounty: string,
-    activation: boolean,
-    gatewayType: GatewayType,
-    anchoredBlockNumber: BigNumber,
-  ): Gateway {
-    const { auxChainId } = this.facilitatorConfig;
-    const gateway: Gateway = new Gateway(
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      this.facilitatorConfig.originChain,
-      gatewayType,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
-      this.mosaicConfig.originChain.contractAddresses.simpleTokenAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
-      new BigNumber(bounty),
-      anchoredBlockNumber,
-      activation,
-    );
-
-    return gateway;
   }
 
   /**
@@ -645,6 +750,24 @@ export default class Utils {
   }
 
   /**
+   * It asserts unstaked balance of beneficiary at origin chain.
+   * @param beneficiary Address which received OST.
+   * @param expectedAmount Expected minted amount.
+   */
+  public async assertUnstakedBalance(
+    beneficiary: string,
+    expectedAmount: BigNumber,
+  ): Promise<void> {
+    const simpletokenInstance = this.getSimpleTokenInstance();
+    const actualUnstakedAmount = await simpletokenInstance.methods.balanceOf(beneficiary).call();
+    assert.strictEqual(
+      new BigNumber(actualUnstakedAmount).cmp(expectedAmount),
+      0,
+      `Expected unStaked balance is ${expectedAmount} but got ${actualUnstakedAmount}`,
+    );
+  }
+
+  /**
    * It verifies the ERC2O token transfer. Beneficiary address is always newly created one.
    * @param receipt Receipt of ERC20 transfer.
    * @param beneficiary Beneficiary of the transfer.
@@ -658,7 +781,6 @@ export default class Utils {
     assert.strictEqual(receipt.status, true, 'Receipt status should be true');
 
     const simpletokenInstance = this.getSimpleTokenInstance();
-
     const beneficiaryBalance = await simpletokenInstance.methods.balanceOf(beneficiary).call();
 
     assert.strictEqual(
@@ -675,7 +797,8 @@ export default class Utils {
   public getEIP20GatewayInstance(): EIP20Gateway {
     const {
       ostEIP20GatewayAddress,
-    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId].contractAddresses.origin;
+    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId]
+      .contractAddresses.origin;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       ostEIP20GatewayAddress,
@@ -690,7 +813,8 @@ export default class Utils {
   public getEIP20CoGatewayInstance(): EIP20CoGateway {
     const {
       ostEIP20CogatewayAddress,
-    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId].contractAddresses.auxiliary;
+    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId]
+      .contractAddresses.auxiliary;
     const eip20CoGatewayInstance: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
       ostEIP20CogatewayAddress,
@@ -712,11 +836,31 @@ export default class Utils {
   }
 
   /**
+   * It provides Simple Token Prime contract instance.
+   * @returns Simple token Prime object.
+   */
+  public getSimpleTokenPrimeInstance(): OSTPrime {
+    const simpletokenPrimeInstance: OSTPrime = interacts.getOSTPrime(
+      this.auxiliaryWeb3,
+      this.ostPrime,
+    );
+    return simpletokenPrimeInstance;
+  }
+
+  /**
    * It provides OSTComposer instance.
    * @returns OSTComposer object.
    */
   public getOSTComposerInstance(): OSTComposer {
     return interacts.getOSTComposer(this.originWeb3, this.ostComposer);
+  }
+
+  /**
+   * It provides RedeemPool instance.
+   * @returns RedeemPool object.
+   */
+  public getRedeemPoolInstance(): RedeemPool {
+    return interacts.getRedeemPool(this.auxiliaryWeb3, this.redeemPool);
   }
 
   /**
@@ -785,7 +929,12 @@ export default class Utils {
       txOptions.gas = await tx.estimateGas(txOptions);
     }
 
-    return tx.send(txOptions);
+    return new Promise(async (onResolve, onReject): Promise<void> => {
+      tx.send(txOptions)
+        .on('transactionHash', (hash: string): any => Logger.debug(`submitted txHash: ${hash}`))
+        .on('receipt', (receipt: TransactionReceipt): void => onResolve(receipt))
+        .on('error', (error: Error): void => onReject(error));
+    });
   }
 
   /**
@@ -903,57 +1052,57 @@ export default class Utils {
 
   /**
    * It verifies the status of message on gatway and cogateway with the status in db.
-   * @param eip20GatewayMessageStatus Status of message on gateway.
-   * @param eip20CoGatewayMessageStatus Status of message on cogateway.
+   * @param sourceMessageStatus Status of message on gateway.
+   * @param destinationMessageStatus Status of message on cogateway.
    * @param messageObject Message object.
    * @returns returns true if any the condition is satisfied otherwise false.
    */
   public static isMessageStatusValid(
-    eip20GatewayMessageStatus: string,
-    eip20CoGatewayMessageStatus: string,
+    sourceMessageStatus: string,
+    destinationMessageStatus: string,
     messageObject: Message,
   ): boolean {
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Undeclared
       && Utils.isSourceDeclaredTargetUndeclared(messageObject)
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Undeclared
       && Utils.isSourceDeclaredTargetUndeclared(messageObject)
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Declared
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Declared
       && (Utils.isSourceDeclaredTargetUndeclared(messageObject)
       || Utils.isSourceDeclaredTargetDeclared(messageObject))
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Declared
-      && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+      sourceMessageStatus === MessageStatus.Declared
+      && destinationMessageStatus === MessageStatus.Progressed
       && (Utils.isSourceDeclaredTargetDeclared(messageObject)
       || Utils.isSourceDeclaredTargetProgressed(messageObject))
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Progressed
-      && eip20CoGatewayMessageStatus === MessageStatus.Declared
+      sourceMessageStatus === MessageStatus.Progressed
+      && destinationMessageStatus === MessageStatus.Declared
       && (Utils.isSourceDeclaredTargetDeclared(messageObject)
       || Utils.isSourceProgressedTargetDeclared(messageObject))
     ) {
       return true;
     }
     if (
-      eip20GatewayMessageStatus === MessageStatus.Progressed
-      && eip20CoGatewayMessageStatus === MessageStatus.Progressed
+      sourceMessageStatus === MessageStatus.Progressed
+      && destinationMessageStatus === MessageStatus.Progressed
       && (Utils.isSourceProgressedTargetDeclared(messageObject)
       || Utils.isSourceDeclaredTargetProgressed(messageObject)
       || Utils.isSourceDeclaredTargetDeclared(messageObject))
@@ -962,5 +1111,14 @@ export default class Utils {
     }
 
     return false;
+  }
+
+  /**
+   * Convert amount to wei's
+   * @param amount
+   * @return wei amount
+   */
+  public static convertToWei(amount: string) {
+    return web3Utils.toWei(amount.toString());
   }
 }
