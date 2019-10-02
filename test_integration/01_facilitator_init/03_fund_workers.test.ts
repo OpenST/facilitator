@@ -5,15 +5,12 @@ import Web3 from 'web3';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
-import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
-import { TransactionReceipt } from 'web3-core';
 import { FacilitatorConfig } from '../../src/Config/Config';
 import Utils from '../Utils';
 import * as Constants from '../Constants.json';
-import assert from '../../test/test_utils/assert';
 import SharedStorage from '../SharedStorage';
 
-describe('facilitator post init', async (): Promise<void> => {
+describe('should fund facilitator workers on origin & auxiliary', async (): Promise<void> => {
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
   const auxChainId = Number(Constants.auxChainId);
@@ -27,41 +24,6 @@ describe('facilitator post init', async (): Promise<void> => {
   let originWorker: string;
   let auxiliaryWorker: string;
   let utils: Utils;
-
-  /**
-   * It whitelists address of an account.
-   * @param whitelistWorkerReceipt txReceipt for whitelisting tx
-   * @param organizationInstance organization contract instance
-   * @param address Address to be whitelisted.
-   * @param expirationHeight Block number at which address becomes invalid.
-   */
-  async function assertWorkerWhitelisting(
-    whitelistWorkerReceipt: TransactionReceipt,
-    organizationInstance: Organization,
-    address: string,
-    expirationHeight: string,
-  ) {
-    assert.strictEqual(
-      whitelistWorkerReceipt.status,
-      true,
-    );
-
-    const actualExpirationHeight = new BigNumber(await organizationInstance.methods.workers(
-      address,
-    ).call());
-
-    assert.strictEqual(
-      await organizationInstance.methods.isWorker(address).call(),
-      true,
-    );
-
-    assert.strictEqual(
-      actualExpirationHeight.cmp(expirationHeight),
-      0,
-      `Expected worker expiration height is ${expirationHeight} but`
-      + `got ${actualExpirationHeight}`,
-    );
-  }
 
   before(async () => {
     const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
@@ -84,42 +46,19 @@ describe('facilitator post init', async (): Promise<void> => {
     SharedStorage.setAuxiliaryFunder(auxiliaryAccounts[6]);
   });
 
-  it('should whitelist origin worker', async () => {
-    const organizationInstance = await utils.getOriginOrganizationInstance();
-    const txReceipt = await utils.whitelistOriginWorker(
-      organizationInstance,
-      originWorker,
-      Constants.originWorkerExpirationHeight,
-    );
-    await assertWorkerWhitelisting(
-      txReceipt,
-      organizationInstance,
-      originWorker,
-      Constants.originWorkerExpirationHeight,
-    );
-  });
-
-  it('should whitelist auxiliary worker', async () => {
-    const organizationInstance = await utils.getAuxiliaryOrganizationInstance();
-    const txReceipt = await utils.whitelistAuxiliaryWorker(
-      organizationInstance,
-      auxiliaryWorker,
-      Constants.auxiliaryWorkerExpirationHeight,
-    );
-    await assertWorkerWhitelisting(
-      txReceipt,
-      organizationInstance,
-      auxiliaryWorker,
-      Constants.auxiliaryWorkerExpirationHeight,
-    );
-  });
-
-  it('validates funding of origin and aux workers', async (): Promise<void> => {
-    await utils.fundEthOnOrigin(originWorker, new BigNumber(amountTobeFundedOnOrigin));
+  it('should fund auxiliary worker', async (): Promise<void> => {
     await utils.fundOSTPrimeOnAuxiliary(
       auxiliaryWorker,
       new BigNumber(amountTobeFundedOnAuxiliary),
     );
+  });
+
+  it('should fund origin worker', async (): Promise<void> => {
+
+    // Fund ETH
+    await utils.fundEthOnOrigin(originWorker, new BigNumber(amountTobeFundedOnOrigin));
+
+    // Fund OST (for bounty)
     const simpleTokenInstance: EIP20Token = utils.getSimpleTokenInstance();
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.transfer(
       originWorker,
@@ -138,4 +77,5 @@ describe('facilitator post init', async (): Promise<void> => {
       new BigNumber(OSTToBeFundedToWorkerForBounty),
     );
   });
+
 });
