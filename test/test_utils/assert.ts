@@ -16,10 +16,11 @@
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
+import { ValidationErrorItem } from "sequelize/types/lib/errors";
 chai.use(chaiAsPromised);
 const { assert } = chai;
 
-export function assertErrorMessages(errorObject: any, messages: any) {
+export function assertErrorMessages(errorObject: ValidationErrorItem[], messages: string[]) {
     assert.strictEqual(
       errorObject.length,
       messages.length,
@@ -27,7 +28,7 @@ export function assertErrorMessages(errorObject: any, messages: any) {
       `asserted is ${messages.length}`,
     );
 
-    errorObject.forEach(function (value: any, index: number) {
+    errorObject.forEach(function (value: ValidationErrorItem, index: number) {
 
       assert.strictEqual(
         value.message,
