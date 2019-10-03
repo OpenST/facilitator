@@ -184,10 +184,9 @@ const Utils = {
       gatewayInstance = interacts.getEIP20Gateway(web3, address);
       codeHash = CODE_HASH.eip20Gateway;
     } else {
-      gatewayInstance = interacts.getEIP20Gateway(web3, address);
+      gatewayInstance = interacts.getEIP20CoGateway(web3, address);
       codeHash = CODE_HASH.eip20CoGateway;
     }
-
     messageBoxOffset = await gatewayInstance.methods.MESSAGE_BOX_OFFSET().call();
     if (messageBoxOffset === null) {
       const chainCodeHash = await this.getCodeHash(web3, address);
