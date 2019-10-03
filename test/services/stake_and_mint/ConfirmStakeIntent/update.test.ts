@@ -32,6 +32,7 @@ import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/C
 import Utils from '../../../../src/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
+import { GatewayType } from '../../../../src/repositories/GatewayRepository';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -106,6 +107,12 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       sinon.fake.resolves(fakeTransactionHash),
     );
 
+    const getMessageBoxOffsetSpy = sinon.replace(
+      Utils,
+      'getMessageBoxOffset',
+      sinon.fake.resolves(messageOutBoxOffset),
+    );
+
     confirmStakeIntentService = new ConfirmStakeIntentService(
       messageRepository as any,
       messageTransferRequestRepository as any,
@@ -155,6 +162,12 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       sendTransactionSpy,
       1,
       [[rawTx, transactionOptions, auxiliaryWeb3]],
+    );
+
+    SpyAssert.assert(
+      getMessageBoxOffsetSpy,
+      1,
+      [[originWeb3, GatewayType.Origin, gatewayAddress]],
     );
 
     SpyAssert.assert(

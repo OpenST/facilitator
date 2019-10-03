@@ -24,7 +24,7 @@ import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
-import { MESSAGE_BOX_OFFSET, ORIGIN_GAS_PRICE } from '../../Constants';
+import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
@@ -33,6 +33,7 @@ import Observer from '../../observer/Observer';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
+import { GatewayType } from '../../repositories/GatewayRepository';
 
 /**
  * Class collects all non confirmed pending messages for redeem and confirms those messages.
@@ -157,11 +158,17 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     gateway: Gateway,
   ): Promise<string> {
     Logger.debug(`Generating proof for confirm redeem intent for gateway ${this.coGatewayAddress} and message hash ${message.messageHash}`);
+    const messageBoxOffset = await Utils.getMessageBoxOffset(
+      this.auxiliaryWeb3,
+      GatewayType.Auxiliary,
+      this.coGatewayAddress,
+    );
+    console.log('messageBoxOffset in confirmredeemintentservice :- ',messageBoxOffset);
     const proofData = await proofGenerator.getOutboxProof(
       this.coGatewayAddress,
       [message.messageHash],
       gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
-      MESSAGE_BOX_OFFSET, // fixme #141
+      messageBoxOffset,
     );
     if (proofData.storageProof[0].value === '0') {
       return Promise.reject(new Error('Storage proof is invalid'));

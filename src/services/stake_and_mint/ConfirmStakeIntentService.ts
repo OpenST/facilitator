@@ -25,7 +25,7 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE, MESSAGE_BOX_OFFSET } from '../../Constants';
+import { AUXILIARY_GAS_PRICE } from '../../Constants';
 import Logger from '../../Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
@@ -34,6 +34,7 @@ import Observer from '../../observer/Observer';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
+import { GatewayType } from '../../repositories/GatewayRepository';
 
 /**
  * Class collects all non confirmed pending messages and confirms those messages.
@@ -158,11 +159,17 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     gateway: Gateway,
   ): Promise<string> {
     Logger.debug(`Generation proof for confirm stake intent for gateway ${this.gatewayAddress} and message hash ${message.messageHash}`);
+    const messageBoxOffset = await Utils.getMessageBoxOffset(
+      this.originWeb3,
+      GatewayType.Origin,
+      this.gatewayAddress,
+    );
+    console.log('messageBoxOffset in confirmstakeintentservice :- ',messageBoxOffset);
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],
       gateway.lastRemoteGatewayProvenBlockHeight.toString(10),
-      MESSAGE_BOX_OFFSET, // fixme #141
+      messageBoxOffset,
     );
     if (proofData.storageProof[0].value === '0') {
       return Promise.reject(new Error('Storage proof is invalid'));
