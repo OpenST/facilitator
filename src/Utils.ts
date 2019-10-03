@@ -20,11 +20,11 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import * as Web3Utils from 'web3-utils';
+import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
+import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import Logger from './Logger';
 import Account from './Account';
 import MessageTransferRequest from './models/MessageTransferRequest';
-import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
-import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { CODE_HASH, MESSAGE_BOX_OFFSET } from './Constants';
 import { GatewayType } from './repositories/GatewayRepository';
 
@@ -172,27 +172,28 @@ const Utils = {
    * @param address Address of gateway contract.
    * @returns Message box offset of gateway of origin or auxiliary.
    */
-  async getMessageBoxOffset(web3: Web3, gatewayType: GatewayType, address: string): Promise<string> {
-    let messageBoxOffset: string = '';
+  async getMessageBoxOffset(
+    web3: Web3,
+    gatewayType: GatewayType,
+    address: string,
+  ): Promise<string> {
+    let messageBoxOffset = '';
     let gatewayInstance: EIP20Gateway | EIP20CoGateway;
     let codeHash: string;
-
-    if(gatewayType === GatewayType.Origin) {
-      gatewayInstance =  interacts.getEIP20Gateway(web3, address);
+    if (gatewayType === GatewayType.Origin) {
+      gatewayInstance = interacts.getEIP20Gateway(web3, address);
       codeHash = CODE_HASH.eip20Gateway;
-    }
-    else {
+    } else {
       gatewayInstance = interacts.getEIP20Gateway(web3, address);
       codeHash = CODE_HASH.eip20CoGateway;
     }
-    try {
-      messageBoxOffset = await gatewayInstance.methods.MESSAGE_BOX_OFFSET().call();
-    } catch (e) {
+
+    messageBoxOffset = await gatewayInstance.methods.MESSAGE_BOX_OFFSET().call();
+    if (messageBoxOffset === null) {
       const chainCodeHash = await this.getCodeHash(web3, address);
-      if(chainCodeHash === codeHash) {
+      if (chainCodeHash === codeHash) {
         messageBoxOffset = MESSAGE_BOX_OFFSET;
-      }
-      else {
+      } else {
         throw new Error(`Message box offset not found for contract address ${address}`);
       }
     }
@@ -200,15 +201,15 @@ const Utils = {
   },
 
   /**
-   * It gets code of the address and performs hash it.
+   * It gets code of the address and performs hash of it.
    * @param web3 Web3 instance.
    * @param address Address of contract.
    * @returns Hash of the contract code.
    */
   async getCodeHash(web3: Web3, address: string): Promise<string> {
-   const code = await web3.eth.getCode(address);
-   return web3.utils.sha3(code);
-  }
+    const code = await web3.eth.getCode(address);
+    return web3.utils.sha3(code);
+  },
 };
 
 export default Utils;

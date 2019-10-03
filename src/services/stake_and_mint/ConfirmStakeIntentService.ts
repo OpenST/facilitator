@@ -164,7 +164,7 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
       GatewayType.Origin,
       this.gatewayAddress,
     );
-    console.log('messageBoxOffset in confirmstakeintentservice :- ',messageBoxOffset);
+
     const proofData = await proofGenerator.getOutboxProof(
       this.gatewayAddress,
       [message.messageHash],
