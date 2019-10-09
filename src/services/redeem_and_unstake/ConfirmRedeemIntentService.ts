@@ -33,7 +33,6 @@ import Observer from '../../observer/Observer';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
-import { GatewayType } from '../../repositories/GatewayRepository';
 
 /**
  * Class collects all non confirmed pending messages for redeem and confirms those messages.
@@ -160,10 +159,8 @@ export default class ConfirmRedeemIntentService extends Observer<Gateway> {
     Logger.debug(`Generating proof for confirm redeem intent for gateway ${this.coGatewayAddress} and message hash ${message.messageHash}`);
     const messageBoxOffset = await Utils.getMessageBoxOffset(
       this.auxiliaryWeb3,
-      GatewayType.Auxiliary,
       this.coGatewayAddress,
     );
-    console.log('messageBoxOffset in confirmredeemintentservice :- ',messageBoxOffset);
     const proofData = await proofGenerator.getOutboxProof(
       this.coGatewayAddress,
       [message.messageHash],

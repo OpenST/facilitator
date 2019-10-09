@@ -32,7 +32,6 @@ import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/C
 import Utils from '../../../../src/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
-import { GatewayType } from '../../../../src/repositories/GatewayRepository';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -167,7 +166,7 @@ describe('ConfirmStakeIntentService.update()', (): void => {
     SpyAssert.assert(
       getMessageBoxOffsetSpy,
       1,
-      [[originWeb3, GatewayType.Origin, gatewayAddress]],
+      [[originWeb3, gatewayAddress]],
     );
 
     SpyAssert.assert(

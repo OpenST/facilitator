@@ -136,7 +136,7 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
     SpyAssert.assert(
       getMessageBoxOffsetSpy,
       1,
-      [[auxiliaryWeb3, GatewayType.Auxiliary, coGatewayAddress]],
+      [[auxiliaryWeb3, coGatewayAddress]],
     );
 
     SpyAssert.assert(
@@ -188,7 +188,6 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
         proof!.storageProof[0].serializedProof,
       ]],
     );
-
   });
 
   it('Should not do confirmRedeemIntent if '
@@ -301,11 +300,9 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
         proof.storageProof,
       ]],
     );
-
   });
 
   afterEach(async (): Promise<void> => {
     sinon.restore();
   });
-
 });

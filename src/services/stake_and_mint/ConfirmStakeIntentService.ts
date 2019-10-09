@@ -34,7 +34,6 @@ import Observer from '../../observer/Observer';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
-import { GatewayType } from '../../repositories/GatewayRepository';
 
 /**
  * Class collects all non confirmed pending messages and confirms those messages.
@@ -161,7 +160,6 @@ export default class ConfirmStakeIntentService extends Observer<Gateway> {
     Logger.debug(`Generation proof for confirm stake intent for gateway ${this.gatewayAddress} and message hash ${message.messageHash}`);
     const messageBoxOffset = await Utils.getMessageBoxOffset(
       this.originWeb3,
-      GatewayType.Origin,
       this.gatewayAddress,
     );
 
