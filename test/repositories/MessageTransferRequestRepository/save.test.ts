@@ -169,7 +169,6 @@ describe('MessageTransferRequestRepository::save', (): void => {
 
 
    it('should fail when gateway address is null', async (): Promise<void> => {
-    const invalidGatewayAddress = 'MessageTransferRequest.gateway cannot be null';
     const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
@@ -179,7 +178,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
-      null!,
+      null as any,
       sender,
       senderProxy,
     );
@@ -188,12 +187,11 @@ describe('MessageTransferRequestRepository::save', (): void => {
       config.repos.messageTransferRequestRepository.save(
       requestInput,
     ),
-      `${invalidGatewayAddress}`,
+      'MessageTransferRequest.gateway cannot be null',
     );
   });
 
    it('should fail when gateway address is undefined', async (): Promise<void> => {
-    const invalidGatewayAddress = 'MessageTransferRequest.gateway cannot be null';
     const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
@@ -203,7 +201,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
-      undefined!,
+      undefined as any,
       sender,
       senderProxy,
     );
@@ -212,7 +210,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       config.repos.messageTransferRequestRepository.save(
       requestInput,
     ),
-      `${invalidGatewayAddress}`,
+      'MessageTransferRequest.gateway cannot be null',
     );
   });
 
@@ -224,12 +222,12 @@ describe('MessageTransferRequestRepository::save', (): void => {
       RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
-      undefined!,
-      undefined!,
-      undefined!,
-      undefined!,
+      undefined as any,
+      undefined as any,
+      undefined as any,
+      undefined as any,
       '0xe34w5',
-      '0xe234q',
+      '0xe234a',
       '0x1234',
     );
 

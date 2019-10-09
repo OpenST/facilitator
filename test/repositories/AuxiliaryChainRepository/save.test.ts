@@ -103,11 +103,10 @@ describe('AuxiliaryChainRepository::save', (): void => {
   });
 
   it('should fail when ostGatewayAddress is null', async (): Promise<void> => {
-    const invalidGatewayAddress = 'AuxiliaryChain.ostGatewayAddress cannot be null';
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      null!,
+      null as any,
       ostCoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
@@ -120,16 +119,15 @@ describe('AuxiliaryChainRepository::save', (): void => {
     assert.isRejected(config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
     ),
-      `${invalidGatewayAddress}`,
+      'AuxiliaryChain.ostGatewayAddress cannot be null',
     );
   });
 
   it('should fail when ostGatewayAddress is undefined', async (): Promise<void> => {
-    const invalidGatewayAddress = 'AuxiliaryChain.ostGatewayAddress cannot be null';
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      undefined!,
+      undefined as any,
       ostCoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
@@ -143,7 +141,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
       config.repos.auxiliaryChainRepository.save(
         auxiliaryChain,
       ),
-      `${invalidGatewayAddress}`,
+      'AuxiliaryChain.ostGatewayAddress cannot be null',
     );
   });
 
@@ -153,7 +151,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
 
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
-      undefined!,
+      undefined as any,
       '0xacd142',
       '0x123',
       '0x24A3f',

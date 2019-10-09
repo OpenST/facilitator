@@ -20,7 +20,12 @@ import { ValidationErrorItem } from "sequelize/types/lib/errors";
 chai.use(chaiAsPromised);
 const { assert } = chai;
 
-export function assertErrorMessages(errorObject: ValidationErrorItem[], messages: string[]) {
+/**
+ * It asserts the error message received from sequelize with the expected message.
+ * @param errorObject Error object by sequelize.
+ * @param messages Expected error messages.
+ */
+export function assertErrorMessages(errorObject: ValidationErrorItem[], messages: string[]): void {
     assert.strictEqual(
       errorObject.length,
       messages.length,

@@ -109,12 +109,11 @@ describe('GatewayRepository::save', (): void => {
   });
 
   it('should fail when remote gateway address is null', async (): Promise<void> => {
-    const invalidRemoteGatewayAddress = 'Gateway.remoteGatewayAddress cannot be null';
     const gateway = new Gateway(
       gatewayAddress,
       chain,
       gatewayType,
-      null!,
+      null as any,
       tokenAddress,
       anchorAddress,
       bounty,
@@ -128,17 +127,16 @@ describe('GatewayRepository::save', (): void => {
       config.repos.gatewayRepository.save(
       gateway,
     ),
-      `${invalidRemoteGatewayAddress}`,
+      'Gateway.remoteGatewayAddress cannot be null',
     );
   });
 
   it('should fail when remote gateway address is undefined', async (): Promise<void> => {
-    const invalidRemoteGatewayAddress = 'Gateway.remoteGatewayAddress cannot be null';
     const gateway = new Gateway(
       gatewayAddress,
       chain,
       gatewayType,
-      undefined!,
+      undefined as any,
       tokenAddress,
       anchorAddress,
       bounty,
@@ -152,7 +150,7 @@ describe('GatewayRepository::save', (): void => {
       config.repos.gatewayRepository.save(
       gateway,
     ),
-      `${invalidRemoteGatewayAddress}`,
+      'Gateway.remoteGatewayAddress cannot be null',
     );
   });
 
@@ -161,12 +159,12 @@ describe('GatewayRepository::save', (): void => {
 
     const gateway = new Gateway(
       gatewayAddress,
-      undefined!,
-      undefined!,
-      undefined!,
+      undefined as any,
+      undefined as any,
+      undefined as any,
       '0x1234',
       '0x12345',
-      undefined!,
+      undefined as any,
       lastRemoteGatewayProvenBlockHeight,
       activation,
       createdAt,
