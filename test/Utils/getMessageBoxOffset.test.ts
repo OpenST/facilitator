@@ -26,6 +26,7 @@ import { MESSAGE_BOX_OFFSET } from '../../src/Constants';
 describe('Utils.getMessageBoxOffset()', async () => {
   const web3 = new Web3('');
   const address = '0xF9234855d1Fb05f06A09baFB827faD084516b21c';
+  const dummyMessageBoxOffset = '9';
 
   function getGatewayInstance(messageBoxOffset: string | null): object {
     return {
@@ -41,8 +42,8 @@ describe('Utils.getMessageBoxOffset()', async () => {
     };
   }
 
-  it('should pass when messagebox offset is null', async () => {
-    const gatewayInstance = getGatewayInstance(MESSAGE_BOX_OFFSET);
+  it('should pass when messagebox offset is present in the contract', async () => {
+    const gatewayInstance = getGatewayInstance(dummyMessageBoxOffset);
 
     const eip20GatewaySpy = sinon.replace(
       interacts,
@@ -54,8 +55,8 @@ describe('Utils.getMessageBoxOffset()', async () => {
 
     assert.strictEqual(
       messageBoxOffset,
-      MESSAGE_BOX_OFFSET,
-      `Messagebox offset should be ${MESSAGE_BOX_OFFSET} but got ${messageBoxOffset}`,
+      dummyMessageBoxOffset,
+      `Messagebox offset should be ${dummyMessageBoxOffset} but got ${messageBoxOffset}`,
     );
 
     SpyAssert.assert(eip20GatewaySpy, 1, [[web3, address]]);
@@ -63,7 +64,7 @@ describe('Utils.getMessageBoxOffset()', async () => {
     sinon.restore();
   });
 
-  it('should pass when messagebox offset is not null ', async () => {
+  it('should pass and return default messagebox offset when it is not present in the contract', async () => {
     const gatewayInstance = getGatewayInstance(null);
 
     const eip20CoGatewaySpy = sinon.replace(
@@ -76,8 +77,8 @@ describe('Utils.getMessageBoxOffset()', async () => {
 
     assert.strictEqual(
       messageBoxOffset,
-      undefined,
-      `Messagebox offset should be undefined but got ${messageBoxOffset}`,
+      MESSAGE_BOX_OFFSET,
+      `Messagebox offset should be ${MESSAGE_BOX_OFFSET} but got ${messageBoxOffset}`,
     );
 
     SpyAssert.assert(eip20CoGatewaySpy, 1, [[web3, address]]);

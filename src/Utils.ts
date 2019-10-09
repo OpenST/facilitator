@@ -171,7 +171,7 @@ const Utils = {
   async getMessageBoxOffset(
     web3: Web3,
     address: string,
-  ): Promise<string | undefined> {
+  ): Promise<string> {
     // fixme : Use Gatewaybase contract interact(https://github.com/mosaicdao/mosaic-contracts/issues/799)
     const gatewayInstance = interacts.getEIP20Gateway(web3, address);
     const messageBoxOffset = await gatewayInstance.methods.MESSAGE_BOX_OFFSET().call();
