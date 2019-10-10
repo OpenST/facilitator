@@ -109,19 +109,38 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
    * @returns Newly created or updated contract entity object.
    */
   public async save(contractEntity: ContractEntity): Promise<ContractEntity> {
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(contractEntity);
-
-    await ContractEntityModel.upsert(
-      contractEntity,
+    const contractEntityModelObj = await ContractEntityModel.findOne(
       {
-        fields: definedOwnProps,
+        where: {
+          contractAddress: contractEntity.contractAddress,
+          entityType: contractEntity.entityType,
+        },
       },
     );
 
-    const updatedContractEntity = await this.get(
-      contractEntity.contractAddress,
-      contractEntity.entityType,
-    );
+    let updatedContractEntity: ContractEntity | null;
+    if (contractEntityModelObj === null) {
+      updatedContractEntity = this.convertToContractEntity(await ContractEntityModel.create(
+        contractEntity,
+      ));
+    } else {
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(contractEntity);
+      await ContractEntityModel.update(
+        contractEntity,
+        {
+          where: {
+            contractAddress: contractEntity.contractAddress,
+            entityType: contractEntity.entityType,
+          },
+          fields: definedOwnProps,
+        },
+      );
+      updatedContractEntity = await this.get(
+        contractEntity.contractAddress,
+        contractEntity.entityType,
+      );
+    }
+
     assert(
       updatedContractEntity !== null,
       `Updated contract entity record not found for contractAddress: ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`,

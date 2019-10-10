@@ -30,6 +30,10 @@ interface TestConfigInterface {
 let config: TestConfigInterface;
 
 describe('MessageTransferRequestRepository::get', (): void => {
+  const gatewayAddress = '0x0000000000000000000000000000000000000001';
+  const beneficiary = '0x0000000000000000000000000000000000000002';
+  const sender = '0x0000000000000000000000000000000000000003';
+  const senderProxy = '0x0000000000000000000000000000000000000004';
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
@@ -42,13 +46,13 @@ describe('MessageTransferRequestRepository::get', (): void => {
       RequestType.Stake,
       new BigNumber('10'),
       new BigNumber('1'),
-      'beneficiary',
+      beneficiary,
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
-      'gateway',
-      'sender',
-      'senderProxy',
+      gatewayAddress,
+      sender,
+      senderProxy,
     );
 
     await config.repos.messageTransferRequestRepository.save(

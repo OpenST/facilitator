@@ -38,13 +38,13 @@ export default class StubData {
     requestType,
     new BigNumber('10'),
     new BigNumber('1'),
-    'beneficiary',
+    '0x0000000000000000000000000000000000000001',
     new BigNumber('2'),
     new BigNumber('3'),
     new BigNumber('4'),
-    'gateway',
-    'sender',
-    'senderProxy',
+    '0x0000000000000000000000000000000000000002',
+    '0x0000000000000000000000000000000000000003',
+    '0x0000000000000000000000000000000000000004',
   );
 
   public static auxiliaryChainRecord(

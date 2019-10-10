@@ -21,6 +21,7 @@ import Gateway from '../../../src/models/Gateway';
 import { GatewayType } from '../../../src/repositories/GatewayRepository';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
+import assert, { assertErrorMessages } from "../../test_utils/assert";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -106,4 +107,88 @@ describe('GatewayRepository::save', (): void => {
 
     Util.assertGatewayAttributes(updatedGateway, gateway);
   });
+
+  it('should fail when remote gateway address is null', async (): Promise<void> => {
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      null as any,
+      tokenAddress,
+      anchorAddress,
+      bounty,
+      lastRemoteGatewayProvenBlockHeight,
+      activation,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.gatewayRepository.save(
+      gateway,
+    ),
+      'Gateway.remoteGatewayAddress cannot be null',
+    );
+  });
+
+  it('should fail when remote gateway address is undefined', async (): Promise<void> => {
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      undefined as any,
+      tokenAddress,
+      anchorAddress,
+      bounty,
+      lastRemoteGatewayProvenBlockHeight,
+      activation,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.gatewayRepository.save(
+      gateway,
+    ),
+      'Gateway.remoteGatewayAddress cannot be null',
+    );
+  });
+
+  it('should fail when multiple parameters are undefined', async (): Promise<void> => {
+    // It is used to test for multiple validations failure.
+
+    const gateway = new Gateway(
+      gatewayAddress,
+      undefined as any,
+      undefined as any,
+      undefined as any,
+      '0x1234',
+      '0x12345',
+      undefined as any,
+      lastRemoteGatewayProvenBlockHeight,
+      activation,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.gatewayRepository.save(
+        gateway,
+      ),
+    );
+
+    try {
+      await config.repos.gatewayRepository.save(gateway);
+    } catch (error) {
+      assertErrorMessages(error.errors, [
+        'Gateway.chain cannot be null',
+        'Gateway.gatewayType cannot be null',
+        'Gateway.remoteGatewayAddress cannot be null',
+        'Gateway.bounty cannot be null',
+        'Validation len on tokenAddress failed',
+        'Validation len on anchorAddress failed',
+      ]);
+    }
+  });
+
 });
