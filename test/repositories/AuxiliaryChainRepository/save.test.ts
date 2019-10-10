@@ -146,7 +146,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
   });
 
 
-  it('should fail when parameters are undefined', async (): Promise<void> => {
+  it('should fail when multiple parameters are undefined', async (): Promise<void> => {
     // It is used to test for multiple validations failure.
 
     const auxiliaryChain = new AuxiliaryChain(

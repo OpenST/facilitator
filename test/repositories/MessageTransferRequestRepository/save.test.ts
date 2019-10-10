@@ -214,7 +214,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
     );
   });
 
-  it('should fail when parameters are undefined', async (): Promise<void> => {
+  it('should fail when multiple parameters are undefined', async (): Promise<void> => {
     // It is used to test when multiple validations failed.
 
     const requestInput = new MessageTransferRequest(
