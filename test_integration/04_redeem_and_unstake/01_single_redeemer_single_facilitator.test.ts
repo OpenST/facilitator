@@ -108,7 +108,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
       new BigNumber(1),
-      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.eip20CoGatewayAddress,
       redeemerAccount.address,
       '' // would be filled later
     );
@@ -313,7 +313,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   });
 
   it('should verify anchoring', async (): Promise<void> => {
-    anchoredBlockNumber = await utils.anchorAuxiliary(auxChainId);
+    anchoredBlockNumber = await utils.anchorAuxiliary();
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);

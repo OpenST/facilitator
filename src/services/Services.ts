@@ -26,6 +26,7 @@ import Utils from '../Utils';
 import ProveCoGatewayService from './redeem_and_unstake/ProveCoGatewayService';
 import ConfirmRedeemIntentService from './redeem_and_unstake/ConfirmRedeemIntentService';
 import AcceptRedeemRequestService from './redeem_and_unstake/AcceptRedeemRequestService';
+import TokenAddresses from '../Config/TokenAddresses';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -89,13 +90,13 @@ export default class Services {
    * @param repositories Repository container.
    * @param config Instance of config.
    */
-  public static create(repositories: Repositories, config: Config): Services {
+  public static create(repositories: Repositories, config: Config, tokenAddresses: TokenAddresses): Services {
     // Initialize stake & mint services
 
     const acceptStakeRequestService = new AcceptStakeRequestService(
       repositories,
       config.originWeb3,
-      Utils.toChecksumAddress(config.mosaic.originChain.contractAddresses.ostComposerAddress),
+      Utils.toChecksumAddress(tokenAddresses.stakePoolAddress),
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
     );
     const { auxChainId } = config.facilitator;
@@ -107,7 +108,7 @@ export default class Services {
       Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
       Utils.toChecksumAddress(
-        config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
+        tokenAddresses.originGatewayAddress,
       ),
       auxChainId,
     );
@@ -117,9 +118,8 @@ export default class Services {
       repositories.messageTransferRequestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      config.mosaic.auxiliaryChains[auxChainId]
-        .contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      tokenAddresses.originGatewayAddress,
+      tokenAddresses.auxiliaryGatewayAddress,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
 
@@ -127,7 +127,7 @@ export default class Services {
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
+      tokenAddresses.originGatewayAddress,
       config.facilitator.chains[config.facilitator.originChain].worker,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
@@ -137,8 +137,7 @@ export default class Services {
     const acceptRedeemRequestService = new AcceptRedeemRequestService(
       repositories,
       config.auxiliaryWeb3,
-      Utils.toChecksumAddress(config.mosaic.auxiliaryChains[auxChainId]
-        .contractAddresses.auxiliary.redeemPoolAddress),
+      Utils.toChecksumAddress(tokenAddresses.redeemPoolAddress),
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.auxChainId].worker),
     );
 
@@ -147,9 +146,8 @@ export default class Services {
       repositories.messageTransferRequestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
-      config.mosaic.auxiliaryChains[auxChainId]
-        .contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      tokenAddresses.originGatewayAddress,
+      tokenAddresses.auxiliaryGatewayAddress,
       config.facilitator.chains[config.facilitator.originChain].worker,
     );
 
@@ -160,10 +158,7 @@ export default class Services {
       config.auxiliaryWeb3,
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
       // This parameter value represents interested CoGateway, for now it's OST prime CoGateway.
-      Utils.toChecksumAddress(
-        config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary
-          .ostEIP20CogatewayAddress,
-      ),
+      Utils.toChecksumAddress(tokenAddresses.auxiliaryGatewayAddress),
       auxChainId,
     );
 
@@ -171,8 +166,7 @@ export default class Services {
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      config.mosaic.auxiliaryChains[auxChainId].contractAddresses.auxiliary
-        .ostEIP20CogatewayAddress,
+      tokenAddresses.auxiliaryGatewayAddress,
       config.facilitator.chains[config.facilitator.originChain].worker,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );

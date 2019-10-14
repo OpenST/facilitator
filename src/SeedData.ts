@@ -124,7 +124,7 @@ export default class SeedData {
       this.config.facilitator.originChain,
       GatewayType.Origin,
       this.coGatewayAddress,
-      this.simpleTokenAddress,
+      this.valueTokenAddress,
       this.anchorAddress,
       gatewayProperties.bounty,
       Zero,
@@ -142,7 +142,7 @@ export default class SeedData {
       this.config.facilitator.auxChainId.toString(),
       GatewayType.Auxiliary,
       this.gatewayAddress,
-      this.ostPrimeAddress,
+      this.utilityTokenAddress,
       this.coAnchorAddress,
       await this.getCoGatewayBounty(),
       Zero,
@@ -156,7 +156,7 @@ export default class SeedData {
    */
   private async populateContractEntityTable(): Promise<void> {
     const contractAddressEventTypesMap: Record<string, EntityType[]> = {
-      [this.ostComposerAddress]: [EntityType.StakeRequesteds],
+      [this.stakePoolAddress]: [EntityType.StakeRequesteds],
       [this.redeemPoolAddress]: [EntityType.RedeemRequesteds],
       [this.gatewayAddress]: [
         // Stake & mint entities
@@ -215,7 +215,7 @@ export default class SeedData {
    */
   private get gatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress,
+      this.auxiliaryChainMosaicConfig.contractAddresses.origin.eip20GatewayAddress,
     );
   }
 
@@ -224,7 +224,7 @@ export default class SeedData {
    */
   private get coGatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.eip20CoGatewayAddress,
     );
   }
 
@@ -247,14 +247,17 @@ export default class SeedData {
   }
 
   /**
-   * @return Returns OstComposer address.
+   * @return Returns stake pool address.
    */
-  private get ostComposerAddress(): string {
+  private get stakePoolAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.ostComposerAddress,
+      this.originChainMosaicConfig.contractAddresses.stakePoolAddress,
     );
   }
 
+  /**
+   * @return Returns redeem pool address.
+   */
   private get redeemPoolAddress(): string {
     return Utils.toChecksumAddress(
       this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.redeemPoolAddress,
@@ -262,20 +265,20 @@ export default class SeedData {
   }
 
   /**
-   * @return Returns OstPrime address.
+   * @return Returns utility token address.
    */
-  private get ostPrimeAddress(): string {
+  private get utilityTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress,
+      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.utilityTokenAddress,
     );
   }
 
   /**
-   * @return Returns SimpleToken address.
+   * @return Returns value token address.
    */
-  private get simpleTokenAddress(): string {
+  private get valueTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.simpleTokenAddress,
+      this.originChainMosaicConfig.contractAddresses.valueTokenAddress,
     );
   }
 

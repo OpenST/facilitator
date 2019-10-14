@@ -296,7 +296,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   });
 
   it('should verify anchoring', async (): Promise<void> => {
-    anchoredBlockNumber = await utils.anchorOrigin(auxChainId);
+    anchoredBlockNumber = await utils.anchorOrigin();
 
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {

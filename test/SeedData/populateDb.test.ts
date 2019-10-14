@@ -48,7 +48,7 @@ describe('SeedData.populateDb()', (): void => {
   const ostCoGatewayAddress = '0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227';
   const anchorAddress = '0xaC80704c80AB83512b48314bDfa82f79923C2Fbe';
   const coAnchorAddress = '0xBe26124167E8a350eE806B3ba11Ddb6c8E6dc689';
-  const simpleTokenAddress = '0x325f05a75999347b7d8461BaEf274afAE0B8AE1c';
+  const valueTokenAddress = '0x325f05a75999347b7d8461BaEf274afAE0B8AE1c';
   const ostPrimeAddress = '0x0d3E57044B1B96a257fB2ba3958c1130219A2d55';
   const currentTimestamp = Utils.getCurrentTimestamp();
 
@@ -82,7 +82,7 @@ describe('SeedData.populateDb()', (): void => {
       originChain,
       GatewayType.Origin,
       ostCoGatewayAddress,
-      simpleTokenAddress,
+      valueTokenAddress,
       anchorAddress,
       zeroBn,
       zeroBn,

@@ -26,6 +26,7 @@ import SharedStorage from './SharedStorage';
 import Logger from '../src/Logger';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
+import TokenAddresses from "../src/Config/TokenAddresses";
 
 const workerPrefix = 'MOSAIC_ADDRESS_PASSW_';
 
@@ -43,7 +44,8 @@ export default class Utils {
 
   private ostPrime: string;
 
-  public mosaicConfig: MosaicConfig;
+  // public mosaicConfig: MosaicConfig;
+  public tokenAddresses: TokenAddresses;
 
   public facilitatorConfig: FacilitatorConfig;
 
@@ -61,17 +63,15 @@ export default class Utils {
     auxChainId: number,
   ) {
     this.facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-    this.mosaicConfig = mosaicConfig;
+    this.tokenAddresses = TokenAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
     this.originChain = facilitatorConfig.originChain;
     this.originWeb3 = new Web3(facilitatorConfig.chains[this.originChain].nodeRpc);
     this.auxiliaryWeb3 = new Web3(facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc);
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
-    this.ostComposer = this.mosaicConfig.originChain.contractAddresses.ostComposerAddress;
-    this.redeemPool = this.mosaicConfig.auxiliaryChains[auxChainId]
-      .contractAddresses.auxiliary.redeemPoolAddress;
-    this.ostPrime = this.mosaicConfig.auxiliaryChains[auxChainId]
-      .contractAddresses.auxiliary.ostPrimeAddress;
+    this.ostComposer = this.tokenAddresses.stakePoolAddress;
+    this.redeemPool = this.tokenAddresses.redeemPoolAddress;
+    this.ostPrime = this.tokenAddresses.utilityTokenAddress;
   }
 
   /**
@@ -220,18 +220,16 @@ export default class Utils {
 
   /**
    * It anchors state root to auxiliary chain's anchor contract.
-   * @param auxChainId Identifier for the auxiliary chain.
    */
-  public async anchorOrigin(auxChainId: number): Promise<number> {
+  public async anchorOrigin(): Promise<number> {
     const organizationInstance = interacts.getOrganization(
       this.auxiliaryWeb3,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
-        .auxiliary.anchorOrganizationAddress,
+      this.tokenAddresses.auxiliaryAnchorOrganizationAddress,
     );
 
     const anchorInstance = interacts.getAnchor(
       this.auxiliaryWeb3,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
+      this.tokenAddresses.auxiliaryAnchorAddress,
     );
 
     const currentBlock = await this.originWeb3.eth.getBlock('latest');
@@ -255,19 +253,17 @@ export default class Utils {
 
   /**
    * It anchors state root to origin chain's anchor contract.
-   * @param auxChainId Identifier for the auxiliary chain.
    */
-  public async anchorAuxiliary(auxChainId: number): Promise<number> {
+  public async anchorAuxiliary(): Promise<number> {
     const organizationInstance = interacts.getOrganization(
       this.originWeb3,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
-        .origin.anchorOrganizationAddress,
+      this.tokenAddresses.originAnchorOrganizationAddress,
     );
     const owner = await organizationInstance.methods.owner().call();
 
     const anchorInstance = interacts.getAnchor(
       this.originWeb3,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
+      this.tokenAddresses.originAnchorAddress,
     );
 
     const currentBlock = await this.auxiliaryWeb3.eth.getBlock('latest');
@@ -634,12 +630,10 @@ export default class Utils {
     const auxiliaryChain = new AuxiliaryChain(
       auxChainId,
       originChain,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
-        .origin.ostEIP20GatewayAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses
-        .auxiliary.ostEIP20CogatewayAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
-      this.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
+      this.tokenAddresses.originGatewayAddress,
+      this.tokenAddresses.auxiliaryGatewayAddress,
+      this.tokenAddresses.originAnchorAddress,
+      this.tokenAddresses.auxiliaryAnchorAddress,
       lastOriginBlockHeight,
       lastAuxiliaryBlockHeight,
     );
@@ -795,10 +789,7 @@ export default class Utils {
    * @returns EIP20Gateway object.
    */
   public getEIP20GatewayInstance(): EIP20Gateway {
-    const {
-      ostEIP20GatewayAddress,
-    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId]
-      .contractAddresses.origin;
+    const ostEIP20GatewayAddress = this.tokenAddresses.originGatewayAddress;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       ostEIP20GatewayAddress,
@@ -811,13 +802,10 @@ export default class Utils {
    * @returns EIP20CoGateway object.
    */
   public getEIP20CoGatewayInstance(): EIP20CoGateway {
-    const {
-      ostEIP20CogatewayAddress,
-    } = this.mosaicConfig.auxiliaryChains[this.facilitatorConfig.auxChainId]
-      .contractAddresses.auxiliary;
+    const eip20CoGatewayAddress = this.tokenAddresses.auxiliaryGatewayAddress;
     const eip20CoGatewayInstance: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
-      ostEIP20CogatewayAddress,
+      eip20CoGatewayAddress,
     );
     return eip20CoGatewayInstance;
   }
@@ -827,10 +815,10 @@ export default class Utils {
    * @returns Simple token object.
    */
   public getSimpleTokenInstance(): EIP20Token {
-    const { simpleTokenAddress } = this.mosaicConfig.originChain.contractAddresses;
+    const { valueTokenAddress } = this.tokenAddresses;
     const simpletokenInstance: EIP20Token = interacts.getEIP20Token(
       this.originWeb3,
-      simpleTokenAddress,
+      valueTokenAddress,
     );
     return simpletokenInstance;
   }
