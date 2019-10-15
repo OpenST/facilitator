@@ -218,18 +218,35 @@ export class MessageRepository extends Subject<Message> {
    * @returns Newly created or updated Message object.
    */
   public async save(message: Message): Promise<Message> {
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(message);
-
-    await MessageModel.upsert(
-      message,
+    const messageModelObj = await MessageModel.findOne(
       {
-        fields: definedOwnProps,
+        where: {
+          messageHash: message.messageHash,
+        },
       },
     );
 
-    const updatedMessage = await this.get(
-      message.messageHash,
-    );
+    let updatedMessage: Message | null;
+    if (messageModelObj === null) {
+      updatedMessage = this.convertToMessage(await MessageModel.create(
+        message,
+      ));
+    } else {
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(message);
+      await MessageModel.update(
+        message,
+        {
+          where: {
+            messageHash: message.messageHash,
+          },
+          fields: definedOwnProps,
+        },
+      );
+      updatedMessage = await this.get(
+        message.messageHash,
+      );
+    }
+
     assert(
       updatedMessage !== null,
       `Updated message record not found for messageHash: ${message.messageHash}`,

@@ -20,6 +20,7 @@ import BigNumber from 'bignumber.js';
 import AuxiliaryChain from '../../../src/models/AuxiliaryChain';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
+import assert, { assertErrorMessages } from "../../test_utils/assert";
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -93,10 +94,90 @@ describe('AuxiliaryChainRepository::save', (): void => {
       auxiliaryChain,
     );
 
+    auxiliaryChain.originChainName = 'goerli';
     const updatedAuxiliaryChain = await config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
     );
 
     Util.assertAuxiliaryChainAttributes(updatedAuxiliaryChain, auxiliaryChain);
+  });
+
+  it('should fail when ostGatewayAddress is null', async (): Promise<void> => {
+    const auxiliaryChain = new AuxiliaryChain(
+      chainId,
+      originChainName,
+      null as any,
+      ostCoGatewayAddress,
+      anchorAddress,
+      coAnchorAddress,
+      lastOriginBlockHeight,
+      lastAuxiliaryBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(config.repos.auxiliaryChainRepository.save(
+      auxiliaryChain,
+    ),
+      'AuxiliaryChain.ostGatewayAddress cannot be null',
+    );
+  });
+
+  it('should fail when ostGatewayAddress is undefined', async (): Promise<void> => {
+    const auxiliaryChain = new AuxiliaryChain(
+      chainId,
+      originChainName,
+      undefined as any,
+      ostCoGatewayAddress,
+      anchorAddress,
+      coAnchorAddress,
+      lastOriginBlockHeight,
+      lastAuxiliaryBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.auxiliaryChainRepository.save(
+        auxiliaryChain,
+      ),
+      'AuxiliaryChain.ostGatewayAddress cannot be null',
+    );
+  });
+
+
+  it('should fail when multiple parameters are undefined', async (): Promise<void> => {
+    // It is used to test for multiple validations failure.
+
+    const auxiliaryChain = new AuxiliaryChain(
+      chainId,
+      undefined as any,
+      '0xacd142',
+      '0x123',
+      '0x24A3f',
+      '0xd32fe3',
+      lastOriginBlockHeight,
+      lastAuxiliaryBlockHeight,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.auxiliaryChainRepository.save(
+        auxiliaryChain,
+      ),
+    );
+
+    try {
+      await config.repos.auxiliaryChainRepository.save(auxiliaryChain);
+    } catch (error) {
+      assertErrorMessages(error.errors, [
+        'AuxiliaryChain.originChainName cannot be null',
+        'Validation len on ostGatewayAddress failed',
+        'Validation len on ostCoGatewayAddress failed',
+        'Validation len on anchorAddress failed',
+        'Validation len on coAnchorAddress failed',
+      ]);
+    }
   });
 });
