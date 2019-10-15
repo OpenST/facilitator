@@ -1,14 +1,8 @@
 # Running facilitator as systemd service
 
-## Switch user to root
-
-```
-su root
-```
-
 ## Create facilitator_{token}.service file under /etc/systemd/system/
 
-token here is token identifier.
+token here is token identifier. Facilitator service file will look like below: 
 e.g. facilitator_ost.service
      facilitator_weth.service
 ```
