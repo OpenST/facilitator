@@ -1,0 +1,25 @@
+[Unit]
+Description=Facilitator service for ost
+After=network.target
+
+[Service]
+# Machine user
+User=root
+
+# Service will switch to this directory before starting facilitator
+WorkingDirectory=/root/facilitator
+# Start facilitator
+ExecStart=./facilitator start --facilitator-config <facilitator-config-path> --mosaic-config <mosaic-config-path>
+
+# Restart when facilitator is crashed
+Restart=always
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+
+# Output to syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=facilitator_<token_name>
+
+[Install]
+WantedBy=multi-user.target
