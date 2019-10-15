@@ -1,10 +1,10 @@
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
-import TokenConfig from '@openst/mosaic-chains/lib/src/Config/TokenConfig';
+import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 
 /**
  * It represents contract addresses from mosaic config or token config.
  */
-export default class TokenAddresses {
+export default class GatewayAddresses {
 
   public readonly valueTokenAddress: string;
 
@@ -34,9 +34,19 @@ export default class TokenAddresses {
 
   /**
    * Constructor.
-   * @param mosaicConfig MosaicConfig object.
-   * @param auxChainId Chain id of auxiliary chain.
-   * @param tokenConfig TokenConfig object.
+   * @param {string} valueTokenAddress
+   * @param {string} baseTokenAddress
+   * @param {string} stakePoolAddress
+   * @param {string} originAnchorAddress
+   * @param {string} originAnchorOrganizationAddress
+   * @param {string} auxiliaryAnchorAddress
+   * @param {string} auxiliaryAnchorOrganizationAddress
+   * @param {string} originGatewayAddress
+   * @param {string} auxiliaryGatewayAddress
+   * @param {string} redeemPoolAddress
+   * @param {string} utilityTokenAddress
+   * @param {string} originGatewayOrganizationAddress
+   * @param {string} auxiliaryGatewayOrganizationAddress
    */
   private constructor(
     valueTokenAddress: string,
@@ -44,8 +54,8 @@ export default class TokenAddresses {
     stakePoolAddress: string,
     originAnchorAddress: string,
     originAnchorOrganizationAddress: string,
-    auxiliaryAnchorOrganizationAddress: string,
     auxiliaryAnchorAddress: string,
+    auxiliaryAnchorOrganizationAddress: string,
     originGatewayAddress: string,
     auxiliaryGatewayAddress: string,
     redeemPoolAddress: string,
@@ -69,17 +79,17 @@ export default class TokenAddresses {
   }
 
   /**
-   * It provides TokenAddresses object based from mosaic config object.
+   * It provides GatewayAddresses object based from mosaic config object.
    * @param mosaicConfig Mosaic config object
    * @param auxChainId Chain id of auxiliary chain.
-   * @returns TokenAddresses object.
+   * @returns GatewayAddresses object.
    */
   public static fromMosaicConfig(
     mosaicConfig: MosaicConfig,
     auxChainId: number,
-  ): TokenAddresses {
+  ): GatewayAddresses {
     if (mosaicConfig.auxiliaryChains[auxChainId]) {
-      return new TokenAddresses(
+      return new GatewayAddresses(
         mosaicConfig.originChain.contractAddresses.valueTokenAddress,
         mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.baseTokenAddress,
         mosaicConfig.originChain.contractAddresses.stakePoolAddress,
@@ -92,36 +102,36 @@ export default class TokenAddresses {
         mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.redeemPoolAddress,
         mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.utilityTokenAddress,
         mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.gatewayOrganizationAddress,
-        mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.coGatewayOrganizationAddress
+        mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.coGatewayOrganizationAddress,
       );
     }
     throw new Error(`Auxchain id ${auxChainId} is not present in mosaic config`);
   }
 
   /**
-   * It provides TokenAddresses object based from tokenconfig object.
-   * @param tokenConfig TokenConfig object.
-   * @returns TokenAddresses object.
+   * It provides GatewayAddresses object from gateway config object.
+   * @param gatewayConfig GatewayConfig object.
+   * @returns GatewayAddresses object.
    */
-  public static fromTokenConfig(tokenConfig: TokenConfig): TokenAddresses {
-    if(tokenConfig !== null) {
-      const auxChainId = tokenConfig.auxChainId;
-      return new TokenAddresses(
-        tokenConfig.originContracts.valueTokenAddress,
-        tokenConfig.originContracts.baseTokenAddress,
-        tokenConfig.originContracts.stakePoolAddress!,
-        tokenConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
-        tokenConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorOrganizationAddress,
-        tokenConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
-        tokenConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress,
-        tokenConfig.originContracts.eip20GatewayAddress,
-        tokenConfig.auxiliaryContracts.eip20CoGatewayAddress,
-        tokenConfig.auxiliaryContracts.redeemPoolAddress!,
-        tokenConfig.auxiliaryContracts.utilityTokenAddress,
-        tokenConfig.originContracts.gatewayOrganizationAddress,
-        tokenConfig.auxiliaryContracts.coGatewayOrganizationAddress
+  public static fromGatewayConfig(gatewayConfig: GatewayConfig): GatewayAddresses {
+    if(gatewayConfig) {
+      const auxChainId = gatewayConfig.auxChainId;
+      return new GatewayAddresses(
+        gatewayConfig.originContracts.valueTokenAddress,
+        gatewayConfig.originContracts.baseTokenAddress,
+        gatewayConfig.originContracts.stakePoolAddress!,
+        gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
+        gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorOrganizationAddress,
+        gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
+        gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress,
+        gatewayConfig.originContracts.eip20GatewayAddress,
+        gatewayConfig.auxiliaryContracts.eip20CoGatewayAddress,
+        gatewayConfig.auxiliaryContracts.redeemPoolAddress!,
+        gatewayConfig.auxiliaryContracts.utilityTokenAddress,
+        gatewayConfig.originContracts.gatewayOrganizationAddress,
+        gatewayConfig.auxiliaryContracts.coGatewayOrganizationAddress,
       );
     }
-    throw new Error('Token config should not be null');
+    throw new Error('Gateway config should not be null');
   }
 }

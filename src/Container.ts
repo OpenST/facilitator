@@ -23,7 +23,7 @@ import Repositories from './repositories/Repositories';
 import Services from './services/Services';
 import Subscriptions from './subscriptions/Subscriptions';
 import TransactionHandler from './TransactionHandler';
-import TokenAddresses from './Config/TokenAddresses';
+import GatewayAddresses from './Config/GatewayAddresses';
 
 export default class Container {
   /**
@@ -50,12 +50,12 @@ export default class Container {
     const config = configFactory.getConfig();
     Logger.debug('Config loaded successfully.');
     const repositories = await Repositories.create(config.facilitator.database.path);
-    const tokenAddresses = TokenAddresses.fromMosaicConfig(config.mosaic, config.facilitator.auxChainId);
+    const gatewayAddresses = GatewayAddresses.fromMosaicConfig(config.mosaic, config.facilitator.auxChainId);
     const handler = Handlers.create(
       repositories,
       config.facilitator.auxChainId,
-      tokenAddresses.originGatewayAddress,
-      tokenAddresses.auxiliaryGatewayAddress,
+      gatewayAddresses.originGatewayAddress,
+      gatewayAddresses.auxiliaryGatewayAddress,
     );
     const transactionHandler = new TransactionHandler(
       handler,
@@ -72,7 +72,7 @@ export default class Container {
       config.facilitator.chains[configAuxChainId].subGraphRpc,
     );
 
-    const services = Services.create(repositories, config, tokenAddresses);
+    const services = Services.create(repositories, config, gatewayAddresses);
 
     repositories.attach(services);
 

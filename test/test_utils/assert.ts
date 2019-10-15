@@ -16,7 +16,7 @@
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import { ValidationErrorItem } from "sequelize/types/lib/errors";
+import { ValidationErrorItem } from 'sequelize/types/lib/errors';
 chai.use(chaiAsPromised);
 const { assert } = chai;
 

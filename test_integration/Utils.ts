@@ -26,7 +26,7 @@ import SharedStorage from './SharedStorage';
 import Logger from '../src/Logger';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
-import TokenAddresses from "../src/Config/TokenAddresses";
+import GatewayAddresses from "../src/Config/GatewayAddresses";
 
 const workerPrefix = 'MOSAIC_ADDRESS_PASSW_';
 
@@ -38,14 +38,13 @@ export default class Utils {
 
   public auxiliaryWeb3: Web3;
 
-  private ostComposer: string;
+  private stakePoolAddress: string;
 
   private redeemPool: string;
 
   private ostPrime: string;
 
-  // public mosaicConfig: MosaicConfig;
-  public tokenAddresses: TokenAddresses;
+  public gatewayAddresses: GatewayAddresses;
 
   public facilitatorConfig: FacilitatorConfig;
 
@@ -63,15 +62,15 @@ export default class Utils {
     auxChainId: number,
   ) {
     this.facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-    this.tokenAddresses = TokenAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
+    this.gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
     this.originChain = facilitatorConfig.originChain;
     this.originWeb3 = new Web3(facilitatorConfig.chains[this.originChain].nodeRpc);
     this.auxiliaryWeb3 = new Web3(facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc);
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
-    this.ostComposer = this.tokenAddresses.stakePoolAddress;
-    this.redeemPool = this.tokenAddresses.redeemPoolAddress;
-    this.ostPrime = this.tokenAddresses.utilityTokenAddress;
+    this.stakePoolAddress = this.gatewayAddresses.stakePoolAddress;
+    this.redeemPool = this.gatewayAddresses.redeemPoolAddress;
+    this.ostPrime = this.gatewayAddresses.utilityTokenAddress;
   }
 
   /**
@@ -205,7 +204,7 @@ export default class Utils {
    * @returns Organization contract address.
    */
   public async getOrganizationFromOSTComposer(): Promise<string> {
-    const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.ostComposer);
+    const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.stakePoolAddress);
     return await ostComposerInstance.methods.organization().call();
   }
 
@@ -224,12 +223,12 @@ export default class Utils {
   public async anchorOrigin(): Promise<number> {
     const organizationInstance = interacts.getOrganization(
       this.auxiliaryWeb3,
-      this.tokenAddresses.auxiliaryAnchorOrganizationAddress,
+      this.gatewayAddresses.auxiliaryAnchorOrganizationAddress,
     );
 
     const anchorInstance = interacts.getAnchor(
       this.auxiliaryWeb3,
-      this.tokenAddresses.auxiliaryAnchorAddress,
+      this.gatewayAddresses.auxiliaryAnchorAddress,
     );
 
     const currentBlock = await this.originWeb3.eth.getBlock('latest');
@@ -257,13 +256,13 @@ export default class Utils {
   public async anchorAuxiliary(): Promise<number> {
     const organizationInstance = interacts.getOrganization(
       this.originWeb3,
-      this.tokenAddresses.originAnchorOrganizationAddress,
+      this.gatewayAddresses.originAnchorOrganizationAddress,
     );
     const owner = await organizationInstance.methods.owner().call();
 
     const anchorInstance = interacts.getAnchor(
       this.originWeb3,
-      this.tokenAddresses.originAnchorAddress,
+      this.gatewayAddresses.originAnchorAddress,
     );
 
     const currentBlock = await this.auxiliaryWeb3.eth.getBlock('latest');
@@ -630,10 +629,10 @@ export default class Utils {
     const auxiliaryChain = new AuxiliaryChain(
       auxChainId,
       originChain,
-      this.tokenAddresses.originGatewayAddress,
-      this.tokenAddresses.auxiliaryGatewayAddress,
-      this.tokenAddresses.originAnchorAddress,
-      this.tokenAddresses.auxiliaryAnchorAddress,
+      this.gatewayAddresses.originGatewayAddress,
+      this.gatewayAddresses.auxiliaryGatewayAddress,
+      this.gatewayAddresses.originAnchorAddress,
+      this.gatewayAddresses.auxiliaryAnchorAddress,
       lastOriginBlockHeight,
       lastAuxiliaryBlockHeight,
     );
@@ -789,7 +788,7 @@ export default class Utils {
    * @returns EIP20Gateway object.
    */
   public getEIP20GatewayInstance(): EIP20Gateway {
-    const ostEIP20GatewayAddress = this.tokenAddresses.originGatewayAddress;
+    const ostEIP20GatewayAddress = this.gatewayAddresses.originGatewayAddress;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       ostEIP20GatewayAddress,
@@ -802,7 +801,7 @@ export default class Utils {
    * @returns EIP20CoGateway object.
    */
   public getEIP20CoGatewayInstance(): EIP20CoGateway {
-    const eip20CoGatewayAddress = this.tokenAddresses.auxiliaryGatewayAddress;
+    const eip20CoGatewayAddress = this.gatewayAddresses.auxiliaryGatewayAddress;
     const eip20CoGatewayInstance: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
       eip20CoGatewayAddress,
@@ -815,7 +814,7 @@ export default class Utils {
    * @returns Simple token object.
    */
   public getSimpleTokenInstance(): EIP20Token {
-    const { valueTokenAddress } = this.tokenAddresses;
+    const { valueTokenAddress } = this.gatewayAddresses;
     const simpletokenInstance: EIP20Token = interacts.getEIP20Token(
       this.originWeb3,
       valueTokenAddress,
@@ -840,7 +839,7 @@ export default class Utils {
    * @returns OSTComposer object.
    */
   public getOSTComposerInstance(): OSTComposer {
-    return interacts.getOSTComposer(this.originWeb3, this.ostComposer);
+    return interacts.getOSTComposer(this.originWeb3, this.stakePoolAddress);
   }
 
   /**
