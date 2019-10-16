@@ -26,7 +26,6 @@ import Utils from '../Utils';
 import ProveCoGatewayService from './redeem_and_unstake/ProveCoGatewayService';
 import ConfirmRedeemIntentService from './redeem_and_unstake/ConfirmRedeemIntentService';
 import AcceptRedeemRequestService from './redeem_and_unstake/AcceptRedeemRequestService';
-import GatewayAddresses from '../Config/GatewayAddresses';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -89,15 +88,14 @@ export default class Services {
    * This is a factory method to create Service container.
    * @param repositories Repository container.
    * @param config Instance of config.
-   * @param gatewayAddresses GatewayAddresses object.
    */
-  public static create(repositories: Repositories, config: Config, gatewayAddresses: GatewayAddresses): Services {
+  public static create(repositories: Repositories, config: Config): Services {
     // Initialize stake & mint services
 
     const acceptStakeRequestService = new AcceptStakeRequestService(
       repositories,
       config.originWeb3,
-      Utils.toChecksumAddress(gatewayAddresses.stakePoolAddress),
+      Utils.toChecksumAddress(config.gatewayAddresses.stakePoolAddress),
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
     );
     const { auxChainId } = config.facilitator;
@@ -109,7 +107,7 @@ export default class Services {
       Utils.toChecksumAddress(config.facilitator.chains[auxChainId].worker),
       // This parameter value represents interested gateway, for now it's OST prime gateway.
       Utils.toChecksumAddress(
-        gatewayAddresses.originGatewayAddress,
+        config.gatewayAddresses.eip20GatewayAddress,
       ),
       auxChainId,
     );
@@ -119,8 +117,8 @@ export default class Services {
       repositories.messageTransferRequestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      gatewayAddresses.originGatewayAddress,
-      gatewayAddresses.auxiliaryGatewayAddress,
+      config.gatewayAddresses.eip20GatewayAddress,
+      config.gatewayAddresses.eip20CoGatewayAddress,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
 
@@ -128,7 +126,7 @@ export default class Services {
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      gatewayAddresses.originGatewayAddress,
+      config.gatewayAddresses.eip20GatewayAddress,
       config.facilitator.chains[config.facilitator.originChain].worker,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );
@@ -138,7 +136,7 @@ export default class Services {
     const acceptRedeemRequestService = new AcceptRedeemRequestService(
       repositories,
       config.auxiliaryWeb3,
-      Utils.toChecksumAddress(gatewayAddresses.redeemPoolAddress),
+      Utils.toChecksumAddress(config.gatewayAddresses.redeemPoolAddress),
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.auxChainId].worker),
     );
 
@@ -147,8 +145,8 @@ export default class Services {
       repositories.messageTransferRequestRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      gatewayAddresses.originGatewayAddress,
-      gatewayAddresses.auxiliaryGatewayAddress,
+      config.gatewayAddresses.eip20GatewayAddress,
+      config.gatewayAddresses.eip20CoGatewayAddress,
       config.facilitator.chains[config.facilitator.originChain].worker,
     );
 
@@ -159,7 +157,7 @@ export default class Services {
       config.auxiliaryWeb3,
       Utils.toChecksumAddress(config.facilitator.chains[config.facilitator.originChain].worker),
       // This parameter value represents interested CoGateway, for now it's OST prime CoGateway.
-      Utils.toChecksumAddress(gatewayAddresses.auxiliaryGatewayAddress),
+      Utils.toChecksumAddress(config.gatewayAddresses.eip20CoGatewayAddress),
       auxChainId,
     );
 
@@ -167,7 +165,7 @@ export default class Services {
       repositories.gatewayRepository,
       config.originWeb3,
       config.auxiliaryWeb3,
-      gatewayAddresses.auxiliaryGatewayAddress,
+      config.gatewayAddresses.eip20CoGatewayAddress,
       config.facilitator.chains[config.facilitator.originChain].worker,
       config.facilitator.chains[config.facilitator.auxChainId].worker,
     );

@@ -1,11 +1,27 @@
+// Copyright 2019 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------------------------------------------------------
+
+
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 
 /**
- * It represents contract addresses from mosaic config or token config.
+ * It represents contract addresses of mosaic config or gateway config.
  */
 export default class GatewayAddresses {
-
   public readonly valueTokenAddress: string;
 
   public readonly baseTokenAddress: string;
@@ -16,17 +32,17 @@ export default class GatewayAddresses {
 
   public readonly auxiliaryAnchorAddress: string;
 
-  public readonly originGatewayAddress: string;
+  public readonly eip20GatewayAddress: string;
 
-  public readonly auxiliaryGatewayAddress: string;
+  public readonly eip20CoGatewayAddress: string;
 
   public readonly redeemPoolAddress: string;
 
   public readonly utilityTokenAddress: string;
 
-  public readonly originGatewayOrganizationAddress: string;
+  public readonly eip20GatewayOrganizationAddress: string;
 
-  public readonly auxiliaryGatewayOrganizationAddress: string;
+  public readonly eip20CoGatewayOrganizationAddress: string;
 
   public readonly originAnchorOrganizationAddress: string;
 
@@ -34,19 +50,23 @@ export default class GatewayAddresses {
 
   /**
    * Constructor.
-   * @param {string} valueTokenAddress
-   * @param {string} baseTokenAddress
-   * @param {string} stakePoolAddress
-   * @param {string} originAnchorAddress
-   * @param {string} originAnchorOrganizationAddress
-   * @param {string} auxiliaryAnchorAddress
-   * @param {string} auxiliaryAnchorOrganizationAddress
-   * @param {string} originGatewayAddress
-   * @param {string} auxiliaryGatewayAddress
-   * @param {string} redeemPoolAddress
-   * @param {string} utilityTokenAddress
-   * @param {string} originGatewayOrganizationAddress
-   * @param {string} auxiliaryGatewayOrganizationAddress
+   * @param valueTokenAddress Address of valuetoken contract.
+   * @param baseTokenAddress Address of basetoken contract.
+   * @param stakePoolAddress Address of StakePool contract.
+   * @param originAnchorAddress Address of anchor contract at origin chain.
+   * @param originAnchorOrganizationAddress Address of organization contract of
+   *  anchor at origin chain.
+   * @param auxiliaryAnchorAddress Address of anchor contract at auxiliary chain.
+   * @param auxiliaryAnchorOrganizationAddress Address of organization contract of anchor
+   *  at auxiliary chain.
+   * @param originGatewayAddress Address of gateway address contract at origin.
+   * @param auxiliaryGatewayAddress Address of cogateway contract at auxiliary.
+   * @param redeemPoolAddress Address of redeem pool contract address.
+   * @param utilityTokenAddress Address of utilitytoken address.
+   * @param originGatewayOrganizationAddress Address of organization contract of gateway
+   *  at origin.
+   * @param auxiliaryGatewayOrganizationAddress Address of organization contract of cogateway
+   *  at auxiliary.
    */
   private constructor(
     valueTokenAddress: string,
@@ -70,16 +90,16 @@ export default class GatewayAddresses {
     this.originAnchorOrganizationAddress = originAnchorOrganizationAddress;
     this.auxiliaryAnchorAddress = auxiliaryAnchorAddress;
     this.auxiliaryAnchorOrganizationAddress = auxiliaryAnchorOrganizationAddress;
-    this.originGatewayAddress = originGatewayAddress;
-    this.auxiliaryGatewayAddress = auxiliaryGatewayAddress;
+    this.eip20GatewayAddress = originGatewayAddress;
+    this.eip20CoGatewayAddress = auxiliaryGatewayAddress;
     this.redeemPoolAddress = redeemPoolAddress;
     this.utilityTokenAddress = utilityTokenAddress;
-    this.originGatewayOrganizationAddress = originGatewayOrganizationAddress;
-    this.auxiliaryGatewayOrganizationAddress = auxiliaryGatewayOrganizationAddress;
+    this.eip20GatewayOrganizationAddress = originGatewayOrganizationAddress;
+    this.eip20CoGatewayOrganizationAddress = auxiliaryGatewayOrganizationAddress;
   }
 
   /**
-   * It provides GatewayAddresses object based from mosaic config object.
+   * It returns GatewayAddresses object after parsing mosaic config object.
    * @param mosaicConfig Mosaic config object
    * @param auxChainId Chain id of auxiliary chain.
    * @returns GatewayAddresses object.
@@ -109,24 +129,26 @@ export default class GatewayAddresses {
   }
 
   /**
-   * It provides GatewayAddresses object from gateway config object.
+   * It returns GatewayAddresses object after parsing gateway config object.
    * @param gatewayConfig GatewayConfig object.
    * @returns GatewayAddresses object.
    */
   public static fromGatewayConfig(gatewayConfig: GatewayConfig): GatewayAddresses {
-    if(gatewayConfig) {
-      const auxChainId = gatewayConfig.auxChainId;
+    if (gatewayConfig) {
+      const { auxChainId } = gatewayConfig;
       return new GatewayAddresses(
         gatewayConfig.originContracts.valueTokenAddress,
         gatewayConfig.originContracts.baseTokenAddress,
-        gatewayConfig.originContracts.stakePoolAddress!,
+        gatewayConfig.originContracts.stakePoolAddress ||
+          gatewayConfig.mosaicConfig.originChain.contractAddresses.stakePoolAddress,
         gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorAddress,
         gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.anchorOrganizationAddress,
         gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorAddress,
         gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.anchorOrganizationAddress,
         gatewayConfig.originContracts.eip20GatewayAddress,
         gatewayConfig.auxiliaryContracts.eip20CoGatewayAddress,
-        gatewayConfig.auxiliaryContracts.redeemPoolAddress!,
+        gatewayConfig.auxiliaryContracts.redeemPoolAddress ||
+          gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.redeemPoolAddress,
         gatewayConfig.auxiliaryContracts.utilityTokenAddress,
         gatewayConfig.originContracts.gatewayOrganizationAddress,
         gatewayConfig.auxiliaryContracts.coGatewayOrganizationAddress,

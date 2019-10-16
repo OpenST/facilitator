@@ -26,7 +26,6 @@ describe('facilitator init', async (): Promise<void> => {
 
     spawnSync(facilitatorInit, { stdio: outputOptions, env: process.env });
     facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-
     assert.strictEqual(
       facilitatorConfig.auxChainId,
       Number(Constants.auxChainId),

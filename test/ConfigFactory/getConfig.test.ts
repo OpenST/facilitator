@@ -22,6 +22,7 @@ import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import ConfigFactory from '../../src/Config/ConfigFactory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
+import GatewayAddresses from '../../src/Config/GatewayAddresses';
 
 describe('FacilitatorOptionParser.getConfig()', () => {
   const originChain = '2';
@@ -59,22 +60,22 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     return spy;
   }
 
+  function spyGatewayAddressesFromMosaicConfig(gatewayAddresses: any): any {
+    const spy = sinon.stub(
+      GatewayAddresses,
+      'fromMosaicConfig',
+    ).callsFake(
+      sinon.fake.returns(gatewayAddresses),
+    );
+    return spy;
+  }
+
   function spyMosaicfromFile(mosaicConfig: MosaicConfig): any {
     const spy = sinon.stub(
       MosaicConfig,
       'fromFile',
     ).callsFake(
       sinon.fake.returns(mosaicConfig),
-    );
-    return spy;
-  }
-
-  function spyConfigFromPath(mosaic: any, facilitator: any): any {
-    const spy = sinon.stub(
-      Config,
-      'fromFile',
-    ).callsFake(
-      sinon.fake.returns(new Config(mosaic, facilitator)),
     );
     return spy;
   }
@@ -122,7 +123,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     );
   });
 
-  it('should fail when aux chain id an empty string', () => {
+  it('should fail when aux chain id is an empty string', () => {
     const fs: ConfigFactory = new ConfigFactory(
       originChain,
       undefined,
@@ -220,11 +221,13 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
   it('should pass when origin chain, aux chain id is provided and facilitator config path is '
     + 'provided', () => {
-    const config = `{"originChain":"7","chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
+    const config = `{"originChain":"7","auxChainId":"${auxChain}","chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
     const mosaicConfig = sinon.createStubInstance(MosaicConfig);
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
     const facilitatorConfig = JSON.parse(config) as FacilitatorConfig;
     const facilitatorSpy = spyFacilitatorFromFile(facilitatorConfig);
     const mosaicSpy = spyMosaicFromChain(mosaicConfig);
+    const gatewayAddressesSpy = spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
 
     const fs: ConfigFactory = new ConfigFactory(
       originChain,
@@ -236,11 +239,12 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     const configObj: Config = fs.getConfig();
     SpyAssert.assert(facilitatorSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(mosaicSpy, 1, [[originChain]]);
+    SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaicConfig, auxChain.toString()]]);
 
     assert.strictEqual(
-      configObj.mosaic,
-      mosaicConfig,
-      'mosaic config object is invalid',
+      configObj.gatewayAddresses,
+      gatewayAddresses,
+      'gateway addresses object is invalid',
     );
 
     facilitatorSpy.restore();
@@ -249,11 +253,14 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   });
 
   it('should pass when origin chain, aux chain and mosaic config path is provided', () => {
-    const config = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-    const mosaic = JSON.parse(config) as MosaicConfig;
+    const mosaicJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
+    const facilitatorJson = `{"originChain":"7","auxChainId":"${auxChain}","chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
+    const mosaic = JSON.parse(mosaicJson) as MosaicConfig;
     const mosaicSpy = spyMosaicfromFile(mosaic);
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
+    const facilitator = JSON.parse(facilitatorJson) as FacilitatorConfig;
     const facilitatorSpy = spyFacilitatorFromChain(facilitator);
+    const gatewayAddressesSpy = spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
 
     const fs: ConfigFactory = new ConfigFactory(
       originChain,
@@ -266,14 +273,15 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
     SpyAssert.assert(mosaicSpy, 1, [[mosaicConfigPath]]);
     SpyAssert.assert(facilitatorSpy, 1, [[auxChain]]);
+    SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain.toString()]]);
     assert.strictEqual(
       configObj.facilitator,
       facilitator as any,
       'invalid facilitator object',
     );
     assert.strictEqual(
-      configObj.mosaic,
-      mosaic,
+      configObj.gatewayAddresses,
+      gatewayAddresses,
     );
 
     facilitatorSpy.restore();
@@ -282,21 +290,25 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   });
 
   it('should pass when origin chain and aux chain is provided', () => {
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
+    const facilitatorJson = `{"originChain":"7","auxChainId":"${auxChain}","chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
+    const facilitator = JSON.parse(facilitatorJson) as FacilitatorConfig;
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
     const mosaic = sinon.createStubInstance(MosaicConfig);
 
     const facilitatorSpy = spyFacilitatorFromChain(facilitator);
     const mosaicSpy = spyMosaicFromChain(mosaic);
+    const gatewayAddressesSpy = spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
 
     const fs: ConfigFactory = new ConfigFactory(originChain, auxChain, '', '');
     const config: Config = fs.getConfig();
 
     SpyAssert.assert(mosaicSpy, 1, [[originChain]]);
     SpyAssert.assert(facilitatorSpy, 1, [[auxChain]]);
+    SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain.toString()]]);
     assert.strictEqual(
-      config.mosaic,
-      mosaic,
-      'invalid mosaic object',
+      config.gatewayAddresses,
+      gatewayAddresses,
+      'invalid gateway addresses object',
     );
     assert.strictEqual(
       config.facilitator,
@@ -310,15 +322,15 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   });
 
   it('should pass when facilitator config and mosaic config is provided', () => {
-    const configJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-    const mosaic = JSON.parse(configJson) as MosaicConfig;
-    // const mosaic = sinon.createStubInstance(MosaicConfig);
+    const mosaicJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
+    const mosaic = JSON.parse(mosaicJson) as MosaicConfig;
+    const mosaicFromFileSpy = spyMosaicfromFile(mosaic);
     const facilitator = sinon.createStubInstance(FacilitatorConfig);
-    facilitator.originChain = '2';
-    // mosaic.originChain = new OriginChain();
-    // mosaic.originChain.chain = '12346';
-    facilitator.auxChainId = 3;
-    const configSpy = spyConfigFromPath(mosaic, facilitator);
+    facilitator.originChain = originChain;
+    facilitator.auxChainId = auxChain;
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
+    const facilitatorFromFileSpy = spyFacilitatorFromFile(facilitator);
+    const gatewayAddressesSpy = spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
     const fs: ConfigFactory = new ConfigFactory(
       undefined as any,
       undefined as any,
@@ -328,11 +340,13 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
     const config: Config = fs.getConfig();
 
-    SpyAssert.assert(configSpy, 1, [[mosaicConfigPath, facilitatorConfigPath]]);
+    SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain]]);
+    SpyAssert.assert(facilitatorFromFileSpy, 1, [[facilitatorConfigPath]]);
+    SpyAssert.assert(mosaicFromFileSpy, 1, [[mosaicConfigPath]]);
     assert.strictEqual(
-      config.mosaic,
-      mosaic,
-      'Invalid mosaic object',
+      config.gatewayAddresses,
+      gatewayAddresses,
+      'Invalid gateway addresses object',
     );
     assert.strictEqual(
       config.facilitator,
@@ -340,7 +354,6 @@ describe('FacilitatorOptionParser.getConfig()', () => {
       'Invalid mosaic object',
     );
 
-    configSpy.restore();
     sinon.restore();
   });
 
@@ -351,7 +364,9 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     facilitator.originChain = '5';
 
     facilitator.auxChainId = 3;
-    const configSpy = spyConfigFromPath(mosaic, facilitator);
+    spyMosaicfromFile(mosaic);
+    spyFacilitatorFromFile(facilitator);
+
     const fs: ConfigFactory = new ConfigFactory(
       undefined as any,
       undefined as any,
@@ -364,7 +379,6 @@ describe('FacilitatorOptionParser.getConfig()', () => {
       'origin chain id in mosaic config is different than the one provided',
     );
 
-    configSpy.restore();
     sinon.restore();
   });
 
@@ -372,11 +386,15 @@ describe('FacilitatorOptionParser.getConfig()', () => {
   + 'id doesn\'t match', () => {
     const configJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
     const mosaic = JSON.parse(configJson) as MosaicConfig;
+
     const facilitator = sinon.createStubInstance(FacilitatorConfig);
     facilitator.originChain = '5';
 
     facilitator.auxChainId = 3;
-    const configSpy = spyConfigFromPath(mosaic, facilitator);
+
+    spyMosaicfromFile(mosaic);
+    spyFacilitatorFromFile(facilitator);
+
     const fs: ConfigFactory = new ConfigFactory(
       undefined as any,
       undefined as any,
@@ -389,15 +407,17 @@ describe('FacilitatorOptionParser.getConfig()', () => {
       'origin chain id in mosaic config is different than the one provided',
     );
 
-    configSpy.restore();
     sinon.restore();
   });
 
   it('should pass when only facilitator config is provided', () => {
+    const facilitatorJson = `{"originChain":"${originChain}","auxChainId":"${auxChain}","chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
     const mosaic = sinon.createStubInstance(MosaicConfig);
-
-    const facilitatorSpy = spyFacilitatorFromFile(JSON.parse(`{"originChain":"${originChain}"}`));
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
+    const facilitatorSpy = spyFacilitatorFromFile(JSON.parse(facilitatorJson));
     const mosaicSpy = spyMosaicFromChain(mosaic);
+    const gatewayAddressesSpy = spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
+
     const fs: ConfigFactory = new ConfigFactory(
       undefined,
       undefined,
@@ -408,9 +428,10 @@ describe('FacilitatorOptionParser.getConfig()', () => {
 
     SpyAssert.assert(facilitatorSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(mosaicSpy, 1, [[originChain]]);
+    SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain.toString()]]);
     assert.strictEqual(
-      config.mosaic,
-      mosaic,
+      config.gatewayAddresses,
+      gatewayAddresses,
       'Invalid mosaic object in config object',
     );
 
