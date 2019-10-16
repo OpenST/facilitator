@@ -21,19 +21,29 @@ import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
+import GatewayAddresses from "../../src/Config/GatewayAddresses";
 
 describe('Config.fromFile()', () => {
   const mosaicConfigPath = 'test/Config/mosaic-config.json';
   const facilitatorConfigPath = 'test/Config/facilitator-config.json';
+  const auxChain = 3;
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = FacilitatorConfig.fromChain(3);
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
+    const facilitator = FacilitatorConfig.fromChain(auxChain);
+    facilitator.auxChainId = auxChain;
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,
       'fromFile',
       sinon.fake.returns(mosaic),
+    );
+
+    const gatewayAddressesSpy = sinon.replace(
+      GatewayAddresses,
+      'fromMosaicConfig',
+      sinon.fake.returns(gatewayAddresses),
     );
 
     const facilitatorConfigSpy = sinon.replace(
@@ -46,15 +56,16 @@ describe('Config.fromFile()', () => {
 
     SpyAssert.assert(mosaicConfigSpy, 1, [[mosaicConfigPath]]);
     SpyAssert.assert(facilitatorConfigSpy, 1, [[facilitatorConfigPath]]);
+    SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain]]);
     assert.strictEqual(
       config.facilitator,
       facilitator,
       'Facilitator object is different',
     );
     assert.strictEqual(
-      config.mosaic,
-      mosaic,
-      'Mosaic object is different',
+      config.gatewayAddresses,
+      gatewayAddresses,
+      'GatewayAddresses object is different',
     );
 
     sinon.restore();

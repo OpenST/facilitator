@@ -28,10 +28,66 @@ import Logger from '../Logger';
 
 import Repositories from '../repositories/Repositories';
 import SeedData from '../SeedData';
+import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
+import GatewayAddresses from '../Config/GatewayAddresses';
 
+/**
+ * It provides gateway addresses and origin chain id. It is to be used when mosaic
+ * config is provided.
+ * @param auxChainId Auxiliary chain id.
+ * @param mosaicConfigPath Path to mosaic config.
+ * @returns originchain id and gatewayaddresses object.
+ */
+function getFromMosaicConfig(
+  auxChainId: number,
+  mosaicConfigPath: string
+): {
+  originChainId: string; gatewayAddresses: GatewayAddresses
+} {
+    const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
+    const auxChain = mosaicConfig.auxiliaryChains[auxChainId];
+    if (auxChain === null || auxChain === undefined) {
+      Logger.error(`auxchain id ${auxChainId} is not present in the mosaic config`);
+      process.exit(1);
+    }
+
+  return {
+    originChainId: mosaicConfig.originChain.chain,
+    gatewayAddresses: GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId)
+  };
+}
+
+/**
+ * It provides gateway addresses and origin chain id. It is to be used when gateway
+ * config is provided.
+ * @param auxChainId Auxiliary chain id.
+ * @param gatewayConfigPath Path to gateway config.
+ * @returns originchain id and gatewayaddresses object.
+ */
+function getFromGatewayConfig(
+  auxChainId: number,
+  gatewayConfigPath: string
+): {
+  originChainId: string; gatewayAddresses: GatewayAddresses
+} {
+    const gatewayConfig = GatewayConfig.fromFile(gatewayConfigPath);
+
+    if (auxChainId === gatewayConfig.auxChainId) {
+      Logger.error(`aux chain id present in gateway config is ${gatewayConfig.auxChainId}`+
+        `but ${auxChainId} is specified`);
+      process.exit(1);
+    }
+
+  const gatewayAddresses = GatewayAddresses.fromGatewayConfig(gatewayConfig);
+  return {
+    originChainId: gatewayConfig.mosaicConfig.originChain.chain,
+    gatewayAddresses
+  }
+}
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
+  .option('-t, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-c, --aux-chain-id <aux-chain-id>', 'auxiliary chain id')
   .option('-o, --origin-password <origin-password>', 'origin chain account password')
   .option('-a, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
@@ -47,9 +103,10 @@ commander
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 
-    if (options.mosaicConfig === undefined) {
-      Logger.error('required --mosaic-config <mosaic-config>');
-      mandatoryOptionMissing = true;
+    if(options.mosaicConfig && options.gatewayConfig) {
+      Logger.error('both mosaic and gateway config is provided. ' +
+        'only one of the option is expected. refer readme for more details');
+      process.exit(1);
     }
 
     const { auxChainId } = options;
@@ -118,14 +175,14 @@ commander
     const facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
 
     // Get origin chain id.
-    const mosaicConfig = MosaicConfig.fromFile(options.mosaicConfig);
-    const auxChain = mosaicConfig.auxiliaryChains[auxChainId];
-    if (auxChain === null || auxChain === undefined) {
-      Logger.error('aux chain id is not present in the mosaic config');
-      process.exit(1);
-    }
+    const {
+      originChainId,
+      gatewayAddresses,
+    } = options.mosaicConfig !== undefined ? getFromMosaicConfig(auxChainId, options.mosaicConfig) :
+      getFromGatewayConfig(auxChainId, options.tokenConfig);
 
-    const originChainId = mosaicConfig.originChain.chain;
+    facilitatorConfig.originChain = originChainId;
+    facilitatorConfig.auxChainId = auxChainId;
 
     let { dbPath } = options;
     if (dbPath === undefined || dbPath === null) {
@@ -139,8 +196,7 @@ commander
     }
 
     facilitatorConfig.database.path = dbPath;
-    facilitatorConfig.originChain = originChainId;
-    facilitatorConfig.auxChainId = auxChainId;
+
     const setFacilitator = (
       chainId: string,
       rpc: string,
@@ -173,7 +229,7 @@ commander
       options.auxiliaryPassword,
     );
 
-    const config = new Config(mosaicConfig, facilitatorConfig);
+    const config = new Config(gatewayAddresses, facilitatorConfig);
     const repositories = await Repositories.create(config.facilitator.database.path);
     const seedData = new SeedData(
       config,

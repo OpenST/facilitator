@@ -22,9 +22,6 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 
-import {
-  AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
-} from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config } from './Config/Config';
 import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
@@ -197,25 +194,11 @@ export default class SeedData {
   }
 
   /**
-   * @return Returns auxiliary chain mosaic config.
-   */
-  private get auxiliaryChainMosaicConfig(): AuxiliaryChainMosaicConfig {
-    return this.config.mosaic.auxiliaryChains[this.config.facilitator.auxChainId];
-  }
-
-  /**
-   * @return Returns origin chain mosaic config.
-   */
-  private get originChainMosaicConfig(): OriginChainMosaicConfig {
-    return this.config.mosaic.originChain;
-  }
-
-  /**
    * @return Returns Gateway address.
    */
   private get gatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.eip20GatewayAddress,
+      this.config.gatewayAddresses.originGatewayAddress,
     );
   }
 
@@ -224,7 +207,7 @@ export default class SeedData {
    */
   private get coGatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.eip20CoGatewayAddress,
+      this.config.gatewayAddresses.auxiliaryGatewayAddress,
     );
   }
 
@@ -233,7 +216,7 @@ export default class SeedData {
    */
   private get anchorAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress,
+      this.config.gatewayAddresses.originAnchorAddress,
     );
   }
 
@@ -242,7 +225,7 @@ export default class SeedData {
    */
   private get coAnchorAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress,
+      this.config.gatewayAddresses.auxiliaryAnchorAddress,
     );
   }
 
@@ -251,7 +234,7 @@ export default class SeedData {
    */
   private get stakePoolAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.stakePoolAddress,
+      this.config.gatewayAddresses.stakePoolAddress,
     );
   }
 
@@ -260,7 +243,7 @@ export default class SeedData {
    */
   private get redeemPoolAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.redeemPoolAddress,
+      this.config.gatewayAddresses.redeemPoolAddress,
     );
   }
 
@@ -269,7 +252,7 @@ export default class SeedData {
    */
   private get utilityTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.utilityTokenAddress,
+      this.config.gatewayAddresses.utilityTokenAddress,
     );
   }
 
@@ -278,7 +261,7 @@ export default class SeedData {
    */
   private get valueTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.valueTokenAddress,
+      this.config.gatewayAddresses.valueTokenAddress,
     );
   }
 

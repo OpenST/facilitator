@@ -21,6 +21,7 @@ import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
+import GatewayAddresses from '../../src/Config/GatewayAddresses';
 
 describe('Config.fromChain()', () => {
   const originChain = '2';
@@ -28,12 +29,19 @@ describe('Config.fromChain()', () => {
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
     const facilitator = sinon.fake(FacilitatorConfig);
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,
       'fromChain',
       sinon.fake.returns(mosaic),
+    );
+
+    const gatewayAddressesSpy = sinon.replace(
+      GatewayAddresses,
+      'fromMosaicConfig',
+      sinon.fake.returns(gatewayAddresses),
     );
 
     const facilitatorConfigSpy = sinon.replace(
@@ -45,15 +53,16 @@ describe('Config.fromChain()', () => {
     const config = Config.fromChain(originChain, auxChain);
     SpyAssert.assert(mosaicConfigSpy, 1, [[originChain]]);
     SpyAssert.assert(facilitatorConfigSpy, 1, [[auxChain]]);
+    SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain]]);
     assert.strictEqual(
       config.facilitator,
       facilitator as any,
       'Facilitator object is different',
     );
     assert.strictEqual(
-      config.mosaic,
-      mosaic,
-      'Mosaic object is different',
+      config.gatewayAddresses,
+      gatewayAddresses,
+      'GatewayAddresses object is different',
     );
 
     sinon.restore();
