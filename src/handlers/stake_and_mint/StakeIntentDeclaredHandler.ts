@@ -23,6 +23,7 @@ import {
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
+import MessageTransferRequestRepository from "../../repositories/MessageTransferRequestRepository";
 
 /**
  * This class handles stake intent declared transactions.
@@ -32,10 +33,16 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
 
   private readonly messageRepository: MessageRepository;
 
-  public constructor(messageRepository: MessageRepository) {
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
+
+  public constructor(
+    messageRepository: MessageRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
+    ) {
     super();
 
     this.messageRepository = messageRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
   }
 
   /**
@@ -69,6 +76,14 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
           message.sourceStatus = MessageStatus.Declared;
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
+        }
+        // Links stakeRequest with messages table
+        let stakeRequest = await this.messageTransferRequestRepository.getByRequestHashNonce(
+          transaction._staker,
+          message.nonce!,
+        );
+        if (stakeRequest && !stakeRequest.messageHash) {
+          stakeRequest.messageHash = message.messageHash;
         }
         return message;
       },

@@ -68,7 +68,10 @@ export default class Handlers {
         repos.auxiliaryChainRepository,
         auxChainId,
       ),
-      stakeIntentDeclareds: new StakeIntentDeclaredHandler(repos.messageRepository),
+      stakeIntentDeclareds: new StakeIntentDeclaredHandler(
+        repos.messageRepository,
+        repos.messageTransferRequestRepository,
+      ),
       gatewayProvens: new GatewayProvenHandler(
         repos.gatewayRepository,
       ),
@@ -81,7 +84,10 @@ export default class Handlers {
         repos.messageTransferRequestRepository,
         cogatewayAddress,
       ),
-      redeemIntentDeclareds: new RedeemIntentDeclaredHandler(repos.messageRepository),
+      redeemIntentDeclareds: new RedeemIntentDeclaredHandler(
+        repos.messageRepository,
+        repos.messageTransferRequestRepository,
+        ),
       redeemIntentConfirmeds: new RedeemIntentConfirmedHandler(repos.messageRepository),
       redeemProgresseds: new RedeemProgressedHandler(repos.messageRepository),
       unstakeProgresseds: new UnstakeProgressedHandler(repos.messageRepository),

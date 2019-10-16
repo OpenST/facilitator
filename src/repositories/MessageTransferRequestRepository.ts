@@ -18,7 +18,7 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { DataTypes, InitOptions, Model } from 'sequelize';
+import {DataTypes, InitOptions, Model, Op} from 'sequelize';
 
 import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
@@ -286,6 +286,34 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
     });
 
     return this.convertToRequests(requestModels);
+  }
+
+  /**
+   * Returns a stake/redeem message transfer request by requestHash and nonce.
+   *
+   * @param requestHash Request's hash.
+   * @param nonce Nonce of request.
+   *
+   * @return MessageTransferRequest object if exists, otherwise null.
+   */
+  public async getByRequestHashNonce(requestHash: string, nonce: BigNumber):
+    Promise<MessageTransferRequest | null> {
+    const requestModel = await MessageTransferRequestModel.findOne({
+      where: {
+        requestHash: {
+          [Op.eq]: requestHash,
+        },
+        nonce: {
+          [Op.eq]: nonce,
+        },
+      },
+    });
+
+    if (requestModel === null) {
+      return null;
+    }
+
+    return this.convertToRequest(requestModel);
   }
 
 

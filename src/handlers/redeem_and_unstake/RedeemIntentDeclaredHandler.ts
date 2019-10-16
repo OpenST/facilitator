@@ -24,6 +24,7 @@ import {
   MessageType,
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
+import MessageTransferRequestRepository from "../../repositories/MessageTransferRequestRepository";
 
 /**
  * This class handles redeem intent declared transactions.
@@ -33,10 +34,16 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
 
   private readonly messageRepository: MessageRepository;
 
-  public constructor(messageRepository: MessageRepository) {
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
+
+  public constructor(
+    messageRepository: MessageRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
+    ) {
     super();
 
     this.messageRepository = messageRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
   }
 
   /**
@@ -70,6 +77,14 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
           message.sourceStatus = MessageStatus.Declared;
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
+        }
+        // Links redeemRequest with messages table
+        let redeemRequest = await this.messageTransferRequestRepository.getByRequestHashNonce(
+          transaction._staker,
+          message.nonce!,
+        );
+        if (redeemRequest && !redeemRequest.messageHash) {
+          redeemRequest.messageHash = message.messageHash;
         }
         return message;
       },
