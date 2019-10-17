@@ -157,3 +157,4 @@ export default class GatewayAddresses {
     throw new Error('Gateway config should not be null');
   }
 }
+
