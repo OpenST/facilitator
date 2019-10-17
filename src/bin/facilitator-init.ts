@@ -74,7 +74,7 @@ function getFromGatewayConfig(
 
     if (auxChainId === gatewayConfig.auxChainId) {
       Logger.error(`aux chain id present in gateway config is ${gatewayConfig.auxChainId}`+
-        `but ${auxChainId} is specified`);
+        `but ${auxChainId} is specified in the command`);
       process.exit(1);
     }
 
@@ -87,7 +87,7 @@ function getFromGatewayConfig(
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
-  .option('-t, --gateway-config <gateway-config>', 'path to gateway configuration')
+  .option('-q, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-c, --aux-chain-id <aux-chain-id>', 'auxiliary chain id')
   .option('-o, --origin-password <origin-password>', 'origin chain account password')
   .option('-a, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
@@ -102,10 +102,14 @@ commander
   .action(async (options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
+    console.log('options :- ',options);
 
-    if(options.mosaicConfig && options.gatewayConfig) {
-      Logger.error('both mosaic and gateway config is provided. ' +
-        'only one of the option is expected. refer readme for more details');
+    if(
+      (options.mosaicConfig && options.gatewayConfig) ||
+      (options.gatewayConfig === undefined && options.mosaicConfig === undefined)
+    ) {
+      Logger.error('only one option out of gateway config and mosaic config is required. ' +
+        'refer readme for more details');
       process.exit(1);
     }
 
@@ -179,7 +183,7 @@ commander
       originChainId,
       gatewayAddresses,
     } = options.mosaicConfig !== undefined ? getFromMosaicConfig(auxChainId, options.mosaicConfig) :
-      getFromGatewayConfig(auxChainId, options.tokenConfig);
+      getFromGatewayConfig(auxChainId, options.gatewayConfig);
 
     facilitatorConfig.originChain = originChainId;
     facilitatorConfig.auxChainId = auxChainId;

@@ -36,7 +36,7 @@ export default class Container {
   public static async create(
     originChain?: string,
     auxChainId?: string,
-    mosaicConfigPath?: string,
+    mosaicConfigPath?: string, // todo: may be only config.
     facilitatorConfigPath?: string,
   ): Promise<Facilitator> {
     Logger.debug('Reading config file');

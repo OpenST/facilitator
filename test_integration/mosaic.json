@@ -16,7 +16,7 @@
       ],
       "contractAddresses": {
         "origin": {
-          "baseTokenAddress":"0x7de07272E4c6cb822503B46C8a41517935C3f0c0",
+          "baseTokenAddress":"0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8",
           "anchorOrganizationAddress": "0x7de07272E4c6cb822503B46C8a41517935C3f0c0",
           "anchorAddress": "0xEa8D41fc6C6C0Ee155E5F6FbF9Cc1167Fa17927E",
           "gatewayOrganizationAddress": "0xaB5335771fBA0270634e649882229c7e8CaA6158",

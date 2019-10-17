@@ -39,9 +39,11 @@ process.on('SIGTERM', terminationHandler);
 
 facilitatorCmd
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
+  .option('-q, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-t, --facilitator-config <facilitator-config>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
     try {
+      // todo: call to config factory to get config
       facilitator = await Container.create(
         origin_chain,
         aux_chain_id,
