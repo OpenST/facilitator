@@ -85,6 +85,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
         );
         if (redeemRequest && !redeemRequest.messageHash) {
           redeemRequest.messageHash = message.messageHash;
+          await this.messageTransferRequestRepository.save(redeemRequest);
         }
         return message;
       },

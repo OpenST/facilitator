@@ -26,6 +26,11 @@ import {
 } from '../../../../src/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from "../../../test_utils/StubData";
+import {
+  default as MessageTransferRequestRepository,
+  RequestType
+} from "../../../../src/repositories/MessageTransferRequestRepository";
 
 describe('StakeIntentDeclaredHandler.persist()', (): void => {
   const transactions = [{
@@ -37,17 +42,30 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     contractAddress: '0x0000000000000000000000000000000000000002',
     blockNumber: '10',
   }];
+  const stakeRequest = StubData.getAMessageTransferRequest(
+    'requestHash',
+    RequestType.Stake,
+  );
+  const mockedMessageTransferRequestRepository = sinon.createStubInstance(
+    MessageTransferRequestRepository,
+    {
+      getByRequestHashNonce: Promise.resolve(stakeRequest),
+    }
+  );
 
   it('should change message source state to Declared if message does not exist',
     async (): Promise<void> => {
       const save = sinon.stub();
 
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(null),
         });
-      const handler = new StakeIntentDeclaredHandler(mockedRepository as any);
+      const handler = new StakeIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any
+      );
 
       const models = await handler.persist(transactions);
 
@@ -68,7 +86,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
     });
 
   it('should change message source state to Declared if message status is Undeclared',
@@ -81,12 +99,15 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         MessageDirection.OriginToAuxiliary,
       );
       existingMessageWithUndeclaredStatus.sourceStatus = MessageStatus.Undeclared;
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(existingMessageWithUndeclaredStatus),
         });
-      const handler = new StakeIntentDeclaredHandler(mockedRepository as any);
+      const handler = new StakeIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
 
       const models = await handler.persist(transactions);
 
@@ -104,7 +125,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
     });
 
   it('should not change message source state to Declared if current status is Progressed',
@@ -117,12 +138,15 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         MessageDirection.OriginToAuxiliary,
       );
       existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(existingMessageWithProgressStatus),
         });
-      const handler = new StakeIntentDeclaredHandler(mockedRepository as any);
+      const handler = new StakeIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
 
       const models = await handler.persist(transactions);
 
@@ -139,7 +163,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
     });
 
   it('should not change message state if current status is already Declared',
@@ -152,12 +176,15 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         MessageDirection.OriginToAuxiliary,
       );
       existingMessageWithProgressStatus.sourceStatus = MessageStatus.Declared;
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(existingMessageWithProgressStatus),
         });
-      const handler = new StakeIntentDeclaredHandler(mockedRepository as any);
+      const handler = new StakeIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
 
       const models = await handler.persist(transactions);
 
@@ -174,6 +201,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
     });
 });
