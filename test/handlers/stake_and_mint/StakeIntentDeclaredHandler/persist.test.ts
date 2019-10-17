@@ -26,11 +26,11 @@ import {
 } from '../../../../src/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
-import StubData from "../../../test_utils/StubData";
+import StubData from '../../../test_utils/StubData';
 import {
   default as MessageTransferRequestRepository,
-  RequestType
-} from "../../../../src/repositories/MessageTransferRequestRepository";
+  RequestType,
+} from '../../../../src/repositories/MessageTransferRequestRepository';
 
 describe('StakeIntentDeclaredHandler.persist()', (): void => {
   const transactions = [{
@@ -50,7 +50,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     MessageTransferRequestRepository,
     {
       getBySenderProxyNonce: Promise.resolve(stakeRequest),
-    }
+    },
   );
 
   it('should change message source state to Declared if message does not exist',
@@ -64,7 +64,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         });
       const handler = new StakeIntentDeclaredHandler(
         mockedMessageRepository as any,
-        mockedMessageTransferRequestRepository as any
+        mockedMessageTransferRequestRepository as any,
       );
 
       const models = await handler.persist(transactions);
@@ -87,11 +87,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._staker, transactions[0]._stakerNonce]]
-      );
     });
 
   it('should change message source state to Declared if message status is Undeclared',
@@ -133,12 +128,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       SpyAssert.assert(
         mockedMessageRepository.get,
         1,
-        [[transactions[0]._messageHash]]
-      );
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._staker, transactions[0]._stakerNonce]]
+        [[transactions[0]._messageHash]],
       );
     });
 
@@ -180,12 +170,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       SpyAssert.assert(
         mockedMessageRepository.get,
         1,
-        [[transactions[0]._messageHash]]
-      );
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._staker, transactions[0]._stakerNonce]]
+        [[transactions[0]._messageHash]],
       );
     });
 
@@ -227,12 +212,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       SpyAssert.assert(
         mockedMessageRepository.get,
         1,
-        [[transactions[0]._messageHash]]
-      );
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._staker, transactions[0]._stakerNonce]]
+        [[transactions[0]._messageHash]],
       );
     });
 });

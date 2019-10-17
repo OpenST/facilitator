@@ -23,8 +23,8 @@ import {
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
-import MessageTransferRequestRepository from "../../repositories/MessageTransferRequestRepository";
-import MessageTransferRequest from "../../models/MessageTransferRequest";
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 
 /**
  * This class handles stake intent declared transactions.
@@ -39,7 +39,7 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
   public constructor(
     messageRepository: MessageRepository,
     messageTransferRequestRepository: MessageTransferRequestRepository,
-    ) {
+  ) {
     super();
 
     this.messageRepository = messageRepository;
@@ -56,7 +56,7 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
     Logger.debug('Started persisting Stake intent declared records');
-    let stakeRequestModels: MessageTransferRequest[] = [];
+    const stakeRequestModels: MessageTransferRequest[] = [];
     const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -80,7 +80,7 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
         // Link stakeRequest with messages table
-        let stakeRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
+        const stakeRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
           transaction._staker,
           message.nonce!,
         );
@@ -92,18 +92,18 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
       },
     ));
 
-    let saveStakeRequestPromises = [];
+    const saveStakeRequestPromises = [];
     for (let i = 0; i < stakeRequestModels.length; i += 1) {
       Logger.debug(`Updating message hash in stakeRequest for requestHash: 
       ${stakeRequestModels[i].requestHash}`);
       saveStakeRequestPromises.push(
-        this.messageTransferRequestRepository.save(stakeRequestModels[i])
+        this.messageTransferRequestRepository.save(stakeRequestModels[i]),
       );
     }
     await Promise.all(saveStakeRequestPromises);
     Logger.debug('stakeRequests saved');
 
-    let saveMessagesPromises = [];
+    const saveMessagesPromises = [];
     for (let i = 0; i < messageModels.length; i += 1) {
       Logger.debug(`Changing source status to declared for messageHash: 
       ${messageModels[i].messageHash}`);

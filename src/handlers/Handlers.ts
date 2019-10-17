@@ -87,7 +87,7 @@ export default class Handlers {
       redeemIntentDeclareds: new RedeemIntentDeclaredHandler(
         repos.messageRepository,
         repos.messageTransferRequestRepository,
-        ),
+      ),
       redeemIntentConfirmeds: new RedeemIntentConfirmedHandler(repos.messageRepository),
       redeemProgresseds: new RedeemProgressedHandler(repos.messageRepository),
       unstakeProgresseds: new UnstakeProgressedHandler(repos.messageRepository),

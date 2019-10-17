@@ -176,7 +176,6 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
         proof!.storageProof[0].serializedProof,
       ]],
     );
-
   });
 
   it('Should not do confirmRedeemIntent if '
@@ -289,11 +288,9 @@ describe('ConfirmRedeemIntentService.update()', (): void => {
         proof.storageProof,
       ]],
     );
-
   });
 
   afterEach(async (): Promise<void> => {
     sinon.restore();
   });
-
 });

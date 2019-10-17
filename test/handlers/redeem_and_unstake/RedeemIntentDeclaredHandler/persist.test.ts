@@ -28,9 +28,9 @@ import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import {
   default as MessageTransferRequestRepository,
-  RequestType
-} from "../../../../src/repositories/MessageTransferRequestRepository";
-import StubData from "../../../test_utils/StubData";
+  RequestType,
+} from '../../../../src/repositories/MessageTransferRequestRepository';
+import StubData from '../../../test_utils/StubData';
 
 describe('RedeemIntentDeclaredHandler.persist()', (): void => {
   const transactions = [{
@@ -50,7 +50,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     MessageTransferRequestRepository,
     {
       getBySenderProxyNonce: Promise.resolve(redeemRequest),
-    }
+    },
   );
 
   it('should change message source state to declared if message does not exist',
@@ -89,12 +89,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       SpyAssert.assert(
         mockedMessageRepository.get,
         1,
-        [[transactions[0]._messageHash]]
-      );
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+        [[transactions[0]._messageHash]],
       );
     });
 
@@ -116,7 +111,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         });
       const handler = new RedeemIntentDeclaredHandler(
         mockedMessageRepository as any,
-        mockedMessageTransferRequestRepository as any
+        mockedMessageTransferRequestRepository as any,
       );
 
       const models = await handler.persist(transactions);
@@ -138,12 +133,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       SpyAssert.assert(
         mockedMessageRepository.get,
         1,
-        [[transactions[0]._messageHash]]
-      );
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+        [[transactions[0]._messageHash]],
       );
     });
 
@@ -179,7 +169,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       const handler = new RedeemIntentDeclaredHandler(
         mockedMessageRepository as any,
         mockedMessageTransferRequestRepository as any,
-        );
+      );
 
       const models = await handler.persist(bulkTransactions);
 
@@ -215,11 +205,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         mockedMessageRepository.get,
         2,
         [[bulkTransactions[0]._messageHash], [bulkTransactions[1]._messageHash]],
-      );
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
       );
     });
 
@@ -261,12 +246,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     SpyAssert.assert(
       mockedMessageRepository.get,
       1,
-      [[transactions[0]._messageHash]]
-    );
-    SpyAssert.assert(
-      mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-      1,
-      [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+      [[transactions[0]._messageHash]],
     );
   });
 
@@ -308,12 +288,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       SpyAssert.assert(
         mockedMessageRepository.get,
         1,
-        [[transactions[0]._messageHash]]
-      );
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+        [[transactions[0]._messageHash]],
       );
     });
 });

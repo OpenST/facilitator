@@ -21,7 +21,7 @@ import Gateway from '../../../src/models/Gateway';
 import { GatewayType } from '../../../src/repositories/GatewayRepository';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
-import assert, { assertErrorMessages } from "../../test_utils/assert";
+import assert, { assertErrorMessages } from '../../test_utils/assert';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -125,8 +125,8 @@ describe('GatewayRepository::save', (): void => {
 
     assert.isRejected(
       config.repos.gatewayRepository.save(
-      gateway,
-    ),
+        gateway,
+      ),
       'Gateway.remoteGatewayAddress cannot be null',
     );
   });
@@ -148,8 +148,8 @@ describe('GatewayRepository::save', (): void => {
 
     assert.isRejected(
       config.repos.gatewayRepository.save(
-      gateway,
-    ),
+        gateway,
+      ),
       'Gateway.remoteGatewayAddress cannot be null',
     );
   });
@@ -190,5 +190,4 @@ describe('GatewayRepository::save', (): void => {
       ]);
     }
   });
-
 });

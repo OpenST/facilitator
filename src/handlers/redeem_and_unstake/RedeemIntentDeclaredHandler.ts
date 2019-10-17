@@ -24,7 +24,7 @@ import {
   MessageType,
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
-import MessageTransferRequestRepository from "../../repositories/MessageTransferRequestRepository";
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
 
 /**
  * This class handles redeem intent declared transactions.
@@ -39,7 +39,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
   public constructor(
     messageRepository: MessageRepository,
     messageTransferRequestRepository: MessageTransferRequestRepository,
-    ) {
+  ) {
     super();
 
     this.messageRepository = messageRepository;
@@ -79,7 +79,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
         // Links redeemRequest with messages table
-        let redeemRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
+        const redeemRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
           transaction._staker,
           message.nonce!,
         );

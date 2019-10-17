@@ -18,7 +18,9 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import {DataTypes, InitOptions, Model, Op} from 'sequelize';
+import {
+  DataTypes, InitOptions, Model, Op,
+} from 'sequelize';
 
 import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
@@ -297,7 +299,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
    * @return MessageTransferRequest object if exists, otherwise null.
    */
   public async getBySenderProxyNonce(senderProxy: string, nonce: BigNumber):
-    Promise<MessageTransferRequest | null> {
+  Promise<MessageTransferRequest | null> {
     const requestModel = await MessageTransferRequestModel.findOne({
       where: {
         senderProxy: {
