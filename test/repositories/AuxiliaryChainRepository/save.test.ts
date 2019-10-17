@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 import AuxiliaryChain from '../../../src/models/AuxiliaryChain';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
-import assert, { assertErrorMessages } from "../../test_utils/assert";
+import assert, { assertErrorMessages } from '../../test_utils/assert';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -119,8 +119,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
     assert.isRejected(config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
     ),
-      'AuxiliaryChain.ostGatewayAddress cannot be null',
-    );
+    'AuxiliaryChain.ostGatewayAddress cannot be null');
   });
 
   it('should fail when ostGatewayAddress is undefined', async (): Promise<void> => {
