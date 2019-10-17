@@ -106,6 +106,12 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       sinon.fake.resolves(fakeTransactionHash),
     );
 
+    const getMessageBoxOffsetSpy = sinon.replace(
+      Utils,
+      'getMessageBoxOffset',
+      sinon.fake.resolves(messageOutBoxOffset),
+    );
+
     confirmStakeIntentService = new ConfirmStakeIntentService(
       messageRepository as any,
       messageTransferRequestRepository as any,
@@ -155,6 +161,12 @@ describe('ConfirmStakeIntentService.update()', (): void => {
       sendTransactionSpy,
       1,
       [[rawTx, transactionOptions, auxiliaryWeb3]],
+    );
+
+    SpyAssert.assert(
+      getMessageBoxOffsetSpy,
+      1,
+      [[originWeb3, gatewayAddress]],
     );
 
     SpyAssert.assert(
