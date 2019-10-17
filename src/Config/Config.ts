@@ -30,7 +30,7 @@ import {
 import Logger from '../Logger';
 import Utils from '../Utils';
 import schema from './FacilitatorConfig.schema.json';
-import GatewayAddresses from "./GatewayAddresses";
+import GatewayAddresses from './GatewayAddresses';
 
 // Database password key to read from env.
 const ENV_DB_PASSWORD = 'MOSAIC_FACILITATOR_DB_PASSWORD';
@@ -262,7 +262,7 @@ export class Config {
   private _auxiliaryWeb3?: Web3;
 
   /**
-   * It would set mosaic config and facilitator config object.
+   * It would set gateway addresses and facilitator config object.
    * @param gatewayAddresses GatewayAddresses object.
    * @param facilitatorConfig Facilitator config object.
    */
@@ -317,7 +317,7 @@ export class Config {
    * mosaic config path or facilitator config path doesn't exists.
    * @param mosaicConfigPath Path to mosaic config file path.
    * @param facilitatorConfigPath Path to facilitator config file path/
-   * @returns Config object consisting of gatewayAddresses and facilitator configurations.
+   * @returns Config object consisting of gateway addresses and facilitator configurations.
    */
   public static fromFile(
     mosaicConfigPath: string,
@@ -325,8 +325,14 @@ export class Config {
   ): Config {
     const mosaic: MosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
-    const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaic, facilitator.auxChainId);
-    return new Config(gatewayAddresses, facilitator);
+
+    return new Config(
+      GatewayAddresses.fromMosaicConfig(
+        mosaic,
+        facilitator.auxChainId,
+      ),
+      facilitator,
+    );
   }
 
   /**
@@ -334,7 +340,7 @@ export class Config {
    * default location, it will initialize new config objects.
    * @param originChain Origin chain id.
    * @param  auxiliaryChain Auxiliary chain id.
-   * @returns Config object consisting of gatewayAddresses and facilitator configurations.
+   * @returns Config object consisting of gateway addresses and facilitator configurations.
    */
   public static fromChain(
     originChain: string,
@@ -342,7 +348,13 @@ export class Config {
   ): Config {
     const mosaic: MosaicConfig = MosaicConfig.fromChain(originChain);
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(auxiliaryChain);
-    const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaic, auxiliaryChain);
-    return new Config(gatewayAddresses, facilitator);
+
+    return new Config(
+      GatewayAddresses.fromMosaicConfig(
+        mosaic,
+        facilitator.auxChainId,
+      ),
+      facilitator,
+    );
   }
 }

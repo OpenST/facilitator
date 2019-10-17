@@ -629,8 +629,8 @@ export default class Utils {
     const auxiliaryChain = new AuxiliaryChain(
       auxChainId,
       originChain,
-      this.gatewayAddresses.originGatewayAddress,
-      this.gatewayAddresses.auxiliaryGatewayAddress,
+      this.gatewayAddresses.eip20GatewayAddress,
+      this.gatewayAddresses.eip20CoGatewayAddress,
       this.gatewayAddresses.originAnchorAddress,
       this.gatewayAddresses.auxiliaryAnchorAddress,
       lastOriginBlockHeight,
@@ -788,7 +788,7 @@ export default class Utils {
    * @returns EIP20Gateway object.
    */
   public getEIP20GatewayInstance(): EIP20Gateway {
-    const ostEIP20GatewayAddress = this.gatewayAddresses.originGatewayAddress;
+    const ostEIP20GatewayAddress = this.gatewayAddresses.eip20GatewayAddress;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       ostEIP20GatewayAddress,
@@ -801,7 +801,7 @@ export default class Utils {
    * @returns EIP20CoGateway object.
    */
   public getEIP20CoGatewayInstance(): EIP20CoGateway {
-    const eip20CoGatewayAddress = this.gatewayAddresses.auxiliaryGatewayAddress;
+    const eip20CoGatewayAddress = this.gatewayAddresses.eip20CoGatewayAddress;
     const eip20CoGatewayInstance: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
       eip20CoGatewayAddress,

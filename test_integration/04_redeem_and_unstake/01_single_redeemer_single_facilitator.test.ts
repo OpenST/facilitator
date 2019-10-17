@@ -109,7 +109,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
       new BigNumber(1),
-      gatewayAddresses.auxiliaryGatewayAddress,
+      gatewayAddresses.eip20CoGatewayAddress,
       redeemerAccount.address,
       '' // would be filled later
     );

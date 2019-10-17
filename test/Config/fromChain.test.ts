@@ -30,7 +30,8 @@ describe('Config.fromChain()', () => {
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
     const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
-    const facilitator = sinon.fake(FacilitatorConfig);
+    const facilitator = FacilitatorConfig.fromChain(auxChain);
+    facilitator.auxChainId = auxChain;
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,

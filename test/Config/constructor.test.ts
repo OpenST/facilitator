@@ -19,7 +19,7 @@ import sinon from 'sinon';
 
 import { Config } from '../../src/Config/Config';
 import assert from '../test_utils/assert';
-import GatewayAddresses from '../../src/Config/GatewayAddresses';
+import GatewayAddresses from "../../src/Config/GatewayAddresses";
 
 describe('Config.constructor()', () => {
   it('should pass with valid arguments', () => {
@@ -35,7 +35,7 @@ describe('Config.constructor()', () => {
     assert.strictEqual(
       config.gatewayAddresses,
       gatewayAddresses,
-      'Mosaic object is different',
+      'Gateway addresses object is different',
     );
 
     sinon.restore();

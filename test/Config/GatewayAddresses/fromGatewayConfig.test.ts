@@ -45,9 +45,12 @@ function assertGatewayAddressesInGatewayConfig(
     'Invalid basetoken address',
   );
 
+  const stakePoolAddress = gatewayConfig.originContracts.stakePoolAddress ||
+    gatewayConfig.mosaicConfig.originChain.contractAddresses.stakePoolAddress;
+
   assert.strictEqual(
     gatewayAddresses.stakePoolAddress,
-    gatewayConfig.originContracts.stakePoolAddress!,
+    stakePoolAddress,
     'Invalid stakepool address',
   );
 
@@ -76,20 +79,23 @@ function assertGatewayAddressesInGatewayConfig(
   );
 
   assert.strictEqual(
-    gatewayAddresses.originGatewayAddress,
+    gatewayAddresses.eip20GatewayAddress,
     gatewayConfig.originContracts.eip20GatewayAddress,
     'Invalid origin gateway address',
   );
 
   assert.strictEqual(
-    gatewayAddresses.auxiliaryGatewayAddress,
+    gatewayAddresses.eip20CoGatewayAddress,
     gatewayConfig.auxiliaryContracts.eip20CoGatewayAddress,
     'Invalid auxiliary gateway address',
   );
 
+  const redeemPoolAddress = gatewayConfig.auxiliaryContracts.redeemPoolAddress ||
+    gatewayConfig.mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.redeemPoolAddress;
+
   assert.strictEqual(
     gatewayAddresses.redeemPoolAddress,
-    gatewayConfig.auxiliaryContracts.redeemPoolAddress!,
+    redeemPoolAddress,
     'Invalid redeem pool address',
   );
 
@@ -100,13 +106,13 @@ function assertGatewayAddressesInGatewayConfig(
   );
 
   assert.strictEqual(
-    gatewayAddresses.originGatewayOrganizationAddress,
+    gatewayAddresses.eip20GatewayOrganizationAddress,
     gatewayConfig.originContracts.gatewayOrganizationAddress,
     'Invalid origin gateway organization address',
   );
 
   assert.strictEqual(
-    gatewayAddresses.auxiliaryGatewayOrganizationAddress,
+    gatewayAddresses.eip20CoGatewayOrganizationAddress,
     gatewayConfig.auxiliaryContracts.coGatewayOrganizationAddress,
     'Invalid auxiliary gateway organization address',
   );
@@ -122,6 +128,16 @@ function assertGatewayAddressesInGatewayConfig(
     assertGatewayAddressesInGatewayConfig(gatewayAddresses, gatewayConfig, auxChainId);
 
   });
+
+  it('should pass when stakepool and redeempool addresses are present in gateway config', () => {
+    gatewayConfig.originContracts.stakePoolAddress = '0xc6fF898ceBf631eFb58eEc7187E4c1f70AE8d943';
+    gatewayConfig.auxiliaryContracts.redeemPoolAddress = '0xdab6898ceBf631eFb58eEc7187E4c1f70AE8d943';
+    const gatewayAddresses = GatewayAddresses.fromGatewayConfig(gatewayConfig);
+
+    assertGatewayAddressesInGatewayConfig(gatewayAddresses, gatewayConfig, auxChainId);
+
+  });
+
 
   it('should fail when gateway config is null', () => {
 

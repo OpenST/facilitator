@@ -21,7 +21,7 @@ import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../src/Config/Config';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
-import GatewayAddresses from "../../src/Config/GatewayAddresses";
+import GatewayAddresses from '../../src/Config/GatewayAddresses';
 
 describe('Config.fromFile()', () => {
   const mosaicConfigPath = 'test/Config/mosaic-config.json';
@@ -30,9 +30,9 @@ describe('Config.fromFile()', () => {
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
     const facilitator = FacilitatorConfig.fromChain(auxChain);
     facilitator.auxChainId = auxChain;
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
 
     const mosaicConfigSpy = sinon.replace(
       MosaicConfig,

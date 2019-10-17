@@ -76,13 +76,13 @@ function assertGatewayAddressesInMosaicConfig(
   );
 
   assert.strictEqual(
-    gatewayAddresses.originGatewayAddress,
+    gatewayAddresses.eip20GatewayAddress,
     mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.eip20GatewayAddress,
     'Invalid origin gateway address',
   );
 
   assert.strictEqual(
-    gatewayAddresses.auxiliaryGatewayAddress,
+    gatewayAddresses.eip20CoGatewayAddress,
     mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.eip20CoGatewayAddress,
     'Invalid auxiliary gateway address',
   );
@@ -100,13 +100,13 @@ function assertGatewayAddressesInMosaicConfig(
   );
 
   assert.strictEqual(
-    gatewayAddresses.originGatewayOrganizationAddress,
+    gatewayAddresses.eip20GatewayOrganizationAddress,
     mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.gatewayOrganizationAddress,
     'Invalid origin gateway organization address',
   );
 
   assert.strictEqual(
-    gatewayAddresses.auxiliaryGatewayOrganizationAddress,
+    gatewayAddresses.eip20CoGatewayOrganizationAddress,
     mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.coGatewayOrganizationAddress,
     'Invalid auxiliary gateway organization address',
   );

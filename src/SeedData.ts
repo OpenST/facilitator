@@ -198,7 +198,7 @@ export default class SeedData {
    */
   private get gatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.config.gatewayAddresses.originGatewayAddress,
+      this.config.gatewayAddresses.eip20GatewayAddress,
     );
   }
 
@@ -207,7 +207,7 @@ export default class SeedData {
    */
   private get coGatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.config.gatewayAddresses.auxiliaryGatewayAddress,
+      this.config.gatewayAddresses.eip20CoGatewayAddress,
     );
   }
 

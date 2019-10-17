@@ -98,7 +98,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
       new BigNumber(1),
-      gatewayAddresses.originGatewayAddress,
+      gatewayAddresses.eip20GatewayAddress,
       stakerAccount.address,
       '0x0000000000000000000000000000000000000001',
     );

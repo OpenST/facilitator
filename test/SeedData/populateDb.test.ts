@@ -119,7 +119,7 @@ describe('SeedData.populateDb()', (): void => {
   }
 
   /**
-   * Verifies data which was inserted for OstComposer related events in contract_entities table.
+   * Verifies data which was inserted for StakePool related events in contract_entities table.
    */
   async function verifyOstComposerRelatedContractEntities(): Promise<void> {
     const contractEntity = new ContractEntity(
