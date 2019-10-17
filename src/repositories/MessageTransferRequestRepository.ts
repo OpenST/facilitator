@@ -289,19 +289,19 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
   }
 
   /**
-   * Returns a stake/redeem message transfer request by requestHash and nonce.
+   * Returns a stake/redeem message transfer request by senderProxy and nonce.
    *
-   * @param requestHash Request's hash.
+   * @param senderProxy sender proxy address.
    * @param nonce Nonce of request.
    *
    * @return MessageTransferRequest object if exists, otherwise null.
    */
-  public async getByRequestHashNonce(requestHash: string, nonce: BigNumber):
+  public async getBySenderProxyNonce(senderProxy: string, nonce: BigNumber):
     Promise<MessageTransferRequest | null> {
     const requestModel = await MessageTransferRequestModel.findOne({
       where: {
-        requestHash: {
-          [Op.eq]: requestHash,
+        senderProxy: {
+          [Op.eq]: senderProxy,
         },
         nonce: {
           [Op.eq]: nonce,

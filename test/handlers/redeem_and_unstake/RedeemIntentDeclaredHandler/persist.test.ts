@@ -49,7 +49,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
   const mockedMessageTransferRequestRepository = sinon.createStubInstance(
     MessageTransferRequestRepository,
     {
-      getByRequestHashNonce: Promise.resolve(redeemRequest),
+      getBySenderProxyNonce: Promise.resolve(redeemRequest),
     }
   );
 
@@ -86,7 +86,16 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]]
+      );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+      );
     });
 
   it('should change message source state to Declared if message status is UnDeclared',
@@ -126,7 +135,16 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]]
+      );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+      );
     });
 
   it('should change all messages source state to declared when input has multiple transactions',
@@ -198,6 +216,11 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         2,
         [[bulkTransactions[0]._messageHash], [bulkTransactions[1]._messageHash]],
       );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+      );
     });
 
   it('should not change message source state to Declared '
@@ -235,7 +258,16 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       'Number of models must be equal to transactions',
     );
     SpyAssert.assert(save, 1, [[expectedModel]]);
-    SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+    SpyAssert.assert(
+      mockedMessageRepository.get,
+      1,
+      [[transactions[0]._messageHash]]
+    );
+    SpyAssert.assert(
+      mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+      1,
+      [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+    );
   });
 
   it('should not update anything if current message state is already Declared',
@@ -273,6 +305,15 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]]
+      );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, transactions[0]._redeemerNonce]]
+      );
     });
 });

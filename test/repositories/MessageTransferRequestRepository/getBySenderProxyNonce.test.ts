@@ -31,14 +31,14 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('MessageTransferRequestRepository::getByRequestHashNonce', (): void => {
+describe('MessageTransferRequestRepository::getBySenderProxyNonce', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of MessageTransferRequest by requestHash and nonce.', async (): Promise<void> => {
+  it('Checks retrieval of MessageTransferRequest by sender and nonce.', async (): Promise<void> => {
     const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
     const message = StubData.messageAttributes(
       messageHash,
@@ -56,8 +56,8 @@ describe('MessageTransferRequestRepository::getByRequestHashNonce', (): void => 
       request,
     );
 
-    const requestOutput = await config.repos.messageTransferRequestRepository.getByRequestHashNonce(
-      request.requestHash,
+    const requestOutput = await config.repos.messageTransferRequestRepository.getBySenderProxyNonce(
+      request.senderProxy,
       request.nonce,
     );
 
@@ -73,16 +73,16 @@ describe('MessageTransferRequestRepository::getByRequestHashNonce', (): void => 
     );
   });
 
-  it('Checks retrieval of non-existing MessageTransferRequest by requestHash and nonce.', async (): Promise<void> => {
-    const request = await config.repos.messageTransferRequestRepository.getByRequestHashNonce(
-      'nonExistingRequestHash',
+  it('Checks retrieval of non-existing MessageTransferRequest by senderProxy and nonce.', async (): Promise<void> => {
+    const request = await config.repos.messageTransferRequestRepository.getBySenderProxyNonce(
+      'nonExistingSenderProxy',
       new BigNumber(1),
     );
 
     assert.strictEqual(
       request,
       null,
-      'MessageTransferRequest with \'nonExistingRequestHash\' does not exist.',
+      'MessageTransferRequest with \'nonExistingSenderProxy\' does not exist.',
     );
   });
 });

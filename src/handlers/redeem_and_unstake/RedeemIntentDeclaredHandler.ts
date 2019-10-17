@@ -79,7 +79,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
         // Links redeemRequest with messages table
-        let redeemRequest = await this.messageTransferRequestRepository.getByRequestHashNonce(
+        let redeemRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
           transaction._staker,
           message.nonce!,
         );

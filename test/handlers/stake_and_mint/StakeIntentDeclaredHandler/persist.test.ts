@@ -49,7 +49,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
   const mockedMessageTransferRequestRepository = sinon.createStubInstance(
     MessageTransferRequestRepository,
     {
-      getByRequestHashNonce: Promise.resolve(stakeRequest),
+      getBySenderProxyNonce: Promise.resolve(stakeRequest),
     }
   );
 
@@ -87,6 +87,11 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._staker, transactions[0]._stakerNonce]]
+      );
     });
 
   it('should change message source state to Declared if message status is Undeclared',
@@ -125,7 +130,16 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]]
+      );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._staker, transactions[0]._stakerNonce]]
+      );
     });
 
   it('should not change message source state to Declared if current status is Progressed',
@@ -163,7 +177,16 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]]
+      );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._staker, transactions[0]._stakerNonce]]
+      );
     });
 
   it('should not change message state if current status is already Declared',
@@ -201,6 +224,15 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]]
+      );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._staker, transactions[0]._stakerNonce]]
+      );
     });
 });
