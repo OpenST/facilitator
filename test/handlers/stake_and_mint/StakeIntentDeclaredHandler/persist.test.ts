@@ -46,12 +46,18 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     'requestHash',
     RequestType.Stake,
   );
+  const saveMessageTransferRequestRepository = sinon.stub();
   let mockedMessageTransferRequestRepository = sinon.createStubInstance(
     MessageTransferRequestRepository,
     {
       getBySenderProxyNonce: Promise.resolve(stakeRequest),
+      save: saveMessageTransferRequestRepository as any,
     },
   );
+
+  afterEach((): void => {
+    sinon.restore();
+  });
 
   it('should change message source state to Declared if message does not exist',
     async (): Promise<void> => {
@@ -92,7 +98,11 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._staker, new BigNumber(transactions[0]._stakerNonce)]],
       );
-      sinon.restore();
+      SpyAssert.assert(
+        saveMessageTransferRequestRepository,
+        0,
+        [[]],
+      );
     });
 
   it('should change message source state to Declared if message status is Undeclared',
@@ -136,7 +146,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
-      sinon.restore();
     });
 
   it('should not change message source state to Declared if current status is Progressed',
@@ -179,7 +188,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
-      sinon.restore();
     });
 
   it('should not change message state if current status is already Declared',
@@ -222,7 +230,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
-      sinon.restore();
     });
 
   it('should update messageHash in messageTransferRequestRepository',
@@ -284,6 +291,5 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         [[transactions[0]._staker, new BigNumber(transactions[0]._stakerNonce)]],
       );
       SpyAssert.assert(stakeRequestSave, 1, [[stakeRequest]]);
-      sinon.restore();
     });
 });

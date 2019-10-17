@@ -291,7 +291,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
   }
 
   /**
-   * Returns a stake/redeem message transfer request by senderProxy and nonce.
+   * Returns a message transfer request by senderProxy and nonce.
    *
    * @param senderProxy sender proxy address.
    * @param nonce Nonce of request.

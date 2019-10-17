@@ -40,15 +40,6 @@ describe('MessageTransferRequestRepository::getBySenderProxyNonce', (): void => 
 
   it('Checks retrieval of MessageTransferRequest by sender and nonce.', async (): Promise<void> => {
     const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
-    const message = StubData.messageAttributes(
-      messageHash,
-      '0x0000000000000000000000000000000000000001',
-      new BigNumber(300),
-    );
-    await config.repos.messageRepository.save(
-      message,
-    );
-
     const request = StubData.getAMessageTransferRequest('requestHash', RequestType.Stake);
     request.messageHash = messageHash;
 

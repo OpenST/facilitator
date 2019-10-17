@@ -25,6 +25,7 @@ import {
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import MessageTransferRequest from "../../models/MessageTransferRequest";
 
 /**
  * This class handles redeem intent declared transactions.
@@ -56,7 +57,8 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
     Logger.debug('Started persisting Redeem intent declared records');
-    const models: Message[] = await Promise.all(transactions.map(
+    const redeemRequestModels: MessageTransferRequest[] = [];
+    const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This can happen if some other facilitator has accepted the redeem request.
@@ -85,20 +87,31 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
         );
         if (redeemRequest && !redeemRequest.messageHash) {
           redeemRequest.messageHash = message.messageHash;
-          await this.messageTransferRequestRepository.save(redeemRequest);
+          redeemRequestModels.push(redeemRequest);
         }
         return message;
       },
     ));
 
-    const savePromises = [];
-    for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
-      savePromises.push(this.messageRepository.save(models[i]));
+    const saveRedeemRequestPromises = [];
+    for (let i = 0; i < redeemRequestModels.length; i += 1) {
+      Logger.debug(`Updating message hash in redeemRequest for requestHash: 
+      ${redeemRequestModels[i].requestHash}`);
+      saveRedeemRequestPromises.push(
+        this.messageTransferRequestRepository.save(redeemRequestModels[i]),
+      );
     }
+    await Promise.all(saveRedeemRequestPromises);
+    Logger.debug('redeemRequests saved');
 
-    await Promise.all(savePromises);
+    const saveMessagesPromises = [];
+    for (let i = 0; i < messageModels.length; i += 1) {
+      Logger.debug(`Changing source status to declared for message hash ${messageModels[i].messageHash}`);
+      saveMessagesPromises.push(this.messageRepository.save(messageModels[i]));
+    }
+    await Promise.all(saveMessagesPromises);
     Logger.debug('Messages saved');
-    return models;
+
+    return messageModels;
   }
 }
