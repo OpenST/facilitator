@@ -91,6 +91,12 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, new BigNumber(transactions[0]._redeemerNonce)]],
+      );
+      sinon.restore();
     });
 
   it('should change message source state to Declared if message status is UnDeclared',
@@ -135,6 +141,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
+      sinon.restore();
     });
 
   it('should change all messages source state to declared when input has multiple transactions',
@@ -206,6 +213,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         2,
         [[bulkTransactions[0]._messageHash], [bulkTransactions[1]._messageHash]],
       );
+      sinon.restore();
     });
 
   it('should not change message source state to Declared '
@@ -248,6 +256,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       1,
       [[transactions[0]._messageHash]],
     );
+    sinon.restore();
   });
 
   it('should not update anything if current message state is already Declared',
@@ -290,5 +299,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
+      sinon.restore();
     });
 });

@@ -80,7 +80,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
         }
         // Links redeemRequest with messages table
         const redeemRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
-          transaction._staker,
+          transaction._redeemer,
           message.nonce!,
         );
         if (redeemRequest && !redeemRequest.messageHash) {

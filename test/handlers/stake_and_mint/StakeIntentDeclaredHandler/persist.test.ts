@@ -87,6 +87,12 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._staker, new BigNumber(transactions[0]._stakerNonce)]],
+      );
+      sinon.restore();
     });
 
   it('should change message source state to Declared if message status is Undeclared',
@@ -130,6 +136,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
+      sinon.restore();
     });
 
   it('should not change message source state to Declared if current status is Progressed',
@@ -172,6 +179,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
+      sinon.restore();
     });
 
   it('should not change message state if current status is already Declared',
@@ -214,5 +222,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
+      sinon.restore();
     });
 });
