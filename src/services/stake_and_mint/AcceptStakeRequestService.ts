@@ -74,7 +74,8 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
   public async update(stakeRequests: MessageTransferRequest[]): Promise<void> {
     Logger.debug('Accept stake request service invoked');
     const nonAcceptedStakeRequests = stakeRequests.filter(
-      (stakeRequest: MessageTransferRequest): boolean => (stakeRequest.requestType === RequestType.Stake) && !stakeRequest.messageHash,
+      (stakeRequest: MessageTransferRequest): boolean =>
+        (stakeRequest.requestType === RequestType.Stake) && !stakeRequest.messageHash,
     );
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }

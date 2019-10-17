@@ -78,7 +78,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
-        // Links redeemRequest with messages table
+        // Update messageHash in messageTransferRequestRepository
         const redeemRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
           transaction._redeemer,
           message.nonce!,

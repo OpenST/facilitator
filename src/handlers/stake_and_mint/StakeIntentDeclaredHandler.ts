@@ -79,7 +79,7 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
-        // Link stakeRequest with messages table
+        // Update messageHash in messageTransferRequestRepository
         const stakeRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
           transaction._staker,
           message.nonce!,

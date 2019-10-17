@@ -85,7 +85,8 @@ export default class AcceptRedeemRequestService extends Observer<MessageTransfer
   public async update(redeemRequests: MessageTransferRequest[]): Promise<void> {
     Logger.debug('Accept redeem request service invoked');
     const nonAcceptedRedeemRequests = redeemRequests.filter(
-      (redeemRequest: MessageTransferRequest): boolean => (redeemRequest.requestType === RequestType.Redeem) && !redeemRequest.messageHash,
+      (redeemRequest: MessageTransferRequest): boolean =>
+        (redeemRequest.requestType === RequestType.Redeem) && !redeemRequest.messageHash,
     );
 
     await this.acceptRedeemRequests(nonAcceptedRedeemRequests);
