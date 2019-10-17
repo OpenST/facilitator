@@ -42,11 +42,11 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     contractAddress: '0x0000000000000000000000000000000000000002',
     blockNumber: '10',
   }];
-  const stakeRequest = StubData.getAMessageTransferRequest(
+  let stakeRequest = StubData.getAMessageTransferRequest(
     'requestHash',
     RequestType.Stake,
   );
-  const mockedMessageTransferRequestRepository = sinon.createStubInstance(
+  let mockedMessageTransferRequestRepository = sinon.createStubInstance(
     MessageTransferRequestRepository,
     {
       getBySenderProxyNonce: Promise.resolve(stakeRequest),
@@ -222,6 +222,66 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         1,
         [[transactions[0]._messageHash]],
       );
+      sinon.restore();
+    });
+
+  it('should update messageHash in messageTransferRequestRepository',
+    async (): Promise<void> => {
+      const messageSave = sinon.stub();
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
+        {
+          save: messageSave as any,
+          get: Promise.resolve(null),
+        });
+
+      // Sync stakeRequest with message model
+      stakeRequest.senderProxy = transactions[0]._staker;
+      stakeRequest.nonce = new BigNumber(transactions[0]._stakerNonce);
+      stakeRequest.messageHash = undefined;
+      let stakeRequestSave = sinon.stub();
+      mockedMessageTransferRequestRepository = sinon.createStubInstance(
+        MessageTransferRequestRepository,
+        {
+          getBySenderProxyNonce: Promise.resolve(stakeRequest),
+          save: stakeRequestSave as any,
+        },
+      );
+
+      const handler = new StakeIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
+
+      const messageModels = await handler.persist(transactions);
+
+      const expectedMessageModel = new Message(
+        transactions[0]._messageHash,
+        MessageType.Stake,
+        MessageDirection.OriginToAuxiliary,
+      );
+      expectedMessageModel.sender = transactions[0]._staker;
+      expectedMessageModel.nonce = new BigNumber(transactions[0]._stakerNonce);
+      expectedMessageModel.sourceStatus = MessageStatus.Declared;
+      expectedMessageModel.gatewayAddress = transactions[0].contractAddress;
+      expectedMessageModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
+
+      // Validate message models
+      assert.equal(
+        messageModels.length,
+        transactions.length,
+        'Number of models must be equal to transactions',
+      );
+      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(messageSave, 1, [[expectedMessageModel]]);
+
+      // Validate stakeRequest models
+      stakeRequest.messageHash = expectedMessageModel.messageHash;
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._staker, new BigNumber(transactions[0]._stakerNonce)]],
+      );
+      SpyAssert.assert(stakeRequestSave, 1, [[stakeRequest]]);
       sinon.restore();
     });
 });
