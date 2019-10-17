@@ -55,7 +55,7 @@ describe('AcceptStakeRequestService::update', (): void => {
   const web3 = new Web3(null);
   let acceptStakeRequestSpy: any;
   let interactsSpy: any;
-  const ostComposerAddress = '0x0000000000000000000000000000000000000001';
+  const stakePoolAddress = '0x0000000000000000000000000000000000000001';
   const originWorkerAddress = '0x0000000000000000000000000000000000000002';
   let sendTransactionSpy: any;
   const fakeTransactionHash = 'fakeTransactionHash';
@@ -65,7 +65,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     const service = new AcceptStakeRequestService(
       repos,
       web3,
-      ostComposerAddress,
+      stakePoolAddress,
       originWorkerAddress,
     );
     config = {
@@ -233,7 +233,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     SpyAssert.assert(
       interactsSpy,
       1,
-      [[web3, ostComposerAddress]],
+      [[web3, stakePoolAddress]],
     );
     SpyAssert.assert(
       acceptStakeRequestSpy,
@@ -349,7 +349,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     SpyAssert.assert(
       interactsSpy,
       1,
-      [[web3, ostComposerAddress]],
+      [[web3, stakePoolAddress]],
     );
     SpyAssert.assert(
       acceptStakeRequestSpy,
@@ -393,7 +393,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     SpyAssert.assert(
       interactsSpy,
       0,
-      [[web3, ostComposerAddress]],
+      [[web3, stakePoolAddress]],
     );
     SpyAssert.assert(
       acceptStakeRequestSpy,
