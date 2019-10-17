@@ -42,7 +42,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     contractAddress: '0x0000000000000000000000000000000000000002',
     blockNumber: '10',
   }];
-  let redeemRequest = StubData.getAMessageTransferRequest(
+  const redeemRequest = StubData.getAMessageTransferRequest(
     'requestHash',
     RequestType.Redeem,
   );
@@ -315,7 +315,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       redeemRequest.senderProxy = transactions[0]._redeemer;
       redeemRequest.nonce = new BigNumber(transactions[0]._redeemerNonce);
       redeemRequest.messageHash = undefined;
-      let stakeRequestSave = sinon.stub();
+      const stakeRequestSave = sinon.stub();
       mockedMessageTransferRequestRepository = sinon.createStubInstance(
         MessageTransferRequestRepository,
         {
@@ -340,7 +340,9 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       expectedMessageModel.nonce = new BigNumber(transactions[0]._redeemerNonce);
       expectedMessageModel.sourceStatus = MessageStatus.Declared;
       expectedMessageModel.gatewayAddress = transactions[0].contractAddress;
-      expectedMessageModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
+      expectedMessageModel.sourceDeclarationBlockHeight = new BigNumber(
+        transactions[0].blockNumber
+      );
 
       // Validate message models
       assert.equal(

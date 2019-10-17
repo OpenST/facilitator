@@ -42,7 +42,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
     contractAddress: '0x0000000000000000000000000000000000000002',
     blockNumber: '10',
   }];
-  let stakeRequest = StubData.getAMessageTransferRequest(
+  const stakeRequest = StubData.getAMessageTransferRequest(
     'requestHash',
     RequestType.Stake,
   );
@@ -238,7 +238,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       stakeRequest.senderProxy = transactions[0]._staker;
       stakeRequest.nonce = new BigNumber(transactions[0]._stakerNonce);
       stakeRequest.messageHash = undefined;
-      let stakeRequestSave = sinon.stub();
+      const stakeRequestSave = sinon.stub();
       mockedMessageTransferRequestRepository = sinon.createStubInstance(
         MessageTransferRequestRepository,
         {
@@ -263,7 +263,9 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       expectedMessageModel.nonce = new BigNumber(transactions[0]._stakerNonce);
       expectedMessageModel.sourceStatus = MessageStatus.Declared;
       expectedMessageModel.gatewayAddress = transactions[0].contractAddress;
-      expectedMessageModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
+      expectedMessageModel.sourceDeclarationBlockHeight = new BigNumber(
+        transactions[0].blockNumber,
+      );
 
       // Validate message models
       assert.equal(
