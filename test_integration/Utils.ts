@@ -815,7 +815,6 @@ export default class Utils {
    */
   public getSimpleTokenInstance(): EIP20Token {
     const { valueTokenAddress } = this.gatewayAddresses;
-    console.log('valueTokenAddress ;- ',valueTokenAddress);
     const simpletokenInstance: EIP20Token = interacts.getEIP20Token(
       this.originWeb3,
       valueTokenAddress,

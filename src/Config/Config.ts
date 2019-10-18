@@ -129,7 +129,7 @@ export class FacilitatorConfig {
    */
   private constructor(config: any) {
     this.originChain = config.originChain || '';
-    this.auxChainId = config.auxChainId || 0;
+    this.auxChainId = config.auxChainId || '';
     this.database = config.database || new DBConfig();
     this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
@@ -331,7 +331,7 @@ export class Config {
       ? GatewayAddresses.fromMosaicConfig(
         MosaicConfig.fromFile(mosaicConfigPath),
         facilitator.auxChainId,
-      ) : GatewayAddresses.fromGatewayConfig(GatewayConfig.fromFile(gatewayConfigPath));
+      ) : GatewayAddresses.fromGatewayConfig(GatewayConfig.fromFile(gatewayConfigPath!));
 
     return new Config(
       gatewayAddresses,
