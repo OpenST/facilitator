@@ -788,10 +788,10 @@ export default class Utils {
    * @returns EIP20Gateway object.
    */
   public getEIP20GatewayInstance(): EIP20Gateway {
-    const ostEIP20GatewayAddress = this.gatewayAddresses.eip20GatewayAddress;
+    const eip20GatewayAddress = this.gatewayAddresses.eip20GatewayAddress;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
-      ostEIP20GatewayAddress,
+      eip20GatewayAddress,
     );
     return eip20GatewayInstance;
   }
