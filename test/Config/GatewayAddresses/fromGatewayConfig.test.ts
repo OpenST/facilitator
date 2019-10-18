@@ -18,7 +18,7 @@ import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import GatewayAddresses from '../../../src/Config/GatewayAddresses';
 
 import assert from '../../test_utils/assert';
-import Utils from "../../../src/Utils";
+import Utils from '../../../src/Utils';
 
 describe('GatewayAddresses.fromGatewayConfig()', () => {
 /**
@@ -133,10 +133,10 @@ describe('GatewayAddresses.fromGatewayConfig()', () => {
 
   it('should pass when stakepool and redeempool addresses are present in gateway config', () => {
     gatewayConfig.originContracts.stakePoolAddress = Utils.toChecksumAddress(
-      '0xc6fF898ceBf631eFb58eEc7187E4c1f70AE8d943'
+      '0xc6fF898ceBf631eFb58eEc7187E4c1f70AE8d943',
     );
     gatewayConfig.auxiliaryContracts.redeemPoolAddress = Utils.toChecksumAddress(
-      '0xdab6898ceBf631eFb58eEc7187E4c1f70AE8d943'
+      '0xdab6898ceBf631eFb58eEc7187E4c1f70AE8d943',
     );
     const gatewayAddresses = GatewayAddresses.fromGatewayConfig(gatewayConfig);
 
