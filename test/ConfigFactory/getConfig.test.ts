@@ -50,7 +50,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     return spy;
   }
 
-  function spyMosaicFromChain(mosaicConfig: any): any {
+  function spyMosaicFromChain(mosaicConfig: MosaicConfig): any {
     const spy = sinon.stub(
       MosaicConfig,
       'fromChain',
@@ -60,7 +60,7 @@ describe('FacilitatorOptionParser.getConfig()', () => {
     return spy;
   }
 
-  function spyGatewayAddressesFromMosaicConfig(gatewayAddresses: any): any {
+  function spyGatewayAddressesFromMosaicConfig(gatewayAddresses: GatewayAddresses): any {
     const spy = sinon.stub(
       GatewayAddresses,
       'fromMosaicConfig',

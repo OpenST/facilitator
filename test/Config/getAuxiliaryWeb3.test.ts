@@ -26,7 +26,7 @@ describe('Config.auxiliaryWeb3', () => {
   let config: Config; let chain: Chain;
 
   beforeEach(() => {
-    const mosaicConfigPath = 'test/Facilitator/testdata/mosaic-config.json';
+    const mosaicConfigPath = 'test/Facilitator/testdata/mosaic.json';
     const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
     chain = config.facilitator.chains[config.facilitator.auxChainId];

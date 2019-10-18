@@ -4,11 +4,11 @@
   "originWorkerExpirationHeight":"100000000000",
   "auxiliaryWorkerExpirationHeight":"100000000000",
   "originRpc":"http://127.0.0.1:41515",
-  "originGraphRpc":"http://127.0.0.1:11515/subgraphs/name/mosaic/origin-1000",
-  "originGraphWs":"ws://127.0.0.1:61515/subgraphs/name/mosaic/origin-1000",
+  "originGraphRpc":"http://127.0.0.1:11515/subgraphs/name/mosaic/origin-A7f056b1320fE619571849f13",
+  "originGraphWs":"ws://127.0.0.1:61515/subgraphs/name/mosaic/origin-A7f056b1320fE619571849f13",
   "auxiliaryRpc":"http://127.0.0.1:41000",
-  "auxiliaryGraphRpc":"http://127.0.0.1:11000/subgraphs/name/mosaic/auxiliary-1000",
-  "auxiliaryGraphWs":"ws://127.0.0.1:61000/subgraphs/name/mosaic/auxiliary-1000",
+  "auxiliaryGraphRpc":"http://127.0.0.1:11000/subgraphs/name/mosaic/auxiliary-B6329BcFE2050F50db2eD3",
+  "auxiliaryGraphWs":"ws://127.0.0.1:61000/subgraphs/name/mosaic/auxiliary-B6329BcFE2050F50db2eD3",
   "originWorkerPassword":"origin",
   "auxiliaryWorkerPassword":"auxiliary"
 }

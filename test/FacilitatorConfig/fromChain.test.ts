@@ -62,34 +62,34 @@ describe('FacilitatorConfig.fromChain()', () => {
    * 3. args[1][1] refers to second parameter of second call for path.join. It would return 'e'.
    */
   function assertPathSpy(
-    pathSpy: any,
+    spy: any,
   ) {
     assert.strictEqual(
-      pathSpy.callCount,
+      spy.callCount,
       2,
-      `Expected call count is 2 but got ${pathSpy.callCount}`,
+      `Expected call count is 2 but got ${spy.callCount}`,
     );
 
     // validating input parameters on first call of path.join
     assert.strictEqual(
-      pathSpy.args[0][1],
+      spy.args[0][1],
       '.mosaic',
       'Base path is incorrect',
     );
 
     // validating input parameters on second call of path.join
     assert.strictEqual(
-      pathSpy.args[1][0],
+      spy.args[1][0],
       facilitatorConfigPath,
       'Path is incorrect',
     );
     assert.strictEqual(
-      pathSpy.args[1][1],
+      spy.args[1][1],
       chain.toString(),
       'Chain name is incorrect',
     );
     assert.strictEqual(
-      pathSpy.args[1][2],
+      spy.args[1][2],
       'facilitator-config.json',
       'Facilitator config file name is incorrect',
     );
