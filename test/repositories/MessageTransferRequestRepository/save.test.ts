@@ -168,7 +168,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
   });
 
 
-   it('should fail when gateway address is null', async (): Promise<void> => {
+  it('should fail when gateway address is null', async (): Promise<void> => {
     const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
@@ -185,13 +185,13 @@ describe('MessageTransferRequestRepository::save', (): void => {
 
     assert.isRejected(
       config.repos.messageTransferRequestRepository.save(
-      requestInput,
-    ),
+        requestInput,
+      ),
       'MessageTransferRequest.gateway cannot be null',
     );
   });
 
-   it('should fail when gateway address is undefined', async (): Promise<void> => {
+  it('should fail when gateway address is undefined', async (): Promise<void> => {
     const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
@@ -208,8 +208,8 @@ describe('MessageTransferRequestRepository::save', (): void => {
 
     assert.isRejected(
       config.repos.messageTransferRequestRepository.save(
-      requestInput,
-    ),
+        requestInput,
+      ),
       'MessageTransferRequest.gateway cannot be null',
     );
   });
@@ -232,7 +232,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
     );
 
     assert.isRejected(
-        config.repos.messageTransferRequestRepository.save(
+      config.repos.messageTransferRequestRepository.save(
         requestInput,
       ),
     );
@@ -251,5 +251,4 @@ describe('MessageTransferRequestRepository::save', (): void => {
       ]);
     }
   });
-
 });
