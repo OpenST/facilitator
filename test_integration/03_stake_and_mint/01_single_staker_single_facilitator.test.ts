@@ -23,6 +23,7 @@ import assert from '../../test/test_utils/assert';
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import SharedStorage from '../SharedStorage';
 import { FacilitatorConfig } from '../../src/Config/Config';
+import GatewayAddresses from "../../src/Config/GatewayAddresses";
 
 describe('stake and mint with single staker & facilitator process', async (): Promise<void> => {
   const stakeAmount = '130';
@@ -34,7 +35,8 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   const auxChainId = Number(Constants.auxChainId);
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
-  const ostComposer: string = mosaicConfig.originChain.contractAddresses.ostComposerAddress;
+  const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
+  const ostComposer: string = gatewayAddresses.stakePoolAddress;
 
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
@@ -96,7 +98,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
       new BigNumber(1),
-      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.ostEIP20GatewayAddress,
+      gatewayAddresses.eip20GatewayAddress,
       stakerAccount.address,
       '0x0000000000000000000000000000000000000001',
     );
@@ -296,7 +298,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   });
 
   it('should verify anchoring', async (): Promise<void> => {
-    anchoredBlockNumber = await utils.anchorOrigin(auxChainId);
+    anchoredBlockNumber = await utils.anchorOrigin();
 
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {

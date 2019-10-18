@@ -28,7 +28,7 @@ import Logger from '../Logger';
 
 import Repositories from '../repositories/Repositories';
 import SeedData from '../SeedData';
-
+import GatewayAddresses from '../Config/GatewayAddresses';
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -173,7 +173,8 @@ commander
       options.auxiliaryPassword,
     );
 
-    const config = new Config(mosaicConfig, facilitatorConfig);
+    const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
+    const config = new Config(gatewayAddresses, facilitatorConfig);
     const repositories = await Repositories.create(config.facilitator.database.path);
     const seedData = new SeedData(
       config,

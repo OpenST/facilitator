@@ -22,9 +22,6 @@ import { interacts } from '@openst/mosaic-contracts';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 
-import {
-  AuxiliaryChain as AuxiliaryChainMosaicConfig, OriginChain as OriginChainMosaicConfig,
-} from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config } from './Config/Config';
 import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
@@ -124,7 +121,7 @@ export default class SeedData {
       this.config.facilitator.originChain,
       GatewayType.Origin,
       this.coGatewayAddress,
-      this.simpleTokenAddress,
+      this.valueTokenAddress,
       this.anchorAddress,
       gatewayProperties.bounty,
       Zero,
@@ -142,7 +139,7 @@ export default class SeedData {
       this.config.facilitator.auxChainId.toString(),
       GatewayType.Auxiliary,
       this.gatewayAddress,
-      this.ostPrimeAddress,
+      this.utilityTokenAddress,
       this.coAnchorAddress,
       await this.getCoGatewayBounty(),
       Zero,
@@ -156,7 +153,7 @@ export default class SeedData {
    */
   private async populateContractEntityTable(): Promise<void> {
     const contractAddressEventTypesMap: Record<string, EntityType[]> = {
-      [this.ostComposerAddress]: [EntityType.StakeRequesteds],
+      [this.stakePoolAddress]: [EntityType.StakeRequesteds],
       [this.redeemPoolAddress]: [EntityType.RedeemRequesteds],
       [this.gatewayAddress]: [
         // Stake & mint entities
@@ -197,25 +194,11 @@ export default class SeedData {
   }
 
   /**
-   * @return Returns auxiliary chain mosaic config.
-   */
-  private get auxiliaryChainMosaicConfig(): AuxiliaryChainMosaicConfig {
-    return this.config.mosaic.auxiliaryChains[this.config.facilitator.auxChainId];
-  }
-
-  /**
-   * @return Returns origin chain mosaic config.
-   */
-  private get originChainMosaicConfig(): OriginChainMosaicConfig {
-    return this.config.mosaic.originChain;
-  }
-
-  /**
    * @return Returns Gateway address.
    */
   private get gatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.ostEIP20GatewayAddress,
+      this.config.gatewayAddresses.eip20GatewayAddress,
     );
   }
 
@@ -224,7 +207,7 @@ export default class SeedData {
    */
   private get coGatewayAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      this.config.gatewayAddresses.eip20CoGatewayAddress,
     );
   }
 
@@ -233,7 +216,7 @@ export default class SeedData {
    */
   private get anchorAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.origin.anchorAddress,
+      this.config.gatewayAddresses.originAnchorAddress,
     );
   }
 
@@ -242,40 +225,43 @@ export default class SeedData {
    */
   private get coAnchorAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.anchorAddress,
+      this.config.gatewayAddresses.auxiliaryAnchorAddress,
     );
   }
 
   /**
-   * @return Returns OstComposer address.
+   * @return Returns stake pool address.
    */
-  private get ostComposerAddress(): string {
+  private get stakePoolAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.ostComposerAddress,
+      this.config.gatewayAddresses.stakePoolAddress,
     );
   }
 
+  /**
+   * @return Returns redeem pool address.
+   */
   private get redeemPoolAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.redeemPoolAddress,
+      this.config.gatewayAddresses.redeemPoolAddress,
     );
   }
 
   /**
-   * @return Returns OstPrime address.
+   * @return Returns utility token address.
    */
-  private get ostPrimeAddress(): string {
+  private get utilityTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.auxiliaryChainMosaicConfig.contractAddresses.auxiliary.ostPrimeAddress,
+      this.config.gatewayAddresses.utilityTokenAddress,
     );
   }
 
   /**
-   * @return Returns SimpleToken address.
+   * @return Returns value token address.
    */
-  private get simpleTokenAddress(): string {
+  private get valueTokenAddress(): string {
     return Utils.toChecksumAddress(
-      this.originChainMosaicConfig.contractAddresses.simpleTokenAddress,
+      this.config.gatewayAddresses.valueTokenAddress,
     );
   }
 

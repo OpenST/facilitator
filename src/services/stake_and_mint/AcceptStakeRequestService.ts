@@ -49,7 +49,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
 
   private messageRepository: MessageRepository;
 
-  private ostComposerAddress: string;
+  private stakePoolAddress: string;
 
   private originWorkerAddress: string;
 
@@ -59,7 +59,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
   public constructor(
     repos: Repositories,
     web3: Web3,
-    ostComposerAddress: string,
+    stakePoolAddress: string,
     originWorkerAddress: string,
   ) {
     super();
@@ -67,7 +67,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     this.web3 = web3;
     this.messageTransferRequestRepository = repos.messageTransferRequestRepository;
     this.messageRepository = repos.messageRepository;
-    this.ostComposerAddress = ostComposerAddress;
+    this.stakePoolAddress = stakePoolAddress;
     this.originWorkerAddress = originWorkerAddress;
   }
 
@@ -131,7 +131,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     const baseTokenInteract = interacts.getEIP20Token(this.web3, baseToken);
     Logger.debug(`Sending bounty approval transaction for base token ${baseToken}`);
     const rawTransaction = baseTokenInteract.methods.approve(
-      this.ostComposerAddress,
+      this.stakePoolAddress,
       bounty,
     );
 
@@ -152,7 +152,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     stakeRequest: MessageTransferRequest, hashLock: string,
   ): Promise<string> {
     Logger.debug(`Sending accept request transaction for staker proxy ${stakeRequest.senderProxy}`);
-    const ostComposer: OSTComposer = interacts.getOSTComposer(this.web3, this.ostComposerAddress);
+    const stakePool: OSTComposer = interacts.getOSTComposer(this.web3, this.stakePoolAddress);
 
     assert(stakeRequest.amount !== undefined);
     assert(stakeRequest.beneficiary !== undefined);
@@ -162,7 +162,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     assert(stakeRequest.sender !== undefined);
     assert(stakeRequest.gateway !== undefined);
 
-    const rawTx: TransactionObject<string> = ostComposer.methods.acceptStakeRequest(
+    const rawTx: TransactionObject<string> = stakePool.methods.acceptStakeRequest(
       (stakeRequest.amount).toString(10),
       (stakeRequest.beneficiary),
       (stakeRequest.gasPrice).toString(10),

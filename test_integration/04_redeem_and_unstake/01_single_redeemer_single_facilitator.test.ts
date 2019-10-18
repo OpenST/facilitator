@@ -23,6 +23,7 @@ import assert from '../../test/test_utils/assert';
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import { FacilitatorConfig } from '../../src/Config/Config';
 import Logger from '../../src/Logger';
+import GatewayAddresses from "../../src/Config/GatewayAddresses";
 
 describe('redeem and unstake with single redeemer & facilitator process', async (): Promise<void> => {
   const redeemAmount = '130';
@@ -33,8 +34,8 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   const auxChainId = Number(Constants.auxChainId);
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
-  const redeemPool: string = mosaicConfig.auxiliaryChains[auxChainId]
-    .contractAddresses.auxiliary.redeemPoolAddress;
+  const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
+  const redeemPool: string = gatewayAddresses.redeemPoolAddress;
 
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
@@ -108,7 +109,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
       new BigNumber(1),
-      mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.ostEIP20CogatewayAddress,
+      gatewayAddresses.eip20CoGatewayAddress,
       redeemerAccount.address,
       '' // would be filled later
     );
@@ -313,7 +314,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   });
 
   it('should verify anchoring', async (): Promise<void> => {
-    anchoredBlockNumber = await utils.anchorAuxiliary(auxChainId);
+    anchoredBlockNumber = await utils.anchorAuxiliary();
     let verifyAnchorInterval: NodeJS.Timeout;
     const verifyAnchorPromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);

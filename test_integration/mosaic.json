@@ -4,8 +4,8 @@
       "gatewayLibAddress": "0x353AEba14b902e67cDdA99595f74d910e3FD5e97",
       "messageBusAddress": "0xB69f2Aa06793028CC8E604122218b1D2E23eae4b",
       "merklePatriciaLibAddress": "0xf8238D9850F2a47f1411Cb7F5F5F3279A72b7f7a",
-      "simpleTokenAddress": "0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8",
-      "ostComposerAddress": "0x34817af7b685dbd8a360e8bed3121eb03d56c9bd"
+      "valueTokenAddress": "0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8",
+      "stakePoolAddress": "0x34817af7b685dbd8a360e8bed3121eb03d56c9bd"
     },
     "chain": "dev"
   },
@@ -16,17 +16,18 @@
       ],
       "contractAddresses": {
         "origin": {
+          "baseTokenAddress":"0x7de07272E4c6cb822503B46C8a41517935C3f0c0",
           "anchorOrganizationAddress": "0x7de07272E4c6cb822503B46C8a41517935C3f0c0",
           "anchorAddress": "0xEa8D41fc6C6C0Ee155E5F6FbF9Cc1167Fa17927E",
-          "ostGatewayOrganizationAddress": "0xaB5335771fBA0270634e649882229c7e8CaA6158",
-          "ostEIP20GatewayAddress": "0xA7f056b1320fE619571849f138Cd1Ae2f2e64179"
+          "gatewayOrganizationAddress": "0xaB5335771fBA0270634e649882229c7e8CaA6158",
+          "eip20GatewayAddress": "0xA7f056b1320fE619571849f138Cd1Ae2f2e64179"
         },
         "auxiliary": {
           "anchorOrganizationAddress": "0xb8c982d0cd5f7c1B24B80f0e38cB25a6d9b5b716",
           "anchorAddress": "0x50c0Af1A754CE6bA25a102D4ee759b08141C4aA9",
-          "ostCoGatewayOrganizationAddress": "0xbc67Ff0116248762c940B97bA1501BeD6Fa6D093",
-          "ostPrimeAddress": "0x19F64B29789F02FFcCE2c37DFB3d65FEaDdea66a",
-          "ostEIP20CogatewayAddress": "0xB6329BcFE2050F50db2eD347b3cE67DDfAc39110",
+          "coGatewayOrganizationAddress": "0xbc67Ff0116248762c940B97bA1501BeD6Fa6D093",
+          "utilityTokenAddress": "0x19F64B29789F02FFcCE2c37DFB3d65FEaDdea66a",
+          "eip20CoGatewayAddress": "0xB6329BcFE2050F50db2eD347b3cE67DDfAc39110",
           "gatewayLibAddress": "0x3d0c80965628a7e44AD70E0490DBB4D305F1636D",
           "messageBusAddress": "0xF9234855d1Fb05f06A09baFB827faD084516b21c",
           "merklePatriciaLibAddress": "0x3CaB7dE8Dde1fb082A315F986B09c431c1B7D9e7",

@@ -4,8 +4,8 @@
             "gatewayLibAddress": "0x1FD9274a2FE0E86f5A7b5Bde57b93C8C9b62e21d",
             "messageBusAddress": "0xF5F22562eC76F33A9F114E0Ca9e3916C383DF041",
             "merklePatriciaLibAddress": "0xF68374642F47a4C353C78afF17bfA216c930f116",
-            "simpleTokenAddress": "0x325f05a75999347b7d8461BaEf274afAE0B8AE1c",
-            "ostComposerAddress": "0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38"
+            "valueTokenAddress": "0x325f05a75999347b7d8461BaEf274afAE0B8AE1c",
+            "stakePoolAddress": "0x3c8bA8CaEcb60c67D69605a772AE1bb9A732fb38"
         },
         "chain": "12346"
     },
@@ -18,15 +18,16 @@
                 "origin": {
                     "anchorOrganizationAddress": "0x6e968FE21894A35Ba59ee8EC6f60Ea0DDC3a59E5",
                     "anchorAddress": "0xaC80704c80AB83512b48314bDfa82f79923C2Fbe",
-                    "ostGatewayOrganizationAddress": "0x2eF25877B254d6391B843Df25Dd7A8b0A243BEe9",
-                    "ostEIP20GatewayAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4"
+                    "gatewayOrganizationAddress": "0x2eF25877B254d6391B843Df25Dd7A8b0A243BEe9",
+                    "eip20GatewayAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4",
+                    "baseTokenAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4"
                 },
                 "auxiliary": {
                     "anchorOrganizationAddress": "0x6F5e8F480E3FED3be8F15264B1F28ce4Ec7c1287",
                     "anchorAddress": "0xBe26124167E8a350eE806B3ba11Ddb6c8E6dc689",
-                    "ostCoGatewayOrganizationAddress": "0xe09caeCE30bFddC5Ae2C07aCaa8324428cF3e6c0",
-                    "ostPrimeAddress": "0x0d3E57044B1B96a257fB2ba3958c1130219A2d55",
-                    "ostEIP20CogatewayAddress": "0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227",
+                    "coGatewayOrganizationAddress": "0xe09caeCE30bFddC5Ae2C07aCaa8324428cF3e6c0",
+                    "utilityTokenAddress": "0x0d3E57044B1B96a257fB2ba3958c1130219A2d55",
+                    "eip20CoGatewayAddress": "0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227",
                     "gatewayLibAddress": "0x9511525a52DB3aAd1271616104337e7eC5d99690",
                     "messageBusAddress": "0x48A535C2452D04D21214B1b1e3757AcA58fda833",
                     "merklePatriciaLibAddress": "0xcA0422cB2428369E3ba577ec11d5bc1daB9a7f19",
@@ -841,15 +842,16 @@
                 "origin": {
                     "anchorOrganizationAddress": "0x6e968FE21894A35Ba59ee8EC6f60Ea0DDC3a59E5",
                     "anchorAddress": "0xaC80704c80AB83512b48314bDfa82f79923C2Fbe",
-                    "ostGatewayOrganizationAddress": "0x2eF25877B254d6391B843Df25Dd7A8b0A243BEe9",
-                    "ostEIP20GatewayAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4"
+                    "gatewayOrganizationAddress": "0x2eF25877B254d6391B843Df25Dd7A8b0A243BEe9",
+                    "eip20GatewayAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4",
+                    "baseTokenAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4"
                 },
                 "auxiliary": {
                     "anchorOrganizationAddress": "0x6F5e8F480E3FED3be8F15264B1F28ce4Ec7c1287",
                     "anchorAddress": "0xBe26124167E8a350eE806B3ba11Ddb6c8E6dc689",
-                    "ostCoGatewayOrganizationAddress": "0xe09caeCE30bFddC5Ae2C07aCaa8324428cF3e6c0",
-                    "ostPrimeAddress": "0x0d3E57044B1B96a257fB2ba3958c1130219A2d55",
-                    "ostEIP20CogatewayAddress": "0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227",
+                    "coGatewayOrganizationAddress": "0xe09caeCE30bFddC5Ae2C07aCaa8324428cF3e6c0",
+                    "utilityTokenAddress": "0x0d3E57044B1B96a257fB2ba3958c1130219A2d55",
+                    "eip20CoGatewayAddress": "0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227",
                     "gatewayLibAddress": "0x9511525a52DB3aAd1271616104337e7eC5d99690",
                     "messageBusAddress": "0x48A535C2452D04D21214B1b1e3757AcA58fda833",
                     "merklePatriciaLibAddress": "0xcA0422cB2428369E3ba577ec11d5bc1daB9a7f19"
