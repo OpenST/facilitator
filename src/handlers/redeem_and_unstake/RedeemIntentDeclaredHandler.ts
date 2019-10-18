@@ -25,7 +25,7 @@ import {
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
-import MessageTransferRequest from "../../models/MessageTransferRequest";
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 
 /**
  * This class handles redeem intent declared transactions.
