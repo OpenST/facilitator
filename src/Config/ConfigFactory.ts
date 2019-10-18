@@ -16,6 +16,7 @@
 
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import { FacilitatorStartException } from '../Exception';
 import { Config, FacilitatorConfig } from './Config';
 import GatewayAddresses from './GatewayAddresses';
@@ -34,22 +35,27 @@ export default class ConfigFactory {
 
   public facilitatorConfigPath?: string;
 
+  public gatewayConfigPath?: string;
+
   /**
    * @param originChain Name of the origin chain.
    * @param auxChainId Identifier of the aux chain.
    * @param mosaicConfigPath Path to mosaic config file.
-   * @param facilitatorConfigPath Path to facilitator config path.
+   * @param facilitatorConfigPath Path to facilitator config.
+   * @param gatewayConfigPath Path to gateway config.
    */
   public constructor(
     originChain?: string,
     auxChainId?: number,
     mosaicConfigPath?: string,
     facilitatorConfigPath?: string,
+    gatewayConfigPath?: string,
   ) {
     this.originChain = originChain;
     this.auxChainId = auxChainId;
     this.mosaicConfigPath = mosaicConfigPath;
     this.facilitatorConfigPath = facilitatorConfigPath;
+    this.gatewayConfigPath = gatewayConfigPath;
   }
 
   /**
@@ -74,18 +80,20 @@ export default class ConfigFactory {
       const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromFile(
         this.facilitatorConfigPath,
       );
-
       this.verifyChainIdInFacilitatorConfig(facilitatorConfig);
-
       // when mosaic config path is given.
       if (this.mosaicConfigPath) {
         const mosaicConfig: MosaicConfig = MosaicConfig.fromFile(this.mosaicConfigPath);
         // verify origin chain and aux chain is present in mosaic config.
         this.verifyChainIdInMosaicConfig(mosaicConfig);
-        return Config.fromFile(this.mosaicConfigPath, this.facilitatorConfigPath);
+        return Config.fromFile(this.facilitatorConfigPath, this.mosaicConfigPath, '');
       }
 
-      const mosaicConfig: MosaicConfig = MosaicConfig.fromChain(this.originChain!);
+      if (this.gatewayConfigPath) {
+        return Config.fromFile(this.facilitatorConfigPath, '', this.gatewayConfigPath);
+      }
+
+      const mosaicConfig: MosaicConfig = MosaicConfig.fromChain(this.originChain);
 
       return new Config(
         GatewayAddresses.fromMosaicConfig(
@@ -99,7 +107,7 @@ export default class ConfigFactory {
     if (this.mosaicConfigPath) {
       const mosaic: MosaicConfig = MosaicConfig.fromFile(this.mosaicConfigPath);
       this.verifyChainIdInMosaicConfig(mosaic);
-      const facilitator = FacilitatorConfig.fromChain(this.auxChainId!);
+      const facilitator = FacilitatorConfig.fromChain(this.auxChainId);
       return new Config(
         GatewayAddresses.fromMosaicConfig(
           mosaic,
@@ -109,8 +117,18 @@ export default class ConfigFactory {
       );
     }
 
-    const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(this.auxChainId!);
-    const mosaic: MosaicConfig = MosaicConfig.fromChain(this.originChain!);
+    if (this.gatewayConfigPath) {
+      const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(this.auxChainId);
+      const gatewayConfig = GatewayConfig.fromFile(this.gatewayConfigPath);
+      this.verifyChainIdInGatewayConfig(gatewayConfig);
+      return new Config(
+        GatewayAddresses.fromGatewayConfig(gatewayConfig),
+        facilitator,
+      );
+    }
+
+    const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(this.auxChainId);
+    const mosaic: MosaicConfig = MosaicConfig.fromChain(this.originChain);
     return new Config(
       GatewayAddresses.fromMosaicConfig(
         mosaic,
@@ -127,12 +145,12 @@ export default class ConfigFactory {
    */
   private handleFacilitatorConfigOption(): Config {
     let configObj;
+    const facilitatorConfig = FacilitatorConfig.fromFile(this.facilitatorConfigPath);
+    this.auxChainId = facilitatorConfig.auxChainId;
+    this.originChain = facilitatorConfig.originChain;
     // When no origin and aux chain provided.
     if (this.mosaicConfigPath) {
       const mosaicConfig = MosaicConfig.fromFile(this.mosaicConfigPath);
-      const facilitatorConfig = FacilitatorConfig.fromFile(this.facilitatorConfigPath!);
-      this.auxChainId = facilitatorConfig.auxChainId;
-      this.originChain = facilitatorConfig.originChain;
 
       this.verifyChainIdInMosaicConfig(mosaicConfig);
 
@@ -143,17 +161,27 @@ export default class ConfigFactory {
         ),
         facilitatorConfig,
       );
+    } else if (this.gatewayConfigPath) {
+      const gatewayConfig = GatewayConfig.fromFile(this.gatewayConfigPath);
+
+      this.verifyChainIdInGatewayConfig(gatewayConfig);
+
+      configObj = new Config(
+        GatewayAddresses.fromGatewayConfig(
+          gatewayConfig,
+        ),
+        facilitatorConfig,
+      );
     } else {
-      const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromFile(
-        this.facilitatorConfigPath!,
-      );
+      // only facilitator config is given.
       const mosaicConfig: MosaicConfig = MosaicConfig.fromChain(
-        facilitatorConfig.originChain,
+        this.originChain,
       );
+      this.verifyChainIdInMosaicConfig(mosaicConfig);
       configObj = new Config(
         GatewayAddresses.fromMosaicConfig(
           mosaicConfig,
-          facilitatorConfig.auxChainId,
+          this.auxChainId,
         ),
         facilitatorConfig,
       );
@@ -168,13 +196,13 @@ export default class ConfigFactory {
   private verifyChainIdInFacilitatorConfig(
     facilitatorConfig: FacilitatorConfig,
   ): void {
-    if (facilitatorConfig.chains[this.auxChainId!] === undefined) {
+    if (facilitatorConfig.chains[this.auxChainId] === undefined) {
       throw new FacilitatorStartException(
         `facilitator config is invalid as provided auxchain ${this.auxChainId} is not present`,
       );
     }
 
-    if (facilitatorConfig.chains[this.originChain!] === undefined) {
+    if (facilitatorConfig.chains[this.originChain] === undefined) {
       throw new FacilitatorStartException(
         `facilitator config is invalid as provided origin chain ${this.originChain} is not present`,
       );
@@ -188,13 +216,27 @@ export default class ConfigFactory {
   private verifyChainIdInMosaicConfig(
     mosaicConfig: MosaicConfig,
   ): void {
-    if (mosaicConfig.auxiliaryChains[this.auxChainId!] === undefined) {
+    if (mosaicConfig.auxiliaryChains[this.auxChainId] === undefined) {
       throw new FacilitatorStartException('aux chain is not present in mosaic config');
     }
-
     if (mosaicConfig.originChain.chain !== this.originChain) {
       throw new FacilitatorStartException('origin chain id in mosaic config is different '
         + 'than the one provided');
+    }
+  }
+
+  /**
+   * It verifies chain id's in gateway config.
+   * @param gatewayConfig GatewayConfig object.
+   */
+  private verifyChainIdInGatewayConfig(
+    gatewayConfig: GatewayConfig,
+  ): void {
+    this.verifyChainIdInMosaicConfig(gatewayConfig.mosaicConfig);
+    if (gatewayConfig.auxChainId !== this.auxChainId) {
+      throw new FacilitatorStartException(
+        `Aux chain id ${gatewayConfig.auxChainId} in gatewayconfig and provided auxchain id ${this.auxChainId} are not same`,
+      );
     }
   }
 

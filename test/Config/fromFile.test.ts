@@ -52,7 +52,7 @@ describe('Config.fromFile()', () => {
       sinon.fake.returns(facilitator),
     );
 
-    const config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
+    const config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath);
 
     SpyAssert.assert(mosaicConfigSpy, 1, [[mosaicConfigPath]]);
     SpyAssert.assert(facilitatorConfigSpy, 1, [[facilitatorConfigPath]]);

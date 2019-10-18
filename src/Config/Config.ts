@@ -21,6 +21,7 @@ import path from 'path';
 import Web3 from 'web3';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import Account from '../Account';
 import Directory from '../Directory';
 import {
@@ -128,7 +129,7 @@ export class FacilitatorConfig {
    */
   private constructor(config: any) {
     this.originChain = config.originChain || '';
-    this.auxChainId = config.auxChainId || '';
+    this.auxChainId = config.auxChainId || 0;
     this.database = config.database || new DBConfig();
     this.chains = {};
     this.encryptedAccounts = config.encryptedAccounts || {};
@@ -315,22 +316,25 @@ export class Config {
   /**
    * It provides config object from the path specified. This will throw if
    * mosaic config path or facilitator config path doesn't exists.
+   * @param facilitatorConfigPath Path to facilitator config file path.
    * @param mosaicConfigPath Path to mosaic config file path.
-   * @param facilitatorConfigPath Path to facilitator config file path/
+   * @param gatewayConfigPath Path to gateway config file path.
    * @returns Config object consisting of gateway addresses and facilitator configurations.
    */
   public static fromFile(
-    mosaicConfigPath: string,
     facilitatorConfigPath: string,
+    mosaicConfigPath?: string,
+    gatewayConfigPath?: string,
   ): Config {
-    const mosaic: MosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
+    const gatewayAddresses = mosaicConfigPath
+      ? GatewayAddresses.fromMosaicConfig(
+        MosaicConfig.fromFile(mosaicConfigPath),
+        facilitator.auxChainId,
+      ) : GatewayAddresses.fromGatewayConfig(GatewayConfig.fromFile(gatewayConfigPath));
 
     return new Config(
-      GatewayAddresses.fromMosaicConfig(
-        mosaic,
-        facilitator.auxChainId,
-      ),
+      gatewayAddresses,
       facilitator,
     );
   }

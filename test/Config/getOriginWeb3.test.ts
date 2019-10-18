@@ -28,7 +28,7 @@ describe('Config.originWeb3', () => {
   beforeEach(() => {
     const mosaicConfigPath = 'test/Facilitator/testdata/mosaic.json';
     const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
-    config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
+    config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath);
     chain = config.facilitator.chains[config.facilitator.originChain];
   });
 

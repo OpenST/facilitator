@@ -289,7 +289,7 @@ describe('SeedData.populateDb()', (): void => {
     );
     const mosaicConfigPath = 'test/Facilitator/testdata/mosaic.json';
     const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
-    config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
+    config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath);
     sinon.replaceGetter(
       config,
       'originWeb3',

@@ -19,6 +19,7 @@ import commander from 'commander';
 import Web3 from 'web3';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import Account from '../Account';
 import {
   Chain, FacilitatorConfig, Config, ENV_WORKER_PASSWORD_PREFIX,
@@ -28,7 +29,6 @@ import Logger from '../Logger';
 
 import Repositories from '../repositories/Repositories';
 import SeedData from '../SeedData';
-import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import GatewayAddresses from '../Config/GatewayAddresses';
 
 /**
@@ -40,20 +40,20 @@ import GatewayAddresses from '../Config/GatewayAddresses';
  */
 function getFromMosaicConfig(
   auxChainId: number,
-  mosaicConfigPath: string
+  mosaicConfigPath: string,
 ): {
-  originChainId: string; gatewayAddresses: GatewayAddresses
-} {
-    const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
-    const auxChain = mosaicConfig.auxiliaryChains[auxChainId];
-    if (auxChain === null || auxChain === undefined) {
-      Logger.error(`auxchain id ${auxChainId} is not present in the mosaic config`);
-      process.exit(1);
-    }
+    originChainId: string; gatewayAddresses: GatewayAddresses;
+  } {
+  const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
+  const auxChain = mosaicConfig.auxiliaryChains[auxChainId];
+  if (auxChain === null || auxChain === undefined) {
+    Logger.error(`auxchain id ${auxChainId} is not present in the mosaic config`);
+    process.exit(1);
+  }
 
   return {
     originChainId: mosaicConfig.originChain.chain,
-    gatewayAddresses: GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId)
+    gatewayAddresses: GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId),
   };
 }
 
@@ -66,23 +66,23 @@ function getFromMosaicConfig(
  */
 function getFromGatewayConfig(
   auxChainId: number,
-  gatewayConfigPath: string
+  gatewayConfigPath: string,
 ): {
-  originChainId: string; gatewayAddresses: GatewayAddresses
-} {
-    const gatewayConfig = GatewayConfig.fromFile(gatewayConfigPath);
+    originChainId: string; gatewayAddresses: GatewayAddresses;
+  } {
+  const gatewayConfig = GatewayConfig.fromFile(gatewayConfigPath);
 
-    if (auxChainId === gatewayConfig.auxChainId) {
-      Logger.error(`aux chain id present in gateway config is ${gatewayConfig.auxChainId}`+
-        `but ${auxChainId} is specified in the command`);
-      process.exit(1);
-    }
+  if (auxChainId === gatewayConfig.auxChainId) {
+    Logger.error(`aux chain id present in gateway config is ${gatewayConfig.auxChainId}`
+        + `but ${auxChainId} is specified in the command`);
+    process.exit(1);
+  }
 
   const gatewayAddresses = GatewayAddresses.fromGatewayConfig(gatewayConfig);
   return {
     originChainId: gatewayConfig.mosaicConfig.originChain.chain,
-    gatewayAddresses
-  }
+    gatewayAddresses,
+  };
 }
 
 commander
@@ -102,14 +102,14 @@ commander
   .action(async (options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
-    console.log('options :- ',options);
+    console.log('options :- ', options);
 
-    if(
-      (options.mosaicConfig && options.gatewayConfig) ||
-      (options.gatewayConfig === undefined && options.mosaicConfig === undefined)
+    if (
+      (options.mosaicConfig && options.gatewayConfig)
+      || (options.gatewayConfig === undefined && options.mosaicConfig === undefined)
     ) {
-      Logger.error('only one option out of gateway config and mosaic config is required. ' +
-        'refer readme for more details');
+      Logger.error('only one option out of gateway config and mosaic config is required. '
+        + 'refer readme for more details');
       process.exit(1);
     }
 
@@ -182,8 +182,8 @@ commander
     const {
       originChainId,
       gatewayAddresses,
-    } = options.mosaicConfig !== undefined ? getFromMosaicConfig(auxChainId, options.mosaicConfig) :
-      getFromGatewayConfig(auxChainId, options.gatewayConfig);
+    } = options.mosaicConfig !== undefined ? getFromMosaicConfig(auxChainId, options.mosaicConfig)
+      : getFromGatewayConfig(auxChainId, options.gatewayConfig);
 
     facilitatorConfig.originChain = originChainId;
     facilitatorConfig.auxChainId = auxChainId;
