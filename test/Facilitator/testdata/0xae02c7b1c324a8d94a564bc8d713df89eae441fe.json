@@ -2,7 +2,7 @@
   "mosaicConfigFilePath":"./test/Facilitator/testdata/mosaic.json",
   "auxChainId":301,
   "originContracts":{
-    "baseTokenAddress":"0x8e183Fd2cd55C7C05bBf4FAC989740f69e559A6d",
+    "baseTokenAddress":"0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8",
     "valueTokenAddress":"0x8e183Fd2cd55C7C05bBf4FAC989740f69e559A6d",
     "gatewayOrganizationAddress":"0x3f99f42d226A0CD1C1Fcae1e8dC11b2f7a9DcE4B",
     "eip20GatewayAddress":"0xaE02C7b1C324A8D94A564bC8d713Df89eae441fe"

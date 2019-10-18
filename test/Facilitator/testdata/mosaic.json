@@ -19,7 +19,7 @@
                     "anchorOrganizationAddress": "0x6e968FE21894A35Ba59ee8EC6f60Ea0DDC3a59E5",
                     "anchorAddress": "0xaC80704c80AB83512b48314bDfa82f79923C2Fbe",
                     "gatewayOrganizationAddress": "0x2eF25877B254d6391B843Df25Dd7A8b0A243BEe9",
-                    "eip20GatewayAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4",
+                    "eip20GatewayAddress": "0xaE02C7b1C324A8D94A564bC8d713Df89eae441fe",
                     "baseTokenAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4"
                 },
                 "auxiliary": {
@@ -843,7 +843,7 @@
                     "anchorOrganizationAddress": "0x6e968FE21894A35Ba59ee8EC6f60Ea0DDC3a59E5",
                     "anchorAddress": "0xaC80704c80AB83512b48314bDfa82f79923C2Fbe",
                     "gatewayOrganizationAddress": "0x2eF25877B254d6391B843Df25Dd7A8b0A243BEe9",
-                    "eip20GatewayAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4",
+                    "eip20GatewayAddress": "0xaE02C7b1C324A8D94A564bC8d713Df89eae441fe",
                     "baseTokenAddress": "0x97BA58DBE58898F2B669C56496f46F638DC322d4"
                 },
                 "auxiliary": {
