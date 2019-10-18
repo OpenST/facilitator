@@ -18,7 +18,9 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { DataTypes, InitOptions, Model } from 'sequelize';
+import {
+  DataTypes, InitOptions, Model, Op,
+} from 'sequelize';
 
 import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
@@ -286,6 +288,34 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
     });
 
     return this.convertToRequests(requestModels);
+  }
+
+  /**
+   * Returns a message transfer request by senderProxy and nonce.
+   *
+   * @param senderProxy sender proxy address.
+   * @param nonce Nonce of request.
+   *
+   * @return MessageTransferRequest object if exists, otherwise null.
+   */
+  public async getBySenderProxyNonce(senderProxy: string, nonce: BigNumber):
+  Promise<MessageTransferRequest | null> {
+    const requestModel = await MessageTransferRequestModel.findOne({
+      where: {
+        senderProxy: {
+          [Op.eq]: senderProxy,
+        },
+        nonce: {
+          [Op.eq]: nonce,
+        },
+      },
+    });
+
+    if (requestModel === null) {
+      return null;
+    }
+
+    return this.convertToRequest(requestModel);
   }
 
 

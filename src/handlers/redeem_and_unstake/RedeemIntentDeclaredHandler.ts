@@ -24,6 +24,8 @@ import {
   MessageType,
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 
 /**
  * This class handles redeem intent declared transactions.
@@ -33,10 +35,16 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
 
   private readonly messageRepository: MessageRepository;
 
-  public constructor(messageRepository: MessageRepository) {
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
+
+  public constructor(
+    messageRepository: MessageRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
+  ) {
     super();
 
     this.messageRepository = messageRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
   }
 
   /**
@@ -49,7 +57,8 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
     Logger.debug('Started persisting Redeem intent declared records');
-    const models: Message[] = await Promise.all(transactions.map(
+    const redeemRequestModels: MessageTransferRequest[] = [];
+    const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This can happen if some other facilitator has accepted the redeem request.
@@ -71,18 +80,38 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
+        // Update messageHash in messageTransferRequestRepository
+        const redeemRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
+          transaction._redeemer,
+          message.nonce!,
+        );
+        if (redeemRequest && !redeemRequest.messageHash) {
+          redeemRequest.messageHash = message.messageHash;
+          redeemRequestModels.push(redeemRequest);
+        }
         return message;
       },
     ));
 
-    const savePromises = [];
-    for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
-      savePromises.push(this.messageRepository.save(models[i]));
+    const saveRedeemRequestPromises = [];
+    for (let i = 0; i < redeemRequestModels.length; i += 1) {
+      Logger.debug(`Updating message hash in redeemRequest for requestHash: 
+      ${redeemRequestModels[i].requestHash}`);
+      saveRedeemRequestPromises.push(
+        this.messageTransferRequestRepository.save(redeemRequestModels[i]),
+      );
     }
+    await Promise.all(saveRedeemRequestPromises);
+    Logger.debug('redeemRequests saved');
 
-    await Promise.all(savePromises);
+    const saveMessagesPromises = [];
+    for (let i = 0; i < messageModels.length; i += 1) {
+      Logger.debug(`Changing source status to declared for message hash ${messageModels[i].messageHash}`);
+      saveMessagesPromises.push(this.messageRepository.save(messageModels[i]));
+    }
+    await Promise.all(saveMessagesPromises);
     Logger.debug('Messages saved');
-    return models;
+
+    return messageModels;
   }
 }
