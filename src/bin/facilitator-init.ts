@@ -102,7 +102,6 @@ commander
   .action(async (options) => {
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
-    console.log('options :- ', options);
 
     if (
       (options.mosaicConfig && options.gatewayConfig)
