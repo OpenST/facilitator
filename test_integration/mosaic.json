@@ -16,7 +16,7 @@
       ],
       "contractAddresses": {
         "origin": {
-          "baseTokenAddress": "0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8",
+          "baseTokenAddress":"0x7de07272E4c6cb822503B46C8a41517935C3f0c0",
           "anchorOrganizationAddress": "0x7de07272E4c6cb822503B46C8a41517935C3f0c0",
           "anchorAddress": "0xEa8D41fc6C6C0Ee155E5F6FbF9Cc1167Fa17927E",
           "gatewayOrganizationAddress": "0xaB5335771fBA0270634e649882229c7e8CaA6158",
@@ -26,13 +26,12 @@
           "anchorOrganizationAddress": "0xb8c982d0cd5f7c1B24B80f0e38cB25a6d9b5b716",
           "anchorAddress": "0x50c0Af1A754CE6bA25a102D4ee759b08141C4aA9",
           "coGatewayOrganizationAddress": "0xbc67Ff0116248762c940B97bA1501BeD6Fa6D093",
-          "baseTokenAddress": "0x19F64B29789F02FFcCE2c37DFB3d65FEaDdea66a",
           "utilityTokenAddress": "0x19F64B29789F02FFcCE2c37DFB3d65FEaDdea66a",
-          "eip20CogatewayAddress": "0xB6329BcFE2050F50db2eD347b3cE67DDfAc39110",
+          "eip20CoGatewayAddress": "0xB6329BcFE2050F50db2eD347b3cE67DDfAc39110",
           "gatewayLibAddress": "0x3d0c80965628a7e44AD70E0490DBB4D305F1636D",
           "messageBusAddress": "0xF9234855d1Fb05f06A09baFB827faD084516b21c",
           "merklePatriciaLibAddress": "0x3CaB7dE8Dde1fb082A315F986B09c431c1B7D9e7",
-          "redeemPoolAddress": "0x4c8ba8caecb60c67d69605a772ae1bb9a732fb39"
+          "redeemPoolAddress": "0x8bA9C19BeacBB3eF85E1Df57ceef1Df922F2D87F"
         }
       },
       "chainId": 1000,

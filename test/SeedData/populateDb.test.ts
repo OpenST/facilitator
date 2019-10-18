@@ -43,9 +43,9 @@ describe('SeedData.populateDb()', (): void => {
   const auxiliaryChainId = 301;
   const zeroBn = new BigNumber('0');
   const stakePoolAddress = Web3Utils.toChecksumAddress('0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38');
-  const redeemPoolAddress = Web3Utils.toChecksumAddress('0x4c8ba8caecb60c67d69605a772ae1bb9a732fb39');
-  const ostGatewayAddress = '0x97BA58DBE58898F2B669C56496f46F638DC322d4';
-  const ostCoGatewayAddress = '0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227';
+  const redeemPoolAddress = Web3Utils.toChecksumAddress('0x8bA9C19BeacBB3eF85E1Df57ceef1Df922F2D87F');
+  const eip20GatewayAddress = '0x97BA58DBE58898F2B669C56496f46F638DC322d4';
+  const eip20CoGatewayAddress = '0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227';
   const anchorAddress = '0xaC80704c80AB83512b48314bDfa82f79923C2Fbe';
   const coAnchorAddress = '0xBe26124167E8a350eE806B3ba11Ddb6c8E6dc689';
   const valueTokenAddress = '0x325f05a75999347b7d8461BaEf274afAE0B8AE1c';
@@ -59,8 +59,8 @@ describe('SeedData.populateDb()', (): void => {
     const auxiliaryChain = new AuxiliaryChain(
       auxiliaryChainId,
       originChain,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
+      eip20GatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       zeroBn,
@@ -78,17 +78,17 @@ describe('SeedData.populateDb()', (): void => {
    */
   async function verifyGatewayData(): Promise<void> {
     const gateway = new Gateway(
-      ostGatewayAddress,
+      eip20GatewayAddress,
       originChain,
       GatewayType.Origin,
-      ostCoGatewayAddress,
+      eip20CoGatewayAddress,
       valueTokenAddress,
       anchorAddress,
       zeroBn,
       zeroBn,
       true,
     );
-    const gatewayFromDb = await repositories.gatewayRepository.get(ostGatewayAddress);
+    const gatewayFromDb = await repositories.gatewayRepository.get(eip20GatewayAddress);
     GatewayRepositoryUtil.assertGatewayAttributes(gateway, gatewayFromDb as Gateway);
   }
 
@@ -97,16 +97,16 @@ describe('SeedData.populateDb()', (): void => {
    */
   async function verifyCoGatewayData(): Promise<void> {
     const gateway = new Gateway(
-      ostCoGatewayAddress,
+      eip20CoGatewayAddress,
       auxiliaryChainId.toString(),
       GatewayType.Auxiliary,
-      ostGatewayAddress,
+      eip20GatewayAddress,
       utilityTokenAddress,
       coAnchorAddress,
       zeroBn,
       zeroBn,
     );
-    const gatewayFromDb = await repositories.gatewayRepository.get(ostCoGatewayAddress);
+    const gatewayFromDb = await repositories.gatewayRepository.get(eip20CoGatewayAddress);
     GatewayRepositoryUtil.assertGatewayAttributes(gateway, gatewayFromDb as Gateway);
   }
 
@@ -164,12 +164,12 @@ describe('SeedData.populateDb()', (): void => {
     const promises = [];
     for (let i = 0; i < eventTypes.length; i += 1) {
       const contractEntity = new ContractEntity(
-        ostGatewayAddress,
+        eip20GatewayAddress,
         eventTypes[i],
         currentTimestamp,
       );
       const promise = repositories.contractEntityRepository.get(
-        ostGatewayAddress,
+        eip20GatewayAddress,
         eventTypes[i],
       ).then((contractEntityFromDb) => {
         ContractEntityRepositoryUtil.assertion(
@@ -229,12 +229,12 @@ describe('SeedData.populateDb()', (): void => {
     const promises = [];
     for (let i = 0; i < eventTypes.length; i += 1) {
       const contractEntity = new ContractEntity(
-        ostCoGatewayAddress,
+        eip20CoGatewayAddress,
         eventTypes[i],
         currentTimestamp,
       );
       const promise = repositories.contractEntityRepository.get(
-        ostCoGatewayAddress,
+        eip20CoGatewayAddress,
         eventTypes[i],
       ).then((contractEntityFromDb) => {
         ContractEntityRepositoryUtil.assertion(
@@ -287,7 +287,7 @@ describe('SeedData.populateDb()', (): void => {
       'getEIP20CoGateway',
       () => eip20CoGatewayMockObject as any,
     );
-    const mosaicConfigPath = 'test/Facilitator/testdata/mosaic-config.json';
+    const mosaicConfigPath = 'test/Facilitator/testdata/mosaic.json';
     const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
     sinon.replaceGetter(

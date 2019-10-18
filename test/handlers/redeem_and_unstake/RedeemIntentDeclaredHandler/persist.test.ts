@@ -26,6 +26,11 @@ import {
 } from '../../../../src/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
+import {
+  default as MessageTransferRequestRepository,
+  RequestType,
+} from '../../../../src/repositories/MessageTransferRequestRepository';
+import StubData from '../../../test_utils/StubData';
 
 describe('RedeemIntentDeclaredHandler.persist()', (): void => {
   const transactions = [{
@@ -37,17 +42,36 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     contractAddress: '0x0000000000000000000000000000000000000002',
     blockNumber: '10',
   }];
+  const redeemRequest = StubData.getAMessageTransferRequest(
+    'requestHash',
+    RequestType.Redeem,
+  );
+  const saveMessageTransferRequestRepository = sinon.stub();
+  let mockedMessageTransferRequestRepository = sinon.createStubInstance(
+    MessageTransferRequestRepository,
+    {
+      getBySenderProxyNonce: Promise.resolve(redeemRequest),
+      save: saveMessageTransferRequestRepository as any,
+    },
+  );
+
+  afterEach((): void => {
+   sinon.restore();
+  });
 
   it('should change message source state to declared if message does not exist',
     async (): Promise<void> => {
       const save = sinon.stub();
 
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(null),
         });
-      const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+      const handler = new RedeemIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
 
       const models = await handler.persist(transactions);
 
@@ -68,7 +92,16 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]],
+      );
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, new BigNumber(transactions[0]._redeemerNonce)]],
+      );
     });
 
   it('should change message source state to Declared if message status is UnDeclared',
@@ -82,12 +115,15 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       );
       existingMessageWithUndeclaredStatus.sourceStatus = MessageStatus.Undeclared;
 
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(existingMessageWithUndeclaredStatus),
         });
-      const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+      const handler = new RedeemIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
 
       const models = await handler.persist(transactions);
 
@@ -105,7 +141,11 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]],
+      );
     });
 
   it('should change all messages source state to declared when input has multiple transactions',
@@ -132,12 +172,15 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
 
       const save = sinon.stub();
 
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(null),
         });
-      const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+      const handler = new RedeemIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
 
       const models = await handler.persist(bulkTransactions);
 
@@ -170,7 +213,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       );
       SpyAssert.assert(save, 2, [[expectedModel1], [expectedModel2]]);
       SpyAssert.assert(
-        mockedRepository.get,
+        mockedMessageRepository.get,
         2,
         [[bulkTransactions[0]._messageHash], [bulkTransactions[1]._messageHash]],
       );
@@ -186,12 +229,15 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       MessageDirection.AuxiliaryToOrigin,
     );
     existingMessageWithProgressStatus.sourceStatus = MessageStatus.Progressed;
-    const mockedRepository = sinon.createStubInstance(MessageRepository,
+    const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
       {
         save: save as any,
         get: Promise.resolve(existingMessageWithProgressStatus),
       });
-    const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+    const handler = new RedeemIntentDeclaredHandler(
+      mockedMessageRepository as any,
+      mockedMessageTransferRequestRepository as any,
+    );
 
     const models = await handler.persist(transactions);
 
@@ -208,7 +254,11 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       'Number of models must be equal to transactions',
     );
     SpyAssert.assert(save, 1, [[expectedModel]]);
-    SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+    SpyAssert.assert(
+      mockedMessageRepository.get,
+      1,
+      [[transactions[0]._messageHash]],
+    );
   });
 
   it('should not update anything if current message state is already Declared',
@@ -221,12 +271,15 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         MessageDirection.AuxiliaryToOrigin,
       );
       existingMessageWithProgressStatus.sourceStatus = MessageStatus.Declared;
-      const mockedRepository = sinon.createStubInstance(MessageRepository,
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
         {
           save: save as any,
           get: Promise.resolve(existingMessageWithProgressStatus),
         });
-      const handler = new RedeemIntentDeclaredHandler(mockedRepository as any);
+      const handler = new RedeemIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
 
       const models = await handler.persist(transactions);
 
@@ -243,6 +296,104 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         'Number of models must be equal to transactions',
       );
       SpyAssert.assert(save, 1, [[expectedModel]]);
-      SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(
+        mockedMessageRepository.get,
+        1,
+        [[transactions[0]._messageHash]],
+      );
+    });
+
+  it('should update messageHash in messageTransferRequestRepository',
+    async (): Promise<void> => {
+      const messageSave = sinon.stub();
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
+        {
+          save: messageSave as any,
+          get: Promise.resolve(null),
+        });
+
+      // Sync stakeRequest with message model
+      redeemRequest.senderProxy = transactions[0]._redeemer;
+      redeemRequest.nonce = new BigNumber(transactions[0]._redeemerNonce);
+      redeemRequest.messageHash = undefined;
+      const redeemRequestSave = sinon.stub();
+      mockedMessageTransferRequestRepository = sinon.createStubInstance(
+        MessageTransferRequestRepository,
+        {
+          getBySenderProxyNonce: Promise.resolve(redeemRequest),
+          save: redeemRequestSave as any,
+        },
+      );
+
+      const handler = new RedeemIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
+
+      const messageModels = await handler.persist(transactions);
+
+      const expectedMessageModel = new Message(
+        transactions[0]._messageHash,
+        MessageType.Redeem,
+        MessageDirection.AuxiliaryToOrigin,
+      );
+      expectedMessageModel.sender = transactions[0]._redeemer;
+      expectedMessageModel.nonce = new BigNumber(transactions[0]._redeemerNonce);
+      expectedMessageModel.sourceStatus = MessageStatus.Declared;
+      expectedMessageModel.gatewayAddress = transactions[0].contractAddress;
+      expectedMessageModel.sourceDeclarationBlockHeight = new BigNumber(
+        transactions[0].blockNumber
+      );
+
+      // Validate message models
+      assert.equal(
+        messageModels.length,
+        transactions.length,
+        'Number of models must be equal to transactions',
+      );
+      SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
+      SpyAssert.assert(messageSave, 1, [[expectedMessageModel]]);
+
+      // Validate redeemRequest models
+      redeemRequest.messageHash = expectedMessageModel.messageHash;
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, new BigNumber(transactions[0]._redeemerNonce)]],
+      );
+      SpyAssert.assert(redeemRequestSave, 1, [[redeemRequest]]);
+    });
+
+  it('should not update messageHash in messageTransferRequestRepository when redeemRequest is' +
+    ' undefined',
+    async (): Promise<void> => {
+      const messageSave = sinon.stub();
+      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
+        {
+          save: messageSave as any,
+          get: Promise.resolve(null),
+        });
+
+      const redeemRequestSave = sinon.stub();
+      mockedMessageTransferRequestRepository = sinon.createStubInstance(
+        MessageTransferRequestRepository,
+        {
+          getBySenderProxyNonce: Promise.resolve(null),
+          save: redeemRequestSave as any,
+        },
+      );
+
+      const handler = new RedeemIntentDeclaredHandler(
+        mockedMessageRepository as any,
+        mockedMessageTransferRequestRepository as any,
+      );
+      await handler.persist(transactions);
+
+      SpyAssert.assert(
+        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+        1,
+        [[transactions[0]._redeemer, new BigNumber(transactions[0]._redeemerNonce)]],
+      );
+      SpyAssert.assert(redeemRequestSave, 0, [[]]);
     });
 });

@@ -18,10 +18,12 @@
 import fs from 'fs-extra';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
+import { interacts } from '@openst/mosaic-contracts';
 import * as Web3Utils from 'web3-utils';
 import Logger from './Logger';
 import Account from './Account';
 import MessageTransferRequest from './models/MessageTransferRequest';
+import { MESSAGE_BOX_OFFSET } from './Constants';
 
 const Utils = {
   /**
@@ -158,6 +160,25 @@ const Utils = {
         ],
       ),
     );
+  },
+
+  /**
+   * It returns message box offset of gateway.
+   * @param web3 Web3 instance.
+   * @param address Address of gateway contract.
+   * @returns Message box offset of gateway of origin or auxiliary.
+   */
+  async getMessageBoxOffset(
+    web3: Web3,
+    address: string,
+  ): Promise<string> {
+    // fixme : Use Gatewaybase contract interact(https://github.com/mosaicdao/mosaic-contracts/issues/799)
+    const gatewayInstance = interacts.getEIP20Gateway(web3, address);
+    const messageBoxOffset = await gatewayInstance.methods.MESSAGE_BOX_OFFSET().call();
+    if (messageBoxOffset) {
+      return messageBoxOffset;
+    }
+    return MESSAGE_BOX_OFFSET;
   },
 };
 

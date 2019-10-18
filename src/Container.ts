@@ -52,10 +52,8 @@ export default class Container {
     const handler = Handlers.create(
       repositories,
       config.facilitator.auxChainId,
-      config.mosaic.auxiliaryChains[config.facilitator.auxChainId].contractAddresses
-        .origin.eip20GatewayAddress,
-      config.mosaic.auxiliaryChains[config.facilitator.auxChainId].contractAddresses
-        .auxiliary.eip20CogatewayAddress,
+      config.gatewayAddresses.eip20GatewayAddress,
+      config.gatewayAddresses.eip20CoGatewayAddress,
     );
     const transactionHandler = new TransactionHandler(
       handler,

@@ -17,15 +17,15 @@
 
 import sinon from 'sinon';
 
-import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config } from '../../src/Config/Config';
 import assert from '../test_utils/assert';
+import GatewayAddresses from '../../src/Config/GatewayAddresses';
 
 describe('Config.constructor()', () => {
   it('should pass with valid arguments', () => {
-    const mosaic = sinon.createStubInstance(MosaicConfig);
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
     const facilitator = sinon.fake() as any;
-    const config = new Config(mosaic, facilitator);
+    const config = new Config(gatewayAddresses, facilitator);
 
     assert.strictEqual(
       config.facilitator,
@@ -33,9 +33,9 @@ describe('Config.constructor()', () => {
       'Facilitator object is different',
     );
     assert.strictEqual(
-      config.mosaic,
-      mosaic,
-      'Mosaic object is different',
+      config.gatewayAddresses,
+      gatewayAddresses,
+      'Gateway addresses object is different',
     );
 
     sinon.restore();

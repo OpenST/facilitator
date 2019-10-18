@@ -18,7 +18,9 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { DataTypes, InitOptions, Model } from 'sequelize';
+import {
+  DataTypes, InitOptions, Model, Op,
+} from 'sequelize';
 
 import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
@@ -119,6 +121,10 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
         beneficiary: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
         gasPrice: {
           type: DataTypes.BIGINT,
@@ -144,14 +150,26 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
         gateway: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
         sender: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
         senderProxy: {
           type: DataTypes.STRING,
           allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
         },
       },
       {
@@ -176,14 +194,35 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
    * @returns Newly created or updated stake/redeem request object (with all saved fields).
    */
   public async save(request: MessageTransferRequest): Promise<MessageTransferRequest> {
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(request);
-    await MessageTransferRequestModel.upsert(
-      request,
+    const messageTransferRequestModelObj = await MessageTransferRequestModel.findOne(
       {
-        fields: definedOwnProps,
+        where: {
+          requestHash: request.requestHash,
+        },
       },
     );
-    const requestOutput = await this.get(request.requestHash);
+
+    let requestOutput: MessageTransferRequest | null;
+    if (messageTransferRequestModelObj === null) {
+      requestOutput = this.convertToRequest(await MessageTransferRequestModel.create(
+        request,
+      ));
+    } else {
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(request);
+      await MessageTransferRequestModel.update(
+        request,
+        {
+          where: {
+            requestHash: request.requestHash,
+          },
+          fields: definedOwnProps,
+        },
+      );
+      requestOutput = await this.get(
+        request.requestHash,
+      );
+    }
+
     assert(
       requestOutput !== null,
       `Updated request not found for requestHash: ${request.requestHash}`,
@@ -249,6 +288,34 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
     });
 
     return this.convertToRequests(requestModels);
+  }
+
+  /**
+   * Returns a message transfer request by senderProxy and nonce.
+   *
+   * @param senderProxy sender proxy address.
+   * @param nonce Nonce of request.
+   *
+   * @return MessageTransferRequest object if exists, otherwise null.
+   */
+  public async getBySenderProxyNonce(senderProxy: string, nonce: BigNumber):
+  Promise<MessageTransferRequest | null> {
+    const requestModel = await MessageTransferRequestModel.findOne({
+      where: {
+        senderProxy: {
+          [Op.eq]: senderProxy,
+        },
+        nonce: {
+          [Op.eq]: nonce,
+        },
+      },
+    });
+
+    if (requestModel === null) {
+      return null;
+    }
+
+    return this.convertToRequest(requestModel);
   }
 
 

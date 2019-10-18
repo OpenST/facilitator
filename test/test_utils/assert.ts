@@ -14,9 +14,32 @@
 //
 // ----------------------------------------------------------------------------
 
+import { ValidationErrorItem } from 'sequelize/types/lib/errors';
+
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 const { assert } = chai;
+
+/**
+ * It asserts the error message received from sequelize with the expected message.
+ * @param errorObject Error object by sequelize.
+ * @param messages Expected error messages.
+ */
+export function assertErrorMessages(errorObject: ValidationErrorItem[], messages: string[]): void {
+  assert.strictEqual(
+    errorObject.length,
+    messages.length,
+    `Error object has ${errorObject.length} errors but number of messages to be`
+      + `asserted is ${messages.length}`,
+  );
+
+  errorObject.forEach((value: ValidationErrorItem, index: number) => {
+    assert.strictEqual(
+      value.message,
+      messages[index],
+    );
+  });
+}
 
 export default assert;

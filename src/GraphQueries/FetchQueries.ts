@@ -159,7 +159,7 @@ const FetchQueries: Record<string, string> = {
   + ' {contractAddress: $contractAddress, uts_gt: $uts}) {\n'
   + '    id\n'
   + '    _messageHash\n'
-  + '    _redeem\n'
+  + '    _redeemer\n'
   + '    _redeemerNonce\n'
   + '    _amount\n'
   + '    contractAddress\n'

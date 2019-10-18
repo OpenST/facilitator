@@ -14,6 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
+
 import 'mocha';
 
 import BigNumber from 'bignumber.js';
@@ -21,6 +22,7 @@ import BigNumber from 'bignumber.js';
 import MessageTransferRequest from '../../../src/models/MessageTransferRequest';
 import Repositories from '../../../src/repositories/Repositories';
 import assert from '../../test_utils/assert';
+import StubData from '../../test_utils/StubData';
 import Util from './util';
 import { RequestType } from '../../../src/repositories/MessageTransferRequestRepository';
 
@@ -29,61 +31,58 @@ interface TestConfigInterface {
 }
 let config: TestConfigInterface;
 
-describe('MessageTransferRequestRepository::get', (): void => {
-  const gatewayAddress = '0x0000000000000000000000000000000000000001';
-  const beneficiary = '0x0000000000000000000000000000000000000002';
-  const sender = '0x0000000000000000000000000000000000000003';
-  const senderProxy = '0x0000000000000000000000000000000000000004';
+describe('MessageTransferRequestRepository::getBySenderProxyNonce', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
   });
 
-  it('Checks retrieval of an existing message transfer stake/redeem request.', async (): Promise<void> => {
-    const requestInput = new MessageTransferRequest(
-      'requestHash',
-      RequestType.Stake,
-      new BigNumber('10'),
-      new BigNumber('1'),
-      beneficiary,
-      new BigNumber('2'),
-      new BigNumber('3'),
-      new BigNumber('4'),
-      gatewayAddress,
-      sender,
-      senderProxy,
+  it('Checks retrieval of MessageTransferRequest by sender and nonce.', async (): Promise<void> => {
+    const messageHash = '0x00000000000000000000000000000000000000000000000000000000000000333';
+    const message = StubData.messageAttributes(
+      messageHash,
+      '0x0000000000000000000000000000000000000001',
+      new BigNumber(300),
     );
+    await config.repos.messageRepository.save(
+      message,
+    );
+
+    const request = StubData.getAMessageTransferRequest('requestHash', RequestType.Stake);
+    request.messageHash = messageHash;
 
     await config.repos.messageTransferRequestRepository.save(
-      requestInput,
+      request,
     );
 
-    const requestOutput = await config.repos.messageTransferRequestRepository.get(
-      requestInput.requestHash,
+    const requestOutput = await config.repos.messageTransferRequestRepository.getBySenderProxyNonce(
+      request.senderProxy,
+      request.nonce,
     );
 
     assert.notStrictEqual(
       requestOutput,
       null,
-      'Stake request should exists as it has been just created.',
+      'Stake/Redeem request should exist as it has been just created.',
     );
 
     Util.checkInputAgainstOutput(
-      requestInput,
+      request,
       requestOutput as MessageTransferRequest,
     );
   });
 
-  it('Checks retrieval of non-existing model.', async (): Promise<void> => {
-    const request = await config.repos.messageTransferRequestRepository.get(
-      'nonExistingHash',
+  it('Checks retrieval of non-existing MessageTransferRequest by senderProxy and nonce.', async (): Promise<void> => {
+    const request = await config.repos.messageTransferRequestRepository.getBySenderProxyNonce(
+      'nonExistingSenderProxy',
+      new BigNumber(1),
     );
 
     assert.strictEqual(
       request,
       null,
-      'Stake request with \'nonExistingHash\' does not exist.',
+      'MessageTransferRequest with \'nonExistingSenderProxy\' does not exist.',
     );
   });
 });

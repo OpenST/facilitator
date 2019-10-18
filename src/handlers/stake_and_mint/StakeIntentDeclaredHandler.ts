@@ -23,6 +23,8 @@ import {
 } from '../../repositories/MessageRepository';
 import ContractEntityHandler from '../ContractEntityHandler';
 import Utils from '../../Utils';
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import MessageTransferRequest from '../../models/MessageTransferRequest';
 
 /**
  * This class handles stake intent declared transactions.
@@ -32,10 +34,16 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
 
   private readonly messageRepository: MessageRepository;
 
-  public constructor(messageRepository: MessageRepository) {
+  private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
+
+  public constructor(
+    messageRepository: MessageRepository,
+    messageTransferRequestRepository: MessageTransferRequestRepository,
+  ) {
     super();
 
     this.messageRepository = messageRepository;
+    this.messageTransferRequestRepository = messageTransferRequestRepository;
   }
 
   /**
@@ -48,7 +56,8 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
     Logger.debug('Started persisting Stake intent declared records');
-    const models: Message[] = await Promise.all(transactions.map(
+    const stakeRequestModels: MessageTransferRequest[] = [];
+    const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
         // This will happen if some other facilitator has accepted the stake request.
@@ -70,18 +79,39 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
           message.sourceDeclarationBlockHeight = new BigNumber(transaction.blockNumber);
           Logger.debug(`Change message status to ${MessageStatus.Declared}`);
         }
+        // Update messageHash in messageTransferRequestRepository
+        const stakeRequest = await this.messageTransferRequestRepository.getBySenderProxyNonce(
+          transaction._staker,
+          message.nonce!,
+        );
+        if (stakeRequest && !stakeRequest.messageHash) {
+          stakeRequest.messageHash = message.messageHash;
+          stakeRequestModels.push(stakeRequest);
+        }
         return message;
       },
     ));
 
-    const savePromises = [];
-    for (let i = 0; i < models.length; i += 1) {
-      Logger.debug(`Changing source status to declared for message hash ${models[i].messageHash}`);
-      savePromises.push(this.messageRepository.save(models[i]));
+    const saveStakeRequestPromises = [];
+    for (let i = 0; i < stakeRequestModels.length; i += 1) {
+      Logger.debug(`Updating message hash in stakeRequest for requestHash: 
+      ${stakeRequestModels[i].requestHash}`);
+      saveStakeRequestPromises.push(
+        this.messageTransferRequestRepository.save(stakeRequestModels[i]),
+      );
     }
+    await Promise.all(saveStakeRequestPromises);
+    Logger.debug('stakeRequests saved');
 
-    await Promise.all(savePromises);
+    const saveMessagesPromises = [];
+    for (let i = 0; i < messageModels.length; i += 1) {
+      Logger.debug(`Changing source status to declared for messageHash: 
+      ${messageModels[i].messageHash}`);
+      saveMessagesPromises.push(this.messageRepository.save(messageModels[i]));
+    }
+    await Promise.all(saveMessagesPromises);
     Logger.debug('Messages saved');
-    return models;
+
+    return messageModels;
   }
 }
