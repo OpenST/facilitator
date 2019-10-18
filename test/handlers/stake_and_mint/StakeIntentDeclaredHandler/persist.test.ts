@@ -288,36 +288,36 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       SpyAssert.assert(stakeRequestSave, 1, [[stakeRequest]]);
     });
 
-  it('should not update messageHash in messageTransferRequestRepository when stakeRequest is' +
-    ' undefined',
-    async (): Promise<void> => {
-      const messageSave = sinon.stub();
-      const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
-        {
-          save: messageSave as any,
-          get: Promise.resolve(null),
-        });
+  it('should not update messageHash in messageTransferRequestRepository when stakeRequest is'
+    + ' undefined',
+  async (): Promise<void> => {
+    const messageSave = sinon.stub();
+    const mockedMessageRepository = sinon.createStubInstance(MessageRepository,
+      {
+        save: messageSave as any,
+        get: Promise.resolve(null),
+      });
 
-      const stakeRequestSave = sinon.stub();
-      mockedMessageTransferRequestRepository = sinon.createStubInstance(
-        MessageTransferRequestRepository,
-        {
-          getBySenderProxyNonce: Promise.resolve(null),
-          save: stakeRequestSave as any,
-        },
-      );
+    const stakeRequestSave = sinon.stub();
+    mockedMessageTransferRequestRepository = sinon.createStubInstance(
+      MessageTransferRequestRepository,
+      {
+        getBySenderProxyNonce: Promise.resolve(null),
+        save: stakeRequestSave as any,
+      },
+    );
 
-      const handler = new StakeIntentDeclaredHandler(
-        mockedMessageRepository as any,
-        mockedMessageTransferRequestRepository as any,
-      );
-      await handler.persist(transactions);
+    const handler = new StakeIntentDeclaredHandler(
+      mockedMessageRepository as any,
+      mockedMessageTransferRequestRepository as any,
+    );
+    await handler.persist(transactions);
 
-      SpyAssert.assert(
-        mockedMessageTransferRequestRepository.getBySenderProxyNonce,
-        1,
-        [[transactions[0]._staker, new BigNumber(transactions[0]._stakerNonce)]],
-      );
-      SpyAssert.assert(stakeRequestSave, 0, [[]]);
-    });
+    SpyAssert.assert(
+      mockedMessageTransferRequestRepository.getBySenderProxyNonce,
+      1,
+      [[transactions[0]._staker, new BigNumber(transactions[0]._stakerNonce)]],
+    );
+    SpyAssert.assert(stakeRequestSave, 0, [[]]);
+  });
 });

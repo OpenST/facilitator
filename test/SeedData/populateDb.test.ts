@@ -121,7 +121,7 @@ describe('SeedData.populateDb()', (): void => {
   /**
    * Verifies data which was inserted for StakePool related events in contract_entities table.
    */
-  async function verifyOstComposerRelatedContractEntities(): Promise<void> {
+  async function verifyStakePoolRelatedContractEntities(): Promise<void> {
     const contractEntity = new ContractEntity(
       stakePoolAddress,
       EntityType.StakeRequesteds,
@@ -251,7 +251,7 @@ describe('SeedData.populateDb()', (): void => {
    * Verifies data which was inserted in contract_entities table.
    */
   async function verifyDataInContractEntitiesTable(): Promise<void> {
-    await verifyOstComposerRelatedContractEntities();
+    await verifyStakePoolRelatedContractEntities();
     await verifyRedeemPoolRelatedContractEntities();
     await verifyGatewayRelatedContractEntities();
     await verifyAuxiliaryAnchorRelatedContractEntities();
