@@ -31,10 +31,10 @@ Facilitator start command will start the facilitator.
 Facilitator can be started in below two ways :-
 
 1. `./facilitator start --facilitator-config <facilitator-config> --mosaic-config <mosaic-config> --gateway-config <gateway-config>`
-    * Replace `<facilitator-config>` with the path to facilitator-config.json using generated using `facilitator init`.   
+    * Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
     * `--mosaic-config` and `--gateway-config` is optional argument.
-    * If both `--mosaic-config` is given it will read mosaic and facilitator configs from `<mosaic-config>` and `<facilitator-config>` paths respectively.
-    * If both `--gateway-config` is given it will read gateway and facilitator configs from `<gateway-config>` and `<facilitator-config>` paths respectively.
+    * If both `--mosaic-config` and `--facilitator-config` is given then it will read mosaic and facilitator configs from `<mosaic-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
+    * If both `--gateway-config` and `--facilitator-config` is given then it will read gateway and facilitator configs from `<gateway-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
 
 2. `./facilitator start <origin-chain> <aux-chain-id> `
 	* Replace `<origin-chain>` with name of the origin chain.

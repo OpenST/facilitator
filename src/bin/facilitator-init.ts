@@ -107,9 +107,8 @@ commander
       (options.mosaicConfig && options.gatewayConfig)
       || (options.gatewayConfig === undefined && options.mosaicConfig === undefined)
     ) {
-      Logger.error('only one option out of gateway config and mosaic config is required. '
-        + 'refer readme for more details');
-      process.exit(1);
+      Logger.error('one option out of gateway config and mosaic config is required.');
+      mandatoryOptionMissing = true;
     }
 
     const { auxChainId } = options;
@@ -159,6 +158,7 @@ commander
     }
 
     if (mandatoryOptionMissing) {
+      Logger.info('refer readme for more details');
       process.exit(1);
     }
 

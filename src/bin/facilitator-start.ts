@@ -43,12 +43,22 @@ facilitatorCmd
   .option('-q, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-t, --facilitator-config <facilitator-config>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
+    let mandatoryOptionMissing = false;
     try {
       if (
         (options.mosaicConfig && options.gatewayConfig)
       ) {
-        Logger.error('only one option out of gateway config and mosaic config is required. '
-        + 'refer readme for more details');
+        Logger.error('one option out of gateway config and mosaic config is required.');
+        mandatoryOptionMissing = true;
+      }
+
+      if(options.facilitatorConfig === undefined) {
+        Logger.error('required --facilitator-config <facilitator-config>');
+        mandatoryOptionMissing = true;
+      }
+
+      if (mandatoryOptionMissing) {
+        Logger.info('refer readme for more details');
         process.exit(1);
       }
 
