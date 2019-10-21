@@ -44,6 +44,14 @@ facilitatorCmd
   .option('-t, --facilitator-config <facilitator-config>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
     try {
+      if (
+        (options.mosaicConfig && options.gatewayConfig)
+      ) {
+        Logger.error('only one option out of gateway config and mosaic config is required. '
+        + 'refer readme for more details');
+        process.exit(1);
+      }
+
       Logger.debug('Reading config file');
       const configFactory: ConfigFactory = new ConfigFactory(
         origin_chain,
