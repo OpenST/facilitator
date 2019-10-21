@@ -15,6 +15,9 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - sudo apt-get install libsecret-1-dev
+env:
+  - TEST_SUITE="test:unit"
+  - TEST_SUITE="test:integration:baseToken"
 branches:
   only:
   - master
@@ -31,7 +34,7 @@ notifications:
 install:
   - npm ci
 script:
-  - npm run test
+  - npm run ${TEST_SUITE}
 after_failure:
   - cat /home/travis/.npm/_logs/*-debug.log
 
