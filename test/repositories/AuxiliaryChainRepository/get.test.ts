@@ -37,8 +37,8 @@ describe('AuxiliaryChain::get', (): void => {
     };
     const chainId = 2;
     const originChainName = 'ropsten';
-    const ostGatewayAddress = '0x0000000000000000000000000000000000000001';
-    const ostCoGatewayAddress = '0x0000000000000000000000000000000000000002';
+    const eip20GatewayAddress = '0x0000000000000000000000000000000000000001';
+    const eip20CoGatewayAddress = '0x0000000000000000000000000000000000000002';
     const anchorAddress = '0x0000000000000000000000000000000000000003';
     const coAnchorAddress = '0x0000000000000000000000000000000000000004';
     const lastOriginBlockHeight = new BigNumber('200');
@@ -49,8 +49,8 @@ describe('AuxiliaryChain::get', (): void => {
     auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
+      eip20GatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,

@@ -31,8 +31,8 @@ let config: TestConfigInterface;
 describe('AuxiliaryChainRepository::save', (): void => {
   let chainId: number;
   let originChainName: string;
-  let ostGatewayAddress: string;
-  let ostCoGatewayAddress: string;
+  let eip20GatewayAddress: string;
+  let eip20CoGatewayAddress: string;
   let anchorAddress: string;
   let coAnchorAddress: string;
   let lastOriginBlockHeight: BigNumber;
@@ -46,8 +46,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     };
     chainId = 2;
     originChainName = 'ropsten';
-    ostGatewayAddress = '0x0000000000000000000000000000000000000001';
-    ostCoGatewayAddress = '0x0000000000000000000000000000000000000002';
+    eip20GatewayAddress = '0x0000000000000000000000000000000000000001';
+    eip20CoGatewayAddress = '0x0000000000000000000000000000000000000002';
     anchorAddress = '0x0000000000000000000000000000000000000003';
     coAnchorAddress = '0x0000000000000000000000000000000000000004';
     lastOriginBlockHeight = new BigNumber('200');
@@ -60,8 +60,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
+      eip20GatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
@@ -80,8 +80,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
+      eip20GatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
@@ -102,12 +102,12 @@ describe('AuxiliaryChainRepository::save', (): void => {
     Util.assertAuxiliaryChainAttributes(updatedAuxiliaryChain, auxiliaryChain);
   });
 
-  it('should fail when ostGatewayAddress is null', async (): Promise<void> => {
+  it('should fail when eip20GatewayAddress is null', async (): Promise<void> => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
       null as any,
-      ostCoGatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
@@ -119,15 +119,15 @@ describe('AuxiliaryChainRepository::save', (): void => {
     assert.isRejected(config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
     ),
-    'AuxiliaryChain.ostGatewayAddress cannot be null');
+    'AuxiliaryChain.eip20GatewayAddress cannot be null');
   });
 
-  it('should fail when ostGatewayAddress is undefined', async (): Promise<void> => {
+  it('should fail when eip20GatewayAddress is undefined', async (): Promise<void> => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
       undefined as any,
-      ostCoGatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
@@ -140,7 +140,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
       config.repos.auxiliaryChainRepository.save(
         auxiliaryChain,
       ),
-      'AuxiliaryChain.ostGatewayAddress cannot be null',
+      'AuxiliaryChain.eip20GatewayAddress cannot be null',
     );
   });
 
@@ -172,8 +172,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     } catch (error) {
       assertErrorMessages(error.errors, [
         'AuxiliaryChain.originChainName cannot be null',
-        'Validation len on ostGatewayAddress failed',
-        'Validation len on ostCoGatewayAddress failed',
+        'Validation len on eip20GatewayAddress failed',
+        'Validation len on eip20CoGatewayAddress failed',
         'Validation len on anchorAddress failed',
         'Validation len on coAnchorAddress failed',
       ]);

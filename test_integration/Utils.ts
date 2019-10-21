@@ -676,14 +676,14 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualAuxiliaryChain.ostGatewayAddress,
-      expectedAuxiliaryChain.ostGatewayAddress,
+      actualAuxiliaryChain.eip20GatewayAddress,
+      expectedAuxiliaryChain.eip20GatewayAddress,
       'Incorrect gateway address',
     );
 
     assert.strictEqual(
-      actualAuxiliaryChain.ostCoGatewayAddress,
-      expectedAuxiliaryChain.ostCoGatewayAddress,
+      actualAuxiliaryChain.eip20CoGatewayAddress,
+      expectedAuxiliaryChain.eip20CoGatewayAddress,
       'Incorrect ost cogateway address',
     );
 
