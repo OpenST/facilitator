@@ -60,7 +60,7 @@ export default class ConfigFactory {
 
   /**
    * It would evaluate the parameters and return config object.
-   * @returns Config object that contains mosaic and facilitator configs.
+   * @returns Config object that contains gateway and facilitator configs.
    */
   public getConfig(): Config {
     if (this.isFacilitatorConfigPathAvailable()) {
@@ -71,7 +71,7 @@ export default class ConfigFactory {
 
   /**
    * This method returns Config object when origin chain and aux chain is defined.
-   * @returns Config object encapsulating facilitator and mosaic configs.
+   * @returns Config object encapsulating facilitator and gateway configs.
    */
   private handleOriginAuxChainOption(): Config {
     this.verifyOriginAuxChainDefined();
@@ -141,7 +141,7 @@ export default class ConfigFactory {
   /**
    * This method returns config object when facilitator config is provided and
    * origin chain and aux chain is not provided.
-   * @returns Config object encapsulating facilitator and mosaic configs.
+   * @returns Config object encapsulating facilitator and gateway configs.
    */
   private handleFacilitatorConfigOption(): Config {
     let configObj;
