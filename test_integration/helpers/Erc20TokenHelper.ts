@@ -15,6 +15,6 @@ export default class Erc20TokenHelper implements HelperInterface {
 
   getMintedBalance(beneficiary: string): Promise<BigNumber> {
     const utils = new Utils();
-    return utils.getOSTPrimeBalance(beneficiary);
+    return utils.getUtilityTokenBalance(beneficiary);
   }
 }
