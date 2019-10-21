@@ -18,6 +18,10 @@
 //
 // ----------------------------------------------------------------------------
 
+import { HelperInterface } from './helpers/HelperInterface';
+import GatewayAddresses from '../src/Config/GatewayAddresses';
+import { FacilitatorConfig } from '../src/Config/Config';
+
 /**
  * @file `shared` exists so that integration tests can share data among each other.
  *
@@ -55,6 +59,38 @@ export default class SharedStorage {
     return SharedStorage.set(SharedStorage.auxiliaryFunderKey, value);
   }
 
+  public static getTestData(): any {
+    return SharedStorage.get(SharedStorage.testDataKey);
+  }
+
+  public static setTestData(testData: any): void {
+    return SharedStorage.set(SharedStorage.testDataKey, testData);
+  }
+
+  public static getHelperObject(): HelperInterface {
+    return SharedStorage.get(SharedStorage.helperObjectKey);
+  }
+
+  public static setHelperObject(testData: HelperInterface): void {
+    return SharedStorage.set(SharedStorage.helperObjectKey, testData);
+  }
+
+  public static getGatewayAddresses(): GatewayAddresses {
+    return SharedStorage.get(SharedStorage.gatewayAddressesKey);
+  }
+
+  public static setGatewayAddresses(gatewayAddresses: GatewayAddresses): void {
+    return SharedStorage.set(SharedStorage.gatewayAddressesKey, gatewayAddresses);
+  }
+
+  public static getFacilitatorConfig(): FacilitatorConfig {
+    return SharedStorage.get(SharedStorage.facilitatorConfigKey);
+  }
+
+  public static setFacilitatorConfig(facilitatorConfig: FacilitatorConfig): void {
+    return SharedStorage.set(SharedStorage.facilitatorConfigKey, facilitatorConfig);
+  }
+
   private static get(key: string): any {
     return dataMap[key];
   }
@@ -69,5 +105,21 @@ export default class SharedStorage {
 
   private static get auxiliaryFunderKey(): string {
     return 'AUXILIARY_FUNDER';
+  }
+
+  private static get facilitatorConfigKey(): string {
+    return 'FACILITATOR_CONFIG';
+  }
+
+  private static get gatewayAddressesKey(): string {
+    return 'GATEWAY_ADDRESSES';
+  }
+
+  private static get testDataKey(): string {
+    return 'TEST_DATA';
+  }
+
+  private static get helperObjectKey(): string {
+    return 'HELPER_OBJECT';
   }
 }

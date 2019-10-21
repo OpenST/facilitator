@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import * as path from 'path';
 import fs from 'fs-extra';
 import Directory from '../../src/Directory';
-import * as Constants from '../Constants.json';
+import SharedStorage from '../SharedStorage';
 
 const facilitatorKill = path.join(__dirname, '../kill_facilitator_process.sh');
 
@@ -12,6 +12,7 @@ describe('facilitator stop', async (): Promise<void> => {
       facilitatorKill,
       { stdio: [process.stdout, process.stderr], env: process.env },
     );
-    fs.removeSync(Directory.getFacilitatorConfigPath(Constants.auxChainId.toString()));
+    const testData = SharedStorage.getTestData();
+    fs.removeSync(Directory.getFacilitatorConfigPath(testData.auxChainId.toString()));
   });
 });

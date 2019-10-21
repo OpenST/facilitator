@@ -10,5 +10,9 @@
   "auxiliaryGraphRpc":"http://127.0.0.1:11000/subgraphs/name/mosaic/auxiliary-B6329BcFE2050F50db2eD3",
   "auxiliaryGraphWs":"ws://127.0.0.1:61000/subgraphs/name/mosaic/auxiliary-B6329BcFE2050F50db2eD3",
   "originWorkerPassword":"origin",
-  "auxiliaryWorkerPassword":"auxiliary"
+  "auxiliaryWorkerPassword":"auxiliary",
+  "stakeAmount":"130",
+  "gasPrice": "7",
+  "gasLimit": "3",
+  "stakerValueTokenToFund": "20000"
 }

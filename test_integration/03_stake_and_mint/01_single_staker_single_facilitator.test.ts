@@ -1,4 +1,3 @@
-import * as path from 'path';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 
@@ -7,11 +6,8 @@ import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
 import { Account } from 'web3-eth-accounts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
-import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
-import * as Constants from '../Constants.json';
 import Utils from '../Utils';
 import MessageTransferRequest from '../../src/models/MessageTransferRequest';
-
 import Message from '../../src/models/Message';
 
 import {
@@ -22,26 +18,25 @@ import {
 import assert from '../../test/test_utils/assert';
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import SharedStorage from '../SharedStorage';
-import { FacilitatorConfig } from '../../src/Config/Config';
-import GatewayAddresses from "../../src/Config/GatewayAddresses";
 
 describe('stake and mint with single staker & facilitator process', async (): Promise<void> => {
-  const stakeAmount = '130';
-  const gasPrice = '10';
-  const gasLimit = '4';
-  const stakerOSTBalance = '20000';
   const testDuration = 3;
   const interval = 3000;
-  const auxChainId = Number(Constants.auxChainId);
-  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
-  const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
-  const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
+  const testData = SharedStorage.getTestData();
+  const { stakeAmount } = testData;
+  const { gasPrice } = testData;
+  const { gasLimit } = testData;
+  const { stakerValueTokenToFund } = testData;
+  const helperObject = SharedStorage.getHelperObject();
+
+  const auxChainId = Number(testData.auxChainId);
+  const gatewayAddresses = SharedStorage.getGatewayAddresses();
   const stakePool: string = gatewayAddresses.stakePoolAddress;
 
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
   let utils: Utils;
-  let simpleTokenInstance: EIP20Token;
+  let valueTokenInstance: EIP20Token;
   let stakerAccount: Account;
   let messageHash: string | undefined;
   let generatedStakeRequestHash: string;
@@ -50,23 +45,18 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   let messageTransferRequest: MessageTransferRequest;
 
   before(async () => {
-    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-    utils = new Utils(
-      mosaicConfig,
-      facilitatorConfig,
-      auxChainId,
-    );
+    utils = new Utils();
     ({ originWeb3, auxiliaryWeb3 } = utils);
-    simpleTokenInstance = utils.getSimpleTokenInstance();
+    valueTokenInstance = utils.getValueTokenInstance();
   });
 
   it('should fund staker', async (): Promise<void> => {
     stakerAccount = originWeb3.eth.accounts.create('facilitatortest');
     originWeb3.eth.accounts.wallet.add(stakerAccount);
 
-    const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.transfer(
+    const transferRawTx: TransactionObject<boolean> = valueTokenInstance.methods.transfer(
       stakerAccount.address,
-      stakerOSTBalance,
+      stakerValueTokenToFund,
     );
 
     const transferReceipt = await Utils.sendTransaction(
@@ -76,15 +66,28 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
         gasPrice: await originWeb3.eth.getGasPrice(),
       },
     );
-    await utils.verifyOSTTransfer(
+    await utils.verifyValueTokenTransfer(
       transferReceipt,
       stakerAccount.address,
-      new BigNumber(stakerOSTBalance),
+      new BigNumber(stakerValueTokenToFund),
     );
 
     await utils.fundEthOnOrigin(
       stakerAccount.address,
       new BigNumber(2),
+    );
+
+    const approveRawTx: TransactionObject<boolean> = valueTokenInstance.methods.approve(
+      stakePool,
+      stakeAmount,
+    );
+
+    await Utils.sendTransaction(
+      approveRawTx,
+      {
+        from: stakerAccount.address,
+        gasPrice: await originWeb3.eth.getGasPrice(),
+      },
     );
   });
 
@@ -107,20 +110,6 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       messageTransferRequest,
       messageTransferRequest.gateway!,
       stakePool,
-    );
-
-    const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.approve(
-      stakePool,
-      messageTransferRequest.amount!.toString(10),
-    );
-
-    messageTransferRequest.sender = stakerAccount.address;
-    await Utils.sendTransaction(
-      transferRawTx,
-      {
-        from: messageTransferRequest.sender,
-        gasPrice: await originWeb3.eth.getGasPrice(),
-      },
     );
 
     const stakePoolInstance = utils.getStakePoolInstance();
@@ -384,9 +373,14 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
               && Utils.isSourceProgressedTargetProgressed(messageInDb!)
           ) {
             Utils.assertMessages(messageInDb!, expectedMessage);
-            const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
-            const mintedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
-            await utils.assertMintingBalance(messageTransferRequest.beneficiary!, mintedAmount);
+            const reward = messageTransferRequest.gasPrice.mul(messageTransferRequest.gasLimit!);
+            const expectedMintedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
+            const actualMintedAmount: BigNumber = await helperObject.getMintedBalance(messageTransferRequest.beneficiary!);
+            assert.strictEqual(
+              actualMintedAmount.cmp(expectedMintedAmount),
+              0,
+              `Expected minted balance is ${expectedMintedAmount} but got ${actualMintedAmount}`,
+            );
             resolve();
           } else {
             throw new Error(

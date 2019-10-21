@@ -1,0 +1,14 @@
+{
+  "auxChainId": "1000",
+  "originChain": "dev",
+  "originWorkerExpirationHeight":"100000000000",
+  "auxiliaryWorkerExpirationHeight":"100000000000",
+  "originRpc":"http://127.0.0.1:41515",
+  "originGraphRpc":"http://127.0.0.1:11515/subgraphs/name/mosaic/origin-aE02C7b1C324A8D94A564bC8d",
+  "originGraphWs":"ws://127.0.0.1:61515/subgraphs/name/mosaic/origin-aE02C7b1C324A8D94A564bC8d",
+  "auxiliaryRpc":"http://127.0.0.1:41000",
+  "auxiliaryGraphRpc":"http://127.0.0.1:11000/subgraphs/name/mosaic/auxiliary-c6fF898ceBf631eFb58eEc",
+  "auxiliaryGraphWs":"ws://127.0.0.1:61000/subgraphs/name/mosaic/auxiliary-c6fF898ceBf631eFb58eEc",
+  "originWorkerPassword":"origin",
+  "auxiliaryWorkerPassword":"auxiliary"
+}
