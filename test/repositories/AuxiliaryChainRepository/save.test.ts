@@ -31,8 +31,8 @@ let config: TestConfigInterface;
 describe('AuxiliaryChainRepository::save', (): void => {
   let chainId: number;
   let originChainName: string;
-  let ostGatewayAddress: string;
-  let ostCoGatewayAddress: string;
+  let eip20GatewayAddress: string;
+  let eip20CoGatewayAddress: string;
   let anchorAddress: string;
   let coAnchorAddress: string;
   let lastOriginBlockHeight: BigNumber;
@@ -46,8 +46,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     };
     chainId = 2;
     originChainName = 'ropsten';
-    ostGatewayAddress = '0x0000000000000000000000000000000000000001';
-    ostCoGatewayAddress = '0x0000000000000000000000000000000000000002';
+    eip20GatewayAddress = '0x0000000000000000000000000000000000000001';
+    eip20CoGatewayAddress = '0x0000000000000000000000000000000000000002';
     anchorAddress = '0x0000000000000000000000000000000000000003';
     coAnchorAddress = '0x0000000000000000000000000000000000000004';
     lastOriginBlockHeight = new BigNumber('200');
@@ -60,8 +60,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
+      eip20GatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
@@ -80,8 +80,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
-      ostGatewayAddress,
-      ostCoGatewayAddress,
+      eip20GatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
@@ -107,7 +107,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
       chainId,
       originChainName,
       null as any,
-      ostCoGatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
@@ -127,7 +127,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
       chainId,
       originChainName,
       undefined as any,
-      ostCoGatewayAddress,
+      eip20CoGatewayAddress,
       anchorAddress,
       coAnchorAddress,
       lastOriginBlockHeight,
