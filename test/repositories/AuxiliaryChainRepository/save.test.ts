@@ -102,7 +102,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
     Util.assertAuxiliaryChainAttributes(updatedAuxiliaryChain, auxiliaryChain);
   });
 
-  it('should fail when ostGatewayAddress is null', async (): Promise<void> => {
+  it('should fail when eip20GatewayAddress is null', async (): Promise<void> => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
@@ -119,10 +119,10 @@ describe('AuxiliaryChainRepository::save', (): void => {
     assert.isRejected(config.repos.auxiliaryChainRepository.save(
       auxiliaryChain,
     ),
-    'AuxiliaryChain.ostGatewayAddress cannot be null');
+    'AuxiliaryChain.eip20GatewayAddress cannot be null');
   });
 
-  it('should fail when ostGatewayAddress is undefined', async (): Promise<void> => {
+  it('should fail when eip20GatewayAddress is undefined', async (): Promise<void> => {
     const auxiliaryChain = new AuxiliaryChain(
       chainId,
       originChainName,
@@ -140,7 +140,7 @@ describe('AuxiliaryChainRepository::save', (): void => {
       config.repos.auxiliaryChainRepository.save(
         auxiliaryChain,
       ),
-      'AuxiliaryChain.ostGatewayAddress cannot be null',
+      'AuxiliaryChain.eip20GatewayAddress cannot be null',
     );
   });
 
@@ -172,8 +172,8 @@ describe('AuxiliaryChainRepository::save', (): void => {
     } catch (error) {
       assertErrorMessages(error.errors, [
         'AuxiliaryChain.originChainName cannot be null',
-        'Validation len on ostGatewayAddress failed',
-        'Validation len on ostCoGatewayAddress failed',
+        'Validation len on eip20GatewayAddress failed',
+        'Validation len on eip20CoGatewayAddress failed',
         'Validation len on anchorAddress failed',
         'Validation len on coAnchorAddress failed',
       ]);
