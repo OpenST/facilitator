@@ -141,7 +141,7 @@ describe('AcceptStakeRequestService::update', (): void => {
       config.stakeRequestWithNullMessageHashC,
     );
 
-    const someFakeOSTComposerInstance = {
+    const someFakeStakePoolInstance = {
       methods: {
         acceptStakeRequest: () => {},
       },
@@ -165,7 +165,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     };
 
     acceptStakeRequestSpy = sinon.replace(
-      someFakeOSTComposerInstance.methods,
+      someFakeStakePoolInstance.methods,
       'acceptStakeRequest',
       sinon.fake.returns(fakeTransactionHash),
     );
@@ -173,7 +173,7 @@ describe('AcceptStakeRequestService::update', (): void => {
     interactsSpy = sinon.replace(
       interacts,
       'getOSTComposer',
-      sinon.fake.returns(someFakeOSTComposerInstance),
+      sinon.fake.returns(someFakeStakePoolInstance),
     );
 
     sinon.replace(

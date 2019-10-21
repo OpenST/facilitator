@@ -11,7 +11,7 @@ import assert from '../../test/test_utils/assert';
 
 describe('should whitelist facilitator workers for origin & auxiliary', async (): Promise<void> => {
   const auxChainId = Number(Constants.auxChainId);
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
+  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   let originWorker: string;
   let auxiliaryWorker: string;

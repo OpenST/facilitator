@@ -33,10 +33,10 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   const testDuration = 3;
   const interval = 3000;
   const auxChainId = Number(Constants.auxChainId);
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
+  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
-  const ostComposer: string = gatewayAddresses.stakePoolAddress;
+  const stakePool: string = gatewayAddresses.stakePoolAddress;
 
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
@@ -106,11 +106,11 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
     generatedStakeRequestHash = utils.getStakeRequestHash(
       messageTransferRequest,
       messageTransferRequest.gateway!,
-      ostComposer,
+      stakePool,
     );
 
     const transferRawTx: TransactionObject<boolean> = simpleTokenInstance.methods.approve(
-      ostComposer,
+      stakePool,
       messageTransferRequest.amount!.toString(10),
     );
 
@@ -123,8 +123,8 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       },
     );
 
-    const ostComposerInstance = utils.getOSTComposerInstance();
-    const requestStakeRawTx: TransactionObject<string> = ostComposerInstance.methods.requestStake(
+    const stakePoolInstance = utils.getStakePoolInstance();
+    const requestStakeRawTx: TransactionObject<string> = stakePoolInstance.methods.requestStake(
       messageTransferRequest.amount!.toString(10),
       messageTransferRequest.beneficiary!,
       messageTransferRequest.gasPrice!.toString(10),
@@ -149,7 +149,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       'stake request receipt status should be true',
     );
 
-    const stakeRequestHash = await ostComposerInstance.methods.stakeRequestHashes(
+    const stakeRequestHash = await stakePoolInstance.methods.stakeRequestHashes(
       messageTransferRequest.sender,
       messageTransferRequest.gateway!,
     ).call();
@@ -201,7 +201,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
 
     let requestStakeInterval: NodeJS.Timeout;
 
-    messageTransferRequest.senderProxy = await ostComposerInstance.methods.stakerProxies(
+    messageTransferRequest.senderProxy = await stakePoolInstance.methods.stakerProxies(
       messageTransferRequest.sender,
     ).call();
 

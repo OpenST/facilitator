@@ -32,7 +32,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   const testDuration = 3;
   const interval = 3000;
   const auxChainId = Number(Constants.auxChainId);
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
+  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
   const redeemPool: string = gatewayAddresses.redeemPoolAddress;
