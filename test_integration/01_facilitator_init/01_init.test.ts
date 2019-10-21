@@ -11,7 +11,7 @@ import Directory from '../../src/Directory';
 const facilitatorInit = path.join(__dirname, '../facilitator_init.sh');
 
 describe('facilitator init', async (): Promise<void> => {
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
+  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
   let facilitatorConfig: FacilitatorConfig;
   const outputOptions = [process.stdout, process.stderr];
 
@@ -28,7 +28,7 @@ describe('facilitator init', async (): Promise<void> => {
     facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     assert.strictEqual(
       facilitatorConfig.auxChainId,
-      Number(Constants.auxChainId),
+      auxChainId,
       'Invalid aux chain id',
     );
 

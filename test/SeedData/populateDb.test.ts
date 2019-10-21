@@ -18,7 +18,6 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import Web3 from 'web3';
-import * as Web3Utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
 
@@ -39,17 +38,17 @@ describe('SeedData.populateDb()', (): void => {
     repositories: Repositories;
   let web3: Web3;
 
-  const originChain = '12346';
-  const auxiliaryChainId = 301;
+  const originChain = '1515';
+  const auxiliaryChainId = 1000;
   const zeroBn = new BigNumber('0');
-  const stakePoolAddress = Web3Utils.toChecksumAddress('0x3c8ba8caecb60c67d69605a772ae1bb9a732fb38');
-  const redeemPoolAddress = Web3Utils.toChecksumAddress('0x8bA9C19BeacBB3eF85E1Df57ceef1Df922F2D87F');
-  const eip20GatewayAddress = '0xaE02C7b1C324A8D94A564bC8d713Df89eae441fe';
-  const eip20CoGatewayAddress = '0x40ce8B8EDEb678ea3aD1c9628924C903f8d04227';
-  const anchorAddress = '0xaC80704c80AB83512b48314bDfa82f79923C2Fbe';
-  const coAnchorAddress = '0xBe26124167E8a350eE806B3ba11Ddb6c8E6dc689';
-  const valueTokenAddress = '0x325f05a75999347b7d8461BaEf274afAE0B8AE1c';
-  const utilityTokenAddress = '0x0d3E57044B1B96a257fB2ba3958c1130219A2d55';
+  const stakePoolAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
+  const redeemPoolAddress = '0x8bA9C19BeacBB3eF85E1Df57ceef1Df922F2D87F';
+  const eip20GatewayAddress = '0xA7f056b1320fE619571849f138Cd1Ae2f2e64179';
+  const eip20CoGatewayAddress = '0xB6329BcFE2050F50db2eD347b3cE67DDfAc39110';
+  const anchorAddress = '0xEa8D41fc6C6C0Ee155E5F6FbF9Cc1167Fa17927E';
+  const coAnchorAddress = '0x50c0Af1A754CE6bA25a102D4ee759b08141C4aA9';
+  const valueTokenAddress = '0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8';
+  const utilityTokenAddress = '0x19F64B29789F02FFcCE2c37DFB3d65FEaDdea66a';
   const currentTimestamp = Utils.getCurrentTimestamp();
 
   /**
@@ -287,7 +286,7 @@ describe('SeedData.populateDb()', (): void => {
       'getEIP20CoGateway',
       () => eip20CoGatewayMockObject as any,
     );
-    const mosaicConfigPath = 'test/Facilitator/testdata/mosaic.json';
+    const mosaicConfigPath = 'testdata/mosaic.json';
     const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
     sinon.replaceGetter(

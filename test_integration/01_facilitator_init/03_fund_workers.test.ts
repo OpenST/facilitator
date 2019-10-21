@@ -14,7 +14,7 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
   const auxChainId = Number(Constants.auxChainId);
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
+  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
 
   const OSTToBeFundedToWorkerForBounty = new BigNumber(500);

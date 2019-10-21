@@ -1,6 +1,6 @@
 {
-  "mosaicConfigFilePath":"./test/Facilitator/testdata/mosaic.json",
-  "auxChainId":301,
+  "mosaicConfigFilePath":"./testdata/mosaic.json",
+  "auxChainId":1000,
   "originContracts":{
     "baseTokenAddress":"0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8",
     "valueTokenAddress":"0x8e183Fd2cd55C7C05bBf4FAC989740f69e559A6d",

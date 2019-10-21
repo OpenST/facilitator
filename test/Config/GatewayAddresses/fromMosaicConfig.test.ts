@@ -111,7 +111,7 @@ describe('GatewayAddresses.fromMosaicConfig()', () => {
       'Invalid auxiliary gateway organization address',
     );
   }
-  const mosaicConfigPath = 'test/Facilitator/testdata/mosaic.json';
+  const mosaicConfigPath = 'testdata/mosaic.json';
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   const auxChainId = parseInt(Object.keys(mosaicConfig.auxiliaryChains)[0], 10);
 
