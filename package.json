@@ -9,7 +9,7 @@
     "test:integration:baseToken": "npm run devchain:start && npm run devchain:deploySubgraph:baseToken && TEST_MODE=baseToken mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:integration:erc20Token": "npm run devchain:start && npm run devchain:deploySubgraph:erc20Token && TEST_MODE=erc20Token mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:integration": "npm run test:integration:baseToken && npm run test:integration:erc20Token",
-    "test": "npm run test:unit && npm run test:integration",
+    "test": "npm run test:unit && npm run test:integration:baseToken",
     "coverage:report": "nyc report",
     "coverage:unit": "nyc --silent npm run test:unit",
     "coverage:facilitator": "nyc --silent --no-clean npm run test:facilitator",
