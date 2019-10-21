@@ -36,15 +36,15 @@ const Util = {
     );
 
     assert.strictEqual(
-      inputAuxiliaryChain.ostGatewayAddress,
-      expectedAuxiliaryChain.ostGatewayAddress,
-      'ostGatewayAddress should match',
+      inputAuxiliaryChain.eip20GatewayAddress,
+      expectedAuxiliaryChain.eip20GatewayAddress,
+      'eip20GatewayAddress should match',
     );
 
     assert.strictEqual(
-      inputAuxiliaryChain.ostCoGatewayAddress,
-      expectedAuxiliaryChain.ostCoGatewayAddress,
-      'ostCoGatewayAddress should match',
+      inputAuxiliaryChain.eip20CoGatewayAddress,
+      expectedAuxiliaryChain.eip20CoGatewayAddress,
+      'eip20CoGatewayAddress should match',
     );
 
     assert.strictEqual(

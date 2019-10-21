@@ -31,9 +31,9 @@ class AuxiliaryChainModel extends Model {
 
   public readonly originChainName!: string;
 
-  public readonly ostGatewayAddress!: string;
+  public readonly eip20GatewayAddress!: string;
 
-  public readonly ostCoGatewayAddress!: string;
+  public readonly eip20CoGatewayAddress!: string;
 
   public readonly anchorAddress!: string;
 
@@ -74,7 +74,7 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
             len: [3, 50],
           },
         },
-        ostGatewayAddress: {
+        eip20GatewayAddress: {
           type: DataTypes.STRING,
           allowNull: false,
           validate: {
@@ -82,7 +82,7 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
             len: [42, 42],
           },
         },
-        ostCoGatewayAddress: {
+        eip20CoGatewayAddress: {
           type: DataTypes.STRING,
           allowNull: false,
           validate: {
@@ -214,8 +214,8 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
     return new AuxiliaryChain(
       auxiliaryChainModel.chainId,
       auxiliaryChainModel.originChainName,
-      auxiliaryChainModel.ostGatewayAddress,
-      auxiliaryChainModel.ostCoGatewayAddress,
+      auxiliaryChainModel.eip20GatewayAddress,
+      auxiliaryChainModel.eip20CoGatewayAddress,
       auxiliaryChainModel.anchorAddress,
       auxiliaryChainModel.coAnchorAddress,
       new BigNumber(auxiliaryChainModel.lastOriginBlockHeight),

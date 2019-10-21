@@ -27,9 +27,9 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
 
   public originChainName: string;
 
-  public ostGatewayAddress: string;
+  public eip20GatewayAddress: string;
 
-  public ostCoGatewayAddress: string;
+  public eip20CoGatewayAddress: string;
 
   public anchorAddress: string;
 
@@ -48,8 +48,8 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
    *
    * @param chainId Chain identifier.
    * @param originChainName Name of the origin chain.
-   * @param ostGatewayAddress Gateway contract address.
-   * @param ostCoGatewayAddress CoGateway contract address.
+   * @param eip20GatewayAddress Gateway contract address.
+   * @param eip20CoGatewayAddress CoGateway contract address.
    * @param anchorAddress Anchor contract address.
    * @param coAnchorAddress CoAnchor contract address.
    * @param lastOriginBlockHeight Latest origin chain block height.
@@ -60,8 +60,8 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
   public constructor(
     chainId: number,
     originChainName: string,
-    ostGatewayAddress: string,
-    ostCoGatewayAddress: string,
+    eip20GatewayAddress: string,
+    eip20CoGatewayAddress: string,
     anchorAddress: string,
     coAnchorAddress: string,
     lastOriginBlockHeight?: BigNumber,
@@ -72,8 +72,8 @@ export default class AuxiliaryChain extends Comparable<AuxiliaryChain> {
     super();
     this.chainId = chainId;
     this.originChainName = originChainName;
-    this.ostGatewayAddress = ostGatewayAddress;
-    this.ostCoGatewayAddress = ostCoGatewayAddress;
+    this.eip20GatewayAddress = eip20GatewayAddress;
+    this.eip20CoGatewayAddress = eip20CoGatewayAddress;
     this.anchorAddress = anchorAddress;
     this.coAnchorAddress = coAnchorAddress;
     this.lastOriginBlockHeight = lastOriginBlockHeight;
