@@ -20,6 +20,11 @@ import { TransactionReceipt } from 'web3-core';
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
 
+/**
+ * Integration tests run for BaseToken & EIP20Token
+ * This interface defines methods which would implement logic which differs for the two cases
+ * and are required for running integration tests
+ */
 export interface HelperInterface {
 
   /**
