@@ -18,7 +18,7 @@
 import sinon from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
-import { Config, FacilitatorConfig } from '../../src/Config/Config';
+import { Config, FacilitatorConfig, ConfigType } from '../../src/Config/Config';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 import GatewayAddresses from '../../src/Config/GatewayAddresses';
@@ -52,7 +52,7 @@ describe('Config.fromFile()', () => {
       sinon.fake.returns(facilitator),
     );
 
-    const config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath);
+    const config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC);
 
     SpyAssert.assert(mosaicConfigSpy, 1, [[mosaicConfigPath]]);
     SpyAssert.assert(facilitatorConfigSpy, 1, [[facilitatorConfigPath]]);
@@ -69,5 +69,24 @@ describe('Config.fromFile()', () => {
     );
 
     sinon.restore();
+  });
+
+  it('should fail when invalid config type is provided', () => {
+    const mosaic = sinon.createStubInstance(MosaicConfig);
+    const facilitator = FacilitatorConfig.fromChain(auxChain);
+    facilitator.auxChainId = auxChain;
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
+    const invalidConfigType = 'invalidconfigtype' as ConfigType;
+
+    sinon.replace(MosaicConfig, 'fromFile', sinon.fake.returns(mosaic));
+
+    sinon.replace(GatewayAddresses, 'fromMosaicConfig', sinon.fake.returns(gatewayAddresses));
+
+    sinon.replace(FacilitatorConfig, 'fromFile', sinon.fake.returns(facilitator));
+
+    assert.throws(
+      () => Config.fromFile(facilitatorConfigPath, mosaicConfigPath, invalidConfigType),
+      `Invalid config type ${invalidConfigType}`,
+    );
   });
 });

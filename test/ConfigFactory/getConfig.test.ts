@@ -19,7 +19,7 @@ import sinon from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
-import { Config, FacilitatorConfig } from '../../src/Config/Config';
+import { Config, ConfigType, FacilitatorConfig } from '../../src/Config/Config';
 import ConfigFactory from '../../src/Config/ConfigFactory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
@@ -28,13 +28,21 @@ import GatewayAddresses from '../../src/Config/GatewayAddresses';
 describe('ConfigFactory.getConfig()', () => {
   const originChain = '2';
   const auxChain = 3;
+
+  function getMosaic(): string {
+    return `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
+  }
+
+  function getFacilitator(): string {
+    return `{"originChain":"${originChain}","auxChainId":${auxChain},"chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
+  }
+
   const facilitatorConfigPath = './facilitator-config.json';
   const mosaicConfigPath = './test/mosaic-config.json';
   const gatewayConfigPath = './gateway-config.json';
-  const mosaicJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-  const mosaic = JSON.parse(mosaicJson) as MosaicConfig;
-  const facilitatorJson = `{"originChain":"${originChain}","auxChainId":${auxChain},"chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
-  const facilitator = JSON.parse(facilitatorJson) as FacilitatorConfig;
+  const mosaic = JSON.parse(getMosaic()) as MosaicConfig;
+
+  const facilitator = JSON.parse(getFacilitator()) as FacilitatorConfig;
 
   function spyFromGatewayConfig(gatewayAddresses: GatewayAddresses): any {
     const spy = sinon.stub(
@@ -56,7 +64,7 @@ describe('ConfigFactory.getConfig()', () => {
     return spy;
   }
 
-  function spyGatewayConfigFromFile(gatewayConfig: any): any {
+  function spyGatewayConfigFromFile(gatewayConfig: GatewayConfig): any {
     const spy = sinon.stub(
       GatewayConfig,
       'fromFile',
@@ -112,6 +120,16 @@ describe('ConfigFactory.getConfig()', () => {
       'fromFile',
     ).callsFake(
       sinon.fake.returns(config),
+    );
+    return spy;
+  }
+
+  function spyMosaicExists(status: boolean): any {
+    const spy = sinon.stub(
+      MosaicConfig,
+      'exists',
+    ).callsFake(
+      sinon.fake.returns(status),
     );
     return spy;
   }
@@ -391,13 +409,13 @@ describe('ConfigFactory.getConfig()', () => {
 
   it('should fail when facilitator config and mosaic config is provided but origin chain doesn\'t match', () => {
     const configJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-    const mosaic = JSON.parse(configJson) as MosaicConfig;
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
-    facilitator.originChain = '5';
+    const mosaicConfig = JSON.parse(configJson) as MosaicConfig;
+    const facilitatorStub = sinon.createStubInstance(FacilitatorConfig);
+    facilitatorStub.originChain = '5';
 
-    facilitator.auxChainId = 3;
-    spyMosaicfromFile(mosaic);
-    spyFacilitatorFromFile(facilitator);
+    facilitatorStub.auxChainId = 3;
+    spyMosaicfromFile(mosaicConfig);
+    spyFacilitatorFromFile(facilitatorStub);
 
     const fs: ConfigFactory = new ConfigFactory(
       undefined as any,
@@ -416,16 +434,13 @@ describe('ConfigFactory.getConfig()', () => {
 
   it('should fail when facilitator config and mosaic config is provided but auxiliary '
   + 'id doesn\'t match', () => {
-    const mosaicJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-    const mosaic = JSON.parse(mosaicJson) as MosaicConfig;
+    const facilitatorStub = sinon.createStubInstance(FacilitatorConfig);
+    facilitatorStub.originChain = '5';
 
-    const facilitator = sinon.createStubInstance(FacilitatorConfig);
-    facilitator.originChain = '5';
-
-    facilitator.auxChainId = 3;
+    facilitatorStub.auxChainId = 3;
 
     spyMosaicfromFile(mosaic);
-    spyFacilitatorFromFile(facilitator);
+    spyFacilitatorFromFile(facilitatorStub);
 
     const fs: ConfigFactory = new ConfigFactory(
       undefined as any,
@@ -448,7 +463,7 @@ describe('ConfigFactory.getConfig()', () => {
     const facilitatorSpy = spyFacilitatorFromFile(JSON.parse(facilitatorJson));
     const mosaicSpy = spyMosaicFromChain(mosaic);
     const gatewayAddressesSpy = spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
-
+    const mosaicExistsSpy = spyMosaicExists(true);
     const fs: ConfigFactory = new ConfigFactory(
       undefined,
       undefined,
@@ -460,6 +475,7 @@ describe('ConfigFactory.getConfig()', () => {
     SpyAssert.assert(facilitatorSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(mosaicSpy, 1, [[originChain]]);
     SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain]]);
+    SpyAssert.assert(mosaicExistsSpy, 1, [[originChain]]);
     assert.strictEqual(
       config.gatewayAddresses,
       gatewayAddresses,
@@ -472,9 +488,9 @@ describe('ConfigFactory.getConfig()', () => {
       `Expected chain id is ${originChain} but got ${config.facilitator.originChain}`,
     );
 
-    sinon.restore();
     facilitatorSpy.restore();
     mosaicSpy.restore();
+    sinon.restore();
   });
 
   it('should pass when origin chain, aux chain id, facilitator config and mosaic config is provided', () => {
@@ -493,7 +509,11 @@ describe('ConfigFactory.getConfig()', () => {
 
     SpyAssert.assert(facilitatorFromFileSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(mosaicFromFileSpy, 1, [[mosaicConfigPath]]);
-    SpyAssert.assert(configFromFileSpy, 1, [[facilitatorConfigPath, mosaicConfigPath, '']]);
+    SpyAssert.assert(
+      configFromFileSpy,
+      1,
+      [[facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC]],
+    );
     assert.strictEqual(
       config,
       fakeConfig,
@@ -544,7 +564,6 @@ describe('ConfigFactory.getConfig()', () => {
 
   it('should fail when origin chain, aux chain id and gateway config is provided but aux chain id is incorrect in mosaic config', () => {
     const stubGatewayConfig = getGatewayConfigStub();
-    const facilitator = JSON.parse(facilitatorJson) as FacilitatorConfig;
     spyFacilitatorFromChain(facilitator);
     spyGatewayConfigFromFile(stubGatewayConfig);
     const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
@@ -665,6 +684,31 @@ describe('ConfigFactory.getConfig()', () => {
     );
 
 
+    sinon.restore();
+  });
+
+  it('should fail when only facilitator config is provided but mosaic config is not found', () => {
+    const facilitatorJson = `{"originChain":"${originChain}","auxChainId":${auxChain},"chains":{"${originChain}":{"worker": "0x123"},"${auxChain}":{"worker": "0x123"}}}`;
+    const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
+    const facilitatorSpy = spyFacilitatorFromFile(JSON.parse(facilitatorJson));
+    const mosaicConfig = MosaicConfig.fromChain('200');
+    spyMosaicExists(false);
+    spyMosaicFromChain(mosaicConfig);
+    spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
+
+    const fs: ConfigFactory = new ConfigFactory(
+      undefined,
+      undefined,
+      undefined,
+      facilitatorConfigPath,
+    );
+
+    assert.throws(
+      () => fs.getConfig(),
+      'mosaic config not found',
+    );
+
+    facilitatorSpy.restore();
     sinon.restore();
   });
 });

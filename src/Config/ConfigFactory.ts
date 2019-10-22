@@ -18,7 +18,7 @@
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import { FacilitatorStartException } from '../Exception';
-import { Config, FacilitatorConfig } from './Config';
+import { Config, FacilitatorConfig, ConfigType } from './Config';
 import GatewayAddresses from './GatewayAddresses';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -86,11 +86,19 @@ export default class ConfigFactory {
         const mosaicConfig: MosaicConfig = MosaicConfig.fromFile(this.mosaicConfigPath);
         // verify origin chain and aux chain is present in mosaic config.
         this.verifyChainIdInMosaicConfig(mosaicConfig);
-        return Config.fromFile(this.facilitatorConfigPath, this.mosaicConfigPath, '');
+        return Config.fromFile(
+          this.facilitatorConfigPath,
+          this.mosaicConfigPath,
+          ConfigType.MOSAIC,
+        );
       }
 
       if (this.gatewayConfigPath) {
-        return Config.fromFile(this.facilitatorConfigPath, '', this.gatewayConfigPath);
+        return Config.fromFile(
+          this.facilitatorConfigPath,
+          this.gatewayConfigPath,
+          ConfigType.GATEWAY,
+        );
       }
 
       const mosaicConfig: MosaicConfig = MosaicConfig.fromChain(this.originChain!);
@@ -174,9 +182,13 @@ export default class ConfigFactory {
       );
     } else {
       // only facilitator config is given.
+      if (!MosaicConfig.exists(this.originChain)) {
+        throw new Error('mosaic config not found');
+      }
       const mosaicConfig: MosaicConfig = MosaicConfig.fromChain(
         this.originChain,
       );
+
       this.verifyChainIdInMosaicConfig(mosaicConfig);
       configObj = new Config(
         GatewayAddresses.fromMosaicConfig(
@@ -235,7 +247,8 @@ export default class ConfigFactory {
     this.verifyChainIdInMosaicConfig(gatewayConfig.mosaicConfig);
     if (gatewayConfig.auxChainId !== this.auxChainId) {
       throw new FacilitatorStartException(
-        `Aux chain id ${gatewayConfig.auxChainId} in gatewayconfig and provided auxchain id ${this.auxChainId} are not same`,
+        `Aux chain id ${gatewayConfig.auxChainId} in gatewayconfig and provided auxchain id `
+        + `${this.auxChainId} are not same`,
       );
     }
   }
