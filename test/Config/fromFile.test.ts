@@ -88,5 +88,6 @@ describe('Config.fromFile()', () => {
       () => Config.fromFile(facilitatorConfigPath, mosaicConfigPath, invalidConfigType),
       `Invalid config type ${invalidConfigType}`,
     );
+    sinon.restore();
   });
 });

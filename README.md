@@ -30,19 +30,36 @@ Facilitator start command will start the facilitator.
 
 Facilitator can be started in below two ways :-
 
-1. `./facilitator start --facilitator-config <facilitator-config> --mosaic-config <mosaic-config> --gateway-config <gateway-config>`
+#### Facilitator start for EIP20 gateways:	
+1. `./facilitator start --facilitator-config <facilitator-config> --mosaic-config <mosaic-config>`
     * Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
-    * `--mosaic-config` and `--gateway-config` is optional argument.
-    * If both `--mosaic-config` and `--facilitator-config` is given then it will read mosaic and facilitator configs from `<mosaic-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
-    * If both `--gateway-config` and `--facilitator-config` is given then it will read gateway and facilitator configs from `<gateway-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
+    * Replace `<mosaic-config>` with the path to mosaic-config.json.
+	* When `--mosaic-config` and `--facilitator-config` is given then it will read gateway and facilitator configs from `<gateway-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
 
-2. `./facilitator start <origin-chain> <aux-chain-id> `
+2. `./facilitator start <origin-chain> <aux-chain-id> --facilitator-config <facilitator-config> --mosaic-config <mosaic-config>`
 	* Replace `<origin-chain>` with name of the origin chain.
 	* Replace `<aux-chain-id>` with id of the auxiliary chain.
-	
-	##### Options
-	* `--mosaic-config` and `--facilitator-config` refers to file path of mosaic config and facilitator config respectively. They are optional fields.
-	* If `--mosaic-config` is given then it will read the facilitator config from default path for `<aux-chain-id>` and mosaic-config from `<mosaic-config>` path. Argument `<origin-chain>` and `<aux-chain-id>` should be present in mosaic-config.  
-	* If `--facilitator-config` is given then it will read the mosaic config from default path for `<origin-chain>` and facilitator-config from `<facilitator-config>` path. Argument`<origin-chain>` and `<aux-chain-id>` should be present in it. 
-	* If `--gateway-config` is given then it will read the gateway config from path specified.
-	* **Note** : Both `--mosaic-config` and `--gateway-config` are together not allowed in command.
+	* Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
+    * Replace `<mosaic-config>` with the path to gateway-config.json.
+    * It validates `<origin-chain>` and `<auxiliary-chain>` id's in faciltiator and mosaic configs.
+    
+3.  `./facilitator start <origin-chain> <aux-chain-id>`
+	* It loads mosaic config and facilitator config from default paths.    
+
+4.  `./facilitator start --facilitator-config <facilitator-config>`
+	* It loads facilitator from `<facilitator-config>` path.
+		
+#### Facilitator start for mosaic gateways:
+
+1. `./facilitator start --facilitator-config <facilitator-config> --gateway-config <gateway-config>`
+    * Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
+    * Replace `<gateway-config>` with the path to gateway-config.json.
+	* When `--gateway-config` and `--facilitator-config` is given then it will read gateway and facilitator configs from `<gateway-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
+
+2. `./facilitator start <origin-chain> <aux-chain-id> --facilitator-config <facilitator-config> --gateway-config <gateway-config>`
+	* Replace `<origin-chain>` with name of the origin chain.
+	* Replace `<aux-chain-id>` with id of the auxiliary chain.
+	* Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
+    * Replace `<gateway-config>` with the path to gateway-config.json.	    
+    
+  * **Note** : Both `--mosaic-config` and `--gateway-config` are together not allowed in command.
