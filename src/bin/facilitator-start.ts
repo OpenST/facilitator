@@ -52,11 +52,6 @@ facilitatorCmd
         mandatoryOptionMissing = true;
       }
 
-      if(options.facilitatorConfig === undefined) {
-        Logger.error('required --facilitator-config <facilitator-config>');
-        mandatoryOptionMissing = true;
-      }
-
       if (mandatoryOptionMissing) {
         Logger.info('refer readme for more details');
         process.exit(1);
