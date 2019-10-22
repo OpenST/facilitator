@@ -8,13 +8,13 @@ import { HelperInterface } from './HelperInterface';
 import Utils from '../Utils';
 import Logger from '../../src/Logger';
 
-export default class Erc20TokenHelper implements HelperInterface {
+export default class EIP20TokenHelper implements HelperInterface {
   facilitatorInitScriptPath(): string {
-    return path.join(__dirname, '../scripts/erc20_token/facilitator_init.sh');
+    return path.join(__dirname, '../scripts/eip20_token/facilitator_init.sh');
   }
 
   facilitatorStartScriptPath(): string {
-    return path.join(__dirname, '../scripts/erc20_token/facilitator_start.sh');
+    return path.join(__dirname, '../scripts/eip20_token/facilitator_start.sh');
   }
 
   getMintedBalance(beneficiary: string): Promise<BigNumber> {
@@ -29,7 +29,7 @@ export default class Erc20TokenHelper implements HelperInterface {
 
   wrapUtilityToken(txOption: any): Promise<void> {
     // Do nothing here
-    Logger.debug('ignoring txOption for erc20Token', txOption);
+    Logger.debug('ignoring txOption for eip20Token', txOption);
     return new Promise(((resolve) => {
       resolve();
     }));

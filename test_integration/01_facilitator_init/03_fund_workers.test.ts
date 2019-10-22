@@ -14,9 +14,9 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
   const testData = SharedStorage.getTestData();
   const auxChainId = Number(testData.auxChainId);
 
-  const baseTokenToBeFundedToWorkerForBounty = new BigNumber(5);
-  const baseTokenToBeFundedToWorkerForBountyInWei = web3Utils.toWei(
-    baseTokenToBeFundedToWorkerForBounty.toString()
+  const workerBountyAmountInBaseToken = new BigNumber(5);
+  const workerBountyAmountInWei = web3Utils.toWei(
+    workerBountyAmountInBaseToken.toString()
   );
   const amountTobeFundedOnOrigin = new BigNumber(0.1);
   const amountTobeFundedOnAuxiliary = new BigNumber(0.1);
@@ -55,7 +55,7 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
     const baseTokenInstance: EIP20Token = utils.getBaseTokenInstance();
     const transferRawTx: TransactionObject<boolean> = baseTokenInstance.methods.transfer(
       originWorker,
-      baseTokenToBeFundedToWorkerForBountyInWei,
+      workerBountyAmountInWei,
     );
     const transferReceipt = await Utils.sendTransaction(
       transferRawTx,
@@ -67,7 +67,7 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
     await utils.verifyBaseTokenTransfer(
       transferReceipt,
       originWorker,
-      new BigNumber(baseTokenToBeFundedToWorkerForBountyInWei),
+      new BigNumber(workerBountyAmountInWei),
     );
   });
 });

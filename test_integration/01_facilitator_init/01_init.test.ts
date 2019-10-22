@@ -9,9 +9,9 @@ import assert from '../../test/test_utils/assert';
 import Directory from '../../src/Directory';
 import SharedStorage from '../SharedStorage';
 import BaseTokenHelper from '../helpers/BaseTokenHelper';
-import Erc20TokenHelper from '../helpers/Erc20TokenHelper';
+import EIP20TokenHelper from '../helpers/EIP20TokenHelper';
 import * as BaseTokenTestData from '../testdata/BaseToken.json';
-import * as Erc20TokenTestData from '../testdata/Erc20Token.json';
+import * as EIP20TokenTestData from '../testdata/EIP20Token.json';
 import Logger from '../../src/Logger';
 import GatewayAddresses from '../../src/Config/GatewayAddresses';
 
@@ -33,9 +33,9 @@ describe('facilitator init', async (): Promise<void> => {
         ),
       );
       break;
-    case 'erc20Token':
-      SharedStorage.setHelperObject(new Erc20TokenHelper());
-      SharedStorage.setTestData(Erc20TokenTestData);
+    case 'eip20Token':
+      SharedStorage.setHelperObject(new EIP20TokenHelper());
+      SharedStorage.setTestData(EIP20TokenTestData);
       SharedStorage.setGatewayAddresses(
         GatewayAddresses.fromGatewayConfig(
           GatewayConfig.fromFile(gatewayConfigPath),

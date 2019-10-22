@@ -109,16 +109,16 @@ export default class Utils {
   /**
    * It funds Utility Token on chain to beneficiary.
    * @param beneficiary Address of the account who is to be funded.
-   * @param amountInEth Amount to be funded in ETH.
+   * @param tokenAmount Token amount to be funded.
    * @returns Receipt of eth funding to beneficiary.
    */
   public async fundUtilityToken(
     beneficiary: string,
-    amountInEth: BigNumber,
+    tokenAmount: BigNumber,
   ): Promise<TransactionReceipt> {
     const transferRawTx: TransactionObject<boolean> = this.getUtilityTokenInstance().methods.transfer(
       beneficiary,
-      web3Utils.toWei(amountInEth.toString()),
+      web3Utils.toWei(tokenAmount.toString()),
     );
     return await Utils.sendTransaction(
       transferRawTx,
@@ -801,7 +801,7 @@ export default class Utils {
     assert.strictEqual(
       amount.cmp(beneficiaryBalance),
       0,
-      `Expected balance is  ${amount} but got ${beneficiaryBalance}`,
+      `Expected balance is ${amount} but got ${beneficiaryBalance}`,
     );
   }
 
