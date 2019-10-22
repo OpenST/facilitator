@@ -27,6 +27,9 @@ import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
 import GatewayAddresses from '../src/Config/GatewayAddresses';
 
+// This class variable is used to persist web3 connections
+const urlToWeb3ConnectionsMap: Record<string, Web3> = {};
+
 /**
  * It contains common helper methods to test facilitator.
  */
@@ -54,8 +57,10 @@ export default class Utils {
     this.facilitatorConfig = SharedStorage.getFacilitatorConfig();
     this.gatewayAddresses = SharedStorage.getGatewayAddresses();
     this.originChain = this.facilitatorConfig.originChain;
-    this.originWeb3 = new Web3(this.facilitatorConfig.chains[this.originChain].nodeRpc);
-    this.auxiliaryWeb3 = new Web3(this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].nodeRpc);
+    this.originWeb3 = Utils.getWeb3Connection(this.facilitatorConfig.chains[this.originChain].nodeRpc);
+    this.auxiliaryWeb3 = Utils.getWeb3Connection(
+      this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].nodeRpc
+    );
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.stakePoolAddress = this.gatewayAddresses.stakePoolAddress;
@@ -85,18 +90,18 @@ export default class Utils {
   /**
    * It funds OSTPrime on chain to beneficiary.
    * @param beneficiary Address of the account who is to be funded.
-   * @param amountInEth Amount to be funded in ETH.
+   * @param amountInWei Amount to be funded in Wei.
    * @returns Receipt of eth funding to beneficiary.
    */
   public async fundOSTPrimeOnAuxiliary(
     beneficiary: string,
-    amountInEth: BigNumber,
+    amountInWei: BigNumber,
   ): Promise<TransactionReceipt> {
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
         from: SharedStorage.getAuxiliaryFunder(),
         to: beneficiary,
-        value: web3Utils.toWei(amountInEth.toString()),
+        value: amountInWei.toString(),
       },
     );
   }
@@ -1137,4 +1142,18 @@ export default class Utils {
   public static convertToWei(amount: string) {
     return web3Utils.toWei(amount.toString());
   }
+
+  /**
+   * if present, get connection from the cached pool
+   * else create new connection
+   * @param endpoint
+   * @return web3 connection
+   */
+  private static getWeb3Connection(endpoint: string): Web3 {
+    if (!urlToWeb3ConnectionsMap[endpoint]) {
+      urlToWeb3ConnectionsMap[endpoint] = new Web3(endpoint);
+    }
+    return urlToWeb3ConnectionsMap[endpoint];
+  }
+
 }

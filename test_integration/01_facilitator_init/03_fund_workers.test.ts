@@ -43,7 +43,7 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
   it('should fund auxiliary worker', async (): Promise<void> => {
     await utils.fundOSTPrimeOnAuxiliary(
       auxiliaryWorker,
-      new BigNumber(amountTobeFundedOnAuxiliary),
+      new BigNumber(web3Utils.toWei(amountTobeFundedOnAuxiliary.toString(10)))
     );
   });
 
