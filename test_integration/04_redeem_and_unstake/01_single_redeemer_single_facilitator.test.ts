@@ -7,6 +7,7 @@ import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gatew
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { RedeemPool } from '@openst/mosaic-contracts/dist/interacts/RedeemPool';
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
+import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
 import Utils from '../Utils';
 import MessageTransferRequest from '../../src/models/MessageTransferRequest';
 import Message from '../../src/models/Message';
@@ -22,13 +23,16 @@ import Logger from '../../src/Logger';
 import SharedStorage from '../SharedStorage';
 
 describe('redeem and unstake with single redeemer & facilitator process', async (): Promise<void> => {
-  const redeemAmount = '130';
-  const gasPrice = '2';
-  const gasLimit = '5';
   const testDuration = 3;
   const interval = 3000;
   const testData = SharedStorage.getTestData();
+  const { redeemAmount } = testData;
+  const { gasPrice } = testData;
+  const { gasLimit } = testData;
+  const { redeemerOSTPrimeToFund } = testData;
+  const { redeemerUtilityTokenToFund } = testData;
   const auxChainId = Number(testData.auxChainId);
+  const helperObject = SharedStorage.getHelperObject();
   const gatewayAddresses = SharedStorage.getGatewayAddresses();
   const redeemPool: string = gatewayAddresses.redeemPoolAddress;
 
@@ -51,34 +55,31 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     redeemerAccount = auxiliaryWeb3.eth.accounts.create('redeemTest');
     auxiliaryWeb3.eth.accounts.wallet.add(redeemerAccount);
 
-    const ostPrimeAmountToBeFunded = '0.1'; // OSTPrime unit
-    const ostPrimeAmountToBeFundedInWei = Utils.convertToWei(ostPrimeAmountToBeFunded).toString();
-
     // Fund OSTPrime to redeemer
     await utils.fundOSTPrimeOnAuxiliary(
       redeemerAccount.address,
-      new BigNumber(ostPrimeAmountToBeFunded).mul(1.2), // 20% extra for gas usage
+      redeemerOSTPrimeToFund,
     );
 
-    const simpleTokenPrimeInstance: OSTPrime = utils.getSimpleTokenPrimeInstance();
-
-    // Wrap OSTPrime
-    Logger.debug('submitting wrapping OSTPrime tx.');
-    const wrapRawTx: TransactionObject<boolean> = simpleTokenPrimeInstance.methods.wrap();
-    await Utils.sendTransaction(
-      wrapRawTx,
-      {
-        from: redeemerAccount.address,
-        gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
-        value: ostPrimeAmountToBeFundedInWei,
-      },
+    // Fund Utility Token To Fund
+    await helperObject.fundUtilityTokenToRedeemer(
+      redeemerAccount.address,
+      redeemerUtilityTokenToFund,
     );
 
-    // Approve OSTPrime
-    Logger.debug('submitting approving wrapped OSTPrime tx.');
-    const approveRawTx: TransactionObject<boolean> = simpleTokenPrimeInstance.methods.approve(
+    // Wrap Utility Token
+    await helperObject.wrapUtilityToken({
+      from: redeemerAccount.address,
+      gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
+      value: redeemerUtilityTokenToFund,
+    });
+
+    // Approve Utility Token
+    const utilityTokenInstance: OSTPrime | UtilityToken = helperObject.getUtilityTokenInstance();
+    Logger.debug('submitting approving wrapped Utility Token tx.');
+    const approveRawTx: TransactionObject<boolean> = utilityTokenInstance.methods.approve(
       redeemPool,
-      ostPrimeAmountToBeFundedInWei,
+      redeemAmount,
     );
     await Utils.sendTransaction(
       approveRawTx,

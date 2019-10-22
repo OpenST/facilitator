@@ -11,8 +11,9 @@
   "auxiliaryGraphWs":"ws://127.0.0.1:61000/subgraphs/name/mosaic/auxiliary-c6fF898ceBf631eFb58eEc",
   "originWorkerPassword":"origin",
   "auxiliaryWorkerPassword":"auxiliary",
-  "stakeAmount":"13000000000000000000",
+  "redeemAmount":"130",
   "gasPrice": "7",
   "gasLimit": "3",
-  "stakerValueTokenToFund": "23000000000000000000"
+  "redeemerUtilityTokenToFund": "2300",
+  "redeemerOSTPrimeToFund": "100000000000000000"
 }

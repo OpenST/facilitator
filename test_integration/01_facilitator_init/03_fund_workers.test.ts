@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
+import * as web3Utils from 'web3-utils';
 
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
@@ -13,9 +14,9 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
   const testData = SharedStorage.getTestData();
   const auxChainId = Number(testData.auxChainId);
 
-  const baseTokenToBeFundedToWorkerForBounty = new BigNumber(500);
-  const amountTobeFundedOnOrigin = new BigNumber(1);
-  const amountTobeFundedOnAuxiliary = new BigNumber(1);
+  const baseTokenToBeFundedToWorkerForBounty = new BigNumber(5);
+  const amountTobeFundedOnOrigin = new BigNumber(0.1);
+  const amountTobeFundedOnAuxiliary = new BigNumber(0.1);
 
   let originWorker: string;
   let auxiliaryWorker: string;
@@ -51,7 +52,7 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
     const baseTokenInstance: EIP20Token = utils.getBaseTokenInstance();
     const transferRawTx: TransactionObject<boolean> = baseTokenInstance.methods.transfer(
       originWorker,
-      baseTokenToBeFundedToWorkerForBounty.toString(),
+      web3Utils.toWei(baseTokenToBeFundedToWorkerForBounty.toString()),
     );
     const transferReceipt = await Utils.sendTransaction(
       transferRawTx,

@@ -83,7 +83,7 @@ export default class Utils {
   }
 
   /**
-   * It funds OSTPrime on origin chain to beneficiary.
+   * It funds OSTPrime on chain to beneficiary.
    * @param beneficiary Address of the account who is to be funded.
    * @param amountInEth Amount to be funded in ETH.
    * @returns Receipt of eth funding to beneficiary.
@@ -97,6 +97,29 @@ export default class Utils {
         from: SharedStorage.getAuxiliaryFunder(),
         to: beneficiary,
         value: web3Utils.toWei(amountInEth.toString()),
+      },
+    );
+  }
+
+  /**
+   * It funds Utility Token on chain to beneficiary.
+   * @param beneficiary Address of the account who is to be funded.
+   * @param amountInEth Amount to be funded in ETH.
+   * @returns Receipt of eth funding to beneficiary.
+   */
+  public async fundUtilityToken(
+    beneficiary: string,
+    amountInEth: BigNumber,
+  ): Promise<TransactionReceipt> {
+    const transferRawTx: TransactionObject<boolean> = this.getUtilityTokenInstance().methods.transfer(
+      beneficiary,
+      web3Utils.toWei(amountInEth.toString()),
+    );
+    return await Utils.sendTransaction(
+      transferRawTx,
+      {
+        from: SharedStorage.getAuxiliaryFunder(),
+        gasPrice: await this.auxiliaryWeb3.eth.getGasPrice(),
       },
     );
   }
