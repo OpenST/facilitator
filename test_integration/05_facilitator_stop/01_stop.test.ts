@@ -12,6 +12,6 @@ describe('facilitator stop', async (): Promise<void> => {
       facilitatorKill,
       { stdio: [process.stdout, process.stderr], env: process.env },
     );
-    fs.removeSync(Directory.getFacilitatorConfigPath(Constants.auxChainId.toString()));
+    fs.removeSync(Directory.getFacilitatorConfigPath(parseInt(Constants.auxChainId)));
   });
 });

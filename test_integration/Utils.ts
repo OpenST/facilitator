@@ -391,7 +391,7 @@ export default class Utils {
   private async getRepositories(): Promise<Repositories> {
     return Repositories.create(
       path.join(
-        Directory.getDBFilePath(this.facilitatorConfig.auxChainId.toString(10)),
+        Directory.getDBFilePath(this.facilitatorConfig.auxChainId),
         'mosaic_facilitator.db',
       ),
     );
