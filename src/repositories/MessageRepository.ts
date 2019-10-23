@@ -151,14 +151,14 @@ export class MessageRepository extends Subject<Message> {
           allowNull: true,
         },
         gasPrice: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(32),
           allowNull: true,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(32),
           allowNull: true,
           validate: {
             min: 0,

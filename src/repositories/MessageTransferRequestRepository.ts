@@ -112,7 +112,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           unique: true,
         },
         amount: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(32),
           allowNull: false,
           validate: {
             min: 0,
@@ -127,14 +127,14 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           },
         },
         gasPrice: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(32),
           allowNull: false,
           validate: {
             min: 0,
           },
         },
         gasLimit: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(32),
           allowNull: false,
           validate: {
             min: 0,
