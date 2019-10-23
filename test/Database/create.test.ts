@@ -24,15 +24,16 @@ import Directory from '../../src/Directory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const chainId = '1';
+const chainId = 1;
 
 describe('Database.create()', (): void => {
   afterEach(async (): Promise<void> => {
     sinon.restore();
   });
 
-  it('should fail when chain id is blank', (): void => {
-    assert.throws((): string => DBFileHelper.create(''), 'invalid chain id');
+  it('should fail when aux chain id is 0', (): void => {
+    const auxChainId = 0;
+    assert.throws((): string => DBFileHelper.create(auxChainId), `invalid auxiliary chain id ${auxChainId}`);
   });
 
   it('should pass with valid arguments', (): void => {

@@ -38,25 +38,25 @@ export default class Directory {
 
   /**
    * It returns default db file path.
-   * @param chain Chain id of the aux chain.
-   * @returns {string} It returns file path where db is present.
+   * @param auxChainId Chain id of the aux chain.
+   * @returns It returns file path where db is present.
    */
-  public static getDBFilePath(chain: string): string {
+  public static getDBFilePath(auxChainId: number): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
-      chain,
+      `${auxChainId}`,
       'facilitator',
     );
   }
 
   /**
    * This returns default facilitator config path
-   * @param chain Chain Identifier.
+   * @param auxChainId Chain Identifier.
    */
-  public static getFacilitatorConfigPath(chain: string): string {
+  public static getFacilitatorConfigPath(auxChainId: number): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
-      chain,
+      `${auxChainId}`,
       Directory.MOSAIC_FACILITATOR_CONFIG,
     );
   }

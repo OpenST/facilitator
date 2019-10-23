@@ -164,17 +164,17 @@ export class FacilitatorConfig {
 
   /**
    * It writes facilitator config object.
-   * @param chain Auxiliary chain id.
+   * @param auxChainId Auxiliary chain id.
    */
-  public writeToFacilitatorConfig(chain: number): void {
+  public writeToFacilitatorConfig(auxChainId: number): void {
     const mosaicConfigDir = Directory.getMosaicDirectoryPath();
     const configPath = path.join(
       mosaicConfigDir,
-      chain.toString(),
+      `${auxChainId}`,
     );
     fs.ensureDirSync(configPath);
 
-    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain.toString());
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(auxChainId);
     fs.writeFileSync(
       facilitatorConfigPath,
       JSON.stringify(this, null, '    '),
@@ -184,11 +184,11 @@ export class FacilitatorConfig {
 
   /**
    * This reads facilitator config from the json file and creates FacilitatorConfig object.
-   * @param chain Auxiliary chain id.
+   * @param auxChainId Auxiliary chain id.
    * @returns Facilitator config object.
    */
-  public static fromChain(chain: number): FacilitatorConfig {
-    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain.toString());
+  public static fromChain(auxChainId: number): FacilitatorConfig {
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(auxChainId);
 
     if (fs.existsSync(facilitatorConfigPath)) {
       return this.readConfig(facilitatorConfigPath);
@@ -225,21 +225,21 @@ export class FacilitatorConfig {
 
   /**
    * This method removes config from default path.
-   * @param chain Chain Identifier.
+   * @param auxChainId Auxiliary chain Identifier.
    */
-  public static remove(chain: string): void {
-    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(chain);
+  public static remove(auxChainId: number): void {
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(auxChainId);
     fs.removeSync(facilitatorConfigPath);
   }
 
   /**
-   * It checks if facilitator config is present for given chain id.
-   * @param chain Auxiliary chain id.
+   * It checks if facilitator config is present for given auxiliary chain id.
+   * @param auxChainId Auxiliary chain id.
    * @returns `true` if file is present.
    */
-  public static isFacilitatorConfigPresent(chain: number): boolean {
+  public static isFacilitatorConfigPresent(auxChainId: number): boolean {
     const statOutput = fs.statSync(
-      Directory.getFacilitatorConfigPath(chain.toString()),
+      Directory.getFacilitatorConfigPath(auxChainId),
     );
     return (statOutput.size > 0);
   }
