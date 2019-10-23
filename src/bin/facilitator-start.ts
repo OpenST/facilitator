@@ -20,6 +20,7 @@ import commander from 'commander';
 import Container from '../Container';
 import Facilitator from '../Facilitator';
 import Logger from '../Logger';
+import ConfigFactory from '../Config/ConfigFactory';
 
 const facilitatorCmd = commander
   .arguments('[origin_chain] [aux_chain_id]');
@@ -39,14 +40,35 @@ process.on('SIGTERM', terminationHandler);
 
 facilitatorCmd
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
+  .option('-g, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-t, --facilitator-config <facilitator-config>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
+    let mandatoryOptionMissing = false;
     try {
-      facilitator = await Container.create(
+      if (
+        (options.mosaicConfig && options.gatewayConfig)
+      ) {
+        Logger.error('one option out of gateway config and mosaic config is required.');
+        mandatoryOptionMissing = true;
+      }
+
+      if (mandatoryOptionMissing) {
+        Logger.info('refer readme for more details');
+        process.exit(1);
+      }
+
+      Logger.debug('Reading config file');
+      const configFactory: ConfigFactory = new ConfigFactory(
         origin_chain,
-        aux_chain_id,
+        aux_chain_id ? Number.parseInt(aux_chain_id, 10) : undefined,
         options.mosaicConfig,
         options.facilitatorConfig,
+        options.gatewayConfig,
+      );
+      const config = configFactory.getConfig();
+      Logger.debug('Config loaded successfully.');
+      facilitator = await Container.create(
+        config,
       );
       Logger.info('facilitator starting...');
       await facilitator.start();

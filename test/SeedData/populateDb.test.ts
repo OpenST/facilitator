@@ -22,7 +22,7 @@ import * as Web3Utils from 'web3-utils';
 
 import { interacts } from '@openst/mosaic-contracts';
 
-import { Config } from '../../src/Config/Config';
+import { Config, ConfigType } from '../../src/Config/Config';
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
 import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
 import Gateway from '../../src/models/Gateway';
@@ -289,7 +289,7 @@ describe('SeedData.populateDb()', (): void => {
     );
     const mosaicConfigPath = 'test/Facilitator/testdata/mosaic.json';
     const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
-    config = Config.fromFile(mosaicConfigPath, facilitatorConfigPath);
+    config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC);
     sinon.replaceGetter(
       config,
       'originWeb3',

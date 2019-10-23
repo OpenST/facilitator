@@ -18,7 +18,6 @@
 import commander from 'commander';
 import Web3 from 'web3';
 
-import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import Account from '../Account';
 import {
   Chain, FacilitatorConfig, Config, ENV_WORKER_PASSWORD_PREFIX,
@@ -29,16 +28,18 @@ import Logger from '../Logger';
 import Repositories from '../repositories/Repositories';
 import SeedData from '../SeedData';
 import GatewayAddresses from '../Config/GatewayAddresses';
+import FacilitatorInit from '../lib/FacilitatorInit';
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
+  .option('-g, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-c, --aux-chain-id <aux-chain-id>', 'auxiliary chain id')
   .option('-o, --origin-password <origin-password>', 'origin chain account password')
   .option('-a, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
   .option('-r, --origin-rpc <origin-rpc>', 'origin chain rpc')
   .option('-h, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
   .option('-e, --origin-graph-ws <origin-graph-ws>', 'origin ws subgraph endpoint ')
-  .option('-g, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
+  .option('-n, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
   .option('-s, --auxiliary-graph-ws <auxiliary-graph-ws>', 'auxiliary ws subgraph endpoint')
   .option('-i, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
   .option('-d, --db-path <db-path>', 'path where db path is present')
@@ -47,8 +48,11 @@ commander
     // Validating mandatory parameters
     let mandatoryOptionMissing = false;
 
-    if (options.mosaicConfig === undefined) {
-      Logger.error('required --mosaic-config <mosaic-config>');
+    if (
+      (options.mosaicConfig && options.gatewayConfig)
+      || (options.gatewayConfig === undefined && options.mosaicConfig === undefined)
+    ) {
+      Logger.error('one option out of gateway config and mosaic config is required.');
       mandatoryOptionMissing = true;
     }
 
@@ -99,101 +103,116 @@ commander
     }
 
     if (mandatoryOptionMissing) {
+      Logger.info('refer readme for more details');
       process.exit(1);
     }
 
-    if (options.force) {
-      FacilitatorConfig.remove(auxChainId);
-    } else {
-      try {
-        if (FacilitatorConfig.isFacilitatorConfigPresent(auxChainId)) {
-          Logger.error('facilitator config already present. use -f option to override the existing facilitator config.');
-          process.exit(1);
-        }
-      } catch (e) {
-        Logger.info('creating facilitator config as it is not present');
+    try {
+      if (options.force) {
+        FacilitatorConfig.remove(auxChainId);
+      } else if (FacilitatorConfig.isFacilitatorConfigPresent(auxChainId)) {
+        throw new Error('facilitator config already present. use -f option to override the existing facilitator config.');
       }
-    }
+      Logger.info('creating facilitator config as it is not present');
+      const facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
 
-    const facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
+      // Get origin chain id.
+      let originChainId: string | undefined;
+      let gatewayAddresses: GatewayAddresses | undefined;
+      if (options.mosaicConfig !== undefined) {
+        (
+          {
+            originChainId,
+            gatewayAddresses,
+          } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
+        );
+      }
 
-    // Get origin chain id.
-    const mosaicConfig = MosaicConfig.fromFile(options.mosaicConfig);
-    const auxChain = mosaicConfig.auxiliaryChains[auxChainId];
-    if (auxChain === null || auxChain === undefined) {
-      Logger.error('aux chain id is not present in the mosaic config');
-      process.exit(1);
-    }
+      if (options.gatewayConfig !== undefined) {
+        (
+          {
+            originChainId,
+            gatewayAddresses,
+          } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
+        );
+      }
 
-    const originChainId = mosaicConfig.originChain.chain;
+      facilitatorConfig.originChain = originChainId!;
+      facilitatorConfig.auxChainId = auxChainId;
 
-    let { dbPath } = options;
-    if (dbPath === undefined || dbPath === null) {
-      Logger.info('database path is not provided');
-      dbPath = DatabaseFileHelper.create(auxChainId);
-    } else if (DatabaseFileHelper.verify(dbPath)) {
-      Logger.info('DB file verified');
-    } else {
-      Logger.error('DB file doesn\'t exists or file extension is incorrect');
-      process.exit(1);
-    }
+      let { dbPath } = options;
+      if (dbPath === undefined || dbPath === null) {
+        Logger.info('database path is not provided');
+        dbPath = DatabaseFileHelper.create(auxChainId);
+      } else if (DatabaseFileHelper.verify(dbPath)) {
+        Logger.info('DB file verified');
+      } else {
+        throw new Error('DB file doesn\'t exists or file extension is incorrect');
+      }
 
-    facilitatorConfig.database.path = dbPath;
-    facilitatorConfig.originChain = originChainId;
-    facilitatorConfig.auxChainId = auxChainId;
-    const setFacilitator = (
-      chainId: string,
-      rpc: string,
-      subGraphWs: string,
-      subGraphRpc: string,
-      password: string,
-    ): void => {
-      const account: Account = Account.create(new Web3(''), password);
+      facilitatorConfig.database.path = dbPath;
 
-      facilitatorConfig.chains[chainId] = new Chain(rpc, account.address, subGraphWs, subGraphRpc);
-      const envVariableNameForWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${account.address}`;
-      process.env[envVariableNameForWorkerPassword] = password;
+      const setFacilitator = (
+        chainId: string,
+        rpc: string,
+        subGraphWs: string,
+        subGraphRpc: string,
+        password: string,
+      ): void => {
+        const account: Account = Account.create(new Web3(''), password);
 
-      facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
-    };
+        facilitatorConfig.chains[chainId] = new Chain(
+          rpc,
+          account.address,
+          subGraphWs,
+          subGraphRpc,
+        );
+        const envVariableNameForWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${account.address}`;
+        process.env[envVariableNameForWorkerPassword] = password;
 
-    setFacilitator(
-      originChainId,
-      options.originRpc,
-      options.originGraphWs,
-      options.originGraphRpc,
-      options.originPassword,
-    );
+        facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
+      };
 
-    setFacilitator(
-      auxChainId,
-      options.auxiliaryRpc,
-      options.auxiliaryGraphWs,
-      options.auxiliaryGraphRpc,
-      options.auxiliaryPassword,
-    );
+      setFacilitator(
+        originChainId!,
+        options.originRpc,
+        options.originGraphWs,
+        options.originGraphRpc,
+        options.originPassword,
+      );
 
-    const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
-    const config = new Config(gatewayAddresses, facilitatorConfig);
-    const repositories = await Repositories.create(config.facilitator.database.path);
-    const seedData = new SeedData(
-      config,
-      repositories.gatewayRepository,
-      repositories.auxiliaryChainRepository,
-      repositories.contractEntityRepository,
-    );
-    await seedData.populateDb();
+      setFacilitator(
+        auxChainId,
+        options.auxiliaryRpc,
+        options.auxiliaryGraphWs,
+        options.auxiliaryGraphRpc,
+        options.auxiliaryPassword,
+      );
 
-    facilitatorConfig.writeToFacilitatorConfig(auxChainId);
-    Logger.info('facilitator config file is generated');
+      const config = new Config(gatewayAddresses!, facilitatorConfig);
+      const repositories = await Repositories.create(config.facilitator.database.path);
+      const seedData = new SeedData(
+        config,
+        repositories.gatewayRepository,
+        repositories.auxiliaryChainRepository,
+        repositories.contractEntityRepository,
+      );
+      await seedData.populateDb();
 
-    Logger.info(`👉 worker address for ${originChainId} chain is `
-    + `${facilitatorConfig.chains[originChainId].worker}`);
+      facilitatorConfig.writeToFacilitatorConfig(auxChainId);
+      Logger.info('facilitator config file is generated');
 
-    Logger.info(`👉 worker address for ${auxChainId} chain is `
+      Logger.info(`👉 worker address for ${originChainId} chain is `
+    + `${facilitatorConfig.chains[originChainId!].worker}`);
+
+      Logger.info(`👉 worker address for ${auxChainId} chain is `
       + `${facilitatorConfig.chains[auxChainId].worker}`);
-    Logger.info(`\nℹ️  Run below two commands on terminal by replacing <origin password> and <auxiliary-password> with origin and auxiliary password entered in command. \n
-        1. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId].worker}=<origin-password>
+      Logger.info(`\nℹ️  Run below two commands on terminal by replacing <origin password> and <auxiliary-password> with origin and auxiliary password entered in command. \n
+        1. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId!].worker}=<origin-password>
         2. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=<auxiliary-password> \n\n`);
+    } catch (e) {
+      Logger.error(e);
+      process.exit(1);
+    }
   })
   .parse(process.argv);
