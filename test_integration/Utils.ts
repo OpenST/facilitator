@@ -118,7 +118,7 @@ export default class Utils {
   ): Promise<TransactionReceipt> {
     const transferRawTx: TransactionObject<boolean> = this.getUtilityTokenInstance().methods.transfer(
       beneficiary,
-      web3Utils.toWei(tokenAmount.toString()),
+      tokenAmount.toString(10),
     );
     return await Utils.sendTransaction(
       transferRawTx,
