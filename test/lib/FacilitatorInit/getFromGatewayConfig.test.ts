@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import sinon from 'sinon';
+import sinon, { SinonStub, SinonStubbedInstance } from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
@@ -29,17 +29,35 @@ describe('FacilitatorInit.getFromGatewayConfig()', () => {
   const gatewayConfigPath = 'test/Config/gateway-config.json';
   const auxChain = 3;
   const originChain = '2';
-  const mosaicJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-  const mosaic = JSON.parse(mosaicJson) as MosaicConfig;
 
-  function getGatewayConfigStub(): any {
+  function getMosaic(): object {
+    return {
+      originChain:
+        {
+          chain: originChain,
+        },
+      auxiliaryChains:
+        {
+          [auxChain]:
+            {
+              chainId: auxChain,
+            },
+        },
+    };
+  }
+
+  const mosaic = getMosaic() as MosaicConfig;
+
+  function getGatewayConfigStub(): SinonStubbedInstance<GatewayConfig> {
     const stubGatewayConfig = sinon.createStubInstance(GatewayConfig);
     stubGatewayConfig.mosaicConfig = mosaic;
     stubGatewayConfig.auxChainId = auxChain;
     return stubGatewayConfig;
   }
 
-  function spyGatewayConfigfromFile(gatewayConfig: MosaicConfig): any {
+  function spyGatewayConfigfromFile(
+    gatewayConfig: GatewayConfig,
+  ): SinonStub<[string], GatewayConfig> {
     const spy = sinon.stub(
       GatewayConfig,
       'fromFile',
@@ -49,7 +67,9 @@ describe('FacilitatorInit.getFromGatewayConfig()', () => {
     return spy;
   }
 
-  function spyFromGatewayConfig(gatewayAddresses: GatewayAddresses): any {
+  function spyFromGatewayConfig(
+    gatewayAddresses: GatewayAddresses,
+  ): SinonStub<[GatewayConfig], GatewayAddresses> {
     const spy = sinon.stub(
       GatewayAddresses,
       'fromGatewayConfig',

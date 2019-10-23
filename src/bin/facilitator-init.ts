@@ -32,14 +32,14 @@ import FacilitatorInit from '../lib/FacilitatorInit';
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
-  .option('-q, --gateway-config <gateway-config>', 'path to gateway configuration')
+  .option('-g, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-c, --aux-chain-id <aux-chain-id>', 'auxiliary chain id')
   .option('-o, --origin-password <origin-password>', 'origin chain account password')
   .option('-a, --auxiliary-password <auxiliary-password>', 'auxiliary chain account password')
   .option('-r, --origin-rpc <origin-rpc>', 'origin chain rpc')
   .option('-h, --auxiliary-rpc <auxiliary-rpc>', 'auxiliary chain rpc')
   .option('-e, --origin-graph-ws <origin-graph-ws>', 'origin ws subgraph endpoint ')
-  .option('-g, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
+  .option('-n, --origin-graph-rpc <origin-graph-rpc>', 'origin rpc subgraph endpoint')
   .option('-s, --auxiliary-graph-ws <auxiliary-graph-ws>', 'auxiliary ws subgraph endpoint')
   .option('-i, --auxiliary-graph-rpc <auxiliary-graph-rpc>', 'auxiliary rpc subgraph endpoint')
   .option('-d, --db-path <db-path>', 'path where db path is present')

@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import sinon from 'sinon';
+import sinon, { SinonStub } from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import assert from '../../test_utils/assert';
@@ -29,7 +29,25 @@ describe('FacilitatorInit.getFromMosaicConfig()', () => {
   const auxChain = 3;
   const originChain = '2';
 
-  function spyMosaicfromFile(mosaicConfig: MosaicConfig): any {
+  function getMosaic(): object {
+    return {
+      originChain:
+        {
+          chain: originChain,
+        },
+      auxiliaryChains:
+        {
+          [auxChain]:
+            {
+              chainId: auxChain,
+            },
+        },
+    };
+  }
+
+  const mosaic = getMosaic() as MosaicConfig;
+
+  function spyMosaicfromFile(mosaicConfig: MosaicConfig): SinonStub<[string], MosaicConfig> {
     const spy = sinon.stub(
       MosaicConfig,
       'fromFile',
@@ -39,17 +57,9 @@ describe('FacilitatorInit.getFromMosaicConfig()', () => {
     return spy;
   }
 
-  // function spyFromGatewayConfig(gatewayAddresses: GatewayAddresses): any {
-  //   const spy = sinon.stub(
-  //     GatewayAddresses,
-  //     'fromGatewayConfig',
-  //   ).callsFake(
-  //     sinon.fake.returns(gatewayAddresses),
-  //   );
-  //   return spy;
-  // }
-
-  function spyFromMosaicConfig(gatewayAddresses: GatewayAddresses): any {
+  function spyFromMosaicConfig(
+    gatewayAddresses: GatewayAddresses,
+  ): SinonStub<[MosaicConfig, number], GatewayAddresses> {
     const spy = sinon.stub(
       GatewayAddresses,
       'fromMosaicConfig',
@@ -60,9 +70,6 @@ describe('FacilitatorInit.getFromMosaicConfig()', () => {
   }
 
   it('should pass with valid arguments', () => {
-    const mosaicJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-    const mosaic = JSON.parse(mosaicJson) as MosaicConfig;
-
     const mosaicFromFileSpy = spyMosaicfromFile(mosaic);
     const dummyGatewayAddresses = sinon.createStubInstance(GatewayAddresses);
     const fromMosaicConfigSpy = spyFromMosaicConfig(dummyGatewayAddresses);
@@ -90,9 +97,6 @@ describe('FacilitatorInit.getFromMosaicConfig()', () => {
   });
 
   it('should fail when aux chain is not present in mosaic config', () => {
-    const mosaicJson = `{"originChain":{"chain":"${originChain}"},"auxiliaryChains":{"${auxChain}":{"chainId": ${auxChain}}}}`;
-    const mosaic = JSON.parse(mosaicJson) as MosaicConfig;
-
     const mosaicFromFileSpy = spyMosaicfromFile(mosaic);
 
     const emptyObject = FacilitatorInit.getFromMosaicConfig(100, mosaicConfigPath);
