@@ -42,7 +42,7 @@ export default class Utils {
 
   private redeemPool: string;
 
-  private ostPrime: string;
+  private utilityTokenAddresses: string;
 
   public gatewayAddresses: GatewayAddresses;
 
@@ -70,7 +70,7 @@ export default class Utils {
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.stakePoolAddress = this.gatewayAddresses.stakePoolAddress;
     this.redeemPool = this.gatewayAddresses.redeemPoolAddress;
-    this.ostPrime = this.gatewayAddresses.utilityTokenAddress;
+    this.utilityTokenAddresses = this.gatewayAddresses.utilityTokenAddress;
   }
 
   /**
@@ -829,7 +829,7 @@ export default class Utils {
   public getSimpleTokenPrimeInstance(): OSTPrime {
     const simpletokenPrimeInstance: OSTPrime = interacts.getOSTPrime(
       this.auxiliaryWeb3,
-      this.ostPrime,
+      this.utilityTokenAddresses,
     );
     return simpletokenPrimeInstance;
   }

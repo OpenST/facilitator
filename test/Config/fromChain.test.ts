@@ -63,7 +63,7 @@ describe('Config.fromChain()', () => {
     assert.strictEqual(
       config.gatewayAddresses,
       gatewayAddresses,
-      'Mosaic object is different',
+      'GatewayAddresses object is different',
     );
 
     sinon.restore();

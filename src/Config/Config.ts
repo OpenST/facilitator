@@ -21,6 +21,7 @@ import path from 'path';
 import Web3 from 'web3';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import Account from '../Account';
 import Directory from '../Directory';
 import {
@@ -39,6 +40,12 @@ export const ENV_WORKER_PASSWORD_PREFIX = 'MOSAIC_ADDRESS_PASSW_';
 // Database type
 enum DBType {
   SQLITE = 'SQLITE',
+}
+
+// Database type
+export enum ConfigType {
+  GATEWAY = 'Gateway',
+  MOSAIC = 'Mosaic',
 }
 
 /**
@@ -314,23 +321,34 @@ export class Config {
 
   /**
    * It provides config object from the path specified. This will throw if
-   * mosaic config path or facilitator config path doesn't exists.
-   * @param mosaicConfigPath Path to mosaic config file path.
-   * @param facilitatorConfigPath Path to facilitator config file path/
+   * mosaic config path or facilitator config path doesn't exists and invalid config type
+   * is provided.
+   * @param facilitatorConfigPath Path to facilitator config file path.
+   * @param configPath Path to mosaic or gateway config.
+   * @param configType Type of config.
    * @returns Config object consisting of gateway addresses and facilitator configurations.
    */
   public static fromFile(
-    mosaicConfigPath: string,
     facilitatorConfigPath: string,
+    configPath: string,
+    configType: ConfigType,
   ): Config {
-    const mosaic: MosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
 
-    return new Config(
-      GatewayAddresses.fromMosaicConfig(
-        mosaic,
+    let gatewayAddresses: GatewayAddresses;
+    if (ConfigType.GATEWAY === configType) {
+      gatewayAddresses = GatewayAddresses.fromGatewayConfig(GatewayConfig.fromFile(configPath));
+    } else if (ConfigType.MOSAIC === configType) {
+      gatewayAddresses = GatewayAddresses.fromMosaicConfig(
+        MosaicConfig.fromFile(configPath),
         facilitator.auxChainId,
-      ),
+      );
+    } else {
+      throw new Error(`Invalid config type ${configType}`);
+    }
+
+    return new Config(
+      gatewayAddresses,
       facilitator,
     );
   }
