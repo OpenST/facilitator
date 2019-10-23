@@ -252,7 +252,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
     }
   });
 
-  it('should fail when token amount higher than supported amount', async (): Promise<void> => {
+  it('should fail when token amount higher than supported value', async (): Promise<void> => {
     const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,

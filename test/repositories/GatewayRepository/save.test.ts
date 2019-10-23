@@ -191,7 +191,7 @@ describe('GatewayRepository::save', (): void => {
     }
   });
 
-  it('should fail when bounty is higher than supported amount', async (): Promise<void> => {
+  it('should fail when bounty is higher than supported value', async (): Promise<void> => {
     const gateway = new Gateway(
       gatewayAddress,
       chain,

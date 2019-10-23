@@ -128,7 +128,7 @@ describe('MessageRepository::save', (): void => {
     Util.assertMessageAttributes(updatedMessage, message);
   });
 
-  it('should fail when gas price is higher than supported amount', async (): Promise<void> => {
+  it('should fail when gas price is higher than supported value', async (): Promise<void> => {
     const message = new Message(
       messageHash,
       type,

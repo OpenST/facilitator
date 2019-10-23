@@ -22,6 +22,7 @@ import { DataTypes, InitOptions, Model } from 'sequelize';
 import Gateway from '../models/Gateway';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
+import { MAX_VALUE } from '../Constants';
 
 /**
  * An interface, that represents a row from a gateways table.
@@ -122,7 +123,7 @@ export default class GatewayRepository extends Subject<Gateway> {
           allowNull: false,
           validate: {
             min: 0,
-            max: 99999999999999999999999999999999,
+            max: MAX_VALUE,
           },
         },
         activation: {

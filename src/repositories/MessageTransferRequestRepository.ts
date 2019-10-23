@@ -26,6 +26,7 @@ import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import { MessageModel } from './MessageRepository';
+import { MAX_VALUE } from '../Constants';
 
 
 /**
@@ -140,7 +141,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           allowNull: false,
           validate: {
             min: 0,
-            max: 99999999999999999999999999999999,
+            max: MAX_VALUE,
           },
         },
         nonce: {

@@ -24,6 +24,7 @@ import {
 import Message from '../models/Message';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
+import { MAX_VALUE } from '../Constants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -163,7 +164,7 @@ export class MessageRepository extends Subject<Message> {
           allowNull: true,
           validate: {
             min: 0,
-            max: 99999999999999999999999999999999,
+            max: MAX_VALUE,
           },
         },
         nonce: {
