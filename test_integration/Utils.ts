@@ -116,7 +116,7 @@ export default class Utils {
    * @returns Organization instance.
    */
   public async getOriginOrganizationInstance(): Promise<Organization> {
-    const organizationAddress = await this.getOrganizationFromOSTComposer();
+    const organizationAddress = await this.getOrganizationFromStakePool();
     return interacts.getOrganization(this.originWeb3, organizationAddress);
   }
 
@@ -200,12 +200,12 @@ export default class Utils {
   }
 
   /**
-   * It provides organization contract used in OSTComposer.
+   * It provides organization contract used in StakePool.
    * @returns Organization contract address.
    */
-  public async getOrganizationFromOSTComposer(): Promise<string> {
-    const ostComposerInstance = interacts.getOSTComposer(this.originWeb3, this.stakePoolAddress);
-    return await ostComposerInstance.methods.organization().call();
+  public async getOrganizationFromStakePool(): Promise<string> {
+    const stakePoolInstance = interacts.getOSTComposer(this.originWeb3, this.stakePoolAddress);
+    return await stakePoolInstance.methods.organization().call();
   }
 
   /**
@@ -286,13 +286,13 @@ export default class Utils {
    * It provides stake request hash.
    * @param messageTransferRequest It represents message transfer request object.
    * @param gateway Gateway address on which request stake is to be done.
-   * @param ostComposer OSTComposer contract address.
+   * @param stakePool StakePool contract address.
    * @returns EIP712 compatible stakerequest hash.
    */
   public getStakeRequestHash(
     messageTransferRequest: MessageTransferRequest,
     gateway: string,
-    ostComposer: string,
+    stakePool: string,
   ): string {
     const stakeRequestMethod = 'StakeRequest(uint256 amount,address beneficiary,uint256 gasPrice,uint256 gasLimit,uint256 nonce,address staker,address gateway)';
     const encodedTypeHash = web3Utils.sha3(
@@ -315,7 +315,7 @@ export default class Utils {
     const DOMAIN_SEPARATOR = web3Utils.soliditySha3(
       this.originWeb3.eth.abi.encodeParameters(
         ['bytes32', 'address'],
-        [EIP712_DOMAIN_TYPEHASH, ostComposer],
+        [EIP712_DOMAIN_TYPEHASH, stakePool],
       ),
     );
 
@@ -676,14 +676,14 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualAuxiliaryChain.ostGatewayAddress,
-      expectedAuxiliaryChain.ostGatewayAddress,
+      actualAuxiliaryChain.eip20GatewayAddress,
+      expectedAuxiliaryChain.eip20GatewayAddress,
       'Incorrect gateway address',
     );
 
     assert.strictEqual(
-      actualAuxiliaryChain.ostCoGatewayAddress,
-      expectedAuxiliaryChain.ostCoGatewayAddress,
+      actualAuxiliaryChain.eip20CoGatewayAddress,
+      expectedAuxiliaryChain.eip20CoGatewayAddress,
       'Incorrect ost cogateway address',
     );
 
@@ -788,10 +788,10 @@ export default class Utils {
    * @returns EIP20Gateway object.
    */
   public getEIP20GatewayInstance(): EIP20Gateway {
-    const ostEIP20GatewayAddress = this.gatewayAddresses.eip20GatewayAddress;
+    const eip20GatewayAddress = this.gatewayAddresses.eip20GatewayAddress;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
-      ostEIP20GatewayAddress,
+      eip20GatewayAddress,
     );
     return eip20GatewayInstance;
   }
@@ -835,10 +835,10 @@ export default class Utils {
   }
 
   /**
-   * It provides OSTComposer instance.
-   * @returns OSTComposer object.
+   * It provides stakePool instance.
+   * @returns stakePool object.
    */
-  public getOSTComposerInstance(): OSTComposer {
+  public getStakePoolInstance(): OSTComposer {
     return interacts.getOSTComposer(this.originWeb3, this.stakePoolAddress);
   }
 
