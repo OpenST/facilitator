@@ -116,6 +116,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           allowNull: false,
           validate: {
             min: 0,
+            max: 99999999999999999999999999999999
           },
         },
         beneficiary: {
@@ -131,6 +132,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           allowNull: false,
           validate: {
             min: 0,
+            max: 99999999999999999999999999999999
           },
         },
         gasLimit: {
@@ -138,6 +140,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           allowNull: false,
           validate: {
             min: 0,
+            max: 99999999999999999999999999999999
           },
         },
         nonce: {

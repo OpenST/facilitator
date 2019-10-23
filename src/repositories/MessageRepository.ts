@@ -155,6 +155,7 @@ export class MessageRepository extends Subject<Message> {
           allowNull: true,
           validate: {
             min: 0,
+            max: 99999999999999999999999999999999
           },
         },
         gasLimit: {
@@ -162,6 +163,7 @@ export class MessageRepository extends Subject<Message> {
           allowNull: true,
           validate: {
             min: 0,
+            max: 99999999999999999999999999999999
           },
         },
         nonce: {

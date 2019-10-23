@@ -52,7 +52,7 @@ describe('GatewayRepository::save', (): void => {
     remoteGatewayAddress = '0x0000000000000000000000000000000000000002';
     tokenAddress = '0x0000000000000000000000000000000000000003';
     anchorAddress = '0x0000000000000000000000000000000000000004';
-    bounty = new BigNumber('3000000000000000000000000000000');
+    bounty = new BigNumber('30000000000000000000000000000000');
     activation = true;
     lastRemoteGatewayProvenBlockHeight = new BigNumber(1000);
     createdAt = new Date();
@@ -189,5 +189,28 @@ describe('GatewayRepository::save', (): void => {
         'Validation len on anchorAddress failed',
       ]);
     }
+  });
+
+  it('should fail when bounty is higher than supported amount', async (): Promise<void> => {
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      remoteGatewayAddress,
+      tokenAddress,
+      anchorAddress,
+      new BigNumber('333333333333333333333333333333333'),
+      lastRemoteGatewayProvenBlockHeight,
+      activation,
+      createdAt,
+      updatedAt,
+    );
+
+    assert.isRejected(
+      config.repos.gatewayRepository.save(
+        gateway,
+      ),
+      'Validation max on bounty failed',
+    );
   });
 });

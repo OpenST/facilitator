@@ -46,10 +46,10 @@ describe('MessageTransferRequestRepository::save', (): void => {
       'requestHash',
       RequestType.Stake,
       new BigNumber('10'),
-      new BigNumber('3000000000000000000000000000000'),
+      new BigNumber('30000000000000000000000000000000'),
       beneficiary,
-      new BigNumber('1000000000000000000000000000000'),
-      new BigNumber('5000000000000000000000000000000'),
+      new BigNumber('10000000000000000000000000000000'),
+      new BigNumber('50000000000000000000000000000000'),
       new BigNumber('4'),
       gatewayAddress,
       sender,
@@ -250,5 +250,28 @@ describe('MessageTransferRequestRepository::save', (): void => {
         'Validation len on senderProxy failed',
       ]);
     }
+  });
+
+  it('should fail when token amount higher than supported amount', async (): Promise<void> => {
+    const requestInput = new MessageTransferRequest(
+      'requestHash',
+      RequestType.Stake,
+      new BigNumber('10'),
+      new BigNumber('333333333333333333333333333333333'),
+      beneficiary,
+      new BigNumber('2'),
+      new BigNumber('3'),
+      new BigNumber('4'),
+      undefined as any,
+      sender,
+      senderProxy,
+    );
+
+    assert.isRejected(
+      config.repos.messageTransferRequestRepository.save(
+        requestInput,
+      ),
+      'Validation max on amount failed',
+    );
   });
 });
