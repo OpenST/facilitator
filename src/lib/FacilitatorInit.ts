@@ -46,7 +46,7 @@ export default class FacilitatorInit {
     } {
     const gatewayConfig = GatewayConfig.fromFile(gatewayConfigPath);
 
-    if (!(auxChainId === gatewayConfig.auxChainId)) {
+    if (auxChainId != gatewayConfig.auxChainId) {
       return {};
     }
 

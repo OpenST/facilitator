@@ -133,7 +133,7 @@ commander
           {
             originChainId,
             gatewayAddresses,
-          } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
+          } = FacilitatorInit.getFromGatewayConfig(auxChainId, options.gatewayConfig)
         );
       }
 
