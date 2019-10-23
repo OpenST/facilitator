@@ -122,7 +122,7 @@ export default class GatewayRepository extends Subject<Gateway> {
           allowNull: false,
           validate: {
             min: 0,
-            max: 99999999999999999999999999999999
+            max: 99999999999999999999999999999999,
           },
         },
         activation: {

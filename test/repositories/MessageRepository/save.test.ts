@@ -25,7 +25,7 @@ import {
 } from '../../../src/repositories/MessageRepository';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
-import assert from "../../test_utils/assert";
+import assert from '../../test_utils/assert';
 
 interface TestConfigInterface {
   repos: Repositories;
