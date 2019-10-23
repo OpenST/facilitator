@@ -42,6 +42,12 @@ enum DBType {
   SQLITE = 'SQLITE',
 }
 
+// Database type
+export enum ConfigType {
+  GATEWAY = 'Gateway',
+  MOSAIC = 'Mosaic',
+}
+
 /**
  * Holds database configurations.
  */
@@ -315,23 +321,31 @@ export class Config {
 
   /**
    * It provides config object from the path specified. This will throw if
-   * mosaic config path or facilitator config path doesn't exists.
+   * mosaic config path or facilitator config path doesn't exists and invalid config type
+   * is provided.
    * @param facilitatorConfigPath Path to facilitator config file path.
-   * @param mosaicConfigPath Path to mosaic config file path.
-   * @param gatewayConfigPath Path to gateway config file path.
+   * @param configPath Path to mosaic or gateway config.
+   * @param configType Type of config.
    * @returns Config object consisting of gateway addresses and facilitator configurations.
    */
   public static fromFile(
     facilitatorConfigPath: string,
-    mosaicConfigPath?: string,
-    gatewayConfigPath?: string,
+    configPath: string,
+    configType: ConfigType,
   ): Config {
     const facilitator: FacilitatorConfig = FacilitatorConfig.fromFile(facilitatorConfigPath);
-    const gatewayAddresses = mosaicConfigPath
-      ? GatewayAddresses.fromMosaicConfig(
-        MosaicConfig.fromFile(mosaicConfigPath),
+
+    let gatewayAddresses: GatewayAddresses;
+    if (ConfigType.GATEWAY === configType) {
+      gatewayAddresses = GatewayAddresses.fromGatewayConfig(GatewayConfig.fromFile(configPath));
+    } else if (ConfigType.MOSAIC === configType) {
+      gatewayAddresses = GatewayAddresses.fromMosaicConfig(
+        MosaicConfig.fromFile(configPath),
         facilitator.auxChainId,
-      ) : GatewayAddresses.fromGatewayConfig(GatewayConfig.fromFile(gatewayConfigPath!));
+      );
+    } else {
+      throw new Error(`Invalid config type ${configType}`);
+    }
 
     return new Config(
       gatewayAddresses,

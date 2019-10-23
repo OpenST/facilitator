@@ -40,10 +40,23 @@ process.on('SIGTERM', terminationHandler);
 
 facilitatorCmd
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
-  .option('-q, --gateway-config <gateway-config>', 'path to gateway configuration')
+  .option('-g, --gateway-config <gateway-config>', 'path to gateway configuration')
   .option('-t, --facilitator-config <facilitator-config>', 'path to facilitator configuration')
   .action(async (origin_chain, aux_chain_id, options) => {
+    let mandatoryOptionMissing = false;
     try {
+      if (
+        (options.mosaicConfig && options.gatewayConfig)
+      ) {
+        Logger.error('one option out of gateway config and mosaic config is required.');
+        mandatoryOptionMissing = true;
+      }
+
+      if (mandatoryOptionMissing) {
+        Logger.info('refer readme for more details');
+        process.exit(1);
+      }
+
       Logger.debug('Reading config file');
       const configFactory: ConfigFactory = new ConfigFactory(
         origin_chain,
