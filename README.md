@@ -14,7 +14,7 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
    ```
    npm i @openst/facilitator -g
    ```   
-6. Funds on origin chain and auxiliary chain to perform transactions. For testnet mosaic faucet can be used get OST on origin chain and gas on auxiliary chain. Documentation about faucet is available [here](https://github.com/mosaicdao/faucet)   
+6. Funds on origin chain and auxiliary chain are needed to perform transactions. For testnet, mosaic faucet can be used to get OST on origin chain and gas on auxiliary chain. Documentation about faucet is available [here](https://github.com/mosaicdao/faucet)   
 7. Simple token balance on origin is required to stake bounty in the gateway or to mint gas for auxiliary chain. OST balance on auxiliary chain is required to stake bounty for redeem and unstake request.
 
 
