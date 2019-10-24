@@ -252,7 +252,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
     }
   });
 
-  it('should pass when max amount value is saved', async (): Promise<void> => {
+  it('should pass when max token amount, gasPrice, gasLimit value is saved', async (): Promise<void> => {
     const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,
@@ -284,8 +284,8 @@ describe('MessageTransferRequestRepository::save', (): void => {
       new BigNumber('10'),
       new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       beneficiary,
-      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
-      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      new BigNumber('34'),
+      new BigNumber('45'),
       new BigNumber('4'),
       gatewayAddress,
       sender,
@@ -323,7 +323,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
     );
   });
 
-  it('should fail when gasPrice higher than supported value', async (): Promise<void> => {
+  it('should fail when gasLimit higher than supported value', async (): Promise<void> => {
     const requestInput = new MessageTransferRequest(
       'requestHash',
       RequestType.Stake,

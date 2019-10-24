@@ -128,7 +128,7 @@ describe('MessageRepository::save', (): void => {
     Util.assertMessageAttributes(updatedMessage, message);
   });
 
-  it('should pass when max gasPrice value is saved', async (): Promise<void> => {
+  it('should pass when max gasPrice, gasLimit value is saved', async (): Promise<void> => {
     const message = new Message(
       messageHash,
       type,
