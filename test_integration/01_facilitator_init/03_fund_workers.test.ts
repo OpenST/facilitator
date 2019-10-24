@@ -13,7 +13,7 @@ import SharedStorage from '../SharedStorage';
 describe('should fund facilitator workers on origin & auxiliary', async (): Promise<void> => {
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
-  const auxChainId = Number(Constants.auxChainId);
+  const auxChainId = Constants.auxChainId;
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
 
@@ -30,7 +30,7 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
     utils = new Utils(
       mosaicConfig,
       facilitatorConfig,
-      Number(Constants.auxChainId),
+      Constants.auxChainId,
     );
     ({ originWeb3, auxiliaryWeb3 } = utils);
 

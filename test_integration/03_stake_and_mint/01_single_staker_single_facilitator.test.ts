@@ -32,7 +32,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   const stakerOSTBalance = '20000';
   const testDuration = 3;
   const interval = 3000;
-  const auxChainId = Number(Constants.auxChainId);
+  const auxChainId = Constants.auxChainId;
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
