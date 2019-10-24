@@ -137,7 +137,7 @@ describe('MessageRepository::save', (): void => {
       sourceStatus,
       targetStatus,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
-      gasLimit,
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       nonce,
       sender,
       sourceDeclarationBlockHeight,
@@ -177,6 +177,33 @@ describe('MessageRepository::save', (): void => {
         message,
       ),
       'Validation max on gasPrice failed',
+    );
+  });
+
+  it('should fail when gas limit is higher than supported value', async (): Promise<void> => {
+    const message = new Message(
+      messageHash,
+      type,
+      direction,
+      gatewayAddress,
+      sourceStatus,
+      targetStatus,
+      gasPrice,
+      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      nonce,
+      sender,
+      sourceDeclarationBlockHeight,
+      secret,
+      hashLock,
+      createdAt,
+      updatedAt,
+    );
+
+    await assert.isRejected(
+      config.repos.messageRepository.save(
+        message,
+      ),
+      'Validation max on gasLimit failed',
     );
   });
 });
