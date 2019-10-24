@@ -24,7 +24,7 @@ import SpyAssert from '../test_utils/SpyAssert';
 
 describe('FacilitatorConfig.remove()', () => {
   it('should remove facilitator config from default path', async () => {
-    const someChain = 300;
+    const auxChainId = 300;
 
     const removeSyncStub = sinon.stub(
       fs,
@@ -36,9 +36,9 @@ describe('FacilitatorConfig.remove()', () => {
       'getFacilitatorConfigPath',
       sinon.fake.returns(somePath),
     );
-    FacilitatorConfig.remove(someChain);
+    FacilitatorConfig.remove(auxChainId);
 
-    SpyAssert.assert(dirStub, 1, [[someChain]]);
+    SpyAssert.assert(dirStub, 1, [[auxChainId]]);
     SpyAssert.assert(removeSyncStub, 1, [[somePath]]);
     sinon.restore();
   });

@@ -24,7 +24,7 @@ import Directory from '../../src/Directory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const chainId = 1;
+const auxChainId = 1;
 
 describe('Database.create()', (): void => {
   afterEach(async (): Promise<void> => {
@@ -53,10 +53,10 @@ describe('Database.create()', (): void => {
 
     const fsSpy = sinon.stub(fs, 'ensureDirSync').callsFake((): boolean => true);
 
-    const actualFacilitatorConfigPath = DBFileHelper.create(chainId);
+    const actualFacilitatorConfigPath = DBFileHelper.create(auxChainId);
     const expectedFacilitatorConfigPath = `${dbPath + dbFileName}`;
 
-    SpyAssert.assert(spyDirectory, 1, [[chainId]]);
+    SpyAssert.assert(spyDirectory, 1, [[auxChainId]]);
 
     SpyAssert.assert(fsSpy, 1, [[dbPath]]);
 

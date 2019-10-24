@@ -238,10 +238,9 @@ export class FacilitatorConfig {
    * @returns `true` if file is present.
    */
   public static isFacilitatorConfigPresent(auxChainId: number): boolean {
-    const statOutput = fs.statSync(
+    return fs.existsSync(
       Directory.getFacilitatorConfigPath(auxChainId),
     );
-    return (statOutput.size > 0);
   }
 
   /**
