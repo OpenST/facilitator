@@ -20,15 +20,15 @@ describe('facilitator init', async (): Promise<void> => {
   });
 
   it('Validates facilitator init', async (): Promise<void> => {
-    const auxChainId = Number(Constants.auxChainId);
+    const auxChainId = Constants.auxChainId;
     // Removing facilitator config.
-    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));
+    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId));
 
     spawnSync(facilitatorInit, { stdio: outputOptions, env: process.env });
     facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
     assert.strictEqual(
       facilitatorConfig.auxChainId,
-      Number(Constants.auxChainId),
+      auxChainId,
       'Invalid aux chain id',
     );
 

@@ -391,7 +391,7 @@ export default class Utils {
   private async getRepositories(): Promise<Repositories> {
     return Repositories.create(
       path.join(
-        Directory.getDBFilePath(this.facilitatorConfig.auxChainId.toString(10)),
+        Directory.getDBFilePath(this.facilitatorConfig.auxChainId),
         'mosaic_facilitator.db',
       ),
     );
@@ -874,7 +874,7 @@ export default class Utils {
     process.env.ORIGIN_GRAPH_WS = Constants.originGraphWs;
     process.env.ORIGIN_WORKER_PASSWORD = Constants.originWorkerPassword;
     process.env.AUXILIARY_WORKER_PASSWORD = Constants.auxiliaryWorkerPassword;
-    process.env.AUXILIARY_CHAIN_ID = Constants.auxChainId;
+    process.env.AUXILIARY_CHAIN_ID = Constants.auxChainId.toString();
     process.env.MOSAIC_CONFIG_PATH = mosaicConfigPath;
     process.env.ORIGIN_CHAIN = Constants.originChain;
     process.env.ORIGIN_WORKER_PASSWORD = Constants.originWorkerPassword;

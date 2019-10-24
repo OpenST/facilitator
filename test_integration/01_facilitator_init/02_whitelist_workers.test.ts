@@ -10,7 +10,7 @@ import * as Constants from '../Constants.json';
 import assert from '../../test/test_utils/assert';
 
 describe('should whitelist facilitator workers for origin & auxiliary', async (): Promise<void> => {
-  const auxChainId = Number(Constants.auxChainId);
+  const auxChainId = Constants.auxChainId;
   const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   let originWorker: string;
@@ -57,7 +57,7 @@ describe('should whitelist facilitator workers for origin & auxiliary', async ()
     utils = new Utils(
       mosaicConfig,
       facilitatorConfig,
-      Number(Constants.auxChainId),
+      Constants.auxChainId,
     );
 
     utils.setWorkerPasswordInEnvironment();
