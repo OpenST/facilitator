@@ -147,7 +147,7 @@ describe('MessageRepository::save', (): void => {
       updatedAt,
     );
 
-    let savedMessage = await config.repos.messageRepository.save(
+    const savedMessage = await config.repos.messageRepository.save(
       message,
     );
     Util.assertMessageAttributes(savedMessage, message);

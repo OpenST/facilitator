@@ -179,7 +179,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
       {
         ...initOptions,
         modelName: 'MessageTransferRequest',
-        tableName: 'requests',
+        tableName: 'message_transfer_requests',
       },
     );
 
