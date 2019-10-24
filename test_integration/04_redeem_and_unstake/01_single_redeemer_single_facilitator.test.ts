@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
-import { Account } from 'web3-eth-accounts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { RedeemPool } from '@openst/mosaic-contracts/dist/interacts/RedeemPool';
