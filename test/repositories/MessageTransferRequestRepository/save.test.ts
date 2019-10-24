@@ -257,7 +257,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       'requestHash',
       RequestType.Stake,
       new BigNumber('2345677'),
-      new BigNumber('99999999999999999999999999999999'),
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       beneficiary,
       new BigNumber('10000000000000000000000000000000'),
       new BigNumber('50000000000000000000000000000000'),
@@ -282,17 +282,17 @@ describe('MessageTransferRequestRepository::save', (): void => {
       'requestHash',
       RequestType.Stake,
       new BigNumber('10'),
-      new BigNumber('333333333333333333333333333333333'),
+      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       beneficiary,
       new BigNumber('2'),
       new BigNumber('3'),
       new BigNumber('4'),
-      undefined as any,
+      gatewayAddress,
       sender,
       senderProxy,
     );
 
-    assert.isRejected(
+    await assert.isRejected(
       config.repos.messageTransferRequestRepository.save(
         requestInput,
       ),

@@ -113,11 +113,11 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           unique: true,
         },
         amount: {
-          type: DataTypes.DECIMAL(32),
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,
-            max: 99999999999999999999999999999999,
+            max: MAX_VALUE,
           },
         },
         beneficiary: {
@@ -129,7 +129,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           },
         },
         gasPrice: {
-          type: DataTypes.DECIMAL(32),
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,
@@ -137,7 +137,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           },
         },
         gasLimit: {
-          type: DataTypes.DECIMAL(32),
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,

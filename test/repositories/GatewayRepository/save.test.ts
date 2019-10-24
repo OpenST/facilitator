@@ -199,7 +199,7 @@ describe('GatewayRepository::save', (): void => {
       remoteGatewayAddress,
       tokenAddress,
       anchorAddress,
-      new BigNumber('99999999999999999999999999999999'),
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       lastRemoteGatewayProvenBlockHeight,
       activation,
       createdAt,
@@ -213,7 +213,7 @@ describe('GatewayRepository::save', (): void => {
     Util.assertGatewayAttributes(saveGateway, gateway);
   });
 
-  it('should fail when bounty is higher than supported value', async (): Promise<void> => {
+  it('should fail when bounty amount is higher than supported value', async (): Promise<void> => {
     const gateway = new Gateway(
       gatewayAddress,
       chain,
@@ -221,14 +221,14 @@ describe('GatewayRepository::save', (): void => {
       remoteGatewayAddress,
       tokenAddress,
       anchorAddress,
-      new BigNumber('333333333333333333333333333333333'),
+      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       lastRemoteGatewayProvenBlockHeight,
       activation,
       createdAt,
       updatedAt,
     );
 
-    assert.isRejected(
+    await assert.isRejected(
       config.repos.gatewayRepository.save(
         gateway,
       ),

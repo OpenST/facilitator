@@ -136,7 +136,7 @@ describe('MessageRepository::save', (): void => {
       gatewayAddress,
       sourceStatus,
       targetStatus,
-      new BigNumber('99999999999999999999999999999999'),
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       gasLimit,
       nonce,
       sender,
@@ -161,7 +161,7 @@ describe('MessageRepository::save', (): void => {
       gatewayAddress,
       sourceStatus,
       targetStatus,
-      new BigNumber('333333333333333333333333333333333'),
+      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       gasLimit,
       nonce,
       sender,
@@ -172,7 +172,7 @@ describe('MessageRepository::save', (): void => {
       updatedAt,
     );
 
-    assert.isRejected(
+    await assert.isRejected(
       config.repos.messageRepository.save(
         message,
       ),

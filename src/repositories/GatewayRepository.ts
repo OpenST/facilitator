@@ -119,7 +119,7 @@ export default class GatewayRepository extends Subject<Gateway> {
           },
         },
         bounty: {
-          type: DataTypes.DECIMAL(32),
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,

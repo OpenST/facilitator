@@ -152,7 +152,7 @@ export class MessageRepository extends Subject<Message> {
           allowNull: true,
         },
         gasPrice: {
-          type: DataTypes.DECIMAL(32),
+          type: DataTypes.DECIMAL(78),
           allowNull: true,
           validate: {
             min: 0,
@@ -160,7 +160,7 @@ export class MessageRepository extends Subject<Message> {
           },
         },
         gasLimit: {
-          type: DataTypes.DECIMAL(32),
+          type: DataTypes.DECIMAL(78),
           allowNull: true,
           validate: {
             min: 0,
