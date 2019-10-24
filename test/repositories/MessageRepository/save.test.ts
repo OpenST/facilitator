@@ -128,6 +128,31 @@ describe('MessageRepository::save', (): void => {
     Util.assertMessageAttributes(updatedMessage, message);
   });
 
+  it('should pass when max gasPrice value is saved', async (): Promise<void> => {
+    const message = new Message(
+      messageHash,
+      type,
+      direction,
+      gatewayAddress,
+      sourceStatus,
+      targetStatus,
+      new BigNumber('99999999999999999999999999999999'),
+      gasLimit,
+      nonce,
+      sender,
+      sourceDeclarationBlockHeight,
+      secret,
+      hashLock,
+      createdAt,
+      updatedAt,
+    );
+
+    let savedMessage = await config.repos.messageRepository.save(
+      message,
+    );
+    Util.assertMessageAttributes(savedMessage, message);
+  });
+
   it('should fail when gas price is higher than supported value', async (): Promise<void> => {
     const message = new Message(
       messageHash,

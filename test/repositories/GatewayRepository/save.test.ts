@@ -191,6 +191,28 @@ describe('GatewayRepository::save', (): void => {
     }
   });
 
+  it('should pass when max bounty value is saved', async (): Promise<void> => {
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      remoteGatewayAddress,
+      tokenAddress,
+      anchorAddress,
+      new BigNumber('99999999999999999999999999999999'),
+      lastRemoteGatewayProvenBlockHeight,
+      activation,
+      createdAt,
+      updatedAt,
+    );
+
+    const saveGateway = await config.repos.gatewayRepository.save(
+      gateway,
+    );
+
+    Util.assertGatewayAttributes(saveGateway, gateway);
+  });
+
   it('should fail when bounty is higher than supported value', async (): Promise<void> => {
     const gateway = new Gateway(
       gatewayAddress,

@@ -252,6 +252,31 @@ describe('MessageTransferRequestRepository::save', (): void => {
     }
   });
 
+  it('should pass when max amount value is saved', async (): Promise<void> => {
+    const requestInput = new MessageTransferRequest(
+      'requestHash',
+      RequestType.Stake,
+      new BigNumber('2345677'),
+      new BigNumber('99999999999999999999999999999999'),
+      beneficiary,
+      new BigNumber('10000000000000000000000000000000'),
+      new BigNumber('50000000000000000000000000000000'),
+      new BigNumber('4'),
+      gatewayAddress,
+      sender,
+      senderProxy,
+    );
+
+    const requestResponse = await config.repos.messageTransferRequestRepository.save(
+      requestInput,
+    );
+
+    Util.checkInputAgainstOutput(
+      requestInput,
+      requestResponse,
+    );
+  });
+
   it('should fail when token amount higher than supported value', async (): Promise<void> => {
     const requestInput = new MessageTransferRequest(
       'requestHash',
