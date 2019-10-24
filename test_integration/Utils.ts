@@ -107,29 +107,6 @@ export default class Utils {
   }
 
   /**
-   * It funds Utility Token on chain to beneficiary.
-   * @param beneficiary Address of the account who is to be funded.
-   * @param tokenAmount Token amount to be funded.
-   * @returns Receipt of eth funding to beneficiary.
-   */
-  public async fundUtilityToken(
-    beneficiary: string,
-    tokenAmount: BigNumber,
-  ): Promise<TransactionReceipt> {
-    const transferRawTx: TransactionObject<boolean> = this.getUtilityTokenInstance().methods.transfer(
-      beneficiary,
-      tokenAmount.toString(10),
-    );
-    return await Utils.sendTransaction(
-      transferRawTx,
-      {
-        from: SharedStorage.getAuxiliaryFunder(),
-        gasPrice: await this.auxiliaryWeb3.eth.getGasPrice(),
-      },
-    );
-  }
-
-  /**
    * It provides origin organization contract instance.
    * @returns Organization instance.
    */

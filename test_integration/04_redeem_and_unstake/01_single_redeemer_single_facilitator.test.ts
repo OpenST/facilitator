@@ -30,8 +30,8 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   const { gasPrice } = testData;
   const { gasLimit } = testData;
   const { redeemerOSTPrimeToFund } = testData;
-  const { redeemerUtilityTokenToFund } = testData;
   const auxChainId = Number(testData.auxChainId);
+  let redeemerAddress: string;
   const helperObject = SharedStorage.getHelperObject();
   const gatewayAddresses = SharedStorage.getGatewayAddresses();
   const redeemPool: string = gatewayAddresses.redeemPoolAddress;
@@ -39,7 +39,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
   let utils: Utils;
-  let redeemerAccount: Account;
   let messageHash: string | undefined;
   let preGeneratedRedeemRequestHash: string;
   let expectedMessage: Message;
@@ -52,26 +51,23 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   });
 
   it('should fund redeemer', async (): Promise<void> => {
-    redeemerAccount = auxiliaryWeb3.eth.accounts.create('redeemTest');
-    auxiliaryWeb3.eth.accounts.wallet.add(redeemerAccount);
+
+    redeemerAddress = SharedStorage.getStakeAndMintBeneficiary();
 
     // Fund OSTPrime to redeemer
     await utils.fundOSTPrimeOnAuxiliary(
-      redeemerAccount.address,
+      redeemerAddress,
       redeemerOSTPrimeToFund,
     );
 
-    // Fund Utility Token To Fund
-    await helperObject.fundUtilityTokenToRedeemer(
-      redeemerAccount.address,
-      redeemerUtilityTokenToFund,
-    );
+    // Utility Token's are not funded.
+    // We would redeem the tokens which were minted in stake and mint test case
 
     // Wrap Utility Token
     await helperObject.wrapUtilityToken({
-      from: redeemerAccount.address,
+      from: redeemerAddress,
       gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
-      value: redeemerUtilityTokenToFund,
+      value: redeemAmount,
     });
 
     // Approve Utility Token
@@ -84,7 +80,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     await Utils.sendTransaction(
       approveRawTx,
       {
-        from: redeemerAccount.address,
+        from: redeemerAddress,
         gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
       },
     );
@@ -101,7 +97,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       new BigNumber(gasLimit),
       new BigNumber(1),
       gatewayAddresses.eip20CoGatewayAddress,
-      redeemerAccount.address,
+      redeemerAddress,
       '', // would be filled later
     );
 

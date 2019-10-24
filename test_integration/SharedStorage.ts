@@ -59,6 +59,14 @@ export default class SharedStorage {
     return SharedStorage.set(SharedStorage.auxiliaryFunderKey, value);
   }
 
+  public static getStakeAndMintBeneficiary(): string {
+    return SharedStorage.get(SharedStorage.stakeAndMintBeneficiaryKey);
+  }
+
+  public static setStakeAndMintBeneficiary(value: string): void {
+    return SharedStorage.set(SharedStorage.stakeAndMintBeneficiaryKey, value);
+  }
+
   public static getTestData(): any {
     return SharedStorage.get(SharedStorage.testDataKey);
   }
@@ -105,6 +113,10 @@ export default class SharedStorage {
 
   private static get auxiliaryFunderKey(): string {
     return 'AUXILIARY_FUNDER';
+  }
+
+  private static get stakeAndMintBeneficiaryKey(): string {
+    return 'S_M_BENEFICIARY';
   }
 
   private static get facilitatorConfigKey(): string {

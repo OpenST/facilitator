@@ -92,12 +92,17 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   });
 
   it('should perform and verify request stake', async (): Promise<void> => {
+
+    const stakeAndMintBeneficiaryAccount: Account = auxiliaryWeb3.eth.accounts.create('beneficiary');
+    auxiliaryWeb3.eth.accounts.wallet.add(stakeAndMintBeneficiaryAccount);
+    SharedStorage.setStakeAndMintBeneficiary(stakeAndMintBeneficiaryAccount.address);
+
     messageTransferRequest = new MessageTransferRequest(
       '',
       MessageType.Stake,
       new BigNumber(0), // It will be updated after stake request is done.
       new BigNumber(stakeAmount),
-      auxiliaryWeb3.eth.accounts.create('beneficiary').address,
+      stakeAndMintBeneficiaryAccount.address,
       new BigNumber(gasPrice),
       new BigNumber(gasLimit),
       new BigNumber(1),

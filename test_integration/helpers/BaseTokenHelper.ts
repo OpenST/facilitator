@@ -21,7 +21,6 @@ import { HelperInterface } from './HelperInterface';
 import Utils from '../Utils';
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
-import { TransactionReceipt } from 'web3-core';
 import Logger from '../../src/Logger';
 
 export default class BaseTokenHelper implements HelperInterface {
@@ -71,17 +70,6 @@ export default class BaseTokenHelper implements HelperInterface {
       wrapRawTx,
       txOption,
     );
-  }
-
-  /**
-   * fund Utility Token To Redeemer
-   * @param beneficiary
-   * @param amount
-   * @return tx Receipt
-   */
-  fundUtilityTokenToRedeemer(beneficiary: string, amount: BigNumber): Promise<TransactionReceipt> {
-    const utils = new Utils();
-    return utils.fundOSTPrimeOnAuxiliary(beneficiary, amount);
   }
 
 }

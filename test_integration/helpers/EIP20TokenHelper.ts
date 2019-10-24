@@ -18,7 +18,6 @@
 import * as path from 'path';
 import BigNumber from 'bignumber.js';
 import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
-import { TransactionReceipt } from 'web3-core';
 
 import { HelperInterface } from './HelperInterface';
 import Utils from '../Utils';
@@ -71,17 +70,6 @@ export default class EIP20TokenHelper implements HelperInterface {
     return new Promise(((resolve) => {
       resolve();
     }));
-  }
-
-  /**
-   * fund Utility Token To Redeemer
-   * @param beneficiary
-   * @param amount
-   * @return tx Receipt
-   */
-  fundUtilityTokenToRedeemer(beneficiary: string, amount: BigNumber): Promise<TransactionReceipt> {
-    const utils = new Utils();
-    return utils.fundUtilityToken(beneficiary, amount);
   }
 
 }

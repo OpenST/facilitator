@@ -16,7 +16,6 @@
 
 
 import BigNumber from 'bignumber.js';
-import { TransactionReceipt } from 'web3-core';
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
 
@@ -56,14 +55,6 @@ export interface HelperInterface {
    * @return
    */
   wrapUtilityToken(txOption: any): Promise<void>;
-
-  /**
-   * fund Utility Token To Redeemer
-   * @param beneficiary
-   * @param amount
-   * @return tx Receipt
-   */
-  fundUtilityTokenToRedeemer(beneficiary: string, amount: BigNumber): Promise<TransactionReceipt>;
 
 }
 
