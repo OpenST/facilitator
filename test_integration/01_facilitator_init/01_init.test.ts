@@ -53,20 +53,25 @@ describe('facilitator init', async (): Promise<void> => {
   const helperObject = SharedStorage.getHelperObject();
 
   function setEnvVars() {
+
     process.env.AUXILIARY_RPC = testData.auxiliaryRpc;
-    process.env.ORIGIN_RPC = testData.originRpc;
-    process.env.ORIGIN_GRAPH_RPC = testData.originGraphRpc;
     process.env.AUXILIARY_GRAPH_RPC = testData.auxiliaryGraphRpc;
     process.env.AUXILIARY_GRAPH_WS = testData.auxiliaryGraphWs;
+    process.env.AUXILIARY_GRAPH_ADMIN_RPC = testData.auxiliaryGraphAdminRPC;
+    process.env.AUXILIARY_GRAPH_IPFS = testData.auxiliaryGraphIPFS;
+    process.env.AUXILIARY_WORKER_PASSWORD = testData.auxiliaryWorkerPassword;
+
+    process.env.ORIGIN_RPC = testData.originRpc;
+    process.env.ORIGIN_GRAPH_RPC = testData.originGraphRpc;
+    process.env.ORIGIN_GRAPH_ADMIN_RPC = testData.originGraphAdminRPC;
+    process.env.ORIGIN_GRAPH_IPFS = testData.originGraphIPFS;
     process.env.ORIGIN_GRAPH_WS = testData.originGraphWs;
     process.env.ORIGIN_WORKER_PASSWORD = testData.originWorkerPassword;
-    process.env.AUXILIARY_WORKER_PASSWORD = testData.auxiliaryWorkerPassword;
+
     process.env.AUXILIARY_CHAIN_ID = testData.auxChainId;
     process.env.MOSAIC_CONFIG_PATH = mosaicConfigPath;
     process.env.GATEWAY_CONFIG_PATH = gatewayConfigPath;
     process.env.ORIGIN_CHAIN = testData.originChain;
-    process.env.ORIGIN_WORKER_PASSWORD = testData.originWorkerPassword;
-    process.env.AUXILIARY_WORKER_PASSWORD = testData.auxiliaryWorkerPassword;
   }
 
   before(async () => {
