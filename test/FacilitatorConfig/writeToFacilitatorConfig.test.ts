@@ -23,7 +23,7 @@ import { FacilitatorConfig } from '../../src/Config/Config';
 import Directory from '../../src/Directory';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const chain = 301;
+const chain = 1000;
 const mosaicDirectoryPath = '.mosaic';
 const facilitatorConfigPath = path.join(
   mosaicDirectoryPath,

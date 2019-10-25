@@ -36,7 +36,7 @@ async function spyFsModule(status: boolean): Promise<any> {
 }
 
 describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
-  const chain = 301;
+  const chain = 1000;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
 

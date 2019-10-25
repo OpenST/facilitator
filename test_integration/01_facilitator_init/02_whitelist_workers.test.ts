@@ -1,18 +1,14 @@
-import * as path from 'path';
 import BigNumber from 'bignumber.js';
 
-import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Organization } from '@openst/mosaic-contracts/dist/interacts/Organization';
 import { TransactionReceipt } from 'web3-core';
-import { FacilitatorConfig } from '../../src/Config/Config';
+import { FacilitatorConfig, ENV_WORKER_PASSWORD_PREFIX } from '../../src/Config/Config';
 import Utils from '../Utils';
-import * as Constants from '../Constants.json';
+import SharedStorage from '../SharedStorage';
 import assert from '../../test/test_utils/assert';
 
 describe('should whitelist facilitator workers for origin & auxiliary', async (): Promise<void> => {
-  const auxChainId = Constants.auxChainId;
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
-  const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
+  const testData = SharedStorage.getTestData();
   let originWorker: string;
   let auxiliaryWorker: string;
   let utils: Utils;
@@ -53,18 +49,15 @@ describe('should whitelist facilitator workers for origin & auxiliary', async ()
   }
 
   before(async () => {
-    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-    utils = new Utils(
-      mosaicConfig,
-      facilitatorConfig,
-      Constants.auxChainId,
-    );
-
-    utils.setWorkerPasswordInEnvironment();
+    utils = new Utils();
+    const facilitatorConfig: FacilitatorConfig = SharedStorage.getFacilitatorConfig();
 
     originWorker = facilitatorConfig.chains[facilitatorConfig.originChain].worker;
-    auxiliaryWorker = facilitatorConfig.chains[auxChainId].worker;
-
+    auxiliaryWorker = facilitatorConfig.chains[facilitatorConfig.auxChainId].worker;
+    const originWorkerExport = ENV_WORKER_PASSWORD_PREFIX + originWorker;
+    const auxWorkerExport = ENV_WORKER_PASSWORD_PREFIX + auxiliaryWorker;
+    process.env[originWorkerExport] = testData.originWorkerPassword;
+    process.env[auxWorkerExport] = testData.auxiliaryWorkerPassword;
   });
 
   it('should whitelist origin worker', async () => {
@@ -72,13 +65,13 @@ describe('should whitelist facilitator workers for origin & auxiliary', async ()
     const txReceipt = await utils.whitelistOriginWorker(
       organizationInstance,
       originWorker,
-      Constants.originWorkerExpirationHeight,
+      testData.originWorkerExpirationHeight,
     );
     await assertWorkerWhitelisting(
       txReceipt,
       organizationInstance,
       originWorker,
-      Constants.originWorkerExpirationHeight,
+      testData.originWorkerExpirationHeight,
     );
   });
 
@@ -87,14 +80,13 @@ describe('should whitelist facilitator workers for origin & auxiliary', async ()
     const txReceipt = await utils.whitelistAuxiliaryWorker(
       organizationInstance,
       auxiliaryWorker,
-      Constants.auxiliaryWorkerExpirationHeight,
+      testData.auxiliaryWorkerExpirationHeight,
     );
     await assertWorkerWhitelisting(
       txReceipt,
       organizationInstance,
       auxiliaryWorker,
-      Constants.auxiliaryWorkerExpirationHeight,
+      testData.auxiliaryWorkerExpirationHeight,
     );
   });
-
 });

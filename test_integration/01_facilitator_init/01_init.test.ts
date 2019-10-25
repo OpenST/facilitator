@@ -2,30 +2,93 @@ import { spawnSync } from 'child_process';
 import * as path from 'path';
 import fs from 'fs-extra';
 
+import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
+import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import { FacilitatorConfig } from '../../src/Config/Config';
-import Utils from '../Utils';
-import * as Constants from '../Constants.json';
 import assert from '../../test/test_utils/assert';
 import Directory from '../../src/Directory';
-
-const facilitatorInit = path.join(__dirname, '../facilitator_init.sh');
+import SharedStorage from '../SharedStorage';
+import BaseTokenHelper from '../helpers/BaseTokenHelper';
+import EIP20TokenHelper from '../helpers/EIP20TokenHelper';
+import * as BaseTokenTestData from '../testdata/BaseToken.json';
+import * as EIP20TokenTestData from '../testdata/EIP20Token.json';
+import Logger from '../../src/Logger';
+import GatewayAddresses from '../../src/Config/GatewayAddresses';
 
 describe('facilitator init', async (): Promise<void> => {
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
+  const testMode = process.env.TEST_MODE;
+  Logger.debug('testMode', testMode);
+
+  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
+  const gatewayConfigPath = path.join(__dirname, '../../testdata/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json');
+
+  switch (testMode) {
+    case 'baseToken':
+      SharedStorage.setHelperObject(new BaseTokenHelper());
+      SharedStorage.setTestData(BaseTokenTestData);
+      SharedStorage.setGatewayAddresses(
+        GatewayAddresses.fromMosaicConfig(
+          MosaicConfig.fromFile(mosaicConfigPath),
+          Number(BaseTokenTestData.auxChainId),
+        ),
+      );
+      break;
+    case 'eip20Token':
+      SharedStorage.setHelperObject(new EIP20TokenHelper());
+      SharedStorage.setTestData(EIP20TokenTestData);
+      SharedStorage.setGatewayAddresses(
+        GatewayAddresses.fromGatewayConfig(
+          GatewayConfig.fromFile(gatewayConfigPath),
+        ),
+      );
+      break;
+    default:
+      Logger.error('unsupported test mode for integration test: ', testMode);
+      process.exit(1);
+  }
+
   let facilitatorConfig: FacilitatorConfig;
   const outputOptions = [process.stdout, process.stderr];
+  const testData = SharedStorage.getTestData();
+  const helperObject = SharedStorage.getHelperObject();
+
+  function setEnvVars() {
+
+    process.env.AUXILIARY_RPC = testData.auxiliaryRpc;
+    process.env.AUXILIARY_GRAPH_RPC = testData.auxiliaryGraphRpc;
+    process.env.AUXILIARY_GRAPH_WS = testData.auxiliaryGraphWs;
+    process.env.AUXILIARY_GRAPH_ADMIN_RPC = testData.auxiliaryGraphAdminRPC;
+    process.env.AUXILIARY_GRAPH_IPFS = testData.auxiliaryGraphIPFS;
+    process.env.AUXILIARY_WORKER_PASSWORD = testData.auxiliaryWorkerPassword;
+
+    process.env.ORIGIN_RPC = testData.originRpc;
+    process.env.ORIGIN_GRAPH_RPC = testData.originGraphRpc;
+    process.env.ORIGIN_GRAPH_ADMIN_RPC = testData.originGraphAdminRPC;
+    process.env.ORIGIN_GRAPH_IPFS = testData.originGraphIPFS;
+    process.env.ORIGIN_GRAPH_WS = testData.originGraphWs;
+    process.env.ORIGIN_WORKER_PASSWORD = testData.originWorkerPassword;
+
+    process.env.AUXILIARY_CHAIN_ID = testData.auxChainId;
+    process.env.MOSAIC_CONFIG_PATH = mosaicConfigPath;
+    process.env.GATEWAY_CONFIG_PATH = gatewayConfigPath;
+    process.env.ORIGIN_CHAIN = testData.originChain;
+  }
 
   before(async () => {
-    Utils.setEnvironment(mosaicConfigPath);
+    setEnvVars();
   });
 
   it('Validates facilitator init', async (): Promise<void> => {
-    const auxChainId = Constants.auxChainId;
+    const auxChainId = testData.auxChainId;
     // Removing facilitator config.
     fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId));
 
-    spawnSync(facilitatorInit, { stdio: outputOptions, env: process.env });
+    const facilitatorInitScriptPath = helperObject.facilitatorInitScriptPath();
+    spawnSync(facilitatorInitScriptPath, { stdio: outputOptions, env: process.env });
+
     facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
+    SharedStorage.setFacilitatorConfig(facilitatorConfig);
+
     assert.strictEqual(
       facilitatorConfig.auxChainId,
       auxChainId,
@@ -34,31 +97,31 @@ describe('facilitator init', async (): Promise<void> => {
 
     assert.strictEqual(
       facilitatorConfig.originChain,
-      Constants.originChain,
+      testData.originChain,
       'Invalid origin chain id',
     );
 
     assert.strictEqual(
       facilitatorConfig.chains[facilitatorConfig.originChain].nodeRpc,
-      Constants.originRpc,
+      testData.originRpc,
       'Invalid origin rpc',
     );
 
     assert.strictEqual(
       facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc,
-      Constants.auxiliaryRpc,
+      testData.auxiliaryRpc,
       'Invalid auxiliary rpc',
     );
 
     assert.strictEqual(
       facilitatorConfig.chains[facilitatorConfig.auxChainId].subGraphRpc,
-      Constants.auxiliaryGraphRpc,
+      testData.auxiliaryGraphRpc,
       'Invalid auxiliary graph rpc',
     );
 
     assert.strictEqual(
       facilitatorConfig.chains[facilitatorConfig.originChain].subGraphRpc,
-      Constants.originGraphRpc,
+      testData.originGraphRpc,
       'Invalid auxiliary graph rpc',
     );
   });
