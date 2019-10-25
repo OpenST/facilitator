@@ -28,8 +28,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   const { gasLimit } = testData;
   const { stakerValueTokenToFund } = testData;
   const helperObject = SharedStorage.getHelperObject();
-
-  const auxChainId = Number(testData.auxChainId);
+  const auxChainId = testData.auxChainId;
   const gatewayAddresses = SharedStorage.getGatewayAddresses();
   const stakePool: string = gatewayAddresses.stakePoolAddress;
 

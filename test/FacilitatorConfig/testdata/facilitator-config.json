@@ -1,6 +1,6 @@
 {
   "originChain":"1515",
-  "auxChainId":"1000",
+  "auxChainId":1000,
   "database": {
     "path": "/Users/gulshanvasnani/.mosaic/1000/facilitator/OSTFacilitator.db"
   },

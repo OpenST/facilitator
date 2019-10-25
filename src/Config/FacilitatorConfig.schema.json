@@ -15,7 +15,7 @@
           "additionalProperties": false
         },
         "auxChainId": {
-          "type": "string",
+          "type": "number",
           "additionalProperties": false
         },
         "database": {

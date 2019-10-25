@@ -25,6 +25,7 @@ import {
 } from '../../../src/repositories/MessageRepository';
 import Repositories from '../../../src/repositories/Repositories';
 import Util from './util';
+import assert from '../../test_utils/assert';
 
 interface TestConfigInterface {
   repos: Repositories;
@@ -58,8 +59,8 @@ describe('MessageRepository::save', (): void => {
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     sourceStatus = MessageStatus.Declared;
     targetStatus = MessageStatus.Declared;
-    gasPrice = new BigNumber(100);
-    gasLimit = new BigNumber(200);
+    gasPrice = new BigNumber('30000000000000000000000000000000');
+    gasLimit = new BigNumber('10000000000000000000000000000000');
     nonce = new BigNumber(1);
     sender = '0x0000000000000000000000000000000000000002';
     direction = MessageDirection.OriginToAuxiliary;
@@ -125,5 +126,84 @@ describe('MessageRepository::save', (): void => {
     );
 
     Util.assertMessageAttributes(updatedMessage, message);
+  });
+
+  it('should pass when max gasPrice, gasLimit value is saved', async (): Promise<void> => {
+    const message = new Message(
+      messageHash,
+      type,
+      direction,
+      gatewayAddress,
+      sourceStatus,
+      targetStatus,
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      nonce,
+      sender,
+      sourceDeclarationBlockHeight,
+      secret,
+      hashLock,
+      createdAt,
+      updatedAt,
+    );
+
+    const savedMessage = await config.repos.messageRepository.save(
+      message,
+    );
+    Util.assertMessageAttributes(savedMessage, message);
+  });
+
+  it('should fail when gas price is higher than supported value', async (): Promise<void> => {
+    const message = new Message(
+      messageHash,
+      type,
+      direction,
+      gatewayAddress,
+      sourceStatus,
+      targetStatus,
+      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      gasLimit,
+      nonce,
+      sender,
+      sourceDeclarationBlockHeight,
+      secret,
+      hashLock,
+      createdAt,
+      updatedAt,
+    );
+
+    await assert.isRejected(
+      config.repos.messageRepository.save(
+        message,
+      ),
+      'Validation max on gasPrice failed',
+    );
+  });
+
+  it('should fail when gas limit is higher than supported value', async (): Promise<void> => {
+    const message = new Message(
+      messageHash,
+      type,
+      direction,
+      gatewayAddress,
+      sourceStatus,
+      targetStatus,
+      gasPrice,
+      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      nonce,
+      sender,
+      sourceDeclarationBlockHeight,
+      secret,
+      hashLock,
+      createdAt,
+      updatedAt,
+    );
+
+    await assert.isRejected(
+      config.repos.messageRepository.save(
+        message,
+      ),
+      'Validation max on gasLimit failed',
+    );
   });
 });

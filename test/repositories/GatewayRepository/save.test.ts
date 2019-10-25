@@ -52,7 +52,7 @@ describe('GatewayRepository::save', (): void => {
     remoteGatewayAddress = '0x0000000000000000000000000000000000000002';
     tokenAddress = '0x0000000000000000000000000000000000000003';
     anchorAddress = '0x0000000000000000000000000000000000000004';
-    bounty = new BigNumber(100);
+    bounty = new BigNumber('30000000000000000000000000000000');
     activation = true;
     lastRemoteGatewayProvenBlockHeight = new BigNumber(1000);
     createdAt = new Date();
@@ -189,5 +189,50 @@ describe('GatewayRepository::save', (): void => {
         'Validation len on anchorAddress failed',
       ]);
     }
+  });
+
+  it('should pass when max bounty value is saved', async (): Promise<void> => {
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      remoteGatewayAddress,
+      tokenAddress,
+      anchorAddress,
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      lastRemoteGatewayProvenBlockHeight,
+      activation,
+      createdAt,
+      updatedAt,
+    );
+
+    const saveGateway = await config.repos.gatewayRepository.save(
+      gateway,
+    );
+
+    Util.assertGatewayAttributes(saveGateway, gateway);
+  });
+
+  it('should fail when bounty amount is higher than supported value', async (): Promise<void> => {
+    const gateway = new Gateway(
+      gatewayAddress,
+      chain,
+      gatewayType,
+      remoteGatewayAddress,
+      tokenAddress,
+      anchorAddress,
+      new BigNumber('99999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      lastRemoteGatewayProvenBlockHeight,
+      activation,
+      createdAt,
+      updatedAt,
+    );
+
+    await assert.isRejected(
+      config.repos.gatewayRepository.save(
+        gateway,
+      ),
+      'Validation max on bounty failed',
+    );
   });
 });

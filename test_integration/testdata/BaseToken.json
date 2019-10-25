@@ -1,5 +1,5 @@
 {
-  "auxChainId": "1000",
+  "auxChainId": 1000,
   "originChain": "dev",
   "originWorkerExpirationHeight":"100000000000",
   "auxiliaryWorkerExpirationHeight":"100000000000",

@@ -76,7 +76,7 @@ describe('facilitator init', async (): Promise<void> => {
   it('Validates facilitator init', async (): Promise<void> => {
     const auxChainId = Number(testData.auxChainId);
     // Removing facilitator config.
-    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId.toString()));
+    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId));
 
     const facilitatorInitScriptPath = helperObject.facilitatorInitScriptPath();
     spawnSync(facilitatorInitScriptPath, { stdio: outputOptions, env: process.env });

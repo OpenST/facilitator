@@ -29,7 +29,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   const { gasPrice } = testData;
   const { gasLimit } = testData;
   const { redeemerOSTPrimeToFund } = testData;
-  const auxChainId = Number(testData.auxChainId);
+  const auxChainId = testData.auxChainId;
   let redeemerAddress: string;
   const helperObject = SharedStorage.getHelperObject();
   const gatewayAddresses = SharedStorage.getGatewayAddresses();

@@ -26,6 +26,7 @@ import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 import { MessageModel } from './MessageRepository';
+import { MAX_VALUE } from '../Constants';
 
 
 /**
@@ -112,10 +113,11 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           unique: true,
         },
         amount: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,
+            max: MAX_VALUE,
           },
         },
         beneficiary: {
@@ -127,17 +129,19 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
           },
         },
         gasPrice: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,
+            max: MAX_VALUE,
           },
         },
         gasLimit: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,
+            max: MAX_VALUE,
           },
         },
         nonce: {
@@ -175,7 +179,7 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
       {
         ...initOptions,
         modelName: 'MessageTransferRequest',
-        tableName: 'requests',
+        tableName: 'message_transfer_requests',
       },
     );
 

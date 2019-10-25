@@ -12,7 +12,7 @@ describe('should fund facilitator workers on origin & auxiliary', async (): Prom
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
   const testData = SharedStorage.getTestData();
-  const auxChainId = Number(testData.auxChainId);
+  const auxChainId = testData.auxChainId;
 
   const workerBountyAmountInBaseToken = new BigNumber(5);
   const workerBountyAmountInWei = web3Utils.toWei(

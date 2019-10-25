@@ -22,6 +22,7 @@ import { DataTypes, InitOptions, Model } from 'sequelize';
 import Gateway from '../models/Gateway';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
+import { MAX_VALUE } from '../Constants';
 
 /**
  * An interface, that represents a row from a gateways table.
@@ -118,10 +119,11 @@ export default class GatewayRepository extends Subject<Gateway> {
           },
         },
         bounty: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
           validate: {
             min: 0,
+            max: MAX_VALUE,
           },
         },
         activation: {
