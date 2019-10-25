@@ -15,7 +15,7 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
    npm i @openst/facilitator -g
    ```   
 6. Funds on origin chain and auxiliary chain are needed to perform transactions. For testnet, mosaic faucet can be used to get OST on origin chain and gas on auxiliary chain. Documentation about faucet is available [here](https://github.com/mosaicdao/faucet)   
-7. Simple token balance on origin is required to stake bounty in the gateway or to mint gas for auxiliary chain. OST balance on auxiliary chain is required to stake bounty for redeem and unstake request.
+7. Simple token balance on origin chain is required to stake bounty in the gateway or to mint gas for auxiliary chain. OST balance on auxiliary chain is required to stake bounty for redeem and unstake request.
 
 
 ## Setup facilitator: 
@@ -32,7 +32,6 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
       
    *Example*:
 
-
       mosaic start ropsten
       mosaic start 1405 --origin ropsten
 
@@ -41,11 +40,11 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
  
 Documentation of supported mosaic chains can be found [here](https://github.com/mosaicdao/mosaic-chains).      
 
-You can skip this step, if there is existing chain pair and graph node running. 
+You can skip this step, if there is existing chain pair and graph node already running. 
 
 **2. Deploy stake pool and redeem pool**: This step is required for running pool of facilitators. 
 
-*Deploy stake pool*: Use below command to deploy stake pool contract for facilitation of stake and mint requests. Organization owner and admin keys will be used to whitelist worker keys in next step.
+*Deploy stake pool*: Use below command to deploy stake pool contract for facilitation of stake and mint requests. Organization owner and admin keys will be needed to whitelist worker keys in next step.
        
   ```
   mosaic setup-stake-pool <originChain> <originWeb3EndPoint> <deployer> <organizationOwner> <organizationAdmin>
@@ -54,7 +53,7 @@ You can skip this step, if there is existing chain pair and graph node running.
   ```
  mosaic setup-stake-pool 12346  http://localhost:8545 0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb 0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb 0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb
  ```
-*Deploy redeem pool*: Use below command to deploy redeem pool contract for facilitation of redeem and unstake requests. Organization owner and admin keys will be used to whitelist worker keys in next step.
+*Deploy redeem pool*: Use below command to deploy redeem pool contract for facilitation of redeem and unstake requests. Organization owner and admin keys will be needed to whitelist worker keys in next step.
 
 ```
 mosaic setup-redeem-pool <originChain> <auxiliaryChain> <auxChainWeb3EndPoint> <deployer> <organizationOwner> <organizationAdmin>
@@ -86,22 +85,22 @@ mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> auxiliary
 
 `<graph-rpc-admin-url>` and `<graph-ipfs-url>` was displayed while starting origin and auxiliary chain.
 
-By default subgraph command will deploy subgraph for OST gateways, optionally it also accepts `--mosaic-config`, `--gateway-config` and `--gateway-address` option to deploy subgraph for other gateways. 
+By default subgraph command deploys subgraph for OST gateways, optionally it also accepts `--mosaic-config`, `--gateway-config` and `--gateway-address` option to deploy subgraph for other gateways. 
 
-Mosaic config i.e `mosaic.json` can be found in [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>` folder.
+Mosaic config i.e `mosaic.json` can be found [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>` folder.
 
-Gateway config i.e. `<gatewayaddress>.json` can be found in [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>/<auxiliary-chain>/<gateway-address.json`.
+Gateway config i.e. `<gatewayaddress>.json` can be found [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>/<auxiliary-chain>/<gateway-address.json`.
 
 More documentation about `subgraph` command can be found [here](https://github.com/mosaicdao/mosaic-chains#subgraph-deployment).
 
-**4. Facilitator init**: Facilitator init command initialize the facilitator which creates database, worker addresses and create facilitator config file. Facilitator config file is needed to start facilitator.  
+**4. Facilitator init**: Facilitator init command initializes the facilitator which creates database, worker addresses and create facilitator config file. Facilitator config file is needed to start facilitator.  
 
 ```
 facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> --origin-password <origin-password> --auxiliary-password <auxiliary-password> --origin-rpc <origin-rpc> --auxiliary-rpc <auxiliary-rpc> --origin-graph-ws <origin-graph-ws> --origin-graph-rpc <origin-graph-rpc> --auxiliary-graph-ws <auxiliary-graph-ws> --auxiliary-graph-rpc <auxiliary-graph-rpc> --db-path <db-path> --force
 
 ```
 
-* Replace `<mosaic-config>` with location where mosaic config is present.
+* Replace `<mosaic-config>` with file location where mosaic config is present.
 * `<mosaic-config>` config can be found at `~/mosaic/<origin-chain>/mosaic.json` where `<origin-chain>` is origin chain identifier e.g. `ropsten`, `goerli`, `ethereum` and `dev-origin`.
 
 * Replace `<aux-chain-id>` with auxiliary chain id. 
@@ -117,9 +116,9 @@ facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> -
 * `--force` option is used to forcefully override facilitator config. It is optional parameter.
 
 
-Facilitator init can be also done with `--gateway-config <gateway-config>` option. Gateway config i.e. `<gatewayaddress>.json` can be found in [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>/<auxiliary-chain>/<gateway-address.json`.
+Facilitator init can be also be done with `--gateway-config <gateway-config>` option. Gateway config i.e. `<gatewayaddress>.json` can be found in [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>/<auxiliary-chain>/<gateway-address.json`.
 
-Replace <gateway-config> with location where gateway config is present.
+Replace <gateway-config> with file location where gateway config is present.
 
 
 This command will generate facilitator config file which is needed to start facilitator. 
@@ -138,7 +137,7 @@ Above variables will also be produced with the output of `facilitator init` comm
 
    *Gas on origin*: Facilitator needs to pay for gas on origin chain. Origin worker address created in `facilitator init` step must be funded to pay for transaction fee. 
    
-   There are various ways to fund on origin chain, for testnet any public faucet can be used. Below web3 transaction can also be done, if there is fund in an existing key.
+   There are various ways to fund worker on origin chain. For testnet any public faucet can be used. Below web3 transaction can also be done, if there is fund in an existing key.
    
       
       web3.eth.sendTransaction(
@@ -148,20 +147,19 @@ Above variables will also be produced with the output of `facilitator init` comm
           value:<Fund_in_wei
       })
       
-   *Gas on auxiliary*: Facilitator also needs to pay for transaction fee on auxiliary chain. For testnet [mosaic faucet](https://github.com/mosaicdao/faucet) can be used to get fund. Alternatively, OST on value chain can also be converted to base token on auxiliary chain in order to pay for gas. This is explained in detail in section [request stake]().
+   *Gas on auxiliary*: Facilitator also needs to pay for transaction fee on auxiliary chain. For testnet [mosaic faucet](https://github.com/mosaicdao/faucet) can be used to get fund. Alternatively, OST on value chain can also be converted to base token on auxiliary chain in order to pay for gas.
    
    *Value token for bounty*: Facilitator needs to stake bounty to gateway/co-gateway in order to perform stake & mint and redeem & unstake. Bounty token on the origin chain for existing mosaic chain is simple token and on the auxiliary chain bounty is base token. 
    
    On testnet, bounty can be funded to workers using [mosaic faucet](https://github.com/mosaicdao/faucet).
    
-**7. White list workers**: origin and auxiliary workers should be whitelisted in stakepool and redeem pool contract respectively. Below commands will whitelist the workers. 
+**7. White list workers**: origin and auxiliary workers should be whitelisted in stakepool and redeem pool contracts respectively. Below commands will whitelist the workers. 
 
    1. Clone git repository:
    ```
        git clone https://github.com/mosaicdao/mosaic-chains.git
    ```
    2. Set below enviornment variables
-   
     
     export ORIGIN_WEB3_ENDPOINT='replace_with_origin_web3_endpoint';
     export AUXILIARY_WEB3_ENDPOINT='replace_with_auxiliary_web3_endpoint';
