@@ -36,7 +36,7 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
       mosaic start 1405 --origin ropsten
 
       
- Once chains are successfully started, it will display web3 endpoint, graph admin rpc, graph ws end point and ipfs url. These URLs will be used in further steps. 
+ Once chains have been successfully started, it will display web3 endpoint, graph admin rpc, graph ws end point and ipfs url. These URLs will be used in further steps. 
  
 Documentation of supported mosaic chains can be found [here](https://github.com/mosaicdao/mosaic-chains).      
 
