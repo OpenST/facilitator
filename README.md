@@ -1,16 +1,16 @@
 # Facilitator 
 
-Mosaic facilitator is an executable which enables atomic token transfers across two blockchains. Facilitator executable facilitates stake & mint and Redeem & unstake of any EIP20 token using mosaic gateways. 
+Mosaic facilitator is an executable which enables atomic token transfers across two blockchains. Facilitator executable facilitates stake & mint and Redeem & unstake of any EIP20 token using mosaic gateways. Facilitator earns reward for facilitating token transfers across two blockchains.
 
 ## Prerequisite
 1. Docker version `18.09.1` or above.
 2. Docker compose version `1.23.2` or above.
 3. Node version `11` or above.
-4. Mosaic chains executable. 
+4. Mosaic chains. 
    ```
    npm i @openst/mosaic-chains -g
    ```
-5. Facilitator executable. 
+5. Facilitator. 
    ```
    npm i @openst/facilitator -g
    ```   
@@ -21,7 +21,9 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
 ## Setup facilitator: 
  
  **1. Start pair of chains**:
-      
+   
+   You can skip this step, if there is existing chain pair and graph node already running. 
+   
    *Start origin chain*: 
 
             mosaic start <origin-chain>
@@ -40,9 +42,10 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
  
 Documentation of supported mosaic chains can be found [here](https://github.com/mosaicdao/mosaic-chains).      
 
-You can skip this step, if there is existing chain pair and graph node already running. 
 
-**2. Deploy stake pool and redeem pool**: This step is required for running pool of facilitators. 
+**2. Deploy stake pool and redeem pool**:  
+
+Skip this step if stake and redeem pool already exists and you own the owner / admin keys used while deployment.
 
 *Deploy stake pool*: Use below command to deploy stake pool contract for facilitation of stake and mint requests. Organization owner and admin keys will be needed to whitelist worker keys in next step.
        
@@ -63,8 +66,6 @@ Example
 mosaic setup-redeem-pool 12346 500 http://localhost:40500 0x0000000000000000000000000000000000000001 0x0000000000000000000000000000000000000001 0x0000000000000000000000000000000000000001
 
 ```
-   
- Note: Skip this step if stake and redeem pool already exists.
  
  Documentation of deployment of stake and redeem pool can be found [here](https://github.com/mosaicdao/mosaic-chains#stake-pool).
  
@@ -93,7 +94,7 @@ Gateway config i.e. `<gatewayaddress>.json` can be found [here](https://github.c
 
 More documentation about `subgraph` command can be found [here](https://github.com/mosaicdao/mosaic-chains#subgraph-deployment).
 
-**4. Facilitator init**: Facilitator init command initializes the facilitator which creates database, worker addresses and create facilitator config file. Facilitator config file is needed to start facilitator.  
+**4. Facilitator init**: Facilitator init command initializes & populates seed data in database, generated worker addresses & encrypted keys for them and creates facilitator config file (is needed to start facilitator).  
 
 ```
 facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> --origin-password <origin-password> --auxiliary-password <auxiliary-password> --origin-rpc <origin-rpc> --auxiliary-rpc <auxiliary-rpc> --origin-graph-ws <origin-graph-ws> --origin-graph-rpc <origin-graph-rpc> --auxiliary-graph-ws <auxiliary-graph-ws> --auxiliary-graph-rpc <auxiliary-graph-rpc> --db-path <db-path> --force
@@ -101,7 +102,7 @@ facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> -
 ```
 
 * Replace `<mosaic-config>` with file location where mosaic config is present.
-* `<mosaic-config>` config can be found at `~/mosaic/<origin-chain>/mosaic.json` where `<origin-chain>` is origin chain identifier e.g. `ropsten`, `goerli`, `ethereum` and `dev-origin`.
+* `<mosaic-config>` config can be found at `~/.mosaic/<origin-chain>/mosaic.json` where `<origin-chain>` is origin chain identifier e.g. `ropsten`, `goerli`, `ethereum` and `dev-origin`.
 
 * Replace `<aux-chain-id>` with auxiliary chain id. 
 * Replace `<origin-password>` with the password required to encrypt the worker account of origin chain created with this command. It will be required to unlock worker account while starting facilitator.
