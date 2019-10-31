@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/OpenST/facilitator#readme",
   "dependencies": {
-    "@openst/mosaic-chains": "^0.1.0-alpha.5",
+    "@openst/mosaic-chains": "^0.1.0-alpha.7",
     "@openst/mosaic-contracts": "^0.12.0",
     "@openst/mosaic-proof": "^0.1.0-alpha.1",
     "apollo-cache-inmemory": "1.6.2",
