@@ -1,9 +1,9 @@
 #!/bin/bash
 
-auxChainId="301"
+auxChainId="1000"
 homedir=$HOME
 facilitatorConfigPath="${homedir}/.mosaic/${auxChainId}/facilitator-config.json"
-mosaicConfigPath="./test/Facilitator/testdata/mosaic.json"
+mosaicConfigPath="./testdata/mosaic.json"
 
 # Prints an error string to stdout.
 function error {

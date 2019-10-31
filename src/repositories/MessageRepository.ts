@@ -24,6 +24,7 @@ import {
 import Message from '../models/Message';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
+import { MAX_VALUE } from '../Constants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -151,17 +152,19 @@ export class MessageRepository extends Subject<Message> {
           allowNull: true,
         },
         gasPrice: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(78),
           allowNull: true,
           validate: {
             min: 0,
+            max: MAX_VALUE,
           },
         },
         gasLimit: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.DECIMAL(78),
           allowNull: true,
           validate: {
             min: 0,
+            max: MAX_VALUE,
           },
         },
         nonce: {

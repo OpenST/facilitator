@@ -25,7 +25,7 @@ import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
 describe('FacilitatorConfig.fromChain()', () => {
-  const chain = 301;
+  const chain = 1000;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const facilitatorDBPath = 'test/database/mosaic_facilitator.db';
   const config = `{"database":{"path":"${facilitatorDBPath}"}}`;

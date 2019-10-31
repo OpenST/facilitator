@@ -1,12 +1,14 @@
 import { spawn } from 'child_process';
-import * as path from 'path';
 
-const facilitatorStart = path.join(__dirname, '../facilitator_start.sh');
+import SharedStorage from '../SharedStorage';
 
 describe('facilitator start', async (): Promise<void> => {
   it('should start facilitator', async (): Promise<void> => {
+    const helperObject = SharedStorage.getHelperObject();
+    const facilitatorStartScriptPath = helperObject.facilitatorStartScriptPath();
+
     spawn(
-      facilitatorStart,
+      facilitatorStartScriptPath,
       { stdio: [process.stdout, process.stderr], env: process.env },
     );
     // Note: Ensuring that facilitator starts before doing any transactions.

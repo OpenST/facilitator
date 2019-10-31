@@ -1,15 +1,12 @@
-import * as path from 'path';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
-import { Account } from 'web3-eth-accounts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { RedeemPool } from '@openst/mosaic-contracts/dist/interacts/RedeemPool';
-import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
-import * as Constants from '../Constants.json';
+import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
 import Utils from '../Utils';
 import MessageTransferRequest from '../../src/models/MessageTransferRequest';
 import Message from '../../src/models/Message';
@@ -21,26 +18,26 @@ import {
 } from '../../src/repositories/MessageRepository';
 import assert from '../../test/test_utils/assert';
 import AuxiliaryChain from '../../src/models/AuxiliaryChain';
-import { FacilitatorConfig } from '../../src/Config/Config';
 import Logger from '../../src/Logger';
-import GatewayAddresses from "../../src/Config/GatewayAddresses";
+import SharedStorage from '../SharedStorage';
 
 describe('redeem and unstake with single redeemer & facilitator process', async (): Promise<void> => {
-  const redeemAmount = '130';
-  const gasPrice = '2';
-  const gasLimit = '5';
   const testDuration = 3;
   const interval = 3000;
-  const auxChainId = Number(Constants.auxChainId);
-  const mosaicConfigPath = path.join(__dirname, '../mosaic.json');
-  const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
-  const gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
+  const testData = SharedStorage.getTestData();
+  const { redeemAmount } = testData;
+  const { gasPrice } = testData;
+  const { gasLimit } = testData;
+  const { redeemerOSTPrimeToFund } = testData;
+  const auxChainId = testData.auxChainId;
+  let redeemerAddress: string;
+  const helperObject = SharedStorage.getHelperObject();
+  const gatewayAddresses = SharedStorage.getGatewayAddresses();
   const redeemPool: string = gatewayAddresses.redeemPoolAddress;
 
   let originWeb3: Web3;
   let auxiliaryWeb3: Web3;
   let utils: Utils;
-  let redeemerAccount: Account;
   let messageHash: string | undefined;
   let preGeneratedRedeemRequestHash: string;
   let expectedMessage: Message;
@@ -48,52 +45,41 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   let messageTransferRequest: MessageTransferRequest;
 
   before(async () => {
-    const facilitatorConfig: FacilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-    utils = new Utils(
-      mosaicConfig,
-      facilitatorConfig,
-      auxChainId,
-    );
+    utils = new Utils();
     ({ originWeb3, auxiliaryWeb3 } = utils);
   });
 
   it('should fund redeemer', async (): Promise<void> => {
-    redeemerAccount = auxiliaryWeb3.eth.accounts.create('redeemTest');
-    auxiliaryWeb3.eth.accounts.wallet.add(redeemerAccount);
 
-    const ostPrimeAmountToBeFunded = '0.1'; // OSTPrime unit
-    const ostPrimeAmountToBeFundedInWei = Utils.convertToWei(ostPrimeAmountToBeFunded).toString();
+    redeemerAddress = SharedStorage.getStakeAndMintBeneficiary();
 
     // Fund OSTPrime to redeemer
     await utils.fundOSTPrimeOnAuxiliary(
-      redeemerAccount.address,
-      new BigNumber(ostPrimeAmountToBeFunded).mul(1.2), // 20% extra for gas usage
+      redeemerAddress,
+      redeemerOSTPrimeToFund,
     );
 
-    const simpleTokenPrimeInstance: OSTPrime = utils.getSimpleTokenPrimeInstance();
+    // Utility Token's are not funded.
+    // We would redeem the tokens which were minted in stake and mint test case
 
-    // Wrap OSTPrime
-    Logger.debug('submitting wrapping OSTPrime tx.');
-    const wrapRawTx: TransactionObject<boolean> = simpleTokenPrimeInstance.methods.wrap();
-    await Utils.sendTransaction(
-      wrapRawTx,
-      {
-        from: redeemerAccount.address,
-        gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
-        value: ostPrimeAmountToBeFundedInWei,
-      },
-    );
+    // Wrap Utility Token
+    await helperObject.wrapUtilityToken({
+      from: redeemerAddress,
+      gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
+      value: redeemAmount,
+    });
 
-    // Approve OSTPrime
-    Logger.debug('submitting approving wrapped OSTPrime tx.');
-    const approveRawTx: TransactionObject<boolean> = simpleTokenPrimeInstance.methods.approve(
+    // Approve Utility Token
+    const utilityTokenInstance: OSTPrime | UtilityToken = helperObject.getUtilityTokenInstance();
+    Logger.debug('submitting approving wrapped Utility Token tx.');
+    const approveRawTx: TransactionObject<boolean> = utilityTokenInstance.methods.approve(
       redeemPool,
-      ostPrimeAmountToBeFundedInWei,
+      redeemAmount,
     );
     await Utils.sendTransaction(
       approveRawTx,
       {
-        from: redeemerAccount.address,
+        from: redeemerAddress,
         gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
       },
     );
@@ -110,8 +96,8 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       new BigNumber(gasLimit),
       new BigNumber(1),
       gatewayAddresses.eip20CoGatewayAddress,
-      redeemerAccount.address,
-      '' // would be filled later
+      redeemerAddress,
+      '', // would be filled later
     );
 
     preGeneratedRedeemRequestHash = utils.getRedeemRequestHash(
@@ -146,32 +132,32 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     const assertMessageTransferRequestPromise = new Promise(((resolve, reject) => {
       const endTime = Utils.getEndTime(testDuration);
       assertMessageTransferRequestInterval = setInterval(async () => {
-          const messageTransferRequestDb: MessageTransferRequest | null = await
-            utils.getMessageTransferRequest(
-              preGeneratedRedeemRequestHash,
-            );
+        const messageTransferRequestDb: MessageTransferRequest | null = await
+        utils.getMessageTransferRequest(
+          preGeneratedRedeemRequestHash,
+        );
 
-          if (messageTransferRequestDb != null) {
-            try {
-              Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
-            } catch (e) {
-              reject(e);
-            }
-            resolve();
+        if (messageTransferRequestDb != null) {
+          try {
+            Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
+          } catch (e) {
+            reject(e);
           }
+          resolve();
+        }
 
-          const currentTime = process.hrtime()[0];
+        const currentTime = process.hrtime()[0];
 
-          if (currentTime >= endTime) {
-            reject(
-              new Error(
-                'Assertion for redeem requests table failed as response was not received'
+        if (currentTime >= endTime) {
+          reject(
+            new Error(
+              'Assertion for redeem requests table failed as response was not received'
                 + ` within ${testDuration} mins`,
-              ),
-            );
-          }
-        },
-        interval);
+            ),
+          );
+        }
+      },
+      interval);
     }));
 
     await assertMessageTransferRequestPromise.then((): void => {
@@ -190,82 +176,82 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
 
       assertMessageInterval = setInterval(async (): Promise<void> => {
-          const redeemRequestDb: MessageTransferRequest | null = await utils.getMessageTransferRequest(
-            preGeneratedRedeemRequestHash,
+        const redeemRequestDb: MessageTransferRequest | null = await utils.getMessageTransferRequest(
+          preGeneratedRedeemRequestHash,
+        );
+
+        if (redeemRequestDb!.messageHash) {
+          ({ messageHash } = redeemRequestDb!);
+          expectedMessage = new Message(
+            messageHash!,
+            MessageType.Redeem,
+            MessageDirection.AuxiliaryToOrigin,
+            messageTransferRequest.gateway,
+            MessageStatus.Undeclared,
+            MessageStatus.Undeclared,
+            messageTransferRequest.gasPrice,
+            messageTransferRequest.gasLimit,
+            messageTransferRequest.nonce,
+            messageTransferRequest.senderProxy,
+            new BigNumber(0),
+            '',
           );
+          const messageInDb = await utils.getMessageFromDB(messageHash);
+          const message = await coGateway.methods.messages(messageHash!.toString()).call();
 
-          if (redeemRequestDb!.messageHash) {
-            ({messageHash} = redeemRequestDb!);
-            expectedMessage = new Message(
-              messageHash!,
-              MessageType.Redeem,
-              MessageDirection.AuxiliaryToOrigin,
-              messageTransferRequest.gateway,
-              MessageStatus.Undeclared,
-              MessageStatus.Undeclared,
-              messageTransferRequest.gasPrice,
-              messageTransferRequest.gasLimit,
-              messageTransferRequest.nonce,
-              messageTransferRequest.senderProxy,
-              new BigNumber(0),
-              '',
-            );
-            const messageInDb = await utils.getMessageFromDB(messageHash);
-            const message = await coGateway.methods.messages(messageHash!.toString()).call();
-
-            const eip20CoGatewayMessageStatus = Utils.getEnumValue(
-              parseInt(
-                await coGateway.methods.getOutboxMessageStatus(messageHash!).call(),
-                10,
-              ),
-            );
-            const eip20GatewayMessageStatus = Utils.getEnumValue(
-              parseInt(
-                await gateway.methods.getInboxMessageStatus(messageHash!).call(),
-                10,
-              ),
-            );
-            try {
-              if (
-                eip20CoGatewayMessageStatus === MessageStatus.Undeclared
+          const eip20CoGatewayMessageStatus = Utils.getEnumValue(
+            parseInt(
+              await coGateway.methods.getOutboxMessageStatus(messageHash!).call(),
+              10,
+            ),
+          );
+          const eip20GatewayMessageStatus = Utils.getEnumValue(
+            parseInt(
+              await gateway.methods.getInboxMessageStatus(messageHash!).call(),
+              10,
+            ),
+          );
+          try {
+            if (
+              eip20CoGatewayMessageStatus === MessageStatus.Undeclared
                 && eip20GatewayMessageStatus === MessageStatus.Undeclared
                 && Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)
-              ) {
-                Utils.assertMessages(messageInDb!, expectedMessage);
-              } else if (
-                eip20CoGatewayMessageStatus === MessageStatus.Declared
+            ) {
+              Utils.assertMessages(messageInDb!, expectedMessage);
+            } else if (
+              eip20CoGatewayMessageStatus === MessageStatus.Declared
                 && eip20GatewayMessageStatus === MessageStatus.Undeclared
-              ) {
-                if (Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)) {
-                  Utils.assertMessages(messageInDb!, expectedMessage);
-                } else if (Utils.isSourceDeclaredTargetUndeclared(messageInDb!)) {
-                  expectedMessage.hashLock = message.hashLock;
-                  Utils.assertMessages(messageInDb!, expectedMessage);
-                  resolve();
-                }
-              } else {
-                throw new Error(
-                  `Message status for source in db is ${messageInDb!.sourceStatus} but in `
+            ) {
+              if (Utils.isSourceUndeclaredTargetUndeclared(messageInDb!)) {
+                Utils.assertMessages(messageInDb!, expectedMessage);
+              } else if (Utils.isSourceDeclaredTargetUndeclared(messageInDb!)) {
+                expectedMessage.hashLock = message.hashLock;
+                Utils.assertMessages(messageInDb!, expectedMessage);
+                resolve();
+              }
+            } else {
+              throw new Error(
+                `Message status for source in db is ${messageInDb!.sourceStatus} but in `
                   + `eip20CoGateway is ${eip20CoGatewayMessageStatus} and Message status for target in db is `
                   + `${messageInDb!.targetStatus} but got ${eip20GatewayMessageStatus}`,
-                );
-              }
-            } catch (e) {
-              reject(e);
-            }
-            const currentTime = process.hrtime()[0];
-
-            if (currentTime >= endTime) {
-              reject(
-                new Error(
-                  'Assertion for messages table while request staking failed as response was not received'
-                  + ` within ${testDuration} mins`,
-                ),
               );
             }
+          } catch (e) {
+            reject(e);
           }
-        },
-        interval);
+          const currentTime = process.hrtime()[0];
+
+          if (currentTime >= endTime) {
+            reject(
+              new Error(
+                'Assertion for messages table while request staking failed as response was not received'
+                  + ` within ${testDuration} mins`,
+              ),
+            );
+          }
+        }
+      },
+      interval);
     }));
 
     await assertMessagePromise.then((): void => {
@@ -277,7 +263,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   }
 
   it('should perform & validate request redeem', async (): Promise<void> => {
-
     const redeemPoolInstance = utils.getRedeemPoolInstance();
 
     prepareRequestRedeemData();
@@ -310,7 +295,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     ).call();
 
     await assertMessage();
-
   });
 
   it('should verify anchoring', async (): Promise<void> => {

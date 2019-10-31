@@ -56,8 +56,7 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    const { auxChainId } = options;
-    if (auxChainId === undefined) {
+    if (options.auxChainId === undefined) {
       Logger.error('required --aux-chain-id <aux-chain-id>');
       mandatoryOptionMissing = true;
     }
@@ -108,6 +107,7 @@ commander
     }
 
     try {
+      const auxChainId = parseInt(options.auxChainId);
       if (options.force) {
         FacilitatorConfig.remove(auxChainId);
       } else if (FacilitatorConfig.isFacilitatorConfigPresent(auxChainId)) {
@@ -133,8 +133,16 @@ commander
           {
             originChainId,
             gatewayAddresses,
-          } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
+          } = FacilitatorInit.getFromGatewayConfig(auxChainId, options.gatewayConfig)
         );
+      }
+
+      if(!originChainId) {
+        throw new Error(`Invalid origin chain id ${originChainId} in config`);
+      }
+
+      if(!gatewayAddresses) {
+        throw new Error(`Gateway addresses cannot be ${gatewayAddresses}`);
       }
 
       facilitatorConfig.originChain = originChainId!;
@@ -169,10 +177,8 @@ commander
         );
         const envVariableNameForWorkerPassword = `${ENV_WORKER_PASSWORD_PREFIX}${account.address}`;
         process.env[envVariableNameForWorkerPassword] = password;
-
         facilitatorConfig.encryptedAccounts[account.address] = account.encryptedKeyStore;
       };
-
       setFacilitator(
         originChainId!,
         options.originRpc,
@@ -180,9 +186,8 @@ commander
         options.originGraphRpc,
         options.originPassword,
       );
-
       setFacilitator(
-        auxChainId,
+        auxChainId.toString(),
         options.auxiliaryRpc,
         options.auxiliaryGraphWs,
         options.auxiliaryGraphRpc,

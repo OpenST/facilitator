@@ -12,8 +12,8 @@ import { TransactionReceipt } from 'web3-core';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
-import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import * as EthUtils from 'ethereumjs-util';
+import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
 import Repositories from '../src/repositories/Repositories';
 import Directory from '../src/Directory';
 import assert from '../test/test_utils/assert';
@@ -21,14 +21,14 @@ import { FacilitatorConfig } from '../src/Config/Config';
 import Message from '../src/models/Message';
 import Gateway from '../src/models/Gateway';
 import AuxiliaryChain from '../src/models/AuxiliaryChain';
-import * as Constants from './Constants.json';
 import SharedStorage from './SharedStorage';
 import Logger from '../src/Logger';
 import MessageTransferRequest from '../src/models/MessageTransferRequest';
 import { MessageStatus } from '../src/repositories/MessageRepository';
-import GatewayAddresses from "../src/Config/GatewayAddresses";
+import GatewayAddresses from '../src/Config/GatewayAddresses';
 
-const workerPrefix = 'MOSAIC_ADDRESS_PASSW_';
+// This class variable is used to persist web3 connections
+const urlToWeb3ConnectionsMap: Record<string, Web3> = {};
 
 /**
  * It contains common helper methods to test facilitator.
@@ -52,20 +52,15 @@ export default class Utils {
 
   /**
    * Constructor for utils class for initialization.
-   * @param mosaicConfig Mosaic config object.
-   * @param facilitatorConfig Facilitator config object.
-   * @param auxChainId Auxiliary chain id.
    */
-  public constructor(
-    mosaicConfig: MosaicConfig,
-    facilitatorConfig: FacilitatorConfig,
-    auxChainId: number,
-  ) {
-    this.facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-    this.gatewayAddresses = GatewayAddresses.fromMosaicConfig(mosaicConfig, auxChainId);
-    this.originChain = facilitatorConfig.originChain;
-    this.originWeb3 = new Web3(facilitatorConfig.chains[this.originChain].nodeRpc);
-    this.auxiliaryWeb3 = new Web3(facilitatorConfig.chains[facilitatorConfig.auxChainId].nodeRpc);
+  public constructor() {
+    this.facilitatorConfig = SharedStorage.getFacilitatorConfig();
+    this.gatewayAddresses = SharedStorage.getGatewayAddresses();
+    this.originChain = this.facilitatorConfig.originChain;
+    this.originWeb3 = Utils.getWeb3Connection(this.facilitatorConfig.chains[this.originChain].nodeRpc);
+    this.auxiliaryWeb3 = Utils.getWeb3Connection(
+      this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].nodeRpc
+    );
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
     this.stakePoolAddress = this.gatewayAddresses.stakePoolAddress;
@@ -93,20 +88,20 @@ export default class Utils {
   }
 
   /**
-   * It funds OSTPrime on origin chain to beneficiary.
+   * It funds OSTPrime on chain to beneficiary.
    * @param beneficiary Address of the account who is to be funded.
-   * @param amountInEth Amount to be funded in ETH.
+   * @param amountInWei Amount to be funded in Wei.
    * @returns Receipt of eth funding to beneficiary.
    */
   public async fundOSTPrimeOnAuxiliary(
     beneficiary: string,
-    amountInEth: BigNumber,
+    amountInWei: BigNumber,
   ): Promise<TransactionReceipt> {
     return this.auxiliaryWeb3.eth.sendTransaction(
       {
         from: SharedStorage.getAuxiliaryFunder(),
         to: beneficiary,
-        value: web3Utils.toWei(amountInEth.toString()),
+        value: amountInWei.toString(),
       },
     );
   }
@@ -300,12 +295,12 @@ export default class Utils {
     );
     const stakeIntentTypeHash = web3Utils.soliditySha3(
       { type: 'bytes32', value: encodedTypeHash },
-      { type: 'uint256', value: messageTransferRequest.amount!.toString(10) },
-      { type: 'address', value: messageTransferRequest.beneficiary! },
-      { type: 'uint256', value: messageTransferRequest.gasPrice!.toString(10) },
-      { type: 'uint256', value: messageTransferRequest.gasLimit!.toString(10) },
-      { type: 'uint256', value: messageTransferRequest.nonce!.toString(10) },
-      { type: 'address', value: messageTransferRequest.sender! },
+      { type: 'uint256', value: messageTransferRequest.amount.toString(10) },
+      { type: 'address', value: messageTransferRequest.beneficiary },
+      { type: 'uint256', value: messageTransferRequest.gasPrice.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.gasLimit.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.nonce.toString(10) },
+      { type: 'address', value: messageTransferRequest.sender },
       { type: 'address', value: gateway },
     );
 
@@ -391,7 +386,7 @@ export default class Utils {
   private async getRepositories(): Promise<Repositories> {
     return Repositories.create(
       path.join(
-        Directory.getDBFilePath(this.facilitatorConfig.auxChainId.toString(10)),
+        Directory.getDBFilePath(this.facilitatorConfig.auxChainId),
         'mosaic_facilitator.db',
       ),
     );
@@ -541,7 +536,7 @@ export default class Utils {
       actualObject.blockNumber.cmp(expectedObject.blockNumber),
       0,
       'Expected blocknumber at which stake request is done is '
-        + `${expectedObject.blockNumber}  but got ${expectedObject.blockNumber},`,
+      + `${expectedObject.blockNumber}  but got ${expectedObject.blockNumber},`,
     );
   }
 
@@ -593,8 +588,8 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualGateway.lastRemoteGatewayProvenBlockHeight!.cmp(
-        expectedGateway.lastRemoteGatewayProvenBlockHeight!,
+      actualGateway.lastRemoteGatewayProvenBlockHeight.cmp(
+        expectedGateway.lastRemoteGatewayProvenBlockHeight,
       ),
       0,
       'Expected last remote gateway proven height is'
@@ -603,13 +598,13 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualGateway.activation,
-      expectedGateway.activation,
+      actualGateway.activation!,
+      expectedGateway.activation!,
       'Gateway should activated',
     );
 
     assert.strictEqual(
-      actualGateway.bounty!.cmp(expectedGateway.bounty!),
+      actualGateway.bounty.cmp(expectedGateway.bounty!),
       0,
       `Expected bounty value is ${actualGateway.bounty} but got ${expectedGateway.bounty}`,
     );
@@ -725,21 +720,25 @@ export default class Utils {
   }
 
   /**
-   * It asserts minted balance of beneficiary at auxiliary chain.
+   * It gets OST Prime balance from auxiliary chain.
    * @param beneficiary Address which received OSTPrime.
-   * @param expectedMintedAmount Expected minted amount.
    */
-  public async assertMintingBalance(
+  public async getOSTPrimeBalance(
     beneficiary: string,
-    expectedMintedAmount: BigNumber,
-  ): Promise<void> {
-    const actualMintedAmount = new BigNumber(await this.auxiliaryWeb3.eth.getBalance(beneficiary));
+  ): Promise<BigNumber> {
+    return new BigNumber(await this.auxiliaryWeb3.eth.getBalance(beneficiary));
+  }
 
-    assert.strictEqual(
-      actualMintedAmount.cmp(expectedMintedAmount),
-      0,
-      `Expected minted balance is ${expectedMintedAmount} but got ${actualMintedAmount}`,
-    );
+  /**
+   * It gets Utility token balance from auxiliary chain.
+   * @param beneficiary Address which received Utility token.
+   */
+  public async getUtilityTokenBalance(
+    beneficiary: string,
+  ): Promise<BigNumber> {
+    const utilityTokenInstance = await this.getUtilityTokenInstance();
+    const balance = await utilityTokenInstance.methods.balanceOf(beneficiary).call();
+    return new BigNumber(balance);
   }
 
   /**
@@ -751,8 +750,8 @@ export default class Utils {
     beneficiary: string,
     expectedAmount: BigNumber,
   ): Promise<void> {
-    const simpletokenInstance = this.getSimpleTokenInstance();
-    const actualUnstakedAmount = await simpletokenInstance.methods.balanceOf(beneficiary).call();
+    const valueTokenInstance = this.getValueTokenInstance();
+    const actualUnstakedAmount = await valueTokenInstance.methods.balanceOf(beneficiary).call();
     assert.strictEqual(
       new BigNumber(actualUnstakedAmount).cmp(expectedAmount),
       0,
@@ -761,20 +760,43 @@ export default class Utils {
   }
 
   /**
-   * It verifies the ERC2O token transfer. Beneficiary address is always newly created one.
-   * @param receipt Receipt of ERC20 transfer.
+   * It verifies the base token transfer. Beneficiary address is always newly created one.
+   * @param receipt Receipt of base token transfer.
    * @param beneficiary Beneficiary of the transfer.
    * @param amount Amount which is transferred to beneficiary.
    */
-  public async verifyOSTTransfer(
+  public async verifyBaseTokenTransfer(
     receipt: TransactionReceipt,
     beneficiary: string,
     amount: BigNumber,
   ): Promise<void> {
     assert.strictEqual(receipt.status, true, 'Receipt status should be true');
 
-    const simpletokenInstance = this.getSimpleTokenInstance();
-    const beneficiaryBalance = await simpletokenInstance.methods.balanceOf(beneficiary).call();
+    const baseTokenInstance = this.getBaseTokenInstance();
+    const beneficiaryBalance = await baseTokenInstance.methods.balanceOf(beneficiary).call();
+
+    assert.strictEqual(
+      amount.cmp(beneficiaryBalance),
+      0,
+      `Expected balance is ${amount} but got ${beneficiaryBalance}`,
+    );
+  }
+
+  /**
+   * It verifies the value token transfer. Beneficiary address is always newly created one.
+   * @param receipt Receipt of value token transfer.
+   * @param beneficiary Beneficiary of the transfer.
+   * @param amount Amount which is transferred to beneficiary.
+   */
+  public async verifyValueTokenTransfer(
+    receipt: TransactionReceipt,
+    beneficiary: string,
+    amount: BigNumber,
+  ): Promise<void> {
+    assert.strictEqual(receipt.status, true, 'Receipt status should be true');
+
+    const valueTokenInstance = this.getValueTokenInstance();
+    const beneficiaryBalance = await valueTokenInstance.methods.balanceOf(beneficiary).call();
 
     assert.strictEqual(
       amount.cmp(beneficiaryBalance),
@@ -788,7 +810,7 @@ export default class Utils {
    * @returns EIP20Gateway object.
    */
   public getEIP20GatewayInstance(): EIP20Gateway {
-    const eip20GatewayAddress = this.gatewayAddresses.eip20GatewayAddress;
+    const { eip20GatewayAddress } = this.gatewayAddresses;
     const eip20GatewayInstance: EIP20Gateway = interacts.getEIP20Gateway(
       this.originWeb3,
       eip20GatewayAddress,
@@ -801,7 +823,7 @@ export default class Utils {
    * @returns EIP20CoGateway object.
    */
   public getEIP20CoGatewayInstance(): EIP20CoGateway {
-    const eip20CoGatewayAddress = this.gatewayAddresses.eip20CoGatewayAddress;
+    const { eip20CoGatewayAddress } = this.gatewayAddresses;
     const eip20CoGatewayInstance: EIP20CoGateway = interacts.getEIP20CoGateway(
       this.auxiliaryWeb3,
       eip20CoGatewayAddress,
@@ -810,16 +832,27 @@ export default class Utils {
   }
 
   /**
-   * It provides Simple Token contract instance.
-   * @returns Simple token object.
+   * It provides Base Token contract instance.
+   * @returns Base token object.
    */
-  public getSimpleTokenInstance(): EIP20Token {
+  public getBaseTokenInstance(): EIP20Token {
+    const { baseTokenAddress } = this.gatewayAddresses;
+    return interacts.getEIP20Token(
+      this.originWeb3,
+      baseTokenAddress,
+    );
+  }
+
+  /**
+   * It provides Value Token contract instance.
+   * @returns Value token object.
+   */
+  public getValueTokenInstance(): EIP20Token {
     const { valueTokenAddress } = this.gatewayAddresses;
-    const simpletokenInstance: EIP20Token = interacts.getEIP20Token(
+    return interacts.getEIP20Token(
       this.originWeb3,
       valueTokenAddress,
     );
-    return simpletokenInstance;
   }
 
   /**
@@ -827,11 +860,21 @@ export default class Utils {
    * @returns Simple token Prime object.
    */
   public getSimpleTokenPrimeInstance(): OSTPrime {
-    const simpletokenPrimeInstance: OSTPrime = interacts.getOSTPrime(
+    return interacts.getOSTPrime(
       this.auxiliaryWeb3,
       this.utilityTokenAddresses,
     );
-    return simpletokenPrimeInstance;
+  }
+
+  /**
+   * It provides Utility Token contract instance.
+   * @returns Utility token  object.
+   */
+  public getUtilityTokenInstance(): UtilityToken {
+    return interacts.getUtilityToken(
+      this.auxiliaryWeb3,
+      this.utilityTokenAddresses,
+    );
   }
 
   /**
@@ -859,38 +902,6 @@ export default class Utils {
     const durationInSecs = durationInMins * 60;
     const startTime = process.hrtime()[0];
     return startTime + durationInSecs;
-  }
-
-  /**
-   * It sets environment variables. They are required for facilitator init and start script.
-   * @param mosaicConfigPath Path to mosaic config.
-   */
-  public static setEnvironment(mosaicConfigPath: string): void {
-    process.env.AUXILIARY_RPC = Constants.auxiliaryRpc;
-    process.env.ORIGIN_RPC = Constants.originRpc;
-    process.env.ORIGIN_GRAPH_RPC = Constants.originGraphRpc;
-    process.env.AUXILIARY_GRAPH_RPC = Constants.auxiliaryGraphRpc;
-    process.env.AUXILIARY_GRAPH_WS = Constants.auxiliaryGraphWs;
-    process.env.ORIGIN_GRAPH_WS = Constants.originGraphWs;
-    process.env.ORIGIN_WORKER_PASSWORD = Constants.originWorkerPassword;
-    process.env.AUXILIARY_WORKER_PASSWORD = Constants.auxiliaryWorkerPassword;
-    process.env.AUXILIARY_CHAIN_ID = Constants.auxChainId;
-    process.env.MOSAIC_CONFIG_PATH = mosaicConfigPath;
-    process.env.ORIGIN_CHAIN = Constants.originChain;
-    process.env.ORIGIN_WORKER_PASSWORD = Constants.originWorkerPassword;
-    process.env.AUXILIARY_WORKER_PASSWORD = Constants.auxiliaryWorkerPassword;
-  }
-
-  /**
-   * It sets the origin and auxiliary worker password in environment.
-   */
-  public setWorkerPasswordInEnvironment(): void {
-    const originWorker = this.facilitatorConfig.chains[this.facilitatorConfig.originChain].worker;
-    const auxiliaryWorker = this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].worker;
-    const originWorkerExport = workerPrefix + originWorker;
-    const auxWorkerExport = workerPrefix + auxiliaryWorker;
-    process.env[originWorkerExport] = Constants.originWorkerPassword;
-    process.env[auxWorkerExport] = Constants.auxiliaryWorkerPassword;
   }
 
   /**
@@ -1108,4 +1119,18 @@ export default class Utils {
   public static convertToWei(amount: string) {
     return web3Utils.toWei(amount.toString());
   }
+
+  /**
+   * if present, get connection from the cached pool
+   * else create new connection
+   * @param endpoint
+   * @return web3 connection
+   */
+  private static getWeb3Connection(endpoint: string): Web3 {
+    if (!urlToWeb3ConnectionsMap[endpoint]) {
+      urlToWeb3ConnectionsMap[endpoint] = new Web3(endpoint);
+    }
+    return urlToWeb3ConnectionsMap[endpoint];
+  }
+
 }

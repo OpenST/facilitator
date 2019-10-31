@@ -1,17 +1,17 @@
 {
-	"originChain":"12346",
-	"auxChainId":"301",
+	"originChain":"1515",
+	"auxChainId":"1000",
     "db": {
-        "path": "/Users/gulshanvasnani/.mosaic/301/facilitator/mosaic_facilitator.db"
+        "path": "/Users/gulshanvasnani/.mosaic/1000/facilitator/mosaic_facilitator.db"
     },
     "chains": {
-        "301": {
+        "1000": {
             "worker": "0x5dEe7EdaDf7eabF76873E32bd010390b5b4FE997",
             "nodeRpc": "https://localhost.com:8645",
             "subGraphWs":"",
             "subGraphRpc":""
         },
-        "12346": {
+        "1515": {
             "worker": "0x72dD55d7EC97532D34d77Bb57503814d07c6d446",
             "nodeRpc": "https://localhost.com:8545",
             "subGraphWs":"http://localhost:8000/subgraphs/name/openst/ost-composer",

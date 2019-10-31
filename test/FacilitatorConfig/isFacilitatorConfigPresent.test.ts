@@ -28,15 +28,15 @@ let pathSpy: any;
 let directorySpy: any;
 let fsSpy: any;
 
-async function spyFsModule(fileSize: number): Promise<any> {
+async function spyFsModule(status: boolean): Promise<any> {
   fsSpy = sinon.stub(
     fs,
-    'statSync',
-  ).callsFake(sinon.fake.returns({ size: fileSize }));
+    'existsSync',
+  ).callsFake(sinon.fake.returns(status));
 }
 
 describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
-  const chain = 301;
+  const chain = 1000;
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const mosaicDirectoryPath = '.mosaic';
 
@@ -58,8 +58,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
   });
 
   it('should pass with valid arguments', (): void => {
-    const fileSize = 1;
-    spyFsModule(fileSize);
+    spyFsModule(true);
 
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
     SpyAssert.assert(directorySpy, 1, [[]]);
@@ -73,8 +72,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
   });
 
   it('should fail when file is empty', (): void => {
-    const fileSize = 0;
-    spyFsModule(fileSize);
+    spyFsModule(false);
 
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
 
