@@ -16,3 +16,7 @@ src/*.js
 src/*.js.map
 src/**/*.js
 src/**/*.js.map
+
+# Packaging output
+lib/**
+openst-facilitator-*.tgz

@@ -2,14 +2,24 @@
   "name": "@openst/facilitator",
   "version": "0.1.0-alpha.1",
   "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
+  "bin": {
+    "facilitator": "lib/src/bin/facilitator.js"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "lib/**"
+  ],
   "scripts": {
     "lint:ts": "eslint src -c .eslintrc.json --ext ts",
+    "package": "./package.sh",
+    "prepack": "npm run package",
     "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/**/*.test.ts test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
     "test:facilitator": "./test/facilitator.sh",
     "test:integration:baseToken": "npm run devchain:start && npm run devchain:deploySubgraph:baseToken && TEST_MODE=baseToken mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:integration:eip20Token": "npm run devchain:start && npm run devchain:deploySubgraph:eip20Token && TEST_MODE=eip20Token mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:integration": "npm run test:integration:baseToken && npm run test:integration:eip20Token",
-    "test": "npm run test:unit && npm run test:integration",
+    "test:package": "./test/package.sh",
+    "test": "npm run test:unit && npm run test:package && npm run test:integration",
     "coverage:report": "nyc report",
     "coverage:unit": "nyc --silent npm run test:unit",
     "coverage:facilitator": "nyc --silent --no-clean npm run test:facilitator",
