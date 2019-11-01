@@ -71,12 +71,14 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    if (options.originPassword === undefined) {
+    const originPassword = options.originPassword;
+    if (originPassword === undefined) {
       Logger.error('required --origin-password <origin-password>');
       mandatoryOptionMissing = true;
     }
 
-    if (options.auxiliaryPassword === undefined) {
+    const auxiliaryPassword = options.auxiliaryPassword;
+    if (auxiliaryPassword === undefined) {
       Logger.error('required --auxiliary-password <auxiliary-password>');
       mandatoryOptionMissing = true;
     }
@@ -184,14 +186,14 @@ commander
         options.originRpc,
         options.originGraphWs,
         options.originGraphRpc,
-        options.originPassword,
+        originPassword,
       );
       setFacilitator(
         auxChainId.toString(),
         options.auxiliaryRpc,
         options.auxiliaryGraphWs,
         options.auxiliaryGraphRpc,
-        options.auxiliaryPassword,
+        auxiliaryPassword,
       );
 
       const config = new Config(gatewayAddresses!, facilitatorConfig);
@@ -207,14 +209,14 @@ commander
       facilitatorConfig.writeToFacilitatorConfig(auxChainId);
       Logger.info('facilitator config file is generated');
 
-      Logger.info(`👉 worker address for ${originChainId} chain is `
+      Logger.info(`👉 worker address for ${originChainId}(origin) chain is `
     + `${facilitatorConfig.chains[originChainId!].worker}`);
 
-      Logger.info(`👉 worker address for ${auxChainId} chain is `
+      Logger.info(`👉 worker address for ${auxChainId}(auxiliary) chain is `
       + `${facilitatorConfig.chains[auxChainId].worker}`);
       Logger.info(`\nℹ️  Run below two commands on terminal by replacing <origin password> and <auxiliary-password> with origin and auxiliary password entered in command. \n
-        1. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId!].worker}=<origin-password>
-        2. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=<auxiliary-password> \n\n`);
+        1. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId!].worker}=${originPassword}
+        2. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=${auxiliaryPassword} \n\n`);
     } catch (e) {
       Logger.error(e);
       process.exit(1);
