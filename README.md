@@ -38,7 +38,15 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
       mosaic start 1405 --origin ropsten
 
       
- Once chains have been successfully started, it will display web3 endpoint, graph admin rpc, graph ws end point and ipfs url. These URLs will be used in further steps. 
+ Once chains have been successfully started, it will display web3 endpoint, graph admin rpc, graph ws end point and ipfs url. These URLs will be used in further steps.
+ Started chain can be attached as :
+```
+ mosaic attach <chain-name>
+```
+*Example*:
+```
+mosaic attach ropsten
+```
  
 Documentation of supported mosaic chains can be found [here](https://github.com/mosaicdao/mosaic-chains).      
 
@@ -69,7 +77,7 @@ mosaic setup-redeem-pool 12346 500 http://localhost:40500 0x00000000000000000000
  
  Documentation of deployment of stake and redeem pool can be found [here](https://github.com/mosaicdao/mosaic-chains#stake-pool).
  
- **3. Deploy subgraphs**: Origin and auxiliary subgraphs are needed for facilitator executable. Below commands will deploy origin and auxiliary subgraph. 
+ **3. Deploy subgraphs**: Origin and auxiliary subgraphs are needed for facilitator executable. Each command will print the subgraph url's. Make a note of it as it will be required at facilitator-init step. Below commands will deploy origin and auxiliary subgraph. 
 
 *Origin subgraph*: Below command will deploy origin subgraph. 
 ```
@@ -120,7 +128,7 @@ Facilitator init can be also be done with `--gateway-config <gateway-config>` op
 Replace <gateway-config> with file location where gateway config is present.
 
 
-This command will generate facilitator config file which is needed to start facilitator. 
+This command will generate facilitator config file which is needed to start facilitator. Back up facilitator-config file as it contains encrypted keys which will own funds.
 
 
 **5. Set ENV variables**: Facilitator init commands create worker keys which are encrypted with password. Enviornment variables need to be set to unlock the encrypted keystore file. 
