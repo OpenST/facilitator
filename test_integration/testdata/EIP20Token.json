@@ -1,6 +1,6 @@
 {
   "auxChainId": 1000,
-  "originChain": "dev",
+  "originChain": "dev-origin",
   "originWorkerExpirationHeight":"100000000000",
   "auxiliaryWorkerExpirationHeight":"100000000000",
   "originRpc":"http://127.0.0.1:41515",

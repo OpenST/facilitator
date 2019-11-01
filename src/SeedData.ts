@@ -72,6 +72,7 @@ export default class SeedData {
 
   /**
    * Populates seed data in database tables.
+   * @returns Bounty amount of eip20Gateway and eip20CoGateway.
    */
   public async populateDb(): Promise<{
     eip20GatewayBounty: BigNumber;
@@ -121,6 +122,9 @@ export default class SeedData {
 
   /**
    * Populates seed data in gateways table.
+   * @param activationStatus Activation status of EIP20Gateway.
+   * @param eip20GatewayBounty Bounty for EIP20Gateway.
+   * @param eip20CoGatewayBounty Bounty for EIP20CoGateway.
    */
   private async populateGatewayTable(
     activationStatus: boolean,
@@ -135,6 +139,8 @@ export default class SeedData {
 
   /**
    * Populates seed data for Gateway in gateways table.
+   * @param activationStatus Activation status of EIP20CoGateway.
+   * @param eip20GatewayBounty Bounty for EIP20Gateway.
    */
   private async populateGatewayEntry(
     activationStatus: boolean,
@@ -156,6 +162,7 @@ export default class SeedData {
 
   /**
    * Populates seed data for CoGateway in gateways table.
+   * @param eip20CoGatwayBounty Bounty for EIP20CoGateway.
    */
   private async populateCoGatewayEntry(eip20CoGatwayBounty: BigNumber): Promise<void> {
     const auxiliaryGateway = new Gateway(
