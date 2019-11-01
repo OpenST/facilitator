@@ -55,7 +55,7 @@ Documentation of supported mosaic chains can be found [here](https://github.com/
 
 Skip this step if stake and redeem pool already exists and you own the owner / admin keys used while deployment.
 
-*Deploy stake pool*: Use below command to deploy stake pool contract for facilitation of stake and mint requests. Organization owner and admin keys will be needed to whitelist worker keys in next step.
+*Deploy stake pool*: Use below command to deploy stake pool contract for facilitation of stake and mint requests. Organization owner and admin keys will be needed to whitelist worker keys in next step. Deployer address must be unlocked.
        
   ```
   mosaic setup-stake-pool <originChain> <originWeb3EndPoint> <deployer> <organizationOwner> <organizationAdmin>
@@ -64,7 +64,7 @@ Skip this step if stake and redeem pool already exists and you own the owner / a
   ```
  mosaic setup-stake-pool 12346  http://localhost:8545 0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb 0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb 0x913da4198e6be1d5f5e4a40d0667f70c0b5430eb
  ```
-*Deploy redeem pool*: Use below command to deploy redeem pool contract for facilitation of redeem and unstake requests. Organization owner and admin keys will be needed to whitelist worker keys in next step.
+*Deploy redeem pool*: Use below command to deploy redeem pool contract for facilitation of redeem and unstake requests. Organization owner and admin keys will be needed to whitelist worker keys in next step. Deployer address must be unlocked.
 
 ```
 mosaic setup-redeem-pool <originChain> <auxiliaryChain> <auxChainWeb3EndPoint> <deployer> <organizationOwner> <organizationAdmin>
@@ -96,12 +96,12 @@ mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> auxiliary
 
 By default subgraph command deploys subgraph for OST gateways, optionally it also accepts `--mosaic-config`, `--gateway-config` and `--gateway-address` option to deploy subgraph for other gateways. 
 
-Refer [here](#https://github.com/mosaicdao/mosaic-chains#mosaic-config) to locate Mosaic config.
+Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config) to locate Mosaic config.
 Refer [here](https://github.com/mosaicdao/mosaic-chains#gateway-config) to locate Gateway config.
 
 More documentation about `subgraph` command can be found [here](https://github.com/mosaicdao/mosaic-chains#subgraph-deployment).
 
-**4. Facilitator init**: Facilitator init command initializes & populates seed data in database, generated worker addresses & encrypted keys for them and creates facilitator config file (is needed to start facilitator).  
+**4. Facilitator init**: Facilitator init command initializes & populates seed data in database, generates worker addresses & encrypted keys for them and creates facilitator config file (is needed to start facilitator).  
 
 ```
 facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> --origin-password <origin-password> --auxiliary-password <auxiliary-password> --origin-rpc <origin-rpc> --auxiliary-rpc <auxiliary-rpc> --origin-graph-ws <origin-graph-ws> --origin-graph-rpc <origin-graph-rpc> --auxiliary-graph-ws <auxiliary-graph-ws> --auxiliary-graph-rpc <auxiliary-graph-rpc> --db-path <db-path> --force
@@ -115,10 +115,10 @@ facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> -
 * Replace `<auxiliary-password>` with the password required to encrypt the worker account of auxiliary chain created with this command. It will be required to unlock worker account while starting facilitator.
 * Replace `<origin-rpc>` with origin chain's rpc url.
 * Replace `<auxiliary-rpc>` with auxiliary chain's rpc url.
-* Replace `<origin-graph-ws>` with origin ws graph endpoint.
-* Replace `<origin-graph-rpc>` with origin rpc graph admin rpc endpoint.
-* Replace `<auxiliary-graph-ws>` with auxiliary ws graph endpoint.
-* Replace `<auxiliary-graph-rpc>` with auxiliary rpc graph admin endpoint.
+* Replace `<origin-graph-ws>` with origin subgraph ws endpoint provided in subgraph deployment step.
+* Replace `<origin-graph-rpc>` with origin subgraph rpc admin rpc endpoint provided in subgraph deployment step.
+* Replace `<auxiliary-graph-ws>` with auxiliary subgraph ws endpoint provided in subgraph deployment step.
+* Replace `<auxiliary-graph-rpc>` with auxiliary subgraph rpc admin endpoint provided in subgraph deployment step.
 * Replace `<db-path>` with the database path. It is the path for `sqlite` database. If not provided,it would create it.
 * `--force` option is used to forcefully override facilitator config. It is optional parameter.
 
@@ -160,7 +160,7 @@ Above variables will also be produced with the output of `facilitator init` comm
    
    On testnet, bounty can be funded to workers using [mosaic faucet](https://github.com/mosaicdao/faucet).
    
-**7. White list workers**: origin and auxiliary workers should be whitelisted in stakepool and redeem pool contracts respectively. Below commands will whitelist the workers. 
+**7. White list workers**: Origin and auxiliary workers should be whitelisted in stakepool and redeem pool contracts respectively. Below commands will whitelist the workers. 
 
    1. Clone git repository:
        ```
@@ -183,17 +183,17 @@ Above variables will also be produced with the output of `facilitator init` comm
     export ORIGIN_WORKER_EXPIRATION_HEIGHT='replace_with_origin_expiration_height';
     export AUXILIARY_WORKER_EXPIRATION_HEIGHT='replace_with_auxiliary_expiration_height';
 
-origin and auxiliary worker addresses are generated with `facilitator init` step. 
+Origin and auxiliary worker addresses are generated with `facilitator init` step. 
 Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config) to locate Mosaic config path for supported chain.  
 
-origin and auxiliary worker expiration height is block height from current block for which worker keys are whitelisted. If current block is 1000 and expiration height is set to 100 then worker keys will be whitelisted for 1100 block.
+Origin and auxiliary worker expiration height is block height from current block for which worker keys are whitelisted. If current block is 1000 and expiration height is set to 100 then worker keys will be whitelisted for 1100 block.
 
    3. run command:
      
      npm run whitelist-workers
          
 
-   Note: This command expects owner addresses of stake pool and redeem pool organization to be unlocked on the node. 
+   Note: This command expects admin address of stake pool and redeem pool organization to be unlocked on the node. 
     
 
 **8. Facilitator start**: Facilitator start command starts the facilitator process. 

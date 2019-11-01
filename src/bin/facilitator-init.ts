@@ -218,7 +218,7 @@ commander
       console.log(`2. Worker address for ${originChainId} (origin) chain is ${facilitatorConfig.chains[originChainId].worker}`);
       console.log(`3. Worker address for ${auxChainId} (auxiliary) chain is ${facilitatorConfig.chains[auxChainId].worker}`);
       console.log(`4. For each stake and mint facilitation requires funds ${eip20GatewayBounty.toString(10)}(wei) of ${config.gatewayAddresses.baseTokenAddress} token for bounty on ${originChainId} chain.`);
-      console.log(`5. For each redeem and unstake facilitation, bounty amount in base token is ${eip20CoGatewayBounty.toString(10)}(wei) which should be funded to ${auxChainId} (auxiliary) worker.`);
+      console.log(`5. For each redeem and unstake facilitation, bounty amount in base token is ${eip20CoGatewayBounty.toString(10)}(wei) which should be funded to chain id ${auxChainId} (auxiliary) worker.`);
       console.log('6. Set below environment variables : ');
       console.log(`\t i. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId].worker}=${originPassword}`);
       console.log(`\tii. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=${auxiliaryPassword} \n`);
