@@ -39,7 +39,7 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
 
       
  Once chains have been successfully started, it will display web3 endpoint, graph admin rpc, graph ws end point and ipfs url. These URLs will be used in further steps.
- Started chain can be attached as :
+ To connect to these chains, one can be use the below command :
 ```
  mosaic attach <chain-name>
 ```
