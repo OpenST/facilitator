@@ -214,7 +214,7 @@ commander
 
       Logger.info(`👉 worker address for ${auxChainId}(auxiliary) chain is `
       + `${facilitatorConfig.chains[auxChainId].worker}`);
-      Logger.info(`\nℹ️  Run below two commands on terminal by replacing <origin password> and <auxiliary-password> with origin and auxiliary password entered in command. \n
+      Logger.info(`\nℹ️  Run below two commands on terminal : \n
         1. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId!].worker}=${originPassword}
         2. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=${auxiliaryPassword} \n\n`);
     } catch (e) {
