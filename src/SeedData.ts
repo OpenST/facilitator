@@ -73,12 +73,33 @@ export default class SeedData {
   /**
    * Populates seed data in database tables.
    */
-  public async populateDb(): Promise<void> {
+  public async populateDb(): Promise<{
+    eip20GatewayBounty: BigNumber;
+    eip20CoGatewayBounty: BigNumber;
+  }> {
     const promises = [];
     promises.push(this.populateAuxiliaryChainTable());
-    promises.push(this.populateGatewayTable());
+
+    const gatewayProperties: {
+      activated: boolean;
+      bounty: BigNumber;
+    } = await this.getGatewayProperties();
+    const eip20CoGatewayBounty = await this.getCoGatewayBounty();
+    promises.push(
+      this.populateGatewayTable(
+        gatewayProperties.activated,
+        gatewayProperties.bounty,
+        eip20CoGatewayBounty,
+      ),
+    );
+
     promises.push(this.populateContractEntityTable());
     await Promise.all(promises);
+
+    return {
+      eip20GatewayBounty: gatewayProperties.bounty,
+      eip20CoGatewayBounty,
+    };
   }
 
   /**
@@ -101,21 +122,24 @@ export default class SeedData {
   /**
    * Populates seed data in gateways table.
    */
-  private async populateGatewayTable(): Promise<void> {
+  private async populateGatewayTable(
+    activationStatus: boolean,
+    eip20GatewayBounty: BigNumber,
+    eip20CoGatewayBounty: BigNumber,
+  ): Promise<void> {
     const promises = [];
-    promises.push(this.populateGatewayEntry());
-    promises.push(this.populateCoGatewayEntry());
+    promises.push(this.populateGatewayEntry(activationStatus, eip20GatewayBounty));
+    promises.push(this.populateCoGatewayEntry(eip20CoGatewayBounty));
     await Promise.all(promises);
   }
 
   /**
    * Populates seed data for Gateway in gateways table.
    */
-  private async populateGatewayEntry(): Promise<void> {
-    const gatewayProperties: {
-      activated: boolean;
-      bounty: BigNumber;
-    } = await this.getGatewayProperties();
+  private async populateGatewayEntry(
+    activationStatus: boolean,
+    eip20GatewayBounty: BigNumber,
+  ): Promise<void> {
     const originGateway = new Gateway(
       this.gatewayAddress,
       this.config.facilitator.originChain,
@@ -123,9 +147,9 @@ export default class SeedData {
       this.coGatewayAddress,
       this.valueTokenAddress,
       this.anchorAddress,
-      gatewayProperties.bounty,
+      eip20GatewayBounty,
       Zero,
-      gatewayProperties.activated,
+      activationStatus,
     );
     await this.gatewayRepository.save(originGateway);
   }
@@ -133,7 +157,7 @@ export default class SeedData {
   /**
    * Populates seed data for CoGateway in gateways table.
    */
-  private async populateCoGatewayEntry(): Promise<void> {
+  private async populateCoGatewayEntry(eip20CoGatwayBounty: BigNumber): Promise<void> {
     const auxiliaryGateway = new Gateway(
       this.coGatewayAddress,
       this.config.facilitator.auxChainId.toString(),
@@ -141,7 +165,7 @@ export default class SeedData {
       this.gatewayAddress,
       this.utilityTokenAddress,
       this.coAnchorAddress,
-      await this.getCoGatewayBounty(),
+      eip20CoGatwayBounty,
       Zero,
       undefined,
     );

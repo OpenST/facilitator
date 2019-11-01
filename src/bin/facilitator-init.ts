@@ -29,6 +29,7 @@ import Repositories from '../repositories/Repositories';
 import SeedData from '../SeedData';
 import GatewayAddresses from '../Config/GatewayAddresses';
 import FacilitatorInit from '../lib/FacilitatorInit';
+import Directory from '../Directory';
 
 commander
   .option('-m, --mosaic-config <mosaic-config>', 'path to mosaic configuration')
@@ -71,13 +72,13 @@ commander
       mandatoryOptionMissing = true;
     }
 
-    const originPassword = options.originPassword;
+    const { originPassword } = options;
     if (originPassword === undefined) {
       Logger.error('required --origin-password <origin-password>');
       mandatoryOptionMissing = true;
     }
 
-    const auxiliaryPassword = options.auxiliaryPassword;
+    const { auxiliaryPassword } = options;
     if (auxiliaryPassword === undefined) {
       Logger.error('required --auxiliary-password <auxiliary-password>');
       mandatoryOptionMissing = true;
@@ -139,11 +140,11 @@ commander
         );
       }
 
-      if(!originChainId) {
+      if (!originChainId) {
         throw new Error(`Invalid origin chain id ${originChainId} in config`);
       }
 
-      if(!gatewayAddresses) {
+      if (!gatewayAddresses) {
         throw new Error(`Gateway addresses cannot be ${gatewayAddresses}`);
       }
 
@@ -204,19 +205,23 @@ commander
         repositories.auxiliaryChainRepository,
         repositories.contractEntityRepository,
       );
-      await seedData.populateDb();
+      const {
+        eip20GatewayBounty,
+        eip20CoGatewayBounty,
+      } = await seedData.populateDb();
 
       facilitatorConfig.writeToFacilitatorConfig(auxChainId);
       Logger.info('facilitator config file is generated');
-
-      Logger.info(`👉 worker address for ${originChainId}(origin) chain is `
-    + `${facilitatorConfig.chains[originChainId!].worker}`);
-
-      Logger.info(`👉 worker address for ${auxChainId}(auxiliary) chain is `
-      + `${facilitatorConfig.chains[auxChainId].worker}`);
-      Logger.info(`\nℹ️  Run below two commands on terminal : \n
-        1. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId!].worker}=${originPassword}
-        2. export ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=${auxiliaryPassword} \n\n`);
+      console.log('--------------------------------------------------------------------------------------------------------');
+      console.log('Below points to be noted : ');
+      console.log(`1. Facilitator config path is generated at , ${Directory.getFacilitatorConfigPath(auxChainId)}. Back it up!!! `);
+      console.log(`2. Worker address for ${originChainId}(origin) chain is ${facilitatorConfig.chains[originChainId].worker}`);
+      console.log(`3. Worker address for ${auxChainId}(auxiliary) chain is ${facilitatorConfig.chains[auxChainId].worker}`);
+      console.log(`4. For stake and mint facilitation token address is ${config.gatewayAddresses.baseTokenAddress}. Worker has to be funded with ${eip20GatewayBounty.toString(10)}(wei) amount for each stake-mint.`);
+      console.log(`5. For redeem and unstake bounty amount in base token is ${eip20CoGatewayBounty.toString(10)}. Worker has to be funded with ${eip20GatewayBounty.toString(10)}(wei) amount for each redeem-unstake. `);
+      console.log('6. Set below environment variables : ');
+      console.log(`\t i. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId].worker}=${originPassword}`);
+      console.log(`\tii. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=${auxiliaryPassword} \n`);
     } catch (e) {
       Logger.error(e);
       process.exit(1);
