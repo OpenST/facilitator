@@ -38,7 +38,7 @@ describe('SeedData.populateDb()', (): void => {
     repositories: Repositories;
   let web3: Web3;
 
-  const originChain = '1515';
+  const originChain = 'dev-origin';
   const auxiliaryChainId = 1000;
   const zeroBn = new BigNumber('0');
   const stakePoolAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
