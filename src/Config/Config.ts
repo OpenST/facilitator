@@ -179,7 +179,6 @@ export class FacilitatorConfig {
       facilitatorConfigPath,
       JSON.stringify(this, null, '    '),
     );
-    Logger.info(`Created facilitator config on path ${facilitatorConfigPath}`);
   }
 
   /**

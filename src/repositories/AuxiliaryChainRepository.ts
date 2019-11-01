@@ -70,8 +70,7 @@ export default class AuxiliaryChainRepository extends Subject<AuxiliaryChain> {
           type: DataTypes.STRING,
           allowNull: false,
           validate: {
-            isAlphanumeric: true,
-            len: [3, 50],
+            len: [1, 50],
           },
         },
         eip20GatewayAddress: {

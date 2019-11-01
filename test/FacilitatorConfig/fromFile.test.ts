@@ -43,7 +43,7 @@ describe('FacilitatorConfig.fromFile()', () => {
   }
 
   it('should pass with valid arguments', () => {
-    const originChain = '1515';
+    const originChain = 'dev-origin';
     const fsSpy = spyFsModule(true);
     const config = `{"originChain":"${originChain}"}`;
     const data = JSON.parse(config);
