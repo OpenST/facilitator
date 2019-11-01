@@ -7,7 +7,7 @@
             "valueTokenAddress": "0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8",
             "stakePoolAddress": "0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD"
         },
-        "chain": "dev"
+        "chain": "dev-origin"
     },
     "auxiliaryChains": {
         "1000": {
