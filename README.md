@@ -155,10 +155,16 @@ Above variables will also be produced with the output of `facilitator init` comm
 **7. White list workers**: origin and auxiliary workers should be whitelisted in stakepool and redeem pool contracts respectively. Below commands will whitelist the workers. 
 
    1. Clone git repository:
-   ```
-       git clone https://github.com/mosaicdao/mosaic-chains.git
-   ```
-   2. Set below enviornment variables
+       ```
+           git clone https://github.com/mosaicdao/mosaic-chains.git
+       ```
+   
+   2. Install dependencies:
+        ```
+            npm ci
+        ```
+   
+   3. Set below enviornment variables
     
     export ORIGIN_WEB3_ENDPOINT='replace_with_origin_web3_endpoint';
     export AUXILIARY_WEB3_ENDPOINT='replace_with_auxiliary_web3_endpoint';
