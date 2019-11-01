@@ -1,5 +1,5 @@
 {
-  "originChain":"1515",
+  "originChain":"dev-origin",
   "auxChainId":1000,
   "database": {
     "path": "/Users/gulshanvasnani/.mosaic/1000/facilitator/OSTFacilitator.db"
@@ -11,7 +11,7 @@
       "subGraphWs":"ws://localhost:8000/subgraphs/name/openst/ost-composer",
       "subGraphRpc":"http://localhost:8000/subgraphs/name/openst/ost-composer"
     },
-    "1515": {
+    "dev-origin": {
       "worker": "0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7",
       "nodeRpc": "https://localhost.com:8545",
       "subGraphWs":"ws://localhost:8000/subgraphs/name/openst/ost-composer",
