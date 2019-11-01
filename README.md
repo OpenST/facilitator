@@ -26,11 +26,11 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
    
    *Start origin chain*: 
 
-            mosaic start <origin-chain>
+            mosaic start <origin-chain-identifier>
             
    *Start auxiliary chain*:
  
-            mosaic start <auxiliary chain> --origin <origin-chain>
+            mosaic start <auxiliary chain> --origin <origin-chain-identifier>
       
    *Example*:
 
@@ -88,9 +88,9 @@ mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> auxiliary
 
 By default subgraph command deploys subgraph for OST gateways, optionally it also accepts `--mosaic-config`, `--gateway-config` and `--gateway-address` option to deploy subgraph for other gateways. 
 
-Mosaic config i.e `mosaic.json` can be found [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>` folder.
+Mosaic config i.e `mosaic.json` can be found [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain-identifier>` folder.
 
-Gateway config i.e. `<gatewayaddress>.json` can be found [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>/<auxiliary-chain>/<gateway-address.json`.
+Gateway config i.e. `<gatewayaddress>.json` can be found [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain-identifier>/<auxiliary-chain>/<gateway-address.json`.
 
 More documentation about `subgraph` command can be found [here](https://github.com/mosaicdao/mosaic-chains#subgraph-deployment).
 
@@ -102,7 +102,7 @@ facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> -
 ```
 
 * Replace `<mosaic-config>` with file location where mosaic config is present.
-* `<mosaic-config>` config can be found at `~/.mosaic/<origin-chain>/mosaic.json` where `<origin-chain>` is origin chain identifier e.g. `ropsten`, `goerli`, `ethereum` and `dev-origin`.
+* `<mosaic-config>` config can be found at `~/.mosaic/<origin-chain-identifier>/mosaic.json` where `<origin-chain-identifier>` is origin chain identifier e.g. `ropsten`, `goerli`, `ethereum` and `dev-origin`.
 
 * Replace `<aux-chain-id>` with auxiliary chain id. 
 * Replace `<origin-password>` with the password required to encrypt the worker account of origin chain created with this command. It will be required to unlock worker account while starting facilitator.
@@ -117,7 +117,7 @@ facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> -
 * `--force` option is used to forcefully override facilitator config. It is optional parameter.
 
 
-Facilitator init can be also be done with `--gateway-config <gateway-config>` option. Gateway config i.e. `<gatewayaddress>.json` can be found in [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain>/<auxiliary-chain>/<gateway-address.json`.
+Facilitator init can be also be done with `--gateway-config <gateway-config>` option. Gateway config i.e. `<gatewayaddress>.json` can be found in [here](https://github.com/mosaicdao/mosaic-chains/tree/develop/chains) inside `<origin-chain-identifier>/<auxiliary-chain>/<gateway-address.json`.
 
 Replace <gateway-config> with file location where gateway config is present.
 
@@ -172,7 +172,7 @@ Above variables will also be produced with the output of `facilitator init` comm
     export AUXILIARY_WORKER_EXPIRATION_HEIGHT='replace_with_auxiliary_expiration_height';
 
 origin and auxiliary worker addresses are generated with `facilitator init` step. 
-Mosaic config path for supported chain should be available on `~/.mosaic/<origin-chain>/mosaic.json` where `<origin-chain>` is origin chain identifier e.g. `ropsten`.  
+Mosaic config path for supported chain should be available on `~/.mosaic/<origin-chain-identifier>/mosaic.json` where `<origin-chain-identifier>` is origin chain identifier e.g. `ropsten`.  
 
 origin and auxiliary worker expiration height is block height from current block for which worker keys are whitelisted. If current block is 1000 and expiration height is set to 100 then worker keys will be whitelisted for 1100 block.
 
@@ -187,17 +187,17 @@ origin and auxiliary worker expiration height is block height from current block
 **8. Facilitator start**: Facilitator start command starts the facilitator process. 
 - If facilitator-init is done using `<mosaic-config>` option, then use below command
 ```
-facilitator start <origin-chain> <aux-chain-id> --facilitator-config <facilitator-config> --mosaic-config <mosaic-config>
+facilitator start <origin-chain-identifier> <aux-chain-id> --facilitator-config <facilitator-config> --mosaic-config <mosaic-config>
 
 ```
 
 - If facilitator-init is done using `<gateway-config>` option, then use below command
 ```
-facilitator start <origin-chain> <aux-chain-id> --facilitator-config <facilitator-config> --gateway-config <gateway-config>
+facilitator start <origin-chain-identifier> <aux-chain-id> --facilitator-config <facilitator-config> --gateway-config <gateway-config>
 
 ```
 
-* Replace `<origin-chain>` with name of the origin chain identifier.
+* Replace `<origin-chain-identifier>` with name of the origin chain identifier.
 * Replace `<aux-chain-id>` with id of the auxiliary chain identifier. E.g. 1405, 1406, 1407 .
 * Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`. Path will be at location `~/.mosaic/<aux-chain-id>/facilitator-config.json`.   
 * Replace `<gateway-config>` with the path to gateway-config.json.
@@ -217,14 +217,14 @@ Facilitator can be started in below two ways :-
     * Replace `<mosaic-config>` with the path to mosaic-config.json.
 	* When `--mosaic-config` and `--facilitator-config` is given then it will read gateway and facilitator configs from `<gateway-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
 
-2. `./facilitator start <origin-chain> <aux-chain-id> --facilitator-config <facilitator-config> --mosaic-config <mosaic-config>`
-	* Replace `<origin-chain>` with name of the origin chain.
+2. `./facilitator start <origin-chain-identifier> <aux-chain-id> --facilitator-config <facilitator-config> --mosaic-config <mosaic-config>`
+	* Replace `<origin-chain-identifier>` with name of the origin chain.
 	* Replace `<aux-chain-id>` with id of the auxiliary chain.
 	* Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
     * Replace `<mosaic-config>` with the path to gateway-config.json.
-    * It validates `<origin-chain>` and `<auxiliary-chain>` id's in faciltiator and mosaic configs.
+    * It validates `<origin-chain-identifier>` and `<auxiliary-chain>` id's in faciltiator and mosaic configs.
     
-3.  `./facilitator start <origin-chain> <aux-chain-id>`
+3.  `./facilitator start <origin-chain-identifier> <aux-chain-id>`
 	* It loads mosaic config and facilitator config from default paths.    
 
 4.  `./facilitator start --facilitator-config <facilitator-config>`
@@ -237,8 +237,8 @@ Facilitator can be started in below two ways :-
     * Replace `<gateway-config>` with the path to gateway-config.json.
 	* When `--gateway-config` and `--facilitator-config` is given then it will read gateway and facilitator configs from `<gateway-config>` and `<facilitator-config>` paths respectively and validates origin and aux chain id's.
 
-2. `./facilitator start <origin-chain> <aux-chain-id> --facilitator-config <facilitator-config> --gateway-config <gateway-config>`
-	* Replace `<origin-chain>` with name of the origin chain.
+2. `./facilitator start <origin-chain-identifier> <aux-chain-id> --facilitator-config <facilitator-config> --gateway-config <gateway-config>`
+	* Replace `<origin-chain-identifier>` with name of the origin chain.
 	* Replace `<aux-chain-id>` with id of the auxiliary chain.
 	* Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
     * Replace `<gateway-config>` with the path to gateway-config.json.	    
