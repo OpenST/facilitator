@@ -222,6 +222,9 @@ commander
       console.log('6. Set below environment variables : ');
       console.log(`\t i. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId].worker}=${originPassword}`);
       console.log(`\tii. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=${auxiliaryPassword} \n`);
+      // Explicitly exit process as web3 on websocket holds the connection
+      // and let app to close.
+      process.exit(0);
     } catch (e) {
       Logger.error(e);
       process.exit(1);
