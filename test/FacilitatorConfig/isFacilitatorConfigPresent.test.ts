@@ -16,16 +16,14 @@
 
 
 import fs from 'fs-extra';
-import path from 'path';
-import sinon from 'sinon';
+import sinon, { SinonStub } from 'sinon';
 
 import { FacilitatorConfig } from '../../src/Config/Config';
 import Directory from '../../src/Directory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
-let pathSpy: any;
-let directorySpy: any;
+let facilitatorConfigPathSpy: SinonStub<[string, number, string], string>;
 let fsSpy: any;
 
 async function spyFsModule(status: boolean): Promise<any> {
@@ -36,21 +34,17 @@ async function spyFsModule(status: boolean): Promise<any> {
 }
 
 describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
-  const chain = 1000;
+  const auxChainId = 1000;
+  const originChain = 'dev';
+  const dummyGatewayAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
-  const mosaicDirectoryPath = '.mosaic';
-
 
   beforeEach(async (): Promise<void> => {
-    pathSpy = sinon.stub(
-      path,
-      'join',
-    ).returns(facilitatorConfigPath);
 
-    directorySpy = sinon.stub(
+    facilitatorConfigPathSpy = sinon.stub(
       Directory,
-      'getMosaicDirectoryPath',
-    ).returns(mosaicDirectoryPath);
+      'getFacilitatorConfigPath',
+    ).returns(facilitatorConfigPath);
   });
 
   afterEach(async (): Promise<void> => {
@@ -60,31 +54,36 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
   it('should pass with valid arguments', (): void => {
     spyFsModule(true);
 
-    const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
-    SpyAssert.assert(directorySpy, 1, [[]]);
+    const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(
+      originChain,
+      auxChainId,
+      dummyGatewayAddress
+    );
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain.toString(), 'facilitator-config.json']]);
+    SpyAssert.assert(facilitatorConfigPathSpy, 1, [[originChain, auxChainId, dummyGatewayAddress]]);
     assert.strictEqual(
       status,
       true,
-      `Facilitator config for ${chain} should be present`,
+      `Facilitator config for ${auxChainId} should be present`,
     );
   });
 
   it('should fail when file is empty', (): void => {
     spyFsModule(false);
 
-    const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(chain);
+    const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(
+      originChain,
+      auxChainId,
+      dummyGatewayAddress
+    );
 
-    SpyAssert.assert(directorySpy, 1, [[]]);
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
-    SpyAssert.assert(pathSpy, 1, [[mosaicDirectoryPath, chain.toString(), 'facilitator-config.json']]);
-    SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
+    SpyAssert.assert(facilitatorConfigPathSpy, 1, [[originChain, auxChainId, dummyGatewayAddress]]);
 
     assert.strictEqual(
       status,
       false,
-      `Facilitator config for chain ${chain} should not be present`,
+      `Facilitator config for chain ${auxChainId} should not be present`,
     );
   });
 });

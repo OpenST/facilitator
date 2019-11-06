@@ -27,10 +27,12 @@ describe('Config.fromFile()', () => {
   const mosaicConfigPath = 'test/Config/mosaic-config.json';
   const facilitatorConfigPath = 'test/Config/facilitator-config.json';
   const auxChain = 3;
+  const originChain = 'dev-origin';
+  const dummyGatewayAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = FacilitatorConfig.fromChain(auxChain);
+    const facilitator = FacilitatorConfig.fromChain(originChain, auxChain, dummyGatewayAddress);
     facilitator.auxChainId = auxChain;
     const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
 
@@ -73,7 +75,7 @@ describe('Config.fromFile()', () => {
 
   it('should fail when invalid config type is provided', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
-    const facilitator = FacilitatorConfig.fromChain(auxChain);
+    const facilitator = FacilitatorConfig.fromChain(originChain, auxChain, dummyGatewayAddress);
     facilitator.auxChainId = auxChain;
     const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
     const invalidConfigType = 'invalidconfigtype' as ConfigType;

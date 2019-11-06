@@ -115,7 +115,11 @@ export default class ConfigFactory {
     if (this.mosaicConfigPath) {
       const mosaic: MosaicConfig = MosaicConfig.fromFile(this.mosaicConfigPath);
       this.verifyChainIdInMosaicConfig(mosaic);
-      const facilitator = FacilitatorConfig.fromChain(this.auxChainId!);
+      const facilitator = FacilitatorConfig.fromChain(
+        this.originChain!,
+        this.auxChainId!,
+        mosaic.auxiliaryChains[this.auxChainId!].contractAddresses.auxiliary.eip20CoGatewayAddress,
+      );
       return new Config(
         GatewayAddresses.fromMosaicConfig(
           mosaic,
@@ -126,17 +130,29 @@ export default class ConfigFactory {
     }
 
     if (this.gatewayConfigPath) {
-      const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(this.auxChainId!);
       const gatewayConfig = GatewayConfig.fromFile(this.gatewayConfigPath);
+      const gatewayAddresses = GatewayAddresses.fromGatewayConfig(gatewayConfig);
+      const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(
+        this.originChain!,
+        this.auxChainId!,
+        gatewayAddresses.eip20CoGatewayAddress,
+        );
       this.verifyChainIdInGatewayConfig(gatewayConfig);
       return new Config(
-        GatewayAddresses.fromGatewayConfig(gatewayConfig),
+        gatewayAddresses,
         facilitator,
       );
     }
 
-    const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(this.auxChainId!);
+    // when only origin chain and aux chain id is given.
     const mosaic: MosaicConfig = MosaicConfig.fromChain(this.originChain!);
+
+    const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(
+      this.originChain!,
+      this.auxChainId!,
+      mosaic.auxiliaryChains[this.auxChainId!].contractAddresses.auxiliary.eip20CoGatewayAddress,
+    );
+
     return new Config(
       GatewayAddresses.fromMosaicConfig(
         mosaic,

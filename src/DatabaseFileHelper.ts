@@ -43,14 +43,16 @@ export default class DatabaseFileHelper {
 
   /**
    * It creates database and returns the database file path.
+   * @param originChainId Origin chain id.
    * @param auxChainId chain id of the aux chain.
+   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
    * @returns Database file path.
    */
-  public static create(auxChainId: number): string {
+  public static create(originChainId: string, auxChainId: number, eip20CoGatewayAddress: string): string {
     if (auxChainId === 0) {
       throw new Error(`invalid auxiliary chain id ${auxChainId}`);
     }
-    const dbPath: string = Directory.getDBFilePath(auxChainId);
+    const dbPath: string = Directory.getDBFilePath(originChainId, auxChainId, eip20CoGatewayAddress);
     fs.ensureDirSync(dbPath);
     const facilitatorConfigDB = path.join(dbPath, `${`${DatabaseFileHelper.DBName}.db`}`);
     new sqlite.Database(facilitatorConfigDB);

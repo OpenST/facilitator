@@ -25,6 +25,8 @@ export default class Directory {
   // Facilitator config file name.
   public static MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
 
+  public static GATEWAY_FOLDER_PREFIX = 'gateway-';
+
   /**
    * Provides path to mosaic directory
    * @returns {string} It returns mosaic directory path.
@@ -38,26 +40,50 @@ export default class Directory {
 
   /**
    * It returns default db file path.
+   * @param originChainId Origin chain identifier.
    * @param auxChainId Chain id of the aux chain.
+   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
    * @returns It returns file path where db is present.
    */
-  public static getDBFilePath(auxChainId: number): string {
+  public static getDBFilePath(
+    originChainId: string,
+    auxChainId: number,
+    eip20CoGatewayAddress: string
+  ): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
+      originChainId,
       `${auxChainId}`,
-      'facilitator',
+      Directory.getGatewayFolderName(eip20CoGatewayAddress),
     );
   }
 
   /**
    * This returns default facilitator config path
-   * @param auxChainId Chain Identifier.
+   * @param originChainId Origin chain Identifier.
+   * @param auxChainId Auxiliary chain Identifier.
+   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
    */
-  public static getFacilitatorConfigPath(auxChainId: number): string {
+  public static getFacilitatorConfigPath(
+    originChainId: string,
+    auxChainId: number,
+    eip20CoGatewayAddress: string,
+  ): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
+      originChainId,
       `${auxChainId}`,
+      Directory.getGatewayFolderName(eip20CoGatewayAddress),
       Directory.MOSAIC_FACILITATOR_CONFIG,
     );
+  }
+
+  /**
+   * It prepends `Directory.GATEWAY_FOLDER_PREFIX` prefix the input parameter.
+   * @param suffix Suffix for the folder creation.
+   * @returns name of the gateway folder.
+   */
+  private static getGatewayFolderName(suffix: string): string {
+    return `${Directory.GATEWAY_FOLDER_PREFIX}${suffix}`;
   }
 }

@@ -164,9 +164,15 @@ export class FacilitatorConfig {
 
   /**
    * It writes facilitator config object.
+   * @param originChainId Origin chain id.
    * @param auxChainId Auxiliary chain id.
+   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
    */
-  public writeToFacilitatorConfig(auxChainId: number): void {
+  public writeToFacilitatorConfig(
+    originChainId: string,
+    auxChainId: number,
+    eip20CoGatewayAddress: string,
+  ): void {
     const mosaicConfigDir = Directory.getMosaicDirectoryPath();
     const configPath = path.join(
       mosaicConfigDir,
@@ -174,7 +180,11 @@ export class FacilitatorConfig {
     );
     fs.ensureDirSync(configPath);
 
-    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(auxChainId);
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
+      originChainId,
+      auxChainId,
+      eip20CoGatewayAddress,
+    );
     fs.writeFileSync(
       facilitatorConfigPath,
       JSON.stringify(this, null, '    '),
@@ -183,11 +193,21 @@ export class FacilitatorConfig {
 
   /**
    * This reads facilitator config from the json file and creates FacilitatorConfig object.
+   * @param originChainId Origin chain identifier.
    * @param auxChainId Auxiliary chain id.
+   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
    * @returns Facilitator config object.
    */
-  public static fromChain(auxChainId: number): FacilitatorConfig {
-    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(auxChainId);
+  public static fromChain(
+    originChainId: string,
+    auxChainId: number,
+    eip20CoGatewayAddress: string
+  ): FacilitatorConfig {
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
+      originChainId,
+      auxChainId,
+      eip20CoGatewayAddress,
+    );
 
     if (fs.existsSync(facilitatorConfigPath)) {
       return this.readConfig(facilitatorConfigPath);
@@ -224,21 +244,37 @@ export class FacilitatorConfig {
 
   /**
    * This method removes config from default path.
+   * @param originChainId Origin chain identifier.
    * @param auxChainId Auxiliary chain Identifier.
+   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
    */
-  public static remove(auxChainId: number): void {
-    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(auxChainId);
+  public static remove(
+    originChainId: string,
+    auxChainId: number,
+    eip20CoGatewayAddress: string
+  ): void {
+    const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
+      originChainId,
+      auxChainId,
+      eip20CoGatewayAddress
+    );
     fs.removeSync(facilitatorConfigPath);
   }
 
   /**
    * It checks if facilitator config is present for given auxiliary chain id.
+   * @param originChainId Origin chain identifier.
    * @param auxChainId Auxiliary chain id.
+   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
    * @returns `true` if file is present.
    */
-  public static isFacilitatorConfigPresent(auxChainId: number): boolean {
+  public static isFacilitatorConfigPresent(
+    originChainId: string,
+    auxChainId: number,
+    eip20CoGatewayAddress: string
+  ): boolean {
     return fs.existsSync(
-      Directory.getFacilitatorConfigPath(auxChainId),
+      Directory.getFacilitatorConfigPath(originChainId, auxChainId, eip20CoGatewayAddress),
     );
   }
 
@@ -356,14 +392,20 @@ export class Config {
    * default location, it will initialize new config objects.
    * @param originChain Origin chain id.
    * @param  auxiliaryChain Auxiliary chain id.
+   * @param gatewayAddress GatewayAddress of auxiliary chain.
    * @returns Config object consisting of gateway addresses and facilitator configurations.
    */
   public static fromChain(
     originChain: string,
     auxiliaryChain: number,
+    gatewayAddress: string,
   ): Config {
     const mosaic: MosaicConfig = MosaicConfig.fromChain(originChain);
-    const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(auxiliaryChain);
+    const facilitator: FacilitatorConfig = FacilitatorConfig.fromChain(
+      originChain,
+      auxiliaryChain,
+      gatewayAddress,
+    );
 
     return new Config(
       GatewayAddresses.fromMosaicConfig(

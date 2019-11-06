@@ -13,6 +13,10 @@ describe('facilitator stop', async (): Promise<void> => {
       { stdio: [process.stdout, process.stderr], env: process.env },
     );
     const testData = SharedStorage.getTestData();
-    fs.removeSync(Directory.getFacilitatorConfigPath(testData.auxChainId.toString()));
+    fs.removeSync(Directory.getFacilitatorConfigPath(
+      testData.originChain,
+      testData.auxChainId,
+      SharedStorage.getGatewayAddresses().eip20CoGatewayAddress),
+    );
   });
 });

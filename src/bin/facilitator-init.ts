@@ -109,29 +109,20 @@ commander
       process.exit(1);
     }
 
-    try {
-      const auxChainId = parseInt(options.auxChainId);
-      if (options.force) {
-        FacilitatorConfig.remove(auxChainId);
-      } else if (FacilitatorConfig.isFacilitatorConfigPresent(auxChainId)) {
-        throw new Error('facilitator config already present. use -f option to override the existing facilitator config.');
-      }
-      Logger.info('creating facilitator config as it is not present');
-      const facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
+    // Get origin chain id.
+    const auxChainId = parseInt(options.auxChainId);
+    let originChainId: string | undefined;
+    let gatewayAddresses: GatewayAddresses | undefined;
+    if (options.mosaicConfig !== undefined) {
+      (
+        {
+          originChainId,
+          gatewayAddresses,
+        } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
+      );
+    }
 
-      // Get origin chain id.
-      let originChainId: string | undefined;
-      let gatewayAddresses: GatewayAddresses | undefined;
-      if (options.mosaicConfig !== undefined) {
-        (
-          {
-            originChainId,
-            gatewayAddresses,
-          } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
-        );
-      }
-
-      if (options.gatewayConfig !== undefined) {
+    if (options.gatewayConfig !== undefined) {
         (
           {
             originChainId,
@@ -148,13 +139,22 @@ commander
         throw new Error(`Gateway addresses cannot be ${gatewayAddresses}`);
       }
 
+    try {
+      if (options.force) {
+        FacilitatorConfig.remove(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
+      } else if (FacilitatorConfig.isFacilitatorConfigPresent(originChainId!, auxChainId, gatewayAddresses!.eip20CoGatewayAddress)) {
+        throw new Error('facilitator config already present. use -f option to override the existing facilitator config.');
+      }
+      Logger.info('creating facilitator config');
+      const facilitatorConfig = FacilitatorConfig.fromChain(originChainId!, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
+
       facilitatorConfig.originChain = originChainId!;
       facilitatorConfig.auxChainId = auxChainId;
 
       let { dbPath } = options;
       if (dbPath === undefined || dbPath === null) {
         Logger.info('database path is not provided');
-        dbPath = DatabaseFileHelper.create(auxChainId);
+        dbPath = DatabaseFileHelper.create(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
       } else if (DatabaseFileHelper.verify(dbPath)) {
         Logger.info('DB file verified');
       } else {
@@ -210,11 +210,11 @@ commander
         eip20CoGatewayBounty,
       } = await seedData.populateDb();
 
-      facilitatorConfig.writeToFacilitatorConfig(auxChainId);
+      facilitatorConfig.writeToFacilitatorConfig(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
       Logger.info('facilitator config file is generated');
       console.log('--------------------------------------------------------------------------------------------------------');
       console.log('Below points to be noted : ');
-      console.log(`1. Facilitator config path is generated at ${Directory.getFacilitatorConfigPath(auxChainId)}. Back it up as it contains encrypted keys which will own funds.`);
+      console.log(`1. Facilitator config path is generated at ${Directory.getFacilitatorConfigPath(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress)}. Back it up as it contains encrypted keys which will own funds.`);
       console.log(`2. Worker address for ${originChainId} (origin) chain is ${facilitatorConfig.chains[originChainId].worker}`);
       console.log(`3. Worker address for ${auxChainId} (auxiliary) chain is ${facilitatorConfig.chains[auxChainId].worker}`);
       console.log(`4. For each stake and mint facilitation requires funds ${eip20GatewayBounty.toString(10)}(wei) of ${config.gatewayAddresses.baseTokenAddress} token for bounty on ${originChainId} chain.`);

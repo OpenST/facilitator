@@ -21,14 +21,14 @@ describe('facilitator init', async (): Promise<void> => {
 
   const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
   const gatewayConfigPath = path.join(__dirname, '../../testdata/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json');
-
+  const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   switch (testMode) {
     case 'baseToken':
       SharedStorage.setHelperObject(new BaseTokenHelper());
       SharedStorage.setTestData(BaseTokenTestData);
       SharedStorage.setGatewayAddresses(
         GatewayAddresses.fromMosaicConfig(
-          MosaicConfig.fromFile(mosaicConfigPath),
+          mosaicConfig,
           Number(BaseTokenTestData.auxChainId),
         ),
       );
@@ -80,13 +80,15 @@ describe('facilitator init', async (): Promise<void> => {
 
   it('Validates facilitator init', async (): Promise<void> => {
     const auxChainId = testData.auxChainId;
+    const originChain = testData.originChain;
     // Removing facilitator config.
-    fs.removeSync(Directory.getFacilitatorConfigPath(auxChainId));
+    const eip20CoGatewayAddress = mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.eip20CoGatewayAddress;
+    fs.removeSync(Directory.getFacilitatorConfigPath(originChain, auxChainId, eip20CoGatewayAddress));
 
     const facilitatorInitScriptPath = helperObject.facilitatorInitScriptPath();
     spawnSync(facilitatorInitScriptPath, { stdio: outputOptions, env: process.env });
 
-    facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
+    facilitatorConfig = FacilitatorConfig.fromChain(originChain, auxChainId, eip20CoGatewayAddress);
     SharedStorage.setFacilitatorConfig(facilitatorConfig);
 
     assert.strictEqual(

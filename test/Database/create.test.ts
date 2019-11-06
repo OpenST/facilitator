@@ -27,13 +27,18 @@ import SpyAssert from '../test_utils/SpyAssert';
 const auxChainId = 1;
 
 describe('Database.create()', (): void => {
+  const originChainId = 'dev';
+  const dummyGatewayAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
   afterEach(async (): Promise<void> => {
     sinon.restore();
   });
 
   it('should fail when aux chain id is 0', (): void => {
     const auxChainId = 0;
-    assert.throws((): string => DBFileHelper.create(auxChainId), `invalid auxiliary chain id ${auxChainId}`);
+    assert.throws(
+      (): string => DBFileHelper.create(originChainId, auxChainId, dummyGatewayAddress),
+      `invalid auxiliary chain id ${auxChainId}`
+    );
   });
 
   it('should pass with valid arguments', (): void => {
@@ -53,10 +58,10 @@ describe('Database.create()', (): void => {
 
     const fsSpy = sinon.stub(fs, 'ensureDirSync').callsFake((): boolean => true);
 
-    const actualFacilitatorConfigPath = DBFileHelper.create(auxChainId);
+    const actualFacilitatorConfigPath = DBFileHelper.create(originChainId, auxChainId, dummyGatewayAddress);
     const expectedFacilitatorConfigPath = `${dbPath + dbFileName}`;
 
-    SpyAssert.assert(spyDirectory, 1, [[auxChainId]]);
+    SpyAssert.assert(spyDirectory, 1, [[originChainId, auxChainId, dummyGatewayAddress]]);
 
     SpyAssert.assert(fsSpy, 1, [[dbPath]]);
 
