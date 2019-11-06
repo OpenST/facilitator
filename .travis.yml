@@ -1,0 +1,42 @@
+dist: trusty
+language: node_js
+node_js:
+  - "11"
+cache: npm
+sudo: required
+services:
+  - docker
+env:
+  global:
+    - DOCKER_COMPOSE_VERSION=1.23.2
+  jobs:
+    - TEST_SUITE="test:unit"
+    - TEST_SUITE="test:package"
+    - TEST_SUITE="test:integration:baseToken"
+    - TEST_SUITE="test:integration:eip20Token"
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - sudo apt-get install libsecret-1-dev
+branches:
+  only:
+  - master
+  - develop
+  - /^feature\/.*/
+  - /^release-.*/
+  - /^hotfix-.*/
+notifications:
+  email:
+    recipients:
+      - ci.report@ost.com
+    on_success: always
+    on_failure: always
+install:
+  - npm ci
+script:
+  - npm run ${TEST_SUITE}
+after_failure:
+  - cat /home/travis/.npm/_logs/*-debug.log
+

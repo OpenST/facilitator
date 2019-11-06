@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+./facilitator init --gateway-config $GATEWAY_CONFIG_PATH --aux-chain-id $AUXILIARY_CHAIN_ID --origin-password $ORIGIN_WORKER_PASSWORD --auxiliary-password $AUXILIARY_WORKER_PASSWORD --origin-rpc $ORIGIN_RPC --auxiliary-rpc $AUXILIARY_RPC --origin-graph-ws $ORIGIN_GRAPH_WS --auxiliary-graph-ws $AUXILIARY_GRAPH_WS --origin-graph-rpc $ORIGIN_GRAPH_RPC --auxiliary-graph-rpc $AUXILIARY_GRAPH_RPC -f

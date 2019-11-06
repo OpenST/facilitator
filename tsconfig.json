@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonjs",
+        "outDir": "./lib",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "alwaysStrict": true,
+        "strictNullChecks": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noErrorTruncation": true,
+        "resolveJsonModule": true,
+        "inlineSourceMap": true,
+        "declaration": true,
+        "types": [
+            "chai",
+            "node",
+            "mocha",
+            "web3"
+        ]
+    },
+    "include": [
+        "index.ts",
+        "src/*.ts",
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
