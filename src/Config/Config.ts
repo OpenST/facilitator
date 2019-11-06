@@ -201,7 +201,7 @@ export class FacilitatorConfig {
   public static fromChain(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string
+    eip20CoGatewayAddress: string,
   ): FacilitatorConfig {
     const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
       originChainId,
@@ -251,12 +251,12 @@ export class FacilitatorConfig {
   public static remove(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string
+    eip20CoGatewayAddress: string,
   ): void {
     const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
       originChainId,
       auxChainId,
-      eip20CoGatewayAddress
+      eip20CoGatewayAddress,
     );
     fs.removeSync(facilitatorConfigPath);
   }
@@ -271,7 +271,7 @@ export class FacilitatorConfig {
   public static isFacilitatorConfigPresent(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string
+    eip20CoGatewayAddress: string,
   ): boolean {
     return fs.existsSync(
       Directory.getFacilitatorConfigPath(originChainId, auxChainId, eip20CoGatewayAddress),

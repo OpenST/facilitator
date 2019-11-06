@@ -136,7 +136,7 @@ export default class ConfigFactory {
         this.originChain!,
         this.auxChainId!,
         gatewayAddresses.eip20CoGatewayAddress,
-        );
+      );
       this.verifyChainIdInGatewayConfig(gatewayConfig);
       return new Config(
         gatewayAddresses,

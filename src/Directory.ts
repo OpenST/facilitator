@@ -48,7 +48,7 @@ export default class Directory {
   public static getDBFilePath(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string
+    eip20CoGatewayAddress: string,
   ): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
@@ -79,9 +79,9 @@ export default class Directory {
   }
 
   /**
-   * It prepends `Directory.GATEWAY_FOLDER_PREFIX` prefix the input parameter.
+   * It prepends `GATEWAY_FOLDER_PREFIX` prefix to the input parameter.
    * @param suffix Suffix for the folder creation.
-   * @returns name of the gateway folder.
+   * @returns Name of the gateway folder.
    */
   private static getGatewayFolderName(suffix: string): string {
     return `${Directory.GATEWAY_FOLDER_PREFIX}${suffix}`;

@@ -21,7 +21,7 @@ echo stopping $originChain chain
 ./node_modules/.bin/mosaic stop $originChain
 
 echo stopping $auxiliaryChain chain
-./node_modules/.bin/mosaic stop 1000
+./node_modules/.bin/mosaic stop $auxiliaryChain
 }
 
 if [ $operation = "start" ]; then

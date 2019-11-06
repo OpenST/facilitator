@@ -110,7 +110,7 @@ commander
     }
 
     // Get origin chain id.
-    const auxChainId = parseInt(options.auxChainId);
+    const auxChainId = parseInt(options.auxChainId, 10);
     let originChainId: string | undefined;
     let gatewayAddresses: GatewayAddresses | undefined;
     if (options.mosaicConfig !== undefined) {
@@ -123,30 +123,40 @@ commander
     }
 
     if (options.gatewayConfig !== undefined) {
-        (
-          {
-            originChainId,
-            gatewayAddresses,
-          } = FacilitatorInit.getFromGatewayConfig(auxChainId, options.gatewayConfig)
-        );
-      }
+      (
+        {
+          originChainId,
+          gatewayAddresses,
+        } = FacilitatorInit.getFromGatewayConfig(auxChainId, options.gatewayConfig)
+      );
+    }
 
-      if (!originChainId) {
-        throw new Error(`Invalid origin chain id ${originChainId} in config`);
-      }
+    if (!originChainId) {
+      throw new Error(`Invalid origin chain id ${originChainId} in config`);
+    }
 
-      if (!gatewayAddresses) {
-        throw new Error(`Gateway addresses cannot be ${gatewayAddresses}`);
-      }
+    if (!gatewayAddresses) {
+      throw new Error(`Gateway addresses cannot be ${gatewayAddresses}`);
+    }
 
     try {
       if (options.force) {
-        FacilitatorConfig.remove(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
-      } else if (FacilitatorConfig.isFacilitatorConfigPresent(originChainId!, auxChainId, gatewayAddresses!.eip20CoGatewayAddress)) {
+        FacilitatorConfig.remove(originChainId, auxChainId, gatewayAddresses.eip20CoGatewayAddress);
+      } else if (
+        FacilitatorConfig.isFacilitatorConfigPresent(
+          originChainId!,
+          auxChainId,
+          gatewayAddresses!.eip20CoGatewayAddress,
+        )
+      ) {
         throw new Error('facilitator config already present. use -f option to override the existing facilitator config.');
       }
       Logger.info('creating facilitator config');
-      const facilitatorConfig = FacilitatorConfig.fromChain(originChainId!, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
+      const facilitatorConfig = FacilitatorConfig.fromChain(
+        originChainId!,
+        auxChainId,
+        gatewayAddresses!.eip20CoGatewayAddress,
+      );
 
       facilitatorConfig.originChain = originChainId!;
       facilitatorConfig.auxChainId = auxChainId;
@@ -154,7 +164,11 @@ commander
       let { dbPath } = options;
       if (dbPath === undefined || dbPath === null) {
         Logger.info('database path is not provided');
-        dbPath = DatabaseFileHelper.create(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
+        dbPath = DatabaseFileHelper.create(
+          originChainId,
+          auxChainId,
+          gatewayAddresses!.eip20CoGatewayAddress,
+        );
       } else if (DatabaseFileHelper.verify(dbPath)) {
         Logger.info('DB file verified');
       } else {
@@ -210,7 +224,11 @@ commander
         eip20CoGatewayBounty,
       } = await seedData.populateDb();
 
-      facilitatorConfig.writeToFacilitatorConfig(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress);
+      facilitatorConfig.writeToFacilitatorConfig(
+        originChainId,
+        auxChainId,
+        gatewayAddresses!.eip20CoGatewayAddress,
+      );
       Logger.info('facilitator config file is generated');
       console.log('--------------------------------------------------------------------------------------------------------');
       console.log('Below points to be noted : ');
