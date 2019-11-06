@@ -88,7 +88,7 @@ mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> origin <o
 *Auxiliary subgraph*: Below command will deploy auxiliary sugraph.
 
 ```
-mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> auxiliary <aux-graph-rpc-admin-url> <aux-graph-ipfs-url> 
+mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> auxiliary <aux-graph-admin-url> <aux-graph-ipfs-url> 
 
 ```
 
