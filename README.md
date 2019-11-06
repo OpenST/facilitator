@@ -1,4 +1,4 @@
-# 🎅 Facilitator
+# 🤝 Facilitator
 
 Mosaic facilitator is an executable which enables atomic token transfers across two blockchains. Facilitator executable facilitates `stake & mint` and `redeem & unstake` of any EIP20 token using mosaic gateways. Facilitator earns reward for facilitating token transfers across two blockchains.
 
