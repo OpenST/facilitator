@@ -67,6 +67,7 @@ export default class DatabaseFileHelper {
     // console.log('spawn : ',spawn.output);
     console.log('displaying permissions ');
     execSync(`ls -l /home/travis/.mosaic`,{stdio: "inherit"});
+    execSync(`ls -l /home/travis/.mosaic/dev-origin/1000`,{stdio: "inherit"});
     fs.ensureDirSync(dbPath);
     const facilitatorConfigDB = path.join(dbPath, `${`${DatabaseFileHelper.DBName}.db`}`);
     new sqlite.Database(facilitatorConfigDB);
