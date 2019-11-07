@@ -6,25 +6,25 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
 1. Tested with docker version `18.09.1`.
 2. Tested with docker compose version `1.23.2`.
 3. Tested with node version `v11.2.0`.
-4. Mosaic chains. 
+4. Install mosaic chains
    ```
    npm i @openst/mosaic-chains -g
    ```
-5. Facilitator. 
+5. Install facilitator 
    ```
    npm i @openst/facilitator -g
    ```   
-6. Funds on origin chain and auxiliary chain are needed to perform transactions. `For origin chain gas and Simple Token` balance is needed. `For auxiliary chain gas` is needed.
+6. Funds on origin chain and auxiliary chain are needed to perform transactions. `For origin chain gas and Simple Token` balance is needed. `For auxiliary chain gas` balance is needed.
    For testnet, mosaic faucet can be used to get Simple Token on origin chain and gas on auxiliary chain. Documentation about faucet is available [here](https://github.com/mosaicdao/faucet)   
 7. `Simple Token balance on origin chain` is required to stake bounty in the gateway or to mint gas for auxiliary chain. `gas on auxiliary chain` is required to stake bounty for redeem 
-and unstake request.
+   and unstake request.
 
 
-## Setup facilitator: 
+## Setup facilitator
  
  **1. Start pair of chains**:
    
-   You can skip this step, if there is an existing chain pair and graph node already running. 
+   You can skip this step, if there is an existing chain pair and graph node is already running. 
    
    *Start origin chain*: 
 
@@ -63,8 +63,9 @@ Skip this step if stake and redeem pool contracts already exists and you own the
 For deploying stake pool contract, 3 keys are needed. Please make sure below keys are available before moving to next step.
 
 - `deployer`: Deployer deploys stake pool and organization contract. It should have `gas on origin chain` for deploying contracts. `Deployer address must be unlocked`.
-- `organizationOwner`: Organization owner is the owner of organization contract. It should have `gas on origin chain`.
-- `organizationAdmin`: Organization admin is the admin of organization contract. Organization owner and admin keys will be needed to `whitelist worker keys` in further steps.
+- `organizationOwner`: Organization owner is the owner of organization contract.
+- `organizationAdmin`: Organization admin is the admin of organization contract. It should have `gas on origin chain`. Organization admin key will `whitelist worker keys` in
+ further steps.
 
 Use below command to deploy stake pool contract for facilitation of stake and mint requests.
        
@@ -81,8 +82,9 @@ mosaic setup-stake-pool 12346  http://localhost:8545 0x913da4198e6be1d5f5e4a40d0
 For deploying redeem pool contract, 3 keys are needed. Please make sure below keys are available before moving to next step.
 
 - `deployer`: Deployer deploys redeem pool and organization contract. It should have `gas on auxiliary chain` for deploying contracts. `Deployer address must be unlocked`.
-- `organizationOwner`: Organization owner is the owner of organization contract. It should have `gas on auxiliary chain`.
-- `organizationAdmin`: Organization admin is the admin of organization contract. Organization owner and admin keys will be needed to `whitelist worker keys` in further step.
+- `organizationOwner`: Organization owner is the owner of organization contract.
+- `organizationAdmin`: Organization admin is the admin of organization contract. It should have `gas on auxiliary chain`. Organization admin key will be needed to `whitelist worker keys`
+ in further step.
 
 Use below command to deploy redeem pool contract for facilitation of redeem and unstake requests.
 
@@ -99,23 +101,22 @@ mosaic setup-redeem-pool 12346 500 http://localhost:40500 0x00000000000000000000
  **3. Deploy subgraphs**: Origin and auxiliary subgraphs are needed for facilitator executable. Each command will print the subgraph urls. Keep a `copy of subgraph urls` as it will be required at facilitator-init step. 
  Below commands will deploy origin and auxiliary subgraph. 
 
-*Origin subgraph*: Below command will deploy origin subgraph. 
+*Deploy origin subgraph*: Below command will deploy origin subgraph. 
 ```
 mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> origin <origin-graph-admin-url> <origin-graph-ipfs-url> 
 
 ```
 **Note:** `<origin-graph-admin-url>` and `<origin-graph-ipfs-url>` was displayed while starting origin chain.
 
-*Auxiliary subgraph*: Below command will deploy auxiliary sugraph.
+*Deploy auxiliary subgraph*: Below command will deploy auxiliary sugraph.
 
 ```
 mosaic subgraph <origin-chain-identifier> <auxiliary-chain-identifier> auxiliary <aux-graph-admin-url> <aux-graph-ipfs-url> 
 
 ```
-
 **Note:** `<aux-graph-admin-url>` and `<aux-graph-ipfs-url>` was displayed while starting auxiliary chain.
 
-By default subgraph command deploys subgraph for OST gateways, optionally it also accepts `--mosaic-config`, `--gateway-config` and `--gateway-address` option to deploy subgraph for other gateways. 
+By default subgraph command deploys subgraph for OST gateways. optionally it also accepts `--mosaic-config`, `--gateway-config` and `--gateway-address` option to deploy subgraph for other gateways. 
 
 Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config) to locate Mosaic config.
 Refer [here](https://github.com/mosaicdao/mosaic-chains#gateway-config) to locate Gateway config.
@@ -130,7 +131,7 @@ facilitator init --mosaic-config <mosaic-config> --aux-chain-id <aux-chain-id> -
 
 ```
 
-* Replace `<mosaic-config>` with file location. Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config).
+* Replace `<mosaic-config>` with file location. Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config) for details.
 * Replace `<aux-chain-id>` with auxiliary chain id. 
 * Replace `<origin-password>` with the password required to encrypt the worker account of origin chain created with this command. It will be required to unlock worker account while starting facilitator.
 * Replace `<auxiliary-password>` with the password required to encrypt the worker account of auxiliary chain created with this command. It will be required to unlock worker account while starting facilitator.
@@ -152,9 +153,9 @@ Replace <gateway-config> with file location where gateway config is present.
 This command will generate facilitator config file which is needed to start facilitator. `Back up facilitator-config file` as it contains encrypted keys which will own funds.
 
 
-**5. Set ENV variables**: Facilitator init commands create worker keys which are encrypted with password. Enviornment variables need to be set to unlock the encrypted keystore file. 
+**5. Set ENV variables**: Facilitator init command create worker keys which are encrypted with password. Enviornment variables need to be set to unlock the encrypted keystore file. 
 
-Set below env variables after replacing address and password.
+Set below environment variables after replacing address and password.
 ```
 export MOSAIC_ADDRESS_PASSW_<Address>=<origin-password>
 export MOSAIC_ADDRESS_PASSW_<Address>=<auxiliary-password>
@@ -178,7 +179,7 @@ Above variables will also be produced with the output of `facilitator init` comm
    **Gas on auxiliary**: Facilitator also needs to pay for transactions fees on auxiliary chain. For testnet [mosaic faucet](https://github.com/mosaicdao/faucet) can be used to get funds. 
    Alternatively, Simple Token on value chain can also be converted to base token on auxiliary chain in order to pay for gas.
    
-   **Value token for bounty**: Facilitator needs to stake bounty to gateway/co-gateway in order to perform stake & mint and redeem & unstake. `Bounty token on the origin chain for existing mosaic 
+   **Bounty**: Facilitator needs to stake bounty to gateway/co-gateway in order to perform stake & mint and redeem & unstake. `Bounty token on the origin chain for existing mosaic 
    chain is Simple Token and on the auxiliary chain bounty is base token`. 
    
    On testnet, bounty can be funded to workers using [mosaic faucet](https://github.com/mosaicdao/faucet).
@@ -235,14 +236,14 @@ facilitator start <origin-chain-identifier> <aux-chain-id> --facilitator-config 
 * Replace `<origin-chain-identifier>` with name of the origin chain identifier.
 * Replace `<aux-chain-id>` with id of the auxiliary chain identifier. E.g. 1405, 1406, 1407.
 * Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`. Path will be at location `~/.mosaic/<aux-chain-id>/facilitator-config.json`.   
-* Replace `<gateway-config>` with the path to gateway-config.json. Refer [here](https://github.com/mosaicdao/mosaic-chains#gateway-config)
-* Replace `<mosaic-config>` with the path to mosaic-config.json. Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config)
+* Replace `<gateway-config>` with the path to gateway-config.json. Refer [here](https://github.com/mosaicdao/mosaic-chains#gateway-config) for details.
+* Replace `<mosaic-config>` with the path to mosaic-config.json. Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config) for details.
 
 
 Details about facilitator start command can be found in [facilitator start options section](#Facilitator-start-options).
 
 
-## Facilitator start options: 
+## Starting facilitator
 
 Facilitator can be started in below two ways :-
 
@@ -256,7 +257,7 @@ Facilitator can be started in below two ways :-
 	* Replace `<origin-chain-identifier>` with name of the origin chain.
 	* Replace `<aux-chain-id>` with id of the auxiliary chain.
 	* Replace `<facilitator-config>` with the path to facilitator-config.json generated using `facilitator init`.   
-    * Replace `<mosaic-config>` with the path to mosaic.json. Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config)
+    * Replace `<mosaic-config>` with the path to mosaic.json. Refer [here](https://github.com/mosaicdao/mosaic-chains#mosaic-config) for details.
     * It validates `<origin-chain-identifier>` and `<auxiliary-chain>` id's in faciltiator and mosaic configs.
     
 3.  `./facilitator start <origin-chain-identifier> <aux-chain-id>`
