@@ -17,6 +17,7 @@
 
 import os from 'os';
 import path from 'path';
+import * as web3Utils from 'web3-utils';
 
 /**
  * Directory provides operations on strings representing directories.
@@ -42,19 +43,19 @@ export default class Directory {
    * It returns default db file path.
    * @param originChainId Origin chain identifier.
    * @param auxChainId Chain id of the aux chain.
-   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    * @returns It returns file path where db is present.
    */
   public static getDBFilePath(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string,
+    eip20GatewayAddress: string,
   ): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
       originChainId,
       `${auxChainId}`,
-      Directory.getGatewayFolderName(eip20CoGatewayAddress),
+      Directory.getGatewayFolderName(eip20GatewayAddress),
     );
   }
 
@@ -62,18 +63,18 @@ export default class Directory {
    * This returns default facilitator config path
    * @param originChainId Origin chain Identifier.
    * @param auxChainId Auxiliary chain Identifier.
-   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    */
   public static getFacilitatorConfigPath(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string,
+    eip20GatewayAddress: string,
   ): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
       originChainId,
       `${auxChainId}`,
-      Directory.getGatewayFolderName(eip20CoGatewayAddress),
+      Directory.getGatewayFolderName(eip20GatewayAddress),
       Directory.MOSAIC_FACILITATOR_CONFIG,
     );
   }
@@ -84,6 +85,6 @@ export default class Directory {
    * @returns Name of the gateway folder.
    */
   private static getGatewayFolderName(suffix: string): string {
-    return `${Directory.GATEWAY_FOLDER_PREFIX}${suffix}`;
+    return `${Directory.GATEWAY_FOLDER_PREFIX}${web3Utils.toChecksumAddress(suffix)}`;
   }
 }

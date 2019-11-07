@@ -166,12 +166,12 @@ export class FacilitatorConfig {
    * It writes facilitator config object.
    * @param originChainId Origin chain id.
    * @param auxChainId Auxiliary chain id.
-   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    */
   public writeToFacilitatorConfig(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string,
+    eip20GatewayAddress: string,
   ): void {
     const mosaicConfigDir = Directory.getMosaicDirectoryPath();
     const configPath = path.join(
@@ -183,7 +183,7 @@ export class FacilitatorConfig {
     const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
       originChainId,
       auxChainId,
-      eip20CoGatewayAddress,
+      eip20GatewayAddress,
     );
     fs.writeFileSync(
       facilitatorConfigPath,
@@ -195,18 +195,18 @@ export class FacilitatorConfig {
    * This reads facilitator config from the json file and creates FacilitatorConfig object.
    * @param originChainId Origin chain identifier.
    * @param auxChainId Auxiliary chain id.
-   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    * @returns Facilitator config object.
    */
   public static fromChain(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string,
+    eip20GatewayAddress: string,
   ): FacilitatorConfig {
     const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
       originChainId,
       auxChainId,
-      eip20CoGatewayAddress,
+      eip20GatewayAddress,
     );
 
     if (fs.existsSync(facilitatorConfigPath)) {
@@ -246,17 +246,17 @@ export class FacilitatorConfig {
    * This method removes config from default path.
    * @param originChainId Origin chain identifier.
    * @param auxChainId Auxiliary chain Identifier.
-   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    */
   public static remove(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string,
+    eip20GatewayAddress: string,
   ): void {
     const facilitatorConfigPath = Directory.getFacilitatorConfigPath(
       originChainId,
       auxChainId,
-      eip20CoGatewayAddress,
+      eip20GatewayAddress,
     );
     fs.removeSync(facilitatorConfigPath);
   }
@@ -265,7 +265,7 @@ export class FacilitatorConfig {
    * It checks if facilitator config is present for given auxiliary chain id.
    * @param originChainId Origin chain identifier.
    * @param auxChainId Auxiliary chain id.
-   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
+   * @param eip20CoGatewayAddress Gateway address of origin chain.
    * @returns `true` if file is present.
    */
   public static isFacilitatorConfigPresent(

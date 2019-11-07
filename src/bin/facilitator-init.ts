@@ -141,12 +141,12 @@ commander
 
     try {
       if (options.force) {
-        FacilitatorConfig.remove(originChainId, auxChainId, gatewayAddresses.eip20CoGatewayAddress);
+        FacilitatorConfig.remove(originChainId, auxChainId, gatewayAddresses.eip20GatewayAddress);
       } else if (
         FacilitatorConfig.isFacilitatorConfigPresent(
           originChainId!,
           auxChainId,
-          gatewayAddresses!.eip20CoGatewayAddress,
+          gatewayAddresses!.eip20GatewayAddress,
         )
       ) {
         throw new Error('facilitator config already present. use -f option to override the existing facilitator config.');
@@ -155,7 +155,7 @@ commander
       const facilitatorConfig = FacilitatorConfig.fromChain(
         originChainId!,
         auxChainId,
-        gatewayAddresses!.eip20CoGatewayAddress,
+        gatewayAddresses!.eip20GatewayAddress,
       );
 
       facilitatorConfig.originChain = originChainId!;
@@ -167,7 +167,7 @@ commander
         dbPath = DatabaseFileHelper.create(
           originChainId,
           auxChainId,
-          gatewayAddresses!.eip20CoGatewayAddress,
+          gatewayAddresses!.eip20GatewayAddress,
         );
       } else if (DatabaseFileHelper.verify(dbPath)) {
         Logger.info('DB file verified');
@@ -227,12 +227,12 @@ commander
       facilitatorConfig.writeToFacilitatorConfig(
         originChainId,
         auxChainId,
-        gatewayAddresses!.eip20CoGatewayAddress,
+        gatewayAddresses!.eip20GatewayAddress,
       );
       Logger.info('facilitator config file is generated');
       console.log('--------------------------------------------------------------------------------------------------------');
       console.log('Below points to be noted : ');
-      console.log(`1. Facilitator config path is generated at ${Directory.getFacilitatorConfigPath(originChainId, auxChainId, gatewayAddresses!.eip20CoGatewayAddress)}. Back it up as it contains encrypted keys which will own funds.`);
+      console.log(`1. Facilitator config path is generated at ${Directory.getFacilitatorConfigPath(originChainId, auxChainId, gatewayAddresses!.eip20GatewayAddress)}. Back it up as it contains encrypted keys which will own funds.`);
       console.log(`2. Worker address for ${originChainId} (origin) chain is ${facilitatorConfig.chains[originChainId].worker}`);
       console.log(`3. Worker address for ${auxChainId} (auxiliary) chain is ${facilitatorConfig.chains[auxChainId].worker}`);
       console.log(`4. For each stake and mint facilitation requires funds ${eip20GatewayBounty.toString(10)}(wei) of ${config.gatewayAddresses.baseTokenAddress} token for bounty on ${originChainId} chain.`);

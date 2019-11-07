@@ -46,13 +46,13 @@ export default class DatabaseFileHelper {
    * It creates database and returns the database file path.
    * @param originChainId Origin chain id.
    * @param auxChainId chain id of the aux chain.
-   * @param eip20CoGatewayAddress Gateway address of auxiliary chain.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    * @returns Database file path.
    */
   public static create(
     originChainId: string,
     auxChainId: number,
-    eip20CoGatewayAddress: string,
+    eip20GatewayAddress: string,
   ): string {
     if (auxChainId === 0) {
       throw new Error(`invalid auxiliary chain id ${auxChainId}`);
@@ -60,7 +60,7 @@ export default class DatabaseFileHelper {
     const dbPath: string = Directory.getDBFilePath(
       originChainId,
       auxChainId,
-      eip20CoGatewayAddress,
+      eip20GatewayAddress,
     );
     console.log('displaying permissions ');
     execSync(`ls -l`,{stdio: "inherit"});
