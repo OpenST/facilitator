@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 // ----------------------------------------------------------------------------
-
+// TODO: make cogatewayaddress to gateway address
 
 import commander from 'commander';
 import Web3 from 'web3';
