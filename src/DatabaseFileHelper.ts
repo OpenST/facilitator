@@ -21,7 +21,7 @@ import sqlite from 'sqlite3';
 
 import Directory from './Directory';
 import Logger from './Logger';
-import { spawnSync } from 'child_process';
+import { execSync } from 'child_process';
 
 /**
  * It creates db file at the path.
@@ -63,7 +63,8 @@ export default class DatabaseFileHelper {
       eip20CoGatewayAddress,
     );
     console.log('displaying permissions ');
-    spawnSync(`ls -l ${dbPath}`, { stdio: [process.stdout, process.stderr], env: process.env });
+    execSync(`ls -l`,{stdio: "inherit"});
+    // console.log('spawn : ',spawn.output);
     console.log('displaying permissions ');
     fs.ensureDirSync(dbPath);
     const facilitatorConfigDB = path.join(dbPath, `${`${DatabaseFileHelper.DBName}.db`}`);
