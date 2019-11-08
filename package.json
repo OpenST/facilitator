@@ -28,7 +28,7 @@
     "devchain:stop": "bash ./test_integration/devchains.sh stop",
     "devchain:deploySubgraph:baseToken": "bash ./test_integration/scripts/base_token/deploy_subgraph.sh",
     "devchain:deploySubgraph:eip20Token": "bash ./test_integration/scripts/eip20_token/deploy_subgraph.sh",
-    "test:baseToken":"TEST_MODE=baseToken mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts"
+    "test:baseToken": "TEST_MODE=baseToken mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts"
   },
   "repository": {
     "type": "git",
