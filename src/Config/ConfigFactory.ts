@@ -118,8 +118,9 @@ export default class ConfigFactory {
       const facilitator = FacilitatorConfig.fromChain(
         this.originChain!,
         this.auxChainId!,
-        mosaic.auxiliaryChains[this.auxChainId!].contractAddresses.auxiliary.eip20CoGatewayAddress,
+        mosaic.auxiliaryChains[this.auxChainId!].contractAddresses.origin.eip20GatewayAddress,
       );
+      console.log('facilitator :- ',facilitator);
       return new Config(
         GatewayAddresses.fromMosaicConfig(
           mosaic,
