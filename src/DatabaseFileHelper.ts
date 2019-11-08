@@ -62,7 +62,6 @@ export default class DatabaseFileHelper {
       auxChainId,
       eip20GatewayAddress,
     );
-    dbPath = path.join(dbPath, 'facilitator');
     // console.log('displaying permissions ');
     // execSync(`ls -l`,{stdio: "inherit"});
     // // console.log('spawn : ',spawn.output);

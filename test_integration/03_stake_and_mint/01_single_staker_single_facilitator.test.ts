@@ -161,7 +161,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
         utils.getMessageTransferRequest(
           generatedStakeRequestHash,
         );
-
+        console.log('messageTransferRequestDb :- ',messageTransferRequestDb);
         if (messageTransferRequestDb != null) {
           try {
             Utils.assertMessageTransferRequests(messageTransferRequestDb, messageTransferRequest);
