@@ -82,13 +82,13 @@ describe('facilitator init', async (): Promise<void> => {
     const auxChainId = testData.auxChainId;
     const originChain = testData.originChain;
     // Removing facilitator config.
-    const eip20CoGatewayAddress = mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.auxiliary.eip20CoGatewayAddress;
-    fs.removeSync(Directory.getFacilitatorConfigPath(originChain, auxChainId, eip20CoGatewayAddress));
+    const eip20GatewayAddress = mosaicConfig.auxiliaryChains[auxChainId].contractAddresses.origin.eip20GatewayAddress;
+    fs.removeSync(Directory.getFacilitatorConfigPath(originChain, auxChainId, eip20GatewayAddress));
 
     const facilitatorInitScriptPath = helperObject.facilitatorInitScriptPath();
     spawnSync(facilitatorInitScriptPath, { stdio: outputOptions, env: process.env });
 
-    facilitatorConfig = FacilitatorConfig.fromChain(originChain, auxChainId, eip20CoGatewayAddress);
+    facilitatorConfig = FacilitatorConfig.fromChain(originChain, auxChainId, eip20GatewayAddress);
     SharedStorage.setFacilitatorConfig(facilitatorConfig);
 
     assert.strictEqual(
