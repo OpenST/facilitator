@@ -21,7 +21,7 @@ import sqlite from 'sqlite3';
 
 import Directory from './Directory';
 import Logger from './Logger';
-import { execSync } from 'child_process';
+// import { execSync } from 'child_process';
 
 /**
  * It creates db file at the path.
@@ -57,20 +57,21 @@ export default class DatabaseFileHelper {
     if (auxChainId === 0) {
       throw new Error(`invalid auxiliary chain id ${auxChainId}`);
     }
-    const dbPath: string = Directory.getDBFilePath(
+    let dbPath: string = Directory.getDBFilePath(
       originChainId,
       auxChainId,
       eip20GatewayAddress,
     );
-    console.log('displaying permissions ');
-    execSync(`ls -l`,{stdio: "inherit"});
-    // console.log('spawn : ',spawn.output);
-    console.log('displaying permissions /home/travis/.mosaic ');
-    execSync(`ls -l /home/travis/.mosaic`,{stdio: "inherit"});
-    console.log('displaying permissions /home/travis/.mosaic/dev-origin/1000 ');
-    execSync(`ls -l /home/travis/.mosaic/dev-origin/1000`,{stdio: "inherit"});
-    console.log('displaying permissions /home/travis/.mosaic/dev-origin/ ');
-    execSync(`ls -l /home/travis/.mosaic/dev-origin/`,{stdio: "inherit"});
+    dbPath = path.join(dbPath, 'facilitator');
+    // console.log('displaying permissions ');
+    // execSync(`ls -l`,{stdio: "inherit"});
+    // // console.log('spawn : ',spawn.output);
+    // console.log('displaying permissions /home/travis/.mosaic ');
+    // execSync(`ls -l /home/travis/.mosaic`,{stdio: "inherit"});
+    // console.log('displaying permissions /home/travis/.mosaic/dev-origin/1000 ');
+    // execSync(`ls -l /home/travis/.mosaic/dev-origin/1000`,{stdio: "inherit"});
+    // console.log('displaying permissions /home/travis/.mosaic/dev-origin/ ');
+    // execSync(`ls -l /home/travis/.mosaic/dev-origin/`,{stdio: "inherit"});
     fs.ensureDirSync(dbPath);
     const facilitatorConfigDB = path.join(dbPath, `${`${DatabaseFileHelper.DBName}.db`}`);
     new sqlite.Database(facilitatorConfigDB);

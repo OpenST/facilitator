@@ -389,7 +389,7 @@ export default class Utils {
         Directory.getDBFilePath(
           this.originChain,
           this.facilitatorConfig.auxChainId,
-          this.gatewayAddresses.eip20CoGatewayAddress
+          this.gatewayAddresses.eip20GatewayAddress,
         ),
         'mosaic_facilitator.db',
       ),

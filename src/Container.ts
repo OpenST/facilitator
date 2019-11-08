@@ -22,6 +22,8 @@ import Services from './services/Services';
 import Subscriptions from './subscriptions/Subscriptions';
 import TransactionHandler from './TransactionHandler';
 import { Config } from './Config/Config';
+import fs from 'fs-extra';
+import { execSync } from 'child_process';
 
 export default class Container {
   /**
@@ -33,6 +35,13 @@ export default class Container {
     config: Config,
 
   ): Promise<Facilitator> {
+    console.log('in container : - ',config.facilitator.database.path);
+    console.log('fs :- ',fs.existsSync(config.facilitator.database.path!));
+    execSync(`ls -l ${config.facilitator.database.path!}`,{stdio: "inherit"});
+    execSync(`chmod -R 777 ${config.facilitator.database.path!}`);
+    execSync(`chmod -R 777 /Users/gulshanvasnani/.mosaic/dev-origin/1000/gateway-0xA7f056b1320fE619571849f138Cd1Ae2f2e64179`);
+    execSync(`ls -l ${config.facilitator.database.path!}`,{stdio: "inherit"});
+
     const repositories = await Repositories.create(config.facilitator.database.path);
     const handler = Handlers.create(
       repositories,
