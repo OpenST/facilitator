@@ -9,8 +9,9 @@ services:
 env:
   global:
     - DOCKER_COMPOSE_VERSION=1.23.2
-    - USER=travis
   jobs:
+    - TEST_SUITE="test:unit"
+    - TEST_SUITE="test:package"
     - TEST_SUITE="test:integration:baseToken"
     - TEST_SUITE="test:integration:eip20Token"
 before_install:
@@ -19,11 +20,13 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - sudo apt-get install libsecret-1-dev
-#  - sudo usermod -a -G root travis
-#  - sudo chown -R travis:travis /home/travis/
 branches:
   only:
-  - change_facilitator_init_directory
+  - master
+  - develop
+  - /^feature\/.*/
+  - /^release-.*/
+  - /^hotfix-.*/
 notifications:
   email:
     recipients:
@@ -33,71 +36,6 @@ notifications:
 install:
   - npm ci
 script:
-  - ls -la
-  - sudo usermod -g root travis
-  - groups travis
-  - id
-#  - sudo chown -R travis:travis /home/travis/
-  - ls -l /home/travis
-#  - sudo env PATH=$PATH npm run test:integration:baseToken # try breaking the command
-  - sudo $(which npm) run test:integration:baseToken
-#  - sudo env PATH=$PATH npm run test:integration:baseToken # if this is used then mosaic subgraph deployment fails due to permission issues
+  - npm run ${TEST_SUITE}
 after_failure:
   - cat /home/travis/.npm/_logs/*-debug.log
-
-
-
-
-
-dist: trusty
-language: node_js
-node_js:
-  - "11"
-cache: npm
-sudo: required
-services:
-  - docker
-env:
-  global:
-    - DOCKER_COMPOSE_VERSION=1.23.2
-    - USER=travis
-  jobs:
-    - TEST_SUITE="devchain:start && test:integration:baseToken"
-    - TEST_SUITE="test:integration:eip20Token"
-before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - sudo chown -R travis:travis /usr/local/bin
-  - sudo apt-get install libsecret-1-dev
-#  - sudo chown -R travis:travis /home/travis/
-branches:
-  only:
-  - change_facilitator_init_directory
-notifications:
-  email:
-    recipients:
-      - ci.report@ost.com
-    on_success: always
-    on_failure: always
-install:
-  - npm ci
-script:
-  - echo $PATH
-  - sudo usermod -a -G root travis
-  - groups travis
-#  - sudo chown -R travis:travis /home/travis/
-  - ls -l /home/travis
-#  - sudo env PATH=$PATH npm run test:integration:baseToken # try breaking the command
-#  - npm run test:integration:baseToken
-#  - sudo env PATH=$PATH npm run test:integration:baseToken # if this is used then mosaic subgraph deployment fails due to permission issues
-  - npm run devchain:start
-#  - sudo chown -R travis:travis /home/travis/
-  - ls -la /home/travis/
-  - npm run devchain:deploySubgraph:baseToken
-  - npm run test:baseToken
-  - npm run devchain:stop
-after_failure:
-  - cat /home/travis/.npm/_logs/*-debug.log
-

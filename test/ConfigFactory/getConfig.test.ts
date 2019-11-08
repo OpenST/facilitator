@@ -396,7 +396,7 @@ describe('ConfigFactory.getConfig()', () => {
     const configObj = fs.getConfig();
 
     SpyAssert.assert(mosaicSpy, 1, [[mosaicConfigPath]]);
-    SpyAssert.assert(facilitatorSpy, 1, [[originChain, auxChain, eip20CoGatewayAddress]]);
+    SpyAssert.assert(facilitatorSpy, 1, [[originChain, auxChain, eip20GatewayAddress]]);
     SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain]]);
     assert.strictEqual(
       configObj.facilitator,
@@ -423,7 +423,7 @@ describe('ConfigFactory.getConfig()', () => {
     const config: Config = fs.getConfig();
 
     SpyAssert.assert(mosaicSpy, 1, [[originChain]]);
-    SpyAssert.assert(facilitatorSpy, 1, [[originChain, auxChain, eip20CoGatewayAddress]]);
+    SpyAssert.assert(facilitatorSpy, 1, [[originChain, auxChain, eip20GatewayAddress]]);
     SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain]]);
     assert.strictEqual(
       config.gatewayAddresses,
@@ -603,7 +603,7 @@ describe('ConfigFactory.getConfig()', () => {
     console.log('gatewayAddresses :- ',gatewayAddresses);
     const config: Config = fs.getConfig();
 
-    SpyAssert.assert(facilitatorFromChainSpy, 1, [[originChain, auxChain, eip20CoGatewayAddress]]);
+    SpyAssert.assert(facilitatorFromChainSpy, 1, [[originChain, auxChain, eip20GatewayAddress]]);
     SpyAssert.assert(gatewayConfigFromFileSpy, 1, [[gatewayConfigPath]]);
     SpyAssert.assert(fromGatewayConfigSpy, 1, [[stubGatewayConfig]]);
 
