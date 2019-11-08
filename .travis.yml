@@ -10,10 +10,7 @@ env:
   global:
     - DOCKER_COMPOSE_VERSION=1.23.2
   jobs:
-    - TEST_SUITE="test:unit"
-    - TEST_SUITE="test:package"
     - TEST_SUITE="test:integration:baseToken"
-    - TEST_SUITE="test:integration:eip20Token"
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
