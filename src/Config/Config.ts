@@ -208,7 +208,6 @@ export class FacilitatorConfig {
       auxChainId,
       eip20GatewayAddress,
     );
-    console.log('facilitatorConfigPath :- ',facilitatorConfigPath);
     if (fs.existsSync(facilitatorConfigPath)) {
       return this.readConfig(facilitatorConfigPath);
     }

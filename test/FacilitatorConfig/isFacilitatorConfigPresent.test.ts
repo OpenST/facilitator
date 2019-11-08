@@ -40,7 +40,6 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
 
   beforeEach(async (): Promise<void> => {
-
     facilitatorConfigPathSpy = sinon.stub(
       Directory,
       'getFacilitatorConfigPath',
@@ -57,7 +56,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(
       originChain,
       auxChainId,
-      dummyGatewayAddress
+      dummyGatewayAddress,
     );
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(facilitatorConfigPathSpy, 1, [[originChain, auxChainId, dummyGatewayAddress]]);
@@ -74,7 +73,7 @@ describe('FacilitatorConfig.isFacilitatorConfigPresent()', (): void => {
     const status: boolean = FacilitatorConfig.isFacilitatorConfigPresent(
       originChain,
       auxChainId,
-      dummyGatewayAddress
+      dummyGatewayAddress,
     );
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);

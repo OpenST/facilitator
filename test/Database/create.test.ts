@@ -37,7 +37,7 @@ describe('Database.create()', (): void => {
     const auxChainId = 0;
     assert.throws(
       (): string => DBFileHelper.create(originChainId, auxChainId, dummyGatewayAddress),
-      `invalid auxiliary chain id ${auxChainId}`
+      `invalid auxiliary chain id ${auxChainId}`,
     );
   });
 

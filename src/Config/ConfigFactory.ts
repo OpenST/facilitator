@@ -120,7 +120,7 @@ export default class ConfigFactory {
         this.auxChainId!,
         mosaic.auxiliaryChains[this.auxChainId!].contractAddresses.origin.eip20GatewayAddress,
       );
-      console.log('facilitator :- ',facilitator);
+
       return new Config(
         GatewayAddresses.fromMosaicConfig(
           mosaic,

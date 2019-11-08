@@ -46,9 +46,9 @@ describe('ConfigFactory.getConfig()', () => {
         {
           chain: originChain,
           contractAddresses: {
-          valueTokenAddress: valueTokenAddress,
-          stakePoolAddress: stakePoolAddress,
-          }
+            valueTokenAddress,
+            stakePoolAddress,
+          },
         },
       auxiliaryChains:
         {
@@ -56,22 +56,22 @@ describe('ConfigFactory.getConfig()', () => {
             {
               chainId: auxChain,
               contractAddresses: {
-              auxiliary: {
-                eip20CoGatewayAddress: eip20CoGatewayAddress,
-                anchorAddress: anchorAddress,
-                anchorOrganizationAddress: anchorOrganizationAddress,
-                redeemPoolAddress: redeemPoolAddress,
-                utilityTokenAddress: utilityTokenAddress,
-                coGatewayOrganizationAddress: coGatewayOrganizationAddress,
-              },
-                origin: {
-                  baseTokenAddress: baseTokenAddress,
-                  anchorAddress: anchorAddress,
-                  anchorOrganizationAddress: anchorOrganizationAddress,
-                  eip20GatewayAddress: eip20GatewayAddress,
-                  gatewayOrganizationAddress: gatewayOrganizationAddress,
+                auxiliary: {
+                  eip20CoGatewayAddress,
+                  anchorAddress,
+                  anchorOrganizationAddress,
+                  redeemPoolAddress,
+                  utilityTokenAddress,
+                  coGatewayOrganizationAddress,
                 },
-            },
+                origin: {
+                  baseTokenAddress,
+                  anchorAddress,
+                  anchorOrganizationAddress,
+                  eip20GatewayAddress,
+                  gatewayOrganizationAddress,
+                },
+              },
             },
         },
     };
@@ -419,7 +419,7 @@ describe('ConfigFactory.getConfig()', () => {
     const gatewayAddressesSpy = spyGatewayAddressesFromMosaicConfig(gatewayAddresses);
 
     const fs: ConfigFactory = new ConfigFactory(originChain, auxChain, '', '');
-    console.log('mosaic:- ',mosaic);
+
     const config: Config = fs.getConfig();
 
     SpyAssert.assert(mosaicSpy, 1, [[originChain]]);
@@ -600,7 +600,7 @@ describe('ConfigFactory.getConfig()', () => {
       undefined,
       gatewayConfigPath,
     );
-    console.log('gatewayAddresses :- ',gatewayAddresses);
+
     const config: Config = fs.getConfig();
 
     SpyAssert.assert(facilitatorFromChainSpy, 1, [[originChain, auxChain, eip20GatewayAddress]]);

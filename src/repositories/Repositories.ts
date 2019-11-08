@@ -53,11 +53,6 @@ export default class Repositories {
     });
 
     const db = new Repositories(sequelize);
-    await sequelize.authenticate().then(() => {
-      console.log('sequelize authenticated');
-    }).catch(err => {
-      console.error('Unable to connect to the database:', err);
-    });
     await sequelize.sync();
 
     return db;

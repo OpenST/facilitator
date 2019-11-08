@@ -41,7 +41,6 @@ describe('facilitator init', async (): Promise<void> => {
           GatewayConfig.fromFile(gatewayConfigPath),
         ),
       );
-      console.log('SharedStorage.getGatewayAddresses :- ',SharedStorage.getGatewayAddresses());
       break;
     default:
       Logger.error('unsupported test mode for integration test: ', testMode);
@@ -72,7 +71,6 @@ describe('facilitator init', async (): Promise<void> => {
     process.env.AUXILIARY_CHAIN_ID = testData.auxChainId;
     process.env.MOSAIC_CONFIG_PATH = mosaicConfigPath;
     process.env.GATEWAY_CONFIG_PATH = gatewayConfigPath;
-    console.log('gatewayConfigPath in setenv vars :- ',gatewayConfigPath);
     process.env.ORIGIN_CHAIN = testData.originChain;
   }
 
@@ -84,8 +82,7 @@ describe('facilitator init', async (): Promise<void> => {
     const auxChainId = testData.auxChainId;
     const originChain = testData.originChain;
     // Removing facilitator config.
-    const eip20GatewayAddress = SharedStorage.getGatewayAddresses().eip20GatewayAddress;
-    console.log('eip20GatewayAddress :- ',eip20GatewayAddress);
+    const { eip20GatewayAddress } = SharedStorage.getGatewayAddresses();
     fs.removeSync(Directory.getFacilitatorConfigPath(originChain, auxChainId, eip20GatewayAddress));
 
     const facilitatorInitScriptPath = helperObject.facilitatorInitScriptPath();

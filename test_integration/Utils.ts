@@ -57,7 +57,7 @@ export default class Utils {
     this.originChain = this.facilitatorConfig.originChain;
     this.originWeb3 = Utils.getWeb3Connection(this.facilitatorConfig.chains[this.originChain].nodeRpc);
     this.auxiliaryWeb3 = Utils.getWeb3Connection(
-      this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].nodeRpc
+      this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].nodeRpc,
     );
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;

@@ -16,7 +16,7 @@ describe('facilitator stop', async (): Promise<void> => {
     fs.removeSync(Directory.getFacilitatorConfigPath(
       testData.originChain,
       testData.auxChainId,
-      SharedStorage.getGatewayAddresses().eip20GatewayAddress),
-    );
+      SharedStorage.getGatewayAddresses().eip20GatewayAddress,
+    ));
   });
 });

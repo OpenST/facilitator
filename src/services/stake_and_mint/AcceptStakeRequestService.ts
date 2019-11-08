@@ -108,12 +108,10 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
       stakeRequest, secret, hashLock,
     );
 
-    console.log('storing in acceptstakerequest');
     await this.updateMessageHash(
       stakeRequest,
       messageHash,
     );
-    console.log('after storing in acceptstakerequest');
   }
 
   private async approveForBounty(stakeRequest: MessageTransferRequest) {
