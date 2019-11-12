@@ -1,6 +1,5 @@
 import Web3 from 'web3';
 import * as web3Utils from 'web3-utils';
-import * as path from 'path';
 import BigNumber from 'bignumber.js';
 import { interacts } from '@openst/mosaic-contracts';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
@@ -15,7 +14,6 @@ import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import * as EthUtils from 'ethereumjs-util';
 import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
 import Repositories from '../src/repositories/Repositories';
-import Directory from '../src/Directory';
 import assert from '../test/test_utils/assert';
 import { FacilitatorConfig } from '../src/Config/Config';
 import Message from '../src/models/Message';
@@ -59,7 +57,7 @@ export default class Utils {
     this.originChain = this.facilitatorConfig.originChain;
     this.originWeb3 = Utils.getWeb3Connection(this.facilitatorConfig.chains[this.originChain].nodeRpc);
     this.auxiliaryWeb3 = Utils.getWeb3Connection(
-      this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].nodeRpc
+      this.facilitatorConfig.chains[this.facilitatorConfig.auxChainId].nodeRpc,
     );
     this.originWeb3.transactionConfirmationBlocks = 1;
     this.auxiliaryWeb3.transactionConfirmationBlocks = 1;
@@ -385,10 +383,7 @@ export default class Utils {
    */
   private async getRepositories(): Promise<Repositories> {
     return Repositories.create(
-      path.join(
-        Directory.getDBFilePath(this.facilitatorConfig.auxChainId),
-        'mosaic_facilitator.db',
-      ),
+      this.facilitatorConfig.database.path,
     );
   }
 

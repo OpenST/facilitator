@@ -25,7 +25,9 @@ import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
 describe('FacilitatorConfig.fromChain()', () => {
-  const chain = 1000;
+  const auxiliaryChain = 1000;
+  const originChain = 'dev-origin';
+  const dummyGatewayAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';
   const facilitatorDBPath = 'test/database/mosaic_facilitator.db';
   const config = `{"database":{"path":"${facilitatorDBPath}"}}`;
@@ -85,11 +87,24 @@ describe('FacilitatorConfig.fromChain()', () => {
     );
     assert.strictEqual(
       spy.args[1][1],
-      chain.toString(),
-      'Chain name is incorrect',
+      originChain,
+      'Origin chain name is incorrect',
     );
+
     assert.strictEqual(
       spy.args[1][2],
+      auxiliaryChain.toString(10),
+      'Auxiliary chain name is incorrect',
+    );
+
+    assert.strictEqual(
+      spy.args[1][3],
+      `gateway-${dummyGatewayAddress}`,
+      'Gateway folder name is incorrect',
+    );
+
+    assert.strictEqual(
+      spy.args[1][4],
       'facilitator-config.json',
       'Facilitator config file name is incorrect',
     );
@@ -115,7 +130,11 @@ describe('FacilitatorConfig.fromChain()', () => {
       sinon.fake.returns(true),
     );
 
-    const facilitatorConfig = FacilitatorConfig.fromChain(chain);
+    const facilitatorConfig = FacilitatorConfig.fromChain(
+      originChain,
+      auxiliaryChain,
+      dummyGatewayAddress,
+    );
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(facilitatorSpy, 1, [[JSON.parse(config)]]);
@@ -132,7 +151,11 @@ describe('FacilitatorConfig.fromChain()', () => {
   it('should fail when facilitator file path doesn\'t exists', () => {
     const fsSpy = spyFsModule(false);
 
-    const facilitatorConfig = FacilitatorConfig.fromChain(chain);
+    const facilitatorConfig = FacilitatorConfig.fromChain(
+      originChain,
+      auxiliaryChain,
+      dummyGatewayAddress,
+    );
 
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
 
@@ -154,7 +177,10 @@ describe('FacilitatorConfig.fromChain()', () => {
       sinon.fake.throws('invalid facilitator config'),
     );
 
-    assert.throws(() => FacilitatorConfig.fromChain(chain), 'invalid facilitator config');
+    assert.throws(
+      () => FacilitatorConfig.fromChain(originChain, auxiliaryChain, dummyGatewayAddress),
+      'invalid facilitator config',
+    );
     SpyAssert.assert(fsSpy, 1, [[facilitatorConfigPath]]);
     SpyAssert.assert(facilitatorSpy, 1, [[JSON.parse(config)]]);
     SpyAssert.assert(utilsSpy, 1, [[facilitatorConfigPath]]);

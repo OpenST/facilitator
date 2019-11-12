@@ -26,11 +26,12 @@ import GatewayAddresses from '../../src/Config/GatewayAddresses';
 describe('Config.fromChain()', () => {
   const originChain = '2';
   const auxChain = 3;
+  const dummyGatewayAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
 
   it('should pass with valid arguments', () => {
     const mosaic = sinon.createStubInstance(MosaicConfig);
     const gatewayAddresses = sinon.createStubInstance(GatewayAddresses);
-    const facilitator = FacilitatorConfig.fromChain(auxChain);
+    const facilitator = FacilitatorConfig.fromChain(originChain, auxChain, dummyGatewayAddress);
     facilitator.auxChainId = auxChain;
 
     const mosaicConfigSpy = sinon.replace(
@@ -51,9 +52,9 @@ describe('Config.fromChain()', () => {
       sinon.fake.returns(facilitator),
     );
 
-    const config = Config.fromChain(originChain, auxChain);
+    const config = Config.fromChain(originChain, auxChain, dummyGatewayAddress);
     SpyAssert.assert(mosaicConfigSpy, 1, [[originChain]]);
-    SpyAssert.assert(facilitatorConfigSpy, 1, [[auxChain]]);
+    SpyAssert.assert(facilitatorConfigSpy, 1, [[originChain, auxChain, dummyGatewayAddress]]);
     SpyAssert.assert(gatewayAddressesSpy, 1, [[mosaic, auxChain]]);
     assert.strictEqual(
       config.facilitator,

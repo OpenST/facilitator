@@ -14,7 +14,6 @@
 //
 // ----------------------------------------------------------------------------
 
-
 import commander from 'commander';
 import Web3 from 'web3';
 
@@ -109,44 +108,54 @@ commander
       process.exit(1);
     }
 
+    // Get origin chain id.
+    const auxChainId = parseInt(options.auxChainId, 10);
+    let originChainId: string | undefined;
+    let gatewayAddresses: GatewayAddresses | undefined;
+    if (options.mosaicConfig !== undefined) {
+      (
+        {
+          originChainId,
+          gatewayAddresses,
+        } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
+      );
+    }
+
+    if (options.gatewayConfig !== undefined) {
+      (
+        {
+          originChainId,
+          gatewayAddresses,
+        } = FacilitatorInit.getFromGatewayConfig(auxChainId, options.gatewayConfig)
+      );
+    }
+
+    if (!originChainId) {
+      throw new Error(`Invalid origin chain id ${originChainId} in config`);
+    }
+
+    if (!gatewayAddresses) {
+      throw new Error(`Gateway addresses cannot be ${gatewayAddresses}`);
+    }
+
     try {
-      const auxChainId = parseInt(options.auxChainId);
       if (options.force) {
-        FacilitatorConfig.remove(auxChainId);
-      } else if (FacilitatorConfig.isFacilitatorConfigPresent(auxChainId)) {
+        FacilitatorConfig.remove(originChainId, auxChainId, gatewayAddresses.eip20GatewayAddress);
+      } else if (
+        FacilitatorConfig.isFacilitatorConfigPresent(
+          originChainId!,
+          auxChainId,
+          gatewayAddresses!.eip20GatewayAddress,
+        )
+      ) {
         throw new Error('facilitator config already present. use -f option to override the existing facilitator config.');
       }
-      Logger.info('creating facilitator config as it is not present');
-      const facilitatorConfig = FacilitatorConfig.fromChain(auxChainId);
-
-      // Get origin chain id.
-      let originChainId: string | undefined;
-      let gatewayAddresses: GatewayAddresses | undefined;
-      if (options.mosaicConfig !== undefined) {
-        (
-          {
-            originChainId,
-            gatewayAddresses,
-          } = FacilitatorInit.getFromMosaicConfig(auxChainId, options.mosaicConfig)
-        );
-      }
-
-      if (options.gatewayConfig !== undefined) {
-        (
-          {
-            originChainId,
-            gatewayAddresses,
-          } = FacilitatorInit.getFromGatewayConfig(auxChainId, options.gatewayConfig)
-        );
-      }
-
-      if (!originChainId) {
-        throw new Error(`Invalid origin chain id ${originChainId} in config`);
-      }
-
-      if (!gatewayAddresses) {
-        throw new Error(`Gateway addresses cannot be ${gatewayAddresses}`);
-      }
+      Logger.info('creating facilitator config');
+      const facilitatorConfig = FacilitatorConfig.fromChain(
+        originChainId!,
+        auxChainId,
+        gatewayAddresses!.eip20GatewayAddress,
+      );
 
       facilitatorConfig.originChain = originChainId!;
       facilitatorConfig.auxChainId = auxChainId;
@@ -154,7 +163,11 @@ commander
       let { dbPath } = options;
       if (dbPath === undefined || dbPath === null) {
         Logger.info('database path is not provided');
-        dbPath = DatabaseFileHelper.create(auxChainId);
+        dbPath = DatabaseFileHelper.create(
+          originChainId,
+          auxChainId,
+          gatewayAddresses!.eip20GatewayAddress,
+        );
       } else if (DatabaseFileHelper.verify(dbPath)) {
         Logger.info('DB file verified');
       } else {
@@ -210,11 +223,15 @@ commander
         eip20CoGatewayBounty,
       } = await seedData.populateDb();
 
-      facilitatorConfig.writeToFacilitatorConfig(auxChainId);
+      facilitatorConfig.writeToFacilitatorConfig(
+        originChainId,
+        auxChainId,
+        gatewayAddresses!.eip20GatewayAddress,
+      );
       Logger.info('facilitator config file is generated');
       console.log('--------------------------------------------------------------------------------------------------------');
       console.log('Below points to be noted : ');
-      console.log(`1. Facilitator config path is generated at ${Directory.getFacilitatorConfigPath(auxChainId)}. Back it up as it contains encrypted keys which will own funds.`);
+      console.log(`1. Facilitator config path is generated at ${Directory.getFacilitatorConfigPath(originChainId, auxChainId, gatewayAddresses!.eip20GatewayAddress)}. Back it up as it contains encrypted keys which will own funds.`);
       console.log(`2. Worker address for ${originChainId} (origin) chain is ${facilitatorConfig.chains[originChainId].worker}`);
       console.log(`3. Worker address for ${auxChainId} (auxiliary) chain is ${facilitatorConfig.chains[auxChainId].worker}`);
       console.log(`4. For each stake and mint facilitation requires funds ${eip20GatewayBounty.toString(10)}(wei) of ${config.gatewayAddresses.baseTokenAddress} token for bounty on ${originChainId} chain.`);
@@ -222,6 +239,9 @@ commander
       console.log('6. Set below environment variables : ');
       console.log(`\t i. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[originChainId].worker}=${originPassword}`);
       console.log(`\tii. ${ENV_WORKER_PASSWORD_PREFIX + facilitatorConfig.chains[auxChainId].worker}=${auxiliaryPassword} \n`);
+      // Explicitly exit process as web3 on websocket holds the connection
+      // and let app to close.
+      process.exit(0);
     } catch (e) {
       Logger.error(e);
       process.exit(1);

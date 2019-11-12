@@ -39,4 +39,3 @@ script:
   - npm run ${TEST_SUITE}
 after_failure:
   - cat /home/travis/.npm/_logs/*-debug.log
-

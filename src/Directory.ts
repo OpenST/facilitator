@@ -17,6 +17,7 @@
 
 import os from 'os';
 import path from 'path';
+import * as web3Utils from 'web3-utils';
 
 /**
  * Directory provides operations on strings representing directories.
@@ -24,6 +25,8 @@ import path from 'path';
 export default class Directory {
   // Facilitator config file name.
   public static MOSAIC_FACILITATOR_CONFIG = 'facilitator-config.json';
+
+  public static GATEWAY_FOLDER_PREFIX = 'gateway-';
 
   /**
    * Provides path to mosaic directory
@@ -38,26 +41,50 @@ export default class Directory {
 
   /**
    * It returns default db file path.
+   * @param originChainId Origin chain identifier.
    * @param auxChainId Chain id of the aux chain.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    * @returns It returns file path where db is present.
    */
-  public static getDBFilePath(auxChainId: number): string {
+  public static getDBFilePath(
+    originChainId: string,
+    auxChainId: number,
+    eip20GatewayAddress: string,
+  ): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
+      originChainId,
       `${auxChainId}`,
-      'facilitator',
+      Directory.getGatewayFolderName(eip20GatewayAddress),
     );
   }
 
   /**
    * This returns default facilitator config path
-   * @param auxChainId Chain Identifier.
+   * @param originChainId Origin chain Identifier.
+   * @param auxChainId Auxiliary chain Identifier.
+   * @param eip20GatewayAddress Gateway address of origin chain.
    */
-  public static getFacilitatorConfigPath(auxChainId: number): string {
+  public static getFacilitatorConfigPath(
+    originChainId: string,
+    auxChainId: number,
+    eip20GatewayAddress: string,
+  ): string {
     return path.join(
       Directory.getMosaicDirectoryPath(),
+      originChainId,
       `${auxChainId}`,
+      Directory.getGatewayFolderName(eip20GatewayAddress),
       Directory.MOSAIC_FACILITATOR_CONFIG,
     );
+  }
+
+  /**
+   * It prepends `GATEWAY_FOLDER_PREFIX` prefix to the input parameter.
+   * @param suffix Suffix for the folder creation.
+   * @returns Name of the gateway folder.
+   */
+  private static getGatewayFolderName(suffix: string): string {
+    return `${Directory.GATEWAY_FOLDER_PREFIX}${web3Utils.toChecksumAddress(suffix)}`;
   }
 }
