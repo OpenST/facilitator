@@ -18,7 +18,7 @@ Mosaic facilitator is an executable which enables atomic token transfers across 
    For testnet, mosaic faucet can be used to get Simple Token on origin chain and gas on auxiliary chain. Documentation about faucet is available [here](https://github.com/mosaicdao/faucet)   
 7. `Simple Token balance on origin chain` is required to stake bounty in the gateway or to mint gas for auxiliary chain. `gas on auxiliary chain` is required to stake bounty for redeem 
    and unstake request.
-8. Mosaic commands need a signer for signing transactions. Refer [here](https://github.com/mosaicdao/mosaic-chains#signing-of-transaction) for setting up signer for geth and parity node.     
+8. Mosaic commands need a signer for signing transactions. Refer [signing of transaction](https://github.com/mosaicdao/mosaic-chains#signing-of-transaction) section for setting up signer for geth and parity node.      
 
 ## Setup facilitator
  
