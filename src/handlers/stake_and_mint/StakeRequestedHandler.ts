@@ -71,7 +71,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
-    Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
+    Logger.info(`Persisting stake request records: ${transactions.length} for gateway: ${this.gatewayAddress}`);
     const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
         transaction.gateway,

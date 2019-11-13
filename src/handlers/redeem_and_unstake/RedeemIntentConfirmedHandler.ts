@@ -46,7 +46,7 @@ export default class RedeemIntentConfirmedHandler extends ContractEntityHandler<
    */
   public async persist(transactions: any[]): Promise<Message[]> {
     let message: Message | null;
-    Logger.debug('Persisting Stake intent confirm records');
+    Logger.debug(`Persisting Redeem intent confirm records: ${transactions.length}`);
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         const messageHash = transaction._messageHash;

@@ -70,7 +70,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
-    Logger.info(`Persisting redeem request records for cogateway: ${this.cogatewayAddress}`);
+    Logger.info(`Persisting redeem request records: ${transactions.length} for cogateway: ${this.cogatewayAddress}`);
     const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.cogatewayAddress === Utils.toChecksumAddress(
         transaction.cogateway,

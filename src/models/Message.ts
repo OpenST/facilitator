@@ -138,7 +138,7 @@ export default class Message extends Comparable<Message> {
   public isValidSecret(): boolean {
     assert(this.secret !== undefined);
 
-    if (web3utils.keccak256(this.secret as string) === this.hashLock) {
+    if (this.secret && web3utils.keccak256(this.secret as string) === this.hashLock) {
       return true;
     }
     return false;

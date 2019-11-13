@@ -46,6 +46,7 @@ export default class UnstakeProgressedHandler extends ContractEntityHandler<Mess
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
+    Logger.debug(`Persisting unstake progress records: ${transactions.length}`);
     const messages: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);

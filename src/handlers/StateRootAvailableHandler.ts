@@ -47,7 +47,7 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
    * @param transactions Bulk transactions.
    */
   public async persist(transactions: any[]): Promise<AuxiliaryChain[]> {
-    Logger.debug('Started persisting Anchor records');
+    Logger.debug(`Started persisting Anchor records: ${transactions.length}`);
     const chainRecord = await this.auxiliaryChainRepository.get(this.auxiliaryChainID);
     let hasChanged = false;
     if (chainRecord === null) {

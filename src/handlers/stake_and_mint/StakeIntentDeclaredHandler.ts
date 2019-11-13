@@ -55,7 +55,7 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Started persisting Stake intent declared records');
+    Logger.debug(`Persisting Stake intent declared records: ${transactions.length}`);
     const stakeRequestModels: MessageTransferRequest[] = [];
     const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
