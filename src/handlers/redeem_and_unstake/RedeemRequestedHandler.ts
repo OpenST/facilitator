@@ -93,7 +93,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
             Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
             // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
-            redeemRequest.messageHash = '';
+            redeemRequest.messageHash = null!;
             return redeemRequest;
           }
           return new MessageTransferRequest(

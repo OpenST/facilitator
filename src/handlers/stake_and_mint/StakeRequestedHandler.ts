@@ -94,7 +94,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
             Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
             // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
-            stakeRequest.messageHash = '';
+            stakeRequest.messageHash = null!;
             return stakeRequest;
           }
           return new MessageTransferRequest(
