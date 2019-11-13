@@ -78,6 +78,7 @@ async function requestStake(
 
   console.log('Request stake done with transaction hash: ', receipt.transactionHash);
   console.log(`🤝 Facilitators are moving your tokens to aux chain. Check beneficiary ${stakeRequestParams.beneficiary} balance on aux chain after few minutes.`);
+  console.log(`Check beneficiary account on view https://view.mosaicdao.org/address/${stakeRequestParams.beneficiary}/transactions`);
 }
 
 export default requestStake;

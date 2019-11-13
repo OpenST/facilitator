@@ -14,6 +14,7 @@ async function readInput() {
     {
       type: 'string',
       name: 'web3EndPoint',
+      default: 'https://rpc.slock.it/goerli',
       message: 'Enter origin chain(goerli) end point:',
     },
     {

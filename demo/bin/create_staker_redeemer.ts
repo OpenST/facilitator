@@ -60,7 +60,7 @@ async function createActor() {
   fs.writeFileSync(filePath, JSON.stringify(encrypedAccount, null, '    '));
   console.log(`${answer.actor} address  ${stakerAccount.address}`);
   console.log(`Encrypted key store path: ${filePath}`);
-  console.log(`👉 ${answer.actor} must have fund to perform transactions. Use public faucet for funding on value chain(goerli). Redeemer account is already funded with mosaic faucet.`);
+  console.log(`👉 ${answer.actor} must have fund to perform transactions. Use public faucet ${'https://goerli-faucet.slock.it/'} for funding on value chain(goerli). Redeemer account is already funded with mosaic faucet.`);
 }
 
 

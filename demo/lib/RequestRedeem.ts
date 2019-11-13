@@ -95,6 +95,7 @@ async function requestRedeem(
 
   console.log('Request redeem done with transaction hash: ', requestRedeemReceipt.transactionHash);
   console.log(`🤝 Facilitators are moving your tokens to origin chain. Check beneficiary ${requestRequestParams.beneficiary} balance on origin chain after few minutes.`);
+  console.log(`Check beneficiary account on etherscan https://goerli.etherscan.io/address/${requestRequestParams.beneficiary}`);
 }
 
 export default requestRedeem;
