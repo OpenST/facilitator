@@ -27,7 +27,10 @@
     "devchain:start": "bash ./test_integration/devchains.sh start",
     "devchain:stop": "bash ./test_integration/devchains.sh stop",
     "devchain:deploySubgraph:baseToken": "bash ./test_integration/scripts/base_token/deploy_subgraph.sh",
-    "devchain:deploySubgraph:eip20Token": "bash ./test_integration/scripts/eip20_token/deploy_subgraph.sh"
+    "devchain:deploySubgraph:eip20Token": "bash ./test_integration/scripts/eip20_token/deploy_subgraph.sh",
+    "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/bin/create_staker_redeemer.ts",
+    "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/bin/request_stake_testnet.ts",
+    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/bin/request_redeem_testnet.ts"
   },
   "repository": {
     "type": "git",
@@ -59,11 +62,13 @@
     "apollo-link-http": "1.5.15",
     "apollo-link-ws": "1.0.18",
     "async": "^3.1.0",
+    "axios": "^0.19.0",
     "bignumber.js": "4.1.0",
     "commander": "2.20.0",
     "fs-extra": "7.0.1",
     "graphql": "14.3.1",
     "graphql-tag": "2.10.1",
+    "inquirer": "^7.0.0",
     "jq": "^1.7.2",
     "jsonschema": "1.2.4",
     "node-fetch": "2.6.0",
