@@ -40,21 +40,14 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
       return [];
     }
 
-
     const updates = [...this._updates];
     this._updates.length = 0;
 
-    // const observerNotifyPromises = [];
-    const results = []; // may be not needed.
-    let result;
     for (let i = 0; i < this._observers.length; i += 1) {
-      // observerNotifyPromises.push(this._observers[i].update(updates));
-      console.log(`calling update ${i}`);
-      result = await this._observers[i].update(updates);
-      results.push(result);
+      Logger.debug(`calling observer update ${i + 1}`);
+      await this._observers[i].update(updates);
     }
-    return results;
-    // return Promise.all(observerNotifyPromises);
+    return Promise.resolve([]);
   }
 
   public newUpdate(t: UpdateType): void {
