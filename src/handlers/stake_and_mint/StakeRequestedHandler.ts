@@ -97,6 +97,9 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
             stakeRequest.messageHash = null;
             return stakeRequest;
           }
+          // It's possible stakeIntentDeclared, progressStaked events are received before
+          // stakeRequested. In that case messageHash should not be overidden.
+          const messageHash = stakeRequest ? stakeRequest.messageHash : null;
           return new MessageTransferRequest(
             stakeRequestHash,
             RequestType.Stake,
@@ -109,7 +112,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
             gateway,
             sender,
             senderProxy,
-            null,
+            messageHash,
           );
         },
       ));

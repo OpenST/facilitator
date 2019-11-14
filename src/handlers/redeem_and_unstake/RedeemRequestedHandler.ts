@@ -96,6 +96,9 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
             redeemRequest.messageHash = null;
             return redeemRequest;
           }
+          // It's possible redeemIntentDeclared, progressRedeem events are received before
+          // redeemRequested. In that case messageHash should not be overidden.
+          const messageHash = redeemRequest ? redeemRequest.messageHash : null;
           return new MessageTransferRequest(
             redeemRequestHash,
             RequestType.Redeem,
@@ -108,7 +111,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
             cogateway,
             sender,
             senderProxy,
-            null,
+            messageHash,
           );
         },
       ));
