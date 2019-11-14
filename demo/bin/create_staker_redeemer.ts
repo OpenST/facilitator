@@ -39,7 +39,7 @@ async function createActor() {
     {
       type: 'string',
       name: 'shouldFund',
-      message: 'Should fund staker with faucet (y/n)?',
+      message: 'Should fund OST to staker with faucet (y/n)?',
       validate(input: string) {
         return input === 'y' || input === 'n';
       },
@@ -60,14 +60,13 @@ async function createActor() {
 
   const filePath = path.join(__dirname, '..', '..', `${answer.actor}.json`);
   fs.writeFileSync(filePath, JSON.stringify(encrypedAccount, null, '    '));
-  console.log(`${answer.actor} address  ${stakerAccount.address}`);
+  console.log(`\n${answer.actor} address  ${stakerAccount.address}`);
   console.log(`Encrypted key store path: ${filePath}`);
-  console.log(`👉 ${answer.actor} must have fund to perform transactions.`);
-  console.log(`👉 Use public faucet ${'https://goerli-faucet.slock.it/'} for funding on value chain(goerli).`);
+  console.log(`\n👉 ${answer.actor} must have fund to perform transactions.`);
+  console.log(`\n👉 Use public faucet ${'https://goerli-faucet.slock.it/'} for funding on value chain(goerli).\n`);
 }
 
 
 createActor().then(() => {
-  console.log('Actor Created  !!!');
   process.exit(0);
 });
