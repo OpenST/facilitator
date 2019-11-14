@@ -23,11 +23,15 @@ import { FacilitatorConfig } from '../../src/Config/Config';
 import Directory from '../../src/Directory';
 import SpyAssert from '../test_utils/SpyAssert';
 
-const chain = 1000;
+const auxiliaryChainId = 1000;
+const originChain = 'dev-origin';
 const mosaicDirectoryPath = '.mosaic';
+const dummyGatewayAddress = '0x34817AF7B685DBD8a360e8Bed3121eb03D56C9BD';
 const facilitatorConfigPath = path.join(
   mosaicDirectoryPath,
-  chain.toString(),
+  originChain,
+  auxiliaryChainId.toString(10),
+  `gateway-${dummyGatewayAddress}`,
   Directory.MOSAIC_FACILITATOR_CONFIG,
 );
 
@@ -56,7 +60,7 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', (): void => {
       fs,
       'existsSync',
     ).returns(false);
-    const fsConfig = FacilitatorConfig.fromChain(chain);
+    const fsConfig = FacilitatorConfig.fromChain(originChain, auxiliaryChainId, dummyGatewayAddress);
     existsSyncStub.restore();
 
     fsConfig.originChain = 'originChain';
@@ -66,7 +70,7 @@ describe('FacilitatorConfig.writeToFacilitatorConfig()', (): void => {
 
     const fsConfigJson = JSON.stringify(fsConfig, null, '    ');
 
-    fsConfig.writeToFacilitatorConfig(chain);
+    fsConfig.writeToFacilitatorConfig(originChain, auxiliaryChainId, dummyGatewayAddress);
 
     SpyAssert.assert(writeFileSyncStub, 1, [[facilitatorConfigPath, fsConfigJson]]);
   });
