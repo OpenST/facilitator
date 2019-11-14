@@ -86,6 +86,12 @@ export default class GraphClient {
           async next(response: Record<string, any>) {
             try {
               Logger.debug(`Received subscription data ${JSON.stringify(response.data)}`);
+
+              const entity = Object.keys(response.data);
+              if (entity.length === 0 || response.data[entity[0]].length === 0) {
+                Logger.info('Skipping transaction fetcher as zero records received');
+                return;
+              }
               const transactions: Record<string,
               Record<string, any>[]> = await fetcher.fetch(response.data);
               await handler.handle(transactions);
