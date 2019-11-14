@@ -45,7 +45,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
 
     for (let i = 0; i < this._observers.length; i += 1) {
       Logger.debug(`calling service observer ${i + 1}`);
-      for(let j=0; j < updates.length; j++) {
+      for (let j = 0; j < updates.length; j++) {
         Logger.debug(`calling update on service ${j + 1}`);
         await this._observers[i].update([updates[j]]);
       }
