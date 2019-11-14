@@ -40,16 +40,18 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
       return [];
     }
 
-
     const updates = [...this._updates];
     this._updates.length = 0;
 
-    const observerNotifyPromises = [];
     for (let i = 0; i < this._observers.length; i += 1) {
-      observerNotifyPromises.push(this._observers[i].update(updates));
+      // Provide one update to service at a time.
+      Logger.debug(`calling service observer ${i + 1}`);
+      for (let j = 0; j < updates.length; j++) {
+        Logger.debug(`calling update on service ${j + 1}`);
+        await this._observers[i].update([updates[j]]);
+      }
     }
-
-    return Promise.all(observerNotifyPromises);
+    return Promise.resolve([]);
   }
 
   public newUpdate(t: UpdateType): void {

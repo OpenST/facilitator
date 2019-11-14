@@ -35,6 +35,6 @@ export default class ObserverSpy extends Observer<NumberUpdate> {
 
   public async update(updates: NumberUpdate[]): Promise<void> {
     this.wasCalled = true;
-    this.spyUpdates = updates;
+    this.spyUpdates.push(...updates);
   }
 }
