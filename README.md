@@ -283,26 +283,7 @@ Facilitator can be started in below two ways :-
   
   ### Mint gas on OST testnet
   
-  Prerequisite: Clone this repository and run `npm ci` to install dependencies.
-  
-  Simple token on goerli can be moved to 1405 testnet chain to pay for transaction gas. Below commands will help to mint gas for mosaic 1405 testnet. 
-  
-  1. Create staker and redeemer accounts. If you wish to move token from `goerli` to `1405` then select `staker` as an actor or else use select `redeemer` as actor.
-  
-      ```bash
-        npm run create_keys:testnet
-      ```  
-  2. Run below command to initiate request stake. 
-     
-     ```bash
-         npm run request_stake:testnet
-     ``` 
-     
-  3. Run below command to initiate request redeem. 
-    
-     ```bash
-         npm run request_redeem:testnet
-     ```  
+  Refer detailed document [here](demo/README.md). 
  
 
 
