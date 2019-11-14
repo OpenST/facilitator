@@ -98,6 +98,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
       gatewayAddresses.eip20CoGatewayAddress,
       redeemerAddress,
       '', // would be filled later
+      null,
     );
 
     preGeneratedRedeemRequestHash = utils.getRedeemRequestHash(
@@ -181,7 +182,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
         );
 
         if (redeemRequestDb!.messageHash) {
-          ({ messageHash } = redeemRequestDb!);
+          ( messageHash = redeemRequestDb!.messageHash);
           expectedMessage = new Message(
             messageHash!,
             MessageType.Redeem,

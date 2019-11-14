@@ -53,6 +53,7 @@ describe('MessageTransferRequestRepository::get', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
 
     await config.repos.messageTransferRequestRepository.save(

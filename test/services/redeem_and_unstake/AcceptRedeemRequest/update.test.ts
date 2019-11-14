@@ -99,6 +99,7 @@ describe('AcceptRedeemRequestService::update', (): void => {
         '0x0000000000000000000000000000000000000012',
         '0x0000000000000000000000000000000000000013',
         '0x0000000000000000000000000000000000000014',
+        null,
       ),
       service,
       fakeData: {
@@ -321,11 +322,6 @@ describe('AcceptRedeemRequestService::update', (): void => {
     assert.strictEqual(
       messageC.direction,
       MessageDirection.AuxiliaryToOrigin,
-    );
-
-    assert.strictEqual(
-      messageC.sourceDeclarationBlockHeight!.comparedTo(0),
-      0,
     );
 
     assert.strictEqual(

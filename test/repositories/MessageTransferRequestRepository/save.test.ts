@@ -54,6 +54,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
 
     const requestResponse = await config.repos.messageTransferRequestRepository.save(
@@ -94,6 +95,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
 
     await config.repos.messageTransferRequestRepository.save(
@@ -112,6 +114,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
     requestUpdateInput.amount = new BigNumber('11');
     requestUpdateInput.gateway = '0x0000000000000000000000000000000000000009';
@@ -181,6 +184,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       null as any,
       sender,
       senderProxy,
+      null,
     );
 
     assert.isRejected(
@@ -204,6 +208,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       undefined as any,
       sender,
       senderProxy,
+      null,
     );
 
     assert.isRejected(
@@ -229,6 +234,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       '0xe34w5',
       '0xe234a',
       '0x1234',
+      null,
     );
 
     assert.isRejected(
@@ -265,6 +271,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
 
     const requestResponse = await config.repos.messageTransferRequestRepository.save(
@@ -290,6 +297,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
 
     await assert.isRejected(
@@ -313,6 +321,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
 
     await assert.isRejected(
@@ -336,6 +345,7 @@ describe('MessageTransferRequestRepository::save', (): void => {
       gatewayAddress,
       sender,
       senderProxy,
+      null,
     );
 
     await assert.isRejected(

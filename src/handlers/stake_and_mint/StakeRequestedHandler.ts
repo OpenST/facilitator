@@ -91,10 +91,10 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
 
           const stakeRequest = await this.messageTransferRequestRepository.get(stakeRequestHash);
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
-            Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
+            Logger.info(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
-            // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
-            stakeRequest.messageHash = null!;
+            // Service checks if messageHash is null and retries acceptStakeRequest transaction.
+            stakeRequest.messageHash = null;
             return stakeRequest;
           }
           return new MessageTransferRequest(
@@ -109,6 +109,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
             gateway,
             sender,
             senderProxy,
+            null,
           );
         },
       ));

@@ -46,7 +46,7 @@ export default class MessageTransferRequest extends Comparable<MessageTransferRe
 
   public senderProxy: string;
 
-  public messageHash?: string;
+  public messageHash: string | null;
 
   public createdAt?: Date;
 
@@ -64,7 +64,7 @@ export default class MessageTransferRequest extends Comparable<MessageTransferRe
     gateway: string,
     sender: string,
     senderProxy: string,
-    messageHash?: string,
+    messageHash: string | null,
     createdAt?: Date,
     updatedAt?: Date,
   ) {

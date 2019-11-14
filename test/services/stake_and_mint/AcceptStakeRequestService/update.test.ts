@@ -97,6 +97,7 @@ describe('AcceptStakeRequestService::update', (): void => {
         '0x0000000000000000000000000000000000000012',
         '0x0000000000000000000000000000000000000013',
         '0x0000000000000000000000000000000000000014',
+        null,
       ),
       service,
       fakeData: {
@@ -330,11 +331,6 @@ describe('AcceptStakeRequestService::update', (): void => {
     assert.strictEqual(
       messageC.direction,
       MessageDirection.OriginToAuxiliary,
-    );
-
-    assert.strictEqual(
-      messageC.sourceDeclarationBlockHeight!.comparedTo(0),
-      0,
     );
 
     assert.strictEqual(

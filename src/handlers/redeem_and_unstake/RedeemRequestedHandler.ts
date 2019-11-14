@@ -90,10 +90,10 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
 
           const redeemRequest = await this.messageTransferRequestRepository.get(redeemRequestHash);
           if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
-            Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
+            Logger.info(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
-            // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
-            redeemRequest.messageHash = null!;
+            // Service checks if messageHash is null and retries acceptStakeRequest transaction.
+            redeemRequest.messageHash = null;
             return redeemRequest;
           }
           return new MessageTransferRequest(
@@ -108,6 +108,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
             cogateway,
             sender,
             senderProxy,
+            null,
           );
         },
       ));

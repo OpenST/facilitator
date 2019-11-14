@@ -66,6 +66,7 @@ describe('MessageTransferRequestRepository::getWithNullMessageHash', (): void =>
         '0x0000000000000000000000000000000000000005',
         '0x0000000000000000000000000000000000000006',
         '0x0000000000000000000000000000000000000007',
+        null,
       ),
       requestWithNullMessageHashD: new MessageTransferRequest(
         'requestHashD',
@@ -79,6 +80,7 @@ describe('MessageTransferRequestRepository::getWithNullMessageHash', (): void =>
         '0x0000000000000000000000000000000000000008',
         '0x0000000000000000000000000000000000000009',
         '0x0000000000000000000000000000000000000010',
+        null,
       ),
     };
 

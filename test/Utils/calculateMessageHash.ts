@@ -70,6 +70,7 @@ describe('Utils::calculateMessageHash', (): void => {
         '0x0000000000000000000000000000000000000012',
         '0x0000000000000000000000000000000000000013',
         '0x0000000000000000000000000000000000000014',
+        null,
       );
 
       const messageHash = Utils.calculateMessageHash(
@@ -100,6 +101,7 @@ describe('Utils::calculateMessageHash', (): void => {
         '0x0000000000000000000000000000000000000012',
         '0x0000000000000000000000000000000000000013',
         '0x0000000000000000000000000000000000000014',
+        null,
       );
 
       const wrongHashLock = '0xa00017d0a9b4240af1deff571017e108d2c1a40de02d84f419113b1e1f7ad111';

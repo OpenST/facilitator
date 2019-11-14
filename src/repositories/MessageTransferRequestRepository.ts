@@ -338,9 +338,9 @@ export default class MessageTransferRequestRepository extends Subject<MessageTra
       requestModel.gateway,
       requestModel.sender,
       requestModel.senderProxy,
+      requestModel.messageHash,
     );
 
-    request.messageHash = requestModel.messageHash;
     request.createdAt = requestModel.createdAt;
     request.updatedAt = requestModel.updatedAt;
 

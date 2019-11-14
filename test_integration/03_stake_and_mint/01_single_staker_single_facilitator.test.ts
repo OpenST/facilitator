@@ -108,6 +108,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
       gatewayAddresses.eip20GatewayAddress,
       stakerAccount.address,
       '0x0000000000000000000000000000000000000001',
+      null,
     );
 
     generatedStakeRequestHash = utils.getStakeRequestHash(
@@ -206,7 +207,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
         );
 
         if (stakeRequestDb!.messageHash) {
-          ({ messageHash } = stakeRequestDb!);
+          ( messageHash = stakeRequestDb!.messageHash);
           expectedMessage = new Message(
             messageHash!,
             MessageType.Stake,
