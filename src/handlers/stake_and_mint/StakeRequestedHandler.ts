@@ -71,7 +71,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
-    Logger.info(`Persisting stake request records for gateway: ${this.gatewayAddress}`);
+    Logger.info(`Persisting stake request records: ${transactions.length} for gateway: ${this.gatewayAddress}`);
     const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
         transaction.gateway,
@@ -91,12 +91,15 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
 
           const stakeRequest = await this.messageTransferRequestRepository.get(stakeRequestHash);
           if (stakeRequest && blockNumber.gt(stakeRequest.blockNumber)) {
-            Logger.debug(`stakeRequest already present for hash ${stakeRequestHash}.`);
+            Logger.info(`stakeRequest already present for hash ${stakeRequestHash}.`);
             stakeRequest.blockNumber = blockNumber;
-            // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
-            stakeRequest.messageHash = '';
+            // Service checks if messageHash is null and retries acceptStakeRequest transaction.
+            stakeRequest.messageHash = null;
             return stakeRequest;
           }
+          // It's possible stakeIntentDeclared, progressStaked events are received before
+          // stakeRequested. In that case messageHash should not be overidden.
+          const messageHash = stakeRequest ? stakeRequest.messageHash : null;
           return new MessageTransferRequest(
             stakeRequestHash,
             RequestType.Stake,
@@ -109,6 +112,7 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
             gateway,
             sender,
             senderProxy,
+            messageHash,
           );
         },
       ));

@@ -315,7 +315,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       // Sync stakeRequest with message model
       redeemRequest.senderProxy = transactions[0]._redeemer;
       redeemRequest.nonce = new BigNumber(transactions[0]._redeemerNonce);
-      redeemRequest.messageHash = undefined;
+      redeemRequest.messageHash = null;
       const redeemRequestSave = sinon.stub();
       mockedMessageTransferRequestRepository = sinon.createStubInstance(
         MessageTransferRequestRepository,

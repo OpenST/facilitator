@@ -70,7 +70,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
-    Logger.info(`Persisting redeem request records for cogateway: ${this.cogatewayAddress}`);
+    Logger.info(`Persisting redeem request records: ${transactions.length} for cogateway: ${this.cogatewayAddress}`);
     const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.cogatewayAddress === Utils.toChecksumAddress(
         transaction.cogateway,
@@ -90,12 +90,15 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
 
           const redeemRequest = await this.messageTransferRequestRepository.get(redeemRequestHash);
           if (redeemRequest && blockNumber.gt(redeemRequest.blockNumber)) {
-            Logger.debug(`redeemRequest already present for hash ${redeemRequestHash}.`);
+            Logger.info(`redeemRequest already present for hash ${redeemRequestHash}.`);
             redeemRequest.blockNumber = blockNumber;
-            // Service checks if messageHash is blank and retries acceptStakeRequest transaction.
-            redeemRequest.messageHash = '';
+            // Service checks if messageHash is null and retries acceptStakeRequest transaction.
+            redeemRequest.messageHash = null;
             return redeemRequest;
           }
+          // It's possible redeemIntentDeclared, progressRedeem events are received before
+          // redeemRequested. In that case messageHash should not be overidden.
+          const messageHash = redeemRequest ? redeemRequest.messageHash : null;
           return new MessageTransferRequest(
             redeemRequestHash,
             RequestType.Redeem,
@@ -108,6 +111,7 @@ export default class RedeemRequestedHandler extends ContractEntityHandler<Messag
             cogateway,
             sender,
             senderProxy,
+            messageHash,
           );
         },
       ));

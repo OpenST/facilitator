@@ -47,7 +47,7 @@ export default class RedeemProgressedHandler extends ContractEntityHandler<Messa
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug('Persisting Redeem progress records');
+    Logger.debug(`Persisting Redeem progress records: ${transactions.length}`);
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);

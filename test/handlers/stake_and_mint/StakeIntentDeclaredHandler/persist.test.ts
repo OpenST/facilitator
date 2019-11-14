@@ -239,7 +239,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       // Sync stakeRequest with message model
       stakeRequest.senderProxy = transactions[0]._staker;
       stakeRequest.nonce = new BigNumber(transactions[0]._stakerNonce);
-      stakeRequest.messageHash = undefined;
+      stakeRequest.messageHash = null;
       const stakeRequestSave = sinon.stub();
       mockedMessageTransferRequestRepository = sinon.createStubInstance(
         MessageTransferRequestRepository,

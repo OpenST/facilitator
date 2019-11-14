@@ -49,7 +49,7 @@ export default class GatewayProvenHandler extends ContractEntityHandler<Gateway>
    * @return List of instances of Gateway objects.
    */
   public async persist(transactions: any[]): Promise<Gateway[]> {
-    Logger.debug('Persisting prove gateway records');
+    Logger.debug(`Persisting prove gateway records: ${transactions.length}`);
     const transaction = transactions[transactions.length - 1];
     const gatewayAddress = Utils.toChecksumAddress(transaction._gateway);
     const gateway = await this.GatewayRepository.get(gatewayAddress);
