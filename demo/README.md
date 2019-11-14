@@ -3,7 +3,7 @@
 In order to send transactions on Mosaic-testnet, you will need OST as base coin to pay for gas. Mosaic executes Ethereum smart contracts at layer-2 and can be accessed with existing web3 tooling.
 
 
-## scripts to move OST tokens from Goerli into Mosaic-testnet
+## Scripts to move OST tokens from Goerli into Mosaic-testnet
   
   Simple token (OST) on goerli can be moved to mosaic  testnet (specifically auxiliary chainId 1405) to pay for transaction gas. Below commands will help to mint gas for mosaic 1405 testnet. 
   
@@ -18,7 +18,8 @@ In order to send transactions on Mosaic-testnet, you will need OST as base coin 
     ```
     ./node-modules/.bin/mosaic start goerli -g 
     ```
-    to start a full node of Goerli in the background (see more instructions) 
+    to start a full node of Goerli in the background in a docker container.
+    basic instructions for `mosaic-chains` [below](##-Quick-how-to-on-using-Mosaic-chains).
   
  2. Synced Mosaic `1405` RPC to fullnode. Use mosaic chains to start `1405` node. 
     ```
@@ -29,7 +30,6 @@ In order to send transactions on Mosaic-testnet, you will need OST as base coin 
    
   **Steps:** 
   1. Clone facilitator repository
-
         ```
         git clone https://github.com/mosaicdao/facilitator
         ```
@@ -39,22 +39,54 @@ In order to send transactions on Mosaic-testnet, you will need OST as base coin 
         npm ci
         ```
      
-  3. Create staker and redeemer accounts:  If you wish to move token from `goerli` to `1405` then select `staker` as an actor or else select `redeemer` as an actor after running command. This command will also fund accounts from mosaic faucet. Faucet will fund simple token on `goerli` and gas on `1405`
+  3. Create staker or redeemer accounts:  If you wish to move token from `goerli` to `1405` then select `staker` as an actor or else select `redeemer` as an actor when running command below. This command will also fund accounts from the mosaic faucet. Faucet will fund OST to your address on `goerli`.
   
       ```bash
         npm run create_keys:testnet
       ```  
       
-     **Note**: You need to fund gas to staker address on goerli. You can use goerli [public faucet](https://goerli-faucet.slock.it/).
+     **Note**: You need to manually fund ETH to your staker address on goerli. You can use goerli [public faucet](https://goerli-faucet.slock.it/).
    
-  4. Run below command to initiate request stake. This command will move simple token from `goerli` to `1405` testnet chain which can be used to pay for transaction gas. 
+  4. Run below command to initiate request stake.
+
+      In this step you should specify a `beneficiary` address that you control, as it will be the final receiver of the OST tokens on layer-2.
+
+      Your funds will be transfered to a `stakePool` contract. From this pool, a facilitator service will accept your request to move the tokens into Layer-2; a facilitator is required because you yourself do not yet have tokens in Layer-2 to present the Merkle proofs for minting the tokens and locking them on Goerli. All addresses on Goerli are provided as defaults.
+
+      This process may take a few minutes to complete, because once the facilitator accepts your request, Goerli's block history needs to be finalised on the Layer-2 chain, after which the facilitator will continue and present the Merkle proof to complete your request.
+  
+      tl;dr This command will move OST from `goerli` to your `beneficiary` address on `1405` testnet (just enter the default values when available)
      
      ```bash
-         npm run request_stake:testnet
+      npm run request_stake:testnet
      ``` 
      
-  5. Run below command to initiate request redeem. This command will move gas token from `1405` to `goerli`. 
+  5. To move back out of Mosaic into Goerli, run below command to initiate request redeem. This command will move OST from `1405` to `goerli`. 
     
      ```bash
-         npm run request_redeem:testnet
+      npm run request_redeem:testnet
+     ```
 
+## Quick how-to on using Mosaic-chains
+
+- List all running services (chains, TheGraph indexing, IPFS nodes)
+  ```
+  ./mosaic list
+  ```
+
+- start an auxiliary chain (layer-2) (eg. testnet aux 1405 against Goerli). Use `-g` to not run additional indexing services to save resources.
+  ```
+  ./mosaic start 1405 --origin goerli -g
+  ```
+
+- start a standard layer-1 chain, eg Goerli testnet
+  ```
+  ./mosaic start goerli -g
+  ```
+
+- stop a chain (and associated services); 
+  ```
+  ./mosaic stop 1405
+  ./mosaic stop goerli
+  ```
+- you can find more information at [github.com/mosaicdao/mosaic-chains/](https://github.com/mosaicdao/mosaic-chains/)
