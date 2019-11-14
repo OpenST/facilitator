@@ -23,14 +23,14 @@ import MessageTransferRequest from '../../../../src/models/MessageTransferReques
 import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
-import Repositories from "../../../../src/repositories/Repositories";
+import Repositories from '../../../../src/repositories/Repositories';
 import {
   MessageDirection,
   MessageStatus,
-  MessageType
-} from "../../../../src/repositories/MessageRepository";
-import Message from "../../../../src/models/Message";
-import Util from "../../../repositories/MessageTransferRequestRepository/util";
+  MessageType,
+} from '../../../../src/repositories/MessageRepository';
+import Message from '../../../../src/models/Message';
+import Util from '../../../repositories/MessageTransferRequestRepository/util';
 
 describe('RedeemRequestedHandler.persist()', (): void => {
   it('should persist successfully when redeemRequesteds is received first time for'
@@ -142,7 +142,10 @@ describe('RedeemRequestedHandler.persist()', (): void => {
     const models1 = await config.repos.messageTransferRequestRepository.save(
       redeemRequest,
     );
-    const handler = new RedeemRequestedHandler(config.repos.messageTransferRequestRepository, cogatewayAddress);
+    const handler = new RedeemRequestedHandler(
+      config.repos.messageTransferRequestRepository,
+      cogatewayAddress,
+    );
     // Transaction with higher block number.
     const transactions2 = [{
       id: '1',

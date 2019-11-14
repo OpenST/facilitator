@@ -332,10 +332,12 @@ export class MessageRepository extends Subject<Message> {
       messageModel.sourceStatus,
       messageModel.targetStatus,
       messageModel.gasPrice ? new BigNumber(messageModel.gasPrice) : messageModel.gasPrice,
-      messageModel.gasLimit ? new BigNumber(messageModel.gasLimit): messageModel.gasLimit,
+      messageModel.gasLimit ? new BigNumber(messageModel.gasLimit) : messageModel.gasLimit,
       messageModel.nonce ? new BigNumber(messageModel.nonce) : messageModel.nonce,
       messageModel.sender,
-      messageModel.sourceDeclarationBlockHeight ? new BigNumber(messageModel.sourceDeclarationBlockHeight) : messageModel.sourceDeclarationBlockHeight,
+      messageModel.sourceDeclarationBlockHeight ?
+        new BigNumber(messageModel.sourceDeclarationBlockHeight) :
+        messageModel.sourceDeclarationBlockHeight,
       messageModel.secret,
       messageModel.hashLock,
       messageModel.createdAt,

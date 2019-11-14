@@ -24,14 +24,14 @@ import MessageTransferRequest from '../../../../src/models/MessageTransferReques
 import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
-import Repositories from "../../../../src/repositories/Repositories";
-import Message from "../../../../src/models/Message";
+import Repositories from '../../../../src/repositories/Repositories';
+import Message from '../../../../src/models/Message';
 import {
   MessageDirection,
   MessageStatus,
-  MessageType
-} from "../../../../src/repositories/MessageRepository";
-import Util from "../../../repositories/MessageTransferRequestRepository/util";
+  MessageType,
+} from '../../../../src/repositories/MessageRepository';
+import Util from '../../../repositories/MessageTransferRequestRepository/util';
 
 describe('StakeRequestedHandler.persist()', (): void => {
   it('should persist successfully when stakeRequesteds is received first time for'
