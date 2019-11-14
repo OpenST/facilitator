@@ -14,22 +14,20 @@ In order to send transactions on Mosaic-testnet, you will need OST as base coin 
    ```
     npm i @openst/mosaic-chains --save-dev
    ```
-and run
+    and run
     ```
     ./node-modules/.bin/mosaic start goerli -g 
     ```
     to start a full node of Goerli in the background (see more instructions) 
   
- 
-2. Synced Mosaic `1405` RPC to fullnode. Use mosaic chains to start `1405` node. 
+ 2. Synced Mosaic `1405` RPC to fullnode. Use mosaic chains to start `1405` node. 
     ```
        mosaic start 1405 --origin goerli -g
     ```
- 1. web3 RPC to `goerli` node.
+3. web3 RPC to `goerli` node.
    Optionally, you can use public goerli node **`https://rpc.slock.it/goerli`**
-   Or run a full node by
    
-  Steps: 
+  **Steps:** 
   1. Clone facilitator repository
 
         ```
@@ -47,15 +45,15 @@ and run
         npm run create_keys:testnet
       ```  
       
-   **Note**: You need to fund gas to staker address on goerli. You can use goerli [public faucet](https://goerli-faucet.slock.it/).
+     **Note**: You need to fund gas to staker address on goerli. You can use goerli [public faucet](https://goerli-faucet.slock.it/).
    
-  3. Run below command to initiate request stake. This command will move simple token from `goerli` to `1405` testnet chain which can be used to pay for transaction gas. 
+  4. Run below command to initiate request stake. This command will move simple token from `goerli` to `1405` testnet chain which can be used to pay for transaction gas. 
      
      ```bash
          npm run request_stake:testnet
      ``` 
      
-  4. Run below command to initiate request redeem. This command will move gas token from `1405` to `goerli`. 
+  5. Run below command to initiate request redeem. This command will move gas token from `1405` to `goerli`. 
     
      ```bash
          npm run request_redeem:testnet
