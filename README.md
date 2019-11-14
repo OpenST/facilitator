@@ -280,5 +280,10 @@ Facilitator can be started in below two ways :-
     * Replace `<gateway-config>` with the path to gateway-config.json. Refer [here](https://github.com/mosaicdao/mosaic-chains#gateway-config)	    
     
   * **Note** : Both `--mosaic-config` and `--gateway-config` together are not allowed in command.
+  
+  ### Mint gas on OST testnet
+  
+  Refer detailed document [here](demo/README.md). 
+ 
 
 
