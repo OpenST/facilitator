@@ -39,10 +39,11 @@ async function createActor() {
     {
       type: 'string',
       name: 'shouldFund',
-      message: 'Should fund staker/redeemer with faucet (y/n)?',
+      message: 'Should fund staker with faucet (y/n)?',
       validate(input: string) {
         return input === 'y' || input === 'n';
       },
+      when: (response: any) => response.actor === 'staker',
     },
   ]);
 
@@ -51,7 +52,7 @@ async function createActor() {
 
   if (answer.shouldFund === 'y') {
     await fundFromFaucet(stakerAccount.address, '5');
-    await fundFromFaucet(stakerAccount.address, '1405');
+    // await fundFromFaucet(stakerAccount.address, '1405');
   }
 
   const encrypedAccount = stakerAccount.encrypt(answer.password);
