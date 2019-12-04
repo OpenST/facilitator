@@ -20,3 +20,7 @@ src/**/*.js.map
 # Packaging output
 lib/**
 openst-facilitator-*.tgz
+
+#keystore
+staker.json
+redeemer.json
