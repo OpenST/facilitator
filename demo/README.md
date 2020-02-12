@@ -38,22 +38,22 @@ Simple token (OST) on goerli can be moved to mosaic testnet (specifically auxili
 4. web3 RPC to `goerli` node.
    Optionally, you can use public goerli node **`https://rpc.slock.it/goerli`**
 
-   **Steps:**
+**Steps:**
 
-5. Clone facilitator repository
+1. Clone facilitator repository
 
    ```bash
    git clone https://github.com/mosaicdao/facilitator
    ```
 
-6. Install dependencies
+2. Install dependencies
 
    ```bash
    cd facilitator
    npm ci
    ```
 
-7. Create staker or redeemer accounts: If you wish to move token from `goerli` to `1405` then select `staker` as an actor or else select `redeemer` as an actor when running command below. This command will also fund accounts from the mosaic faucet. Faucet will fund OST to your address on `goerli`.
+3. Create staker or redeemer accounts: If you wish to move token from `goerli` to `1405` then select `staker` as an actor or else select `redeemer` as an actor when running command below. This command will also fund accounts from the mosaic faucet. Faucet will fund OST to your address on `goerli`.
 
    ```bash
      npm run create_keys:testnet
@@ -61,7 +61,7 @@ Simple token (OST) on goerli can be moved to mosaic testnet (specifically auxili
 
    **Note**: You need to manually fund ETH to your staker address on goerli. You can use goerli [public faucet](https://goerli-faucet.slock.it/).
 
-8. Run below command to initiate request stake.
+4. Run below command to initiate request stake.
 
    In this step you should specify a `beneficiary` address that you control, as it will be the final receiver of the OST tokens on layer-2.
 
@@ -75,7 +75,7 @@ Simple token (OST) on goerli can be moved to mosaic testnet (specifically auxili
     npm run request_stake:testnet
    ```
 
-9. To move back out of Mosaic into Goerli, run below command to initiate request redeem. This command will move OST from `1405` to `goerli`.
+5. To move back out of Mosaic into Goerli, run below command to initiate request redeem. This command will move OST from `1405` to `goerli`.
 
    ```bash
     npm run request_redeem:testnet
