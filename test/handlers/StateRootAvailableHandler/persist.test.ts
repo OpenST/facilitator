@@ -43,7 +43,7 @@ describe('StateRootAvailableHandler.persist()', () => {
 
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
       coAnchorAddress,
-      blockHeight.sub(1),
+      blockHeight.minus(1),
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
       {
@@ -67,7 +67,7 @@ describe('StateRootAvailableHandler.persist()', () => {
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
       coAnchorAddress,
-      blockHeight.sub(1),
+      blockHeight.minus(1),
     );
     const sinonMock = sinon.createStubInstance(AuxiliaryChainRepository,
       {

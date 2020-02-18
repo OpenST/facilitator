@@ -16,50 +16,8 @@
 
 import 'mocha';
 import BigNumber from 'bignumber.js';
-
 import Anchor from '../../../src/models/Anchor';
-
-import assert from '../../test_utils/assert';
-
-interface AnchorAttributes {
-  anchorGA?: string;
-  lastAnchoredBlockNumber?: BigNumber;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-function assertAnchorAttributes(
-  anchor: Anchor,
-  attributes: AnchorAttributes,
-): void {
-  if (Object.prototype.hasOwnProperty.call(attributes, 'anchorGA')) {
-    assert.strictEqual(
-      anchor.anchorGA,
-      attributes.anchorGA,
-    );
-  }
-
-  if (Object.prototype.hasOwnProperty.call(attributes, 'lastAnchoredBlockNumber')) {
-    assert.strictEqual(
-      anchor.lastAnchoredBlockNumber,
-      attributes.lastAnchoredBlockNumber,
-    );
-  }
-
-  if (Object.prototype.hasOwnProperty.call(attributes, 'createdAt')) {
-    assert.strictEqual(
-      anchor.createdAt,
-      attributes.createdAt,
-    );
-  }
-
-  if (Object.prototype.hasOwnProperty.call(attributes, 'updatedAt')) {
-    assert.strictEqual(
-      anchor.updatedAt,
-      attributes.updatedAt,
-    );
-  }
-}
+import { assertAnchorAttributes } from './util';
 
 describe('Anchor::constructor', (): void => {
   it('checks correct construction of an anchor', async (): Promise<void> => {

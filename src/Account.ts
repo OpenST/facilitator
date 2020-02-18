@@ -94,7 +94,7 @@ export default class Account {
    */
   public async getNonce(web3: Web3): Promise<BigNumber> {
     if (addressNonceMap[this.address]) {
-      addressNonceMap[this.address] = addressNonceMap[this.address].add(1);
+      addressNonceMap[this.address] = addressNonceMap[this.address].plus(1);
     } else {
       const nonce = await web3.eth.getTransactionCount(this.address, 'pending');
       addressNonceMap[this.address] = new BigNumber(nonce);

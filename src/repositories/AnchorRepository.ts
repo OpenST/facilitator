@@ -93,7 +93,7 @@ export default class AnchorRepository extends Subject<Anchor> {
    * @returns Newly created or updated anchor object (with all saved fields).
    */
   public async save(anchor: Anchor): Promise<Anchor> {
-    this.assertAnchoredBlockNumber(anchor);
+    await this.assertAnchoredBlockNumber(anchor);
 
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
 
@@ -148,7 +148,7 @@ export default class AnchorRepository extends Subject<Anchor> {
   private convertToAnchor(anchorModel: AnchorModel): Anchor {
     return new Anchor(
       anchorModel.anchorGA,
-      anchorModel.lastAnchoredBlockNumber,
+      new BigNumber(anchorModel.lastAnchoredBlockNumber),
       anchorModel.createdAt,
       anchorModel.updatedAt,
     );
@@ -172,6 +172,6 @@ export default class AnchorRepository extends Subject<Anchor> {
       return;
     }
 
-    assert(anchorModel.lastAnchoredBlockNumber.lessThan(anchor.lastAnchoredBlockNumber));
+    assert(anchor.lastAnchoredBlockNumber.isGreaterThan(anchorModel.lastAnchoredBlockNumber));
   }
 }

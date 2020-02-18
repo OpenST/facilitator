@@ -56,7 +56,7 @@ export default class Anchor extends Comparable<Anchor> {
     super();
 
     assert(anchorGA !== '');
-    assert(lastAnchoredBlockNumber.greaterThanOrEqualTo(0));
+    assert(lastAnchoredBlockNumber.isGreaterThanOrEqualTo(0));
 
     this.anchorGA = anchorGA;
     this.lastAnchoredBlockNumber = lastAnchoredBlockNumber;

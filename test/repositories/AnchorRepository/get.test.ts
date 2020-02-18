@@ -15,11 +15,6 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
-import BigNumber from 'bignumber.js';
-
-import Anchor from '../../../src/models/Anchor';
-
-import assert from '../../test_utils/assert';
 
 describe('AnchorRepository::get', (): void => {
   it('', async (): Promise<void> => {
