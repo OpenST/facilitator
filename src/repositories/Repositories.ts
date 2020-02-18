@@ -22,7 +22,6 @@ import ContractEntityRepository from './ContractEntityRepository';
 import GatewayRepository from './GatewayRepository';
 import { MessageRepository } from './MessageRepository';
 import MessageTransferRequestRepository from './MessageTransferRequestRepository';
-import DepositIntentRepository from './DepositIntentRepository';
 
 export default class Repositories {
   /* Storage */
@@ -36,8 +35,6 @@ export default class Repositories {
   public gatewayRepository: GatewayRepository;
 
   public contractEntityRepository: ContractEntityRepository;
-
-  public depositIntentRepository: DepositIntentRepository;
 
   /* Public Functions */
 
@@ -73,7 +70,6 @@ export default class Repositories {
     promises.push(this.auxiliaryChainRepository.notify());
     promises.push(this.gatewayRepository.notify());
     promises.push(this.contractEntityRepository.notify());
-    promises.push(this.depositIntentRepository.notify());
 
     return Promise.all(promises);
   }
@@ -132,7 +128,5 @@ export default class Repositories {
     this.gatewayRepository = new GatewayRepository(initOptions);
 
     this.contractEntityRepository = new ContractEntityRepository(initOptions);
-
-    this.depositIntentRepository = new DepositIntentRepository(initOptions);
   }
 }

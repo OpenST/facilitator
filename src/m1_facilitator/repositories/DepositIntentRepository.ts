@@ -19,10 +19,10 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
-import { MAX_VALUE } from '../Constants';
+import { MAX_VALUE } from '../../Constants';
 import DepositIntent from '../models/DepositIntent';
-import Subject from '../observer/Subject';
-import Utils from '../Utils';
+import Subject from '../../observer/Subject';
+import Utils from '../../Utils';
 
 /**
  * An interface, that represents a row from a deposit_intents table.
@@ -163,6 +163,27 @@ export default class DepositIntentRepository extends Subject<DepositIntent> {
     const depositIntentModel = await DepositIntentModel.findOne({
       where: {
         intentHash,
+      },
+    });
+
+    if (depositIntentModel === null) {
+      return null;
+    }
+
+    return this.convertToDepositIntent(depositIntentModel);
+  }
+
+  /**
+   * Fetches DepositIntent object from database if found. Otherwise returns null.
+   *
+   * @param messageHash Message hash.
+   *
+   * @returns DepositIntent object containing values which satisfy the `where` condition.
+   */
+  public async getByMessageHash(messageHash: string): Promise<DepositIntent | null> {
+    const depositIntentModel = await DepositIntentModel.findOne({
+      where: {
+        messageHash,
       },
     });
 

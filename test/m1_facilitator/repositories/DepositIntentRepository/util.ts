@@ -15,8 +15,8 @@
 // ----------------------------------------------------------------------------
 
 
-import assert from '../../test_utils/assert';
-import DepositIntent from '../../../src/models/DepositIntent';
+import assert from '../../../test_utils/assert';
+import DepositIntent from '../../../../src/m1_facilitator/models/DepositIntent';
 
 const Util = {
 

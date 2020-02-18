@@ -18,11 +18,11 @@
 import BigNumber from 'bignumber.js';
 
 import Util from './util';
-import assert from '../../test_utils/assert';
-import DepositIntent from '../../../src/models/DepositIntent';
-import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../../test_utils/assert';
+import DepositIntent from '../../../../src/m1_facilitator/models/DepositIntent';
+import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 
-describe('DepositIntent::get', (): void => {
+describe('DepositIntent::getByMessageHash', (): void => {
   let config: {
     repos: Repositories;
   };
@@ -62,19 +62,19 @@ describe('DepositIntent::get', (): void => {
   });
 
   it('should pass when fetching DepositIntent model', async (): Promise<void> => {
-    const getResponse = await config.repos.depositIntentRepository.get(
-      depositIntent.intentHash,
+    const getResponse = await config.repos.depositIntentRepository.getByMessageHash(
+      depositIntent.messageHash,
     );
 
     Util.assertDepositIntentAttributes(getResponse as DepositIntent, depositIntent);
   });
 
   it('should return null when querying for non-existing '
-    + 'intent hash', async (): Promise<void> => {
-    const nonExistingIntentHash = '0x00000000000000000000000000000000000000000000000000000000000111';
+    + 'message hash', async (): Promise<void> => {
+    const nonExistingMessageHash = '0x00000000000000000000000000000000000000000000000000000000000111';
 
-    const getResponse = await config.repos.depositIntentRepository.get(
-      nonExistingIntentHash,
+    const getResponse = await config.repos.depositIntentRepository.getByMessageHash(
+      nonExistingMessageHash,
     );
 
     assert.strictEqual(

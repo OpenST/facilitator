@@ -18,14 +18,15 @@
 import BigNumber from 'bignumber.js';
 
 import Util from './util';
-import { assertErrorMessages } from '../../test_utils/assert';
-import DepositIntent from '../../../src/models/DepositIntent';
-import Repositories from '../../../src/repositories/Repositories';
+import assert from '../../../test_utils/assert';
+import DepositIntent from '../../../../src/m1_facilitator/models/DepositIntent';
+import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 
-describe('DepositIntentRepository::save', (): void => {
+describe('DepositIntent::get', (): void => {
   let config: {
     repos: Repositories;
   };
+  let depositIntent: DepositIntent;
   let intentHash: string;
   let messageHash: string;
   let tokenAddress: string;
@@ -45,10 +46,8 @@ describe('DepositIntentRepository::save', (): void => {
     beneficiary = '0x0000000000000000000000000000000000000002';
     createdAt = new Date();
     updatedAt = new Date();
-  });
 
-  it('should creating DepositIntent model correctly', async (): Promise<void> => {
-    const depositIntent = new DepositIntent(
+    depositIntent = new DepositIntent(
       intentHash,
       messageHash,
       tokenAddress,
@@ -57,52 +56,31 @@ describe('DepositIntentRepository::save', (): void => {
       createdAt,
       updatedAt,
     );
-    const createdDepositIntent = await config.repos.depositIntentRepository.save(
-      depositIntent,
-    );
-
-    Util.assertDepositIntentAttributes(createdDepositIntent, depositIntent);
-  });
-
-  it('should update DepositIntent model correctly', async (): Promise<void> => {
-    const depositIntent = new DepositIntent(
-      intentHash,
-      messageHash,
-    );
-
     await config.repos.depositIntentRepository.save(
       depositIntent,
     );
-
-    depositIntent.tokenAddress = tokenAddress;
-    depositIntent.amount = amount;
-    depositIntent.beneficiary = beneficiary;
-
-    const updatedDepositIntent = await config.repos.depositIntentRepository.save(
-      depositIntent,
-    );
-
-    Util.assertDepositIntentAttributes(updatedDepositIntent, depositIntent);
   });
 
-  it('should fail when token address and beneficiary address is not valid', async (): Promise<void> => {
-    const depositIntent = new DepositIntent(
-      intentHash,
-      messageHash,
-      '0x1234',
-      amount,
-      '0x12345',
-      createdAt,
-      updatedAt,
+  it('should pass when fetching DepositIntent model', async (): Promise<void> => {
+    const getResponse = await config.repos.depositIntentRepository.get(
+      depositIntent.intentHash,
     );
 
-    try {
-      await config.repos.depositIntentRepository.save(depositIntent);
-    } catch (error) {
-      assertErrorMessages(error.errors, [
-        'Validation len on tokenAddress failed',
-        'Validation len on beneficiary failed',
-      ]);
-    }
+    Util.assertDepositIntentAttributes(getResponse as DepositIntent, depositIntent);
+  });
+
+  it('should return null when querying for non-existing '
+    + 'intent hash', async (): Promise<void> => {
+    const nonExistingIntentHash = '0x00000000000000000000000000000000000000000000000000000000000111';
+
+    const getResponse = await config.repos.depositIntentRepository.get(
+      nonExistingIntentHash,
+    );
+
+    assert.strictEqual(
+      getResponse,
+      null,
+      "DepositIntent model doesn't exist.",
+    );
   });
 });
