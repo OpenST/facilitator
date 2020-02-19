@@ -16,10 +16,13 @@
 
 import { InitOptions, Sequelize } from 'sequelize';
 
+import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
 
 export default class Repositories {
   /* Storage */
+
+  public anchorRepository: AnchorRepository;
 
   public depositIntentRepository: DepositIntentRepository;
 
@@ -53,6 +56,7 @@ export default class Repositories {
     const promises = [];
 
     promises.push(this.depositIntentRepository.notify());
+    promises.push(this.anchorRepository.notify());
 
     return Promise.all(promises);
   }
@@ -80,6 +84,7 @@ export default class Repositories {
       freezeTableName: true,
     };
 
+    this.anchorRepository = new AnchorRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
   }
 }
