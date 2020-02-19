@@ -13,7 +13,7 @@
     "lint:ts": "eslint src -c .eslintrc.json --ext ts",
     "package": "./package.sh",
     "prepack": "npm run package",
-    "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/**/*.test.ts test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
+    "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/**/**/*.test.ts test/**/**/**/*.test.ts test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
     "test:facilitator": "./test/m0-facilitator/facilitator.sh",
     "test:integration:baseToken": "npm run devchain:start && npm run devchain:deploySubgraph:baseToken && TEST_MODE=baseToken mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:integration:eip20Token": "npm run devchain:start && npm run devchain:deploySubgraph:eip20Token && TEST_MODE=eip20Token mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
@@ -28,9 +28,9 @@
     "devchain:stop": "bash ./test_integration/m0-facilitator/devchains.sh stop",
     "devchain:deploySubgraph:baseToken": "bash ./test_integration/m0-facilitator/scripts/base_token/deploy_subgraph.sh",
     "devchain:deploySubgraph:eip20Token": "bash ./test_integration/m0-facilitator/scripts/eip20_token/deploy_subgraph.sh",
-    "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/bin/create_staker_redeemer.ts",
-    "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/bin/request_stake_testnet.ts",
-    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/bin/request_redeem_testnet.ts"
+    "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0-facilitator/bin/create_staker_redeemer.ts",
+    "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0-facilitator/bin/request_stake_testnet.ts",
+    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0-facilitator/bin/request_redeem_testnet.ts"
   },
   "repository": {
     "type": "git",

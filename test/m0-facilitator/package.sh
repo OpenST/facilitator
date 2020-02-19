@@ -40,6 +40,6 @@ echo "Accessing as binary."
 ./node_modules/.bin/facilitator help || exit 1
 
 echo "Cleaning up generated files."
-#clean
+clean
 
 echo "Successfully Passed."
