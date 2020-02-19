@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
 import fs from 'fs-extra';
-import Directory from '../../src/Directory';
+import Directory from '../../../src/m0-facilitator/Directory';
 import SharedStorage from '../SharedStorage';
 
 const facilitatorKill = path.join(__dirname, '../kill_facilitator_process.sh');

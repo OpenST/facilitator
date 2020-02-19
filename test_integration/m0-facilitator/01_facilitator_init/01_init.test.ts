@@ -4,16 +4,16 @@ import fs from 'fs-extra';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
-import { FacilitatorConfig } from '../../src/Config/Config';
-import assert from '../../test/test_utils/assert';
-import Directory from '../../src/Directory';
+import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
+import assert from '../../test/m0-facilitator/test_utils/assert';
+import Directory from '../../src/m0-facilitator/Directory';
 import SharedStorage from '../SharedStorage';
 import BaseTokenHelper from '../helpers/BaseTokenHelper';
 import EIP20TokenHelper from '../helpers/EIP20TokenHelper';
 import * as BaseTokenTestData from '../testdata/BaseToken.json';
 import * as EIP20TokenTestData from '../testdata/EIP20Token.json';
-import Logger from '../../src/Logger';
-import GatewayAddresses from '../../src/Config/GatewayAddresses';
+import Logger from '../../../src/m0-facilitator/Logger';
+import GatewayAddresses from '../../../src/m0-facilitator/Config/GatewayAddresses';
 
 describe('facilitator init', async (): Promise<void> => {
   const testMode = process.env.TEST_MODE;
