@@ -40,7 +40,9 @@ export function assertAnchorAttributes(
 
   if (Object.prototype.hasOwnProperty.call(attributes, 'lastAnchoredBlockNumber')) {
     assert.isOk(
-      anchor.lastAnchoredBlockNumber.isEqualTo(attributes.lastAnchoredBlockNumber as BigNumber),
+      anchor.lastAnchoredBlockNumber.isEqualTo(
+        attributes.lastAnchoredBlockNumber as BigNumber,
+      ),
     );
   }
 
