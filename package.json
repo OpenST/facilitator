@@ -3,7 +3,7 @@
   "version": "0.1.0-alpha.2",
   "description": "Facilitator is an executable to facilitate asynchronous message passing between blockchains.",
   "bin": {
-    "facilitator": "lib/src/m0-facilitator/bin/facilitator.js"
+    "facilitator": "lib/src/m0_facilitator/bin/facilitator.js"
   },
   "main": "lib/index.js",
   "files": [
@@ -14,23 +14,23 @@
     "package": "./package.sh",
     "prepack": "npm run package",
     "test:unit": "mocha --require ts-node/register --require source-map-support/register --recursive test/**/**/**/**/*.test.ts test/**/**/**/*.test.ts test/**/**/*.test.ts test/**/*.test.ts test/*.test.ts",
-    "test:facilitator": "./test/m0-facilitator/facilitator.sh",
+    "test:facilitator": "./test/m0_facilitator/facilitator.sh",
     "test:integration:baseToken": "npm run devchain:start && npm run devchain:deploySubgraph:baseToken && TEST_MODE=baseToken mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:integration:eip20Token": "npm run devchain:start && npm run devchain:deploySubgraph:eip20Token && TEST_MODE=eip20Token mocha -t 180000 --require ts-node/register --require source-map-support/register --recursive test_integration/**/**/*.test.ts test_integration/**/*.test.ts test_integration/*.test.ts && npm run devchain:stop",
     "test:integration": "npm run test:integration:baseToken && npm run test:integration:eip20Token",
-    "test:package": "./test/m0-facilitator/package.sh",
+    "test:package": "./test/m0_facilitator/package.sh",
     "test": "npm run test:unit && npm run test:package && npm run test:integration",
     "coverage:report": "nyc report",
     "coverage:unit": "nyc --silent npm run test:unit",
     "coverage:facilitator": "nyc --silent --no-clean npm run test:facilitator",
     "coverage": "tsc && npm run coverage:unit && npm run coverage:facilitator && npm run coverage:report",
-    "devchain:start": "bash ./test_integration/m0-facilitator/devchains.sh start",
-    "devchain:stop": "bash ./test_integration/m0-facilitator/devchains.sh stop",
-    "devchain:deploySubgraph:baseToken": "bash ./test_integration/m0-facilitator/scripts/base_token/deploy_subgraph.sh",
-    "devchain:deploySubgraph:eip20Token": "bash ./test_integration/m0-facilitator/scripts/eip20_token/deploy_subgraph.sh",
-    "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0-facilitator/bin/create_staker_redeemer.ts",
-    "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0-facilitator/bin/request_stake_testnet.ts",
-    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0-facilitator/bin/request_redeem_testnet.ts"
+    "devchain:start": "bash ./test_integration/m0_facilitator/devchains.sh start",
+    "devchain:stop": "bash ./test_integration/m0_facilitator/devchains.sh stop",
+    "devchain:deploySubgraph:baseToken": "bash ./test_integration/m0_facilitator/scripts/base_token/deploy_subgraph.sh",
+    "devchain:deploySubgraph:eip20Token": "bash ./test_integration/m0_facilitator/scripts/eip20_token/deploy_subgraph.sh",
+    "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/create_staker_redeemer.ts",
+    "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_stake_testnet.ts",
+    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_redeem_testnet.ts"
   },
   "repository": {
     "type": "git",
