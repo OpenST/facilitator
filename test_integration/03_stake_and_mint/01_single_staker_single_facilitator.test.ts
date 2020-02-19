@@ -28,7 +28,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   const { gasLimit } = testData;
   const { stakerValueTokenToFund } = testData;
   const helperObject = SharedStorage.getHelperObject();
-  const auxChainId = testData.auxChainId;
+  const { auxChainId } = testData;
   const gatewayAddresses = SharedStorage.getGatewayAddresses();
   const stakePool: string = gatewayAddresses.stakePoolAddress;
 
@@ -91,7 +91,6 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
   });
 
   it('should perform and verify request stake', async (): Promise<void> => {
-
     const stakeAndMintBeneficiaryAccount: Account = auxiliaryWeb3.eth.accounts.create('beneficiary');
     auxiliaryWeb3.eth.accounts.wallet.add(stakeAndMintBeneficiaryAccount);
     SharedStorage.setStakeAndMintBeneficiary(stakeAndMintBeneficiaryAccount.address);
@@ -113,18 +112,18 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
 
     generatedStakeRequestHash = utils.getStakeRequestHash(
       messageTransferRequest,
-      messageTransferRequest.gateway!,
+      messageTransferRequest.gateway,
       stakePool,
     );
 
     const stakePoolInstance = utils.getStakePoolInstance();
     const requestStakeRawTx: TransactionObject<string> = stakePoolInstance.methods.requestStake(
-      messageTransferRequest.amount!.toString(10),
-      messageTransferRequest.beneficiary!,
-      messageTransferRequest.gasPrice!.toString(10),
-      messageTransferRequest.gasLimit!.toString(10),
-      messageTransferRequest.nonce!.toString(10),
-      messageTransferRequest.gateway!,
+      messageTransferRequest.amount.toString(10),
+      messageTransferRequest.beneficiary,
+      messageTransferRequest.gasPrice.toString(10),
+      messageTransferRequest.gasLimit.toString(10),
+      messageTransferRequest.nonce.toString(10),
+      messageTransferRequest.gateway,
     );
 
     const receipt = await Utils.sendTransaction(
@@ -145,7 +144,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
 
     const stakeRequestHash = await stakePoolInstance.methods.stakeRequestHashes(
       messageTransferRequest.sender,
-      messageTransferRequest.gateway!,
+      messageTransferRequest.gateway,
     ).call();
 
     assert.strictEqual(
@@ -206,9 +205,9 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
         );
 
         if (stakeRequestDb!.messageHash) {
-          ( messageHash = stakeRequestDb!.messageHash);
+          (messageHash = stakeRequestDb!.messageHash);
           expectedMessage = new Message(
-            messageHash!,
+            messageHash,
             MessageType.Stake,
             MessageDirection.OriginToAuxiliary,
             messageTransferRequest.gateway,
@@ -225,17 +224,17 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
 
           const gateway: EIP20Gateway = utils.getEIP20GatewayInstance();
           const coGateway: EIP20CoGateway = utils.getEIP20CoGatewayInstance();
-          const message = await gateway.methods.messages(messageHash!.toString()).call();
+          const message = await gateway.methods.messages(messageHash.toString()).call();
           const eip20GatewayMessageStatus = Utils.getEnumValue(
             parseInt(
-              await gateway.methods.getOutboxMessageStatus(messageHash!).call(),
+              await gateway.methods.getOutboxMessageStatus(messageHash).call(),
               10,
             ),
           );
 
           const eip20CoGatewayMessageStatus = Utils.getEnumValue(
             parseInt(
-              await coGateway.methods.getInboxMessageStatus(messageHash!).call(),
+              await coGateway.methods.getInboxMessageStatus(messageHash).call(),
               10,
             ),
           );
@@ -301,7 +300,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
           auxChainId,
         );
 
-        if (auxiliaryChain!.lastOriginBlockHeight!.cmp(anchoredBlockNumber) === 0) {
+        if (auxiliaryChain!.lastOriginBlockHeight!.comparedTo(anchoredBlockNumber) === 0) {
           const expectedAuxiliaryChain = utils.getAuxiliaryChainStub(
             new BigNumber(anchoredBlockNumber),
             auxiliaryChain!.lastAuxiliaryBlockHeight!,
@@ -381,7 +380,7 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
             const expectedMintedAmount: BigNumber = messageTransferRequest.amount.sub(reward);
             const actualMintedAmount: BigNumber = await helperObject.getMintedBalance(messageTransferRequest.beneficiary);
             assert.strictEqual(
-              actualMintedAmount.cmp(expectedMintedAmount),
+              actualMintedAmount.comparedTo(expectedMintedAmount),
               0,
               `Expected minted balance is ${expectedMintedAmount} but got ${actualMintedAmount}`,
             );

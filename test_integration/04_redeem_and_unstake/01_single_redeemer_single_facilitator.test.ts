@@ -29,7 +29,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   const { gasPrice } = testData;
   const { gasLimit } = testData;
   const { redeemerOSTPrimeToFund } = testData;
-  const auxChainId = testData.auxChainId;
+  const { auxChainId } = testData;
   let redeemerAddress: string;
   const helperObject = SharedStorage.getHelperObject();
   const gatewayAddresses = SharedStorage.getGatewayAddresses();
@@ -50,7 +50,6 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
   });
 
   it('should fund redeemer', async (): Promise<void> => {
-
     redeemerAddress = SharedStorage.getStakeAndMintBeneficiary();
 
     // Fund OSTPrime to redeemer
@@ -103,7 +102,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
 
     preGeneratedRedeemRequestHash = utils.getRedeemRequestHash(
       messageTransferRequest,
-      messageTransferRequest.gateway!,
+      messageTransferRequest.gateway,
       redeemPool,
     );
     Logger.debug('preGeneratedRedeemRequestHash', preGeneratedRedeemRequestHash);
@@ -111,18 +110,18 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
 
   async function submitRequestRedeemTransaction(redeemPoolInstance: RedeemPool) {
     const requestRedeemRawTx: TransactionObject<string> = redeemPoolInstance.methods.requestRedeem(
-      messageTransferRequest.amount!.toString(10),
-      messageTransferRequest.beneficiary!,
-      messageTransferRequest.gasPrice!.toString(10),
-      messageTransferRequest.gasLimit!.toString(10),
-      messageTransferRequest.nonce!.toString(10),
-      messageTransferRequest.gateway!,
+      messageTransferRequest.amount.toString(10),
+      messageTransferRequest.beneficiary,
+      messageTransferRequest.gasPrice.toString(10),
+      messageTransferRequest.gasLimit.toString(10),
+      messageTransferRequest.nonce.toString(10),
+      messageTransferRequest.gateway,
     );
 
     return Utils.sendTransaction(
       requestRedeemRawTx,
       {
-        from: messageTransferRequest.sender!,
+        from: messageTransferRequest.sender,
         gasPrice: await auxiliaryWeb3.eth.getGasPrice(),
       },
     );
@@ -182,9 +181,9 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
         );
 
         if (redeemRequestDb!.messageHash) {
-          ( messageHash = redeemRequestDb!.messageHash);
+          (messageHash = redeemRequestDb!.messageHash);
           expectedMessage = new Message(
-            messageHash!,
+            messageHash,
             MessageType.Redeem,
             MessageDirection.AuxiliaryToOrigin,
             messageTransferRequest.gateway,
@@ -198,17 +197,17 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
             '',
           );
           const messageInDb = await utils.getMessageFromDB(messageHash);
-          const message = await coGateway.methods.messages(messageHash!.toString()).call();
+          const message = await coGateway.methods.messages(messageHash.toString()).call();
 
           const eip20CoGatewayMessageStatus = Utils.getEnumValue(
             parseInt(
-              await coGateway.methods.getOutboxMessageStatus(messageHash!).call(),
+              await coGateway.methods.getOutboxMessageStatus(messageHash).call(),
               10,
             ),
           );
           const eip20GatewayMessageStatus = Utils.getEnumValue(
             parseInt(
-              await gateway.methods.getInboxMessageStatus(messageHash!).call(),
+              await gateway.methods.getInboxMessageStatus(messageHash).call(),
               10,
             ),
           );
@@ -279,8 +278,8 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     );
 
     const redeemRequestHash = await redeemPoolInstance.methods.redeemRequestHashes(
-      messageTransferRequest.sender!,
-      messageTransferRequest.gateway!,
+      messageTransferRequest.sender,
+      messageTransferRequest.gateway,
     ).call();
 
     assert.strictEqual(
@@ -292,7 +291,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
     await assertMessageTransferRequest();
 
     messageTransferRequest.senderProxy = await redeemPoolInstance.methods.redeemerProxies(
-      messageTransferRequest.sender!,
+      messageTransferRequest.sender,
     ).call();
 
     await assertMessage();
@@ -307,7 +306,7 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
         const auxiliaryChain: AuxiliaryChain | null = await utils.getAuxiliaryChainFromDb(
           auxChainId,
         );
-        if (auxiliaryChain!.lastAuxiliaryBlockHeight!.cmp(anchoredBlockNumber) === 0) {
+        if (auxiliaryChain!.lastAuxiliaryBlockHeight!.comparedTo(anchoredBlockNumber) === 0) {
           const expectedAuxiliaryChain = utils.getAuxiliaryChainStub(
             auxiliaryChain!.lastOriginBlockHeight!,
             new BigNumber(anchoredBlockNumber),
@@ -385,10 +384,10 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
               && Utils.isSourceProgressedTargetProgressed(messageInDb!)
           ) {
             Utils.assertMessages(messageInDb!, expectedMessage);
-            const reward = messageTransferRequest.gasPrice!.mul(messageTransferRequest.gasLimit!);
-            const redeemedAmount: BigNumber = messageTransferRequest.amount!.sub(reward);
+            const reward = messageTransferRequest.gasPrice.mul(messageTransferRequest.gasLimit);
+            const redeemedAmount: BigNumber = messageTransferRequest.amount.sub(reward);
             Logger.debug('Verifying is redeemer OST balance is: ', redeemedAmount.toString(10));
-            await utils.assertUnstakedBalance(messageTransferRequest.beneficiary!, redeemedAmount);
+            await utils.assertUnstakedBalance(messageTransferRequest.beneficiary, redeemedAmount);
             resolve();
           } else {
             throw new Error(

@@ -344,12 +344,12 @@ export default class Utils {
     );
     const redeemIntentTypeHash = web3Utils.soliditySha3(
       { type: 'bytes32', value: encodedTypeHash },
-      { type: 'uint256', value: messageTransferRequest.amount!.toString(10) },
-      { type: 'address', value: messageTransferRequest.beneficiary! },
-      { type: 'uint256', value: messageTransferRequest.gasPrice!.toString(10) },
-      { type: 'uint256', value: messageTransferRequest.gasLimit!.toString(10) },
-      { type: 'uint256', value: messageTransferRequest.nonce!.toString(10) },
-      { type: 'address', value: messageTransferRequest.sender! },
+      { type: 'uint256', value: messageTransferRequest.amount.toString(10) },
+      { type: 'address', value: messageTransferRequest.beneficiary },
+      { type: 'uint256', value: messageTransferRequest.gasPrice.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.gasLimit.toString(10) },
+      { type: 'uint256', value: messageTransferRequest.nonce.toString(10) },
+      { type: 'address', value: messageTransferRequest.sender },
       { type: 'address', value: cogateway },
     );
 
@@ -426,7 +426,7 @@ export default class Utils {
     expectedObject: Message,
   ): void {
     assert.strictEqual(
-      actualObject.nonce!.cmp(expectedObject.nonce!),
+      actualObject.nonce!.comparedTo(expectedObject.nonce!),
       0,
       `Expected nonce value is ${actualObject.nonce!} but got ${expectedObject.nonce!}`,
     );
@@ -438,13 +438,13 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualObject.gasLimit!.cmp(expectedObject.gasLimit!),
+      actualObject.gasLimit!.comparedTo(expectedObject.gasLimit!),
       0,
       `Expected gas limit is ${expectedObject.gasLimit!} but got ${actualObject.gasLimit!}`,
     );
 
     assert.strictEqual(
-      actualObject.gasPrice!.cmp(expectedObject.gasPrice!),
+      actualObject.gasPrice!.comparedTo(expectedObject.gasPrice!),
       0,
       `Expected gas price is ${expectedObject.gasPrice!} but got ${actualObject.gasPrice!}`,
     );
@@ -456,8 +456,8 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualObject.type!,
-      expectedObject.type!,
+      actualObject.type,
+      expectedObject.type,
       'Incorrect message type',
     );
 
@@ -486,49 +486,49 @@ export default class Utils {
     expectedObject: MessageTransferRequest,
   ): void {
     assert.strictEqual(
-      actualObject.amount!.cmp(expectedObject.amount!),
+      actualObject.amount.comparedTo(expectedObject.amount),
       0,
       `Expected amount is ${expectedObject.amount} but got ${actualObject.amount}`,
     );
 
     assert.strictEqual(
-      actualObject.nonce!.cmp(expectedObject.nonce!),
+      actualObject.nonce.comparedTo(expectedObject.nonce),
       0,
-      `Expected amount is ${expectedObject.nonce!} but got ${actualObject.nonce!}`,
+      `Expected amount is ${expectedObject.nonce} but got ${actualObject.nonce}`,
     );
 
     assert.strictEqual(
-      actualObject.gasPrice!.cmp(expectedObject.gasPrice!),
+      actualObject.gasPrice.comparedTo(expectedObject.gasPrice),
       0,
-      `Expected amount is ${expectedObject.gasPrice!} but got ${actualObject.gasPrice!}`,
+      `Expected amount is ${expectedObject.gasPrice} but got ${actualObject.gasPrice}`,
     );
 
     assert.strictEqual(
-      actualObject.gasLimit!.cmp(expectedObject.gasLimit!),
+      actualObject.gasLimit.comparedTo(expectedObject.gasLimit),
       0,
-      `Expected amount is ${expectedObject.gasLimit!} but got ${actualObject.gasLimit!}`,
+      `Expected amount is ${expectedObject.gasLimit} but got ${actualObject.gasLimit}`,
     );
 
     assert.strictEqual(
-      actualObject.beneficiary!,
-      expectedObject.beneficiary!,
+      actualObject.beneficiary,
+      expectedObject.beneficiary,
       'Invalid beneficiary address',
     );
 
     assert.strictEqual(
-      actualObject.gateway!,
-      expectedObject.gateway!,
+      actualObject.gateway,
+      expectedObject.gateway,
       'Invalid gateway address',
     );
 
     assert.strictEqual(
-      actualObject.sender!,
-      expectedObject.sender!,
+      actualObject.sender,
+      expectedObject.sender,
       'Invalid stake address',
     );
 
     assert.strictEqual(
-      actualObject.blockNumber.cmp(expectedObject.blockNumber),
+      actualObject.blockNumber.comparedTo(expectedObject.blockNumber),
       0,
       'Expected blocknumber at which stake request is done is '
       + `${expectedObject.blockNumber}  but got ${expectedObject.blockNumber},`,
@@ -583,7 +583,7 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualGateway.lastRemoteGatewayProvenBlockHeight.cmp(
+      actualGateway.lastRemoteGatewayProvenBlockHeight.comparedTo(
         expectedGateway.lastRemoteGatewayProvenBlockHeight,
       ),
       0,
@@ -599,7 +599,7 @@ export default class Utils {
     );
 
     assert.strictEqual(
-      actualGateway.bounty.cmp(expectedGateway.bounty!),
+      actualGateway.bounty.comparedTo(expectedGateway.bounty),
       0,
       `Expected bounty value is ${actualGateway.bounty} but got ${expectedGateway.bounty}`,
     );
@@ -641,7 +641,7 @@ export default class Utils {
   ): void {
     assert.strictEqual(
       actualAuxiliaryChain.lastOriginBlockHeight!
-        .cmp(expectedAuxiliaryChain.lastOriginBlockHeight!),
+        .comparedTo(expectedAuxiliaryChain.lastOriginBlockHeight!),
       0,
       `Expected last origin block height is ${expectedAuxiliaryChain.lastOriginBlockHeight} but `
       + `got ${actualAuxiliaryChain.lastOriginBlockHeight}`,
@@ -748,7 +748,7 @@ export default class Utils {
     const valueTokenInstance = this.getValueTokenInstance();
     const actualUnstakedAmount = await valueTokenInstance.methods.balanceOf(beneficiary).call();
     assert.strictEqual(
-      new BigNumber(actualUnstakedAmount).cmp(expectedAmount),
+      new BigNumber(actualUnstakedAmount).comparedTo(expectedAmount),
       0,
       `Expected unStaked balance is ${expectedAmount} but got ${actualUnstakedAmount}`,
     );
@@ -771,7 +771,7 @@ export default class Utils {
     const beneficiaryBalance = await baseTokenInstance.methods.balanceOf(beneficiary).call();
 
     assert.strictEqual(
-      amount.cmp(beneficiaryBalance),
+      amount.comparedTo(beneficiaryBalance),
       0,
       `Expected balance is ${amount} but got ${beneficiaryBalance}`,
     );
@@ -794,7 +794,7 @@ export default class Utils {
     const beneficiaryBalance = await valueTokenInstance.methods.balanceOf(beneficiary).call();
 
     assert.strictEqual(
-      amount.cmp(beneficiaryBalance),
+      amount.comparedTo(beneficiaryBalance),
       0,
       `Expected balance is  ${amount} but got ${beneficiaryBalance}`,
     );
@@ -1127,5 +1127,4 @@ export default class Utils {
     }
     return urlToWeb3ConnectionsMap[endpoint];
   }
-
 }
