@@ -17,11 +17,13 @@
 import { InitOptions, Sequelize } from 'sequelize';
 
 import WithdrawIntentRepository from './WithdrawIntentRepository';
+import DepositIntentRepository from './DepositIntentRepository';
 
 export default class Repositories {
   /* Storage */
 
   public withdrawIntentRepository: WithdrawIntentRepository;
+  public depositIntentRepository: DepositIntentRepository;
 
   /* Public Functions */
 
@@ -31,7 +33,6 @@ export default class Repositories {
    * @param storage A repositories file path or ':memory' in case of in
    *                memory representation.
    */
-
   public static async create(storage = ':memory:'): Promise<Repositories> {
     const sequelize = new Sequelize({
       dialect: 'sqlite',
@@ -54,6 +55,7 @@ export default class Repositories {
     const promises = [];
 
     promises.push(this.withdrawIntentRepository.notify());
+    promises.push(this.depositIntentRepository.notify());
 
     return Promise.all(promises);
   }
@@ -73,7 +75,6 @@ export default class Repositories {
    *
    * @param sequelize Sequelize instance.
    */
-
   private constructor(sequelize: Sequelize) {
     const initOptions: InitOptions = {
       sequelize,
@@ -83,5 +84,6 @@ export default class Repositories {
     };
 
     this.withdrawIntentRepository = new WithdrawIntentRepository(initOptions);
+    this.depositIntentRepository = new DepositIntentRepository(initOptions);
   }
 }
