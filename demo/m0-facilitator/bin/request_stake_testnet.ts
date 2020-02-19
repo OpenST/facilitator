@@ -9,7 +9,7 @@ const { BN } = new Web3().utils;
 
 
 async function readInput() {
-  const filePath = path.join(__dirname, '..', '..', 'staker.json');
+  const filePath = path.join(__dirname, '..', '..', '..', 'staker.json');
   const answer = await inquirer.prompt([
     {
       type: 'string',

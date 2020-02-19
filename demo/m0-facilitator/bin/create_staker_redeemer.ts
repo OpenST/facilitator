@@ -58,7 +58,7 @@ async function createActor() {
 
   const encrypedAccount = stakerAccount.encrypt(answer.password);
 
-  const filePath = path.join(__dirname, '..', '..', `${answer.actor}.json`);
+  const filePath = path.join(__dirname, '..', '..', '..', `${answer.actor}.json`);
   fs.writeFileSync(filePath, JSON.stringify(encrypedAccount, null, '    '));
   console.log(`\n${answer.actor} address  ${stakerAccount.address}`);
   console.log(`Encrypted key store path: ${filePath}`);
