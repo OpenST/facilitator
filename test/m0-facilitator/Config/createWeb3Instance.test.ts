@@ -29,7 +29,7 @@ describe('Config.createWeb3Instance', () => {
   let config: Config; let chain: Chain;
 
   beforeEach(() => {
-    const mosaicConfigPath = 'testdata/mosaic.json';
+    const mosaicConfigPath = 'testdata/m0-facilitator/mosaic.json';
     const facilitatorConfigPath = 'test/m0-facilitator/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC);
     chain = config.facilitator.chains[config.facilitator.originChain];

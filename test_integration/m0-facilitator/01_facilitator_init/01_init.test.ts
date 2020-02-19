@@ -19,8 +19,8 @@ describe('facilitator init', async (): Promise<void> => {
   const testMode = process.env.TEST_MODE;
   Logger.debug('testMode', testMode);
 
-  const mosaicConfigPath = path.join(__dirname, '../../../testdata/mosaic.json');
-  const gatewayConfigPath = path.join(__dirname, '../../../testdata/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json');
+  const mosaicConfigPath = path.join(__dirname, '../../../testdata/m0-facilitator/mosaic.json');
+  const gatewayConfigPath = path.join(__dirname, '../../../testdata/m0-facilitator/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   switch (testMode) {
     case 'baseToken':

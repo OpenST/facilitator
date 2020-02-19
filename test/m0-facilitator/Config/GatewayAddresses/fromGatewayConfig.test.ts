@@ -120,7 +120,7 @@ describe('GatewayAddresses.fromGatewayConfig()', () => {
       'Invalid auxiliary gateway organization address',
     );
   }
-  const gatewayConfigPath = 'testdata/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json';
+  const gatewayConfigPath = 'testdata/m0-facilitator/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json';
   const gatewayConfig = GatewayConfig.fromFile(gatewayConfigPath);
   const { auxChainId } = gatewayConfig;
 

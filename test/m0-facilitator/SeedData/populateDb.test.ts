@@ -286,7 +286,7 @@ describe('SeedData.populateDb()', (): void => {
       'getEIP20CoGateway',
       () => eip20CoGatewayMockObject as any,
     );
-    const mosaicConfigPath = 'testdata/mosaic.json';
+    const mosaicConfigPath = 'testdata/m0-facilitator/mosaic.json';
     const facilitatorConfigPath = 'test/m0-facilitator/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC);
     sinon.replaceGetter(
