@@ -19,10 +19,10 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
-import { MAX_VALUE } from '../../m0-facilitator/Constants';
+import { MAX_VALUE } from '../../m0_facilitator/Constants';
 import DepositIntent from '../models/DepositIntent';
-import Subject from '../../m0-facilitator/observer/Subject';
-import Utils from '../../m0-facilitator/Utils';
+import Subject from '../../m0_facilitator/observer/Subject';
+import Utils from '../../m0_facilitator/Utils';
 
 /**
  * An interface, that represents a row from a deposit_intents table.
