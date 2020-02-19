@@ -23,6 +23,7 @@ export default class Repositories {
   /* Storage */
 
   public withdrawIntentRepository: WithdrawIntentRepository;
+
   public depositIntentRepository: DepositIntentRepository;
 
   /* Public Functions */

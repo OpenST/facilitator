@@ -48,7 +48,7 @@ const Util = {
       );
     }
 
-    
+
     assert.strictEqual(
       inputWithdrawIntent.beneficiary,
       expectedWithdrawIntent.beneficiary,

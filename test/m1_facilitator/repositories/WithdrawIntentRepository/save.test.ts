@@ -38,9 +38,8 @@ describe('WithdrawIntent::save', (): void => {
     config = {
       repos: await Repositories.create(),
     };
-
-    intentHash = '0x00000000000000000000000000000000000000000000000000000000000100';
-    messageHash = '0x00000000000000000000000000000000000000000000000000000000000200';
+    intentHash = '0x00000000000000000000000000000000000000000000000000000000000500';
+    messageHash = '0x00000000000000000000000000000000000000000000000000000000000900';
     tokenAddress = '0x0000000000000000000000000000000000000001';
     amount = new BigNumber('100');
     beneficiary = '0x0000000000000000000000000000000000000002';
@@ -48,7 +47,7 @@ describe('WithdrawIntent::save', (): void => {
     updatedAt = new Date();
   });
 
-  it('Should create WithdrawIntent model correctly', async() : Promise<void> =>{
+  it('Should create WithdrawIntent model correctly', async (): Promise<void> => {
     const withdrawIntent = new WithdrawIntent(
       intentHash,
       messageHash,
@@ -58,15 +57,14 @@ describe('WithdrawIntent::save', (): void => {
       createdAt,
       updatedAt,
     );
-
     const createdWithdrawIntent = await config.repos.withdrawIntentRepository.save(
       withdrawIntent,
     );
 
-    Util.assertWithdrawIntentAttributes(createdWithdrawIntent,withdrawIntent);
+    Util.assertWithdrawIntentAttributes(createdWithdrawIntent, withdrawIntent);
   });
 
-  it('Should update WithdrawIntent model correctly', async (): Promise<void> =>{
+  it('Should update WithdrawIntent model correctly', async (): Promise<void> => {
     const withdrawIntent = new WithdrawIntent(
       intentHash,
       messageHash,
@@ -84,10 +82,10 @@ describe('WithdrawIntent::save', (): void => {
       withdrawIntent,
     );
 
-    Util.assertWithdrawIntentAttributes(updateWithdrawIntent,withdrawIntent);
+    Util.assertWithdrawIntentAttributes(updateWithdrawIntent, withdrawIntent);
   });
 
-  it('Should fail when token address and beneficiary address is not valid', async (): Promise<void> =>{
+  it('Should fail when token address and beneficiary address is not valid', async (): Promise<void> => {
     const withdrawIntent = new WithdrawIntent(
       intentHash,
       messageHash,
@@ -97,9 +95,9 @@ describe('WithdrawIntent::save', (): void => {
       createdAt,
       updatedAt,
     );
-    try{
+    try {
       await config.repos.withdrawIntentRepository.save(withdrawIntent);
-    }catch(error) {
+    } catch (error) {
       assertErrorMessages(error.errors, [
         'Validation len on tokenAddress failed',
         'Validation len on beneficiary failed',

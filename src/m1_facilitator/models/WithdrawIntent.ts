@@ -48,7 +48,6 @@ export default class WithdrawIntent extends Comparable<WithdrawIntent> {
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */
-
   public constructor(
     intentHash: string,
     messageHash: string,

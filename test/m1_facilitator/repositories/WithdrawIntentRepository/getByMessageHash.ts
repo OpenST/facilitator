@@ -39,9 +39,8 @@ describe('WithdrawIntent::getByMessageHash', (): void => {
     config = {
       repos: await Repositories.create(),
     };
-
-    intentHash = '0x00000000000000000000000000000000000000000000000000000000000100';
-    messageHash = '0x00000000000000000000000000000000000000000000000000000000000200';
+    intentHash = '0x00000000000000000000000000000000000000000000000000000000000500';
+    messageHash = '0x00000000000000000000000000000000000000000000000000000000000900';
     tokenAddress = '0x0000000000000000000000000000000000000001';
     amount = new BigNumber('100');
     beneficiary = '0x0000000000000000000000000000000000000002';
@@ -72,7 +71,7 @@ describe('WithdrawIntent::getByMessageHash', (): void => {
 
   it('should return null when querying for non-existing '
     + 'message hash', async (): Promise<void> => {
-    const nonExistingMessageHash = '0x00000000000000000000000000000000000000000000000000000000000111';
+    const nonExistingMessageHash = '0x00000000000000000000000000000000000000000000000000000000000191';
 
     const getResponse = await config.repos.withdrawIntentRepository.getByMessageHash(
       nonExistingMessageHash,
