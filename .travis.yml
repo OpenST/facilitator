@@ -11,6 +11,7 @@ env:
     - DOCKER_COMPOSE_VERSION=1.23.2
   jobs:
     - TEST_SUITE="test:unit"
+    - TEST_SUITE="test:package"
     - TEST_SUITE="test:integration:baseToken"
     - TEST_SUITE="test:integration:eip20Token"
 before_install:
