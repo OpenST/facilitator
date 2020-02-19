@@ -17,12 +17,15 @@
 import { InitOptions, Sequelize } from 'sequelize';
 
 import WithdrawIntentRepository from './WithdrawIntentRepository';
+import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
 
 export default class Repositories {
   /* Storage */
 
   public withdrawIntentRepository: WithdrawIntentRepository;
+
+  public anchorRepository: AnchorRepository;
 
   public depositIntentRepository: DepositIntentRepository;
 
@@ -57,6 +60,7 @@ export default class Repositories {
 
     promises.push(this.withdrawIntentRepository.notify());
     promises.push(this.depositIntentRepository.notify());
+    promises.push(this.anchorRepository.notify());
 
     return Promise.all(promises);
   }
@@ -85,6 +89,7 @@ export default class Repositories {
     };
 
     this.withdrawIntentRepository = new WithdrawIntentRepository(initOptions);
+    this.anchorRepository = new AnchorRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
   }
 }

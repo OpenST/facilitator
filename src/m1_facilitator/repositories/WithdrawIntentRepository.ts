@@ -19,9 +19,9 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
-import { MAX_VALUE } from '../../Constants';
-import Subject from '../../observer/Subject';
-import Utils from '../../Utils';
+import { MAX_VALUE } from '../../m0_facilitator/Constants';
+import Subject from '../../m0_facilitator/observer/Subject';
+import Utils from '../../m0_facilitator/Utils';
 import WithdrawIntent from '../models/WithdrawIntent';
 
 /**
