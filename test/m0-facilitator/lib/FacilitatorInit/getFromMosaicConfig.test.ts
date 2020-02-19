@@ -18,8 +18,8 @@
 import sinon, { SinonStub } from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
 import FacilitatorInit from '../../../../src/m0-facilitator/lib/FacilitatorInit';
 import GatewayAddresses from '../../../../src/m0-facilitator/Config/GatewayAddresses';
 

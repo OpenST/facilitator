@@ -22,8 +22,8 @@ import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
-import assert from '../../../test_utils/assert';
-import SpyAssert from '../../../test_utils/SpyAssert';
+import assert from '../../../../test_utils/assert';
+import SpyAssert from '../../../../test_utils/SpyAssert';
 
 describe('ProgressUnstake.persist()', () => {
   const transactions = [{

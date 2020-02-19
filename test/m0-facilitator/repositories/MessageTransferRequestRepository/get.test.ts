@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 
 import MessageTransferRequest from '../../../../src/m0-facilitator/models/MessageTransferRequest';
 import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 import Util from './util';
 import { RequestType } from '../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 

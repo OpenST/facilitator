@@ -16,7 +16,7 @@
 
 
 import AuxiliaryChain from '../../../../src/m0-facilitator/models/AuxiliaryChain';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 
 const Util = {
   assertAuxiliaryChainAttributes(

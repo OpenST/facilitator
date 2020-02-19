@@ -21,8 +21,8 @@ import BigNumber from 'bignumber.js';
 
 import Message from '../../../../src/m0-facilitator/models/Message';
 import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
-import assert from '../../test_utils/assert';
-import StubData from '../../test_utils/StubData';
+import assert from '../../../test_utils/assert';
+import StubData from '../../../test_utils/StubData';
 import Util from './util';
 import { MessageDirection } from '../../../../src/m0-facilitator/repositories/MessageRepository';
 

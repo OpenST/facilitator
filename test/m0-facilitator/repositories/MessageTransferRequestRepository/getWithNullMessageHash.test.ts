@@ -24,7 +24,7 @@ import {
   MessageDirection, MessageStatus, MessageType,
 } from '../../../../src/m0-facilitator/repositories/MessageRepository';
 import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 import Util from './util';
 import { RequestType } from '../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 

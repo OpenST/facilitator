@@ -17,7 +17,7 @@
 import 'mocha';
 
 import Subject from '../../../../src/m0-facilitator/observer/Subject';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 import NumberUpdate from '../NumberUpdate';
 
 interface TestConfigInterface {

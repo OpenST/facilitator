@@ -20,7 +20,7 @@ import sinon from 'sinon';
 
 import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
 import Directory from '../../../src/m0-facilitator/Directory';
-import SpyAssert from '../test_utils/SpyAssert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('FacilitatorConfig.remove()', () => {
   it('should remove facilitator config from default path', async () => {

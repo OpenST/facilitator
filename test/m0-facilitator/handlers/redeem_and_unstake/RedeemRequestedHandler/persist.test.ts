@@ -21,8 +21,8 @@ import * as Web3Utils from 'web3-utils';
 import RedeemRequestedHandler from '../../../../../src/m0-facilitator/handlers/redeem_and_unstake/RedeemRequestedHandler';
 import MessageTransferRequest from '../../../../../src/m0-facilitator/models/MessageTransferRequest';
 import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
-import assert from '../../../test_utils/assert';
-import SpyAssert from '../../../test_utils/SpyAssert';
+import assert from '../../../../test_utils/assert';
+import SpyAssert from '../../../../test_utils/SpyAssert';
 import Repositories from '../../../../../src/m0-facilitator/repositories/Repositories';
 import {
   MessageDirection,

@@ -20,9 +20,9 @@ import sinon from 'sinon';
 
 import StateRootAvailableHandler from '../../../../src/m0-facilitator/handlers/StateRootAvailableHandler';
 import AuxiliaryChainRepository from '../../../../src/m0-facilitator/repositories/AuxiliaryChainRepository';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from '../../../test_utils/StubData';
 
 describe('StateRootAvailableHandler.persist()', () => {
   const auxiliaryChainId = 123;

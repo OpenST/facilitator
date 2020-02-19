@@ -18,7 +18,7 @@
 import sinon from 'sinon';
 
 import { Config } from '../../../src/m0-facilitator/Config/Config';
-import assert from '../test_utils/assert';
+import assert from '../../test_utils/assert';
 import GatewayAddresses from '../../../src/m0-facilitator/Config/GatewayAddresses';
 
 describe('Config.constructor()', () => {

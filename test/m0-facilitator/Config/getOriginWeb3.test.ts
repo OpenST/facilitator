@@ -20,7 +20,7 @@ import sinon from 'sinon';
 import Web3 from 'web3';
 
 import { Chain, Config, ConfigType } from '../../../src/m0-facilitator/Config/Config';
-import SpyAssert from '../test_utils/SpyAssert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('Config.originWeb3', () => {
   let config: Config; let chain: Chain;

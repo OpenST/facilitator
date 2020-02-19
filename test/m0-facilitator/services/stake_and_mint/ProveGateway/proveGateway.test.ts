@@ -28,9 +28,9 @@ import GatewayRepository from '../../../../../src/m0-facilitator/repositories/Ga
 import { MessageDirection, MessageRepository } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import ProveGatewayService from '../../../../../src/m0-facilitator/services/stake_and_mint/ProveGatewayService';
 import Utils from '../../../../../src/m0-facilitator/Utils';
-import assert from '../../../test_utils/assert';
-import SpyAssert from '../../../test_utils/SpyAssert';
-import StubData from '../../../test_utils/StubData';
+import assert from '../../../../test_utils/assert';
+import SpyAssert from '../../../../test_utils/SpyAssert';
+import StubData from '../../../../test_utils/StubData';
 
 describe('ProveGatewayService.proveGateway()', (): void => {
   const originWeb3 = new Web3(null);

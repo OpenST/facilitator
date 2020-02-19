@@ -22,8 +22,8 @@ import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClien
 import Subscriber from '../../../../src/m0-facilitator/subscriptions/Subscriber';
 import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
 import TransactionHandler from '../../../../src/m0-facilitator/TransactionHandler';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;

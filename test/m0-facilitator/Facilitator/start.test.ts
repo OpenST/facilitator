@@ -19,7 +19,7 @@ import sinon from 'sinon';
 
 import Facilitator from '../../../src/m0-facilitator/Facilitator';
 import Subscriber from '../../../src/m0-facilitator/subscriptions/Subscriber';
-import SpyAssert from '../test_utils/SpyAssert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('Facilitator.start()', (): void => {
   it('should start facilitation', async (): Promise<void> => {

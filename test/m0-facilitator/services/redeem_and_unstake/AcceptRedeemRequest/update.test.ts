@@ -33,8 +33,8 @@ import {
 import Repositories from '../../../../../src/m0-facilitator/repositories/Repositories';
 import AcceptRedeemRequestService from '../../../../../src/m0-facilitator/services/redeem_and_unstake/AcceptRedeemRequestService';
 import Utils from '../../../../../src/m0-facilitator/Utils';
-import assert from '../../../test_utils/assert';
-import SpyAssert from '../../../test_utils/SpyAssert';
+import assert from '../../../../test_utils/assert';
+import SpyAssert from '../../../../test_utils/SpyAssert';
 import { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {

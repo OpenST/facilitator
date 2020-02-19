@@ -30,8 +30,8 @@ import { MessageDirection, MessageRepository } from '../../../../../src/m0-facil
 import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 import ConfirmStakeIntentService from '../../../../../src/m0-facilitator/services/stake_and_mint/ConfirmStakeIntentService';
 import Utils from '../../../../../src/m0-facilitator/Utils';
-import SpyAssert from '../../../test_utils/SpyAssert';
-import StubData from '../../../test_utils/StubData';
+import SpyAssert from '../../../../test_utils/SpyAssert';
+import StubData from '../../../../test_utils/StubData';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

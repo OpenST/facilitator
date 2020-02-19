@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import MessageTransferRequest from '../../../../src/m0-facilitator/models/MessageTransferRequest';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 
 const Util = {
   checkInputAgainstOutput(

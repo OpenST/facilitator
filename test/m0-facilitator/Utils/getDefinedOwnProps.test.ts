@@ -17,7 +17,7 @@
 import 'mocha';
 
 import Utils from '../../../src/m0-facilitator/Utils';
-import assert from '../test_utils/assert';
+import assert from '../../test_utils/assert';
 
 describe('Utils::getDefinedOwnProps', (): void => {
   it('Checks that only defined and owned props are returned.', async (): Promise<void> => {

@@ -22,7 +22,7 @@ import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClien
 import Subscriber from '../../../../src/m0-facilitator/subscriptions/Subscriber';
 import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
 import TransactionHandler from '../../../../src/m0-facilitator/TransactionHandler';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 
 describe('Subscriber.unsubscribe()', () => {
   let mockApolloClient: any;

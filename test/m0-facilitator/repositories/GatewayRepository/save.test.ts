@@ -21,7 +21,7 @@ import Gateway from '../../../../src/m0-facilitator/models/Gateway';
 import { GatewayType } from '../../../../src/m0-facilitator/repositories/GatewayRepository';
 import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
 import Util from './util';
-import assert, { assertErrorMessages } from '../../test_utils/assert';
+import assert, { assertErrorMessages } from '../../../test_utils/assert';
 
 interface TestConfigInterface {
   repos: Repositories;

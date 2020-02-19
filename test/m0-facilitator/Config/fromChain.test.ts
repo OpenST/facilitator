@@ -19,8 +19,8 @@ import sinon from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import { Config, FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 import GatewayAddresses from '../../../src/m0-facilitator/Config/GatewayAddresses';
 
 describe('Config.fromChain()', () => {

@@ -18,7 +18,7 @@
 import sinon from 'sinon';
 
 import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 
 describe('GraphClient.constructor()', () => {
   let mockApolloClient;

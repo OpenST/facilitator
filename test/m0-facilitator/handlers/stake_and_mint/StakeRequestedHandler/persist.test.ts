@@ -22,8 +22,8 @@ import * as Web3Utils from 'web3-utils';
 import StakeRequestedHandler from '../../../../../src/m0-facilitator/handlers/stake_and_mint/StakeRequestedHandler';
 import MessageTransferRequest from '../../../../../src/m0-facilitator/models/MessageTransferRequest';
 import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
-import assert from '../../../test_utils/assert';
-import SpyAssert from '../../../test_utils/SpyAssert';
+import assert from '../../../../test_utils/assert';
+import SpyAssert from '../../../../test_utils/SpyAssert';
 import Repositories from '../../../../../src/m0-facilitator/repositories/Repositories';
 import Message from '../../../../../src/m0-facilitator/models/Message';
 import {

@@ -20,8 +20,8 @@ import sinon from 'sinon';
 
 import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
 import Utils from '../../../src/m0-facilitator/Utils';
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('FacilitatorConfig.fromFile()', () => {
   const facilitatorConfigPath = 'test/Database/facilitator-config.json';

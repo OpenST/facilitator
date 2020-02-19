@@ -29,8 +29,8 @@ import { MessageDirection, MessageRepository } from '../../../../../src/m0-facil
 import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 import ConfirmRedeemIntentService from '../../../../../src/m0-facilitator/services/redeem_and_unstake/ConfirmRedeemIntentService';
 import Utils from '../../../../../src/m0-facilitator/Utils';
-import SpyAssert from '../../../test_utils/SpyAssert';
-import StubData from '../../../test_utils/StubData';
+import SpyAssert from '../../../../test_utils/SpyAssert';
+import StubData from '../../../../test_utils/StubData';
 import { GatewayType } from '../../../../../src/m0-facilitator/repositories/GatewayRepository';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */

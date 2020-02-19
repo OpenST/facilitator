@@ -17,8 +17,8 @@
 import 'mocha';
 
 import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
-import assert from '../../test_utils/assert';
-import StubData from '../../test_utils/StubData';
+import assert from '../../../test_utils/assert';
+import StubData from '../../../test_utils/StubData';
 import Util from './util';
 
 interface TestConfigInterface {

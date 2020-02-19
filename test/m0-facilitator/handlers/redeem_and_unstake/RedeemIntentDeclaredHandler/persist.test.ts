@@ -24,13 +24,13 @@ import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
-import assert from '../../../test_utils/assert';
-import SpyAssert from '../../../test_utils/SpyAssert';
+import assert from '../../../../test_utils/assert';
+import SpyAssert from '../../../../test_utils/SpyAssert';
 import {
   default as MessageTransferRequestRepository,
   RequestType,
 } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
-import StubData from '../../../test_utils/StubData';
+import StubData from '../../../../test_utils/StubData';
 
 describe('RedeemIntentDeclaredHandler.persist()', (): void => {
   const transactions = [{

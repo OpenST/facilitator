@@ -19,8 +19,8 @@ import sinon from 'sinon';
 import Web3 from 'web3';
 
 import Account from '../../../src/m0-facilitator/Account';
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('Unlock', (): void => {
   let web3: Web3;

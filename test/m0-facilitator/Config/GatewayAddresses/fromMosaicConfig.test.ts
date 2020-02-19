@@ -17,7 +17,7 @@
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayAddresses from '../../../../src/m0-facilitator/Config/GatewayAddresses';
 
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 
 describe('GatewayAddresses.fromMosaicConfig()', () => {
 /**

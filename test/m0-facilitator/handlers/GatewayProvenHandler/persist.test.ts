@@ -21,8 +21,8 @@ import * as Utils from 'web3-utils';
 import GatewayProvenHandler from '../../../../src/m0-facilitator/handlers/GatewayProvenHandler';
 import Gateway from '../../../../src/m0-facilitator/models/Gateway';
 import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
-import assert from '../../test_utils/assert';
-import StubData from '../../test_utils/StubData';
+import assert from '../../../test_utils/assert';
+import StubData from '../../../test_utils/StubData';
 
 interface TestConfigInterface {
   repos: Repositories;

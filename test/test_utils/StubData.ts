@@ -18,16 +18,16 @@
 import BigNumber from 'bignumber.js';
 import * as utils from 'web3-utils';
 
-import AuxiliaryChain from '../../../src/m0-facilitator/models/AuxiliaryChain';
-import ContractEntity, { EntityType } from '../../../src/m0-facilitator/models/ContractEntity';
-import Gateway from '../../../src/m0-facilitator/models/Gateway';
-import Message from '../../../src/m0-facilitator/models/Message';
-import MessageTransferRequest from '../../../src/m0-facilitator/models/MessageTransferRequest';
-import { GatewayType } from '../../../src/m0-facilitator/repositories/GatewayRepository';
+import AuxiliaryChain from '../../src/m0-facilitator/models/AuxiliaryChain';
+import ContractEntity, { EntityType } from '../../src/m0-facilitator/models/ContractEntity';
+import Gateway from '../../src/m0-facilitator/models/Gateway';
+import Message from '../../src/m0-facilitator/models/Message';
+import MessageTransferRequest from '../../src/m0-facilitator/models/MessageTransferRequest';
+import { GatewayType } from '../../src/m0-facilitator/repositories/GatewayRepository';
 import {
   MessageDirection, MessageStatus, MessageType,
-} from '../../../src/m0-facilitator/repositories/MessageRepository';
-import { RequestType } from '../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
+} from '../../src/m0-facilitator/repositories/MessageRepository';
+import { RequestType } from '../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 
 export default class StubData {
   public static getAMessageTransferRequest = (

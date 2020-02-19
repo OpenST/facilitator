@@ -26,8 +26,8 @@ import ContractEntityRepository from '../../../../src/m0-facilitator/repositorie
 import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
 import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
 import TransactionHandler from '../../../../src/m0-facilitator/TransactionHandler';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;

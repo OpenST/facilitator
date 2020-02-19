@@ -16,7 +16,7 @@
 
 
 import ContractEntity from '../../../../src/m0-facilitator/models/ContractEntity';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 
 /**
  * It contains common methods used for testing purpose of ContractEntityRepository.

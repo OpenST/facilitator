@@ -22,8 +22,8 @@ import Account from '../../../src/m0-facilitator/Account';
 import {
   Chain, Config, ConfigType, ENV_WORKER_PASSWORD_PREFIX,
 } from '../../../src/m0-facilitator/Config/Config';
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 describe('Config.createWeb3Instance', () => {
   let config: Config; let chain: Chain;

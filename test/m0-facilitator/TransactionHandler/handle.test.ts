@@ -20,9 +20,9 @@ import sinon from 'sinon';
 import StakeRequestedHandler from '../../../src/m0-facilitator/handlers/stake_and_mint/StakeRequestedHandler';
 import Repositories from '../../../src/m0-facilitator/repositories/Repositories';
 import TransactionHandler from '../../../src/m0-facilitator/TransactionHandler';
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
-import StubData from '../test_utils/StubData';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
+import StubData from '../../test_utils/StubData';
 import { RequestType } from '../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 
 describe('TransactionHandler.handle()', (): void => {

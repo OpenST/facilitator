@@ -19,7 +19,7 @@ import sinon from 'sinon';
 
 import Facilitator from '../../../src/m0-facilitator/Facilitator';
 import Subscriber from '../../../src/m0-facilitator/subscriptions/Subscriber';
-import assert from '../test_utils/assert';
+import assert from '../../test_utils/assert';
 
 describe('Facilitator.constructor()', () => {
   it('should construct with correct parameters', async () => {

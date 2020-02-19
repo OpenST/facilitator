@@ -18,8 +18,8 @@
 import * as sinon from 'sinon';
 import * as utils from 'web3-utils';
 
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 import Utils from '../../../src/m0-facilitator/Utils';
 
 describe('Utils.toChecksumAddress()', () => {

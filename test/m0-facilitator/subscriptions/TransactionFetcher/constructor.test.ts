@@ -19,7 +19,7 @@ import sinon from 'sinon';
 
 import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
 import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
-import assert from '../../test_utils/assert';
+import assert from '../../../test_utils/assert';
 
 describe('TransactionFetcher.constructor()', () => {
   it('should construct with correct parameters', async () => {

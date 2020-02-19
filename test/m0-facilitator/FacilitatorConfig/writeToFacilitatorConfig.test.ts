@@ -21,7 +21,7 @@ import sinon from 'sinon';
 
 import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
 import Directory from '../../../src/m0-facilitator/Directory';
-import SpyAssert from '../test_utils/SpyAssert';
+import SpyAssert from '../../test_utils/SpyAssert';
 
 const auxiliaryChainId = 1000;
 const originChain = 'dev-origin';

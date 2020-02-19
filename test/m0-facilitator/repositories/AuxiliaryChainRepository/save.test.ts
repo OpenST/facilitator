@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 import AuxiliaryChain from '../../../../src/m0-facilitator/models/AuxiliaryChain';
 import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
 import Util from './util';
-import assert, { assertErrorMessages } from '../../test_utils/assert';
+import assert, { assertErrorMessages } from '../../../test_utils/assert';
 
 interface TestConfigInterface {
   repos: Repositories;

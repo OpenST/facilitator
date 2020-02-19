@@ -25,8 +25,8 @@ import GatewayRepository from '../../../../../src/m0-facilitator/repositories/Ga
 import { MessageStatus, MessageType } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import ProgressService from '../../../../../src/m0-facilitator/services/redeem_and_unstake/ProgressService';
 import Utils from '../../../../../src/m0-facilitator/Utils';
-import SpyAssert from '../../../test_utils/SpyAssert';
-import StubData from '../../../test_utils/StubData';
+import SpyAssert from '../../../../test_utils/SpyAssert';
+import StubData from '../../../../test_utils/StubData';
 
 describe('ProgressService.update()', () => {
   let coGatewaySpy: any;

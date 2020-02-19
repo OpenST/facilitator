@@ -22,9 +22,9 @@ import FetchQueries from '../../../../src/m0-facilitator/GraphQueries/FetchQueri
 import ContractEntityRepository from '../../../../src/m0-facilitator/repositories/ContractEntityRepository';
 import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
 import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
+import assert from '../../../test_utils/assert';
+import SpyAssert from '../../../test_utils/SpyAssert';
+import StubData from '../../../test_utils/StubData';
 
 describe('TransactionFetcher.fetch()', () => {
   it('should work with correct parameters', async () => {

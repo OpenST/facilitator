@@ -18,8 +18,8 @@
 import * as sinon from 'sinon';
 import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
-import assert from '../test_utils/assert';
-import SpyAssert from '../test_utils/SpyAssert';
+import assert from '../../test_utils/assert';
+import SpyAssert from '../../test_utils/SpyAssert';
 import Utils from '../../../src/m0-facilitator/Utils';
 import { MESSAGE_BOX_OFFSET } from '../../../src/m0-facilitator/Constants';
 
