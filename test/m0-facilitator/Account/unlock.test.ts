@@ -18,7 +18,7 @@
 import sinon from 'sinon';
 import Web3 from 'web3';
 
-import Account from '../../src/Account';
+import Account from '../../../src/m0-facilitator/Account';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 

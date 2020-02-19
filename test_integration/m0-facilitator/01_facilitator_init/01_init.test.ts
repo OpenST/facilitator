@@ -5,8 +5,8 @@ import fs from 'fs-extra';
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
-import assert from '../../test/m0-facilitator/test_utils/assert';
-import Directory from '../../src/m0-facilitator/Directory';
+import assert from '../../../test/m0-facilitator/test_utils/assert';
+import Directory from '../../../src/m0-facilitator/Directory';
 import SharedStorage from '../SharedStorage';
 import BaseTokenHelper from '../helpers/BaseTokenHelper';
 import EIP20TokenHelper from '../helpers/EIP20TokenHelper';
@@ -19,8 +19,8 @@ describe('facilitator init', async (): Promise<void> => {
   const testMode = process.env.TEST_MODE;
   Logger.debug('testMode', testMode);
 
-  const mosaicConfigPath = path.join(__dirname, '../../testdata/mosaic.json');
-  const gatewayConfigPath = path.join(__dirname, '../../testdata/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json');
+  const mosaicConfigPath = path.join(__dirname, '../../../testdata/mosaic.json');
+  const gatewayConfigPath = path.join(__dirname, '../../../testdata/0xae02c7b1c324a8d94a564bc8d713df89eae441fe.json');
   const mosaicConfig = MosaicConfig.fromFile(mosaicConfigPath);
   switch (testMode) {
     case 'baseToken':
@@ -53,7 +53,6 @@ describe('facilitator init', async (): Promise<void> => {
   const helperObject = SharedStorage.getHelperObject();
 
   function setEnvVars() {
-
     process.env.AUXILIARY_RPC = testData.auxiliaryRpc;
     process.env.AUXILIARY_GRAPH_RPC = testData.auxiliaryGraphRpc;
     process.env.AUXILIARY_GRAPH_WS = testData.auxiliaryGraphWs;
@@ -79,8 +78,8 @@ describe('facilitator init', async (): Promise<void> => {
   });
 
   it('Validates facilitator init', async (): Promise<void> => {
-    const auxChainId = testData.auxChainId;
-    const originChain = testData.originChain;
+    const { auxChainId } = testData;
+    const { originChain } = testData;
     // Removing facilitator config.
     const { eip20GatewayAddress } = SharedStorage.getGatewayAddresses();
     fs.removeSync(Directory.getFacilitatorConfigPath(originChain, auxChainId, eip20GatewayAddress));

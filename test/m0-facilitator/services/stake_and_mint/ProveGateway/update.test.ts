@@ -19,7 +19,7 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import Web3 from 'web3';
 
-import ProveGatewayService from '../../../../src/services/stake_and_mint/ProveGatewayService';
+import ProveGatewayService from '../../../../../src/m0-facilitator/services/stake_and_mint/ProveGatewayService';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
 

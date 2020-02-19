@@ -14,7 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
-import Observer from '../../src/observer/Observer';
+import Observer from '../../../src/m0-facilitator/observer/Observer';
 import NumberUpdate from './NumberUpdate';
 
 /**

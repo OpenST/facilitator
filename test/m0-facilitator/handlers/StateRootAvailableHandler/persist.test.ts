@@ -18,8 +18,8 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
-import StateRootAvailableHandler from '../../../src/handlers/StateRootAvailableHandler';
-import AuxiliaryChainRepository from '../../../src/repositories/AuxiliaryChainRepository';
+import StateRootAvailableHandler from '../../../../src/m0-facilitator/handlers/StateRootAvailableHandler';
+import AuxiliaryChainRepository from '../../../../src/m0-facilitator/repositories/AuxiliaryChainRepository';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
 import StubData from '../../test_utils/StubData';

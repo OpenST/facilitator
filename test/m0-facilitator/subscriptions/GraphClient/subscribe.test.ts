@@ -21,11 +21,11 @@ import BigNumber from 'bignumber.js';
 import gql from 'graphql-tag';
 import sinon from 'sinon';
 
-import ContractEntity, { EntityType } from '../../../src/models/ContractEntity';
-import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
-import GraphClient from '../../../src/subscriptions/GraphClient';
-import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
-import TransactionHandler from '../../../src/TransactionHandler';
+import ContractEntity, { EntityType } from '../../../../src/m0-facilitator/models/ContractEntity';
+import ContractEntityRepository from '../../../../src/m0-facilitator/repositories/ContractEntityRepository';
+import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
+import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
+import TransactionHandler from '../../../../src/m0-facilitator/TransactionHandler';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
 

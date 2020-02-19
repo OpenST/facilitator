@@ -4,7 +4,7 @@ import * as web3Utils from 'web3-utils';
 
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import { EIP20Token } from '@openst/mosaic-contracts/dist/interacts/EIP20Token';
-import { FacilitatorConfig } from '../../src/Config/Config';
+import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
 import Utils from '../Utils';
 import SharedStorage from '../SharedStorage';
 

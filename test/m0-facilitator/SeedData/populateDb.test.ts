@@ -21,17 +21,17 @@ import Web3 from 'web3';
 
 import { interacts } from '@openst/mosaic-contracts';
 
-import { Config, ConfigType } from '../../src/Config/Config';
-import AuxiliaryChain from '../../src/models/AuxiliaryChain';
-import ContractEntity, { EntityType } from '../../src/models/ContractEntity';
-import Gateway from '../../src/models/Gateway';
-import { GatewayType } from '../../src/repositories/GatewayRepository';
-import Repositories from '../../src/repositories/Repositories';
-import SeedData from '../../src/SeedData';
+import { Config, ConfigType } from '../../../src/m0-facilitator/Config/Config';
+import AuxiliaryChain from '../../../src/m0-facilitator/models/AuxiliaryChain';
+import ContractEntity, { EntityType } from '../../../src/m0-facilitator/models/ContractEntity';
+import Gateway from '../../../src/m0-facilitator/models/Gateway';
+import { GatewayType } from '../../../src/m0-facilitator/repositories/GatewayRepository';
+import Repositories from '../../../src/m0-facilitator/repositories/Repositories';
+import SeedData from '../../../src/m0-facilitator/SeedData';
 import AuxiliaryChainRepositoryUtil from '../repositories/AuxiliaryChainRepository/util';
 import ContractEntityRepositoryUtil from '../repositories/ContractEntityRepository/util';
 import GatewayRepositoryUtil from '../repositories/GatewayRepository/util';
-import Utils from '../../src/Utils';
+import Utils from '../../../src/m0-facilitator/Utils';
 
 describe('SeedData.populateDb()', (): void => {
   let config: Config; let seedData: SeedData; let
@@ -287,7 +287,7 @@ describe('SeedData.populateDb()', (): void => {
       () => eip20CoGatewayMockObject as any,
     );
     const mosaicConfigPath = 'testdata/mosaic.json';
-    const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
+    const facilitatorConfigPath = 'test/m0-facilitator/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC);
     sinon.replaceGetter(
       config,

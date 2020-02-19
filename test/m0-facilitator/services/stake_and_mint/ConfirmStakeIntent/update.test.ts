@@ -22,14 +22,14 @@ import * as web3utils from 'web3-utils';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
-import Gateway from '../../../../src/models/Gateway';
-import Message from '../../../../src/models/Message';
-import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
-import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
-import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
-import ConfirmStakeIntentService from '../../../../src/services/stake_and_mint/ConfirmStakeIntentService';
-import Utils from '../../../../src/Utils';
+import { AUXILIARY_GAS_PRICE } from '../../../../../src/m0-facilitator/Constants';
+import Gateway from '../../../../../src/m0-facilitator/models/Gateway';
+import Message from '../../../../../src/m0-facilitator/models/Message';
+import MessageTransferRequest from '../../../../../src/m0-facilitator/models/MessageTransferRequest';
+import { MessageDirection, MessageRepository } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
+import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
+import ConfirmStakeIntentService from '../../../../../src/m0-facilitator/services/stake_and_mint/ConfirmStakeIntentService';
+import Utils from '../../../../../src/m0-facilitator/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
 

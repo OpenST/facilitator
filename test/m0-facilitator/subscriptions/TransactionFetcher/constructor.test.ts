@@ -17,8 +17,8 @@
 
 import sinon from 'sinon';
 
-import GraphClient from '../../../src/subscriptions/GraphClient';
-import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
+import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
 import assert from '../../test_utils/assert';
 
 describe('TransactionFetcher.constructor()', () => {

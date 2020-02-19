@@ -17,8 +17,8 @@
 
 import BigNumber from 'bignumber.js';
 
-import AuxiliaryChain from '../../../src/models/AuxiliaryChain';
-import Repositories from '../../../src/repositories/Repositories';
+import AuxiliaryChain from '../../../../src/m0-facilitator/models/AuxiliaryChain';
+import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
 

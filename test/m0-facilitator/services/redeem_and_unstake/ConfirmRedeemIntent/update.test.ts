@@ -21,17 +21,17 @@ import * as web3utils from 'web3-utils';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { ORIGIN_GAS_PRICE } from '../../../../src/Constants';
-import Gateway from '../../../../src/models/Gateway';
-import Message from '../../../../src/models/Message';
-import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
-import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
-import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
-import ConfirmRedeemIntentService from '../../../../src/services/redeem_and_unstake/ConfirmRedeemIntentService';
-import Utils from '../../../../src/Utils';
+import { ORIGIN_GAS_PRICE } from '../../../../../src/m0-facilitator/Constants';
+import Gateway from '../../../../../src/m0-facilitator/models/Gateway';
+import Message from '../../../../../src/m0-facilitator/models/Message';
+import MessageTransferRequest from '../../../../../src/m0-facilitator/models/MessageTransferRequest';
+import { MessageDirection, MessageRepository } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
+import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
+import ConfirmRedeemIntentService from '../../../../../src/m0-facilitator/services/redeem_and_unstake/ConfirmRedeemIntentService';
+import Utils from '../../../../../src/m0-facilitator/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
-import { GatewayType } from '../../../../src/repositories/GatewayRepository';
+import { GatewayType } from '../../../../../src/m0-facilitator/repositories/GatewayRepository';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

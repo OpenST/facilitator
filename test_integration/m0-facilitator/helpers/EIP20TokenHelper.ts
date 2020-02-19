@@ -21,7 +21,7 @@ import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityTok
 
 import { HelperInterface } from './HelperInterface';
 import Utils from '../Utils';
-import Logger from '../../src/Logger';
+import Logger from '../../../src/m0-facilitator/Logger';
 
 export default class EIP20TokenHelper implements HelperInterface {
 

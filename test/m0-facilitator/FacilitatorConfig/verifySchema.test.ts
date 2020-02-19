@@ -18,8 +18,8 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import { FacilitatorConfig } from '../../src/Config/Config';
-import { InvalidFacilitatorConfigException } from '../../src/Exception';
+import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
+import { InvalidFacilitatorConfigException } from '../../../src/m0-facilitator/Exception';
 import assert from '../test_utils/assert';
 
 describe('FacilitatorConfig.verifySchema()', (): void => {

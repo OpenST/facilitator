@@ -22,12 +22,12 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import { ProofGenerator } from '@openst/mosaic-proof';
 
-import { AUXILIARY_GAS_PRICE } from '../../../../src/Constants';
-import Gateway from '../../../../src/models/Gateway';
-import GatewayRepository from '../../../../src/repositories/GatewayRepository';
-import { MessageDirection, MessageRepository } from '../../../../src/repositories/MessageRepository';
-import ProveGatewayService from '../../../../src/services/stake_and_mint/ProveGatewayService';
-import Utils from '../../../../src/Utils';
+import { AUXILIARY_GAS_PRICE } from '../../../../../src/m0-facilitator/Constants';
+import Gateway from '../../../../../src/m0-facilitator/models/Gateway';
+import GatewayRepository from '../../../../../src/m0-facilitator/repositories/GatewayRepository';
+import { MessageDirection, MessageRepository } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
+import ProveGatewayService from '../../../../../src/m0-facilitator/services/stake_and_mint/ProveGatewayService';
+import Utils from '../../../../../src/m0-facilitator/Utils';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';

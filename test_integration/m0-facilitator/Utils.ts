@@ -13,17 +13,17 @@ import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoG
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import * as EthUtils from 'ethereumjs-util';
 import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
-import Repositories from '../src/repositories/Repositories';
-import assert from '../test/test_utils/assert';
-import { FacilitatorConfig } from '../src/Config/Config';
-import Message from '../src/models/Message';
-import Gateway from '../src/models/Gateway';
-import AuxiliaryChain from '../src/models/AuxiliaryChain';
+import Repositories from '../../src/m0-facilitator/repositories/Repositories';
+import assert from '../../test/m0-facilitator/test_utils/assert';
+import { FacilitatorConfig } from '../../src/m0-facilitator/Config/Config';
+import Message from '../../src/m0-facilitator/models/Message';
+import Gateway from '../../src/m0-facilitator/models/Gateway';
+import AuxiliaryChain from '../../src/m0-facilitator/models/AuxiliaryChain';
 import SharedStorage from './SharedStorage';
-import Logger from '../src/Logger';
-import MessageTransferRequest from '../src/models/MessageTransferRequest';
-import { MessageStatus } from '../src/repositories/MessageRepository';
-import GatewayAddresses from '../src/Config/GatewayAddresses';
+import Logger from '../../src/m0-facilitator/Logger';
+import MessageTransferRequest from '../../src/m0-facilitator/models/MessageTransferRequest';
+import { MessageStatus } from '../../src/m0-facilitator/repositories/MessageRepository';
+import GatewayAddresses from '../../src/m0-facilitator/Config/GatewayAddresses';
 
 // This class variable is used to persist web3 connections
 const urlToWeb3ConnectionsMap: Record<string, Web3> = {};

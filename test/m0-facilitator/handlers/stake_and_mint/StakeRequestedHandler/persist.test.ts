@@ -19,18 +19,18 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
-import StakeRequestedHandler from '../../../../src/handlers/stake_and_mint/StakeRequestedHandler';
-import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
-import MessageTransferRequestRepository, { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
+import StakeRequestedHandler from '../../../../../src/m0-facilitator/handlers/stake_and_mint/StakeRequestedHandler';
+import MessageTransferRequest from '../../../../../src/m0-facilitator/models/MessageTransferRequest';
+import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
-import Repositories from '../../../../src/repositories/Repositories';
-import Message from '../../../../src/models/Message';
+import Repositories from '../../../../../src/m0-facilitator/repositories/Repositories';
+import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection,
   MessageStatus,
   MessageType,
-} from '../../../../src/repositories/MessageRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import Util from '../../../repositories/MessageTransferRequestRepository/util';
 
 describe('StakeRequestedHandler.persist()', (): void => {

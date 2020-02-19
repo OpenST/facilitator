@@ -19,7 +19,7 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 import Web3 from 'web3';
 
-import { Chain, Config, ConfigType } from '../../src/Config/Config';
+import { Chain, Config, ConfigType } from '../../../src/m0-facilitator/Config/Config';
 import SpyAssert from '../test_utils/SpyAssert';
 
 describe('Config.auxiliaryWeb3', () => {
@@ -27,7 +27,7 @@ describe('Config.auxiliaryWeb3', () => {
 
   beforeEach(() => {
     const mosaicConfigPath = 'testdata/mosaic.json';
-    const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
+    const facilitatorConfigPath = 'test/m0-facilitator/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC);
     chain = config.facilitator.chains[config.facilitator.auxChainId];
   });

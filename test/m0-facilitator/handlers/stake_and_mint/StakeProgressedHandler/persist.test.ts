@@ -19,11 +19,11 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as web3utils from 'web3-utils';
 
-import StakeProgressedHandler from '../../../../src/handlers/stake_and_mint/StakeProgressedHandler';
-import Message from '../../../../src/models/Message';
+import StakeProgressedHandler from '../../../../../src/m0-facilitator/handlers/stake_and_mint/StakeProgressedHandler';
+import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../../../../src/repositories/MessageRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 

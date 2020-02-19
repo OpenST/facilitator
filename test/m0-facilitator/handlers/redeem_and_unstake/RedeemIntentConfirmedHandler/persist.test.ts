@@ -18,11 +18,11 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as utils from 'web3-utils';
 
-import RedeemntentConfirmedHandler from '../../../../src/handlers/redeem_and_unstake/RedeemIntentConfirmedHandler';
-import Message from '../../../../src/models/Message';
+import RedeemntentConfirmedHandler from '../../../../../src/m0-facilitator/handlers/redeem_and_unstake/RedeemIntentConfirmedHandler';
+import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../../../../src/repositories/MessageRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';

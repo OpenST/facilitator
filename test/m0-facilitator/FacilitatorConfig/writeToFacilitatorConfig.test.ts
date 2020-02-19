@@ -19,8 +19,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import sinon from 'sinon';
 
-import { FacilitatorConfig } from '../../src/Config/Config';
-import Directory from '../../src/Directory';
+import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
+import Directory from '../../../src/m0-facilitator/Directory';
 import SpyAssert from '../test_utils/SpyAssert';
 
 const auxiliaryChainId = 1000;

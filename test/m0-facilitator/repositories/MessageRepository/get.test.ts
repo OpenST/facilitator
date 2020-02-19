@@ -19,11 +19,11 @@ import 'mocha';
 
 import BigNumber from 'bignumber.js';
 
-import Message from '../../../src/models/Message';
+import Message from '../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageStatus, MessageType,
-} from '../../../src/repositories/MessageRepository';
-import Repositories from '../../../src/repositories/Repositories';
+} from '../../../../src/m0-facilitator/repositories/MessageRepository';
+import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
 

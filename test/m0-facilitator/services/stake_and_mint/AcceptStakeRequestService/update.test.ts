@@ -24,18 +24,18 @@ import Web3 from 'web3';
 
 import { interacts } from '@openst/mosaic-contracts';
 
-import { ORIGIN_GAS_PRICE } from '../../../../src/Constants';
-import Message from '../../../../src/models/Message';
-import MessageTransferRequest from '../../../../src/models/MessageTransferRequest';
+import { ORIGIN_GAS_PRICE } from '../../../../../src/m0-facilitator/Constants';
+import Message from '../../../../../src/m0-facilitator/models/Message';
+import MessageTransferRequest from '../../../../../src/m0-facilitator/models/MessageTransferRequest';
 import {
   MessageDirection, MessageStatus, MessageType,
-} from '../../../../src/repositories/MessageRepository';
-import Repositories from '../../../../src/repositories/Repositories';
-import AcceptStakeRequestService from '../../../../src/services/stake_and_mint/AcceptStakeRequestService';
-import Utils from '../../../../src/Utils';
+} from '../../../../../src/m0-facilitator/repositories/MessageRepository';
+import Repositories from '../../../../../src/m0-facilitator/repositories/Repositories';
+import AcceptStakeRequestService from '../../../../../src/m0-facilitator/services/stake_and_mint/AcceptStakeRequestService';
+import Utils from '../../../../../src/m0-facilitator/Utils';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
-import { RequestType } from '../../../../src/repositories/MessageTransferRequestRepository';
+import { RequestType } from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 
 interface TestConfigInterface {
   web3: Web3;

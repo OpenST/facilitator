@@ -17,9 +17,9 @@
 
 import BigNumber from 'bignumber.js';
 
-import Gateway from '../../../src/models/Gateway';
-import { GatewayType } from '../../../src/repositories/GatewayRepository';
-import Repositories from '../../../src/repositories/Repositories';
+import Gateway from '../../../../src/m0-facilitator/models/Gateway';
+import { GatewayType } from '../../../../src/m0-facilitator/repositories/GatewayRepository';
+import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
 import Util from './util';
 import assert, { assertErrorMessages } from '../../test_utils/assert';
 

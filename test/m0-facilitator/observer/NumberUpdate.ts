@@ -14,7 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
-import Comparable from '../../src/observer/Comparable';
+import Comparable from '../../../src/m0-facilitator/observer/Comparable';
 
 /**
  * The class is intended for testing functionality of observer/subject classes.

@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import Gateway from '../../../src/models/Gateway';
+import Gateway from '../../../../src/m0-facilitator/models/Gateway';
 import assert from '../../test_utils/assert';
 
 const Util = {

@@ -17,11 +17,11 @@
 
 import sinon from 'sinon';
 
-import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
-import GraphClient from '../../../src/subscriptions/GraphClient';
-import Subscriber from '../../../src/subscriptions/Subscriber';
-import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
-import TransactionHandler from '../../../src/TransactionHandler';
+import ContractEntityRepository from '../../../../src/m0-facilitator/repositories/ContractEntityRepository';
+import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
+import Subscriber from '../../../../src/m0-facilitator/subscriptions/Subscriber';
+import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
+import TransactionHandler from '../../../../src/m0-facilitator/TransactionHandler';
 import assert from '../../test_utils/assert';
 
 describe('Subscriber.unsubscribe()', () => {

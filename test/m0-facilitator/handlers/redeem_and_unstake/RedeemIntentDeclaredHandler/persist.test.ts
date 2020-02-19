@@ -19,17 +19,17 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
-import RedeemIntentDeclaredHandler from '../../../../src/handlers/redeem_and_unstake/RedeemIntentDeclaredHandler';
-import Message from '../../../../src/models/Message';
+import RedeemIntentDeclaredHandler from '../../../../../src/m0-facilitator/handlers/redeem_and_unstake/RedeemIntentDeclaredHandler';
+import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../../../../src/repositories/MessageRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import {
   default as MessageTransferRequestRepository,
   RequestType,
-} from '../../../../src/repositories/MessageTransferRequestRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 import StubData from '../../../test_utils/StubData';
 
 describe('RedeemIntentDeclaredHandler.persist()', (): void => {

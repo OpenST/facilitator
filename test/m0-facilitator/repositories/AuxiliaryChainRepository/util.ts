@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import AuxiliaryChain from '../../../src/models/AuxiliaryChain';
+import AuxiliaryChain from '../../../../src/m0-facilitator/models/AuxiliaryChain';
 import assert from '../../test_utils/assert';
 
 const Util = {

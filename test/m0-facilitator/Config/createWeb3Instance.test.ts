@@ -18,10 +18,10 @@
 import sinon from 'sinon';
 import Web3 from 'web3';
 
-import Account from '../../src/Account';
+import Account from '../../../src/m0-facilitator/Account';
 import {
   Chain, Config, ConfigType, ENV_WORKER_PASSWORD_PREFIX,
-} from '../../src/Config/Config';
+} from '../../../src/m0-facilitator/Config/Config';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 
@@ -30,7 +30,7 @@ describe('Config.createWeb3Instance', () => {
 
   beforeEach(() => {
     const mosaicConfigPath = 'testdata/mosaic.json';
-    const facilitatorConfigPath = 'test/FacilitatorConfig/testdata/facilitator-config.json';
+    const facilitatorConfigPath = 'test/m0-facilitator/FacilitatorConfig/testdata/facilitator-config.json';
     config = Config.fromFile(facilitatorConfigPath, mosaicConfigPath, ConfigType.MOSAIC);
     chain = config.facilitator.chains[config.facilitator.originChain];
   });

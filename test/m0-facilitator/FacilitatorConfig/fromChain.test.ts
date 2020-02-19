@@ -19,8 +19,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import sinon from 'sinon';
 
-import { FacilitatorConfig } from '../../src/Config/Config';
-import Utils from '../../src/Utils';
+import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
+import Utils from '../../../src/m0-facilitator/Utils';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 

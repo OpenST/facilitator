@@ -7,16 +7,16 @@ import { Account } from 'web3-eth-accounts';
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoGateway';
 import Utils from '../Utils';
-import MessageTransferRequest from '../../src/models/MessageTransferRequest';
-import Message from '../../src/models/Message';
+import MessageTransferRequest from '../../../src/m0-facilitator/models/MessageTransferRequest';
+import Message from '../../../src/m0-facilitator/models/Message';
 
 import {
   MessageDirection,
   MessageStatus,
   MessageType,
-} from '../../src/repositories/MessageRepository';
-import assert from '../../test/test_utils/assert';
-import AuxiliaryChain from '../../src/models/AuxiliaryChain';
+} from '../../../src/m0-facilitator/repositories/MessageRepository';
+import assert from '../../../test/m0-facilitator/test_utils/assert';
+import AuxiliaryChain from '../../../src/m0-facilitator/models/AuxiliaryChain';
 import SharedStorage from '../SharedStorage';
 
 describe('stake and mint with single staker & facilitator process', async (): Promise<void> => {

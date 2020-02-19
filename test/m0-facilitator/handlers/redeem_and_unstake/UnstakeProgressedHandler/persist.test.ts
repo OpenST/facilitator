@@ -17,11 +17,11 @@
 import sinon from 'sinon';
 import * as web3utils from 'web3-utils';
 
-import UnstakeProgressedHandler from '../../../../src/handlers/redeem_and_unstake/UnstakeProgressedHandler';
-import Message from '../../../../src/models/Message';
+import UnstakeProgressedHandler from '../../../../../src/m0-facilitator/handlers/redeem_and_unstake/UnstakeProgressedHandler';
+import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../../../../src/repositories/MessageRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 

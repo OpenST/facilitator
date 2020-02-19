@@ -19,8 +19,8 @@ import fs from 'fs-extra';
 import sinon from 'sinon';
 import sqlite from 'sqlite3';
 
-import DBFileHelper from '../../src/DatabaseFileHelper';
-import Directory from '../../src/Directory';
+import DBFileHelper from '../../../src/m0-facilitator/DatabaseFileHelper';
+import Directory from '../../../src/m0-facilitator/Directory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 

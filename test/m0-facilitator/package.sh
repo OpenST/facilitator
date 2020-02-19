@@ -1,7 +1,7 @@
 #!/bin/bash
 
 script_dir_path="$(cd "$(dirname "$0")" && pwd)"
-root_dir="${script_dir_path}/.."
+root_dir="${script_dir_path}/../.."
 test_package_path="${script_dir_path}/package"
 
 function clean {
@@ -40,6 +40,6 @@ echo "Accessing as binary."
 ./node_modules/.bin/facilitator help || exit 1
 
 echo "Cleaning up generated files."
-clean
+#clean
 
 echo "Successfully Passed."

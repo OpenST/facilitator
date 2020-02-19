@@ -18,10 +18,10 @@
 import sinon from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
-import { Config, FacilitatorConfig, ConfigType } from '../../src/Config/Config';
+import { Config, FacilitatorConfig, ConfigType } from '../../../src/m0-facilitator/Config/Config';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
-import GatewayAddresses from '../../src/Config/GatewayAddresses';
+import GatewayAddresses from '../../../src/m0-facilitator/Config/GatewayAddresses';
 
 describe('Config.fromFile()', () => {
   const mosaicConfigPath = 'test/Config/mosaic-config.json';

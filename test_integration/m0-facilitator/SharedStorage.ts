@@ -19,8 +19,8 @@
 // ----------------------------------------------------------------------------
 
 import { HelperInterface } from './helpers/HelperInterface';
-import GatewayAddresses from '../src/Config/GatewayAddresses';
-import { FacilitatorConfig } from '../src/Config/Config';
+import GatewayAddresses from '../../src/m0-facilitator/Config/GatewayAddresses';
+import { FacilitatorConfig } from '../../src/m0-facilitator/Config/Config';
 
 /**
  * @file `shared` exists so that integration tests can share data among each other.

@@ -19,11 +19,11 @@ import sinon, { SinonStub, SinonStubbedInstance } from 'sinon';
 
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
-import { Config, ConfigType, FacilitatorConfig } from '../../src/Config/Config';
-import ConfigFactory from '../../src/Config/ConfigFactory';
+import { Config, ConfigType, FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
+import ConfigFactory from '../../../src/m0-facilitator/Config/ConfigFactory';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
-import GatewayAddresses from '../../src/Config/GatewayAddresses';
+import GatewayAddresses from '../../../src/m0-facilitator/Config/GatewayAddresses';
 
 describe('ConfigFactory.getConfig()', () => {
   const originChain = '2';

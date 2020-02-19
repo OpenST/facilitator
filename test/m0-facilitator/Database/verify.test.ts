@@ -18,7 +18,7 @@
 import fs from 'fs-extra';
 import sinon from 'sinon';
 
-import DBFileHelper from '../../src/DatabaseFileHelper';
+import DBFileHelper from '../../../src/m0-facilitator/DatabaseFileHelper';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
 

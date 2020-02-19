@@ -18,9 +18,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import BigNumber from 'bignumber.js';
 
-import Gateway from '../../../src/models/Gateway';
-import { GatewayType } from '../../../src/repositories/GatewayRepository';
-import Repositories from '../../../src/repositories/Repositories';
+import Gateway from '../../../../src/m0-facilitator/models/Gateway';
+import { GatewayType } from '../../../../src/m0-facilitator/repositories/GatewayRepository';
+import Repositories from '../../../../src/m0-facilitator/repositories/Repositories';
 import assert from '../../test_utils/assert';
 import Util from './util';
 

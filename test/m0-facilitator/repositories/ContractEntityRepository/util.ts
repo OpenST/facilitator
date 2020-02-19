@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import ContractEntity from '../../../src/models/ContractEntity';
+import ContractEntity from '../../../../src/m0-facilitator/models/ContractEntity';
 import assert from '../../test_utils/assert';
 
 /**

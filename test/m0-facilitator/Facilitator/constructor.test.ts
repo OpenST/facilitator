@@ -17,8 +17,8 @@
 
 import sinon from 'sinon';
 
-import Facilitator from '../../src/Facilitator';
-import Subscriber from '../../src/subscriptions/Subscriber';
+import Facilitator from '../../../src/m0-facilitator/Facilitator';
+import Subscriber from '../../../src/m0-facilitator/subscriptions/Subscriber';
 import assert from '../test_utils/assert';
 
 describe('Facilitator.constructor()', () => {

@@ -18,10 +18,10 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
-import FetchQueries from '../../../src/GraphQueries/FetchQueries';
-import ContractEntityRepository from '../../../src/repositories/ContractEntityRepository';
-import GraphClient from '../../../src/subscriptions/GraphClient';
-import TransactionFetcher from '../../../src/subscriptions/TransactionFetcher';
+import FetchQueries from '../../../../src/m0-facilitator/GraphQueries/FetchQueries';
+import ContractEntityRepository from '../../../../src/m0-facilitator/repositories/ContractEntityRepository';
+import GraphClient from '../../../../src/m0-facilitator/subscriptions/GraphClient';
+import TransactionFetcher from '../../../../src/m0-facilitator/subscriptions/TransactionFetcher';
 import assert from '../../test_utils/assert';
 import SpyAssert from '../../test_utils/SpyAssert';
 import StubData from '../../test_utils/StubData';

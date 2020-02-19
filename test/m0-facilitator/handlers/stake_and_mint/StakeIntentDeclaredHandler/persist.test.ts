@@ -19,18 +19,18 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 import * as Web3Utils from 'web3-utils';
 
-import StakeIntentDeclaredHandler from '../../../../src/handlers/stake_and_mint/StakeIntentDeclaredHandler';
-import Message from '../../../../src/models/Message';
+import StakeIntentDeclaredHandler from '../../../../../src/m0-facilitator/handlers/stake_and_mint/StakeIntentDeclaredHandler';
+import Message from '../../../../../src/m0-facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
-} from '../../../../src/repositories/MessageRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageRepository';
 import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
 import {
   default as MessageTransferRequestRepository,
   RequestType,
-} from '../../../../src/repositories/MessageTransferRequestRepository';
+} from '../../../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
 
 describe('StakeIntentDeclaredHandler.persist()', (): void => {
   const transactions = [{

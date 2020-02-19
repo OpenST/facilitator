@@ -20,8 +20,8 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import assert from '../test_utils/assert';
 import SpyAssert from '../test_utils/SpyAssert';
-import Utils from '../../src/Utils';
-import { MESSAGE_BOX_OFFSET } from '../../src/Constants';
+import Utils from '../../../src/m0-facilitator/Utils';
+import { MESSAGE_BOX_OFFSET } from '../../../src/m0-facilitator/Constants';
 
 describe('Utils.getMessageBoxOffset()', async () => {
   const web3 = new Web3('');

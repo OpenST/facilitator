@@ -17,9 +17,9 @@
 
 import * as web3utils from 'web3-utils';
 
-import Message from '../../../src/models/Message';
+import Message from '../../../../src/m0-facilitator/models/Message';
 import assert from '../../test_utils/assert';
-import { MessageDirection, MessageType } from '../../../src/repositories/MessageRepository';
+import { MessageDirection, MessageType } from '../../../../src/m0-facilitator/repositories/MessageRepository';
 
 describe('AuxiliaryChain::get', (): void => {
   const message = new Message(

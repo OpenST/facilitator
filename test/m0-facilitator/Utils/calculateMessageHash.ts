@@ -23,9 +23,9 @@ import sinon from 'sinon';
 import Web3 from 'web3';
 
 import * as assert from 'assert';
-import MessageTransferRequest from '../../src/models/MessageTransferRequest';
-import { RequestType } from '../../src/repositories/MessageTransferRequestRepository';
-import Utils from '../../src/Utils';
+import MessageTransferRequest from '../../../src/m0-facilitator/models/MessageTransferRequest';
+import { RequestType } from '../../../src/m0-facilitator/repositories/MessageTransferRequestRepository';
+import Utils from '../../../src/m0-facilitator/Utils';
 
 interface TestConfigInterface {
   web3: Web3;

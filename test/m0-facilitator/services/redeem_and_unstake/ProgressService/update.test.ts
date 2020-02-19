@@ -19,12 +19,12 @@ import Web3 from 'web3';
 
 import { interacts } from '@openst/mosaic-contracts';
 
-import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../../../../src/Constants';
-import Message from '../../../../src/models/Message';
-import GatewayRepository from '../../../../src/repositories/GatewayRepository';
-import { MessageStatus, MessageType } from '../../../../src/repositories/MessageRepository';
-import ProgressService from '../../../../src/services/redeem_and_unstake/ProgressService';
-import Utils from '../../../../src/Utils';
+import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../../../../../src/m0-facilitator/Constants';
+import Message from '../../../../../src/m0-facilitator/models/Message';
+import GatewayRepository from '../../../../../src/m0-facilitator/repositories/GatewayRepository';
+import { MessageStatus, MessageType } from '../../../../../src/m0-facilitator/repositories/MessageRepository';
+import ProgressService from '../../../../../src/m0-facilitator/services/redeem_and_unstake/ProgressService';
+import Utils from '../../../../../src/m0-facilitator/Utils';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
 
