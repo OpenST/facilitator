@@ -41,7 +41,7 @@ describe('should whitelist facilitator workers for origin & auxiliary', async ()
     );
 
     assert.strictEqual(
-      actualExpirationHeight.cmp(expirationHeight),
+      actualExpirationHeight.comparedTo(expirationHeight),
       0,
       `Expected worker expiration height is ${expirationHeight} but`
       + `got ${actualExpirationHeight}`,

@@ -74,8 +74,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
   public async update(stakeRequests: MessageTransferRequest[]): Promise<void> {
     Logger.debug('Accept stake request service invoked');
     const nonAcceptedStakeRequests = stakeRequests.filter(
-      (stakeRequest: MessageTransferRequest): boolean =>
-        (stakeRequest.requestType === RequestType.Stake) && !stakeRequest.messageHash,
+      (stakeRequest: MessageTransferRequest): boolean => (stakeRequest.requestType === RequestType.Stake) && !stakeRequest.messageHash,
     );
     await this.acceptStakeRequests(nonAcceptedStakeRequests);
   }
@@ -121,7 +120,7 @@ export default class AcceptStakeRequestService extends Observer<MessageTransferR
     );
 
     const bounty = await eip20GatewayInteract.methods.bounty().call();
-    if (new BigNumber(bounty).lessThanOrEqualTo(0)) {
+    if (new BigNumber(bounty).isLessThanOrEqualTo(0)) {
       Logger.debug('Skipping bounty approval for zero bounty');
       return;
     }

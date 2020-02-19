@@ -66,7 +66,7 @@ describe('Account.getNonce', (): void => {
     const nonce: BigNumber = await accountObject.getNonce(web3MockObject);
     assert.deepEqual(
       nonce,
-      dummyInitialNonce.add(1),
+      dummyInitialNonce.plus(1),
       'nonce should match',
     );
     SpyAssert.assert(
