@@ -15,14 +15,13 @@
 // ----------------------------------------------------------------------------
 
 import 'mocha';
-import BigNumber from 'bignumber.js';
 import { InitOptions, Sequelize } from 'sequelize';
+import BigNumber from 'bignumber.js';
 
-import Anchor from '../../../src/models/Anchor';
-import AnchorRepository from '../../../src/repositories/AnchorRepository';
 import { assertAnchorAttributes } from '../../models/Anchor/util';
-
-import assert from '../../test_utils/assert';
+import Anchor from '../../../../src/m1_facilitator/models/Anchor';
+import AnchorRepository from '../../../../src/m1_facilitator/repositories/AnchorRepository';
+import assert from '../../../test_utils/assert';
 
 interface TestConfiguration {
   anchorRepository: AnchorRepository;

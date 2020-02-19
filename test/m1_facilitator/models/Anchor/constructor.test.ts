@@ -16,8 +16,9 @@
 
 import 'mocha';
 import BigNumber from 'bignumber.js';
-import Anchor from '../../../src/models/Anchor';
+
 import { assertAnchorAttributes } from './util';
+import Anchor from '../../../../src/m1_facilitator/models/Anchor';
 
 describe('Anchor::constructor', (): void => {
   it('checks correct construction of an anchor', async (): Promise<void> => {

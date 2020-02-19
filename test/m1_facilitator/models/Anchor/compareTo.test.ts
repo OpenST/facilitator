@@ -17,9 +17,8 @@
 import 'mocha';
 import BigNumber from 'bignumber.js';
 
-import Anchor from '../../../src/models/Anchor';
-
-import assert from '../../test_utils/assert';
+import Anchor from '../../../../src/m1_facilitator/models/Anchor';
+import assert from '../../../test_utils/assert';
 
 describe('Anchor::compareTo', (): void => {
   it('checks comparison while anchorGA -s are different', async (): Promise<void> => {

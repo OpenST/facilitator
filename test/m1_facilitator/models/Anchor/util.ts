@@ -16,9 +16,8 @@
 
 import BigNumber from 'bignumber.js';
 
-import Anchor from '../../../src/models/Anchor';
-
-import assert from '../../test_utils/assert';
+import Anchor from '../../../../src/m1_facilitator/models/Anchor';
+import assert from '../../../test_utils/assert';
 
 export interface AnchorAttributes {
   anchorGA?: string;

@@ -18,8 +18,8 @@ import { DataTypes, Model, InitOptions } from 'sequelize';
 import BigNumber from 'bignumber.js';
 
 import Anchor from '../models/Anchor';
-import Subject from '../observer/Subject';
-import Utils from '../Utils';
+import Subject from '../../observer/Subject';
+import Utils from '../../Utils';
 
 import assert = require('assert');
 
