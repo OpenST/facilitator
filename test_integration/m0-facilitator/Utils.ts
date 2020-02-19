@@ -14,7 +14,7 @@ import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import * as EthUtils from 'ethereumjs-util';
 import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
 import Repositories from '../../src/m0-facilitator/repositories/Repositories';
-import assert from '../../test/m0-facilitator/test_utils/assert';
+import assert from '../../test/test_utils/assert';
 import { FacilitatorConfig } from '../../src/m0-facilitator/Config/Config';
 import Message from '../../src/m0-facilitator/models/Message';
 import Gateway from '../../src/m0-facilitator/models/Gateway';

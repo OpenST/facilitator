@@ -5,7 +5,7 @@ import { TransactionReceipt } from 'web3-core';
 import { FacilitatorConfig, ENV_WORKER_PASSWORD_PREFIX } from '../../../src/m0-facilitator/Config/Config';
 import Utils from '../Utils';
 import SharedStorage from '../SharedStorage';
-import assert from '../../../test/m0-facilitator/test_utils/assert';
+import assert from '../../../test/test_utils/assert';
 
 describe('should whitelist facilitator workers for origin & auxiliary', async (): Promise<void> => {
   const testData = SharedStorage.getTestData();

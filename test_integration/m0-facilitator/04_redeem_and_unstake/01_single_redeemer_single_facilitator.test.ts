@@ -16,7 +16,7 @@ import {
   MessageStatus,
   MessageType,
 } from '../../../src/m0-facilitator/repositories/MessageRepository';
-import assert from '../../../test/m0-facilitator/test_utils/assert';
+import assert from '../../../test/test_utils/assert';
 import AuxiliaryChain from '../../../src/m0-facilitator/models/AuxiliaryChain';
 import Logger from '../../../src/m0-facilitator/Logger';
 import SharedStorage from '../SharedStorage';

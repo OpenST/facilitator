@@ -5,7 +5,7 @@ import fs from 'fs-extra';
 import MosaicConfig from '@openst/mosaic-chains/lib/src/Config/MosaicConfig';
 import GatewayConfig from '@openst/mosaic-chains/lib/src/Config/GatewayConfig';
 import { FacilitatorConfig } from '../../../src/m0-facilitator/Config/Config';
-import assert from '../../../test/m0-facilitator/test_utils/assert';
+import assert from '../../../test/test_utils/assert';
 import Directory from '../../../src/m0-facilitator/Directory';
 import SharedStorage from '../SharedStorage';
 import BaseTokenHelper from '../helpers/BaseTokenHelper';
