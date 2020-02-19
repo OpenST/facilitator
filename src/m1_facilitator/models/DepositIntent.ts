@@ -17,7 +17,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import Comparable from '../../m0-facilitator/observer/Comparable';
+import Comparable from '../../m0_facilitator/observer/Comparable';
 
 /**
  * Represents DepositIntent model object.
