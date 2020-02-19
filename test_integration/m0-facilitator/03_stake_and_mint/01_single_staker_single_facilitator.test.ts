@@ -376,8 +376,8 @@ describe('stake and mint with single staker & facilitator process', async (): Pr
               && Utils.isSourceProgressedTargetProgressed(messageInDb!)
           ) {
             Utils.assertMessages(messageInDb!, expectedMessage);
-            const reward = messageTransferRequest.gasPrice.mul(messageTransferRequest.gasLimit);
-            const expectedMintedAmount: BigNumber = messageTransferRequest.amount.sub(reward);
+            const reward = messageTransferRequest.gasPrice.multipliedBy(messageTransferRequest.gasLimit);
+            const expectedMintedAmount: BigNumber = messageTransferRequest.amount.minus(reward);
             const actualMintedAmount: BigNumber = await helperObject.getMintedBalance(messageTransferRequest.beneficiary);
             assert.strictEqual(
               actualMintedAmount.comparedTo(expectedMintedAmount),

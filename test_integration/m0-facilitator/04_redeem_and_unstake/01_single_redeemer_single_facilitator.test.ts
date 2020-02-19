@@ -384,8 +384,8 @@ describe('redeem and unstake with single redeemer & facilitator process', async 
               && Utils.isSourceProgressedTargetProgressed(messageInDb!)
           ) {
             Utils.assertMessages(messageInDb!, expectedMessage);
-            const reward = messageTransferRequest.gasPrice.mul(messageTransferRequest.gasLimit);
-            const redeemedAmount: BigNumber = messageTransferRequest.amount.sub(reward);
+            const reward = messageTransferRequest.gasPrice.multipliedBy(messageTransferRequest.gasLimit);
+            const redeemedAmount: BigNumber = messageTransferRequest.amount.minus(reward);
             Logger.debug('Verifying is redeemer OST balance is: ', redeemedAmount.toString(10));
             await utils.assertUnstakedBalance(messageTransferRequest.beneficiary, redeemedAmount);
             resolve();
