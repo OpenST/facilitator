@@ -85,4 +85,15 @@ export default class Anchor extends Comparable<Anchor> {
 
     return this.lastAnchoredBlockNumber.comparedTo(other.lastAnchoredBlockNumber);
   }
+
+  /**
+   * Generates and return global address of given anchor contract address.
+   *
+   * @param anchorContractAddress Anchor contract address.
+   *
+   * @returns Anchor global address.
+   */
+  public static getGlobalAddress(anchorContractAddress: string): string {
+    return anchorContractAddress;
+  }
 }
