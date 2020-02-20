@@ -30,8 +30,8 @@ describe('MessageRepository::get', (): void => {
   let type: MessageType;
   let sourceStatus: MessageStatus;
   let targetStatus: MessageStatus;
-  let gasPrice: BigNumber;
-  let gasLimit: BigNumber;
+  let feeGasPrice: BigNumber;
+  let feeGasLimit: BigNumber;
   let gatewayAddress: string;
   let sourceDeclarationBlockNumber: BigNumber;
   let createdAt: Date;
@@ -46,8 +46,8 @@ describe('MessageRepository::get', (): void => {
     intentHash = '0x00000000000000000000000000000000000000000000000000000000000100';
     sourceStatus = MessageStatus.Declared;
     targetStatus = MessageStatus.Declared;
-    gasPrice = new BigNumber('30000000000000000000000000000000');
-    gasLimit = new BigNumber('10000000000000000000000000000000');
+    feeGasPrice = new BigNumber('30000000000000000000000000000000');
+    feeGasLimit = new BigNumber('10000000000000000000000000000000');
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     sourceDeclarationBlockNumber = new BigNumber(300);
     createdAt = new Date();
@@ -60,8 +60,8 @@ describe('MessageRepository::get', (): void => {
       targetStatus,
       gatewayAddress,
       intentHash,
-      gasPrice,
-      gasLimit,
+      feeGasPrice,
+      feeGasLimit,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,

@@ -29,8 +29,8 @@ describe('MessageRepository::save', (): void => {
   let type: MessageType;
   let sourceStatus: MessageStatus;
   let targetStatus: MessageStatus;
-  let gasPrice: BigNumber;
-  let gasLimit: BigNumber;
+  let feeGasPrice: BigNumber;
+  let feeGasLimit: BigNumber;
   let gatewayAddress: string;
   let sourceDeclarationBlockNumber: BigNumber;
   let createdAt: Date;
@@ -45,8 +45,8 @@ describe('MessageRepository::save', (): void => {
     intentHash = '0x00000000000000000000000000000000000000000000000000000000000100';
     sourceStatus = MessageStatus.Undeclared;
     targetStatus = MessageStatus.Undeclared;
-    gasPrice = new BigNumber('30000000000000000000000000000000');
-    gasLimit = new BigNumber('10000000000000000000000000000000');
+    feeGasPrice = new BigNumber('30000000000000000000000000000000');
+    feeGasLimit = new BigNumber('10000000000000000000000000000000');
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     sourceDeclarationBlockNumber = new BigNumber(300);
     createdAt = new Date();
@@ -61,8 +61,8 @@ describe('MessageRepository::save', (): void => {
       targetStatus,
       gatewayAddress,
       intentHash,
-      gasPrice,
-      gasLimit,
+      feeGasPrice,
+      feeGasLimit,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,
@@ -82,8 +82,8 @@ describe('MessageRepository::save', (): void => {
       targetStatus,
       gatewayAddress,
       intentHash,
-      gasPrice,
-      gasLimit,
+      feeGasPrice,
+      feeGasLimit,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,
@@ -95,7 +95,7 @@ describe('MessageRepository::save', (): void => {
 
     message.sourceStatus = MessageStatus.Declared;
     message.targetStatus = MessageStatus.Declared;
-    message.gasPrice = new BigNumber('30000000000000000000000000000001');
+    message.feeGasPrice = new BigNumber('30000000000000000000000000000001');
     message.gatewayAddress = '0x0000000000000000000000000000000000000002';
 
     const updatedMessage = await config.repos.messageRepository.save(
@@ -105,7 +105,7 @@ describe('MessageRepository::save', (): void => {
     Util.assertMessageAttributes(updatedMessage, message);
   });
 
-  it('should pass when max gasPrice, gasLimit value is saved', async (): Promise<void> => {
+  it('should pass when max feeGasPrice, feeGasLimit value is saved', async (): Promise<void> => {
     const message = new Message(
       messageHash,
       type,
@@ -135,7 +135,7 @@ describe('MessageRepository::save', (): void => {
       gatewayAddress,
       intentHash,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
-      gasLimit,
+      feeGasLimit,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,
@@ -145,7 +145,7 @@ describe('MessageRepository::save', (): void => {
       await config.repos.messageRepository.save(message);
     } catch (error) {
       assertErrorMessages(error.errors, [
-        'Validation on maximum gasPrice failed',
+        'Validation on maximum feeGasPrice failed',
       ]);
     }
   });
@@ -158,7 +158,7 @@ describe('MessageRepository::save', (): void => {
       targetStatus,
       gatewayAddress,
       intentHash,
-      gasPrice,
+      feeGasPrice,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       sourceDeclarationBlockNumber,
       createdAt,
@@ -169,7 +169,7 @@ describe('MessageRepository::save', (): void => {
       await config.repos.messageRepository.save(message);
     } catch (error) {
       assertErrorMessages(error.errors, [
-        'Validation on maximum gasLimit failed',
+        'Validation on maximum feeGasLimit failed',
       ]);
     }
   });

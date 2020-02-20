@@ -52,15 +52,15 @@ const Util = {
     );
 
     assert.notStrictEqual(
-      inputMessage.gasPrice,
-      expectedMessage.gasPrice,
-      'gasPrice should match',
+      inputMessage.feeGasPrice,
+      expectedMessage.feeGasPrice,
+      'feeGasPrice should match',
     );
 
     assert.notStrictEqual(
-      inputMessage.gasLimit,
-      expectedMessage.gasLimit,
-      'gasLimit should match',
+      inputMessage.feeGasLimit,
+      expectedMessage.feeGasLimit,
+      'feeGasLimit should match',
     );
 
     assert.strictEqual(

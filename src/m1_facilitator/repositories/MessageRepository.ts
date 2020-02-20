@@ -37,9 +37,9 @@ class MessageModel extends Model {
 
   public readonly intentHash!: string;
 
-  public readonly gasPrice!: BigNumber;
+  public readonly feeGasPrice!: BigNumber;
 
-  public readonly gasLimit!: BigNumber;
+  public readonly feeGasLimit!: BigNumber;
 
   public readonly sourceDeclarationBlockNumber!: BigNumber;
 
@@ -108,7 +108,7 @@ export default class MessageRepository extends Subject<Message> {
             isAlphanumeric: false,
           },
         },
-        gasPrice: {
+        feeGasPrice: {
           type: DataTypes.DECIMAL(78),
           allowNull: true,
           validate: {
@@ -116,7 +116,7 @@ export default class MessageRepository extends Subject<Message> {
             max: MAX_VALUE,
           },
         },
-        gasLimit: {
+        feeGasLimit: {
           type: DataTypes.DECIMAL(78),
           allowNull: true,
           validate: {
@@ -227,8 +227,8 @@ export default class MessageRepository extends Subject<Message> {
       messageModel.targetStatus,
       messageModel.gatewayAddress,
       messageModel.intentHash,
-      messageModel.gasPrice ? new BigNumber(messageModel.gasPrice) : messageModel.gasPrice,
-      messageModel.gasLimit ? new BigNumber(messageModel.gasLimit) : messageModel.gasLimit,
+      messageModel.feeGasPrice ? new BigNumber(messageModel.feeGasPrice) : messageModel.feeGasPrice,
+      messageModel.feeGasLimit ? new BigNumber(messageModel.feeGasLimit) : messageModel.feeGasLimit,
       messageModel.sourceDeclarationBlockNumber ?
         new BigNumber(messageModel.sourceDeclarationBlockNumber) :
         messageModel.sourceDeclarationBlockNumber,

@@ -45,9 +45,9 @@ export default class Message extends Comparable<Message> {
 
   public intentHash?: string;
 
-  public gasPrice?: BigNumber;
+  public feeGasPrice?: BigNumber;
 
-  public gasLimit?: BigNumber;
+  public feeGasLimit?: BigNumber;
 
   public sourceDeclarationBlockNumber?: BigNumber;
 
@@ -61,13 +61,12 @@ export default class Message extends Comparable<Message> {
    * @param messageHash Message hash is unique for each request.
    * @param type Type of the message deposit/withdraw.
    * @param intentHash Intent hash.
-   * @param sourceStatus Status of source.
-   * @param targetStatus Status of target.
-   * @param gasPrice Gas price that depositor/withdrawer is ready to pay to get
-   *                 deposit/withdraw process done.
-   * @param gasLimit Gas limit that depositor/withdrawer is ready to pay.
+   * @param sourceStatus Status of message declared in the outbox of the gateway on source chain.
+   * @param targetStatus Status of message declared in the inbox of the gateway on the auxiliary chain.
+   * @param feeGasPrice Fee gas price for reward calculation.
+   * @param feeGasLimit Fee gas limit for reward calculation.
    * @param gatewayAddress Gateway contract address.
-   * @param sourceDeclarationBlockNumber Source block height at which message was declared.
+   * @param sourceDeclarationBlockNumber Block number at which message was declared.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */
@@ -78,8 +77,8 @@ export default class Message extends Comparable<Message> {
     targetStatus: MessageStatus,
     gatewayAddress: string,
     intentHash?: string,
-    gasPrice?: BigNumber,
-    gasLimit?: BigNumber,
+    feeGasPrice?: BigNumber,
+    feeGasLimit?: BigNumber,
     sourceDeclarationBlockNumber?: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
@@ -91,8 +90,8 @@ export default class Message extends Comparable<Message> {
     this.targetStatus = targetStatus;
     this.gatewayAddress = gatewayAddress;
     this.intentHash = intentHash;
-    this.gasPrice = gasPrice;
-    this.gasLimit = gasLimit;
+    this.feeGasPrice = feeGasPrice;
+    this.feeGasLimit = feeGasLimit;
     this.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
