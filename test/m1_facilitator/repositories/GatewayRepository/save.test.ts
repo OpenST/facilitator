@@ -41,7 +41,7 @@ describe('Gateway::save', (): void => {
     };
     gatewayGA = '0x0000000000000000000000000000000000000001';
     remoteGA = '0x0000000000000000000000000000000000000002';
-    gatewayType = GatewayType.Consensus;
+    gatewayType = GatewayType.CONSENSUS;
     destinationGA = '0x0000000000000000000000000000000000000003';
     remoteGatewayLastProvenBlockNumber = new BigNumber(100);
     anchorGA = '0x0000000000000000000000000000000000000004';

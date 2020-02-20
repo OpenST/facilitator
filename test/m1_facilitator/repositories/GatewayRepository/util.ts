@@ -33,7 +33,7 @@ const Util = {
     assert.strictEqual(
       inputGateway.remoteGA,
       expectedGateway.remoteGA,
-      'Mismatch in remote\'s global address',
+      'Mismatch in remote gateway global address.',
     );
 
     assert.strictEqual(
@@ -45,15 +45,24 @@ const Util = {
     assert.strictEqual(
       inputGateway.destinationGA,
       expectedGateway.destinationGA,
-      'Mismatch in destination global address.',
+      'Mismatch in ERC20 gateway address.',
     );
 
-    assert.strictEqual(
-      inputGateway.remoteGatewayLastProvenBlockNumber,
-      inputGateway.remoteGatewayLastProvenBlockNumber,
+    const {
+      remoteGatewayLastProvenBlockNumber: expectedRemoteGatewayLastProvenBlockNumber,
+    } = expectedGateway;
+
+    const {
+      remoteGatewayLastProvenBlockNumber: inputRemoteGatewayLastProvenBlockNumber,
+    } = inputGateway;
+
+    assert.isOk(
+      expectedRemoteGatewayLastProvenBlockNumber
+      && inputRemoteGatewayLastProvenBlockNumber
+      && expectedRemoteGatewayLastProvenBlockNumber.eq(inputRemoteGatewayLastProvenBlockNumber),
       'Expected remote gateway\'s last proven block number is '
-      + `${inputGateway.remoteGatewayLastProvenBlockNumber} but got`
-      + `${expectedGateway.remoteGatewayLastProvenBlockNumber}.`,
+      + `${inputRemoteGatewayLastProvenBlockNumber && inputRemoteGatewayLastProvenBlockNumber.toString(10)} but got`
+      + `${expectedRemoteGatewayLastProvenBlockNumber && expectedRemoteGatewayLastProvenBlockNumber.toString(10)}.`,
     );
 
     assert.strictEqual(
@@ -62,20 +71,17 @@ const Util = {
       'Mismatch in anchor\'s global address.',
     );
 
-    if (inputGateway.createdAt && expectedGateway.createdAt) {
-      assert.strictEqual(
-        inputGateway.createdAt.getTime(),
-        expectedGateway.createdAt.getTime(),
-        'Expected created at time is different than the one received in response.',
-      );
-    }
+    assert.strictEqual(
+      inputGateway.createdAt && inputGateway.createdAt.getTime(),
+      expectedGateway.createdAt && expectedGateway.createdAt.getTime(),
+      'Mismatch in created at field of the gateway model.',
+    );
 
     assert.isNotNull(
       inputGateway.updatedAt,
-      'Updated at should not be null.',
+      'Updated at field should not be null.',
     );
   },
-
 };
 
 export default Util;

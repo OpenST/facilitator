@@ -22,8 +22,8 @@ import Comparable from '../../m0_facilitator/observer/Comparable';
  * Type of gateways.
  */
 export enum GatewayType {
-  Consensus = 'consensus',
-  Most = 'most',
+  CONSENSUS = 'consensus',
+  MOST = 'most',
   ERC20 = 'erc20',
   NFT = 'nft'
 }
@@ -32,7 +32,6 @@ export enum GatewayType {
  * Represents Gateway model object.
  */
 export default class Gateway extends Comparable<Gateway> {
-
   public gatewayGA: string;
 
   public remoteGA: string;
@@ -53,13 +52,13 @@ export default class Gateway extends Comparable<Gateway> {
    * Constructor to initialize the fields of Gateway model.
    *
    * @param gatewayGA Gateway global address.
-   * @param remoteGA Remote chain's global address.
+   * @param remoteGA Remote gateway global address.
    * @param gatewayType Type of gateway.
    * @param anchorGA Anchor global address.
-   * @param destinationGA Destination chain's global address.
+   * @param destinationGA ERC20 contract address.
    * @param remoteGatewayLastProvenBlockNumber Remote chain gateway's last anchored block number.
-   * @param createdAt Time of creation of an gateway.
-   * @param updatedAt Time of updation for an gateway.
+   * @param createdAt Specifies the gateway's creation date.
+   * @param updatedAt Specifies the gateway's update date.
    */
   public constructor(
     gatewayGA: string,
@@ -69,7 +68,7 @@ export default class Gateway extends Comparable<Gateway> {
     destinationGA?: string,
     remoteGatewayLastProvenBlockNumber?: BigNumber,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
   ) {
     super();
     this.gatewayGA = gatewayGA;
@@ -82,14 +81,14 @@ export default class Gateway extends Comparable<Gateway> {
     this.updatedAt = updatedAt;
   }
 
- /**
-  * Compares two gateway models.
-  *
-  * @param other A gateway object to compare with.
-  *
-  * @returns 0 if two objects are equal, 1 if the current object is greater
-  *                 and -1 if the specified object is greater.
-  */
+  /**
+   * Compares the `gatewayGA` primary key of two gateway models.
+   *
+   * @param other A gateway object to compare with.
+   *
+   * @returns 0 if two objects are equal, 1 if the current object is greater
+   *                 and -1 if the specified object is greater.
+   */
   public compareTo(other: Gateway): number {
     const currentKey = this.gatewayGA;
     const specifiedKey = other.gatewayGA;

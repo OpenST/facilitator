@@ -42,7 +42,7 @@ describe('Gateway::get', (): void => {
     };
     gatewayGA = '0x0000000000000000000000000000000000000001';
     remoteGA = '0x0000000000000000000000000000000000000002';
-    gatewayType = GatewayType.Consensus;
+    gatewayType = GatewayType.CONSENSUS;
     destinationGA = '0x0000000000000000000000000000000000000003';
     remoteGatewayLastProvenBlockNumber = new BigNumber(100);
     anchorGA = '0x0000000000000000000000000000000000000004';
@@ -74,7 +74,7 @@ describe('Gateway::get', (): void => {
 
   it('should return null when querying for non-existing '
     + 'gateway global address', async (): Promise<void> => {
-      const nonExistingGatewayGA = '0x0000000000000000000000000000000000000010';
+    const nonExistingGatewayGA = '0x0000000000000000000000000000000000000010';
 
     const getResponse = await config.repos.gatewayRepository.get(
       nonExistingGatewayGA,

@@ -46,11 +46,10 @@ class GatewayModel extends Model {
 /**
  * Stores instances of Gateway.
  *
- * Class enables creation, updation and retrieval of Gateway objects.
+ * Class enables creation, update and retrieval of Gateway objects.
  * On construction, it initializes underlying database model.
  */
 export default class GatewayRepository extends Subject<Gateway> {
-
   public constructor(initOptions: InitOptions) {
     super();
 
@@ -75,8 +74,8 @@ export default class GatewayRepository extends Subject<Gateway> {
         gatewayType: {
           type: DataTypes.ENUM({
             values: [
-              GatewayType.Consensus,
-              GatewayType.Most,
+              GatewayType.CONSENSUS,
+              GatewayType.MOST,
               GatewayType.ERC20,
               GatewayType.NFT,
             ],
