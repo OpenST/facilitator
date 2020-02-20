@@ -75,11 +75,13 @@ const Util = {
       'sourceDeclarationBlockNumber should match',
     );
 
-    assert.strictEqual(
-      inputMessage.createdAt,
-      expectedMessage.createdAt,
-      'Expected created at time is different than the one received in response',
-    );
+    if (inputMessage.createdAt && expectedMessage.createdAt) {
+      assert.strictEqual(
+        inputMessage.createdAt.getTime(),
+        expectedMessage.createdAt.getTime(),
+        'Expected created at time is different than the one received in response',
+      );
+    }
 
     assert.isNotNull(
       inputMessage.updatedAt,
