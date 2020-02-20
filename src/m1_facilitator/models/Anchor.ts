@@ -78,4 +78,15 @@ export default class Anchor extends Comparable<Anchor> {
   public compareTo(other: Anchor): number {
     return this.anchorGA.localeCompare(other.anchorGA, 'en', { sensitivity: 'base' });
   }
+
+  /**
+   * Generates and return global address of given anchor contract address.
+   *
+   * @param anchorContractAddress Anchor contract address.
+   *
+   * @returns Anchor global address.
+   */
+  public static getGlobalAddress(anchorContractAddress: string): string {
+    return anchorContractAddress;
+  }
 }
