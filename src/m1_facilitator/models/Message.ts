@@ -61,8 +61,10 @@ export default class Message extends Comparable<Message> {
    * @param messageHash Message hash is unique for each request.
    * @param type Type of the message deposit/withdraw.
    * @param intentHash Intent hash.
-   * @param sourceStatus Status of message declared in the outbox of the gateway on source chain.
-   * @param targetStatus Status of message declared in the inbox of the gateway on the auxiliary chain.
+   * @param sourceStatus Status of message in the outbox of the gateway
+   *                     on source chain.
+   * @param targetStatus Status of message in the inbox of the gateway
+   *                     on the auxiliary chain.
    * @param feeGasPrice Fee gas price for reward calculation.
    * @param feeGasLimit Fee gas limit for reward calculation.
    * @param gatewayAddress Gateway contract address.
