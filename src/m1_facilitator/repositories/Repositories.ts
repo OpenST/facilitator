@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import { InitOptions, Sequelize } from 'sequelize';
 
 import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
-import { MessageRepository } from './MessageRepository';
 import GatewayRepository from './GatewayRepository';
+import MessageRepository from './MessageRepository';
 
 export default class Repositories {
   /* Storage */

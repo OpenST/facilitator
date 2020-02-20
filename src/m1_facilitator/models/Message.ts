@@ -17,25 +17,37 @@ import BigNumber from 'bignumber.js';
 
 import Comparable from '../../m0_facilitator/observer/Comparable';
 
+/** Message types for deposit and withdraw */
+export enum MessageType {
+  Deposit = 'deposit',
+  Withdraw = 'withdraw',
+}
+
+/** Status of messages */
+export enum MessageStatus {
+  Undeclared = 'undeclared',
+  Declared = 'declared',
+}
+
 /**
  * Represents Message model object.
  */
 export default class Message extends Comparable<Message> {
   public messageHash: string;
 
-  public type: string;
+  public type: MessageType;
 
-  public intentHash: string;
+  public sourceStatus: MessageStatus;
 
-  public sourceStatus?: string;
+  public targetStatus: MessageStatus;
 
-  public targetStatus?: string;
+  public gatewayAddress: string;
+
+  public intentHash?: string;
 
   public gasPrice?: BigNumber;
 
   public gasLimit?: BigNumber;
-
-  public gatewayAddress?: string;
 
   public sourceDeclarationBlockNumber?: BigNumber;
 
@@ -61,13 +73,13 @@ export default class Message extends Comparable<Message> {
    */
   public constructor(
     messageHash: string,
-    type: string,
-    intentHash: string,
-    sourceStatus?: string,
-    targetStatus?: string,
+    type: MessageType,
+    sourceStatus: MessageStatus,
+    targetStatus: MessageStatus,
+    gatewayAddress: string,
+    intentHash?: string,
     gasPrice?: BigNumber,
     gasLimit?: BigNumber,
-    gatewayAddress?: string,
     sourceDeclarationBlockNumber?: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
@@ -75,12 +87,12 @@ export default class Message extends Comparable<Message> {
     super();
     this.messageHash = messageHash;
     this.type = type;
-    this.intentHash = intentHash;
     this.sourceStatus = sourceStatus;
     this.targetStatus = targetStatus;
+    this.gatewayAddress = gatewayAddress;
+    this.intentHash = intentHash;
     this.gasPrice = gasPrice;
     this.gasLimit = gasLimit;
-    this.gatewayAddress = gatewayAddress;
     this.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;

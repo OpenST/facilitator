@@ -17,10 +17,7 @@ import BigNumber from 'bignumber.js';
 
 import Util from './util';
 import assert from '../../../test_utils/assert';
-import Message from '../../../../src/m1_facilitator/models/Message';
-import {
-  MessageStatus, MessageType,
-} from '../../../../src/m1_facilitator/repositories/MessageRepository';
+import Message, { MessageStatus, MessageType } from '../../../../src/m1_facilitator/models/Message';
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 
 describe('MessageRepository::get', (): void => {
@@ -30,9 +27,9 @@ describe('MessageRepository::get', (): void => {
   };
   let messageHash: string;
   let intentHash: string;
-  let type: string;
-  let sourceStatus: string;
-  let targetStatus: string;
+  let type: MessageType;
+  let sourceStatus: MessageStatus;
+  let targetStatus: MessageStatus;
   let gasPrice: BigNumber;
   let gasLimit: BigNumber;
   let gatewayAddress: string;
@@ -59,12 +56,12 @@ describe('MessageRepository::get', (): void => {
     message = new Message(
       messageHash,
       type,
-      intentHash,
       sourceStatus,
       targetStatus,
+      gatewayAddress,
+      intentHash,
       gasPrice,
       gasLimit,
-      gatewayAddress,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,

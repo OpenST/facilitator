@@ -17,10 +17,7 @@ import BigNumber from 'bignumber.js';
 
 import Util from './util';
 import { assertErrorMessages } from '../../../test_utils/assert';
-import Message from '../../../../src/m1_facilitator/models/Message';
-import {
-  MessageStatus, MessageType,
-} from '../../../../src/m1_facilitator/repositories/MessageRepository';
+import Message, { MessageStatus, MessageType } from '../../../../src/m1_facilitator/models/Message';
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 
 describe('MessageRepository::save', (): void => {
@@ -29,9 +26,9 @@ describe('MessageRepository::save', (): void => {
   };
   let messageHash: string;
   let intentHash: string;
-  let type: string;
-  let sourceStatus: string;
-  let targetStatus: string;
+  let type: MessageType;
+  let sourceStatus: MessageStatus;
+  let targetStatus: MessageStatus;
   let gasPrice: BigNumber;
   let gasLimit: BigNumber;
   let gatewayAddress: string;
@@ -60,12 +57,12 @@ describe('MessageRepository::save', (): void => {
     const message = new Message(
       messageHash,
       type,
-      intentHash,
       sourceStatus,
       targetStatus,
+      gatewayAddress,
+      intentHash,
       gasPrice,
       gasLimit,
-      gatewayAddress,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,
@@ -81,12 +78,12 @@ describe('MessageRepository::save', (): void => {
     const message = new Message(
       messageHash,
       type,
-      intentHash,
       sourceStatus,
       targetStatus,
+      gatewayAddress,
+      intentHash,
       gasPrice,
       gasLimit,
-      gatewayAddress,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,
@@ -112,12 +109,12 @@ describe('MessageRepository::save', (): void => {
     const message = new Message(
       messageHash,
       type,
-      intentHash,
       sourceStatus,
       targetStatus,
-      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
-      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       gatewayAddress,
+      intentHash,
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
+      new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,
@@ -133,12 +130,12 @@ describe('MessageRepository::save', (): void => {
     const message = new Message(
       messageHash,
       type,
-      intentHash,
       sourceStatus,
       targetStatus,
+      gatewayAddress,
+      intentHash,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       gasLimit,
-      gatewayAddress,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,
@@ -157,12 +154,12 @@ describe('MessageRepository::save', (): void => {
     const message = new Message(
       messageHash,
       type,
-      intentHash,
       sourceStatus,
       targetStatus,
+      gatewayAddress,
+      intentHash,
       gasPrice,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
-      gatewayAddress,
       sourceDeclarationBlockNumber,
       createdAt,
       updatedAt,

@@ -16,9 +16,8 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
-
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
-import Message from '../models/Message';
+import Message, { MessageType, MessageStatus } from '../models/Message';
 import Subject from '../../m0_facilitator/observer/Subject';
 import Utils from '../../m0_facilitator/Utils';
 
@@ -28,19 +27,19 @@ import Utils from '../../m0_facilitator/Utils';
 class MessageModel extends Model {
   public readonly messageHash!: string;
 
-  public readonly type!: string;
+  public readonly type!: MessageType;
+
+  public readonly sourceStatus!: MessageStatus;
+
+  public readonly targetStatus!: MessageStatus;
+
+  public readonly gatewayAddress!: string;
 
   public readonly intentHash!: string;
-
-  public readonly sourceStatus!: string;
-
-  public readonly targetStatus!: string;
 
   public readonly gasPrice!: BigNumber;
 
   public readonly gasLimit!: BigNumber;
-
-  public readonly gatewayAddress!: string;
 
   public readonly sourceDeclarationBlockNumber!: BigNumber;
 
@@ -49,25 +48,13 @@ class MessageModel extends Model {
   public readonly updatedAt!: Date;
 }
 
-/** Message types for deposit and withdraw */
-export enum MessageType {
-  Deposit = 'deposit',
-  Withdraw = 'withdraw',
-}
-
-/** Status of messages */
-export enum MessageStatus {
-  Undeclared = 'undeclared',
-  Declared = 'declared',
-}
-
 /**
  * Stores instances of Message.
  *
  * Class enables creation, update and retrieval of Message objects.
  * On construction it initializes underlying database model.
  */
-export class MessageRepository extends Subject<Message> {
+export default class MessageRepository extends Subject<Message> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -88,13 +75,6 @@ export class MessageRepository extends Subject<Message> {
           }),
           allowNull: false,
         },
-        intentHash: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          validate: {
-            isAlphanumeric: true,
-          },
-        },
         sourceStatus: {
           type: DataTypes.ENUM({
             values: [
@@ -102,7 +82,7 @@ export class MessageRepository extends Subject<Message> {
               MessageStatus.Declared,
             ],
           }),
-          allowNull: true,
+          allowNull: false,
         },
         targetStatus: {
           type: DataTypes.ENUM({
@@ -111,7 +91,22 @@ export class MessageRepository extends Subject<Message> {
               MessageStatus.Declared,
             ],
           }),
+          allowNull: false,
+        },
+        gatewayAddress: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          validate: {
+            isAlphanumeric: true,
+            len: [42, 42],
+          },
+        },
+        intentHash: {
+          type: DataTypes.STRING,
           allowNull: true,
+          validate: {
+            isAlphanumeric: false,
+          },
         },
         gasPrice: {
           type: DataTypes.DECIMAL(78),
@@ -127,14 +122,6 @@ export class MessageRepository extends Subject<Message> {
           validate: {
             min: 0,
             max: MAX_VALUE,
-          },
-        },
-        gatewayAddress: {
-          type: DataTypes.STRING,
-          allowNull: true,
-          validate: {
-            isAlphanumeric: true,
-            len: [42, 42],
           },
         },
         sourceDeclarationBlockNumber: {
@@ -236,12 +223,12 @@ export class MessageRepository extends Subject<Message> {
     return new Message(
       messageModel.messageHash,
       messageModel.type,
-      messageModel.intentHash,
       messageModel.sourceStatus,
       messageModel.targetStatus,
+      messageModel.gatewayAddress,
+      messageModel.intentHash,
       messageModel.gasPrice ? new BigNumber(messageModel.gasPrice) : messageModel.gasPrice,
       messageModel.gasLimit ? new BigNumber(messageModel.gasLimit) : messageModel.gasLimit,
-      messageModel.gatewayAddress,
       messageModel.sourceDeclarationBlockNumber ?
         new BigNumber(messageModel.sourceDeclarationBlockNumber) :
         messageModel.sourceDeclarationBlockNumber,
