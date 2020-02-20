@@ -86,8 +86,12 @@ export default class ERC20GatewayTokenPair extends Comparable<ERC20GatewayTokenP
    *          `< 0` if the current object is less than the given one.
    */
   public compareTo(other: ERC20GatewayTokenPair): number {
-    if (this.erc20Gateway.localeCompare(other.erc20Gateway, 'en', { sensitivity: 'base' }) !== 0) {
-      return this.erc20Gateway.localeCompare(other.erc20Gateway, 'en', { sensitivity: 'base' });
+    const erc20GatewaysComparison: number = this.erc20Gateway.localeCompare(
+      other.erc20Gateway, 'en', { sensitivity: 'base' },
+    );
+
+    if (erc20GatewaysComparison !== 0) {
+      return erc20GatewaysComparison;
     }
 
     return this.valueToken.localeCompare(other.valueToken, 'en', { sensitivity: 'base' });
