@@ -49,7 +49,7 @@ class WithdrawIntentModel extends Model {
  * Class enables creation, updation and retrieval of WithdrawIntent objects.
  * On construction it initializes underlying database model.
  */
-export default class WithdrawtIntentRepository extends Subject<WithdrawIntent> {
+export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
   /* Public Functions */
   public constructor(initOptions: InitOptions) {
     super();

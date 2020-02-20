@@ -21,7 +21,6 @@ import Comparable from '../../m0_facilitator/observer/Comparable';
 /**
  * Represents WithdrawIntent model object.
  */
-
 export default class WithdrawIntent extends Comparable<WithdrawIntent> {
   public intentHash: string;
 
@@ -76,17 +75,6 @@ export default class WithdrawIntent extends Comparable<WithdrawIntent> {
    *                 and -1 if the specified object is greater.
    */
   public compareTo(other: WithdrawIntent): number {
-    const currentKey = this.intentHash;
-    const specifiedKey = other.intentHash;
-
-    if (currentKey > specifiedKey) {
-      return 1;
-    }
-
-    if (currentKey < specifiedKey) {
-      return -1;
-    }
-
-    return 0;
+    return this.intentHash.localeCompare(other.intentHash, 'en', { sensitivity: 'base' });
   }
 }
