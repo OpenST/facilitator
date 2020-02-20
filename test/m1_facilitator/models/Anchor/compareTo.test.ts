@@ -84,7 +84,7 @@ describe('Anchor::compareTo', (): void => {
       );
 
       assert.isOk(
-        anchorA.compareTo(anchorB) < 0, // anchorA < anchorB
+        anchorA.compareTo(anchorB) === 0, // anchorA < anchorB
       );
     }
 
@@ -100,7 +100,7 @@ describe('Anchor::compareTo', (): void => {
       );
 
       assert.isOk(
-        anchorA.compareTo(anchorB) > 0, // anchorA < anchorB
+        anchorA.compareTo(anchorB) === 0, // anchorA < anchorB
       );
     }
 
