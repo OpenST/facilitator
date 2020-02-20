@@ -18,8 +18,6 @@
 import BigNumber from 'bignumber.js';
 import Comparable from '../../m0_facilitator/observer/Comparable';
 
-// import Comparable from '../../m0_facilitator/observer/Comparable';
-
 /**
  * Type of gateways.
  */
@@ -30,6 +28,9 @@ export enum GatewayType {
   NFT = 'nft'
 }
 
+/**
+ * Represents DepositIntent model object.
+ */
 export default class Gateway extends Comparable<Gateway> {
 
   public gatewayGA: string;
@@ -38,7 +39,7 @@ export default class Gateway extends Comparable<Gateway> {
 
   public gatewayType: GatewayType;
 
-  public destinationGA: string;
+  public destinationGA?: string;
 
   public remoteGatewayLastProvenBlockNumber?: BigNumber;
 
@@ -54,7 +55,8 @@ export default class Gateway extends Comparable<Gateway> {
    * @param gatewayGA Gateway global address.
    * @param remoteGA Remote chain's global address.
    * @param gatewayType Type of gateway.
-   * @param destinationGA Destination chain global address.
+   * @param anchorGA Anchor global address.
+   * @param destinationGA Destination chain's global address.
    * @param remoteGatewayLastProvenBlockNumber Remote chain gateway's last anchored block number.
    * @param createdAt Time of creation of an gateway.
    * @param updatedAt Time of updation for an gateway.
@@ -63,8 +65,8 @@ export default class Gateway extends Comparable<Gateway> {
     gatewayGA: string,
     remoteGA: string,
     gatewayType: GatewayType,
-    destinationGA: string,
     anchorGA: string,
+    destinationGA?: string,
     remoteGatewayLastProvenBlockNumber?: BigNumber,
     createdAt?: Date,
     updatedAt?: Date
@@ -80,7 +82,26 @@ export default class Gateway extends Comparable<Gateway> {
     this.updatedAt = updatedAt;
   }
 
+ /**
+  * Compares two gateway models.
+  *
+  * @param other A gateway object to compare with.
+  *
+  * @returns 0 if two objects are equal, 1 if the current object is greater
+  *                 and -1 if the specified object is greater.
+  */
   public compareTo(other: Gateway): number {
+    const currentKey = this.gatewayGA;
+    const specifiedKey = other.gatewayGA;
 
+    if (currentKey > specifiedKey) {
+      return 1;
+    }
+
+    if (currentKey < specifiedKey) {
+      return -1;
+    }
+
+    return 0;
   }
 }

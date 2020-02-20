@@ -18,11 +18,13 @@
 import assert from 'assert';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 import BigNumber from 'bignumber.js';
-import { GatewayType } from '../models/Gateway';
-import Gateway from '../models/Gateway';
+import Gateway, { GatewayType } from '../models/Gateway';
 import Subject from '../../m0_facilitator/observer/Subject';
 import Utils from '../../m0_facilitator/Utils';
 
+/**
+ * An interface, that represents a row from a gateways table.
+ */
 class GatewayModel extends Model {
   public gatewayGA!: string;
 
@@ -41,6 +43,12 @@ class GatewayModel extends Model {
   public updatedAt?: Date;
 }
 
+/**
+ * Stores instances of Gateway.
+ *
+ * Class enables creation, updation and retrieval of Gateway objects.
+ * On construction, it initializes underlying database model.
+ */
 export default class GatewayRepository extends Subject<Gateway> {
 
   public constructor(initOptions: InitOptions) {
@@ -74,7 +82,7 @@ export default class GatewayRepository extends Subject<Gateway> {
             ],
           }),
         },
-        destinationGA: {
+        anchorGA: {
           type: DataTypes.STRING,
           allowNull: true,
           validate: {
@@ -82,7 +90,7 @@ export default class GatewayRepository extends Subject<Gateway> {
             len: [42, 42],
           },
         },
-        anchorGA: {
+        destinationGA: {
           type: DataTypes.STRING,
           allowNull: true,
           validate: {
@@ -106,6 +114,14 @@ export default class GatewayRepository extends Subject<Gateway> {
     );
   }
 
+  /**
+   * Saves a Gateway model in the repository.
+   * If a Gateway model does not exist, it creates else it updates.
+   *
+   * @param gateway Gateway object to update.
+   *
+   * @returns Newly created or updated Gateway object.
+   */
   public async save(gateway: Gateway): Promise<Gateway> {
     const gatewayModelObj = await GatewayModel.findOne(
       {
@@ -151,7 +167,7 @@ export default class GatewayRepository extends Subject<Gateway> {
    *
    * @param gatewayGA Gateway global address whose record is to be retrieved.
    *
-   * @returns Gateway object.
+   * @returns Gateway object if record present for gateway global address otherwise `null`.
    */
   public async get(gatewayGA: string): Promise<Gateway | null> {
     const gatewayModel = await GatewayModel.findOne({
@@ -182,8 +198,8 @@ export default class GatewayRepository extends Subject<Gateway> {
       gatewayModel.gatewayGA,
       gatewayModel.remoteGA,
       gatewayModel.gatewayType,
-      gatewayModel.destinationGA,
       gatewayModel.anchorGA,
+      gatewayModel.destinationGA,
       gatewayModel.remoteGatewayLastProvenBlockNumber,
       gatewayModel.createdAt,
       gatewayModel.updatedAt,
