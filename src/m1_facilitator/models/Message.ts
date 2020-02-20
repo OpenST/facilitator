@@ -87,7 +87,7 @@ export default class Message extends Comparable<Message> {
   }
 
   /**
-   * Compares two Message models.
+   * Compares the `messageHash` primary key of two Message models.
    *
    * @param other A Message object to compare with.
    *

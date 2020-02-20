@@ -64,7 +64,7 @@ export enum MessageStatus {
 /**
  * Stores instances of Message.
  *
- * Class enables creation, updation and retrieval of Message objects.
+ * Class enables creation, update and retrieval of Message objects.
  * On construction it initializes underlying database model.
  */
 export class MessageRepository extends Subject<Message> {
