@@ -17,11 +17,14 @@
 import { InitOptions, Sequelize } from 'sequelize';
 
 import DepositIntentRepository from './DepositIntentRepository';
+import { MessageRepository } from './MessageRepository';
 
 export default class Repositories {
   /* Storage */
 
   public depositIntentRepository: DepositIntentRepository;
+
+  public messageRepository: MessageRepository;
 
   /* Public Functions */
 
@@ -53,6 +56,7 @@ export default class Repositories {
     const promises = [];
 
     promises.push(this.depositIntentRepository.notify());
+    promises.push(this.messageRepository.notify());
 
     return Promise.all(promises);
   }
@@ -81,5 +85,6 @@ export default class Repositories {
     };
 
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
+    this.messageRepository = new MessageRepository(initOptions);
   }
 }
