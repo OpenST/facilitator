@@ -18,6 +18,7 @@ import WithdrawIntentRepository from './WithdrawIntentRepository';
 import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
 import { InitOptions, Sequelize } from 'sequelize';
+import GatewayRepository from './GatewayRepository';
 
 export default class Repositories {
   /* Storage */
@@ -27,6 +28,7 @@ export default class Repositories {
   public depositIntentRepository: DepositIntentRepository;
 
   public withdrawIntentRepository: WithdrawIntentRepository;
+  public gatewayRepository: GatewayRepository;
 
   /* Public Functions */
 
@@ -90,5 +92,6 @@ export default class Repositories {
     this.anchorRepository = new AnchorRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
     this.withdrawIntentRepository = new WithdrawIntentRepository(initOptions);
+    this.gatewayRepository = new GatewayRepository(initOptions);
   }
 }

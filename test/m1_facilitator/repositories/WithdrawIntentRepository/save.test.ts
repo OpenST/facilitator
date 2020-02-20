@@ -68,15 +68,20 @@ describe('WithdrawIntent::save', (): void => {
     const withdrawIntent = new WithdrawIntent(
       intentHash,
       messageHash,
+      tokenAddress,
+      amount,
+      beneficiary,
+      createdAt,
+      updatedAt,
     );
 
     await config.repos.withdrawIntentRepository.save(
       withdrawIntent,
     );
 
-    withdrawIntent.tokenAddress = tokenAddress;
-    withdrawIntent.amount = amount;
-    withdrawIntent.beneficiary = beneficiary;
+    withdrawIntent.tokenAddress = '0x0000000000000000000000000000000000000002';
+    withdrawIntent.amount = new BigNumber('101');
+    withdrawIntent.beneficiary = '0x0000000000000000000000000000000000000004';
 
     const updateWithdrawIntent = await config.repos.withdrawIntentRepository.save(
       withdrawIntent,

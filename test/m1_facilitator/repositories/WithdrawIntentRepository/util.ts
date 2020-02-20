@@ -41,12 +41,14 @@ const Util = {
       'Mismatch in token address.',
     );
 
-    if (inputWithdrawIntent.amount && expectedWithdrawIntent.amount) {
-      assert.isOk(
-        inputWithdrawIntent.amount.eq(expectedWithdrawIntent.amount),
-        'Mismatch in Withdraw amount.',
-      );
-    }
+    assert.isOk(
+      inputWithdrawIntent.amount
+      && expectedWithdrawIntent.amount
+      && inputWithdrawIntent.amount.eq(expectedWithdrawIntent.amount),
+      'Expected Withdraw amount is '
+      + `${inputWithdrawIntent.amount && inputWithdrawIntent.amount.toString(10)} but got`
+      + `${expectedWithdrawIntent.amount && expectedWithdrawIntent.amount.toString(10)}.`,
+    );
 
     assert.strictEqual(
       inputWithdrawIntent.beneficiary,
@@ -54,13 +56,11 @@ const Util = {
       'Mismatch in beneficiary address.',
     );
 
-    if (inputWithdrawIntent.createdAt && expectedWithdrawIntent.createdAt) {
-      assert.strictEqual(
-        inputWithdrawIntent.createdAt.getTime(),
-        expectedWithdrawIntent.createdAt.getTime(),
-        'Expected created at time is different than the one received in response.',
-      );
-    }
+    assert.strictEqual(
+      inputWithdrawIntent.createdAt && inputWithdrawIntent.createdAt.getTime(),
+      expectedWithdrawIntent.createdAt && expectedWithdrawIntent.createdAt.getTime(),
+      'Expected created at time is different than the one received in response.',
+    );
 
     assert.isNotNull(
       inputWithdrawIntent.updatedAt,
