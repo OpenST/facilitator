@@ -25,7 +25,7 @@ import assert = require('assert');
 /* eslint-disable class-methods-use-this */
 
 /**
- * An interface, that represents a row from a table.
+ * An interface, that represents an ERC20GatewayTokenPair database model.
  *
  * See: http://docs.sequelizejs.com/manual/typescript.html#usage
  */
