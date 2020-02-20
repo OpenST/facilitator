@@ -41,8 +41,8 @@ export default class Anchor extends Comparable<Anchor> {
    *
    * @param anchorGA Newly created anchor's global address.
    * @param lastAnchoredBlockNumber Newly created anchor's last anchored block number.
-   * @param createdAt Specifies the anchor's creation date.
-   * @param updatedAt Specifies the anchor's update date.
+   * @param [createdAt] Specifies the anchor's creation date.
+   * @param [updatedAt] Specifies the anchor's update date.
    *
    * @pre anchorGA is not empty.
    * @pre lastAnchoredBlockNumber is greater than or equal to 0.
@@ -67,10 +67,7 @@ export default class Anchor extends Comparable<Anchor> {
   /**
    * compareTo() function implements comparison between two anchor objects.
    *
-   * The function first compares case-insensitively the `anchorGA` attributes
-   * and if attributes for the both anchor objects are equal, compares
-   * `lastAnchoredBlockNumber` attributes.
-   *
+   * The function compares case-insensitively the `anchorGA` attributes.
    *
    * @param other An anchor object to compare with.
    *
@@ -79,10 +76,6 @@ export default class Anchor extends Comparable<Anchor> {
    *          `< 0` if the current object is less than the given one.
    */
   public compareTo(other: Anchor): number {
-    if (this.anchorGA.localeCompare(other.anchorGA, 'en', { sensitivity: 'base' }) !== 0) {
-      return this.anchorGA.localeCompare(other.anchorGA, 'en', { sensitivity: 'base' });
-    }
-
-    return this.lastAnchoredBlockNumber.comparedTo(other.lastAnchoredBlockNumber);
+    return this.anchorGA.localeCompare(other.anchorGA, 'en', { sensitivity: 'base' });
   }
 }

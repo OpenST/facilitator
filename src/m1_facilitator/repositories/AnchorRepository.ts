@@ -72,8 +72,8 @@ export default class AnchorRepository extends Subject<Anchor> {
       },
       {
         ...initOptions,
-        modelName: 'anchor',
-        tableName: 'anchor',
+        modelName: 'Anchor',
+        tableName: 'anchors',
       },
     );
   }
