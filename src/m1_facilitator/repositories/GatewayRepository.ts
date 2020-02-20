@@ -16,11 +16,11 @@
 // ----------------------------------------------------------------------------
 
 import assert from 'assert';
-import { DataTypes, InitOptions, Model } from 'sequelize';
 import BigNumber from 'bignumber.js';
+import { DataTypes, InitOptions, Model } from 'sequelize';
 import Gateway, { GatewayType } from '../models/Gateway';
-import Subject from '../../m0_facilitator/observer/Subject';
 import Utils from '../../m0_facilitator/Utils';
+import Subject from '../../m0_facilitator/observer/Subject';
 
 /**
  * An interface, that represents a row from a gateways table.
