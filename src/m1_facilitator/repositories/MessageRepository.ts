@@ -11,18 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
-import { MAX_VALUE } from '../../Constants';
+import { MAX_VALUE } from '../../m0_facilitator/Constants';
 import Message from '../models/Message';
-import Subject from '../../observer/Subject';
-import Utils from '../../Utils';
+import Subject from '../../m0_facilitator/observer/Subject';
+import Utils from '../../m0_facilitator/Utils';
 
 /**
  * An interface, that represents a row from a messages table.

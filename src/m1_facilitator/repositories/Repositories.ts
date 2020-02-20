@@ -11,16 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
+
 
 import { InitOptions, Sequelize } from 'sequelize';
 
+import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
 import { MessageRepository } from './MessageRepository';
 
 export default class Repositories {
   /* Storage */
+
+  public anchorRepository: AnchorRepository;
 
   public depositIntentRepository: DepositIntentRepository;
 
@@ -57,6 +59,7 @@ export default class Repositories {
 
     promises.push(this.depositIntentRepository.notify());
     promises.push(this.messageRepository.notify());
+    promises.push(this.anchorRepository.notify());
 
     return Promise.all(promises);
   }
@@ -84,6 +87,7 @@ export default class Repositories {
       freezeTableName: true,
     };
 
+    this.anchorRepository = new AnchorRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
     this.messageRepository = new MessageRepository(initOptions);
   }

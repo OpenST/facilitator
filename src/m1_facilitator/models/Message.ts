@@ -11,13 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
 import BigNumber from 'bignumber.js';
 
-import Comparable from '../../observer/Comparable';
+import Comparable from '../../m0_facilitator/observer/Comparable';
 
 /**
  * Represents Message model object.
@@ -46,17 +44,18 @@ export default class Message extends Comparable<Message> {
   public updatedAt?: Date;
 
   /**
-   * Constructor to set fields of Messages model.
+   * Constructor to set fields of Message model.
    *
    * @param messageHash Message hash is unique for each request.
    * @param type Type of the message deposit/withdraw.
    * @param intentHash Intent hash.
    * @param sourceStatus Status of source.
    * @param targetStatus Status of target.
-   * @param gasPrice Gas price that staker is ready to pay to get the stake and mint process done.
-   * @param gasLimit Gas limit that staker is ready to pay.
+   * @param gasPrice Gas price that depositor/withdrawer is ready to pay to get
+   *                 deposit/withdraw process done.
+   * @param gasLimit Gas limit that depositor/withdrawer is ready to pay.
    * @param gatewayAddress Gateway contract address.
-   * @param sourceDeclarationBlockNumber Source block height at which message wa declared.
+   * @param sourceDeclarationBlockNumber Source block height at which message was declared.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */

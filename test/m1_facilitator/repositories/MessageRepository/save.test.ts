@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
 import BigNumber from 'bignumber.js';
@@ -144,16 +142,9 @@ describe('MessageRepository::save', (): void => {
       await config.repos.messageRepository.save(message);
     } catch (error) {
       assertErrorMessages(error.errors, [
-        'Validation max on gasPrice failed',
+        'Validation on maximum gasPrice failed',
       ]);
     }
-
-    // await assert.isRejected(
-    //   config.repos.messageRepository.save(
-    //     message,
-    //   ),
-    //   'Validation max on gasPrice failed',
-    // );
   });
 
   it('should fail when gas limit is higher than supported value', async (): Promise<void> => {
@@ -175,15 +166,8 @@ describe('MessageRepository::save', (): void => {
       await config.repos.messageRepository.save(message);
     } catch (error) {
       assertErrorMessages(error.errors, [
-        'Validation max on gasLimit failed',
+        'Validation on maximum gasLimit failed',
       ]);
     }
-
-    // await assert.isRejected(
-    //   config.repos.messageRepository.save(
-    //     message,
-    //   ),
-    //   'Validation max on gasLimit failed',
-    // );
   });
 });
