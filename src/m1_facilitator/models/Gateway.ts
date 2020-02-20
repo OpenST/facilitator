@@ -29,7 +29,7 @@ export enum GatewayType {
 }
 
 /**
- * Represents DepositIntent model object.
+ * Represents Gateway model object.
  */
 export default class Gateway extends Comparable<Gateway> {
 
