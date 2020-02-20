@@ -65,7 +65,7 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
       { erc20Gateway, valueToken, utilityToken },
     );
 
-    const storedObject: ERC20GatewayTokenPair | null = await config.erc20GatewayTokenPairRepository.get(
+    const storedObject = await config.erc20GatewayTokenPairRepository.get(
       erc20Gateway,
       valueToken,
     );
@@ -99,14 +99,16 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
       updatedUtilityToken,
     );
 
-    const returnedObject = await config.erc20GatewayTokenPairRepository.save(updatedERC20GatewayTokenPair);
+    const returnedObject = await config.erc20GatewayTokenPairRepository.save(
+      updatedERC20GatewayTokenPair,
+    );
 
     assertERC20GatewayTokenPairAttributes(
       returnedObject,
       { erc20Gateway, valueToken, utilityToken: updatedUtilityToken },
     );
 
-    const storedObject: ERC20GatewayTokenPair | null = await config.erc20GatewayTokenPairRepository.get(
+    const storedObject = await config.erc20GatewayTokenPairRepository.get(
       erc20Gateway,
       valueToken,
     );

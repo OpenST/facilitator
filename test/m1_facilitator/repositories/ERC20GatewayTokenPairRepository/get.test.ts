@@ -60,7 +60,7 @@ describe('ERC20GatewayTokenPairRepository::get', (): void => {
       erc20GatewayTokenPair,
     );
 
-    const retrievedObject: ERC20GatewayTokenPair | null = await config.erc20GatewayTokenPairRepository.get(
+    const retrievedObject = await config.erc20GatewayTokenPairRepository.get(
       erc20Gateway,
       valueToken,
     );
