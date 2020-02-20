@@ -93,7 +93,7 @@ export default class AnchorRepository extends Subject<Anchor> {
    * @returns Upserted anchor model (with all saved fields).
    */
   public async save(anchor: Anchor): Promise<Anchor> {
-    await this.assertAnchoredBlockNumber(anchor);
+    await AnchorRepository.assertAnchoredBlockNumber(anchor);
 
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
 
@@ -131,7 +131,7 @@ export default class AnchorRepository extends Subject<Anchor> {
       return null;
     }
 
-    return this.convertToModel(anchorDatabaseModel);
+    return AnchorRepository.convertToModel(anchorDatabaseModel);
   }
 
 
@@ -145,7 +145,7 @@ export default class AnchorRepository extends Subject<Anchor> {
    *
    * @returns Converted Anchor model.
    */
-  private convertToModel(anchorDatabaseModel: AnchorDatabaseModel): Anchor {
+  private static convertToModel(anchorDatabaseModel: AnchorDatabaseModel): Anchor {
     return new Anchor(
       anchorDatabaseModel.anchorGA,
       new BigNumber(anchorDatabaseModel.lastAnchoredBlockNumber),
@@ -161,7 +161,7 @@ export default class AnchorRepository extends Subject<Anchor> {
    *
    * @param anchor An anchor model to assert validity against the stored one.
    */
-  private async assertAnchoredBlockNumber(anchor: Anchor): Promise<void> {
+  private static async assertAnchoredBlockNumber(anchor: Anchor): Promise<void> {
     const anchorDatabaseModel = await AnchorDatabaseModel.findOne({
       where: {
         anchorGA: anchor.anchorGA,
