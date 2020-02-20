@@ -21,7 +21,7 @@ export default class Utils {
   /**
    * Returns the checksum address.
    * @param address Ethereum Address.
-   * @re turns Checksum address.
+   * @returns Checksum address.
    */
   public static toChecksumAddress(address: string): string {
     return Web3Utils.toChecksumAddress(address);

@@ -17,7 +17,6 @@ import AnchorRepository from '../repositories/AnchorRepository';
 import Utils from '../../common/Utils';
 import Anchor from '../models/Anchor';
 
-
 /**
  * This class handles the updates from AvailableStateRoots entity.
  */
@@ -39,10 +38,11 @@ export default class AvailableStateRootsHandler {
    *
    * @param records List of AvailableStateRoots.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async handle(records: any[]): Promise<void> {
     const contractAddressVsBlockNumberMap = new Map();
 
-    records.forEach((record) => {
+    records.forEach((record): void => {
       const contractAddress = Utils.toChecksumAddress(record.contractAddress);
       const blockNumber = new BigNumber(record.blockNumber);
       if (!contractAddressVsBlockNumberMap.has(record.contractAddress)) {
@@ -59,7 +59,7 @@ export default class AvailableStateRootsHandler {
         const modelRecord = await this.anchorRepository.get(
           Anchor.getGlobalAddress(contractAddress),
         );
-        if (modelRecord != null && modelRecord.lastAnchoredBlockNumber.isLessThan(blockNumber)) {
+        if (modelRecord !== null && modelRecord.lastAnchoredBlockNumber.isLessThan(blockNumber)) {
           modelRecord.lastAnchoredBlockNumber = blockNumber;
           await this.anchorRepository.save(modelRecord);
         }
