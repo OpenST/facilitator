@@ -82,18 +82,24 @@ describe('MessageRepository::save', (): void => {
       messageHash,
       type,
       intentHash,
+      sourceStatus,
+      targetStatus,
+      gasPrice,
+      gasLimit,
+      gatewayAddress,
+      sourceDeclarationBlockNumber,
+      createdAt,
+      updatedAt,
     );
 
     await config.repos.messageRepository.save(
       message,
     );
 
-    message.sourceStatus = sourceStatus;
-    message.targetStatus = targetStatus;
-    message.gasLimit = gasLimit;
-    message.gasPrice = gasPrice;
-    message.gatewayAddress = gatewayAddress;
-    message.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
+    message.sourceStatus = MessageStatus.Declared;
+    message.targetStatus = MessageStatus.Declared;
+    message.gasPrice = new BigNumber('30000000000000000000000000000001');
+    message.gatewayAddress = '0x0000000000000000000000000000000000000002';
 
     const updatedMessage = await config.repos.messageRepository.save(
       message,

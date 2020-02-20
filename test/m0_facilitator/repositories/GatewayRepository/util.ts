@@ -94,7 +94,6 @@ const Util = {
       'Updated at should not be null',
     );
   },
-
 };
 
 export default Util;

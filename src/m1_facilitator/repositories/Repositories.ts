@@ -18,6 +18,7 @@ import { InitOptions, Sequelize } from 'sequelize';
 import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
 import { MessageRepository } from './MessageRepository';
+import GatewayRepository from './GatewayRepository';
 
 export default class Repositories {
   /* Storage */
@@ -27,6 +28,8 @@ export default class Repositories {
   public depositIntentRepository: DepositIntentRepository;
 
   public messageRepository: MessageRepository;
+
+  public gatewayRepository: GatewayRepository;
 
   /* Public Functions */
 
@@ -57,9 +60,10 @@ export default class Repositories {
   public async notify(): Promise<void[][]> {
     const promises = [];
 
-    promises.push(this.depositIntentRepository.notify());
-    promises.push(this.messageRepository.notify());
     promises.push(this.anchorRepository.notify());
+    promises.push(this.depositIntentRepository.notify());
+    promises.push(this.gatewayRepository.notify());
+    promises.push(this.messageRepository.notify());
 
     return Promise.all(promises);
   }
@@ -90,5 +94,6 @@ export default class Repositories {
     this.anchorRepository = new AnchorRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
     this.messageRepository = new MessageRepository(initOptions);
+    this.gatewayRepository = new GatewayRepository(initOptions);
   }
 }

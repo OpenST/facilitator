@@ -69,19 +69,28 @@ const Util = {
       'gatewayAddress should match',
     );
 
-    assert.notStrictEqual(
-      inputMessage.sourceDeclarationBlockNumber,
-      expectedMessage.sourceDeclarationBlockNumber,
-      'sourceDeclarationBlockNumber should match',
+    const {
+      sourceDeclarationBlockNumber: expectedSourceDeclarationBlockNumber,
+    } = expectedMessage;
+
+    const {
+      sourceDeclarationBlockNumber: inputSourceDeclarationBlockNumber,
+    } = inputMessage;
+
+    assert.isOk(
+      inputSourceDeclarationBlockNumber
+      && expectedSourceDeclarationBlockNumber
+      && inputSourceDeclarationBlockNumber.eq(expectedSourceDeclarationBlockNumber),
+      'Expected source decalration block number is '
+      + `${expectedSourceDeclarationBlockNumber && expectedSourceDeclarationBlockNumber.toString(10)} but got`
+      + `${inputSourceDeclarationBlockNumber && inputSourceDeclarationBlockNumber.toString(10)}.`,
     );
 
-    if (inputMessage.createdAt && expectedMessage.createdAt) {
-      assert.strictEqual(
-        inputMessage.createdAt.getTime(),
-        expectedMessage.createdAt.getTime(),
-        'Expected created at time is different than the one received in response',
-      );
-    }
+    assert.strictEqual(
+      inputMessage.createdAt && inputMessage.createdAt.getTime(),
+      expectedMessage.createdAt && expectedMessage.createdAt.getTime(),
+      'Expected created at time is different than the one received in response',
+    );
 
     assert.isNotNull(
       inputMessage.updatedAt,
