@@ -75,6 +75,6 @@ export default class WithdrawIntent extends Comparable<WithdrawIntent> {
    *                 and -1 if the specified object is greater.
    */
   public compareTo(other: WithdrawIntent): number {
-    return this.intentHash.localeCompare(other.intentHash, 'en', { sensitivity: 'base' });
+    return this.intentHash.localeCompare(other.intentHash);
   }
 }
