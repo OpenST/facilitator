@@ -24,19 +24,19 @@ import assert = require('assert');
  */
 export default class ERC20GatewayTokenPair extends Comparable<ERC20GatewayTokenPair> {
   /** ERC20Gateway address. */
-  public erc20Gateway: string;
+  public readonly erc20Gateway: string;
 
   /** Value token address. */
-  public valueToken: string;
+  public readonly valueToken: string;
 
   /** Utility token address. */
-  public utilityToken: string;
+  public readonly utilityToken: string;
 
   /** Specifies the creation date of the model. */
-  public createdAt?: Date;
+  public readonly createdAt?: Date;
 
   /** Specifies the update date of the model. */
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * Constructs an ERC20GatewayTokenPair model from the given parameter.
