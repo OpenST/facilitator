@@ -14,6 +14,8 @@
 
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
+import { Validator as JsonSchemaVerifier } from 'jsonschema';
+import schema from './manifest.schema.json';
 
 /**
  * The class holds database configurations.
@@ -131,15 +133,16 @@ export default class Config {
    */
   public static fromFile(manifestPath: string): Config {
     if (fs.existsSync(manifestPath)) {
-      let yamlConfig;
+      let manifestConfig;
       try {
-        yamlConfig = yaml.safeLoad(fs.readFileSync(manifestPath, 'utf8'));
+        manifestConfig = yaml.safeLoad(fs.readFileSync(manifestPath, 'utf8'));
+        const jsonSchemaVerifier = new JsonSchemaVerifier();
+        jsonSchemaVerifier.validate(manifestConfig, schema, { throwError: true });
       } catch (e) {
-        throw new Error(`Error reading facilitator manifest: ${manifestPath}`);
+        throw new Error(`Error reading facilitator manifest: ${manifestPath}, Exception: ${e.message}`);
       }
-      // Config.verifySchema(yamlConfig);
-      yamlConfig.metachain = Config.getMetachain(yamlConfig);
-      return new Config(yamlConfig);
+      manifestConfig.metachain = Config.getMetachain(manifestConfig);
+      return new Config(manifestConfig);
     }
 
     throw new Error(`Manifest file path ${manifestPath} doesn't exist.`);
