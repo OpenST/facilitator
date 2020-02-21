@@ -55,8 +55,8 @@ export default class Gateway extends Comparable<Gateway> {
    * @param remoteGA Remote gateway global address.
    * @param gatewayType Type of gateway.
    * @param anchorGA Anchor global address.
-   * @param destinationGA ERC20 contract address.
    * @param remoteGatewayLastProvenBlockNumber Remote chain gateway's last anchored block number.
+   * @param destinationGA ERC20 contract address.
    * @param createdAt Specifies the gateway's creation date.
    * @param updatedAt Specifies the gateway's update date.
    */
@@ -65,8 +65,8 @@ export default class Gateway extends Comparable<Gateway> {
     remoteGA: string,
     gatewayType: GatewayType,
     anchorGA: string,
-    destinationGA?: string,
     remoteGatewayLastProvenBlockNumber?: BigNumber,
+    destinationGA?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
