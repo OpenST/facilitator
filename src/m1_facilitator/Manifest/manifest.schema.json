@@ -26,9 +26,6 @@
             "type": "string"
           }
         },
-        "chain": {
-          "type": "number"
-        },
         "metachain": {
           "$ref": "#/definitions/Metachain"
         },

@@ -17,6 +17,31 @@ import yaml from 'js-yaml';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import schema from './manifest.schema.json';
 
+interface ManifestInputChain {
+  avatar_account: string;
+  node_endpoint: string;
+  graph_ws_endpoint: string;
+  graph_rpc_endpoint: string;
+}
+
+interface ManifestInputAccount {
+  keystore_path: string;
+  keystore_password_path: string;
+}
+
+interface ManifestInputType {
+  version: string;
+  architecture_layout: string;
+  personas: string[];
+  metachain: {
+    origin: ManifestInputChain;
+    auxiliary: ManifestInputChain;
+  };
+  accounts: Record<string, ManifestInputAccount>;
+  origin_contract_addresses: Record<string, string>;
+  facilitate_tokens: string[];
+}
+
 /**
  * The class holds database configurations.
  */
@@ -62,19 +87,19 @@ export class Chain {
   /** Subgraph rpc endpoint */
   public readonly graphRpcEndpoint: string;
 
-  /** Avatar address. */
-  public readonly avatar: string;
+  /** Avatar account address. */
+  public readonly avatarAccount: string;
 
   public constructor(
     nodeRpcEndpoint: string,
     graphWsEndpoint: string,
     graphRpcEndpoint: string,
-    avatar: string,
+    avatarAccount: string,
   ) {
     this.nodeRpcEndpoint = nodeRpcEndpoint;
     this.graphWsEndpoint = graphWsEndpoint;
     this.graphRpcEndpoint = graphRpcEndpoint;
-    this.avatar = avatar;
+    this.avatarAccount = avatarAccount;
   }
 }
 
@@ -102,33 +127,38 @@ export default class Manifest {
 
   public readonly personas: string[];
 
-  public readonly chain: string;
-
   public readonly metachain: Metachain;
 
   public readonly dbConfig: DBConfig;
 
   public readonly accounts: Record<string, any>;
 
-  public readonly originContractAddresses: string[];
+  public readonly originContractAddresses: Record<string, string>;
 
-  public readonly tokens: string[];
+  public readonly facilitateTokens: string[];
 
   /**
    * Constructor.
    *
    * @param config Facilitator input config object.
    */
-  private constructor(config: any) {
+  private constructor(config: {
+    version: string;
+    architecture_layout: string;
+    personas: string[];
+    metachain: Metachain;
+    accounts: Record<string, Account>;
+    origin_contract_addresses: Record<string, string>;
+    facilitate_tokens: string[];
+  }) {
     this.version = config.version;
     this.architectureLayout = config.architecture_layout;
     this.personas = config.personas;
-    this.chain = config.chain;
     this.metachain = config.metachain;
     this.dbConfig = new DBConfig();
     this.accounts = config.accounts;
     this.originContractAddresses = config.origin_contract_addresses;
-    this.tokens = config.facilitate_tokens;
+    this.facilitateTokens = config.facilitate_tokens;
   }
 
   /**
@@ -160,29 +190,11 @@ export default class Manifest {
   }
 
   /**
-   * Constructs avatar objects.
-   *
-   * @param config Facilitator input yaml object
-   */
-  private static getAccounts(config: any): Record<string, Avatar> {
-    const avatarAccounts: Record<string, Avatar> = {};
-    Object.keys(config.accounts).forEach((address: string): void => {
-      const acc = config.accounts[address];
-      if (!fs.existsSync(acc.keystore_password_path)) {
-        throw new Error(`Password file path ${acc.keystore_password_path} doesn't exist.`);
-      }
-      avatarAccounts[address] = new Avatar(acc.keystore_path, acc.keystore_password_path);
-    });
-
-    return avatarAccounts;
-  }
-
-  /**
    * It constructs and sets Metachain object.
    *
    * @param config Facilitator input yaml object.
    */
-  private static getMetachain(config: any): Metachain {
+  private static getMetachain(config: ManifestInputType): Metachain {
     const originChain = new Chain(
       config.metachain.origin.node_endpoint,
       config.metachain.origin.graph_ws_endpoint,
@@ -200,5 +212,23 @@ export default class Manifest {
       originChain,
       auxChain,
     );
+  }
+
+  /**
+   * Constructs avatar objects.
+   *
+   * @param config Facilitator input yaml object
+   */
+  private static getAccounts(config: ManifestInputType): Record<string, Avatar> {
+    const avatarAccounts: Record<string, Avatar> = {};
+    Object.keys(config.accounts).forEach((address: string): void => {
+      const acc = config.accounts[address];
+      if (!fs.existsSync(acc.keystore_password_path)) {
+        throw new Error(`Password file path ${acc.keystore_password_path} doesn't exist.`);
+      }
+      avatarAccounts[address] = new Avatar(acc.keystore_path, acc.keystore_password_path);
+    });
+
+    return avatarAccounts;
   }
 }

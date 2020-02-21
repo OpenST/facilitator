@@ -2,18 +2,17 @@ version: v0.14
 architecture_layout: M1
 personas:
   - facilitator
-chain: 1405
 metachain:
   origin:
     avatar_account: "0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7"
     node_endpoint: https://localhost.com:8545
-    graph_ws_endpoint: ws://localhost:8000/subgraphs/name/openst/ost-composer
-    graph_rpc_endpoint: http://localhost:8000/subgraphs/name/openst/ost-composer
+    graph_ws_endpoint: ws://localhost:8000/subgraphs/name/m1_facilitator
+    graph_rpc_endpoint: http://localhost:8000/subgraphs/name/m1_facilitator
   auxiliary:
     avatar_account: "0x81Df1244dEd6EF44a90a67526E4Ec4497d807F96"
     node_endpoint: https://localhost.com:8645
-    graph_ws_endpoint: ws://localhost:8000/subgraphs/name/openst/ost-composer
-    graph_rpc_endpoint: http://localhost:8000/subgraphs/name/openst/ost-composer
+    graph_ws_endpoint: ws://localhost:8000/subgraphs/name/m1_facilitator
+    graph_rpc_endpoint: http://localhost:8000/subgraphs/name/m1_facilitator
 accounts:
   "0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7":
     keystore_path: "testdata/m1_facilitator/origin_keystore.json"
@@ -25,4 +24,4 @@ origin_contract_addresses:
     erc20_gateway: "0xA7f056b1320fE619571849f138Cd1Ae2f2e64179"
 facilitate_tokens:
   - "0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8"
-  - "0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8"
+  - "0x19F64B29789F02FFcCE2c37DFB3d65FEaDdea66a"

@@ -77,7 +77,7 @@ describe('Config.fromFile()', (): void => {
     );
 
     assert.deepStrictEqual(
-      config.tokens,
+      config.facilitateTokens,
       inputYamlConfig.facilitate_tokens,
       `Expected value is ${inputYamlConfig.facilitate_tokens} but found ${config.tokens}.`,
     );
