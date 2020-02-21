@@ -161,7 +161,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
    * @returns Converted ERC20GatewayTokenPair model.
    */
   private convertToModel(
-    databaseModel: ERC20GatewayTokenPairDatabaseModel,
+    databaseModel: ERC20GatewayTokenPairModel,
   ): ERC20GatewayTokenPair {
     return new ERC20GatewayTokenPair(
       databaseModel.erc20Gateway,
