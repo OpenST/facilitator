@@ -48,11 +48,11 @@ describe('WithdrawIntent::get', (): void => {
     updatedAt = new Date();
 
     withdrawIntent = new WithdrawIntent(
-      intentHash,
       messageHash,
       tokenAddress,
       amount,
       beneficiary,
+      intentHash,
       createdAt,
       updatedAt,
     );

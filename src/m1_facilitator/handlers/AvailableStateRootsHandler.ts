@@ -25,7 +25,7 @@ export default class AvailableStateRootsHandler {
   private anchorRepository: AnchorRepository;
 
   /**
-   * Construct AvailableStateRootsHandler with the params
+   * Construct AvailableStateRootsHandler with the params.
    *
    * @param anchorRepository Instance of Anchor repository.
    */
@@ -38,8 +38,10 @@ export default class AvailableStateRootsHandler {
    *
    * @param records List of AvailableStateRoots.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async handle(records: any[]): Promise<void> {
+  public async handle(records: {
+    contractAddress: string;
+    blockNumber: string;
+  }[]): Promise<void> {
     const contractAddressVsBlockNumberMap = new Map();
 
     records.forEach((record): void => {

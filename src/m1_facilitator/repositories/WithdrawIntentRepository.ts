@@ -65,7 +65,7 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
         },
         intentHash: {
           type: DataTypes.STRING,
-          primaryKey: true,
+          allowNull: true,
           validate: {
             isAlphanumeric: true,
           },
@@ -115,7 +115,7 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
     const withdrawIntentModelObj = await WithdrawIntentModel.findOne(
       {
         where: {
-          intentHash: withdrawIntent.intentHash,
+          messageHash: withdrawIntent.messageHash,
         },
       },
     );
@@ -143,7 +143,7 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
 
     assert(
       updatedWithdrawIntent !== null,
-      `Updated WithdrawIntent record not found for intent hash: ${withdrawIntent.intentHash}`,
+      `Updated WithdrawIntent record not found for message hash: ${withdrawIntent.messageHash}`,
     );
 
     this.newUpdate(updatedWithdrawIntent as WithdrawIntent);
@@ -185,13 +185,13 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
   /* eslint-disable class-methods-use-this */
   private convertToWithdrawIntent(withdrawIntentModel: WithdrawIntentModel): WithdrawIntent {
     return new WithdrawIntent(
-      withdrawIntentModel.intentHash,
       withdrawIntentModel.messageHash,
       withdrawIntentModel.tokenAddress,
       withdrawIntentModel.amount ? new BigNumber(
         withdrawIntentModel.amount,
       ) : withdrawIntentModel.amount,
       withdrawIntentModel.beneficiary,
+      withdrawIntentModel.intentHash,
       withdrawIntentModel.createdAt,
       withdrawIntentModel.updatedAt,
     );
