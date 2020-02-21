@@ -56,16 +56,16 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
 
     WithdrawIntentModel.init(
       {
-        intentHash: {
+        messageHash: {
           type: DataTypes.STRING,
           primaryKey: true,
           validate: {
             isAlphanumeric: true,
           },
         },
-        messageHash: {
+        intentHash: {
           type: DataTypes.STRING,
-          allowNull: false,
+          primaryKey: true,
           validate: {
             isAlphanumeric: true,
           },
@@ -131,13 +131,13 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
         withdrawIntent,
         {
           where: {
-            intentHash: withdrawIntent.intentHash,
+            messageHash: withdrawIntent.messageHash,
           },
           fields: definedOwnProps,
         },
       );
       updatedWithdrawIntent = await this.get(
-        withdrawIntent.intentHash,
+        withdrawIntent.messageHash,
       );
     }
 
@@ -154,32 +154,11 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
   /**
    * Fetches WithdrawIntent object from database if found. Otherwise returns null.
    *
-   * @param intentHash Withdraw intent hash.
+   * @param messageHash Withdraw message hash.
    *
    * @returns WithdrawIntent object containing values which satisfy the `where` condition.
    */
-  public async get(intentHash: string): Promise<WithdrawIntent | null> {
-    const withdrawIntentModel = await WithdrawIntentModel.findOne({
-      where: {
-        intentHash,
-      },
-    });
-
-    if (withdrawIntentModel === null) {
-      return null;
-    }
-
-    return this.convertToWithdrawIntent(withdrawIntentModel);
-  }
-
-  /**
-   * Fetches WithdrawIntent object from database if found. Otherwise returns null.
-   *
-   * @param messageHash Message hash.
-   *
-   * @returns WithdrawIntent object containing values which satisfy the `where` condition.
-   */
-  public async getByMessageHash(messageHash: string): Promise<WithdrawIntent | null> {
+  public async get(messageHash: string): Promise<WithdrawIntent | null> {
     const withdrawIntentModel = await WithdrawIntentModel.findOne({
       where: {
         messageHash,
@@ -192,6 +171,7 @@ export default class WithdrawIntentRepository extends Subject<WithdrawIntent> {
 
     return this.convertToWithdrawIntent(withdrawIntentModel);
   }
+
 
   /* Private Functions */
 

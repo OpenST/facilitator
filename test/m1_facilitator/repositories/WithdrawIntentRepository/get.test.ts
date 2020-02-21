@@ -63,18 +63,18 @@ describe('WithdrawIntent::get', (): void => {
 
   it('should pass when fetching WithdrawIntent model', async (): Promise<void> => {
     const getResponse = await config.repos.withdrawIntentRepository.get(
-      withdrawIntent.intentHash,
+      withdrawIntent.messageHash,
     );
 
     Util.assertWithdrawIntentAttributes(getResponse as WithdrawIntent, withdrawIntent);
   });
 
   it('should return null when querying for non-existing '
-    + 'intent hash', async (): Promise<void> => {
-    const nonExistingIntentHash = '0x00000000000000000000000000000000000000000000000000000000000191';
+    + 'message hash', async (): Promise<void> => {
+    const nonExistingMessageHash = '0x00000000000000000000000000000000000000000000000000000000000191';
 
     const getResponse = await config.repos.withdrawIntentRepository.get(
-      nonExistingIntentHash,
+      nonExistingMessageHash,
     );
 
     assert.strictEqual(
