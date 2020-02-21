@@ -14,8 +14,13 @@
 
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
-import Config, { DBConfig } from '../../../src/m1_facilitator/Config/Config';
+import Config, { DBConfig, Account } from '../../../src/m1_facilitator/Manifest/Manifest';
 import assert from '../../test_utils/assert';
+
+interface AccountDetail {
+  keystore_path: string;
+  keystore_password_path: string;
+}
 
 describe('Config.fromFile()', (): void => {
   it('should return correct facilitator config object', async (): Promise<void> => {
@@ -54,22 +59,27 @@ describe('Config.fromFile()', (): void => {
       'Mismatch in dbConfig object.',
     );
 
+    const inputAvatarAccounts: Record<string, Account> = {};
+    Object.keys(config.accounts).forEach((address: string): void => {
+      const acc = inputYamlConfig.accounts[address] as AccountDetail;
+      inputAvatarAccounts[address] = new Account(acc.keystore_path, acc.keystore_password_path);
+    });
     assert.deepStrictEqual(
-      config.encryptedAccounts,
-      inputYamlConfig.accounts,
-      `Expected value is ${inputYamlConfig.accounts} but found ${config.encryptedAccounts}`,
+      config.accounts,
+      inputAvatarAccounts,
+      'Account object mismatch.',
     );
 
     assert.deepStrictEqual(
       config.originContractAddresses,
       inputYamlConfig.origin_contract_addresses,
-      `Expected value is ${inputYamlConfig.originContractAddresses} but found ${config.originContractAddresses}`,
+      `Expected value is ${inputYamlConfig.origin_contract_addresses} but found ${config.originContractAddresses}.`,
     );
 
     assert.deepStrictEqual(
       config.tokens,
       inputYamlConfig.facilitate_tokens,
-      `Expected value is ${inputYamlConfig.facilitate_tokens} but found ${config.tokens}`,
+      `Expected value is ${inputYamlConfig.facilitate_tokens} but found ${config.tokens}.`,
     );
   });
 });

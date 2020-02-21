@@ -29,44 +29,55 @@ export class DBConfig {
   }
 }
 
+export class Account {
+  public readonly keystorePath: string;
+
+  public readonly keystorePasswordPath: string;
+
+  public constructor(keystorePath: string, keystorePasswordPath: string) {
+    this.keystorePath = keystorePath;
+    this.keystorePasswordPath = keystorePasswordPath;
+  }
+}
+
 /**
- * It holds chain information like .
+ * It holds chain and graph information.
  */
 export class Chain {
   /** Chain rpc endpoint. */
   public readonly nodeRpcEndpoint: string;
 
   /** Subgraph web socket endpoint */
-  public readonly subGraphWsEndpoint: string;
+  public readonly graphWsEndpoint: string;
 
   /** Subgraph rpc endpoint */
-  public readonly subGraphRpcEndpoint: string;
+  public readonly graphRpcEndpoint: string;
 
   /** Worker address. */
   public readonly worker: string;
 
   /** Worker password. */
-  private readonly _password?: string;
+  private readonly password: string;
 
   public constructor(
     nodeRpcEndpoint: string,
-    subGraphWsEndpoint: string,
-    subGraphRpcEndpoint: string,
+    graphWsEndpoint: string,
+    graphRpcEndpoint: string,
     worker: string,
-    password?: string,
+    password: string,
   ) {
     this.nodeRpcEndpoint = nodeRpcEndpoint;
-    this.subGraphWsEndpoint = subGraphWsEndpoint;
-    this.subGraphRpcEndpoint = subGraphRpcEndpoint;
+    this.graphWsEndpoint = graphWsEndpoint;
+    this.graphRpcEndpoint = graphRpcEndpoint;
     this.worker = worker;
-    this._password = password;
+    this.password = password;
   }
 
   /**
    * Get the password for unlocking worker.
    */
-  public get password(): string | undefined {
-    return this._password;
+  public getPassword(): string {
+    return this.password;
   }
 }
 
@@ -87,7 +98,7 @@ export class Metachain {
 /**
  * The object represents facilitator manifest values.
  */
-export default class Config {
+export default class Manifest {
   public readonly version: string;
 
   public readonly architectureLayout: string;
@@ -100,7 +111,7 @@ export default class Config {
 
   public readonly dbConfig: DBConfig;
 
-  public readonly encryptedAccounts: Record<string, any>;
+  public readonly accounts: Record<string, any>;
 
   public readonly originContractAddresses: string[];
 
@@ -118,20 +129,21 @@ export default class Config {
     this.chain = config.chain;
     this.metachain = config.metachain;
     this.dbConfig = new DBConfig();
-    this.encryptedAccounts = config.accounts;
+    this.accounts = config.accounts;
     this.originContractAddresses = config.origin_contract_addresses;
     this.tokens = config.facilitate_tokens;
   }
 
   /**
    * Function reads the facilitator manifest from the specified path.
-   * If the file path does not exist error is thrown.
+   * Error is thrown if file path doesn't exist.
+   * Error is thrown when manifest schema is not correctly validated.
    *
    * @param manifestPath Path to facilitator yaml manifest file.
    *
    * @returns Config object initialized by the specified file's content.
    */
-  public static fromFile(manifestPath: string): Config {
+  public static fromFile(manifestPath: string): Manifest {
     if (fs.existsSync(manifestPath)) {
       let manifestConfig;
       try {
@@ -141,11 +153,22 @@ export default class Config {
       } catch (e) {
         throw new Error(`Error reading facilitator manifest: ${manifestPath}, Exception: ${e.message}`);
       }
-      manifestConfig.metachain = Config.getMetachain(manifestConfig);
-      return new Config(manifestConfig);
+      manifestConfig.metachain = Manifest.getMetachain(manifestConfig);
+      manifestConfig.accounts = Manifest.getAccounts(manifestConfig);
+      return new Manifest(manifestConfig);
     }
 
     throw new Error(`Manifest file path ${manifestPath} doesn't exist.`);
+  }
+
+  private static getAccounts(config: any): Record<string, Account> {
+    const avatarAccounts: Record<string, Account> = {};
+    Object.keys(config.accounts).forEach((address: string): void => {
+      const acc = config.accounts[address];
+      avatarAccounts[address] = new Account(acc.keystore_path, acc.keystore_password_path);
+    });
+
+    return avatarAccounts;
   }
 
   /**
