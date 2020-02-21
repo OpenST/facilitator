@@ -42,6 +42,11 @@ interface ManifestInputType {
   facilitate_tokens: string[];
 }
 
+/** Enum of architecture layouts which facilitator supports. */
+enum ArchitectureLayout {
+  MOSAIC1 = 'M1',
+}
+
 /**
  * The class holds database configurations.
  */
@@ -128,7 +133,7 @@ export class Metachain {
 export default class Manifest {
   public readonly version: string;
 
-  public readonly architectureLayout: string;
+  public readonly architectureLayout: ArchitectureLayout;
 
   public readonly personas: string[];
 
@@ -140,7 +145,7 @@ export default class Manifest {
 
   public readonly originContractAddresses: Record<string, string>;
 
-  public readonly facilitateTokens: string[];
+  public readonly facilitateTokens: Set<string>;
 
   /**
    * Constructor.
@@ -157,13 +162,13 @@ export default class Manifest {
     facilitate_tokens: string[];
   }) {
     this.version = config.version;
-    this.architectureLayout = config.architecture_layout;
+    this.architectureLayout = config.architecture_layout as ArchitectureLayout;
     this.personas = config.personas;
     this.metachain = config.metachain;
     this.dbConfig = new DBConfig();
     this.accounts = config.accounts;
     this.originContractAddresses = config.origin_contract_addresses;
-    this.facilitateTokens = config.facilitate_tokens;
+    this.facilitateTokens = new Set(config.facilitate_tokens);
   }
 
   /**

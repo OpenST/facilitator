@@ -93,8 +93,8 @@ describe('Config.fromFile()', (): void => {
 
     assert.deepStrictEqual(
       manifest.facilitateTokens,
-      inputYamlConfig.facilitate_tokens,
-      `Expected value is ${inputYamlConfig.facilitate_tokens} but found ${manifest.facilitateTokens}.`,
+      new Set(inputYamlConfig.facilitate_tokens),
+      'Mismatch in facilitate token values.',
     );
   });
 });
