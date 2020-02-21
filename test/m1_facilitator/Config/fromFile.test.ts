@@ -75,14 +75,14 @@ describe('Config.fromFile()', (): void => {
     );
 
     const inputAvatarAccounts: Record<string, Avatar> = {};
-    Object.keys(manifest.accounts).forEach((address: string): void => {
+    Object.keys(inputYamlConfig.accounts).forEach((address: string): void => {
       const acc = inputYamlConfig.accounts[address] as AccountDetail;
       inputAvatarAccounts[address] = new Avatar(acc.keystore_path, acc.keystore_password_path);
     });
     assert.deepStrictEqual(
-      manifest.accounts,
+      manifest.avatars,
       inputAvatarAccounts,
-      'Account object mismatch.',
+      'Avatar object mismatch.',
     );
 
     assert.deepStrictEqual(

@@ -47,6 +47,12 @@ enum ArchitectureLayout {
   MOSAIC1 = 'M1',
 }
 
+/** Enum of different personas which facilitator supports. */
+enum Personas {
+  FACILITATOR = 'facilitator',
+  VALIDATOR = 'validator'
+}
+
 /**
  * The class holds database configurations.
  */
@@ -135,13 +141,13 @@ export default class Manifest {
 
   public readonly architectureLayout: ArchitectureLayout;
 
-  public readonly personas: string[];
+  public readonly personas: Personas[];
 
   public readonly metachain: Metachain;
 
   public readonly dbConfig: DBConfig;
 
-  public readonly accounts: Record<string, any>;
+  public readonly avatars: Record<string, Avatar>;
 
   public readonly originContractAddresses: Record<string, string>;
 
@@ -157,16 +163,16 @@ export default class Manifest {
     architecture_layout: string;
     personas: string[];
     metachain: Metachain;
-    accounts: Record<string, Account>;
+    accounts: Record<string, Avatar>;
     origin_contract_addresses: Record<string, string>;
     facilitate_tokens: string[];
   }) {
     this.version = config.version;
     this.architectureLayout = config.architecture_layout as ArchitectureLayout;
-    this.personas = config.personas;
+    this.personas = config.personas as Personas[];
     this.metachain = config.metachain;
     this.dbConfig = new DBConfig();
-    this.accounts = config.accounts;
+    this.avatars = config.accounts;
     this.originContractAddresses = config.origin_contract_addresses;
     this.facilitateTokens = new Set(config.facilitate_tokens);
   }
