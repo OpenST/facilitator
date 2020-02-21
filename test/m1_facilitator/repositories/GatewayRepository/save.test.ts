@@ -55,8 +55,8 @@ describe('Gateway::save', (): void => {
       remoteGA,
       gatewayType,
       anchorGA,
-      destinationGA,
       remoteGatewayLastProvenBlockNumber,
+      destinationGA,
       createdAt,
       updatedAt,
     );
@@ -73,8 +73,8 @@ describe('Gateway::save', (): void => {
       remoteGA,
       gatewayType,
       anchorGA,
-      destinationGA,
       remoteGatewayLastProvenBlockNumber,
+      destinationGA,
       createdAt,
       updatedAt,
     );
