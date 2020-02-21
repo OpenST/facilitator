@@ -2,10 +2,6 @@
   "$schema": "http://json-schema.org/draft-06/schema#",
   "$ref": "#/definitions/FacilitatorManifest",
   "definitions": {
-    "Address": {
-      "type": "string",
-      "pattern": "^0x[a-fA-F0-9]{40}$"
-    },
     "FacilitatorManifest": {
       "title": "Facilitator",
       "description": "Object encapsulating details about facilitator manifest",
@@ -18,12 +14,15 @@
         },
         "architecture_layout": {
           "type": "string",
-          "additionalProperties": false
+          "additionalProperties": false,
+          "enum": ["M1"]
         },
         "personas": {
           "type": "array",
+          "additionalProperties": false,
           "items": {
-            "type": "string"
+            "type": "string",
+            "enum": ["facilitator", "validator"]
           }
         },
         "metachain": {
@@ -34,14 +33,16 @@
         },
         "origin_contract_addresses": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "erc20_gateway": {
-              "type": "string"
+              "type": "#/definitions/Address"
             }
           }
         },
         "facilitate_tokens": {
           "type": "array",
+          "additionalProperties": false,
           "items": {
             "type": "string"
           }
@@ -56,6 +57,10 @@
         "origin_contract_addresses",
         "facilitate_tokens"
       ]
+    },
+    "Address": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$"
     },
     "Metachain": {
       "type": "object",
@@ -112,6 +117,7 @@
     },
     "AccountDetail": {
       "type": "object",
+      "additionalProperties": false,
       "title": "Account details",
       "description": "Object represents account detail",
       "properties": {

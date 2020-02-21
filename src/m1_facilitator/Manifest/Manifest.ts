@@ -89,8 +89,8 @@ export class Avatar {
  * It holds chain and graph information.
  */
 export class Chain {
-  /** Chain rpc endpoint. */
-  public readonly nodeRpcEndpoint: string;
+  /** Chain rpc/ws endpoint. */
+  public readonly nodeEndpoint: string;
 
   /** Subgraph web socket endpoint */
   public readonly graphWsEndpoint: string;
@@ -101,13 +101,21 @@ export class Chain {
   /** Avatar account address. */
   public readonly avatarAccount: string;
 
+  /**
+   * Constructor
+   *
+   * @param nodeEndpoint Chain end point.
+   * @param graphWsEndpoint Graph web socket end point.
+   * @param graphRpcEndpoint Graph rpc end point.
+   * @param avatarAccount Avatar account address.
+   */
   public constructor(
-    nodeRpcEndpoint: string,
+    nodeEndpoint: string,
     graphWsEndpoint: string,
     graphRpcEndpoint: string,
     avatarAccount: string,
   ) {
-    this.nodeRpcEndpoint = nodeRpcEndpoint;
+    this.nodeEndpoint = nodeEndpoint;
     this.graphWsEndpoint = graphWsEndpoint;
     this.graphRpcEndpoint = graphRpcEndpoint;
     this.avatarAccount = avatarAccount;
@@ -123,6 +131,7 @@ export class Metachain {
   public readonly auxiliaryChain: Chain;
 
   /**
+   * Constructor.
    *
    * @param originChain Origin chain object.
    * @param auxiliaryChain Auxiliary chain object.
