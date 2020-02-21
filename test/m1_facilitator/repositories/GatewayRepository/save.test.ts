@@ -103,8 +103,8 @@ describe('Gateway::save', (): void => {
       '0x342',
       gatewayType,
       '0x123',
-      '0x1234',
       remoteGatewayLastProvenBlockNumber,
+      '0x1234',
       createdAt,
       updatedAt,
     );
