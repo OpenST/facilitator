@@ -109,11 +109,16 @@ export class Chain {
 export class Metachain {
   public readonly originChain: Chain;
 
-  public readonly auxChain: Chain;
+  public readonly auxiliaryChain: Chain;
 
-  public constructor(originChain: Chain, auxChain: Chain) {
+  /**
+   *
+   * @param originChain Origin chain object.
+   * @param auxiliaryChain Auxiliary chain object.
+   */
+  public constructor(originChain: Chain, auxiliaryChain: Chain) {
     this.originChain = originChain;
-    this.auxChain = auxChain;
+    this.auxiliaryChain = auxiliaryChain;
   }
 }
 

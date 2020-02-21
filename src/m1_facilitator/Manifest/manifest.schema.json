@@ -51,7 +51,6 @@
         "version",
         "architecture_layout",
         "personas",
-        "chain",
         "metachain",
         "accounts",
         "origin_contract_addresses",

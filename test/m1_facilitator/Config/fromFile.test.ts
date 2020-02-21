@@ -14,7 +14,9 @@
 
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
-import Config, { DBConfig, Avatar } from '../../../src/m1_facilitator/Manifest/Manifest';
+import Config, {
+  DBConfig, Avatar, Chain, Metachain,
+} from '../../../src/m1_facilitator/Manifest/Manifest';
 import assert from '../../test_utils/assert';
 
 interface AccountDetail {
@@ -26,60 +28,73 @@ describe('Config.fromFile()', (): void => {
   it('should return correct facilitator config object', async (): Promise<void> => {
     const manifestFilePath = 'testdata/m1_facilitator/facilitator_manifest.yml';
     const inputYamlConfig = yaml.safeLoad(fs.readFileSync(manifestFilePath, 'utf8'));
-    const config = Config.fromFile(manifestFilePath);
+    const manifest = Config.fromFile(manifestFilePath);
 
     assert.strictEqual(
-      config.version,
+      manifest.version,
       inputYamlConfig.version,
-      `Expected value is ${inputYamlConfig.version} but found ${config.version}`,
+      `Expected value is ${inputYamlConfig.version} but found ${manifest.version}`,
     );
 
     assert.strictEqual(
-      config.architectureLayout,
+      manifest.architectureLayout,
       inputYamlConfig.architecture_layout,
-      `Expected value is ${inputYamlConfig.architecture_layout} but found ${config.architectureLayout}`,
+      `Expected value is ${inputYamlConfig.architecture_layout} but found ${manifest.architectureLayout}`,
     );
 
     assert.deepStrictEqual(
-      config.personas,
+      manifest.personas,
       inputYamlConfig.personas,
-      `Expected value is ${inputYamlConfig.personas} but found ${config.personas}`,
+      `Expected value is ${inputYamlConfig.personas} but found ${manifest.personas}`,
     );
 
-    assert.strictEqual(
-      config.chain,
-      inputYamlConfig.chain,
-      `Expected value is ${inputYamlConfig.chain} but found ${config.chain}`,
+    const originChainObject = new Chain(
+      inputYamlConfig.metachain.origin.node_endpoint,
+      inputYamlConfig.metachain.origin.graph_ws_endpoint,
+      inputYamlConfig.metachain.origin.graph_rpc_endpoint,
+      inputYamlConfig.metachain.origin.avatar_account,
+    );
+    const auxiliaryChainObject = new Chain(
+      inputYamlConfig.metachain.auxiliary.node_endpoint,
+      inputYamlConfig.metachain.auxiliary.graph_ws_endpoint,
+      inputYamlConfig.metachain.auxiliary.graph_rpc_endpoint,
+      inputYamlConfig.metachain.auxiliary.avatar_account,
+    );
+    const expectedMetachain = new Metachain(originChainObject, auxiliaryChainObject);
+    assert.deepStrictEqual(
+      manifest.metachain,
+      expectedMetachain,
+      'Mismatch in metachain object',
     );
 
     const dbConfig = new DBConfig();
     assert.deepStrictEqual(
-      config.dbConfig,
+      manifest.dbConfig,
       dbConfig,
       'Mismatch in dbConfig object.',
     );
 
     const inputAvatarAccounts: Record<string, Avatar> = {};
-    Object.keys(config.accounts).forEach((address: string): void => {
+    Object.keys(manifest.accounts).forEach((address: string): void => {
       const acc = inputYamlConfig.accounts[address] as AccountDetail;
       inputAvatarAccounts[address] = new Avatar(acc.keystore_path, acc.keystore_password_path);
     });
     assert.deepStrictEqual(
-      config.accounts,
+      manifest.accounts,
       inputAvatarAccounts,
       'Account object mismatch.',
     );
 
     assert.deepStrictEqual(
-      config.originContractAddresses,
+      manifest.originContractAddresses,
       inputYamlConfig.origin_contract_addresses,
-      `Expected value is ${inputYamlConfig.origin_contract_addresses} but found ${config.originContractAddresses}.`,
+      `Expected value is ${inputYamlConfig.origin_contract_addresses} but found ${manifest.originContractAddresses}.`,
     );
 
     assert.deepStrictEqual(
-      config.facilitateTokens,
+      manifest.facilitateTokens,
       inputYamlConfig.facilitate_tokens,
-      `Expected value is ${inputYamlConfig.facilitate_tokens} but found ${config.tokens}.`,
+      `Expected value is ${inputYamlConfig.facilitate_tokens} but found ${manifest.facilitateTokens}.`,
     );
   });
 });
