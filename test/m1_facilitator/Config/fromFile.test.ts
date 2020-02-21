@@ -14,7 +14,7 @@
 
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
-import Config, { DBConfig, Account } from '../../../src/m1_facilitator/Manifest/Manifest';
+import Config, { DBConfig, Avatar } from '../../../src/m1_facilitator/Manifest/Manifest';
 import assert from '../../test_utils/assert';
 
 interface AccountDetail {
@@ -59,10 +59,10 @@ describe('Config.fromFile()', (): void => {
       'Mismatch in dbConfig object.',
     );
 
-    const inputAvatarAccounts: Record<string, Account> = {};
+    const inputAvatarAccounts: Record<string, Avatar> = {};
     Object.keys(config.accounts).forEach((address: string): void => {
       const acc = inputYamlConfig.accounts[address] as AccountDetail;
-      inputAvatarAccounts[address] = new Account(acc.keystore_path, acc.keystore_password_path);
+      inputAvatarAccounts[address] = new Avatar(acc.keystore_path, acc.keystore_password_path);
     });
     assert.deepStrictEqual(
       config.accounts,

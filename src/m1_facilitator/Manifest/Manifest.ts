@@ -29,11 +29,20 @@ export class DBConfig {
   }
 }
 
-export class Account {
+/**
+ * It holds avatar information.
+ */
+export class Avatar {
   public readonly keystorePath: string;
 
   public readonly keystorePasswordPath: string;
 
+  /**
+   * Constructor.
+   *
+   * @param keystorePath File path containing keystore path.
+   * @param keystorePasswordPath File path containing keystore password.
+   */
   public constructor(keystorePath: string, keystorePasswordPath: string) {
     this.keystorePath = keystorePath;
     this.keystorePasswordPath = keystorePasswordPath;
@@ -53,31 +62,19 @@ export class Chain {
   /** Subgraph rpc endpoint */
   public readonly graphRpcEndpoint: string;
 
-  /** Worker address. */
-  public readonly worker: string;
-
-  /** Worker password. */
-  private readonly password: string;
+  /** Avatar address. */
+  public readonly avatar: string;
 
   public constructor(
     nodeRpcEndpoint: string,
     graphWsEndpoint: string,
     graphRpcEndpoint: string,
-    worker: string,
-    password: string,
+    avatar: string,
   ) {
     this.nodeRpcEndpoint = nodeRpcEndpoint;
     this.graphWsEndpoint = graphWsEndpoint;
     this.graphRpcEndpoint = graphRpcEndpoint;
-    this.worker = worker;
-    this.password = password;
-  }
-
-  /**
-   * Get the password for unlocking worker.
-   */
-  public getPassword(): string {
-    return this.password;
+    this.avatar = avatar;
   }
 }
 
@@ -120,7 +117,7 @@ export default class Manifest {
   /**
    * Constructor.
    *
-   * @param config Facilitator manifest yaml object.
+   * @param config Facilitator input config object.
    */
   private constructor(config: any) {
     this.version = config.version;
@@ -136,12 +133,13 @@ export default class Manifest {
 
   /**
    * Function reads the facilitator manifest from the specified path.
+   * It parses the yaml manifest file.
    * Error is thrown if file path doesn't exist.
    * Error is thrown when manifest schema is not correctly validated.
    *
    * @param manifestPath Path to facilitator yaml manifest file.
    *
-   * @returns Config object initialized by the specified file's content.
+   * @returns Manifest object initialized by the specified file's content.
    */
   public static fromFile(manifestPath: string): Manifest {
     if (fs.existsSync(manifestPath)) {
@@ -161,11 +159,19 @@ export default class Manifest {
     throw new Error(`Manifest file path ${manifestPath} doesn't exist.`);
   }
 
-  private static getAccounts(config: any): Record<string, Account> {
-    const avatarAccounts: Record<string, Account> = {};
+  /**
+   * Constructs avatar objects.
+   *
+   * @param config Facilitator input yaml object
+   */
+  private static getAccounts(config: any): Record<string, Avatar> {
+    const avatarAccounts: Record<string, Avatar> = {};
     Object.keys(config.accounts).forEach((address: string): void => {
       const acc = config.accounts[address];
-      avatarAccounts[address] = new Account(acc.keystore_path, acc.keystore_password_path);
+      if (!fs.existsSync(acc.keystore_password_path)) {
+        throw new Error(`Password file path ${acc.keystore_password_path} doesn't exist.`);
+      }
+      avatarAccounts[address] = new Avatar(acc.keystore_path, acc.keystore_password_path);
     });
 
     return avatarAccounts;
@@ -174,37 +180,20 @@ export default class Manifest {
   /**
    * It constructs and sets Metachain object.
    *
-   * @param config Facilitator config yaml object.
+   * @param config Facilitator input yaml object.
    */
   private static getMetachain(config: any): Metachain {
-    const originAvatarInfo = config.accounts[config.metachain.origin.avatar_account];
-    let originAvatarPassword;
-    if (fs.existsSync(originAvatarInfo.keystore_password_path)) {
-      originAvatarPassword = fs.readFileSync(originAvatarInfo.keystore_password_path).toString();
-    } else {
-      throw new Error(`Password file path ${originAvatarInfo.keystore_password_path} doesn't exist.`);
-    }
     const originChain = new Chain(
       config.metachain.origin.node_endpoint,
       config.metachain.origin.graph_ws_endpoint,
       config.metachain.origin.graph_rpc_endpoint,
       config.metachain.origin.avatar_account,
-      originAvatarPassword,
     );
-
-    const auxAvatarInfo = config.accounts[config.metachain.auxiliary.avatar_account];
-    let auxAvatarPassword;
-    if (fs.existsSync(auxAvatarInfo.keystore_password_path)) {
-      auxAvatarPassword = fs.readFileSync(originAvatarInfo.keystore_password_path).toString();
-    } else {
-      throw new Error(`Password file path ${originAvatarInfo.keystore_password_path} doesn't exist.`);
-    }
     const auxChain = new Chain(
       config.metachain.auxiliary.node_endpoint,
       config.metachain.auxiliary.graph_ws_endpoint,
       config.metachain.auxiliary.graph_rpc_endpoint,
       config.metachain.auxiliary.avatar_account,
-      auxAvatarPassword,
     );
 
     return new Metachain(
