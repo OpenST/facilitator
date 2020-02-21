@@ -27,7 +27,7 @@ import assert = require('assert');
  *
  * See: http://docs.sequelizejs.com/manual/typescript.html#usage
  */
-class ERC20GatewayTokenPairDatabaseModel extends Model {
+class ERC20GatewayTokenPairModel extends Model {
   public readonly erc20Gateway!: string;
 
   public readonly valueToken!: string;
@@ -55,7 +55,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
   public constructor(initOptions: InitOptions) {
     super();
 
-    ERC20GatewayTokenPairDatabaseModel.init(
+    ERC20GatewayTokenPairModel.init(
       {
         erc20Gateway: {
           type: DataTypes.STRING,
@@ -106,7 +106,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
   public async save(erc20GatewayTokenPair: ERC20GatewayTokenPair): Promise<ERC20GatewayTokenPair> {
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(erc20GatewayTokenPair);
 
-    await ERC20GatewayTokenPairDatabaseModel.upsert(
+    await ERC20GatewayTokenPairModel.upsert(
       erc20GatewayTokenPair,
       {
         fields: definedOwnProps,
@@ -135,7 +135,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
   public async get(
     erc20Gateway: string, valueToken: string,
   ): Promise<ERC20GatewayTokenPair | null> {
-    const databaseModel = await ERC20GatewayTokenPairDatabaseModel.findOne({
+    const databaseModel = await ERC20GatewayTokenPairModel.findOne({
       where: {
         erc20Gateway,
         valueToken,

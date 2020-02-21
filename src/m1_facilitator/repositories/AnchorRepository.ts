@@ -28,7 +28,7 @@ import assert = require('assert');
  *
  * See: http://docs.sequelizejs.com/manual/typescript.html#usage
  */
-class AnchorDatabaseModel extends Model {
+class AnchorModel extends Model {
   public readonly anchorGA!: string;
 
   public readonly lastAnchoredBlockNumber!: BigNumber;
@@ -54,7 +54,7 @@ export default class AnchorRepository extends Subject<Anchor> {
   public constructor(initOptions: InitOptions) {
     super();
 
-    AnchorDatabaseModel.init(
+    AnchorModel.init(
       {
         anchorGA: {
           type: DataTypes.STRING,
@@ -95,7 +95,7 @@ export default class AnchorRepository extends Subject<Anchor> {
 
     const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
 
-    await AnchorDatabaseModel.upsert(
+    await AnchorModel.upsert(
       anchor,
       {
         fields: definedOwnProps,
@@ -119,7 +119,7 @@ export default class AnchorRepository extends Subject<Anchor> {
    * @returns Anchor model if exists, otherwise null.
    */
   public async get(anchorGA: string): Promise<Anchor | null> {
-    const anchorDatabaseModel = await AnchorDatabaseModel.findOne({
+    const anchorDatabaseModel = await AnchorModel.findOne({
       where: {
         anchorGA,
       },
@@ -143,7 +143,7 @@ export default class AnchorRepository extends Subject<Anchor> {
    *
    * @returns Converted Anchor model.
    */
-  private static convertToModel(anchorDatabaseModel: AnchorDatabaseModel): Anchor {
+  private static convertToModel(anchorDatabaseModel: AnchorModel): Anchor {
     return new Anchor(
       anchorDatabaseModel.anchorGA,
       new BigNumber(anchorDatabaseModel.lastAnchoredBlockNumber),
@@ -160,7 +160,7 @@ export default class AnchorRepository extends Subject<Anchor> {
    * @param anchor An anchor model to assert validity against the stored one.
    */
   private static async assertAnchoredBlockNumber(anchor: Anchor): Promise<void> {
-    const anchorDatabaseModel = await AnchorDatabaseModel.findOne({
+    const anchorDatabaseModel = await AnchorModel.findOne({
       where: {
         anchorGA: anchor.anchorGA,
       },
