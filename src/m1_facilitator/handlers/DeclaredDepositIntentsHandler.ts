@@ -1,4 +1,3 @@
-
 // Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +13,7 @@
 // limitations under the License.
 
 import BigNumber from 'bignumber.js';
+
 import DepositIntent from '../models/DepositIntent';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import GatewayRepository from '../repositories/GatewayRepository';
@@ -22,18 +22,31 @@ import MessageRepository from '../repositories/MessageRepository';
 import Utils from '../../common/Utils';
 import Logger from '../../m0_facilitator/Logger';
 
+/** It represents record of DeclaredDepositIntents entity. */
+interface DeclaredDepositIntentsEntityInterface {
+  contractAddress: string;
+  messageHash: string;
+  valueTokenAddress: string;
+  beneficiary: string;
+  amount: string;
+  feeGasPrice: string;
+  feeGasLimit: string;
+  blockNumber: string;
+}
+
+
 /**
  * It handles updates from DeclaredDepositIntents entity.
  */
 export default class DeclaredDepositIntentsHandler {
   /** Instance of DepositIntentRepository. */
-  private depositIntentRepository: DepositIntentRepository;
+  private readonly depositIntentRepository: DepositIntentRepository;
 
   /** Instance of MessageRepository. */
-  private messageRepository: MessageRepository;
+  private readonly messageRepository: MessageRepository;
 
   /** Instance of GatewayRepository. */
-  private gatewayRepository: GatewayRepository;
+  private readonly gatewayRepository: GatewayRepository;
 
   /**
    * Constructor for DeclaredDepositIntentHandler.
@@ -53,39 +66,30 @@ export default class DeclaredDepositIntentsHandler {
   }
 
   /**
-   * It handles DeclaredDepositIntent entity records.
+   * Handles DeclaredDepositIntents entity records.
+   * - It creates a message record and updates it's source status to `Declared`.
+   * - It creates `DepositIntent` record.
+   * - This handler only reacts to the events of ERC20Gateway which are populated
+   *   during seed data. It silently ignores the events by other ERC20Gateway.
+   *
    * @param records List of DeclaredDepositIntent entity.
    */
-  public async handle(records: {
-    contractAddress: string;
-    messageHash: string;
-    intentHash: string;
-    tokenAddress: string;
-    beneficiary: string;
-    amount: BigNumber;
-    feeGasPrice: BigNumber;
-    feeGasLimit: BigNumber;
-    blockNumber: BigNumber;
-  }[]): Promise<void> {
+  public async handle(records: DeclaredDepositIntentsEntityInterface[]): Promise<void> {
     const promisesCollection = records.map(
       async (record): Promise<void> => {
-        const isNewMessage = await this.handleMessage(
+        await this.handleMessage(
           record.contractAddress,
           record.messageHash,
           record.feeGasPrice,
           record.feeGasLimit,
           record.blockNumber,
-          record.intentHash,
         );
-        if (isNewMessage) {
-          await this.handleDepositIntent(
-            record.messageHash,
-            record.tokenAddress,
-            record.amount,
-            record.beneficiary,
-            record.intentHash,
-          );
-        }
+        await this.handleDepositIntent(
+          record.messageHash,
+          record.valueTokenAddress,
+          record.amount,
+          record.beneficiary,
+        );
       },
     );
     await Promise.all(promisesCollection);
@@ -93,40 +97,35 @@ export default class DeclaredDepositIntentsHandler {
   }
 
   /**
-   * It updates Message model.
+   * It creates/updates Message repository.
    *
    * @param contractAddress Address of gateway contract.
    * @param messageHash Message hash.
-   * @param feeGasPrice Gasprice which depositor/withdrawal will be paying.
+   * @param feeGasPrice GasPrice which depositor/withdrawal will be paying.
    * @param feeGasLimit GasLimit which depositor/withdrawal will be paying.
    * @param blockNumber Block number at which deposit transaction is mined.
-   * @param intentHash Deposit intent hash.
    */
   private async handleMessage(
     contractAddress: string,
     messageHash: string,
-    feeGasPrice: BigNumber,
-    feeGasLimit: BigNumber,
-    blockNumber: BigNumber,
-    intentHash: string,
-  ): Promise<boolean> {
+    feeGasPrice: string,
+    feeGasLimit: string,
+    blockNumber: string,
+  ): Promise<void> {
     let messageObj = await this.messageRepository.get(messageHash);
-    let isNewMessage = false;
     if (messageObj === null) {
       const gatewayRecord = await this.gatewayRepository.get(contractAddress);
-      if (gatewayRecord != null) {
+      if (gatewayRecord !== null) {
         messageObj = new Message(
           messageHash,
           MessageType.Deposit,
           MessageStatus.Undeclared,
           MessageStatus.Undeclared,
-          gatewayRecord.remoteGA,
+          Utils.toChecksumAddress(gatewayRecord.gatewayGA),
           new BigNumber(feeGasPrice),
           new BigNumber(feeGasLimit),
           new BigNumber(blockNumber),
-          intentHash,
         );
-        isNewMessage = true;
         Logger.debug(`Creating message object ${JSON.stringify(messageObj)}`);
       }
     }
@@ -137,24 +136,21 @@ export default class DeclaredDepositIntentsHandler {
       messageObj.sourceStatus = MessageStatus.Declared;
       await this.messageRepository.save(messageObj);
     }
-    return isNewMessage;
   }
 
   /**
-   * It updates DepositIntent model.
+   * It creates/updates DepositIntent repository.
    *
    * @param messageHash Message hash.
-   * @param tokenAddress Value token address.
+   * @param valueTokenAddress Value token address.
    * @param amount Deposit amount.
    * @param beneficiary Beneficiary address.
-   * @param intentHash Intent hash.
    */
   private async handleDepositIntent(
     messageHash: string,
-    tokenAddress: string,
-    amount: BigNumber,
+    valueTokenAddress: string,
+    amount: string,
     beneficiary: string,
-    intentHash: string,
   ): Promise<void> {
     const depositIntentObj = await this.depositIntentRepository.get(
       messageHash,
@@ -162,10 +158,9 @@ export default class DeclaredDepositIntentsHandler {
     if (depositIntentObj == null) {
       const depositIntent = new DepositIntent(
         messageHash,
-        tokenAddress,
+        valueTokenAddress,
         new BigNumber(amount),
         Utils.toChecksumAddress(beneficiary),
-        intentHash,
       );
       await this.depositIntentRepository.save(depositIntent);
       Logger.debug(`Deposit intent ${depositIntent} saved.`);

@@ -33,13 +33,12 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
   const record1 = {
     contractAddress: '0x0000000000000000000000000000000000000001',
     messageHash: web3utils.sha3('2'),
-    intentHash: web3utils.sha3('10'),
-    tokenAddress: '0x0000000000000000000000000000000000000002',
+    valueTokenAddress: '0x0000000000000000000000000000000000000002',
     beneficiary: '0x0000000000000000000000000000000000000050',
-    amount: new BigNumber(20),
-    feeGasLimit: new BigNumber(20),
-    feeGasPrice: new BigNumber(20),
-    blockNumber: new BigNumber('100'),
+    amount: '20',
+    feeGasLimit: '20',
+    feeGasPrice: '20',
+    blockNumber: '100',
   };
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
@@ -65,10 +64,9 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
 
   async function assertMessageRepository(record: {
     messageHash: string;
-    intentHash: string;
-    feeGasLimit: BigNumber;
-    feeGasPrice: BigNumber;
-    blockNumber: BigNumber;
+    feeGasLimit: string;
+    feeGasPrice: string;
+    blockNumber: string;
   }): Promise<void> {
     const message = await messageRepository.get(record.messageHash);
 
@@ -90,59 +88,56 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       'Target status must be undeclared',
     );
 
-    assert.strictEqual(
-      message && message.intentHash,
-      record.intentHash,
-      'Incorrect deposit intent hash',
+    console.log('message hash : ',message);
+
+    assert.isOk(
+      message && message.feeGasLimit && message.feeGasLimit.isEqualTo(
+        new BigNumber(record.feeGasLimit),
+      ),
+      `Expected gas limit is ${record.feeGasLimit} but`
+      + ` got ${message && message.feeGasLimit && message.feeGasLimit}`,
     );
 
     assert.isOk(
-      message && message.feeGasLimit && message.feeGasLimit.eq(record.feeGasLimit),
-      `Expected gas limit is ${record.feeGasLimit.toString(10)} but`
-      + ` got ${message && message.feeGasLimit && message.feeGasLimit.toString(10)}`,
-    );
-
-    assert.isOk(
-      message && message.feeGasPrice && message.feeGasPrice.eq(record.feeGasPrice),
-      `Expected gas limit is ${record.feeGasLimit && record.feeGasLimit.toString(10)} but`
-      + ` got ${message && message.feeGasLimit && message.feeGasLimit.toString(10)}`,
+      message && message.feeGasPrice && message.feeGasPrice.isEqualTo(
+        new BigNumber(record.feeGasPrice),
+      ),
+      `Expected gas limit is ${record.feeGasLimit && record.feeGasLimit} but`
+      + ` got ${message && message.feeGasLimit && message.feeGasLimit}`,
     );
 
     assert.isOk(
       message && message.sourceDeclarationBlockNumber
-      && message.sourceDeclarationBlockNumber.eq(record.blockNumber),
-      `Expected source declaration block number is ${record.blockNumber.toString(10)} but got`
+      && message.sourceDeclarationBlockNumber.isEqualTo(
+        new BigNumber(record.blockNumber),
+      ),
+      `Expected source declaration block number is ${record.blockNumber} but got`
       + `${
         message
-        && message.sourceDeclarationBlockNumber && message.sourceDeclarationBlockNumber.toString(10)
+        && message.sourceDeclarationBlockNumber && message.sourceDeclarationBlockNumber
       }`,
     );
   }
 
   async function assertDepositIntentRepository(record: {
     messageHash: string;
-    intentHash: string;
-    tokenAddress: string;
-    amount: BigNumber;
+    valueTokenAddress: string;
+    amount: string;
     beneficiary: string;
   }): Promise<void> {
     const depositIntent = await depositIntentRepository.get(record.messageHash);
 
-    assert.strictEqual(
-      depositIntent && depositIntent.intentHash,
-      record.intentHash,
-      'Invalid intent hash',
-    );
-
     assert.isOk(
-      depositIntent && depositIntent.amount && depositIntent.amount.eq(record.amount),
-      `Expected deposit amount is ${record.amount.toString(10)} but got `
-      + `${depositIntent && depositIntent.amount && depositIntent.amount.toString(10)}`,
+      depositIntent && depositIntent.amount && depositIntent.amount.isEqualTo(
+        new BigNumber(record.amount),
+      ),
+      `Expected deposit amount is ${record.amount} but got `
+      + `${depositIntent && depositIntent.amount && depositIntent.amount}`,
     );
 
     assert.strictEqual(
       depositIntent && depositIntent.tokenAddress,
-      record.tokenAddress,
+      record.valueTokenAddress,
       'Incorrect token address',
     );
 
@@ -173,7 +168,6 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
         new BigNumber(20),
         new BigNumber(20),
         new BigNumber(100),
-        record1.intentHash,
       ),
     );
 
@@ -186,13 +180,12 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     const record2 = {
       contractAddress: '0x0000000000000000000000000000000000000060',
       messageHash: web3utils.sha3('20'),
-      intentHash: web3utils.sha3('100'),
-      tokenAddress: '0x0000000000000000000000000000000000000062',
-      feeGasLimit: new BigNumber(20),
-      feeGasPrice: new BigNumber(40),
-      blockNumber: new BigNumber('100'),
+      valueTokenAddress: '0x0000000000000000000000000000000000000062',
+      feeGasLimit: '20',
+      feeGasPrice: '40',
+      blockNumber: '100',
       beneficiary: '0x0000000000000000000000000000000000000070',
-      amount: new BigNumber(20),
+      amount: '20',
     };
 
     const gateway1 = new Gateway(
@@ -213,6 +206,5 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     await assertMessageRepository(record2);
     await assertDepositIntentRepository(record1);
     await assertDepositIntentRepository(record2);
-
   });
 });
