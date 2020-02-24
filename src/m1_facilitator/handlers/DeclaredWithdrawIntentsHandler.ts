@@ -19,10 +19,12 @@ import WithdrawIntentRepository
 import MessageRepository from '../repositories/MessageRepository';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import WithdrawIntent from '../models/WithdrawIntent';
+import GatewayRepository from "../repositories/GatewayRepository";
 
 export default class DeclaredWithdrawIntentsHandler {
   /* Withdraw intent repository intent. */
   private withdrawIntentRepository: WithdrawIntentRepository;
+  private gatewayRepository: GatewayRepository;
 
   /* Message repository. */
   private messageRepository: MessageRepository;
@@ -31,18 +33,26 @@ export default class DeclaredWithdrawIntentsHandler {
   /**
    * Construct DeclaredWithdrawIntentsHandler with params.
    * @param withdrawIntentRepository Instance of withdraw intent repository
-   * @param messageRepository
+   * @param messageRepository Instance of message repository.
+   * @param gatewayRepository Instance of gateway repository.
    */
   public constructor(
     withdrawIntentRepository: WithdrawIntentRepository,
     messageRepository: MessageRepository,
+    gatewayRepository: GatewayRepository,
   ) {
+    this.gatewayRepository = gatewayRepository;
     this.withdrawIntentRepository = withdrawIntentRepository;
     this.messageRepository = messageRepository;
   }
 
   /**
    * Handles DeclaredWithdrawIntents entity records.
+   * - It creates a message record and updates it's source status to `Declared`.
+   * - It creates `WithdrawIntent` record.
+   * - This handler only reacts to the events of cogateways which are populated
+   *   during seed data. It silently ignores the events by other cogateways.
+   *
    * @param records List of declared withdraw intents.
    */
   public async handle(records: {
@@ -55,13 +65,17 @@ export default class DeclaredWithdrawIntentsHandler {
     const savePromises = records.map(async (record): Promise<void> => {
       const { messageHash, contractAddress } = record;
 
-      await this.handleMessage(messageHash, contractAddress);
-      await this.handleWithdrawIntent(
-        messageHash,
-        record.utilityTokenAddress,
-        new BigNumber(record.amount),
-        record.beneficiary,
-      );
+      const gatewayRecord = await this.gatewayRepository.get(contractAddress);
+
+      if (gatewayRecord !== null) {
+        await this.handleMessage(messageHash, contractAddress);
+        await this.handleWithdrawIntent(
+          messageHash,
+          record.utilityTokenAddress,
+          new BigNumber(record.amount),
+          record.beneficiary,
+        );
+      }
     });
 
     await Promise.all(savePromises);

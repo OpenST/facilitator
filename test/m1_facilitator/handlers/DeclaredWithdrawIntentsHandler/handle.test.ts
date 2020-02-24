@@ -28,11 +28,16 @@ import Message, {
   MessageStatus,
   MessageType,
 } from '../../../../src/m1_facilitator/models/Message';
+import GatewayRepository
+  from '../../../../src/m1_facilitator/repositories/GatewayRepository';
+import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
+import Anchor from '../../../../src/m1_facilitator/models/Anchor';
 
 describe('DeclaredWithdrawIntentsHandler::handle', () => {
   let handler: DeclaredWithdrawIntentsHandler;
   let messageRepository: MessageRepository;
   let withdrawIntentRepository: WithdrawIntentRepository;
+  let gatewayRepository: GatewayRepository;
 
   const withdrawIntentEntityRecord = {
     messageHash: web3Utils.sha3('1'),
@@ -44,11 +49,23 @@ describe('DeclaredWithdrawIntentsHandler::handle', () => {
 
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
-    ({ messageRepository, withdrawIntentRepository } = repositories);
+    ({ messageRepository, withdrawIntentRepository, gatewayRepository } = repositories);
     handler = new DeclaredWithdrawIntentsHandler(
       repositories.withdrawIntentRepository,
       repositories.messageRepository,
+      repositories.gatewayRepository,
     );
+
+    const gateway = new Gateway(
+      withdrawIntentEntityRecord.contractAddress,
+      '0x0000000000000000000000000000000000000005',
+      GatewayType.ERC20,
+      Anchor.getGlobalAddress('0x0000000000000000000000000000000000000007'),
+      '0x0000000000000000000000000000000000000008',
+      new BigNumber(0),
+    );
+
+    await gatewayRepository.save(gateway);
   });
 
   it('should handle declared withdraw intent records', async (): Promise<void> => {
