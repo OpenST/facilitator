@@ -16,8 +16,8 @@ import fs from 'fs-extra';
 import yaml from 'js-yaml';
 import Config, {
   DBConfig, Avatar, Chain, Metachain,
-} from '../../../m1_facilitator/manifest/Config'
-import assert from '../../../test_utils/assert';
+} from '../../../src/m1_facilitator/manifest/Manifest'
+import assert from '../../test_utils/assert';
 import Web3 from 'web3';
 
 interface AccountDetail {

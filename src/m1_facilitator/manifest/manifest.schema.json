@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/FacilitatorManifest",
+  "definitions": {
+    "FacilitatorManifest": {
+      "title": "Facilitator",
+      "description": "Object encapsulating details about facilitator manifest",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "additionalProperties": false
+        },
+        "architecture_layout": {
+          "type": "string",
+          "additionalProperties": false,
+          "enum": ["M1"]
+        },
+        "personas": {
+          "type": "array",
+          "additionalProperties": false,
+          "items": {
+            "type": "string",
+            "enum": ["facilitator", "validator"]
+          }
+        },
+        "metachain": {
+          "$ref": "#/definitions/Metachain"
+        },
+        "accounts": {
+          "$ref": "#/definitions/Accounts"
+        },
+        "origin_contract_addresses": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "erc20_gateway": {
+              "$ref": "#/definitions/Address"
+            }
+          }
+        },
+        "facilitate_tokens": {
+          "type": "array",
+          "additionalProperties": false,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "version",
+        "architecture_layout",
+        "personas",
+        "metachain",
+        "accounts",
+        "origin_contract_addresses",
+        "facilitate_tokens"
+      ]
+    },
+    "Address": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$"
+    },
+    "Metachain": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "Metachain",
+      "description": "It encapsulates metachain specific information",
+      "properties": {
+        "origin": {
+          "$ref": "#/definitions/Chain"
+        },
+        "auxiliary": {
+          "$ref": "#/definitions/Chain"
+        }
+      }
+    },
+    "Chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "Chain",
+      "description": "It encapsulates chain specific information",
+      "properties": {
+        "avatar_account": {
+          "type": "string"
+        },
+        "node_endpoint": {
+          "type": "string"
+        },
+        "graph_ws_endpoint":{
+          "type": "string"
+        },
+        "graph_rpc_endpoint":{
+          "type": "string"
+        }
+      },
+      "required": [
+        "avatar_account",
+        "node_endpoint",
+        "graph_ws_endpoint",
+        "graph_rpc_endpoint"
+      ]
+    },
+    "Accounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "Account details",
+      "description": "List of account details",
+      "minProperties": 2,
+      "patternProperties": {
+        "^0x[a-fA-F0-9]{40}$": {
+          "$ref": "#/definitions/AccountDetail",
+          "description": "Represents account for an address"
+        }
+      }
+    },
+    "AccountDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "Account details",
+      "description": "Object represents account detail",
+      "properties": {
+        "keystore_path": {
+          "type": "string"
+        },
+        "keystore_password_path": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
