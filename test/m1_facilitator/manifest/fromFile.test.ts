@@ -15,7 +15,7 @@
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
 import Config, {
-  DBConfig, Avatar, Chain, Metachain,
+  DBConfig, AvatarAccount, Chain, Metachain,
 } from '../../../src/m1_facilitator/manifest/Manifest'
 import assert from '../../test_utils/assert';
 import Web3 from 'web3';
@@ -100,12 +100,12 @@ describe('Config.fromFile()', (): void => {
       'Mismatch in dbConfig object.',
     );
 
-    const inputAvatarAccounts: Record<string, Avatar> = {};
+    const inputAvatarAccounts: Record<string, AvatarAccount> = {};
     Object.keys(inputYamlConfig.accounts).forEach((address: string): void => {
       const acc = inputYamlConfig.accounts[address] as AccountDetail;
       const keystore = fs.readFileSync(acc.keystore_path).toString();
       const password = fs.readFileSync(acc.keystore_password_path).toString();
-      inputAvatarAccounts[address] = new Avatar(JSON.parse(keystore), password);
+      inputAvatarAccounts[address] = new AvatarAccount(JSON.parse(keystore), password);
     });
     assert.deepStrictEqual(
       manifest.avatars,

@@ -100,7 +100,7 @@ export class DBConfig {
 /**
  * It holds avatar information.
  */
-export class Avatar {
+export class AvatarAccount {
   public readonly keystore: EncryptedKeystoreV3Json;
 
   public readonly password: string;
@@ -194,7 +194,7 @@ export default class Manifest {
 
   public readonly dbConfig: DBConfig;
 
-  public readonly avatars: Record<string, Avatar>;
+  public readonly avatars: Record<string, AvatarAccount>;
 
   public readonly originContractAddresses: Record<string, string>;
 
@@ -210,7 +210,7 @@ export default class Manifest {
     architecture_layout: string;
     personas: string[];
     metachain: Metachain;
-    accounts: Record<string, Avatar>;
+    accounts: Record<string, AvatarAccount>;
     origin_contract_addresses: Record<string, string>;
     facilitate_tokens: string[];
   }) {
@@ -284,8 +284,8 @@ export default class Manifest {
    *
    * @param config Facilitator input yaml object
    */
-  private static getAvatars(config: ManifestInfo): Record<string, Avatar> {
-    const avatars: Record<string, Avatar> = {};
+  private static getAvatars(config: ManifestInfo): Record<string, AvatarAccount> {
+    const avatars: Record<string, AvatarAccount> = {};
     Object.keys(config.accounts).forEach((address: string): void => {
       const acc = config.accounts[address];
       if (!fs.existsSync(acc.keystore_password_path)) {
@@ -296,7 +296,7 @@ export default class Manifest {
       }
       const keystore = fs.readFileSync(acc.keystore_path).toString();
       const password = fs.readFileSync(acc.keystore_password_path).toString();
-      avatars[address] = new Avatar(JSON.parse(keystore), password);
+      avatars[address] = new AvatarAccount(JSON.parse(keystore), password);
     });
 
     return avatars;
