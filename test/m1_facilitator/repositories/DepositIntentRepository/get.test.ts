@@ -48,11 +48,11 @@ describe('DepositIntent::get', (): void => {
     updatedAt = new Date();
 
     depositIntent = new DepositIntent(
-      intentHash,
       messageHash,
       tokenAddress,
       amount,
       beneficiary,
+      intentHash,
       createdAt,
       updatedAt,
     );
@@ -63,18 +63,18 @@ describe('DepositIntent::get', (): void => {
 
   it('should pass when fetching DepositIntent model', async (): Promise<void> => {
     const getResponse = await config.repos.depositIntentRepository.get(
-      depositIntent.intentHash,
+      depositIntent.messageHash,
     );
 
     Util.assertDepositIntentAttributes(getResponse as DepositIntent, depositIntent);
   });
 
   it('should return null when querying for non-existing '
-    + 'intent hash', async (): Promise<void> => {
-    const nonExistingIntentHash = '0x00000000000000000000000000000000000000000000000000000000000111';
+    + 'message hash', async (): Promise<void> => {
+    const nonExistingMessageHash = '0x00000000000000000000000000000000000000000000000000000000000111';
 
     const getResponse = await config.repos.depositIntentRepository.get(
-      nonExistingIntentHash,
+      nonExistingMessageHash,
     );
 
     assert.strictEqual(

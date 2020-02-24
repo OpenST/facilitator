@@ -16,7 +16,7 @@
 
 import BigNumber from 'bignumber.js';
 import Message from '../../models/Message';
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 import Utils from '../../Utils';
 import {
   MessageDirection,
@@ -95,7 +95,7 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
 
     const saveRedeemRequestPromises = [];
     for (let i = 0; i < redeemRequestModels.length; i += 1) {
-      Logger.debug(`Updating message hash in redeemRequest for requestHash: 
+      Logger.debug(`Updating message hash in redeemRequest for requestHash:
       ${redeemRequestModels[i].requestHash}`);
       saveRedeemRequestPromises.push(
         this.messageTransferRequestRepository.save(redeemRequestModels[i]),

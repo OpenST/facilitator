@@ -20,7 +20,7 @@ import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 
 import { AUXILIARY_GAS_PRICE, ORIGIN_GAS_PRICE } from '../../Constants';
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
 import GatewayRepository from '../../repositories/GatewayRepository';

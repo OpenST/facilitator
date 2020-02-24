@@ -20,7 +20,7 @@ import Message from '../../src/m0_facilitator/models/Message';
 import Gateway from '../../src/m0_facilitator/models/Gateway';
 import AuxiliaryChain from '../../src/m0_facilitator/models/AuxiliaryChain';
 import SharedStorage from './SharedStorage';
-import Logger from '../../src/m0_facilitator/Logger';
+import Logger from '../../src/common/Logger';
 import MessageTransferRequest from '../../src/m0_facilitator/models/MessageTransferRequest';
 import { MessageStatus } from '../../src/m0_facilitator/repositories/MessageRepository';
 import GatewayAddresses from '../../src/m0_facilitator/Config/GatewayAddresses';

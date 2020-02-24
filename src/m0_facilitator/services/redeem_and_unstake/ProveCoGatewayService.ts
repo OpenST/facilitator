@@ -26,7 +26,7 @@ import { ProofGenerator } from '@openst/mosaic-proof';
 
 import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gateway';
 import { ORIGIN_GAS_PRICE } from '../../Constants';
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 import AuxiliaryChain from '../../models/AuxiliaryChain';
 import Observer from '../../observer/Observer';
 import GatewayRepository from '../../repositories/GatewayRepository';

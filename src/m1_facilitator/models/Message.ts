@@ -62,7 +62,6 @@ export default class Message extends Comparable<Message> {
    *
    * @param messageHash Message hash is unique for each request.
    * @param type Type of the message deposit/withdraw.
-   * @param intentHash Intent hash.
    * @param sourceStatus Status of message in the outbox of the gateway
    *                     on source chain.
    * @param targetStatus Status of message in the inbox of the gateway
@@ -71,6 +70,7 @@ export default class Message extends Comparable<Message> {
    * @param feeGasLimit Fee gas limit for reward calculation.
    * @param gatewayAddress Gateway contract address.
    * @param sourceDeclarationBlockNumber Block number at which message was declared.
+   * @param intentHash Intent hash.
    * @param sender Address of message sender.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
@@ -81,10 +81,10 @@ export default class Message extends Comparable<Message> {
     sourceStatus: MessageStatus,
     targetStatus: MessageStatus,
     gatewayAddress: string,
-    intentHash?: string,
     feeGasPrice?: BigNumber,
     feeGasLimit?: BigNumber,
     sourceDeclarationBlockNumber?: BigNumber,
+    intentHash?: string,
     sender?: string,
     createdAt?: Date,
     updatedAt?: Date,

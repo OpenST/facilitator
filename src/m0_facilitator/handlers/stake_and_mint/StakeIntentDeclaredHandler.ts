@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 
 import Message from '../../models/Message';
 import {
@@ -94,7 +94,7 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
 
     const saveStakeRequestPromises = [];
     for (let i = 0; i < stakeRequestModels.length; i += 1) {
-      Logger.debug(`Updating message hash in stakeRequest for requestHash: 
+      Logger.debug(`Updating message hash in stakeRequest for requestHash:
       ${stakeRequestModels[i].requestHash}`);
       saveStakeRequestPromises.push(
         this.messageTransferRequestRepository.save(stakeRequestModels[i]),
@@ -105,7 +105,7 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
 
     const saveMessagesPromises = [];
     for (let i = 0; i < messageModels.length; i += 1) {
-      Logger.debug(`Changing source status to declared for messageHash: 
+      Logger.debug(`Changing source status to declared for messageHash:
       ${messageModels[i].messageHash}`);
       saveMessagesPromises.push(this.messageRepository.save(messageModels[i]));
     }

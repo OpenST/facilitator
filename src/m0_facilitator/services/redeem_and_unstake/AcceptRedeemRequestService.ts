@@ -24,7 +24,7 @@ import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types
 
 import { RedeemPool } from '@openst/mosaic-contracts/dist/interacts/RedeemPool';
 import { AUXILIARY_GAS_PRICE } from '../../Constants';
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
 import Observer from '../../observer/Observer';
