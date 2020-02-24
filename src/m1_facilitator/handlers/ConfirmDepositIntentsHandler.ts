@@ -39,9 +39,17 @@ export default class ConfirmDepositIntentsHandler {
 
   /**
    * Handles the ConfirmDepositIntent entity.
+   * - It updates target status of message to `Declared` if it is undeclared.
+   * - If message does not exists it create a message record.
+   * - This handler only reacts to the events of gateways which are populated
+   *   during seed data. It silently ignores the events by other gateways.
+   *
    * @param records List of ConfirmDepositIntents.
    */
-  public async handle(records: any[]): Promise<void> {
+  public async handle(records: {
+    messageHash: string;
+    contractAddress: string;
+  }[]): Promise<void> {
     const savePromises = records.map(async (record): Promise<void> => {
       let message = await this.messageRepository.get(record.messageHash);
 
