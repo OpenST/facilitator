@@ -136,7 +136,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     assert.strictEqual(
       depositIntent && depositIntent.tokenAddress,
       record.valueTokenAddress,
-      'Incorrect token address',
+      'Incorrect value token address',
     );
 
     assert.strictEqual(

@@ -34,7 +34,6 @@ interface DeclaredDepositIntentsEntityInterface {
   blockNumber: string;
 }
 
-
 /**
  * It handles updates from DeclaredDepositIntents entity.
  */
@@ -97,12 +96,12 @@ export default class DeclaredDepositIntentsHandler {
   }
 
   /**
-   * It creates/updates Message repository.
+   * It creates/updates Message model.
    *
    * @param contractAddress Address of gateway contract.
    * @param messageHash Message hash.
-   * @param feeGasPrice GasPrice which depositor/withdrawal will be paying.
-   * @param feeGasLimit GasLimit which depositor/withdrawal will be paying.
+   * @param feeGasPrice GasPrice which depositor will be paying.
+   * @param feeGasLimit GasLimit which depositor will be paying.
    * @param blockNumber Block number at which deposit transaction is mined.
    */
   private async handleMessage(
@@ -139,7 +138,7 @@ export default class DeclaredDepositIntentsHandler {
   }
 
   /**
-   * It creates/updates DepositIntent repository.
+   * It creates/updates DepositIntent model.
    *
    * @param messageHash Message hash.
    * @param valueTokenAddress Value token address.
@@ -155,10 +154,10 @@ export default class DeclaredDepositIntentsHandler {
     const depositIntentObj = await this.depositIntentRepository.get(
       messageHash,
     );
-    if (depositIntentObj == null) {
+    if (depositIntentObj === null) {
       const depositIntent = new DepositIntent(
         messageHash,
-        valueTokenAddress,
+        Utils.toChecksumAddress(valueTokenAddress),
         new BigNumber(amount),
         Utils.toChecksumAddress(beneficiary),
       );
