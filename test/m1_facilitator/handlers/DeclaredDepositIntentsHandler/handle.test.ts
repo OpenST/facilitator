@@ -16,7 +16,7 @@ import * as web3utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 
 import assert from '../../../test_utils/assert';
-import DeclaredDepositIntentHandler from '../../../../src/m1_facilitator/handlers/DeclaredDepositIntentHandler';
+import DeclaredDepositIntentsHandler from '../../../../src/m1_facilitator/handlers/DeclaredDepositIntentsHandler';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 import Message, { MessageType, MessageStatus } from '../../../../src/m1_facilitator/models/Message';
 import MessageRepository from '../../../../src/m1_facilitator/repositories/MessageRepository';
@@ -24,8 +24,8 @@ import DepositIntentRepository from '../../../../src/m1_facilitator/repositories
 import GatewayRepository from '../../../../src/m1_facilitator/repositories/GatewayRepository';
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 
-describe('DeclaredDepositIntentHandler::handle', (): void => {
-  let declaredDepositIntentHandler: DeclaredDepositIntentHandler;
+describe('DeclaredDepositIntentsHandler::handle', (): void => {
+  let declaredDepositIntentsHandler: DeclaredDepositIntentsHandler;
   let messageRepository: MessageRepository;
   let depositIntentRepository: DepositIntentRepository;
   let gatewayRepository: GatewayRepository;
@@ -56,7 +56,7 @@ describe('DeclaredDepositIntentHandler::handle', (): void => {
       gateway,
     );
 
-    declaredDepositIntentHandler = new DeclaredDepositIntentHandler(
+    declaredDepositIntentsHandler = new DeclaredDepositIntentsHandler(
       repositories.depositIntentRepository,
       repositories.gatewayRepository,
       repositories.messageRepository,
@@ -65,7 +65,7 @@ describe('DeclaredDepositIntentHandler::handle', (): void => {
 
   it('should change source status of message from undeclared to declared if message'
     + ' is not present', async (): Promise<void> => {
-    await declaredDepositIntentHandler.handle([record]);
+    await declaredDepositIntentsHandler.handle([record]);
 
     const message = await messageRepository.get(record.messageHash);
 
@@ -97,7 +97,7 @@ describe('DeclaredDepositIntentHandler::handle', (): void => {
 
   it('should create a deposit intent if message is not present is'
   + ' not present', async (): Promise<void> => {
-    await declaredDepositIntentHandler.handle([record]);
+    await declaredDepositIntentsHandler.handle([record]);
 
     const depositIntent = await depositIntentRepository.get(record.messageHash);
 
@@ -123,7 +123,7 @@ describe('DeclaredDepositIntentHandler::handle', (): void => {
       ),
     );
 
-    await declaredDepositIntentHandler.handle([record]);
+    await declaredDepositIntentsHandler.handle([record]);
 
     const message = await messageRepository.get(record.messageHash);
 
@@ -165,7 +165,7 @@ describe('DeclaredDepositIntentHandler::handle', (): void => {
       gateway1,
     );
 
-    await declaredDepositIntentHandler.handle([record, record2]);
+    await declaredDepositIntentsHandler.handle([record, record2]);
 
     const message = await messageRepository.get(record.messageHash);
     const message2 = await messageRepository.get(record2.messageHash);

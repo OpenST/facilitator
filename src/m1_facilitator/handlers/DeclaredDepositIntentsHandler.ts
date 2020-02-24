@@ -23,9 +23,9 @@ import Utils from '../../common/Utils';
 import Logger from '../../m0_facilitator/Logger';
 
 /**
- * It handles updates from DeclaredDepositIntent entity.
+ * It handles updates from DeclaredDepositIntents entity.
  */
-export default class DeclaredDepositIntentHandler {
+export default class DeclaredDepositIntentsHandler {
   /** Instance of DepositIntentRepository. */
   private depositIntentRepository: DepositIntentRepository;
 

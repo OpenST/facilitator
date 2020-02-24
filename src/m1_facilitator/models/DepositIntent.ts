@@ -40,12 +40,12 @@ export default class DepositIntent extends Comparable<DepositIntent> {
    * Constructor to set fields of DepositIntent model.
    *
    * @param messageHash Message hash.
-   * @param tokenAddress Value token address.
-   * @param amount Deposited amount.
-   * @param beneficiary Beneficiary address.
-   * @param intentHash Deposit intent hash.
-   * @param createdAt Time at which record is created.
-   * @param updatedAt Time at which record is updated.
+   * @param [tokenAddress] Value token address.
+   * @param [amount] Deposited amount.
+   * @param [beneficiary] Beneficiary address.
+   * @param [intentHash] Deposit intent hash.
+   * @param [createdAt] Time at which record is created.
+   * @param [updatedAt] Time at which record is updated.
    */
   public constructor(
     messageHash: string,
