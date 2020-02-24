@@ -26,10 +26,13 @@ import Logger from '../../m0_facilitator/Logger';
  * It handles updates from DeclaredDepositIntent entity.
  */
 export default class DeclaredDepositIntentHandler {
+  /** Instance of DepositIntentRepository. */
   private depositIntentRepository: DepositIntentRepository;
 
+  /** Instance of MessageRepository. */
   private messageRepository: MessageRepository;
 
+  /** Instance of GatewayRepository. */
   private gatewayRepository: GatewayRepository;
 
   /**
