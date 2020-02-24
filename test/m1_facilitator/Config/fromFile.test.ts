@@ -25,6 +25,32 @@ interface AccountDetail {
   keystore_password_path: string;
 }
 
+function assertChainObject(actualChainObject: Chain, expectChainObject:Chain) {
+  assert.deepStrictEqual(
+    actualChainObject.nodeEndpoint,
+    expectChainObject.nodeEndpoint,
+    'Mismatch in nodeEndpoint.',
+  );
+
+  assert.deepStrictEqual(
+    actualChainObject.graphWsEndpoint,
+    expectChainObject.graphWsEndpoint,
+    'Mismatch in graphWsEndpoint.',
+  );
+
+  assert.deepStrictEqual(
+    actualChainObject.graphRpcEndpoint,
+    expectChainObject.graphRpcEndpoint,
+    'Mismatch in graphRpcEndpoint.',
+  );
+
+  assert.deepStrictEqual(
+    actualChainObject.avatarAccount,
+    expectChainObject.avatarAccount,
+    'Mismatch in avatarAccount.',
+  );
+}
+
 describe('Config.fromFile()', (): void => {
   it('should return correct facilitator config object', async (): Promise<void> => {
     const manifestFilePath = 'testdata/m1_facilitator/facilitator_manifest.yml';
@@ -64,53 +90,8 @@ describe('Config.fromFile()', (): void => {
       new Web3(inputYamlConfig.metachain.auxiliary.node_endpoint),
     );
     const expectedMetachain = new Metachain(originChainObject, auxiliaryChainObject);
-    assert.deepStrictEqual(
-      manifest.metachain.originChain.nodeEndpoint,
-      expectedMetachain.originChain.nodeEndpoint,
-      'Mismatch in origin metachain nodeEndpoint.',
-    );
-
-    assert.deepStrictEqual(
-      manifest.metachain.originChain.graphWsEndpoint,
-      expectedMetachain.originChain.graphWsEndpoint,
-      'Mismatch in origin metachain graphWsEndpoint.',
-    );
-
-    assert.deepStrictEqual(
-      manifest.metachain.originChain.graphRpcEndpoint,
-      expectedMetachain.originChain.graphRpcEndpoint,
-      'Mismatch in origin metachain graphRpcEndpoint.',
-    );
-
-    assert.deepStrictEqual(
-      manifest.metachain.originChain.avatarAccount,
-      expectedMetachain.originChain.avatarAccount,
-      'Mismatch in origin metachain avatarAccount.',
-    );
-
-    assert.deepStrictEqual(
-      manifest.metachain.auxiliaryChain.nodeEndpoint,
-      expectedMetachain.auxiliaryChain.nodeEndpoint,
-      'Mismatch in auxiliaryChain metachain nodeEndpoint.',
-    );
-
-    assert.deepStrictEqual(
-      manifest.metachain.auxiliaryChain.graphWsEndpoint,
-      expectedMetachain.auxiliaryChain.graphWsEndpoint,
-      'Mismatch in auxiliaryChain metachain graphWsEndpoint.',
-    );
-
-    assert.deepStrictEqual(
-      manifest.metachain.auxiliaryChain.graphRpcEndpoint,
-      expectedMetachain.auxiliaryChain.graphRpcEndpoint,
-      'Mismatch in auxiliaryChain metachain graphRpcEndpoint.',
-    );
-
-    assert.deepStrictEqual(
-      manifest.metachain.auxiliaryChain.avatarAccount,
-      expectedMetachain.auxiliaryChain.avatarAccount,
-      'Mismatch in auxiliaryChain metachain avatarAccount.',
-    );
+    assertChainObject(manifest.metachain.originChain, expectedMetachain.originChain);
+    assertChainObject(manifest.metachain.auxiliaryChain, expectedMetachain.auxiliaryChain);
 
     const dbConfig = new DBConfig();
     assert.deepStrictEqual(
