@@ -62,6 +62,10 @@
       "type": "string",
       "pattern": "^0x[a-fA-F0-9]{40}$"
     },
+    "Url": {
+      "type": "string",
+      "pattern": "^(http|https|ws):\/\/(([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])(:[0-9]+)?\/?(.*)$"
+    },
     "Metachain": {
       "type": "object",
       "additionalProperties": false,
@@ -86,13 +90,13 @@
           "$ref": "#/definitions/Address"
         },
         "node_endpoint": {
-          "type": "string"
+          "$ref": "#/definitions/Url"
         },
         "graph_ws_endpoint":{
-          "type": "string"
+          "$ref": "#/definitions/Url"
         },
         "graph_rpc_endpoint":{
-          "type": "string"
+          "$ref": "#/definitions/Url"
         }
       },
       "required": [

@@ -5,7 +5,7 @@ personas:
 metachain:
   origin:
     avatar_account: "0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7"
-    node_endpoint: https://localhost.com:8545
+    node_endpoint: https://localhost:8545
     graph_ws_endpoint: ws://localhost:8000/subgraphs/name/m1_facilitator
     graph_rpc_endpoint: http://localhost:8000/subgraphs/name/m1_facilitator
   auxiliary:
