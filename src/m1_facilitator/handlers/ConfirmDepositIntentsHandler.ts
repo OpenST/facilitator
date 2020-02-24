@@ -16,6 +16,8 @@ import MessageRepository from '../repositories/MessageRepository';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import GatewayRepository from '../repositories/GatewayRepository';
 
+import assert = require('assert');
+
 /**
  * This class handles the updates from ConfirmDepositIntents entity.
  */
@@ -68,12 +70,13 @@ export default class ConfirmDepositIntentsHandler {
           );
         }
       }
-      if (message !== null
-        && message.targetStatus === MessageStatus.Undeclared
-        && message.type === MessageType.Deposit
-      ) {
-        message.targetStatus = MessageStatus.Declared;
-        await this.messageRepository.save(message);
+      if (message !== null) {
+        if (message.targetStatus === MessageStatus.Undeclared) {
+          assert(message.type === MessageType.Deposit);
+
+          message.targetStatus = MessageStatus.Declared;
+          await this.messageRepository.save(message);
+        }
       }
     });
 
