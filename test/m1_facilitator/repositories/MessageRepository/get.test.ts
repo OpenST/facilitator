@@ -59,10 +59,10 @@ describe('MessageRepository::get', (): void => {
       sourceStatus,
       targetStatus,
       gatewayAddress,
-      intentHash,
       feeGasPrice,
       feeGasLimit,
       sourceDeclarationBlockNumber,
+      intentHash,
       createdAt,
       updatedAt,
     );

@@ -14,7 +14,6 @@
 //
 // ----------------------------------------------------------------------------
 
-
 import BigNumber from 'bignumber.js';
 
 import Comparable from '../../m0_facilitator/observer/Comparable';
@@ -23,9 +22,9 @@ import Comparable from '../../m0_facilitator/observer/Comparable';
  * Represents DepositIntent model object.
  */
 export default class DepositIntent extends Comparable<DepositIntent> {
-  public intentHash: string;
-
   public messageHash: string;
+
+  public intentHash?: string;
 
   public tokenAddress?: string;
 
@@ -40,20 +39,20 @@ export default class DepositIntent extends Comparable<DepositIntent> {
   /**
    * Constructor to set fields of DepositIntent model.
    *
-   * @param intentHash Deposit intent hash.
    * @param messageHash Message hash.
    * @param tokenAddress Value token address.
    * @param amount Deposited amount.
    * @param beneficiary Beneficiary address.
+   * @param intentHash Deposit intent hash.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */
   public constructor(
-    intentHash: string,
     messageHash: string,
     tokenAddress?: string,
     amount?: BigNumber,
     beneficiary?: string,
+    intentHash?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
@@ -76,8 +75,8 @@ export default class DepositIntent extends Comparable<DepositIntent> {
    *                 and -1 if the specified object is greater.
    */
   public compareTo(other: DepositIntent): number {
-    const currentKey = this.intentHash;
-    const specifiedKey = other.intentHash;
+    const currentKey = this.messageHash;
+    const specifiedKey = other.messageHash;
 
     if (currentKey > specifiedKey) {
       return 1;

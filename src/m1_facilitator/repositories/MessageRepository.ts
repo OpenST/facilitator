@@ -226,12 +226,12 @@ export default class MessageRepository extends Subject<Message> {
       messageModel.sourceStatus,
       messageModel.targetStatus,
       messageModel.gatewayAddress,
-      messageModel.intentHash,
       messageModel.feeGasPrice ? new BigNumber(messageModel.feeGasPrice) : messageModel.feeGasPrice,
       messageModel.feeGasLimit ? new BigNumber(messageModel.feeGasLimit) : messageModel.feeGasLimit,
-      messageModel.sourceDeclarationBlockNumber ?
-        new BigNumber(messageModel.sourceDeclarationBlockNumber) :
-        messageModel.sourceDeclarationBlockNumber,
+      messageModel.sourceDeclarationBlockNumber
+        ? new BigNumber(messageModel.sourceDeclarationBlockNumber)
+        : messageModel.sourceDeclarationBlockNumber,
+      messageModel.intentHash,
       messageModel.createdAt,
       messageModel.updatedAt,
     );
