@@ -16,6 +16,9 @@ import MessageRepository from '../repositories/MessageRepository';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import GatewayRepository from '../repositories/GatewayRepository';
 
+/**
+ * This class handles the updates from ConfirmDepositIntents entity.
+ */
 export default class ConfirmDepositIntentsHandler {
   /* Instance of message repository. */
   private messageRepository: MessageRepository;

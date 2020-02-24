@@ -30,7 +30,6 @@ import GatewayRepository
   from '../../../../src/m1_facilitator/repositories/GatewayRepository';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 
-
 describe('ConfirmDepositIntentsHandler::handle', () => {
   let messageRepository: MessageRepository;
   let gatewayRepository: GatewayRepository;
@@ -60,6 +59,7 @@ describe('ConfirmDepositIntentsHandler::handle', () => {
 
     const confirmDepositIntentRecord = {
       messageHash,
+      contractAddress: '0x0000000000000000000000000000000000000001',
     };
 
     await confirmDepositIntentsHandler.handle([confirmDepositIntentRecord]);
@@ -126,9 +126,11 @@ describe('ConfirmDepositIntentsHandler::handle', () => {
     const confirmDepositIntentRecords = [
       {
         messageHash: web3utils.sha3('1'),
+        contractAddress: '0x0000000000000000000000000000000000000001',
       },
       {
         messageHash: web3utils.sha3('2'),
+        contractAddress: '0x0000000000000000000000000000000000000001',
       },
     ];
 
