@@ -20,7 +20,7 @@ import GatewayRepository from '../repositories/GatewayRepository';
 import DepositIntentRepository from '../repositories/DepositIntentRepository';
 import MessageRepository from '../repositories/MessageRepository';
 import Utils from '../../common/Utils';
-import Logger from '../../m0_facilitator/Logger';
+import Logger from '../../common/Logger';
 
 /** It represents record of DeclaredDepositIntents entity. */
 interface DeclaredDepositIntentsEntityInterface {
@@ -69,7 +69,7 @@ export default class DeclaredDepositIntentsHandler {
    * Handles DeclaredDepositIntents entity records.
    * - It creates a message record and updates it's source status to `Declared`.
    * - It creates `DepositIntent` record.
-   * - This handler only reacts to the events of ERC20Gateway which are populated
+   * - This handler only reacts to DepositIntentDeclared event of ERC20Gateway which are populated
    *   during seed data. It silently ignores the events by other ERC20Gateway.
    *
    * @param records List of DeclaredDepositIntent entity.

@@ -88,8 +88,6 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       'Target status must be undeclared',
     );
 
-    console.log('message hash : ',message);
-
     assert.isOk(
       message && message.feeGasLimit && message.feeGasLimit.isEqualTo(
         new BigNumber(record.feeGasLimit),

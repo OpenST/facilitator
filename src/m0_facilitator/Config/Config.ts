@@ -28,7 +28,7 @@ import {
   FacilitatorConfigNotFoundException, InvalidFacilitatorConfigException,
   WorkerPasswordNotFoundException,
 } from '../Exception';
-import Logger from '../Logger';
+import Logger from '../../common/Logger';
 import Utils from '../Utils';
 import schema from './FacilitatorConfig.schema.json';
 import GatewayAddresses from './GatewayAddresses';
