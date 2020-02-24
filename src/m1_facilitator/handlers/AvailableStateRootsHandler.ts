@@ -17,6 +17,12 @@ import AnchorRepository from '../repositories/AnchorRepository';
 import Utils from '../../common/Utils';
 import Anchor from '../models/Anchor';
 
+/** Represents record of AvailableStateRootsEntity. */
+interface AvailableStateRootsEntityInterface {
+  contractAddress: string;
+  blockNumber: string;
+}
+
 /**
  * This class handles the updates from AvailableStateRoots entity.
  */
@@ -38,10 +44,7 @@ export default class AvailableStateRootsHandler {
    *
    * @param records List of AvailableStateRoots.
    */
-  public async handle(records: {
-    contractAddress: string;
-    blockNumber: string;
-  }[]): Promise<void> {
+  public async handle(records: AvailableStateRootsEntityInterface[]): Promise<void> {
     const contractAddressVsBlockNumberMap = new Map();
 
     records.forEach((record): void => {

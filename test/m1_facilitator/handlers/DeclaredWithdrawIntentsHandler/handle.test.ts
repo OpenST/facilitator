@@ -30,7 +30,7 @@ import Message, {
 } from '../../../../src/m1_facilitator/models/Message';
 import GatewayRepository
   from '../../../../src/m1_facilitator/repositories/GatewayRepository';
-import Gateway, {GatewayType} from '../../../../src/m1_facilitator/models/Gateway';
+import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 import Anchor from '../../../../src/m1_facilitator/models/Anchor';
 
 describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
@@ -46,6 +46,10 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       utilityTokenAddress: '0x0000000000000000000000000000000000000002',
       amount: '2',
       beneficiary: '0x0000000000000000000000000000000000000003',
+      feeGasPrice: '2',
+      feeGasLimit: '2',
+      withdrawer: '0x0000000000000000000000000000000000000005',
+      blockNumber: '100',
     },
     {
       messageHash: web3Utils.sha3('2'),
@@ -53,6 +57,10 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       utilityTokenAddress: '0x0000000000000000000000000000000000000002',
       amount: '3',
       beneficiary: '0x0000000000000000000000000000000000000004',
+      feeGasPrice: '2',
+      feeGasLimit: '2',
+      withdrawer: '0x0000000000000000000000000000000000000005',
+      blockNumber: '101',
     },
   ];
 
@@ -83,6 +91,10 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     utilityTokenAddress: string;
     amount: string;
     beneficiary: string;
+    feeGasPrice: string;
+    feeGasLimit: string;
+    withdrawer: string;
+    blockNumber: string;
   }): Promise<void> {
     const messageRecord = await messageRepository.get(
       withdrawIntentEntityRecord.messageHash,
@@ -119,6 +131,39 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       messageRecord && messageRecord.gatewayAddress,
       withdrawIntentEntityRecord.contractAddress,
       'Gateway address must match',
+    );
+
+    assert.strictEqual(
+      messageRecord && messageRecord.sender,
+      withdrawIntentEntityRecord.withdrawer,
+      'Withdrawer address must match',
+    );
+
+    assert.isOk(
+      messageRecord
+      && messageRecord.feeGasPrice
+      && messageRecord.feeGasPrice.isEqualTo(
+        new BigNumber(withdrawIntentEntityRecord.feeGasPrice),
+      ),
+      'FeeGas Price must match',
+    );
+
+    assert.isOk(
+      messageRecord
+      && messageRecord.feeGasLimit
+      && messageRecord.feeGasLimit.isEqualTo(
+        new BigNumber(withdrawIntentEntityRecord.feeGasLimit),
+      ),
+      'FeeGas limit must match',
+    );
+
+    assert.isOk(
+      messageRecord
+      && messageRecord.sourceDeclarationBlockNumber
+      && messageRecord.sourceDeclarationBlockNumber.isEqualTo(
+        new BigNumber(withdrawIntentEntityRecord.blockNumber),
+      ),
+      'Source declaration block number must match',
     );
 
     assert.strictEqual(

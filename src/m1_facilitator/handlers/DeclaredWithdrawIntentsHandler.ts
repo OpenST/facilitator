@@ -21,6 +21,19 @@ import Message, { MessageStatus, MessageType } from '../models/Message';
 import WithdrawIntent from '../models/WithdrawIntent';
 import GatewayRepository from '../repositories/GatewayRepository';
 
+/** Represents record of DeclaredWithdrawIntentsEntity. */
+interface DeclaredWithdrawIntentsEntityInterface {
+  messageHash: string;
+  contractAddress: string;
+  utilityTokenAddress: string;
+  amount: string;
+  beneficiary: string;
+  feeGasPrice: string;
+  feeGasLimit: string;
+  withdrawer: string;
+  blockNumber: string;
+}
+
 /**
  * This class handles the updates from DeclaredWithdrawIntents.
  */
@@ -60,20 +73,21 @@ export default class DeclaredWithdrawIntentsHandler {
    *
    * @param records List of declared withdraw intents.
    */
-  public async handle(records: {
-    messageHash: string;
-    contractAddress: string;
-    utilityTokenAddress: string;
-    amount: string;
-    beneficiary: string;
-  }[]): Promise<void> {
+  public async handle(records: DeclaredWithdrawIntentsEntityInterface[]): Promise<void> {
     const savePromises = records.map(async (record): Promise<void> => {
       const { messageHash, contractAddress } = record;
 
       const gatewayRecord = await this.gatewayRepository.get(contractAddress);
 
       if (gatewayRecord !== null) {
-        await this.handleMessage(messageHash, contractAddress);
+        await this.handleMessage(
+          messageHash,
+          contractAddress,
+          new BigNumber(record.feeGasPrice),
+          new BigNumber(record.feeGasLimit),
+          record.withdrawer,
+          new BigNumber(record.blockNumber),
+        );
         await this.handleWithdrawIntent(
           messageHash,
           record.utilityTokenAddress,
@@ -117,8 +131,19 @@ export default class DeclaredWithdrawIntentsHandler {
    *
    * @param messageHash Message hash.
    * @param contractAddress Cogateway contract address.
+   * @param feeGasPrice Message transfer fee gas price.
+   * @param feeGasLimit Message transfer fee gas limit.
+   * @param sender Address of message sender.
+   * @param sourceDeclarationBlockNumber Block number at which this transaction is mined.
    */
-  private async handleMessage(messageHash: string, contractAddress: string): Promise<void> {
+  private async handleMessage(
+    messageHash: string,
+    contractAddress: string,
+    feeGasPrice: BigNumber,
+    feeGasLimit: BigNumber,
+    sender: string,
+    sourceDeclarationBlockNumber: BigNumber,
+  ): Promise<void> {
     let message = await this.messageRepository.get(messageHash);
 
     if (message === null) {
@@ -129,6 +154,10 @@ export default class DeclaredWithdrawIntentsHandler {
         MessageStatus.Undeclared,
         contractAddress,
       );
+      message.feeGasPrice = feeGasPrice;
+      message.feeGasLimit = feeGasLimit;
+      message.sender = sender;
+      message.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     }
     message.sourceStatus = MessageStatus.Declared;
     await this.messageRepository.save(message);
