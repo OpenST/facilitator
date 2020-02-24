@@ -30,7 +30,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
   let depositIntentRepository: DepositIntentRepository;
   let gatewayRepository: GatewayRepository;
 
-  const record = {
+  const record1 = {
     contractAddress: '0x0000000000000000000000000000000000000001',
     messageHash: web3utils.sha3('2'),
     intentHash: web3utils.sha3('10'),
@@ -38,16 +38,16 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     beneficiary: '0x0000000000000000000000000000000000000050',
     amount: new BigNumber(20),
     feeGasLimit: new BigNumber(20),
-    feeGasPrice: new BigNumber(40),
+    feeGasPrice: new BigNumber(20),
     blockNumber: new BigNumber('100'),
   };
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
     ({ depositIntentRepository, gatewayRepository, messageRepository } = repositories);
     const gateway = new Gateway(
-      record.contractAddress,
+      record1.contractAddress,
       '0x0000000000000000000000000000000000000010',
-      GatewayType.CONSENSUS,
+      GatewayType.ERC20,
       '0x0000000000000000000000000000000000000001',
       '0x0000000000000000000000000000000000000030',
       new BigNumber(200),
@@ -63,16 +63,19 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     );
   });
 
-  it('should change source status of message from undeclared to declared if message'
-    + ' is not present', async (): Promise<void> => {
-    await declaredDepositIntentsHandler.handle([record]);
-
+  async function assertMessageRepository(record: {
+    messageHash: string;
+    intentHash: string;
+    feeGasLimit: BigNumber;
+    feeGasPrice: BigNumber;
+    blockNumber: BigNumber;
+  }): Promise<void> {
     const message = await messageRepository.get(record.messageHash);
 
     assert.strictEqual(
       message && message.type,
       MessageType.Deposit,
-      'Message type should be deposit',
+      'Message type must be deposit',
     );
 
     assert.strictEqual(
@@ -87,57 +90,96 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       'Target status must be undeclared',
     );
 
-    const depositIntent = await depositIntentRepository.get(record.messageHash);
+    assert.strictEqual(
+      message && message.intentHash,
+      record.intentHash,
+      'Incorrect deposit intent hash',
+    );
 
     assert.isOk(
-      depositIntent,
-      `Record must be present for ${record.messageHash} in deposit intent model`,
+      message && message.feeGasLimit && message.feeGasLimit.eq(record.feeGasLimit),
+      `Expected gas limit is ${record.feeGasLimit.toString(10)} but`
+      + ` got ${message && message.feeGasLimit && message.feeGasLimit.toString(10)}`,
     );
-  });
-
-  it('should create a deposit intent if message is not present is'
-  + ' not present', async (): Promise<void> => {
-    await declaredDepositIntentsHandler.handle([record]);
-
-    const depositIntent = await depositIntentRepository.get(record.messageHash);
 
     assert.isOk(
-      depositIntent,
-      `Record must be present for ${record.messageHash} in deposit intent model`,
+      message && message.feeGasPrice && message.feeGasPrice.eq(record.feeGasPrice),
+      `Expected gas limit is ${record.feeGasLimit && record.feeGasLimit.toString(10)} but`
+      + ` got ${message && message.feeGasLimit && message.feeGasLimit.toString(10)}`,
     );
+
+    assert.isOk(
+      message && message.sourceDeclarationBlockNumber
+      && message.sourceDeclarationBlockNumber.eq(record.blockNumber),
+      `Expected source declaration block number is ${record.blockNumber.toString(10)} but got`
+      + `${
+        message
+        && message.sourceDeclarationBlockNumber && message.sourceDeclarationBlockNumber.toString(10)
+      }`,
+    );
+  }
+
+  async function assertDepositIntentRepository(record: {
+    messageHash: string;
+    intentHash: string;
+    tokenAddress: string;
+    amount: BigNumber;
+    beneficiary: string;
+  }): Promise<void> {
+    const depositIntent = await depositIntentRepository.get(record.messageHash);
+
+    assert.strictEqual(
+      depositIntent && depositIntent.intentHash,
+      record.intentHash,
+      'Invalid intent hash',
+    );
+
+    assert.isOk(
+      depositIntent && depositIntent.amount && depositIntent.amount.eq(record.amount),
+      `Expected deposit amount is ${record.amount.toString(10)} but got `
+      + `${depositIntent && depositIntent.amount && depositIntent.amount.toString(10)}`,
+    );
+
+    assert.strictEqual(
+      depositIntent && depositIntent.tokenAddress,
+      record.tokenAddress,
+      'Incorrect token address',
+    );
+
+    assert.strictEqual(
+      depositIntent && depositIntent.beneficiary,
+      record.beneficiary,
+      'Incorrect beneficiary address',
+    );
+  }
+
+  it('should change source status of message from undeclared to declared if message'
+    + ' is not present', async (): Promise<void> => {
+    await declaredDepositIntentsHandler.handle([record1]);
+
+    await assertMessageRepository(record1);
+    await assertDepositIntentRepository(record1);
   });
 
   it('should change status of message from undeclared to declared for'
     + ' existing message', async (): Promise<void> => {
     await messageRepository.save(
       new Message(
-        record.messageHash,
+        record1.messageHash,
         MessageType.Deposit,
         MessageStatus.Undeclared,
         MessageStatus.Undeclared,
         '0x0000000000000000000000000000000000000050',
-        new BigNumber(0),
-        new BigNumber(0),
-        new BigNumber(0),
-        record.intentHash,
+        new BigNumber(20),
+        new BigNumber(20),
+        new BigNumber(100),
+        record1.intentHash,
       ),
     );
 
-    await declaredDepositIntentsHandler.handle([record]);
+    await declaredDepositIntentsHandler.handle([record1]);
 
-    const message = await messageRepository.get(record.messageHash);
-
-    assert.strictEqual(
-      message && message.sourceStatus,
-      MessageStatus.Declared,
-      'Source status must be declared',
-    );
-
-    assert.strictEqual(
-      message && message.targetStatus,
-      MessageStatus.Undeclared,
-      'Target status must be undeclared',
-    );
+    await assertMessageRepository(record1);
   });
 
   it('should handle multiple records', async (): Promise<void> => {
@@ -156,7 +198,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     const gateway1 = new Gateway(
       record2.contractAddress,
       '0x0000000000000000000000000000000000000010',
-      GatewayType.CONSENSUS,
+      GatewayType.ERC20,
       '0x0000000000000000000000000000000000000001',
       '0x0000000000000000000000000000000000000030',
       new BigNumber(200),
@@ -165,34 +207,12 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       gateway1,
     );
 
-    await declaredDepositIntentsHandler.handle([record, record2]);
+    await declaredDepositIntentsHandler.handle([record1, record2]);
 
-    const message = await messageRepository.get(record.messageHash);
-    const message2 = await messageRepository.get(record2.messageHash);
-
-    assert.strictEqual(
-      message && message.sourceStatus,
-      MessageStatus.Declared,
-      `Source status for message ${record.messageHash} must be declared`,
-    );
-
-    assert.strictEqual(
-      message && message.targetStatus,
-      MessageStatus.Undeclared,
-      `Target status for message ${record.messageHash} must be undeclared`,
-    );
-
-    assert.strictEqual(
-      message2 && message2.sourceStatus,
-      MessageStatus.Declared,
-      `Source status for message ${record2.messageHash} must be declared`,
-    );
-
-    assert.strictEqual(
-      message2 && message2.targetStatus,
-      MessageStatus.Undeclared,
-      `Target status for message ${record2.messageHash} must be undeclared`,
-    );
+    await assertMessageRepository(record1);
+    await assertMessageRepository(record2);
+    await assertDepositIntentRepository(record1);
+    await assertDepositIntentRepository(record2);
 
   });
 });
