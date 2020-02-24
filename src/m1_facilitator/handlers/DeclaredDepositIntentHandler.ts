@@ -23,7 +23,7 @@ import Utils from '../../common/Utils';
 import Logger from '../../m0_facilitator/Logger';
 
 /**
- * It handles updates from DeclaredDepositIntent entity
+ * It handles updates from DeclaredDepositIntent entity.
  */
 export default class DeclaredDepositIntentHandler {
   private depositIntentRepository: DepositIntentRepository;
@@ -91,6 +91,7 @@ export default class DeclaredDepositIntentHandler {
 
   /**
    * It updates Message model.
+   *
    * @param contractAddress Address of gateway contract.
    * @param messageHash Message hash.
    * @param feeGasPrice Gasprice which depositor/withdrawal will be paying.
@@ -137,6 +138,7 @@ export default class DeclaredDepositIntentHandler {
   }
 
   /**
+   * It updates DepositIntent model.
    *
    * @param messageHash Message hash.
    * @param tokenAddress Value token address.
