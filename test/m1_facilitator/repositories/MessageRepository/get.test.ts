@@ -34,6 +34,7 @@ describe('MessageRepository::get', (): void => {
   let feeGasLimit: BigNumber;
   let gatewayAddress: string;
   let sourceDeclarationBlockNumber: BigNumber;
+  let sender: string;
   let createdAt: Date;
   let updatedAt: Date;
 
@@ -50,6 +51,7 @@ describe('MessageRepository::get', (): void => {
     feeGasLimit = new BigNumber('10000000000000000000000000000000');
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     sourceDeclarationBlockNumber = new BigNumber(300);
+    sender = '0x0000000000000000000000000000000000000005';
     createdAt = new Date();
     updatedAt = new Date();
 
@@ -63,6 +65,7 @@ describe('MessageRepository::get', (): void => {
       feeGasLimit,
       sourceDeclarationBlockNumber,
       intentHash,
+      sender,
       createdAt,
       updatedAt,
     );

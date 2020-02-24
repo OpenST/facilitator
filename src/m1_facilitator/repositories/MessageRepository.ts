@@ -43,6 +43,8 @@ class MessageModel extends Model {
 
   public readonly sourceDeclarationBlockNumber!: BigNumber;
 
+  public readonly sender!: string;
+
   public readonly createdAt!: Date;
 
   public readonly updatedAt!: Date;
@@ -130,6 +132,11 @@ export default class MessageRepository extends Subject<Message> {
           validate: {
             min: 0,
           },
+        },
+
+        sender: {
+          type: DataTypes.STRING,
+          allowNull: true,
         },
       },
       {
@@ -232,6 +239,7 @@ export default class MessageRepository extends Subject<Message> {
         ? new BigNumber(messageModel.sourceDeclarationBlockNumber)
         : messageModel.sourceDeclarationBlockNumber,
       messageModel.intentHash,
+      messageModel.sender,
       messageModel.createdAt,
       messageModel.updatedAt,
     );
