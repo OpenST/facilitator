@@ -35,11 +35,16 @@ export default class AvailableStateRootsHandler {
 
   /**
    * Handles the AvailableStateRoots entity records.
+   * - Updates the latest anchored block number.
+   * - This handler only reacts to the events of anchors which are populated
+   *   during seed data. It silently ignores events by other anchors.
    *
    * @param records List of AvailableStateRoots.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async handle(records: any[]): Promise<void> {
+  public async handle(records: {
+    contractAddress: string;
+    blockNumber: string;
+  }[]): Promise<void> {
     const contractAddressVsBlockNumberMap = new Map();
 
     records.forEach((record): void => {
