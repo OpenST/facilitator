@@ -50,15 +50,15 @@ interface ManifestAccount {
 /**
  * Interface of facilitator manifest input file. It represents below:
  * {
- *    version: ""
- *    architecture_layout: ""
- *    personas: []
+ *    version: string
+ *    architecture_layout: string
+ *    personas: string[]
  *    metachain:
- *      origin: object
- *      auxiliary: object
- *    accounts: object
- *    origin_contract_addresses: object
- *    facilitate_tokens: []
+ *      origin: ManifestChain
+ *      auxiliary: ManifestChain
+ *    accounts: Record<string, ManifestAccount>
+ *    origin_contract_addresses: Record<string, string>
+ *    facilitate_tokens: string[]
  * }
  */
 interface ManifestInfo {
@@ -76,7 +76,7 @@ interface ManifestInfo {
 
 /** Enum of architecture layouts which facilitator supports. */
 enum ArchitectureLayout {
-  MOSAIC1 = 'M1',
+  MOSAIC1 = 'MOSAIC1',
 }
 
 /** Enum of different personas which facilitator supports. */

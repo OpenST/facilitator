@@ -44,7 +44,7 @@
           "type": "array",
           "additionalProperties": false,
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/Address"
           }
         }
       },
@@ -64,7 +64,7 @@
     },
     "Url": {
       "type": "string",
-      "pattern": "^(http|https|ws):\/\/(([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])(:[0-9]+)?\/?(.*)$"
+      "pattern": "^(http|https|ws|wss):\/\/(([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])(:[0-9]+)?\/?(.*)$"
     },
     "Metachain": {
       "type": "object",
