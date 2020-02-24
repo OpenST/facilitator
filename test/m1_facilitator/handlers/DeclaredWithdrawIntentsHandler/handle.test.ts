@@ -33,7 +33,7 @@ import GatewayRepository
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 import Anchor from '../../../../src/m1_facilitator/models/Anchor';
 
-describe('DeclaredWithdrawIntentsHandler::handle', () => {
+describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
   let handler: DeclaredWithdrawIntentsHandler;
   let messageRepository: MessageRepository;
   let withdrawIntentRepository: WithdrawIntentRepository;
@@ -132,7 +132,8 @@ describe('DeclaredWithdrawIntentsHandler::handle', () => {
       && withdrawIntentRecord.amount.isEqualTo(
         new BigNumber(withdrawIntentEntityRecord.amount),
       ),
-      'Amount must match',
+      `Expected withdrawal amount is ${withdrawIntentRecord && withdrawIntentRecord.amount}`
+      + ` but got ${withdrawIntentEntityRecord && withdrawIntentEntityRecord.amount}`,
     );
   });
 

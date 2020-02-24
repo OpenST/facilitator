@@ -12,18 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import BigNumber from 'bignumber.js';
+
 import WithdrawIntentRepository
   from '../repositories/WithdrawIntentRepository';
 import MessageRepository from '../repositories/MessageRepository';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import WithdrawIntent from '../models/WithdrawIntent';
-import GatewayRepository from "../repositories/GatewayRepository";
+import GatewayRepository from '../repositories/GatewayRepository';
 
+/**
+ * This class handles the updates from DeclaredWithdrawIntents.
+ */
 export default class DeclaredWithdrawIntentsHandler {
-  /* Withdraw intent repository intent. */
+  /* Withdraw intent repository. */
   private withdrawIntentRepository: WithdrawIntentRepository;
+
+  /* Gateway repository instance. */
   private gatewayRepository: GatewayRepository;
 
   /* Message repository. */
@@ -32,7 +37,7 @@ export default class DeclaredWithdrawIntentsHandler {
 
   /**
    * Construct DeclaredWithdrawIntentsHandler with params.
-   * @param withdrawIntentRepository Instance of withdraw intent repository
+   * @param withdrawIntentRepository Instance of withdraw intent repository.
    * @param messageRepository Instance of message repository.
    * @param gatewayRepository Instance of gateway repository.
    */
