@@ -30,7 +30,7 @@ import GatewayRepository
   from '../../../../src/m1_facilitator/repositories/GatewayRepository';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 
-describe('ConfirmDepositIntentsHandler::handle', () => {
+describe('ConfirmDepositIntentsHandler::handle', (): void => {
   let messageRepository: MessageRepository;
   let gatewayRepository: GatewayRepository;
   let confirmDepositIntentsHandler: ConfirmDepositIntentsHandler;
