@@ -44,7 +44,8 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
     );
   });
 
-  it('should change target status to declared for existing message', async (): Promise<void> => {
+  it('should change target status to declared for existing'
+    + ' message', async (): Promise<void> => {
     const messageHash = web3utils.sha3('1');
     const existingMessage = new Message(
       messageHash,
@@ -72,7 +73,8 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
     );
   });
 
-  it('should create a message with target status declared if message does not exists', async (): Promise<void> => {
+  it('should create a message with target status declared' 
+    + ' if message does not exists', async (): Promise<void> => {
     const messageHash = web3utils.sha3('1');
 
     const confirmWithdrawIntentRecord = {

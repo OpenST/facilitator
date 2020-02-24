@@ -40,7 +40,13 @@ export default class ConfirmWithdrawIntentHandler {
   }
 
   /**
-   * Handles the ConfirmWithdrawIntent entity.
+   * - Handles the ConfirmWithdrawIntent entity.
+   * - Updates the target status of message with `Withdraw` type to `Declared`
+   *   if it is `Undeclared`.
+   * - If message does not exists, it creates message record.
+   * - This handler only reacts to the events of gateways which are populated
+   *   during seed data. It silently ignores the events by the other gateways.
+   *
    * @param records List of ConfirmWithdrawIntents.
    */
   public async handle(records: {
