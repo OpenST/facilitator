@@ -78,8 +78,8 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       '0x0000000000000000000000000000000000000005',
       GatewayType.ERC20,
       Anchor.getGlobalAddress('0x0000000000000000000000000000000000000007'),
-      '0x0000000000000000000000000000000000000008',
       new BigNumber(0),
+      '0x0000000000000000000000000000000000000008',
     );
 
     await gatewayRepository.save(gateway);
@@ -145,7 +145,8 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       && messageRecord.feeGasPrice.isEqualTo(
         new BigNumber(withdrawIntentEntityRecord.feeGasPrice),
       ),
-      'FeeGas Price must match',
+      `Expected FeeGas Price is ${withdrawIntentEntityRecord.feeGasPrice} must match `
+      + ` but found ${messageRecord && messageRecord.feeGasPrice && messageRecord.feeGasPrice.toString(10)}`,
     );
 
     assert.isOk(
@@ -154,7 +155,8 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       && messageRecord.feeGasLimit.isEqualTo(
         new BigNumber(withdrawIntentEntityRecord.feeGasLimit),
       ),
-      'FeeGas limit must match',
+      `Expected FeeGas limit is ${withdrawIntentEntityRecord.feeGasLimit} must match `
+      + ` but found ${messageRecord && messageRecord.feeGasLimit && messageRecord.feeGasLimit.toString(10)}`,
     );
 
     assert.isOk(
@@ -163,7 +165,8 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       && messageRecord.sourceDeclarationBlockNumber.isEqualTo(
         new BigNumber(withdrawIntentEntityRecord.blockNumber),
       ),
-      'Source declaration block number must match',
+      `Expected source declaration block height is ${withdrawIntentEntityRecord.blockNumber} must match `
+      + ` but found ${messageRecord && messageRecord.sourceDeclarationBlockNumber && messageRecord.sourceDeclarationBlockNumber.toString(10)}`,
     );
 
     assert.strictEqual(
