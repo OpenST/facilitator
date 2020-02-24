@@ -30,7 +30,7 @@ import Message, {
 } from '../../../../src/m1_facilitator/models/Message';
 import GatewayRepository
   from '../../../../src/m1_facilitator/repositories/GatewayRepository';
-import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
+import Gateway, {GatewayType} from '../../../../src/m1_facilitator/models/Gateway';
 import Anchor from '../../../../src/m1_facilitator/models/Anchor';
 
 describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
@@ -39,13 +39,22 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
   let withdrawIntentRepository: WithdrawIntentRepository;
   let gatewayRepository: GatewayRepository;
 
-  const withdrawIntentEntityRecord = {
-    messageHash: web3Utils.sha3('1'),
-    contractAddress: '0x0000000000000000000000000000000000000001',
-    utilityTokenAddress: '0x0000000000000000000000000000000000000002',
-    amount: '2',
-    beneficiary: '0x0000000000000000000000000000000000000003',
-  };
+  const withdrawIntentEntityRecords = [
+    {
+      messageHash: web3Utils.sha3('1'),
+      contractAddress: '0x0000000000000000000000000000000000000001',
+      utilityTokenAddress: '0x0000000000000000000000000000000000000002',
+      amount: '2',
+      beneficiary: '0x0000000000000000000000000000000000000003',
+    },
+    {
+      messageHash: web3Utils.sha3('2'),
+      contractAddress: '0x0000000000000000000000000000000000000001',
+      utilityTokenAddress: '0x0000000000000000000000000000000000000002',
+      amount: '3',
+      beneficiary: '0x0000000000000000000000000000000000000004',
+    },
+  ];
 
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
@@ -57,7 +66,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     );
 
     const gateway = new Gateway(
-      withdrawIntentEntityRecord.contractAddress,
+      withdrawIntentEntityRecords[0].contractAddress,
       '0x0000000000000000000000000000000000000005',
       GatewayType.ERC20,
       Anchor.getGlobalAddress('0x0000000000000000000000000000000000000007'),
@@ -68,9 +77,13 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     await gatewayRepository.save(gateway);
   });
 
-  it('should handle declared withdraw intent records', async (): Promise<void> => {
-    await handler.handle([withdrawIntentEntityRecord]);
-
+  async function assertWithdrawIntent(withdrawIntentEntityRecord: {
+    messageHash: string;
+    contractAddress: string;
+    utilityTokenAddress: string;
+    amount: string;
+    beneficiary: string;
+  }): Promise<void> {
     const messageRecord = await messageRepository.get(
       withdrawIntentEntityRecord.messageHash,
     );
@@ -135,6 +148,13 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       `Expected withdrawal amount is ${withdrawIntentRecord && withdrawIntentRecord.amount}`
       + ` but got ${withdrawIntentEntityRecord && withdrawIntentEntityRecord.amount}`,
     );
+  }
+
+  it('should handle declared withdraw intent records', async (): Promise<void> => {
+    await handler.handle(withdrawIntentEntityRecords);
+
+    await assertWithdrawIntent(withdrawIntentEntityRecords[0]);
+    await assertWithdrawIntent(withdrawIntentEntityRecords[1]);
   });
 
   it('should update source status to declared if message already exists', async (): Promise<void> => {
@@ -148,10 +168,10 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
 
     await messageRepository.save(existingMessage);
 
-    await handler.handle([withdrawIntentEntityRecord]);
+    await handler.handle(withdrawIntentEntityRecords);
 
     const messageRecord = await messageRepository.get(
-      withdrawIntentEntityRecord.messageHash,
+      withdrawIntentEntityRecords[0].messageHash,
     );
 
     assert.strictEqual(
