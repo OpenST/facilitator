@@ -51,6 +51,8 @@ export default class Message extends Comparable<Message> {
 
   public sourceDeclarationBlockNumber?: BigNumber;
 
+  public sender?: string;
+
   public createdAt?: Date;
 
   public updatedAt?: Date;
@@ -69,6 +71,7 @@ export default class Message extends Comparable<Message> {
    * @param feeGasLimit Fee gas limit for reward calculation.
    * @param gatewayAddress Gateway contract address.
    * @param sourceDeclarationBlockNumber Block number at which message was declared.
+   * @param sender Address of message sender.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */
@@ -82,6 +85,7 @@ export default class Message extends Comparable<Message> {
     feeGasPrice?: BigNumber,
     feeGasLimit?: BigNumber,
     sourceDeclarationBlockNumber?: BigNumber,
+    sender?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
@@ -95,6 +99,7 @@ export default class Message extends Comparable<Message> {
     this.feeGasPrice = feeGasPrice;
     this.feeGasLimit = feeGasLimit;
     this.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
+    this.sender = sender;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
