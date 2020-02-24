@@ -48,8 +48,8 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       '0x0000000000000000000000000000000000000010',
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000001',
-      '0x0000000000000000000000000000000000000030',
       new BigNumber(200),
+      '0x0000000000000000000000000000000000000030',
     );
     await gatewayRepository.save(
       gateway,
@@ -191,8 +191,8 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       '0x0000000000000000000000000000000000000010',
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000001',
-      '0x0000000000000000000000000000000000000030',
       new BigNumber(200),
+      '0x0000000000000000000000000000000000000030',
     );
     await gatewayRepository.save(
       gateway1,
