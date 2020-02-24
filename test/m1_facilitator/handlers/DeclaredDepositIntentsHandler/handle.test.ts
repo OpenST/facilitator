@@ -93,7 +93,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
         new BigNumber(record.feeGasLimit),
       ),
       `Expected gas limit is ${record.feeGasLimit} but`
-      + ` got ${message && message.feeGasLimit && message.feeGasLimit}`,
+      + ` got ${message && message.feeGasLimit && message.feeGasLimit.toString(10)}`,
     );
 
     assert.isOk(
@@ -101,7 +101,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
         new BigNumber(record.feeGasPrice),
       ),
       `Expected gas limit is ${record.feeGasLimit && record.feeGasLimit} but`
-      + ` got ${message && message.feeGasLimit && message.feeGasLimit}`,
+      + ` got ${message && message.feeGasLimit && message.feeGasLimit.toString(10)}`,
     );
 
     assert.isOk(
@@ -112,7 +112,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       `Expected source declaration block number is ${record.blockNumber} but got`
       + `${
         message
-        && message.sourceDeclarationBlockNumber && message.sourceDeclarationBlockNumber
+        && message.sourceDeclarationBlockNumber && message.sourceDeclarationBlockNumber.toString(10)
       }`,
     );
   }
@@ -130,7 +130,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
         new BigNumber(record.amount),
       ),
       `Expected deposit amount is ${record.amount} but got `
-      + `${depositIntent && depositIntent.amount && depositIntent.amount}`,
+      + `${depositIntent && depositIntent.amount && depositIntent.amount.toString(10)}`,
     );
 
     assert.strictEqual(
