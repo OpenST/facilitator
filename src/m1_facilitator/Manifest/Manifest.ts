@@ -15,29 +15,61 @@
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
+import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import schema from './manifest.schema.json';
+import Web3 from 'web3';
 
-interface ManifestInputChain {
+/**
+ * Interface of facilitator manifest file input chain data. It represents below:
+ * {
+ *    avatar_account: ""
+ *    node_endpoint: ""
+ *    graph_ws_endpoint: ""
+ *    graph_rpc_endpoint: ""
+ * }
+ */
+interface ManifestChain {
   avatar_account: string;
   node_endpoint: string;
   graph_ws_endpoint: string;
   graph_rpc_endpoint: string;
 }
 
-interface ManifestInputAccount {
+/**
+ * Interface of facilitator manifest file input account data. It represents below:
+ * {
+ *    keystore_path: ""
+ *    keystore_password_path: ""
+ * }
+ */
+interface ManifestAccount {
   keystore_path: string;
   keystore_password_path: string;
 }
 
-interface ManifestInputType {
+/**
+ * Interface of facilitator manifest input file. It represents below:
+ * {
+ *    version: ""
+ *    architecture_layout: ""
+ *    personas: []
+ *    metachain:
+ *      origin: object
+ *      auxiliary: object
+ *    accounts: object
+ *    origin_contract_addresses: object
+ *    facilitate_tokens: []
+ * }
+ */
+interface ManifestInfo {
   version: string;
   architecture_layout: string;
   personas: string[];
   metachain: {
-    origin: ManifestInputChain;
-    auxiliary: ManifestInputChain;
+    origin: ManifestChain;
+    auxiliary: ManifestChain;
   };
-  accounts: Record<string, ManifestInputAccount>;
+  accounts: Record<string, ManifestAccount>;
   origin_contract_addresses: Record<string, string>;
   facilitate_tokens: string[];
 }
@@ -69,19 +101,19 @@ export class DBConfig {
  * It holds avatar information.
  */
 export class Avatar {
-  public readonly keystorePath: string;
+  public readonly keystore: EncryptedKeystoreV3Json;
 
-  public readonly keystorePasswordPath: string;
+  public readonly password: string;
 
   /**
    * Constructor.
    *
-   * @param keystorePath File path containing keystore path.
-   * @param keystorePasswordPath File path containing keystore password.
+   * @param keystore Encrypted keystore.
+   * @param password Keystore password.
    */
-  public constructor(keystorePath: string, keystorePasswordPath: string) {
-    this.keystorePath = keystorePath;
-    this.keystorePasswordPath = keystorePasswordPath;
+  public constructor(keystore: EncryptedKeystoreV3Json, password: string) {
+    this.keystore = keystore;
+    this.password = password;
   }
 }
 
@@ -101,6 +133,9 @@ export class Chain {
   /** Avatar account address. */
   public readonly avatarAccount: string;
 
+  /** Web3 object */
+  public readonly web3: Web3;
+
   /**
    * Constructor
    *
@@ -108,17 +143,20 @@ export class Chain {
    * @param graphWsEndpoint Graph web socket end point.
    * @param graphRpcEndpoint Graph rpc end point.
    * @param avatarAccount Avatar account address.
+   * @param web3 Web3 object.
    */
   public constructor(
     nodeEndpoint: string,
     graphWsEndpoint: string,
     graphRpcEndpoint: string,
     avatarAccount: string,
+    web3: Web3,
   ) {
     this.nodeEndpoint = nodeEndpoint;
     this.graphWsEndpoint = graphWsEndpoint;
     this.graphRpcEndpoint = graphRpcEndpoint;
     this.avatarAccount = avatarAccount;
+    this.web3 = web3;
   }
 }
 
@@ -207,7 +245,7 @@ export default class Manifest {
         throw new Error(`Error reading facilitator manifest: ${manifestPath}, Exception: ${e.message}`);
       }
       manifestConfig.metachain = Manifest.getMetachain(manifestConfig);
-      manifestConfig.accounts = Manifest.getAccounts(manifestConfig);
+      manifestConfig.accounts = Manifest.getAvatars(manifestConfig);
       return new Manifest(manifestConfig);
     }
 
@@ -219,18 +257,20 @@ export default class Manifest {
    *
    * @param config Facilitator input yaml object.
    */
-  private static getMetachain(config: ManifestInputType): Metachain {
+  private static getMetachain(config: ManifestInfo): Metachain {
     const originChain = new Chain(
       config.metachain.origin.node_endpoint,
       config.metachain.origin.graph_ws_endpoint,
       config.metachain.origin.graph_rpc_endpoint,
       config.metachain.origin.avatar_account,
+      new Web3(config.metachain.origin.node_endpoint),
     );
     const auxChain = new Chain(
       config.metachain.auxiliary.node_endpoint,
       config.metachain.auxiliary.graph_ws_endpoint,
       config.metachain.auxiliary.graph_rpc_endpoint,
       config.metachain.auxiliary.avatar_account,
+      new Web3(config.metachain.auxiliary.node_endpoint),
     );
 
     return new Metachain(
@@ -244,16 +284,21 @@ export default class Manifest {
    *
    * @param config Facilitator input yaml object
    */
-  private static getAccounts(config: ManifestInputType): Record<string, Avatar> {
-    const avatarAccounts: Record<string, Avatar> = {};
+  private static getAvatars(config: ManifestInfo): Record<string, Avatar> {
+    const avatars: Record<string, Avatar> = {};
     Object.keys(config.accounts).forEach((address: string): void => {
       const acc = config.accounts[address];
       if (!fs.existsSync(acc.keystore_password_path)) {
         throw new Error(`Password file path ${acc.keystore_password_path} doesn't exist.`);
       }
-      avatarAccounts[address] = new Avatar(acc.keystore_path, acc.keystore_password_path);
+      if (!fs.existsSync(acc.keystore_path)) {
+        throw new Error(`Keystore file path ${acc.keystore_path} doesn't exist.`);
+      }
+      const keystore = fs.readFileSync(acc.keystore_path).toString();
+      const password = fs.readFileSync(acc.keystore_password_path).toString();
+      avatars[address] = new Avatar(JSON.parse(keystore), password);
     });
 
-    return avatarAccounts;
+    return avatars;
   }
 }
