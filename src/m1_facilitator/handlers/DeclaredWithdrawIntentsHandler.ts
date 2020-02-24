@@ -47,7 +47,6 @@ export default class DeclaredWithdrawIntentsHandler {
   /* Message repository. */
   private messageRepository: MessageRepository;
 
-
   /**
    * Construct DeclaredWithdrawIntentsHandler with params.
    * @param withdrawIntentRepository Instance of withdraw intent repository.
