@@ -98,7 +98,7 @@ export class DBConfig {
 }
 
 /**
- * It holds avatar information.
+ * It holds avatar account information.
  */
 export class AvatarAccount {
   public readonly keystore: EncryptedKeystoreV3Json;
@@ -194,7 +194,7 @@ export default class Manifest {
 
   public readonly dbConfig: DBConfig;
 
-  public readonly avatars: Record<string, AvatarAccount>;
+  public readonly avatarAccounts: Record<string, AvatarAccount>;
 
   public readonly originContractAddresses: Record<string, string>;
 
@@ -219,7 +219,7 @@ export default class Manifest {
     this.personas = config.personas as Personas[];
     this.metachain = config.metachain;
     this.dbConfig = new DBConfig();
-    this.avatars = config.accounts;
+    this.avatarAccounts = config.accounts;
     this.originContractAddresses = config.origin_contract_addresses;
     this.facilitateTokens = new Set(config.facilitate_tokens);
   }
@@ -245,7 +245,7 @@ export default class Manifest {
         throw new Error(`Error reading facilitator manifest: ${manifestPath}, Exception: ${e.message}`);
       }
       manifestConfig.metachain = Manifest.getMetachain(manifestConfig);
-      manifestConfig.accounts = Manifest.getAvatars(manifestConfig);
+      manifestConfig.accounts = Manifest.getAvatarAccounts(manifestConfig);
       return new Manifest(manifestConfig);
     }
 
@@ -280,12 +280,12 @@ export default class Manifest {
   }
 
   /**
-   * Constructs avatar objects.
+   * Constructs avatar account objects.
    *
    * @param config Facilitator input yaml object
    */
-  private static getAvatars(config: ManifestInfo): Record<string, AvatarAccount> {
-    const avatars: Record<string, AvatarAccount> = {};
+  private static getAvatarAccounts(config: ManifestInfo): Record<string, AvatarAccount> {
+    const avatarAccounts: Record<string, AvatarAccount> = {};
     Object.keys(config.accounts).forEach((address: string): void => {
       const acc = config.accounts[address];
       if (!fs.existsSync(acc.keystore_password_path)) {
@@ -296,9 +296,9 @@ export default class Manifest {
       }
       const keystore = fs.readFileSync(acc.keystore_path).toString();
       const password = fs.readFileSync(acc.keystore_password_path).toString();
-      avatars[address] = new AvatarAccount(JSON.parse(keystore), password);
+      avatarAccounts[address] = new AvatarAccount(JSON.parse(keystore), password);
     });
 
-    return avatars;
+    return avatarAccounts;
   }
 }

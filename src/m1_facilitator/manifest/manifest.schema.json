@@ -15,7 +15,7 @@
         "architecture_layout": {
           "type": "string",
           "additionalProperties": false,
-          "enum": ["M1"]
+          "enum": ["MOSAIC1"]
         },
         "personas": {
           "type": "array",
@@ -83,7 +83,7 @@
       "description": "It encapsulates chain specific information",
       "properties": {
         "avatar_account": {
-          "type": "string"
+          "$ref": "#/definitions/Address"
         },
         "node_endpoint": {
           "type": "string"

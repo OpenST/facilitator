@@ -108,7 +108,7 @@ describe('Config.fromFile()', (): void => {
       inputAvatarAccounts[address] = new AvatarAccount(JSON.parse(keystore), password);
     });
     assert.deepStrictEqual(
-      manifest.avatars,
+      manifest.avatarAccounts,
       inputAvatarAccounts,
       'Avatar object mismatch.',
     );

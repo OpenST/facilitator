@@ -1,5 +1,5 @@
 version: v0.14
-architecture_layout: M1
+architecture_layout: MOSAIC1
 personas:
   - facilitator
 metachain:
