@@ -18,7 +18,7 @@ import GatewayRepository from '../repositories/GatewayRepository';
 
 import assert = require('assert');
 
-export default class ConfirmWithdrawIntentsHandler {
+export default class ConfirmWithdrawIntentHandler {
   /* Instance of message repository. */
   private messageRepository: MessageRepository;
 
