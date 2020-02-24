@@ -54,8 +54,8 @@ describe('Gateway::get', (): void => {
       remoteGA,
       gatewayType,
       anchorGA,
-      destinationGA,
       remoteGatewayLastProvenBlockNumber,
+      destinationGA,
       createdAt,
       updatedAt,
     );
