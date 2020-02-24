@@ -41,6 +41,9 @@ export default class AvailableStateRootsHandler {
 
   /**
    * Handles the AvailableStateRoots entity records.
+   * - Updates the latest anchored block number.
+   * - This handler only reacts to the events of anchors which are populated
+   *   during seed data. It silently ignores events by other anchors.
    *
    * @param records List of AvailableStateRoots.
    */
