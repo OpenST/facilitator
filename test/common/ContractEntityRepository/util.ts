@@ -15,8 +15,8 @@
 // ----------------------------------------------------------------------------
 
 
-import ContractEntity, { M0EntityType } from '../../../../src/common/models/ContractEntity';
-import assert from '../../../test_utils/assert';
+import ContractEntity, { M0EntityType } from '../../../src/common/models/ContractEntity';
+import assert from '../../test_utils/assert';
 
 /**
  * It contains common methods used for testing purpose of ContractEntityRepository.

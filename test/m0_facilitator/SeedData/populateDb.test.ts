@@ -29,7 +29,7 @@ import { GatewayType } from '../../../src/m0_facilitator/repositories/GatewayRep
 import Repositories from '../../../src/m0_facilitator/repositories/Repositories';
 import SeedData from '../../../src/m0_facilitator/SeedData';
 import AuxiliaryChainRepositoryUtil from '../repositories/AuxiliaryChainRepository/util';
-import ContractEntityRepositoryUtil from '../repositories/ContractEntityRepository/util';
+import ContractEntityRepositoryUtil from '../../common/ContractEntityRepository/util';
 import GatewayRepositoryUtil from '../repositories/GatewayRepository/util';
 import Utils from '../../../src/m0_facilitator/Utils';
 

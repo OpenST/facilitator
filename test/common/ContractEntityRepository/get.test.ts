@@ -17,9 +17,9 @@
 
 import BigNumber from 'bignumber.js';
 
-import ContractEntity, { M0EntityType } from '../../../../src/common/models/ContractEntity';
-import Repositories from '../../../../src/m0_facilitator/repositories/Repositories';
-import assert from '../../../test_utils/assert';
+import ContractEntity, { M0EntityType } from '../../../src/common/models/ContractEntity';
+import Repositories from '../../../src/m0_facilitator/repositories/Repositories';
+import assert from '../../test_utils/assert';
 import Util from './util';
 
 interface TestConfigInterface {
