@@ -60,6 +60,7 @@ export enum M1EntityType {
 export default class ContractEntity<T> extends Comparable<ContractEntity<T>> {
   public contractAddress: string;
 
+  /** It is generic entity type. Ex: M0EntityType, M1EntityType  */
   public entityType: T;
 
   public timestamp: BigNumber;
@@ -71,7 +72,7 @@ export default class ContractEntity<T> extends Comparable<ContractEntity<T>> {
   /**
    * Constructor to set fields of Contract Entities model.
    * @param contractAddress Address of the contract.
-   * @param entityType Type of the entity.
+   * @param entityType Generic entity type(e.g. M0EntityType, M1EntityType).
    * @param timestamp Last updated time in secs.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
@@ -98,6 +99,7 @@ export default class ContractEntity<T> extends Comparable<ContractEntity<T>> {
    *          is lesser.
    */
   public compareTo(other: ContractEntity<T>): number {
+    // As `entityType` is generic, we wont be able to typecast directly to string.
     const currentKey = this.contractAddress.concat(this.entityType as unknown as string);
     const specifiedKey = other.contractAddress.concat(this.entityType as unknown as string);
 
