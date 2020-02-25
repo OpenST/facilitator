@@ -47,8 +47,8 @@ export default class ConfirmWithdrawIntentsHandler {
 
   /**
    * Handles the ConfirmWithdrawIntent entity records.
-   * - It creates a message record and updates it's target status to `Declared`.
-   * - It creates `ConfirmWithdrawIntents` record.
+   * - It creates a message record if doesn't exists and updates it's target
+   *   status to `Declared`.
    * - This handler only reacts to the events of gateways which are populated
    *   during seed data. It silently ignores the events by the other gateways.
    *
