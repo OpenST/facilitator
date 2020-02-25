@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Mutex } from 'async-mutex';
 import * as Web3Utils from 'web3-utils';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
+import Logger from '../../common/Logger';
 
 /**
  * GatewayProven struct represents a GatewayProven subgraph entity
@@ -32,7 +34,7 @@ class GatewayProvenEntity {
   public constructor(
     gatewayAddress: string,
     remoteGatewayAddress: string,
-    blockNumber: number,
+    blockNumber: string,
   ) {
     assert(Web3Utils.isAddress(gatewayAddress));
     assert(Web3Utils.isAddress(remoteGatewayAddress));
@@ -49,9 +51,12 @@ class GatewayProvenEntity {
 export default class GatewayProvenHandler {
   private readonly gatewayRepository: GatewayRepository;
 
+  private mutex: Mutex;
+
   /** Constructs GatewayProvenHandler from the specified arguments. */
   public constructor(gatewayRepository: GatewayRepository) {
     this.gatewayRepository = gatewayRepository;
+    this.mutex = new Mutex();
   }
 
   /**
@@ -64,8 +69,9 @@ export default class GatewayProvenHandler {
    * @post Function updates a record of `gatewayRepository` matching to
    *       `record.contractAddress` (gateway address) by setting
    *       `remoteGatewayLastProvenBlockNumber` to the `record.blockNumber`
-   *        if `record.blockNumber` is greater than `remoteGatewayLastProvenBlockNumber`
-   *        of the stored value in the repository.
+   *       if `record.blockNumber` is greater than
+   *       `remoteGatewayLastProvenBlockNumber` of the stored value in the
+   *       repository.
    */
   public async handle(records: any[]): Promise<void> {
     const savePromises = records.map(async (record): Promise<void> => {
@@ -78,33 +84,41 @@ export default class GatewayProvenHandler {
       const gatewayModelRecord: Gateway | null = await this.gatewayRepository.get(
         gatewayProvenEntity.gatewayAddress,
       );
-      assert(
-        gatewayModelRecord !== null,
-        'There is no gateway model in the gateway repository '
-        + `matching to ${gatewayProvenEntity.gatewayAddress}.`,
-      );
+
+      if (gatewayModelRecord === null) {
+        Logger.warning(
+          'There is no gateway model in the gateway repository '
+          + `matching to ${gatewayProvenEntity.gatewayAddress}.`,
+        );
+        return;
+      }
 
       // We can safely cast as an assertion above is excluding the null case.
-      const gatewayModel: Gateway = gatewayModelRecord as Gateway;
+      const gatewayModel: Gateway = gatewayModelRecord;
 
-      const shouldUpdate = gatewayModel.remoteGatewayLastProvenBlockNumber === undefined
+      const release = await this.mutex.acquire();
+      try {
+        const shouldUpdate = gatewayModel.remoteGatewayLastProvenBlockNumber === undefined
         || gatewayModel.remoteGatewayLastProvenBlockNumber.isLessThan(
           gatewayProvenEntity.blockNumber,
         );
 
-      if (!shouldUpdate) {
-        return;
+        if (!shouldUpdate) {
+          return;
+        }
+
+        const updatedGatewayModel = new Gateway(
+          gatewayModel.gatewayGA,
+          gatewayModel.remoteGA,
+          gatewayModel.gatewayType,
+          gatewayModel.anchorGA,
+          gatewayProvenEntity.blockNumber,
+        );
+
+        await this.gatewayRepository.save(updatedGatewayModel);
+      } finally {
+        release();
       }
-
-      const updatedGatewayModel = new Gateway(
-        gatewayModel.gatewayGA,
-        gatewayModel.remoteGA,
-        gatewayModel.gatewayType,
-        gatewayModel.anchorGA,
-        gatewayProvenEntity.blockNumber,
-      );
-
-      await this.gatewayRepository.save(updatedGatewayModel);
     });
 
     await Promise.all(savePromises);

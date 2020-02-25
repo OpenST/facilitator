@@ -62,6 +62,7 @@
     "apollo-link-http": "1.5.15",
     "apollo-link-ws": "1.0.18",
     "async": "3.1.0",
+    "async-mutex": "0.1.4",
     "axios": "0.19.0",
     "bignumber.js": "9.0.0",
     "commander": "2.20.0",
