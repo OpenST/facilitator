@@ -19,7 +19,7 @@ import { DataTypes, InitOptions, Model } from 'sequelize';
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
 import Message, { MessageType, MessageStatus } from '../models/Message';
 import Subject from '../../common/observer/Subject';
-import Utils from '../../m0_facilitator/Utils';
+import Utils from '../../common/Utils';
 
 /**
  * An interface, that represents a row from a messages table.

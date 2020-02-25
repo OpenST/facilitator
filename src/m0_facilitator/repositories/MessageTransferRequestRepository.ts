@@ -24,7 +24,7 @@ import {
 
 import MessageTransferRequest from '../models/MessageTransferRequest';
 import Subject from '../../common/observer/Subject';
-import Utils from '../Utils';
+import Utils from '../../common/Utils';
 import { MessageModel } from './MessageRepository';
 import { MAX_VALUE } from '../Constants';
 

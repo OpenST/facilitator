@@ -17,7 +17,7 @@ import BigNumber from 'bignumber.js';
 
 import Anchor from '../models/Anchor';
 import Subject from '../../common/observer/Subject';
-import Utils from '../../m0_facilitator/Utils';
+import Utils from '../../common/Utils';
 
 import assert = require('assert');
 

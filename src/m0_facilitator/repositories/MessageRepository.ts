@@ -23,7 +23,7 @@ import {
 
 import Message from '../models/Message';
 import Subject from '../../common/observer/Subject';
-import Utils from '../Utils';
+import Utils from '../../common/Utils';
 import { MAX_VALUE } from '../Constants';
 
 /* eslint-disable class-methods-use-this */
