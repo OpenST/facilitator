@@ -17,8 +17,8 @@ import BigNumber from 'bignumber.js';
 
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
-import ConfirmWithdrawIntentHandler
-  from '../../../../src/m1_facilitator/handlers/ConfirmWithdrawIntentHandler';
+import ConfirmWithdrawIntentsHandler
+  from '../../../../src/m1_facilitator/handlers/ConfirmWithdrawIntentsHandler';
 import Message, {
   MessageStatus,
   MessageType,
@@ -33,12 +33,12 @@ import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gate
 describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
   let messageRepository: MessageRepository;
   let gatewayRepository: GatewayRepository;
-  let confirmWithdrawIntentsHandler: ConfirmWithdrawIntentHandler;
+  let confirmWithdrawIntentsHandler: ConfirmWithdrawIntentsHandler;
 
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
     ({ messageRepository, gatewayRepository } = repositories);
-    confirmWithdrawIntentsHandler = new ConfirmWithdrawIntentHandler(
+    confirmWithdrawIntentsHandler = new ConfirmWithdrawIntentsHandler(
       messageRepository,
       gatewayRepository,
     );
