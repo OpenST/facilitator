@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Mutex } from 'async-mutex';
 import * as Web3Utils from 'web3-utils';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
+
 import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
 import Logger from '../../common/Logger';
@@ -51,12 +51,9 @@ class GatewayProvenEntity {
 export default class GatewayProvenHandler {
   private readonly gatewayRepository: GatewayRepository;
 
-  private mutex: Mutex;
-
   /** Constructs GatewayProvenHandler from the specified arguments. */
   public constructor(gatewayRepository: GatewayRepository) {
     this.gatewayRepository = gatewayRepository;
-    this.mutex = new Mutex();
   }
 
   /**
@@ -96,32 +93,15 @@ export default class GatewayProvenHandler {
       // We can safely cast as a check above is excluding the null case.
       const gatewayModel: Gateway = gatewayModelRecord;
 
-      // As potentially multiple GatewayProven events for the same Gateway
-      // can appear in handler, we lock 'check should we upsert and upsert itself'
-      // part.
-      const release = await this.mutex.acquire();
-      try {
-        const shouldUpdate = gatewayModel.remoteGatewayLastProvenBlockNumber === undefined
-        || gatewayModel.remoteGatewayLastProvenBlockNumber.isLessThan(
-          gatewayProvenEntity.blockNumber,
-        );
+      const updatedGatewayModel = new Gateway(
+        gatewayModel.gatewayGA,
+        gatewayModel.remoteGA,
+        gatewayModel.gatewayType,
+        gatewayModel.anchorGA,
+        gatewayProvenEntity.blockNumber,
+      );
 
-        if (!shouldUpdate) {
-          return;
-        }
-
-        const updatedGatewayModel = new Gateway(
-          gatewayModel.gatewayGA,
-          gatewayModel.remoteGA,
-          gatewayModel.gatewayType,
-          gatewayModel.anchorGA,
-          gatewayProvenEntity.blockNumber,
-        );
-
-        await this.gatewayRepository.save(updatedGatewayModel);
-      } finally {
-        release();
-      }
+      await this.gatewayRepository.save(updatedGatewayModel);
     });
 
     await Promise.all(savePromises);

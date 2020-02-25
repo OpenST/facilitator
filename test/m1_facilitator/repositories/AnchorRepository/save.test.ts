@@ -48,7 +48,7 @@ describe('AnchorRepository::save', (): void => {
 
   it('checks "insert" of an anchor', async (): Promise<void> => {
     const anchorGA = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
-    const lastAnchoredBlockNumber = new BigNumber(1);
+    const lastAnchoredBlockNumber = new BigNumber(3);
 
     const anchor = new Anchor(
       anchorGA,

@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 import { DataTypes, Model, InitOptions } from 'sequelize';
+import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
 
 import Anchor from '../models/Anchor';
@@ -47,6 +48,11 @@ class AnchorModel extends Model {
  * On construction it initializes underlying database model.
  */
 export default class AnchorRepository extends Subject<Anchor> {
+  /* Storage */
+
+  private mutex: Mutex;
+
+
   /* Public Functions */
 
   /**
@@ -55,6 +61,8 @@ export default class AnchorRepository extends Subject<Anchor> {
    */
   public constructor(initOptions: InitOptions) {
     super();
+
+    this.mutex = new Mutex();
 
     AnchorModel.init(
       {
@@ -93,16 +101,30 @@ export default class AnchorRepository extends Subject<Anchor> {
    * @returns Newly created or updated anchor object (with all saved fields).
    */
   public async save(anchor: Anchor): Promise<Anchor> {
-    await this.assertAnchoredBlockNumber(anchor);
+    const release = await this.mutex.acquire();
+    try {
+      const anchorDatabaseModel = await AnchorModel.findOne({
+        where: {
+          anchorGA: anchor.anchorGA,
+        },
+      });
 
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
+      assert(
+        anchorDatabaseModel === null || anchor.lastAnchoredBlockNumber.isGreaterThan(
+          anchorDatabaseModel.lastAnchoredBlockNumber,
+        ),
+      );
 
-    await AnchorModel.upsert(
-      anchor,
-      {
-        fields: definedOwnProps,
-      },
-    );
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
+      await AnchorModel.upsert(
+        anchor,
+        {
+          fields: definedOwnProps,
+        },
+      );
+    } finally {
+      release();
+    }
 
     const upsertedAnchor: Anchor | null = await this.get(anchor.anchorGA);
     assert(upsertedAnchor !== undefined);
@@ -152,26 +174,5 @@ export default class AnchorRepository extends Subject<Anchor> {
       anchorModel.createdAt,
       anchorModel.updatedAt,
     );
-  }
-
-  /**
-   * assertAnchoredBlockNumber() function asserts that stored (if exists)
-   * `lastAnchoredBlockNumber` matching to the anchorGA of the given anchor is
-   * less than the `lastAnchoredBlockNumber` of the given anchor.
-   *
-   * @param anchor An anchor object to assert validity against the stored one.
-   */
-  private async assertAnchoredBlockNumber(anchor: Anchor): Promise<void> {
-    const anchorModel = await AnchorModel.findOne({
-      where: {
-        anchorGA: anchor.anchorGA,
-      },
-    });
-
-    if (anchorModel === null) {
-      return;
-    }
-
-    assert(anchor.lastAnchoredBlockNumber.isGreaterThan(anchorModel.lastAnchoredBlockNumber));
   }
 }
