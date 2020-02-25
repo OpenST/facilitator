@@ -93,9 +93,12 @@ export default class GatewayProvenHandler {
         return;
       }
 
-      // We can safely cast as an assertion above is excluding the null case.
+      // We can safely cast as a check above is excluding the null case.
       const gatewayModel: Gateway = gatewayModelRecord;
 
+      // As potentially multiple GatewayProven events for the same Gateway
+      // can appear in handler, we lock 'check should we upsert and upsert itself'
+      // part.
       const release = await this.mutex.acquire();
       try {
         const shouldUpdate = gatewayModel.remoteGatewayLastProvenBlockNumber === undefined
