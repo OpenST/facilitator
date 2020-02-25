@@ -17,7 +17,7 @@
 
 import { Subscription } from 'apollo-client/util/Observable';
 
-import Logger from '../Logger';
+import Logger from '../../common/Logger';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import TransactionHandler from '../TransactionHandler';
 import GraphClient from './GraphClient';

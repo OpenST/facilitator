@@ -49,11 +49,11 @@ describe('DepositIntentRepository::save', (): void => {
 
   it('should creating DepositIntent model correctly', async (): Promise<void> => {
     const depositIntent = new DepositIntent(
-      intentHash,
       messageHash,
       tokenAddress,
       amount,
       beneficiary,
+      intentHash,
       createdAt,
       updatedAt,
     );
@@ -66,7 +66,6 @@ describe('DepositIntentRepository::save', (): void => {
 
   it('should update DepositIntent model correctly', async (): Promise<void> => {
     const depositIntent = new DepositIntent(
-      intentHash,
       messageHash,
     );
 
@@ -77,6 +76,7 @@ describe('DepositIntentRepository::save', (): void => {
     depositIntent.tokenAddress = tokenAddress;
     depositIntent.amount = amount;
     depositIntent.beneficiary = beneficiary;
+    depositIntent.intentHash = 'intentHash';
 
     const updatedDepositIntent = await config.repos.depositIntentRepository.save(
       depositIntent,
@@ -87,11 +87,11 @@ describe('DepositIntentRepository::save', (): void => {
 
   it('should fail when token address and beneficiary address is not valid', async (): Promise<void> => {
     const depositIntent = new DepositIntent(
-      intentHash,
       messageHash,
       '0x1234',
       amount,
       '0x12345',
+      intentHash,
       createdAt,
       updatedAt,
     );

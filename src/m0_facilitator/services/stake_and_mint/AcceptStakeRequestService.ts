@@ -25,7 +25,7 @@ import { OSTComposer } from '@openst/mosaic-contracts/dist/interacts/OSTComposer
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 
 import { ORIGIN_GAS_PRICE } from '../../Constants';
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
 import Observer from '../../observer/Observer';

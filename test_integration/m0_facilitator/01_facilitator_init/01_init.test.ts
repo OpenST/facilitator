@@ -12,7 +12,7 @@ import BaseTokenHelper from '../helpers/BaseTokenHelper';
 import EIP20TokenHelper from '../helpers/EIP20TokenHelper';
 import * as BaseTokenTestData from '../testdata/BaseToken.json';
 import * as EIP20TokenTestData from '../testdata/EIP20Token.json';
-import Logger from '../../../src/m0_facilitator/Logger';
+import Logger from '../../../src/common/Logger';
 import GatewayAddresses from '../../../src/m0_facilitator/Config/GatewayAddresses';
 
 describe('facilitator init', async (): Promise<void> => {

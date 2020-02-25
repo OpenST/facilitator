@@ -16,7 +16,7 @@
 
 
 import Subscriber from './subscriptions/Subscriber';
-import Logger from './Logger';
+import Logger from '../common/Logger';
 import { SUBSCRIPTION_RESTART_DURATION } from './Constants';
 
 /**
