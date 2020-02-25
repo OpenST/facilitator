@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
 import AuxiliaryChain from '../models/AuxiliaryChain';
-import Subject from '../observer/Subject';
+import Subject from '../../common/observer/Subject';
 import Utils from '../Utils';
 
 /**

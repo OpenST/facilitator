@@ -22,7 +22,7 @@ import {
 } from 'sequelize';
 
 import Message from '../models/Message';
-import Subject from '../observer/Subject';
+import Subject from '../../common/observer/Subject';
 import Utils from '../Utils';
 import { MAX_VALUE } from '../Constants';
 

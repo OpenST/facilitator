@@ -21,8 +21,9 @@ import Comparable from '../observer/Comparable';
 
 /**
  * Entity types of origin and aux chain for which timestamp will be recorded.
+ * These entity type is for Mosaic-0.
  */
-export enum EntityType {
+export enum M0EntityType {
   // Common entities
   StateRootAvailables = 'stateRootAvailables',
   GatewayProvens = 'gatewayProvens',
@@ -41,12 +42,25 @@ export enum EntityType {
 }
 
 /**
+ * This entity type is for Mosaic-1 for which timestamp will be recorded.
+ */
+export enum M1EntityType {
+  StateRootAvailables = 'stateRootAvailables',
+  GatewayProvens = 'gatewayProvens',
+  DeclaredDepositIntents = 'declaredDepositIntents',
+  ConfirmedWithdrawIntents = 'confirmedWithdrawIntents',
+  DeclaredWithdrawIntents = 'declaredWithdrawIntents',
+  ConfirmedDepositIntents = 'confirmedDepositIntents',
+  CreatedUtilityTokens = 'CreatedUtilityTokens'
+}
+
+/**
  * Represents ContractEntity model object.
  */
-export default class ContractEntity extends Comparable<ContractEntity> {
+export default class ContractEntity<T> extends Comparable<ContractEntity<T>> {
   public contractAddress: string;
 
-  public entityType: EntityType;
+  public entityType: T;
 
   public timestamp: BigNumber;
 
@@ -64,7 +78,7 @@ export default class ContractEntity extends Comparable<ContractEntity> {
    */
   public constructor(
     contractAddress: string,
-    entityType: EntityType,
+    entityType: T,
     timestamp: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
@@ -83,9 +97,9 @@ export default class ContractEntity extends Comparable<ContractEntity> {
    * @returns `0` if the objects are same, 1 if new object is greater and -1 if new object
    *          is lesser.
    */
-  public compareTo(other: ContractEntity): number {
-    const currentKey = this.contractAddress.concat(this.entityType);
-    const specifiedKey = other.contractAddress.concat(other.entityType);
+  public compareTo(other: ContractEntity<T>): number {
+    const currentKey = this.contractAddress.concat(this.entityType as unknown as string);
+    const specifiedKey = other.contractAddress.concat(this.entityType as unknown as string);
 
     if (currentKey > specifiedKey) {
       return 1;

@@ -18,10 +18,11 @@
 import { Subscription } from 'apollo-client/util/Observable';
 
 import Logger from '../../common/Logger';
-import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import TransactionHandler from '../TransactionHandler';
 import GraphClient from './GraphClient';
 import TransactionFetcher from './TransactionFetcher';
+import { M0EntityType } from '../../common/models/ContractEntity';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -35,7 +36,7 @@ export default class Subscriber {
 
   private handler: TransactionHandler;
 
-  private contractEntityRepository: ContractEntityRepository;
+  private contractEntityRepository: ContractEntityRepository<M0EntityType>;
 
   private fetcher: TransactionFetcher;
 
@@ -53,7 +54,7 @@ export default class Subscriber {
     subscriptionQueries: Record<string, string>,
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
-    contractEntityRepository: ContractEntityRepository,
+    contractEntityRepository: ContractEntityRepository<M0EntityType>,
   ) {
     this.contractEntityRepository = contractEntityRepository;
     this.querySubscriptions = {};

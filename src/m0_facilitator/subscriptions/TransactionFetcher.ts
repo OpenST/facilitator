@@ -17,9 +17,10 @@
 
 import FetchQueries from '../GraphQueries/FetchQueries';
 import Logger from '../../common/Logger';
-import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import GraphClient from './GraphClient';
 import Utils from '../Utils';
+import { M0EntityType } from '../../common/models/ContractEntity';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -29,7 +30,7 @@ export default class TransactionFetcher {
 
   private readonly queryLimit = 100;
 
-  private contractEntityRepository: ContractEntityRepository;
+  private contractEntityRepository: ContractEntityRepository<M0EntityType>;
 
   /**
    * Constructor
@@ -38,7 +39,7 @@ export default class TransactionFetcher {
    */
   public constructor(
     graphClient: GraphClient,
-    contractEntityRepository: ContractEntityRepository,
+    contractEntityRepository: ContractEntityRepository<M0EntityType>,
   ) {
     this.graphClient = graphClient;
     this.contractEntityRepository = contractEntityRepository;

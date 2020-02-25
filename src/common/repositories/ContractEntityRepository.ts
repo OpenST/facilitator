@@ -21,17 +21,17 @@ import {
   DataTypes, InitOptions, Model, Op,
 } from 'sequelize';
 
-import ContractEntity, { EntityType } from '../models/ContractEntity';
+import ContractEntity, { M0EntityType, M1EntityType } from '../models/ContractEntity';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 
 /**
  * An interface, that represents a row from a contract entities table.
  */
-class ContractEntityModel extends Model {
+class ContractEntityModel<T> extends Model<T> {
   public readonly contractAddress!: string;
 
-  public readonly entityType!: EntityType;
+  public readonly entityType!: T;
 
   public readonly timestamp!: BigNumber;
 
@@ -46,7 +46,7 @@ class ContractEntityModel extends Model {
  * Class enables creation, update and retrieval of ContractEntity objects.
  * On construction it initializes underlying database model.
  */
-export default class ContractEntityRepository extends Subject<ContractEntity> {
+export default class ContractEntityRepository<T> extends Subject<ContractEntity<T>> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -66,21 +66,32 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
           primaryKey: true,
           type: DataTypes.ENUM({
             values: [
+              // M0 Facilitator entities
               // Common entities
-              EntityType.GatewayProvens,
-              EntityType.StateRootAvailables,
+              M0EntityType.GatewayProvens,
+              M0EntityType.StateRootAvailables,
               // Stake & Mint Entities
-              EntityType.StakeRequesteds,
-              EntityType.StakeIntentDeclareds,
-              EntityType.StakeIntentConfirmeds,
-              EntityType.StakeProgresseds,
-              EntityType.MintProgresseds,
+              M0EntityType.StakeRequesteds,
+              M0EntityType.StakeIntentDeclareds,
+              M0EntityType.StakeIntentConfirmeds,
+              M0EntityType.StakeProgresseds,
+              M0EntityType.MintProgresseds,
               // Redeem & Unstake entities
-              EntityType.RedeemRequesteds,
-              EntityType.RedeemIntentDeclareds,
-              EntityType.RedeemIntentConfirmeds,
-              EntityType.RedeemProgresseds,
-              EntityType.UnstakeProgresseds,
+              M0EntityType.RedeemRequesteds,
+              M0EntityType.RedeemIntentDeclareds,
+              M0EntityType.RedeemIntentConfirmeds,
+              M0EntityType.RedeemProgresseds,
+              M0EntityType.UnstakeProgresseds,
+              // M1 facilitator entities
+              // Common entities
+              M1EntityType.StateRootAvailables,
+              M1EntityType.GatewayProvens,
+              // Deposit and confirm deposit entities
+              M1EntityType.DeclaredDepositIntents,
+              M1EntityType.ConfirmedDepositIntents,
+              // Withdraw and Confirm withdraw entities
+              M1EntityType.DeclaredWithdrawIntents,
+              M1EntityType.ConfirmedWithdrawIntents,
             ],
           }),
         },
@@ -108,7 +119,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
    *
    * @returns Newly created or updated contract entity object.
    */
-  public async save(contractEntity: ContractEntity): Promise<ContractEntity> {
+  public async save(contractEntity: ContractEntity<T>): Promise<ContractEntity<T>> {
     const contractEntityModelObj = await ContractEntityModel.findOne(
       {
         where: {
@@ -118,11 +129,13 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
       },
     );
 
-    let updatedContractEntity: ContractEntity | null;
+    let updatedContractEntity: ContractEntity<T> | null;
     if (contractEntityModelObj === null) {
-      updatedContractEntity = this.convertToContractEntity(await ContractEntityModel.create(
-        contractEntity,
-      ));
+      updatedContractEntity = this.convertToContractEntity(
+        await ContractEntityModel.create<ContractEntityModel<T>>(
+          contractEntity,
+        ),
+      );
     } else {
       const definedOwnProps: string[] = Utils.getDefinedOwnProps(contractEntity);
       await ContractEntityModel.update(
@@ -137,18 +150,19 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
       );
       updatedContractEntity = await this.get(
         contractEntity.contractAddress,
-        contractEntity.entityType,
+        contractEntity.entityType as unknown as string,
       );
     }
 
     assert(
       updatedContractEntity !== null,
-      `Updated contract entity record not found for contractAddress: ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`,
+      'Updated contract entity record not found for contractAddress:'
+       + ` ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`,
     );
 
-    this.newUpdate(updatedContractEntity as ContractEntity);
+    this.newUpdate(updatedContractEntity as ContractEntity<T>);
 
-    return updatedContractEntity as ContractEntity;
+    return updatedContractEntity as ContractEntity<T>;
   }
 
   /**
@@ -160,8 +174,8 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
   public async get(
     contractAddress: string,
     entityType: string,
-  ): Promise<ContractEntity | null> {
-    const contractEntityModel = await ContractEntityModel.findOne({
+  ): Promise<ContractEntity<T> | null> {
+    const contractEntityModel = await ContractEntityModel.findOne<ContractEntityModel<T>>({
       where: {
         contractAddress: {
           [Op.eq]: contractAddress,
@@ -188,8 +202,8 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
    * @returns Contract Entity object.
    */
   /* eslint-disable class-methods-use-this */
-  private convertToContractEntity(contractEntityModel: ContractEntityModel): ContractEntity {
-    const contractEntity = new ContractEntity(
+  private convertToContractEntity(contractEntityModel: ContractEntityModel<T>): ContractEntity<T> {
+    const contractEntity = new ContractEntity<T>(
       contractEntityModel.contractAddress,
       contractEntityModel.entityType,
       new BigNumber(contractEntityModel.timestamp),

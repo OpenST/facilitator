@@ -23,7 +23,7 @@ import {
 } from 'sequelize';
 
 import MessageTransferRequest from '../models/MessageTransferRequest';
-import Subject from '../observer/Subject';
+import Subject from '../../common/observer/Subject';
 import Utils from '../Utils';
 import { MessageModel } from './MessageRepository';
 import { MAX_VALUE } from '../Constants';

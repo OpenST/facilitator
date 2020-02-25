@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 import { DataTypes, InitOptions, Model } from 'sequelize';
 
 import Gateway from '../models/Gateway';
-import Subject from '../observer/Subject';
+import Subject from '../../common/observer/Subject';
 import Utils from '../Utils';
 import { MAX_VALUE } from '../Constants';
 

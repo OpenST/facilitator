@@ -21,7 +21,7 @@ import { DataTypes, InitOptions, Model } from 'sequelize';
 
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
 import DepositIntent from '../models/DepositIntent';
-import Subject from '../../m0_facilitator/observer/Subject';
+import Subject from '../../common/observer/Subject';
 import Utils from '../../m0_facilitator/Utils';
 
 /**

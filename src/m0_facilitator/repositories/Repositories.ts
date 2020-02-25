@@ -18,10 +18,11 @@ import { InitOptions, Sequelize } from 'sequelize';
 
 import Services from '../services/Services';
 import AuxiliaryChainRepository from './AuxiliaryChainRepository';
-import ContractEntityRepository from './ContractEntityRepository';
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import GatewayRepository from './GatewayRepository';
 import { MessageRepository } from './MessageRepository';
 import MessageTransferRequestRepository from './MessageTransferRequestRepository';
+import { M0EntityType } from '../../common/models/ContractEntity';
 
 export default class Repositories {
   /* Storage */
@@ -34,7 +35,7 @@ export default class Repositories {
 
   public gatewayRepository: GatewayRepository;
 
-  public contractEntityRepository: ContractEntityRepository;
+  public contractEntityRepository: ContractEntityRepository<M0EntityType>;
 
   /* Public Functions */
 
@@ -127,6 +128,6 @@ export default class Repositories {
 
     this.gatewayRepository = new GatewayRepository(initOptions);
 
-    this.contractEntityRepository = new ContractEntityRepository(initOptions);
+    this.contractEntityRepository = new ContractEntityRepository<M0EntityType>(initOptions);
   }
 }

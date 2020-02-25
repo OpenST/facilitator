@@ -17,7 +17,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import ContractEntity, { EntityType } from '../../../../src/m0_facilitator/models/ContractEntity';
+import ContractEntity, { M0EntityType } from '../../../../src/common/models/ContractEntity';
 import Repositories from '../../../../src/m0_facilitator/repositories/Repositories';
 import assert from '../../../test_utils/assert';
 import Util from './util';
@@ -31,16 +31,16 @@ const createdAt = new Date();
 const updatedAt = new Date();
 
 describe('ContractEntityRepository::get', (): void => {
-  let conEntity: ContractEntity;
+  let conEntity: ContractEntity<M0EntityType>;
 
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
 
-    conEntity = new ContractEntity(
+    conEntity = new ContractEntity<M0EntityType>(
       '0x0000000000000000000000000000000000000002',
-      EntityType.StakeProgresseds,
+      M0EntityType.StakeProgresseds,
       new BigNumber(1),
       createdAt,
       updatedAt,
@@ -55,7 +55,7 @@ describe('ContractEntityRepository::get', (): void => {
       conEntity.contractAddress,
       conEntity.entityType,
     );
-    Util.assertion(getResponse as ContractEntity, conEntity);
+    Util.assertion(getResponse as ContractEntity<M0EntityType>, conEntity);
   });
 
   it('should pass when contract addresses are different and '
@@ -64,11 +64,11 @@ describe('ContractEntityRepository::get', (): void => {
       conEntity.contractAddress,
       conEntity.entityType,
     );
-    Util.assertion(firstResponse as ContractEntity, conEntity);
+    Util.assertion(firstResponse as ContractEntity<M0EntityType>, conEntity);
 
-    const secondConEntity = new ContractEntity(
+    const secondConEntity = new ContractEntity<M0EntityType>(
       '0x0000000000000000000000000000000000000009',
-      EntityType.StakeProgresseds,
+      M0EntityType.StakeProgresseds,
       new BigNumber(1),
       createdAt,
       updatedAt,
@@ -82,7 +82,7 @@ describe('ContractEntityRepository::get', (): void => {
       secondConEntity.contractAddress,
       secondConEntity.entityType,
     );
-    Util.assertion(secondReponse as ContractEntity, secondConEntity);
+    Util.assertion(secondReponse as ContractEntity<M0EntityType>, secondConEntity);
   });
 
   it('should return null when querying for non-existing '
@@ -103,7 +103,7 @@ describe('ContractEntityRepository::get', (): void => {
 
   it('should return null when querying for non-existing'
     + ' entity type', async (): Promise<void> => {
-    conEntity.entityType = EntityType.MintProgresseds;
+    conEntity.entityType = M0EntityType.MintProgresseds;
 
     const getResponse = await config.repos.contractEntityRepository.get(
       conEntity.contractAddress,

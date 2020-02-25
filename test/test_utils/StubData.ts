@@ -19,7 +19,7 @@ import BigNumber from 'bignumber.js';
 import * as utils from 'web3-utils';
 
 import AuxiliaryChain from '../../src/m0_facilitator/models/AuxiliaryChain';
-import ContractEntity, { EntityType } from '../../src/m0_facilitator/models/ContractEntity';
+import ContractEntity, { M0EntityType } from '../../src/common/models/ContractEntity';
 import Gateway from '../../src/m0_facilitator/models/Gateway';
 import Message from '../../src/m0_facilitator/models/Message';
 import MessageTransferRequest from '../../src/m0_facilitator/models/MessageTransferRequest';
@@ -124,9 +124,9 @@ export default class StubData {
 
   public static getContractEntity = (
     timestamp = new BigNumber(1),
-  ): ContractEntity => new ContractEntity(
+  ): ContractEntity<M0EntityType> => new ContractEntity<M0EntityType>(
     '0x0000000000000000000000000000000000000002',
-    EntityType.StakeProgresseds,
+    M0EntityType.StakeProgresseds,
     timestamp,
     new Date(),
   );

@@ -17,7 +17,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import ContractEntity, { EntityType } from '../../../../src/m0_facilitator/models/ContractEntity';
+import ContractEntity, { M0EntityType } from '../../../../src/common/models/ContractEntity';
 import Repositories from '../../../../src/m0_facilitator/repositories/Repositories';
 import assert from '../../../test_utils/assert';
 import Util from './util';
@@ -37,9 +37,9 @@ describe('ContractEntityRepository::save', (): void => {
   });
 
   it('should pass when creating contract entity model.', async (): Promise<void> => {
-    const contractEntity = new ContractEntity(
+    const contractEntity = new ContractEntity<M0EntityType>(
       '0x0000000000000000000000000000000000000002',
-      EntityType.StakeProgresseds,
+      M0EntityType.StakeProgresseds,
       new BigNumber(1),
       createdAt,
     );
@@ -51,9 +51,9 @@ describe('ContractEntityRepository::save', (): void => {
   });
 
   it('should pass when updating contract entity model', async (): Promise<void> => {
-    const contractEntity = new ContractEntity(
+    const contractEntity = new ContractEntity<M0EntityType>(
       '0x0000000000000000000000000000000000000002',
-      EntityType.StakeProgresseds,
+      M0EntityType.StakeProgresseds,
       new BigNumber(1),
       createdAt,
     );
@@ -72,8 +72,8 @@ describe('ContractEntityRepository::save', (): void => {
   });
 
   it('should fail when invalid entity type is to be saved', async (): Promise<void> => {
-    const invalidEntityType = 'invalid_entity_type' as EntityType;
-    const contractEntity = new ContractEntity(
+    const invalidEntityType = 'invalid_entity_type' as M0EntityType;
+    const contractEntity = new ContractEntity<M0EntityType>(
       '0x0000000000000000000000000000000000000002',
       invalidEntityType,
       new BigNumber(1),
@@ -87,9 +87,9 @@ describe('ContractEntityRepository::save', (): void => {
   });
 
   it('should fail when timestamp is null', async (): Promise<void> => {
-    const contractEntity = new ContractEntity(
+    const contractEntity = new ContractEntity<M0EntityType>(
       '0x0000000000000000000000000000000000000002',
-      EntityType.StakeRequesteds,
+      M0EntityType.StakeRequesteds,
       null as any,
       createdAt,
     );
@@ -101,9 +101,9 @@ describe('ContractEntityRepository::save', (): void => {
   });
 
   it('should fail when timestamp is undefined', async (): Promise<void> => {
-    const contractEntity = new ContractEntity(
+    const contractEntity = new ContractEntity<M0EntityType>(
       '0x0000000000000000000000000000000000000002',
-      EntityType.StakeRequesteds,
+      M0EntityType.StakeRequesteds,
       undefined as any,
       createdAt,
     );
