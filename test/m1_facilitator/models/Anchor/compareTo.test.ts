@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 import 'mocha';
 import BigNumber from 'bignumber.js';
@@ -84,7 +82,7 @@ describe('Anchor::compareTo', (): void => {
       );
 
       assert.isOk(
-        anchorA.compareTo(anchorB) < 0, // anchorA < anchorB
+        anchorA.compareTo(anchorB) === 0, // anchorA < anchorB
       );
     }
 
@@ -100,7 +98,7 @@ describe('Anchor::compareTo', (): void => {
       );
 
       assert.isOk(
-        anchorA.compareTo(anchorB) > 0, // anchorA < anchorB
+        anchorA.compareTo(anchorB) === 0, // anchorA < anchorB
       );
     }
 
