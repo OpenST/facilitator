@@ -18,7 +18,7 @@ import {
 } from '../../../src/m0_facilitator/repositories/MessageRepository';
 import assert from '../../../test/test_utils/assert';
 import AuxiliaryChain from '../../../src/m0_facilitator/models/AuxiliaryChain';
-import Logger from '../../../src/m0_facilitator/Logger';
+import Logger from '../../../src/common/Logger';
 import SharedStorage from '../SharedStorage';
 
 describe('redeem and unstake with single redeemer & facilitator process', async (): Promise<void> => {

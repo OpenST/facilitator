@@ -57,16 +57,16 @@ export default class DepositIntentRepository extends Subject<DepositIntent> {
 
     DepositIntentModel.init(
       {
-        intentHash: {
+        messageHash: {
           type: DataTypes.STRING,
           primaryKey: true,
           validate: {
             isAlphanumeric: true,
           },
         },
-        messageHash: {
+        intentHash: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
           validate: {
             isAlphanumeric: true,
           },
@@ -116,7 +116,7 @@ export default class DepositIntentRepository extends Subject<DepositIntent> {
     const depositIntentModelObj = await DepositIntentModel.findOne(
       {
         where: {
-          intentHash: depositIntent.intentHash,
+          messageHash: depositIntent.messageHash,
         },
       },
     );
@@ -132,19 +132,19 @@ export default class DepositIntentRepository extends Subject<DepositIntent> {
         depositIntent,
         {
           where: {
-            intentHash: depositIntent.intentHash,
+            messageHash: depositIntent.messageHash,
           },
           fields: definedOwnProps,
         },
       );
       updatedDepositIntent = await this.get(
-        depositIntent.intentHash,
+        depositIntent.messageHash,
       );
     }
 
     assert(
       updatedDepositIntent !== null,
-      `Updated DepositIntent record not found for intent hash: ${depositIntent.intentHash}`,
+      `Updated DepositIntent record not found for message hash: ${depositIntent.messageHash}`,
     );
 
     this.newUpdate(updatedDepositIntent as DepositIntent);
@@ -155,32 +155,11 @@ export default class DepositIntentRepository extends Subject<DepositIntent> {
   /**
    * Fetches DepositIntent object from database if found. Otherwise returns null.
    *
-   * @param intentHash Deposit intent hash.
-   *
-   * @returns DepositIntent object containing values which satisfy the `where` condition.
-   */
-  public async get(intentHash: string): Promise<DepositIntent | null> {
-    const depositIntentModel = await DepositIntentModel.findOne({
-      where: {
-        intentHash,
-      },
-    });
-
-    if (depositIntentModel === null) {
-      return null;
-    }
-
-    return this.convertToDepositIntent(depositIntentModel);
-  }
-
-  /**
-   * Fetches DepositIntent object from database if found. Otherwise returns null.
-   *
    * @param messageHash Message hash.
    *
    * @returns DepositIntent object containing values which satisfy the `where` condition.
    */
-  public async getByMessageHash(messageHash: string): Promise<DepositIntent | null> {
+  public async get(messageHash: string): Promise<DepositIntent | null> {
     const depositIntentModel = await DepositIntentModel.findOne({
       where: {
         messageHash,
@@ -206,11 +185,13 @@ export default class DepositIntentRepository extends Subject<DepositIntent> {
   /* eslint-disable class-methods-use-this */
   private convertToDepositIntent(depositIntentModel: DepositIntentModel): DepositIntent {
     return new DepositIntent(
-      depositIntentModel.intentHash,
       depositIntentModel.messageHash,
       depositIntentModel.tokenAddress,
-      depositIntentModel.amount ? new BigNumber(depositIntentModel.amount) : depositIntentModel.amount,
+      depositIntentModel.amount ? new BigNumber(
+        depositIntentModel.amount,
+      ) : depositIntentModel.amount,
       depositIntentModel.beneficiary,
+      depositIntentModel.intentHash,
       depositIntentModel.createdAt,
       depositIntentModel.updatedAt,
     );

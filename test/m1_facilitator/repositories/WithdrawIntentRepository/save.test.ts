@@ -49,11 +49,11 @@ describe('WithdrawIntent::save', (): void => {
 
   it('Should create WithdrawIntent model correctly', async (): Promise<void> => {
     const withdrawIntent = new WithdrawIntent(
-      intentHash,
       messageHash,
       tokenAddress,
       amount,
       beneficiary,
+      intentHash,
       createdAt,
       updatedAt,
     );
@@ -66,11 +66,11 @@ describe('WithdrawIntent::save', (): void => {
 
   it('Should update WithdrawIntent model correctly', async (): Promise<void> => {
     const withdrawIntent = new WithdrawIntent(
-      intentHash,
       messageHash,
       tokenAddress,
       amount,
       beneficiary,
+      intentHash,
       createdAt,
       updatedAt,
     );
@@ -92,11 +92,11 @@ describe('WithdrawIntent::save', (): void => {
 
   it('Should fail when token address and beneficiary address is not valid', async (): Promise<void> => {
     const withdrawIntent = new WithdrawIntent(
-      intentHash,
       messageHash,
       '0x1234',
       amount,
       '0x12345',
+      intentHash,
       createdAt,
       updatedAt,
     );

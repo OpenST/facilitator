@@ -17,7 +17,7 @@
 import BigNumber from 'bignumber.js';
 
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
-import Logger from '../Logger';
+import Logger from '../../common/Logger';
 import AuxiliaryChain from '../models/AuxiliaryChain';
 import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
 import ContractEntityHandler from './ContractEntityHandler';

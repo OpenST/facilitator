@@ -16,7 +16,7 @@
 
 
 import FetchQueries from '../GraphQueries/FetchQueries';
-import Logger from '../Logger';
+import Logger from '../../common/Logger';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import GraphClient from './GraphClient';
 import Utils from '../Utils';

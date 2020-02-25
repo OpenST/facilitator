@@ -19,7 +19,7 @@ import Web3 from 'web3';
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import BigNumber from 'bignumber.js';
 
-import Logger from './Logger';
+import Logger from '../common/Logger';
 
 // This class variable is used to persist nonce in-memory
 const addressNonceMap: Record<string, BigNumber> = {};
