@@ -12,47 +12,52 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import BigNumber from 'bignumber.js';
-
-import Anchor from '../../../../src/m1_facilitator/models/Anchor';
+import ERC20GatewayTokenPair from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 import assert from '../../../test_utils/assert';
 
-export interface AnchorAttributes {
-  anchorGA?: string;
-  lastAnchoredBlockNumber?: BigNumber;
+export interface ERC20GatewayTokenPairAttributes {
+  erc20Gateway?: string;
+  valueToken?: string;
+  utilityToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export function assertAnchorAttributes(
-  anchor: Anchor,
-  attributes: AnchorAttributes,
+export function assertERC20GatewayTokenPairAttributes(
+  erc20GatewayTokenPair: ERC20GatewayTokenPair,
+  attributes: ERC20GatewayTokenPairAttributes,
 ): void {
-  if (Object.prototype.hasOwnProperty.call(attributes, 'anchorGA')) {
+  if (Object.prototype.hasOwnProperty.call(attributes, 'erc20Gateway')) {
     assert.strictEqual(
-      anchor.anchorGA,
-      attributes.anchorGA,
+      erc20GatewayTokenPair.erc20Gateway,
+      attributes.erc20Gateway,
     );
   }
 
-  if (Object.prototype.hasOwnProperty.call(attributes, 'lastAnchoredBlockNumber')) {
-    assert.isOk(
-      anchor.lastAnchoredBlockNumber.isEqualTo(
-        attributes.lastAnchoredBlockNumber as BigNumber,
-      ),
+  if (Object.prototype.hasOwnProperty.call(attributes, 'valueToken')) {
+    assert.strictEqual(
+      erc20GatewayTokenPair.valueToken,
+      attributes.valueToken,
+    );
+  }
+
+  if (Object.prototype.hasOwnProperty.call(attributes, 'utilityToken')) {
+    assert.strictEqual(
+      erc20GatewayTokenPair.utilityToken,
+      attributes.utilityToken,
     );
   }
 
   if (Object.prototype.hasOwnProperty.call(attributes, 'createdAt')) {
     assert.strictEqual(
-      anchor.createdAt,
+      erc20GatewayTokenPair.createdAt,
       attributes.createdAt,
     );
   }
 
   if (Object.prototype.hasOwnProperty.call(attributes, 'updatedAt')) {
     assert.strictEqual(
-      anchor.updatedAt,
+      erc20GatewayTokenPair.updatedAt,
       attributes.updatedAt,
     );
   }

@@ -13,30 +13,32 @@
 // limitations under the License.
 
 import 'mocha';
-import BigNumber from 'bignumber.js';
 
-import { assertAnchorAttributes } from './util';
-import Anchor from '../../../../src/m1_facilitator/models/Anchor';
+import { assertERC20GatewayTokenPairAttributes } from './util';
+import ERC20GatewayTokenPair from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 
-describe('Anchor::constructor', (): void => {
-  it('checks correct construction of an anchor', async (): Promise<void> => {
-    const anchorGA = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
-    const lastAnchoredBlockNumber = new BigNumber(1);
+describe('ERC20GatewayTokenPair::constructor', (): void => {
+  it('checks correct construction of an ERC20GatewayTokenPair', async (): Promise<void> => {
+    const erc20Gateway = '0xbb9bc244d798123fde783fcc1c72d3bb8c189411';
+    const valueToken = '0xbb9bc244d798123fde783fcc1c72d3bb8c189412';
+    const utilityToken = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    const anchor = new Anchor(
-      anchorGA,
-      lastAnchoredBlockNumber,
+    const erc20GatewayTokenPair = new ERC20GatewayTokenPair(
+      erc20Gateway,
+      valueToken,
+      utilityToken,
       createdAt,
       updatedAt,
     );
 
-    assertAnchorAttributes(
-      anchor,
+    assertERC20GatewayTokenPairAttributes(
+      erc20GatewayTokenPair,
       {
-        anchorGA,
-        lastAnchoredBlockNumber,
+        erc20Gateway,
+        valueToken,
+        utilityToken,
         createdAt,
         updatedAt,
       },
