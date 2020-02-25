@@ -17,7 +17,7 @@
 
 import { HandlerNotFoundException } from './Exception';
 import ContractEntityHandler from './handlers/ContractEntityHandler';
-import Logger from './Logger';
+import Logger from '../common/Logger';
 import Repositories from './repositories/Repositories';
 
 /**

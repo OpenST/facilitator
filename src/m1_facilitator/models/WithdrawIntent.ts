@@ -22,9 +22,9 @@ import Comparable from '../../m0_facilitator/observer/Comparable';
  * Represents WithdrawIntent model object.
  */
 export default class WithdrawIntent extends Comparable<WithdrawIntent> {
-  public intentHash: string;
-
   public messageHash: string;
+
+  public intentHash?: string;
 
   public tokenAddress?: string;
 
@@ -39,26 +39,26 @@ export default class WithdrawIntent extends Comparable<WithdrawIntent> {
   /**
    * Constructor to set fields of WithdrawIntent model.
    *
-   * @param intentHash Withdraw intent hash.
    * @param messageHash Message hash.
-   * @param tokenAddress Value token address.
-   * @param amount Withdraw amount.
-   * @param beneficiary Beneficiary address.
-   * @param createdAt Time at which record is created.
-   * @param updatedAt Time at which record is updated.
+   * @param [tokenAddress] Value token address.
+   * @param [amount] Withdraw amount.
+   * @param [beneficiary] Beneficiary address.
+   * *@param [intentHash] Withdraw intent hash.
+   * @param [createdAt] Time at which record is created.
+   * @param [updatedAt] Time at which record is updated.
    */
   public constructor(
-    intentHash: string,
     messageHash: string,
     tokenAddress?: string,
     amount?: BigNumber,
     beneficiary?: string,
+    intentHash?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
     super();
-    this.intentHash = intentHash;
     this.messageHash = messageHash;
+    this.intentHash = intentHash;
     this.tokenAddress = tokenAddress;
     this.amount = amount;
     this.beneficiary = beneficiary;
@@ -75,6 +75,6 @@ export default class WithdrawIntent extends Comparable<WithdrawIntent> {
    *                 and -1 if the specified object is greater.
    */
   public compareTo(other: WithdrawIntent): number {
-    return this.intentHash.localeCompare(other.intentHash);
+    return this.messageHash.localeCompare(other.messageHash);
   }
 }

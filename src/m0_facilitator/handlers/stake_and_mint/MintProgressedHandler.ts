@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 import Message from '../../models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,

@@ -21,7 +21,7 @@ import { HelperInterface } from './HelperInterface';
 import Utils from '../Utils';
 import { OSTPrime } from '@openst/mosaic-contracts/dist/interacts/OSTPrime';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
-import Logger from '../../../src/m0_facilitator/Logger';
+import Logger from '../../../src/common/Logger';
 
 export default class BaseTokenHelper implements HelperInterface {
 

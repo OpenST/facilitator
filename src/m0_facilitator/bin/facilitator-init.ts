@@ -22,7 +22,7 @@ import {
   Chain, FacilitatorConfig, Config, ENV_WORKER_PASSWORD_PREFIX,
 } from '../Config/Config';
 import DatabaseFileHelper from '../DatabaseFileHelper';
-import Logger from '../Logger';
+import Logger from '../../common/Logger';
 
 import Repositories from '../repositories/Repositories';
 import SeedData from '../SeedData';
