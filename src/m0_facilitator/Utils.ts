@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import { interacts } from '@openst/mosaic-contracts';
 import * as Web3Utils from 'web3-utils';
-import Logger from './Logger';
+import Logger from '../common/Logger';
 import Account from './Account';
 import MessageTransferRequest from './models/MessageTransferRequest';
 import { MESSAGE_BOX_OFFSET } from './Constants';

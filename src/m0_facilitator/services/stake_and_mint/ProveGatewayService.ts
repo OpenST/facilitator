@@ -26,7 +26,7 @@ import { EIP20CoGateway } from '@openst/mosaic-contracts/dist/interacts/EIP20CoG
 import { ProofGenerator } from '@openst/mosaic-proof';
 
 import { AUXILIARY_GAS_PRICE } from '../../Constants';
-import Logger from '../../Logger';
+import Logger from '../../../common/Logger';
 import AuxiliaryChain from '../../models/AuxiliaryChain';
 import Observer from '../../observer/Observer';
 import GatewayRepository from '../../repositories/GatewayRepository';

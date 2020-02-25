@@ -139,7 +139,7 @@ describe('AvailableStateRootsHandler::handle', (): void => {
     const anchorRecord = await anchorRepository.get(untrackedRecord.contractAddress);
 
     assert.isOk(
-      anchorRecord == null,
+      anchorRecord === null,
       'It must not update latest anchor block number',
     );
   });

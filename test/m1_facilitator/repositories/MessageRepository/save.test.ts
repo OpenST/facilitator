@@ -33,6 +33,7 @@ describe('MessageRepository::save', (): void => {
   let feeGasLimit: BigNumber;
   let gatewayAddress: string;
   let sourceDeclarationBlockNumber: BigNumber;
+  let sender: string;
   let createdAt: Date;
   let updatedAt: Date;
 
@@ -49,6 +50,7 @@ describe('MessageRepository::save', (): void => {
     feeGasLimit = new BigNumber('10000000000000000000000000000000');
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     sourceDeclarationBlockNumber = new BigNumber(300);
+    sender = '0x0000000000000000000000000000000000000005';
     createdAt = new Date();
     updatedAt = new Date();
   });
@@ -60,10 +62,11 @@ describe('MessageRepository::save', (): void => {
       sourceStatus,
       targetStatus,
       gatewayAddress,
-      intentHash,
       feeGasPrice,
       feeGasLimit,
       sourceDeclarationBlockNumber,
+      intentHash,
+      sender,
       createdAt,
       updatedAt,
     );
@@ -81,10 +84,11 @@ describe('MessageRepository::save', (): void => {
       sourceStatus,
       targetStatus,
       gatewayAddress,
-      intentHash,
       feeGasPrice,
       feeGasLimit,
       sourceDeclarationBlockNumber,
+      intentHash,
+      sender,
       createdAt,
       updatedAt,
     );
@@ -112,10 +116,11 @@ describe('MessageRepository::save', (): void => {
       sourceStatus,
       targetStatus,
       gatewayAddress,
-      intentHash,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       sourceDeclarationBlockNumber,
+      intentHash,
+      sender,
       createdAt,
       updatedAt,
     );
@@ -133,10 +138,11 @@ describe('MessageRepository::save', (): void => {
       sourceStatus,
       targetStatus,
       gatewayAddress,
-      intentHash,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       feeGasLimit,
       sourceDeclarationBlockNumber,
+      intentHash,
+      sender,
       createdAt,
       updatedAt,
     );
@@ -157,10 +163,11 @@ describe('MessageRepository::save', (): void => {
       sourceStatus,
       targetStatus,
       gatewayAddress,
-      intentHash,
       feeGasPrice,
       new BigNumber('999999999999999999999999999999999999999999999999999999999999999999999999999999'),
       sourceDeclarationBlockNumber,
+      intentHash,
+      sender,
       createdAt,
       updatedAt,
     );

@@ -18,7 +18,7 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
-import Logger from '../Logger';
+import Logger from '../../common/Logger';
 import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
 import ContractEntityHandler from './ContractEntityHandler';
