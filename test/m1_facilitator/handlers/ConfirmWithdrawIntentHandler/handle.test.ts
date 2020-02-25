@@ -73,7 +73,7 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
     );
   });
 
-  it('should create a message with target status declared' 
+  it('should create a message with target status declared'
     + ' if message does not exists', async (): Promise<void> => {
     const messageHash = web3utils.sha3('1');
 
