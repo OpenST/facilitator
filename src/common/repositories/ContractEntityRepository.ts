@@ -66,7 +66,8 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
           primaryKey: true,
           type: DataTypes.ENUM({
             values: [
-              // Common entities
+              // M0 entities
+              // Common entities for both origin and auxiliary chain
               EntityType.GatewayProvens,
               EntityType.StateRootAvailables,
               // Stake & Mint Entities
@@ -81,6 +82,18 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.RedeemIntentConfirmeds,
               EntityType.RedeemProgresseds,
               EntityType.UnstakeProgresseds,
+              // M1 facilitator entities
+              // Common entities for both origin and auxiliary chain
+              EntityType.ProvenGateways,
+              EntityType.AvailableStateRoots,
+              // Deposit entities
+              EntityType.DeclaredDepositIntents,
+              EntityType.ConfirmedDepositIntents,
+              EntityType.CreatedUtilityTokens,
+              // Withdraw entities
+              EntityType.DeclaredWithdrawIntents,
+              EntityType.ConfirmedWithdrawIntents,
+
             ],
           }),
         },
@@ -120,9 +133,11 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
 
     let updatedContractEntity: ContractEntity | null;
     if (contractEntityModelObj === null) {
-      updatedContractEntity = this.convertToContractEntity(await ContractEntityModel.create(
-        contractEntity,
-      ));
+      updatedContractEntity = this.convertToContractEntity(
+        await ContractEntityModel.create(
+          contractEntity,
+        ),
+      );
     } else {
       const definedOwnProps: string[] = Utils.getDefinedOwnProps(contractEntity);
       await ContractEntityModel.update(
@@ -143,7 +158,8 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
 
     assert(
       updatedContractEntity !== null,
-      `Updated contract entity record not found for contractAddress: ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`,
+      'Updated contract entity record not found for contractAddress:'
+       + ` ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`,
     );
 
     this.newUpdate(updatedContractEntity as ContractEntity);

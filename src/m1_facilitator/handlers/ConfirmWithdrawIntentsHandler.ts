@@ -18,7 +18,13 @@ import GatewayRepository from '../repositories/GatewayRepository';
 
 import assert = require('assert');
 
-export default class ConfirmWithdrawIntentHandler {
+/** Represents record of ConfirmWithdrawIntentsEntity. */
+interface ConfirmWithdrawIntentsEntityInterface {
+  messageHash: string;
+  contractAddress: string;
+}
+
+export default class ConfirmWithdrawIntentsHandler {
   /* Instance of message repository. */
   private messageRepository: MessageRepository;
 
@@ -26,7 +32,7 @@ export default class ConfirmWithdrawIntentHandler {
   private gatewayRepository: GatewayRepository;
 
   /**
-   * Construct ConfirmWithdrawIntentHandler with params.
+   * Construct ConfirmWithdrawIntentsHandler with params.
    *
    * @param messageRepository Instance of message repository.
    * @param gatewayRepository Instance of gateway repository.
@@ -40,25 +46,21 @@ export default class ConfirmWithdrawIntentHandler {
   }
 
   /**
-   * - Handles the ConfirmWithdrawIntent entity.
-   * - Updates the target status of message with `Withdraw` type to `Declared`
-   *   if it is `Undeclared`.
-   * - If message does not exists, it creates message record.
+   * Handles the ConfirmWithdrawIntent entity records.
+   * - It creates a message record if doesn't exists and updates it's target
+   *   status to `Declared`.
    * - This handler only reacts to the events of gateways which are populated
    *   during seed data. It silently ignores the events by the other gateways.
    *
-   * @param records List of ConfirmWithdrawIntents.
+   * @param records List of confirm withdraw intents.
    */
-  public async handle(records: {
-    messageHash: string;
-    contractAddress: string;
-  }[]): Promise<void> {
+  public async handle(records: ConfirmWithdrawIntentsEntityInterface[]): Promise<void> {
     const savePromises = records.map(async (record): Promise<void> => {
-      let message = await this.messageRepository.get(record.messageHash);
+      const gatewayRecord = await this.gatewayRepository.get(record.contractAddress);
+      if (gatewayRecord !== null) {
+        let message = await this.messageRepository.get(record.messageHash);
 
-      if (message === null) {
-        const gatewayRecord = await this.gatewayRepository.get(record.contractAddress);
-        if (gatewayRecord !== null) {
+        if (message === null) {
           message = new Message(
             record.messageHash,
             MessageType.Withdraw,
@@ -67,8 +69,6 @@ export default class ConfirmWithdrawIntentHandler {
             gatewayRecord.remoteGA,
           );
         }
-      }
-      if (message !== null) {
         if (message.targetStatus === MessageStatus.Undeclared) {
           assert(message.type === MessageType.Withdraw);
 
@@ -77,7 +77,6 @@ export default class ConfirmWithdrawIntentHandler {
         }
       }
     });
-
     await Promise.all(savePromises);
   }
 }

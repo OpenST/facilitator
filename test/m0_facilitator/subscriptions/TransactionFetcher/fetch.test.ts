@@ -19,7 +19,7 @@ import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
 import FetchQueries from '../../../../src/m0_facilitator/GraphQueries/FetchQueries';
-import ContractEntityRepository from '../../../../src/m0_facilitator/repositories/ContractEntityRepository';
+import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
 import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
 import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';
 import assert from '../../../test_utils/assert';

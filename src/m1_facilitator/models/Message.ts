@@ -15,7 +15,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import Comparable from '../../m0_facilitator/observer/Comparable';
+import Comparable from '../../common/observer/Comparable';
 
 /** Message types for deposit and withdraw */
 export enum MessageType {

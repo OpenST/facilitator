@@ -17,8 +17,8 @@ import BigNumber from 'bignumber.js';
 
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
-import ConfirmWithdrawIntentHandler
-  from '../../../../src/m1_facilitator/handlers/ConfirmWithdrawIntentHandler';
+import ConfirmWithdrawIntentsHandler
+  from '../../../../src/m1_facilitator/handlers/ConfirmWithdrawIntentsHandler';
 import Message, {
   MessageStatus,
   MessageType,
@@ -33,12 +33,24 @@ import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gate
 describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
   let messageRepository: MessageRepository;
   let gatewayRepository: GatewayRepository;
-  let confirmWithdrawIntentsHandler: ConfirmWithdrawIntentHandler;
+  let confirmWithdrawIntentsHandler: ConfirmWithdrawIntentsHandler;
 
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
     ({ messageRepository, gatewayRepository } = repositories);
-    confirmWithdrawIntentsHandler = new ConfirmWithdrawIntentHandler(
+
+    const gateway = new Gateway(
+      '0x0000000000000000000000000000000000000001',
+      '0x0000000000000000000000000000000000000002',
+      GatewayType.ERC20,
+      '0x0000000000000000000000000000000000000003',
+      new BigNumber(200),
+      '0x0000000000000000000000000000000000000003',
+    );
+    await gatewayRepository.save(
+      gateway,
+    );
+    confirmWithdrawIntentsHandler = new ConfirmWithdrawIntentsHandler(
       messageRepository,
       gatewayRepository,
     );
@@ -73,7 +85,7 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
     );
   });
 
-  it('should create a message with target status declared' 
+  it('should create a message with target status declared'
     + ' if message does not exists', async (): Promise<void> => {
     const messageHash = web3utils.sha3('1');
 
@@ -111,6 +123,17 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
       '0x0000000000000000000000000000000000000001',
     );
 
+    const gateway = new Gateway(
+      '0x0000000000000000000000000000000000000002',
+      '0x0000000000000000000000000000000000000001',
+      GatewayType.ERC20,
+      '0x0000000000000000000000000000000000000003',
+      new BigNumber(200),
+      '0x0000000000000000000000000000000000000003',
+    );
+    await gatewayRepository.save(
+      gateway,
+    );
     const existingMessage2 = new Message(
       web3utils.sha3('20'),
       MessageType.Withdraw,

@@ -17,7 +17,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import Comparable from '../observer/Comparable';
+import Comparable from '../../common/observer/Comparable';
 
 /**
  * Represents AuxiliaryChain model object.

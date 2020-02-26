@@ -16,7 +16,7 @@
 
 import 'mocha';
 
-import Subject from '../../../../src/m0_facilitator/observer/Subject';
+import Subject from '../../../../src/common/observer/Subject';
 import assert from '../../../test_utils/assert';
 import NumberUpdate from '../NumberUpdate';
 
