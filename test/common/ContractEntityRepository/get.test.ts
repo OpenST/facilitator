@@ -17,9 +17,9 @@
 
 import BigNumber from 'bignumber.js';
 
-import ContractEntity, { EntityType } from '../../../../src/m0_facilitator/models/ContractEntity';
-import Repositories from '../../../../src/m0_facilitator/repositories/Repositories';
-import assert from '../../../test_utils/assert';
+import ContractEntity, { EntityType } from '../../../src/common/models/ContractEntity';
+import Repositories from '../../../src/m0_facilitator/repositories/Repositories';
+import assert from '../../test_utils/assert';
 import Util from './util';
 
 interface TestConfigInterface {
@@ -66,7 +66,7 @@ describe('ContractEntityRepository::get', (): void => {
     );
     Util.assertion(firstResponse as ContractEntity, conEntity);
 
-    const secondConEntity = new ContractEntity(
+      const secondConEntity = new ContractEntity(
       '0x0000000000000000000000000000000000000009',
       EntityType.StakeProgresseds,
       new BigNumber(1),
@@ -103,7 +103,7 @@ describe('ContractEntityRepository::get', (): void => {
 
   it('should return null when querying for non-existing'
     + ' entity type', async (): Promise<void> => {
-    conEntity.entityType = EntityType.MintProgresseds;
+      conEntity.entityType = EntityType.MintProgresseds;
 
     const getResponse = await config.repos.contractEntityRepository.get(
       conEntity.contractAddress,

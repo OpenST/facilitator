@@ -14,7 +14,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import Comparable from '../../m0_facilitator/observer/Comparable';
+import Comparable from '../../common/observer/Comparable';
 
 import assert = require('assert');
 

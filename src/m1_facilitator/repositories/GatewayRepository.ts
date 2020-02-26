@@ -18,8 +18,8 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
 import Gateway, { GatewayType } from '../models/Gateway';
-import Subject from '../../m0_facilitator/observer/Subject';
-import Utils from '../../m0_facilitator/Utils';
+import Utils from '../../common/Utils';
+import Subject from '../../common/observer/Subject';
 
 /* eslint-disable class-methods-use-this */
 

@@ -19,7 +19,7 @@ import BigNumber from 'bignumber.js';
 import * as utils from 'web3-utils';
 
 import AuxiliaryChain from '../../src/m0_facilitator/models/AuxiliaryChain';
-import ContractEntity, { EntityType } from '../../src/m0_facilitator/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../src/common/models/ContractEntity';
 import Gateway from '../../src/m0_facilitator/models/Gateway';
 import Message from '../../src/m0_facilitator/models/Message';
 import MessageTransferRequest from '../../src/m0_facilitator/models/MessageTransferRequest';

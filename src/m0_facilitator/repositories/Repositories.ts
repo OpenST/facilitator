@@ -18,7 +18,7 @@ import { InitOptions, Sequelize } from 'sequelize';
 
 import Services from '../services/Services';
 import AuxiliaryChainRepository from './AuxiliaryChainRepository';
-import ContractEntityRepository from './ContractEntityRepository';
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import GatewayRepository from './GatewayRepository';
 import { MessageRepository } from './MessageRepository';
 import MessageTransferRequestRepository from './MessageTransferRequestRepository';
