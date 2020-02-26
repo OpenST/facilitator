@@ -17,37 +17,42 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
 import Gateway from '../models/Gateway';
-import GatewayRepository from '../repositories/GatewayRepository';
+import GatewayRepository, { LastProvenBlockNumberIsNotStrictlyGrowingError, LastProvenBlockNumberIsNotStrictlyGrowingError } from '../repositories/GatewayRepository';
 import Logger from '../../common/Logger';
 
+
 /**
- * GatewayProven struct represents a GatewayProven subgraph entity
- * for better type checking, readability of code.
+ * GatewayProvenEntityInterface represents a gateway-proven subgraph entity.
  */
-class GatewayProvenEntity {
+interface GatewayProvenEntityInterface {
+  contractAddress: string;
+  remoteGateway: string;
+  blockNumber: string;
+}
+
+/**
+ * GatewayProven class wraps a gateway-proven subgraph entity
+ * for type checks and conversions.
+ */
+class GatewayProven {
   public readonly gatewayAddress: string;
 
   public readonly remoteGatewayAddress: string;
 
   public readonly blockNumber: BigNumber;
 
-  public constructor(
-    gatewayAddress: string,
-    remoteGatewayAddress: string,
-    blockNumber: string,
-  ) {
-    assert(Web3Utils.isAddress(gatewayAddress));
-    assert(Web3Utils.isAddress(remoteGatewayAddress));
+  public constructor(entity: GatewayProvenEntityInterface) {
+    assert(Web3Utils.isAddress(entity.contractAddress));
+    assert(Web3Utils.isAddress(entity.remoteGateway));
+    assert(entity.blockNumber !== '');
 
-    this.gatewayAddress = Web3Utils.toChecksumAddress(gatewayAddress);
-    this.remoteGatewayAddress = Web3Utils.toChecksumAddress(remoteGatewayAddress);
-    this.blockNumber = new BigNumber(blockNumber);
+    this.gatewayAddress = Web3Utils.toChecksumAddress(entity.contractAddress);
+    this.remoteGatewayAddress = Web3Utils.toChecksumAddress(entity.remoteGateway);
+    this.blockNumber = new BigNumber(entity.blockNumber);
   }
 }
 
-/**
- * GatewayProvenHandler class handles gateway-proven subgraph entities.
- */
+/** GatewayProvenHandler class handles gateway-proven subgraph entities. */
 export default class GatewayProvenHandler {
   private readonly gatewayRepository: GatewayRepository;
 
@@ -57,51 +62,48 @@ export default class GatewayProvenHandler {
   }
 
   /**
-   * handler() function accepts an array of records of a proven-gateway
-   * subgraph type.
-   *
-   * @pre There should exist a record in the `gatewayRepository` for each record
-   *      matching to `record.contractAddress` (in this case gateway address).
-   *
-   * @post Function updates a record of `gatewayRepository` matching to
-   *       `record.contractAddress` (gateway address) by setting
-   *       `remoteGatewayLastProvenBlockNumber` to the `record.blockNumber`
-   *       if `record.blockNumber` is greater than
-   *       `remoteGatewayLastProvenBlockNumber` of the stored value in the
-   *       repository.
+   * handle() function accepts an array subgraph gateway-proven entities.
+   * If there is no model in the gateway repository matching to a gateway
+   * global address of an entity, the function logs a warning without failing.
+   * Otherwise, it updates a model in the gateway repository matchin to a
+   * gateway global address of an entity with the new block number (of a gateway
+   * proof). The gateway repository will throw an exception if the newly
+   * proposed block number is less than or equal to the stored one.
+   * The function catches the exception and logs a warning without failing.
    */
-  public async handle(records: any[]): Promise<void> {
-    const savePromises = records.map(async (record): Promise<void> => {
-      const gatewayProvenEntity = new GatewayProvenEntity(
-        record.contractAddress,
-        record.remoteGateway,
-        record.blockNumber,
+  public async handle(entities: GatewayProvenEntityInterface[]): Promise<void> {
+    const savePromises = entities.map(async (entity): Promise<void> => {
+      const gatewayProven = new GatewayProven(entity);
+
+      const gatewayModel: Gateway | null = await this.gatewayRepository.get(
+        gatewayProven.gatewayAddress,
       );
 
-      const gatewayModelRecord: Gateway | null = await this.gatewayRepository.get(
-        gatewayProvenEntity.gatewayAddress,
-      );
-
-      if (gatewayModelRecord === null) {
+      if (gatewayModel === null) {
         Logger.warning(
           'There is no gateway model in the gateway repository '
-          + `matching to ${gatewayProvenEntity.gatewayAddress}.`,
+          + `matching to ${gatewayProven.gatewayAddress}.`,
         );
         return;
       }
-
-      // We can safely cast as a check above is excluding the null case.
-      const gatewayModel: Gateway = gatewayModelRecord;
 
       const updatedGatewayModel = new Gateway(
         gatewayModel.gatewayGA,
         gatewayModel.remoteGA,
         gatewayModel.gatewayType,
         gatewayModel.anchorGA,
-        gatewayProvenEntity.blockNumber,
+        gatewayProven.blockNumber,
       );
 
-      await this.gatewayRepository.save(updatedGatewayModel);
+      try {
+        await this.gatewayRepository.save(updatedGatewayModel);
+      } catch (e) {
+        if (e instanceof LastProvenBlockNumberIsNotStrictlyGrowingError) {
+          Logger.warning(e.message);
+        } else {
+          throw e;
+        }
+      }
     });
 
     await Promise.all(savePromises);

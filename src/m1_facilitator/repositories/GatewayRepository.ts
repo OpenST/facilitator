@@ -26,6 +26,15 @@ import Utils from '../../m0_facilitator/Utils';
 
 /* eslint-disable class-methods-use-this */
 
+export class LastProvenBlockNumberIsNotStrictlyGrowingError extends Error {
+  public constructor(current: BigNumber, update: BigNumber) {
+    super(`Failed to set remoteGatewayLastProvenBlockNumber to ${update} `
+      + `as the current value is ${current}`);
+
+    Object.setPrototypeOf(this, LastProvenBlockNumberIsNotStrictlyGrowingError.prototype);
+  }
+}
+
 /** An interface, that represents a row from a gateways table. */
 class GatewayModel extends Model {
   public gatewayGA!: string;
@@ -136,11 +145,15 @@ export default class GatewayRepository extends Subject<Gateway> {
         },
       });
 
-      assert(
-        gatewayDatabaseModel === null || gateway.remoteGatewayLastProvenBlockNumber.isGreaterThan(
+      if (gatewayDatabaseModel !== null
+        && gateway.remoteGatewayLastProvenBlockNumber.isLessThanOrEqualTo(
           gatewayDatabaseModel.remoteGatewayLastProvenBlockNumber,
-        ),
-      );
+        )) {
+        throw new LastProvenBlockNumberIsNotStrictlyGrowingError(
+          gatewayDatabaseModel.remoteGatewayLastProvenBlockNumber,
+          gateway.remoteGatewayLastProvenBlockNumber,
+        );
+      }
 
       const definedOwnProps: string[] = Utils.getDefinedOwnProps(gateway);
       await GatewayModel.upsert(

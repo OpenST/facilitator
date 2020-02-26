@@ -24,6 +24,15 @@ import assert = require('assert');
 
 /* eslint-disable class-methods-use-this */
 
+export class LastAnchoredBlockNumberIsNotStrictlyGrowingError extends Error {
+  public constructor(current: BigNumber, update: BigNumber) {
+    super(`Failed to set lastAnchoredBlockNumber to ${update} `
+      + `as the current value is ${current}`);
+
+    Object.setPrototypeOf(this, LastAnchoredBlockNumberIsNotStrictlyGrowingError.prototype);
+  }
+}
+
 /**
  * An interface, that represents an anchor database model.
  *
@@ -107,11 +116,15 @@ export default class AnchorRepository extends Subject<Anchor> {
         },
       });
 
-      assert(
-        anchorDatabaseModel === null || anchor.lastAnchoredBlockNumber.isGreaterThan(
+      if (anchorDatabaseModel !== null
+        && anchor.lastAnchoredBlockNumber.isLessThanOrEqualTo(
           anchorDatabaseModel.lastAnchoredBlockNumber,
-        ),
-      );
+        )) {
+        throw new LastAnchoredBlockNumberIsNotStrictlyGrowingError(
+          anchorDatabaseModel.lastAnchoredBlockNumber,
+          anchor.lastAnchoredBlockNumber,
+        );
+      }
 
       const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
       await AnchorModel.upsert(

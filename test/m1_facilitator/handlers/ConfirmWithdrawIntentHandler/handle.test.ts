@@ -100,7 +100,7 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
         '0x0000000000000000000000000000000000000001',
         GatewayType.ERC20,
         '0x0000000000000000000000000000000000000003',
-        new BigNumber(0),
+        new BigNumber(201),
       ),
     );
     await confirmWithdrawIntentsHandler.handle([confirmWithdrawIntentRecord]);
