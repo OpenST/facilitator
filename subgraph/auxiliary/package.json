@@ -1,5 +1,5 @@
 {
-  "name": "Mosaic Subgraph",
+  "name": "mosaic-subgraph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
