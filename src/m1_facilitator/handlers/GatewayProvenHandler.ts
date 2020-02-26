@@ -17,14 +17,14 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
 import Gateway from '../models/Gateway';
-import GatewayRepository, { LastProvenBlockNumberIsNotStrictlyGrowingError, LastProvenBlockNumberIsNotStrictlyGrowingError } from '../repositories/GatewayRepository';
+import GatewayRepository, { LastProvenBlockNumberIsNotStrictlyGrowingError } from '../repositories/GatewayRepository';
 import Logger from '../../common/Logger';
 
 
 /**
  * GatewayProvenEntityInterface represents a gateway-proven subgraph entity.
  */
-interface GatewayProvenEntityInterface {
+export interface GatewayProvenEntityInterface {
   contractAddress: string;
   remoteGateway: string;
   blockNumber: string;
@@ -80,7 +80,7 @@ export default class GatewayProvenHandler {
       );
 
       if (gatewayModel === null) {
-        Logger.warning(
+        Logger.warn(
           'There is no gateway model in the gateway repository '
           + `matching to ${gatewayProven.gatewayAddress}.`,
         );
@@ -99,7 +99,7 @@ export default class GatewayProvenHandler {
         await this.gatewayRepository.save(updatedGatewayModel);
       } catch (e) {
         if (e instanceof LastProvenBlockNumberIsNotStrictlyGrowingError) {
-          Logger.warning(e.message);
+          Logger.warn(e.message);
         } else {
           throw e;
         }
