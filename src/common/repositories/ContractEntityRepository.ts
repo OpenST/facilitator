@@ -66,10 +66,10 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
           primaryKey: true,
           type: DataTypes.ENUM({
             values: [
-              // M0 Facilitator entities
-              // Common entities
+              // Common entities for M0 and M1 facilitator
               M0EntityType.GatewayProvens,
               M0EntityType.StateRootAvailables,
+              // M0 facilitator entities
               // Stake & Mint Entities
               M0EntityType.StakeRequesteds,
               M0EntityType.StakeIntentDeclareds,
@@ -83,9 +83,6 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
               M0EntityType.RedeemProgresseds,
               M0EntityType.UnstakeProgresseds,
               // M1 facilitator entities
-              // Common entities
-              M1EntityType.StateRootAvailables,
-              M1EntityType.GatewayProvens,
               // Deposit and confirm deposit entities
               M1EntityType.DeclaredDepositIntents,
               M1EntityType.ConfirmedDepositIntents,

@@ -28,8 +28,8 @@ export default class Utils {
   }
 
   /**
-   * Returns all undefined properties of the object.
-   * @param obj Object whose properties are required.
+   * Returns after removing undefined properties.
+   * @param obj Input object.
    */
   public static getDefinedOwnProps(obj: {}): string[] {
     const nonUndefinedOwnedProps: string[] = [];
