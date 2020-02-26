@@ -45,8 +45,6 @@ export enum M0EntityType {
  * Mosaic-1 supported entity types for which timestamp will be recorded.
  */
 export enum M1EntityType {
-  StateRootAvailables = 'stateRootAvailables',
-  GatewayProvens = 'gatewayProvens',
   DeclaredDepositIntents = 'declaredDepositIntents',
   ConfirmedWithdrawIntents = 'confirmedWithdrawIntents',
   DeclaredWithdrawIntents = 'declaredWithdrawIntents',
