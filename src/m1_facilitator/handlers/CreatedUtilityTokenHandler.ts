@@ -17,7 +17,7 @@ import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPa
 import Utils from '../../common/Utils';
 
 /**
- * It represents record of DeclaredDepositIntents entity.
+ * It represents record of CreatedUtilityTokens entity.
  */
 export interface CreatedUtilityTokenHandlerInterface {
   valueTokenAddress: string;
@@ -29,7 +29,7 @@ export interface CreatedUtilityTokenHandlerInterface {
  * It handles updates from CreatedUtilityTokenHandler entity.
  */
 export default class CreatedUtilityTokenHandler {
-  /** Instance of ERC20GatewayRepository. */
+  /** Instance of ERC20GatewayTokenPairRepository. */
   public erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
 
   /** Instance of GatewayRepository. */
@@ -45,9 +45,9 @@ export default class CreatedUtilityTokenHandler {
 
   /**
    * Handles CreatedUtilityTokens entity records.
-   * - It creates `ERC20TokenPairRepository` record.
+   * - It creates record in `ERC20TokenPair` model.
    * - This handler only reacts to UtilityTokenCreated event of ERC20Cogateway which are populated
-   *   during seed data. It silently ignores the events by other ERC20C0gateway.
+   *   during seed data. It silently ignores the events by other ERC20Cogateway.
    *
    * @param records List of CreatedUtilityTokens entity.
    */
