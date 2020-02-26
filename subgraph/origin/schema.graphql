@@ -1,0 +1,9 @@
+type AvailableStateRoot @entity {
+  id: ID!
+  blockHeight: BigInt! # uint256
+  stateRoot: Bytes! # bytes32
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
