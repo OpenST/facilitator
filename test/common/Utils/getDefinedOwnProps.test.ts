@@ -16,7 +16,7 @@
 
 import 'mocha';
 
-import Utils from '../../../src/m0_facilitator/Utils';
+import Utils from '../../../src/common/Utils';
 import assert from '../../test_utils/assert';
 
 describe('Utils::getDefinedOwnProps', (): void => {

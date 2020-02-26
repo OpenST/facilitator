@@ -25,10 +25,10 @@ import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gatew
 import { Config } from './Config/Config';
 import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
-import ContractEntity, { EntityType } from './models/ContractEntity';
+import ContractEntity, { EntityType } from '../common/models/ContractEntity';
 import Gateway from './models/Gateway';
 import AuxiliaryChainRepository from './repositories/AuxiliaryChainRepository';
-import ContractEntityRepository from './repositories/ContractEntityRepository';
+import ContractEntityRepository from '../common/repositories/ContractEntityRepository';
 import GatewayRepository, { GatewayType } from './repositories/GatewayRepository';
 
 const Zero = new BigNumber('0');

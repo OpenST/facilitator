@@ -18,7 +18,7 @@
 
 import BigNumber from 'bignumber.js';
 
-import Comparable from '../observer/Comparable';
+import Comparable from '../../common/observer/Comparable';
 
 /**
  * It represents MessageTransferRequest model object. It stores stake and redeem requests.

@@ -23,13 +23,13 @@ import { interacts } from '@openst/mosaic-contracts';
 
 import { Config, ConfigType } from '../../../src/m0_facilitator/Config/Config';
 import AuxiliaryChain from '../../../src/m0_facilitator/models/AuxiliaryChain';
-import ContractEntity, { EntityType } from '../../../src/m0_facilitator/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../../src/common/models/ContractEntity';
 import Gateway from '../../../src/m0_facilitator/models/Gateway';
 import { GatewayType } from '../../../src/m0_facilitator/repositories/GatewayRepository';
 import Repositories from '../../../src/m0_facilitator/repositories/Repositories';
 import SeedData from '../../../src/m0_facilitator/SeedData';
 import AuxiliaryChainRepositoryUtil from '../repositories/AuxiliaryChainRepository/util';
-import ContractEntityRepositoryUtil from '../repositories/ContractEntityRepository/util';
+import ContractEntityRepositoryUtil from '../../common/ContractEntityRepository/util';
 import GatewayRepositoryUtil from '../repositories/GatewayRepository/util';
 import Utils from '../../../src/m0_facilitator/Utils';
 
@@ -130,7 +130,10 @@ describe('SeedData.populateDb()', (): void => {
       stakePoolAddress,
       EntityType.StakeRequesteds,
     );
-    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+    ContractEntityRepositoryUtil.assertion(
+      contractEntity,
+      contractEntityFromDb as ContractEntity,
+    );
   }
 
   /**
@@ -146,7 +149,10 @@ describe('SeedData.populateDb()', (): void => {
       redeemPoolAddress,
       EntityType.RedeemRequesteds,
     );
-    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+    ContractEntityRepositoryUtil.assertion(
+      contractEntity,
+      contractEntityFromDb as ContractEntity,
+    );
   }
 
   /**
@@ -195,7 +201,10 @@ describe('SeedData.populateDb()', (): void => {
       coAnchorAddress,
       EntityType.StateRootAvailables,
     );
-    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+    ContractEntityRepositoryUtil.assertion(
+      contractEntity,
+      contractEntityFromDb as ContractEntity,
+    );
   }
 
   /**
@@ -211,7 +220,10 @@ describe('SeedData.populateDb()', (): void => {
       anchorAddress,
       EntityType.StateRootAvailables,
     );
-    ContractEntityRepositoryUtil.assertion(contractEntity, contractEntityFromDb as ContractEntity);
+    ContractEntityRepositoryUtil.assertion(
+      contractEntity,
+      contractEntityFromDb as ContractEntity,
+    );
   }
 
   /**
@@ -235,7 +247,7 @@ describe('SeedData.populateDb()', (): void => {
       const promise = repositories.contractEntityRepository.get(
         eip20CoGatewayAddress,
         eventTypes[i],
-      ).then((contractEntityFromDb) => {
+      ).then((contractEntityFromDb): void => {
         ContractEntityRepositoryUtil.assertion(
           contractEntity,
           contractEntityFromDb as ContractEntity,

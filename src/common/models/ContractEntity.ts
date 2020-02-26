@@ -21,9 +21,11 @@ import Comparable from '../observer/Comparable';
 
 /**
  * Entity types of origin and aux chain for which timestamp will be recorded.
+ * These entity type are supported in Mosaic-0 and Mosaic-1.
  */
 export enum EntityType {
-  // Common entities
+  // M0 entities
+  // Common entities for both origin and auxiliary chain
   StateRootAvailables = 'stateRootAvailables',
   GatewayProvens = 'gatewayProvens',
   // Stake & Mint entities
@@ -38,6 +40,17 @@ export enum EntityType {
   RedeemIntentConfirmeds = 'redeemIntentConfirmeds',
   RedeemProgresseds = 'redeemProgresseds',
   UnstakeProgresseds = 'unstakeProgresseds',
+  // M1 entities
+  // Common entities for both origin and auxiliary chain
+  ProvenGateways = 'provenGateways',
+  AvailableStateRoots = 'availableStateRoots',
+  // Deposit entities
+  DeclaredDepositIntents = 'declaredDepositIntents',
+  ConfirmedDepositIntents = 'confirmedDepositIntents',
+  CreatedUtilityTokens = 'createdUtilityTokens',
+  // Withdraw entities
+  ConfirmedWithdrawIntents = 'confirmedWithdrawIntents',
+  DeclaredWithdrawIntents = 'declaredWithdrawIntents',
 }
 
 /**

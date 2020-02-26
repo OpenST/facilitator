@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Comparable from '../../m0_facilitator/observer/Comparable';
+import Comparable from '../../common/observer/Comparable';
 
 import assert = require('assert');
 
