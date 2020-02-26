@@ -129,7 +129,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
     let updatedContractEntity: ContractEntity | null;
     if (contractEntityModelObj === null) {
       updatedContractEntity = this.convertToContractEntity(
-        await ContractEntityModel.create<ContractEntityModel>(
+        await ContractEntityModel.create(
           contractEntity,
         ),
       );
@@ -147,7 +147,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
       );
       updatedContractEntity = await this.get(
         contractEntity.contractAddress,
-        contractEntity.entityType as unknown as string,
+        contractEntity.entityType,
       );
     }
 
@@ -172,7 +172,7 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
     contractAddress: string,
     entityType: string,
   ): Promise<ContractEntity | null> {
-    const contractEntityModel = await ContractEntityModel.findOne<ContractEntityModel>({
+    const contractEntityModel = await ContractEntityModel.findOne({
       where: {
         contractAddress: {
           [Op.eq]: contractAddress,

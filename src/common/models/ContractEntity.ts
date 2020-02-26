@@ -65,7 +65,7 @@ export default class ContractEntity extends Comparable<ContractEntity> {
   /**
    * Constructor to set fields of Contract Entities model.
    * @param contractAddress Address of the contract.
-   * @param entityType Type of entity.
+   * @param entityType Type of the entity.
    * @param timestamp Last updated time in secs.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
@@ -92,8 +92,8 @@ export default class ContractEntity extends Comparable<ContractEntity> {
    *          is lesser.
    */
   public compareTo(other: ContractEntity): number {
-    const currentKey = this.contractAddress.concat(this.entityType as string);
-    const specifiedKey = other.contractAddress.concat(this.entityType as string);
+    const currentKey = this.contractAddress.concat(this.entityType);
+    const specifiedKey = other.contractAddress.concat(other.entityType);
 
     if (currentKey > specifiedKey) {
       return 1;
