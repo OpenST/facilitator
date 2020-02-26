@@ -24,7 +24,8 @@
             "chai",
             "node",
             "mocha",
-            "web3"
+            "web3",
+            "sinon"
         ]
     },
     "include": [

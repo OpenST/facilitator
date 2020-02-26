@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as Web3Utils from 'web3-utils';
+import BigNumber from 'bignumber.js';
 
 /**
  * This class contains general purpose functions.
@@ -41,5 +42,14 @@ export default class Utils {
       },
     );
     return nonUndefinedOwnedProps;
+  }
+
+  /**
+   * @return Current timestamp as BigNumber object.
+   */
+  public static getCurrentTimestamp(): BigNumber {
+    const currentTimestampInMs = new Date().getTime();
+    const currentTimestampInS = Math.round(currentTimestampInMs / 1000);
+    return new BigNumber(currentTimestampInS);
   }
 }

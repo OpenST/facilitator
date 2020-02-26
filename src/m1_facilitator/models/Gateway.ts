@@ -103,4 +103,15 @@ export default class Gateway extends Comparable<Gateway> {
 
     return 0;
   }
+
+  /**
+   * Generates and return global address of given gateway contract address.
+   *
+   * @param gatewayContractAddress Gateway contract address.
+   *
+   * @returns Gateway global address.
+   */
+  public static getGlobalAddress(gatewayContractAddress: string): string {
+    return gatewayContractAddress;
+  }
 }

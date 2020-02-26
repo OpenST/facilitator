@@ -198,7 +198,7 @@ export default class GatewayRepository extends Subject<Gateway> {
       gatewayModel.remoteGA,
       gatewayModel.gatewayType,
       gatewayModel.anchorGA,
-      gatewayModel.remoteGatewayLastProvenBlockNumber,
+      new BigNumber(gatewayModel.remoteGatewayLastProvenBlockNumber),
       gatewayModel.destinationGA,
       gatewayModel.createdAt,
       gatewayModel.updatedAt,
