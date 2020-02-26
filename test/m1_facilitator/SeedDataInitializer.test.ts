@@ -11,18 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
 
 import assert from '../test_utils/assert';
 import Gateway, { GatewayType } from '../../src/m1_facilitator/models/Gateway';
 import Repositories from '../../src/m1_facilitator/repositories/Repositories';
-import SeedDataInitialiser from '../../src/m1_facilitator/SeedDataInitialiser';
+import SeedDataInitializer from '../../src/m1_facilitator/SeedDataInitializer';
 
-
-describe('SeedDataInitialiser::verifySeedData', (): void => {
+describe('SeedDataInitializer::verifySeedData', (): void => {
   let config: {
     repos: Repositories;
   };
@@ -41,7 +38,7 @@ describe('SeedDataInitialiser::verifySeedData', (): void => {
     };
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     remoteGatewayAddress = '0x0000000000000000000000000000000000000002';
-    gatewayType = GatewayType.CONSENSUS;
+    gatewayType = GatewayType.ERC20;
     destinationGA = '0x0000000000000000000000000000000000000003';
     remoteGatewayLastProvenBlockNumber = new BigNumber(100);
     anchorGA = '0x0000000000000000000000000000000000000004';
@@ -49,7 +46,7 @@ describe('SeedDataInitialiser::verifySeedData', (): void => {
     updatedAt = new Date();
   });
 
-  it('Should verify the seed data for given gatewway address', async (): Promise<void> => {
+  it('Should verify the seed data for given gateway address', async (): Promise<void> => {
     const gateway = new Gateway(
       Gateway.getGlobalAddress(gatewayAddress),
       Gateway.getGlobalAddress(remoteGatewayAddress),
@@ -65,7 +62,7 @@ describe('SeedDataInitialiser::verifySeedData', (): void => {
       gateway,
     );
 
-    const seedDataInitialiser = new SeedDataInitialiser(
+    const seedDataInitialiser = new SeedDataInitializer(
       config.repos,
     );
 
@@ -73,7 +70,7 @@ describe('SeedDataInitialiser::verifySeedData', (): void => {
 
     assert.isNotNull(
       gatewayrecord
-      && await seedDataInitialiser.verfiySeedData(gatewayrecord.gatewayGA),
+      && await seedDataInitialiser.isValidSeedData(gatewayrecord.gatewayGA),
       'Record must not be null for the gateway address.',
     );
   });

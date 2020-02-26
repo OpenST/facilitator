@@ -21,11 +21,15 @@ import Comparable from '../../common/observer/Comparable';
 /**
  * Type of gateways.
  */
+/**
+ * Type of gateways.
+ */
 export enum GatewayType {
   CONSENSUS = 'consensus',
   MOST = 'most',
   ERC20 = 'erc20',
-  NFT = 'nft'
+  NFT = 'nft',
+  ERC20Gateway = "ERC20Gateway"
 }
 
 /**
@@ -105,13 +109,13 @@ export default class Gateway extends Comparable<Gateway> {
   }
 
   /**
-   * Generates and return global address of given gateway contract address.
+   * Generates and return global address of given gateway address.
    *
-   * @param gatewayContractAddress Gateway contract address.
+   * @param gatewayAddress Gateway address.
    *
    * @returns Gateway global address.
    */
-  public static getGlobalAddress(gatewayContractAddress: string): string {
-    return gatewayContractAddress;
+  public static getGlobalAddress(gatewayAddress: string): string {
+    return gatewayAddress;
   }
 }

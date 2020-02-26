@@ -11,13 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 import Repositories from './repositories/Repositories';
 
 /**
- * Takes the address of ERC20Gateway address to check if the database is initial
+ * Takes the address of ERC20Gateway address to check if the database is initialized
  * with the proper seed data.
  */
 export default class SeedDataInitializer {
@@ -33,9 +31,13 @@ export default class SeedDataInitializer {
   }
 
   /**
+   * @notice Gateway address is used for vallidating seed data as it is used in manifest file
+   * and if the gateway record is present, then it can be used for deriving other attributes also.
    * @param gatewayAddress Gateway address for which seed data is to be verified.
+   *
+   * @returns Returns true if the gateway record is present for the given gateway address.
    */
-  public async verfiySeedData(gatewayAddress: string): Promise<boolean> {
+  public async isValidSeedData(gatewayAddress: string): Promise<boolean> {
     const gatewayRecord = await this.repositories.gatewayRepository.get(gatewayAddress);
 
     return (gatewayRecord !== null);
