@@ -1,0 +1,29 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: MosaicFacilitator
+    network: goerli
+    source:
+      address: "0xdbbb5c822ccfac3ea49e32215565c6aafb257a30"
+      abi: ERC20Gateway
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - DepositIntentDeclared
+        - GatewayProven
+        - WithdrawIntentConfirmed
+      abis:
+        - name: ERC20Gateway
+          file: ../abi/ERC20Gateway.json
+      eventHandlers:
+        - event: DepositIntentDeclared(uint256,uint256,address,uint256,uint256,address,address,bytes32)
+          handler: handleDepositIntentDeclared
+        - event: GatewayProven(address,uint256)
+          handler: handleGatewayProven
+        - event: WithdrawIntentConfirmed(bytes32)
+          handler: handleWithdrawIntentConfirmed
+      file: ./src/ERC20GatewayMapping.ts
