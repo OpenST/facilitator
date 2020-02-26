@@ -15,8 +15,8 @@
 import { DataTypes, Model, InitOptions } from 'sequelize';
 
 import ERC20GatewayTokenPair from '../models/ERC20GatewayTokenPair';
-import Subject from '../../m0_facilitator/observer/Subject';
-import Utils from '../../m0_facilitator/Utils';
+import Subject from '../../common/observer/Subject';
+import Utils from '../../common/Utils';
 
 import assert = require('assert');
 

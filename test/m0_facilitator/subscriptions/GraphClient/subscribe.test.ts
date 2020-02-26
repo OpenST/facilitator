@@ -21,8 +21,8 @@ import BigNumber from 'bignumber.js';
 import gql from 'graphql-tag';
 import sinon from 'sinon';
 
-import ContractEntity, { EntityType } from '../../../../src/m0_facilitator/models/ContractEntity';
-import ContractEntityRepository from '../../../../src/m0_facilitator/repositories/ContractEntityRepository';
+import ContractEntity, { EntityType } from '../../../../src/common/models/ContractEntity';
+import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
 import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
 import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';
 import TransactionHandler from '../../../../src/m0_facilitator/TransactionHandler';

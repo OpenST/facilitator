@@ -19,7 +19,7 @@ import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import * as web3utils from 'web3-utils';
 
-import Comparable from '../observer/Comparable';
+import Comparable from '../../common/observer/Comparable';
 
 /**
  * Represents Message model object.

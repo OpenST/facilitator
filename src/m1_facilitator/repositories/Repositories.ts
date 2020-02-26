@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { InitOptions, Sequelize } from 'sequelize';
+
 import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
-import { InitOptions, Sequelize } from 'sequelize';
 import GatewayRepository from './GatewayRepository';
 import MessageRepository from './MessageRepository';
 import WithdrawIntentRepository from './WithdrawIntentRepository';
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 
 export default class Repositories {
   /* Storage */
@@ -31,6 +33,8 @@ export default class Repositories {
   public gatewayRepository: GatewayRepository;
 
   public withdrawIntentRepository: WithdrawIntentRepository;
+
+  public contractEntityRepository: ContractEntityRepository;
 
 
   /* Public Functions */
@@ -67,6 +71,7 @@ export default class Repositories {
     promises.push(this.gatewayRepository.notify());
     promises.push(this.messageRepository.notify());
     promises.push(this.withdrawIntentRepository.notify());
+    promises.push(this.contractEntityRepository.notify());
 
     return Promise.all(promises);
   }
@@ -95,6 +100,7 @@ export default class Repositories {
     };
 
     this.anchorRepository = new AnchorRepository(initOptions);
+    this.contractEntityRepository = new ContractEntityRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
     this.messageRepository = new MessageRepository(initOptions);
     this.gatewayRepository = new GatewayRepository(initOptions);

@@ -28,7 +28,7 @@ import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../../common/Logger';
 import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
-import Observer from '../../observer/Observer';
+import Observer from '../../../common/observer/Observer';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
