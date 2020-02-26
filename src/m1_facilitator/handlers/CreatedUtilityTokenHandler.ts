@@ -11,13 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific
 
-import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import ERC20GatewayTokenPair from '../models/ERC20GatewayTokenPair';
-import Utils from '../../common/Utils';
 import GatewayRepository from '../repositories/GatewayRepository';
+import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
+import Utils from '../../common/Utils';
 
 /**
- *
+ * It represents record of DeclaredDepositIntents entity.
  */
 export interface CreatedUtilityTokenHandlerInterface {
   valueTokenAddress: string;
@@ -26,7 +26,7 @@ export interface CreatedUtilityTokenHandlerInterface {
 }
 
 /**
- *
+ * It handles updates from CreatedUtilityTokenHandler entity.
  */
 export default class CreatedUtilityTokenHandler {
   /** Instance of ERC20GatewayRepository. */
@@ -44,8 +44,12 @@ export default class CreatedUtilityTokenHandler {
   }
 
   /**
+   * Handles CreatedUtilityTokens entity records.
+   * - It creates `ERC20TokenPairRepository` record.
+   * - This handler only reacts to UtilityTokenCreated event of ERC20Cogateway which are populated
+   *   during seed data. It silently ignores the events by other ERC20C0gateway.
    *
-   * @param records
+   * @param records List of CreatedUtilityTokens entity.
    */
   public async handle(records: CreatedUtilityTokenHandlerInterface[]): Promise<void> {
     const promiseCollection = records.map(async (record): Promise<void> => {
@@ -53,7 +57,7 @@ export default class CreatedUtilityTokenHandler {
         Utils.toChecksumAddress(record.contractAddress),
       );
       if (gatewayRecord !== null) {
-        const erc20GatewayTokenPairRecord = this.erc20GatewayTokenPairRepository.get(
+        const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
           Utils.toChecksumAddress(record.contractAddress),
           Utils.toChecksumAddress(record.valueTokenAddress),
         );

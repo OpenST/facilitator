@@ -22,24 +22,30 @@ import ERC20GatewayTokenPairRepository from '../../../../src/m1_facilitator/repo
 import assert from '../../../test_utils/assert';
 
 describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
-  const record1 = {
+  const records = [{
     valueTokenAddress: '0x0000000000000000000000000000000000000040',
     utilityTokenAddress: '0x0000000000000000000000000000000000000041',
     contractAddress: '0x0000000000000000000000000000000000000042',
-  };
+  },
+  {
+    valueTokenAddress: '0x0000000000000000000000000000000000000090',
+    utilityTokenAddress: '0x0000000000000000000000000000000000000091',
+    contractAddress: '0x0000000000000000000000000000000000000092',
+  }];
 
   let gateway: Gateway;
   let createdUtilityTokenHandler: CreatedUtilityTokenHandler;
   let gatewayRepository: GatewayRepository;
   let erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
-  const gatewayAddress = '0x0000000000000000000000000000000000000002';
+  const gatewayAddress1 = '0x0000000000000000000000000000000000000002';
+  const gatewayAddress2 = '0x0000000000000000000000000000000000000080';
 
   before(async (): Promise<void> => {
     const repositories = await Repositories.create();
     ({ erc20GatewayTokenPairRepository, gatewayRepository } = repositories);
     gateway = new Gateway(
-      '0x0000000000000000000000000000000000000001',
-      gatewayAddress,
+      records[0].contractAddress,
+      gatewayAddress1,
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000003',
       new BigNumber(200),
@@ -63,7 +69,7 @@ describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
       record.gatewayAddress,
       record.valueTokenAddress,
     );
-    console.log('erc20GatewayPair : ', erc20GatewayPair);
+
     assert.strictEqual(
       erc20GatewayPair && erc20GatewayPair.utilityToken,
       record.utilityTokenAddress,
@@ -73,13 +79,43 @@ describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
 
   it('should create record in ERC20GatewayTokenPair if value token for the gateway is '
   + 'not present', async (): Promise<void> => {
-    await createdUtilityTokenHandler.handle([record1]);
+    await createdUtilityTokenHandler.handle([records[0]]);
 
     await assertERC20GatewayPair(
       {
-        gatewayAddress,
-        valueTokenAddress: record1.valueTokenAddress,
-        utilityTokenAddress: record1.utilityTokenAddress,
+        gatewayAddress: gatewayAddress1,
+        valueTokenAddress: records[0].valueTokenAddress,
+        utilityTokenAddress: records[0].utilityTokenAddress,
+      },
+    );
+  });
+
+  it('should handle multiple records', async (): Promise<void> => {
+    const gateway2 = new Gateway(
+      records[1].contractAddress,
+      gatewayAddress2,
+      GatewayType.ERC20,
+      '0x0000000000000000000000000000000000000003',
+      new BigNumber(200),
+      '0x0000000000000000000000000000000000000003',
+    );
+    await gatewayRepository.save(gateway2);
+
+    await createdUtilityTokenHandler.handle([records[0], records[1]]);
+
+    await assertERC20GatewayPair(
+      {
+        gatewayAddress: gatewayAddress1,
+        valueTokenAddress: records[0].valueTokenAddress,
+        utilityTokenAddress: records[0].utilityTokenAddress,
+      },
+    );
+
+    await assertERC20GatewayPair(
+      {
+        gatewayAddress: gatewayAddress2,
+        valueTokenAddress: records[1].valueTokenAddress,
+        utilityTokenAddress: records[1].utilityTokenAddress,
       },
     );
   });
