@@ -27,8 +27,8 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import WebSocket from 'ws';
 
 import Logger from '../../common/Logger';
-import ContractEntity, { EntityType } from '../models/ContractEntity';
-import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import ContractEntity, { EntityType } from '../../common/models/ContractEntity';
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import TransactionHandler from '../TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
 import Utils from '../Utils';
