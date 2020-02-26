@@ -25,7 +25,7 @@ import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gatew
 import { Config } from './Config/Config';
 import Utils from './Utils';
 import AuxiliaryChain from './models/AuxiliaryChain';
-import ContractEntity, { M0EntityType } from '../common/models/ContractEntity';
+import ContractEntity, { EntityType } from '../common/models/ContractEntity';
 import Gateway from './models/Gateway';
 import AuxiliaryChainRepository from './repositories/AuxiliaryChainRepository';
 import ContractEntityRepository from '../common/repositories/ContractEntityRepository';
@@ -45,7 +45,7 @@ export default class SeedData {
 
   private auxiliaryChainRepository: AuxiliaryChainRepository;
 
-  private contractEntityRepository: ContractEntityRepository<M0EntityType>;
+  private contractEntityRepository: ContractEntityRepository;
 
   private currentTimestamp: BigNumber;
 
@@ -60,7 +60,7 @@ export default class SeedData {
     config: Config,
     gatewayRepository: GatewayRepository,
     auxiliaryChainRepository: AuxiliaryChainRepository,
-    contractEntityRepository: ContractEntityRepository<M0EntityType>,
+    contractEntityRepository: ContractEntityRepository,
     currentTimestamp?: BigNumber,
   ) {
     this.config = config;
@@ -183,28 +183,28 @@ export default class SeedData {
    * Populates seed data in contract_entities table.
    */
   private async populateContractEntityTable(): Promise<void> {
-    const contractAddressEventTypesMap: Record<string, M0EntityType[]> = {
-      [this.stakePoolAddress]: [M0EntityType.StakeRequesteds],
-      [this.redeemPoolAddress]: [M0EntityType.RedeemRequesteds],
+    const contractAddressEventTypesMap: Record<string, EntityType[]> = {
+      [this.stakePoolAddress]: [EntityType.StakeRequesteds],
+      [this.redeemPoolAddress]: [EntityType.RedeemRequesteds],
       [this.gatewayAddress]: [
         // Stake & mint entities
-        M0EntityType.StakeIntentDeclareds,
-        M0EntityType.StakeProgresseds,
+        EntityType.StakeIntentDeclareds,
+        EntityType.StakeProgresseds,
         // Redeem & Unstake entities
-        M0EntityType.RedeemIntentConfirmeds,
-        M0EntityType.UnstakeProgresseds,
-        M0EntityType.GatewayProvens,
+        EntityType.RedeemIntentConfirmeds,
+        EntityType.UnstakeProgresseds,
+        EntityType.GatewayProvens,
       ],
-      [this.coAnchorAddress]: [M0EntityType.StateRootAvailables],
-      [this.anchorAddress]: [M0EntityType.StateRootAvailables],
+      [this.coAnchorAddress]: [EntityType.StateRootAvailables],
+      [this.anchorAddress]: [EntityType.StateRootAvailables],
       [this.coGatewayAddress]: [
         // Stake & Mint entities
-        M0EntityType.StakeIntentConfirmeds,
-        M0EntityType.MintProgresseds,
-        M0EntityType.GatewayProvens,
+        EntityType.StakeIntentConfirmeds,
+        EntityType.MintProgresseds,
+        EntityType.GatewayProvens,
         // Redeem & Unstake entities
-        M0EntityType.RedeemIntentDeclareds,
-        M0EntityType.RedeemProgresseds,
+        EntityType.RedeemIntentDeclareds,
+        EntityType.RedeemProgresseds,
       ],
     };
     const promises: any = [];
@@ -214,7 +214,7 @@ export default class SeedData {
       const eventTypes = contractAddressEventTypesMap[contractAddress];
       for (let j = 0; eventTypes.length; j += 1) {
         if (!eventTypes[j]) { break; }
-        promises.push(this.contractEntityRepository.save(new ContractEntity<M0EntityType>(
+        promises.push(this.contractEntityRepository.save(new ContractEntity(
           contractAddress,
           eventTypes[j],
           this.currentTimestamp,

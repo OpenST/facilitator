@@ -22,7 +22,6 @@ import ContractEntityRepository from '../../common/repositories/ContractEntityRe
 import GatewayRepository from './GatewayRepository';
 import { MessageRepository } from './MessageRepository';
 import MessageTransferRequestRepository from './MessageTransferRequestRepository';
-import { M0EntityType } from '../../common/models/ContractEntity';
 
 export default class Repositories {
   /* Storage */
@@ -35,7 +34,7 @@ export default class Repositories {
 
   public gatewayRepository: GatewayRepository;
 
-  public contractEntityRepository: ContractEntityRepository<M0EntityType>;
+  public contractEntityRepository: ContractEntityRepository;
 
   /* Public Functions */
 
@@ -128,6 +127,6 @@ export default class Repositories {
 
     this.gatewayRepository = new GatewayRepository(initOptions);
 
-    this.contractEntityRepository = new ContractEntityRepository<M0EntityType>(initOptions);
+    this.contractEntityRepository = new ContractEntityRepository(initOptions);
   }
 }

@@ -21,7 +21,7 @@ import BigNumber from 'bignumber.js';
 import gql from 'graphql-tag';
 import sinon from 'sinon';
 
-import ContractEntity, { M0EntityType } from '../../../../src/common/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../../../src/common/models/ContractEntity';
 import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
 import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
 import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';
@@ -126,9 +126,9 @@ describe('GraphClient.subscribe()', () => {
     SpyAssert.assert(
       contractEntityRepository.save,
       1,
-      [[new ContractEntity<M0EntityType>(
+      [[new ContractEntity(
         '0x0000000000000000000000000000000000000002',
-        M0EntityType.StakeRequesteds,
+        EntityType.StakeRequesteds,
         new BigNumber(1001),
       )]],
     );

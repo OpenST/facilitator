@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import ContractEntity, { M0EntityType } from '../../../src/common/models/ContractEntity';
+import ContractEntity from '../../../src/common/models/ContractEntity';
 import assert from '../../test_utils/assert';
 
 /**
@@ -28,8 +28,8 @@ export default class Util {
    * @param expectedContractEntity Expected contract entity object.
    */
   public static assertion(
-    responseContractEntity: ContractEntity<M0EntityType>,
-    expectedContractEntity: ContractEntity<M0EntityType>,
+    responseContractEntity: ContractEntity,
+    expectedContractEntity: ContractEntity,
   ): void {
     if (expectedContractEntity.timestamp !== undefined) {
       assert.isOk(

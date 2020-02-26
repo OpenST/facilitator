@@ -22,7 +22,6 @@ import ContractEntityRepository from '../../common/repositories/ContractEntityRe
 import TransactionHandler from '../TransactionHandler';
 import GraphClient from './GraphClient';
 import TransactionFetcher from './TransactionFetcher';
-import { M0EntityType } from '../../common/models/ContractEntity';
 
 /**
  * Subscriber class subscribes and unsubscribes subscription queries of a subgraph.
@@ -36,7 +35,7 @@ export default class Subscriber {
 
   private handler: TransactionHandler;
 
-  private contractEntityRepository: ContractEntityRepository<M0EntityType>;
+  private contractEntityRepository: ContractEntityRepository;
 
   private fetcher: TransactionFetcher;
 
@@ -54,7 +53,7 @@ export default class Subscriber {
     subscriptionQueries: Record<string, string>,
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
-    contractEntityRepository: ContractEntityRepository<M0EntityType>,
+    contractEntityRepository: ContractEntityRepository,
   ) {
     this.contractEntityRepository = contractEntityRepository;
     this.querySubscriptions = {};

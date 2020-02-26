@@ -23,7 +23,7 @@ import { interacts } from '@openst/mosaic-contracts';
 
 import { Config, ConfigType } from '../../../src/m0_facilitator/Config/Config';
 import AuxiliaryChain from '../../../src/m0_facilitator/models/AuxiliaryChain';
-import ContractEntity, { M0EntityType } from '../../../src/common/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../../src/common/models/ContractEntity';
 import Gateway from '../../../src/m0_facilitator/models/Gateway';
 import { GatewayType } from '../../../src/m0_facilitator/repositories/GatewayRepository';
 import Repositories from '../../../src/m0_facilitator/repositories/Repositories';
@@ -121,18 +121,18 @@ describe('SeedData.populateDb()', (): void => {
    * Verifies data which was inserted for StakePool related events in contract_entities table.
    */
   async function verifyStakePoolRelatedContractEntities(): Promise<void> {
-    const contractEntity = new ContractEntity<M0EntityType>(
+    const contractEntity = new ContractEntity(
       stakePoolAddress,
-      M0EntityType.StakeRequesteds,
+      EntityType.StakeRequesteds,
       currentTimestamp,
     );
     const contractEntityFromDb = await repositories.contractEntityRepository.get(
       stakePoolAddress,
-      M0EntityType.StakeRequesteds,
+      EntityType.StakeRequesteds,
     );
     ContractEntityRepositoryUtil.assertion(
       contractEntity,
-      contractEntityFromDb as ContractEntity<M0EntityType>,
+      contractEntityFromDb as ContractEntity,
     ); // todo: verify the change.
   }
 
@@ -140,18 +140,18 @@ describe('SeedData.populateDb()', (): void => {
    * Verifies data which was inserted for RedeemPool related events in contract_entities table.
    */
   async function verifyRedeemPoolRelatedContractEntities(): Promise<void> {
-    const contractEntity = new ContractEntity<M0EntityType>(
+    const contractEntity = new ContractEntity(
       redeemPoolAddress,
-      M0EntityType.RedeemRequesteds,
+      EntityType.RedeemRequesteds,
       currentTimestamp,
     );
     const contractEntityFromDb = await repositories.contractEntityRepository.get(
       redeemPoolAddress,
-      M0EntityType.RedeemRequesteds,
+      EntityType.RedeemRequesteds,
     );
     ContractEntityRepositoryUtil.assertion(
       contractEntity,
-      contractEntityFromDb as ContractEntity<M0EntityType>,
+      contractEntityFromDb as ContractEntity,
     );
   }
 
@@ -160,15 +160,15 @@ describe('SeedData.populateDb()', (): void => {
    */
   async function verifyGatewayRelatedContractEntities(): Promise<void> {
     const eventTypes = [
-      M0EntityType.StakeIntentDeclareds,
-      M0EntityType.StakeProgresseds,
-      M0EntityType.RedeemIntentConfirmeds,
-      M0EntityType.UnstakeProgresseds,
-      M0EntityType.GatewayProvens,
+      EntityType.StakeIntentDeclareds,
+      EntityType.StakeProgresseds,
+      EntityType.RedeemIntentConfirmeds,
+      EntityType.UnstakeProgresseds,
+      EntityType.GatewayProvens,
     ];
     const promises = [];
     for (let i = 0; i < eventTypes.length; i += 1) {
-      const contractEntity = new ContractEntity<M0EntityType>(
+      const contractEntity = new ContractEntity(
         eip20GatewayAddress,
         eventTypes[i],
         currentTimestamp,
@@ -179,7 +179,7 @@ describe('SeedData.populateDb()', (): void => {
       ).then((contractEntityFromDb) => {
         ContractEntityRepositoryUtil.assertion(
           contractEntity,
-          contractEntityFromDb as ContractEntity<M0EntityType>,
+          contractEntityFromDb as ContractEntity,
         );
       });
       promises.push(promise);
@@ -192,18 +192,18 @@ describe('SeedData.populateDb()', (): void => {
    * contract_entities table.
    */
   async function verifyAuxiliaryAnchorRelatedContractEntities(): Promise<void> {
-    const contractEntity = new ContractEntity<M0EntityType>(
+    const contractEntity = new ContractEntity(
       coAnchorAddress,
-      M0EntityType.StateRootAvailables,
+      EntityType.StateRootAvailables,
       currentTimestamp,
     );
     const contractEntityFromDb = await repositories.contractEntityRepository.get(
       coAnchorAddress,
-      M0EntityType.StateRootAvailables,
+      EntityType.StateRootAvailables,
     );
     ContractEntityRepositoryUtil.assertion(
       contractEntity,
-      contractEntityFromDb as ContractEntity<M0EntityType>,
+      contractEntityFromDb as ContractEntity,
     );
   }
 
@@ -211,18 +211,18 @@ describe('SeedData.populateDb()', (): void => {
    * Verifies data which was inserted for Origin Anchor related events in contract_entities table.
    */
   async function verifyOriginAnchorRelatedContractEntities(): Promise<void> {
-    const contractEntity = new ContractEntity<M0EntityType>(
+    const contractEntity = new ContractEntity(
       anchorAddress,
-      M0EntityType.StateRootAvailables,
+      EntityType.StateRootAvailables,
       currentTimestamp,
     );
     const contractEntityFromDb = await repositories.contractEntityRepository.get(
       anchorAddress,
-      M0EntityType.StateRootAvailables,
+      EntityType.StateRootAvailables,
     );
     ContractEntityRepositoryUtil.assertion(
       contractEntity,
-      contractEntityFromDb as ContractEntity<M0EntityType>,
+      contractEntityFromDb as ContractEntity,
     );
   }
 
@@ -231,15 +231,15 @@ describe('SeedData.populateDb()', (): void => {
    */
   async function verifyCoGatewayRelatedContractEntities(): Promise<void> {
     const eventTypes = [
-      M0EntityType.StakeIntentConfirmeds,
-      M0EntityType.MintProgresseds,
-      M0EntityType.GatewayProvens,
-      M0EntityType.RedeemIntentDeclareds,
-      M0EntityType.RedeemProgresseds,
+      EntityType.StakeIntentConfirmeds,
+      EntityType.MintProgresseds,
+      EntityType.GatewayProvens,
+      EntityType.RedeemIntentDeclareds,
+      EntityType.RedeemProgresseds,
     ];
     const promises = [];
     for (let i = 0; i < eventTypes.length; i += 1) {
-      const contractEntity = new ContractEntity<M0EntityType>(
+      const contractEntity = new ContractEntity(
         eip20CoGatewayAddress,
         eventTypes[i],
         currentTimestamp,
@@ -250,7 +250,7 @@ describe('SeedData.populateDb()', (): void => {
       ).then((contractEntityFromDb): void => {
         ContractEntityRepositoryUtil.assertion(
           contractEntity,
-          contractEntityFromDb as ContractEntity<M0EntityType>,
+          contractEntityFromDb as ContractEntity,
         );
       });
       promises.push(promise);

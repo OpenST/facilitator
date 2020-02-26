@@ -20,7 +20,6 @@ import GatewayRepository from './GatewayRepository';
 import MessageRepository from './MessageRepository';
 import WithdrawIntentRepository from './WithdrawIntentRepository';
 import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
-import { M1EntityType } from '../../common/models/ContractEntity';
 
 export default class Repositories {
   /* Storage */
@@ -35,7 +34,7 @@ export default class Repositories {
 
   public withdrawIntentRepository: WithdrawIntentRepository;
 
-  public contractEntitytRepository: ContractEntityRepository<M1EntityType>;
+  public contractEntitytRepository: ContractEntityRepository;
 
 
   /* Public Functions */
@@ -101,7 +100,7 @@ export default class Repositories {
     };
 
     this.anchorRepository = new AnchorRepository(initOptions);
-    this.contractEntitytRepository = new ContractEntityRepository<M1EntityType>(initOptions);
+    this.contractEntitytRepository = new ContractEntityRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
     this.messageRepository = new MessageRepository(initOptions);
     this.gatewayRepository = new GatewayRepository(initOptions);

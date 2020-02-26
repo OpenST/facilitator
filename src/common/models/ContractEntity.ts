@@ -21,12 +21,13 @@ import Comparable from '../observer/Comparable';
 
 /**
  * Entity types of origin and aux chain for which timestamp will be recorded.
- * These entity type are supported in Mosaic-0.
+ * These entity type are supported in Mosaic-0 and Mosaic-1.
  */
-export enum M0EntityType {
+export enum EntityType {
   // Common entities
   StateRootAvailables = 'stateRootAvailables',
   GatewayProvens = 'gatewayProvens',
+  // M0 entities
   // Stake & Mint entities
   StakeRequesteds = 'stakeRequesteds',
   StakeIntentDeclareds = 'stakeIntentDeclareds',
@@ -39,27 +40,21 @@ export enum M0EntityType {
   RedeemIntentConfirmeds = 'redeemIntentConfirmeds',
   RedeemProgresseds = 'redeemProgresseds',
   UnstakeProgresseds = 'unstakeProgresseds',
-}
-
-/**
- * Mosaic-1 supported entity types for which timestamp will be recorded.
- */
-export enum M1EntityType {
+  // M1 entities
   DeclaredDepositIntents = 'declaredDepositIntents',
   ConfirmedWithdrawIntents = 'confirmedWithdrawIntents',
   DeclaredWithdrawIntents = 'declaredWithdrawIntents',
   ConfirmedDepositIntents = 'confirmedDepositIntents',
-  CreatedUtilityTokens = 'createdUtilityTokens'
+  CreatedUtilityTokens = 'createdUtilityTokens',
 }
 
 /**
  * Represents ContractEntity model object.
  */
-export default class ContractEntity<T> extends Comparable<ContractEntity<T>> {
+export default class ContractEntity extends Comparable<ContractEntity> {
   public contractAddress: string;
 
-  /** It is generic entity type. Ex: M0EntityType, M1EntityType  */
-  public entityType: T;
+  public entityType: EntityType;
 
   public timestamp: BigNumber;
 
@@ -70,14 +65,14 @@ export default class ContractEntity<T> extends Comparable<ContractEntity<T>> {
   /**
    * Constructor to set fields of Contract Entities model.
    * @param contractAddress Address of the contract.
-   * @param entityType Generic entity type(e.g. M0EntityType, M1EntityType).
+   * @param entityType Type of entity.
    * @param timestamp Last updated time in secs.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */
   public constructor(
     contractAddress: string,
-    entityType: T,
+    entityType: EntityType,
     timestamp: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
@@ -96,10 +91,9 @@ export default class ContractEntity<T> extends Comparable<ContractEntity<T>> {
    * @returns `0` if the objects are same, 1 if new object is greater and -1 if new object
    *          is lesser.
    */
-  public compareTo(other: ContractEntity<T>): number {
-    // As `entityType` is generic, we wont be able to typecast directly to string.
-    const currentKey = this.contractAddress.concat(this.entityType as unknown as string);
-    const specifiedKey = other.contractAddress.concat(this.entityType as unknown as string);
+  public compareTo(other: ContractEntity): number {
+    const currentKey = this.contractAddress.concat(this.entityType as string);
+    const specifiedKey = other.contractAddress.concat(this.entityType as string);
 
     if (currentKey > specifiedKey) {
       return 1;

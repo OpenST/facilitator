@@ -21,17 +21,17 @@ import {
   DataTypes, InitOptions, Model, Op,
 } from 'sequelize';
 
-import ContractEntity, { M0EntityType, M1EntityType } from '../models/ContractEntity';
+import ContractEntity, { EntityType } from '../models/ContractEntity';
 import Subject from '../observer/Subject';
 import Utils from '../Utils';
 
 /**
  * An interface, that represents a row from a contract entities table.
  */
-class ContractEntityModel<T> extends Model<T> {
+class ContractEntityModel extends Model {
   public readonly contractAddress!: string;
 
-  public readonly entityType!: T;
+  public readonly entityType!: EntityType;
 
   public readonly timestamp!: BigNumber;
 
@@ -46,7 +46,7 @@ class ContractEntityModel<T> extends Model<T> {
  * Class enables creation, update and retrieval of ContractEntity objects.
  * On construction it initializes underlying database model.
  */
-export default class ContractEntityRepository<T> extends Subject<ContractEntity<T>> {
+export default class ContractEntityRepository extends Subject<ContractEntity> {
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -67,28 +67,28 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
           type: DataTypes.ENUM({
             values: [
               // Common entities for M0 and M1 facilitator
-              M0EntityType.GatewayProvens,
-              M0EntityType.StateRootAvailables,
+              EntityType.GatewayProvens,
+              EntityType.StateRootAvailables,
               // M0 facilitator entities
               // Stake & Mint Entities
-              M0EntityType.StakeRequesteds,
-              M0EntityType.StakeIntentDeclareds,
-              M0EntityType.StakeIntentConfirmeds,
-              M0EntityType.StakeProgresseds,
-              M0EntityType.MintProgresseds,
+              EntityType.StakeRequesteds,
+              EntityType.StakeIntentDeclareds,
+              EntityType.StakeIntentConfirmeds,
+              EntityType.StakeProgresseds,
+              EntityType.MintProgresseds,
               // Redeem & Unstake entities
-              M0EntityType.RedeemRequesteds,
-              M0EntityType.RedeemIntentDeclareds,
-              M0EntityType.RedeemIntentConfirmeds,
-              M0EntityType.RedeemProgresseds,
-              M0EntityType.UnstakeProgresseds,
+              EntityType.RedeemRequesteds,
+              EntityType.RedeemIntentDeclareds,
+              EntityType.RedeemIntentConfirmeds,
+              EntityType.RedeemProgresseds,
+              EntityType.UnstakeProgresseds,
               // M1 facilitator entities
               // Deposit and confirm deposit entities
-              M1EntityType.DeclaredDepositIntents,
-              M1EntityType.ConfirmedDepositIntents,
+              EntityType.DeclaredDepositIntents,
+              EntityType.ConfirmedDepositIntents,
               // Withdraw and Confirm withdraw entities
-              M1EntityType.DeclaredWithdrawIntents,
-              M1EntityType.ConfirmedWithdrawIntents,
+              EntityType.DeclaredWithdrawIntents,
+              EntityType.ConfirmedWithdrawIntents,
             ],
           }),
         },
@@ -116,7 +116,7 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
    *
    * @returns Newly created or updated contract entity object.
    */
-  public async save(contractEntity: ContractEntity<T>): Promise<ContractEntity<T>> {
+  public async save(contractEntity: ContractEntity): Promise<ContractEntity> {
     const contractEntityModelObj = await ContractEntityModel.findOne(
       {
         where: {
@@ -126,10 +126,10 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
       },
     );
 
-    let updatedContractEntity: ContractEntity<T> | null;
+    let updatedContractEntity: ContractEntity | null;
     if (contractEntityModelObj === null) {
       updatedContractEntity = this.convertToContractEntity(
-        await ContractEntityModel.create<ContractEntityModel<T>>(
+        await ContractEntityModel.create<ContractEntityModel>(
           contractEntity,
         ),
       );
@@ -157,9 +157,9 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
        + ` ${contractEntity.contractAddress} and entityType: ${contractEntity.entityType}`,
     );
 
-    this.newUpdate(updatedContractEntity as ContractEntity<T>);
+    this.newUpdate(updatedContractEntity as ContractEntity);
 
-    return updatedContractEntity as ContractEntity<T>;
+    return updatedContractEntity as ContractEntity;
   }
 
   /**
@@ -171,8 +171,8 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
   public async get(
     contractAddress: string,
     entityType: string,
-  ): Promise<ContractEntity<T> | null> {
-    const contractEntityModel = await ContractEntityModel.findOne<ContractEntityModel<T>>({
+  ): Promise<ContractEntity | null> {
+    const contractEntityModel = await ContractEntityModel.findOne<ContractEntityModel>({
       where: {
         contractAddress: {
           [Op.eq]: contractAddress,
@@ -199,8 +199,8 @@ export default class ContractEntityRepository<T> extends Subject<ContractEntity<
    * @returns Contract Entity object.
    */
   /* eslint-disable class-methods-use-this */
-  private convertToContractEntity(contractEntityModel: ContractEntityModel<T>): ContractEntity<T> {
-    const contractEntity = new ContractEntity<T>(
+  private convertToContractEntity(contractEntityModel: ContractEntityModel): ContractEntity {
+    const contractEntity = new ContractEntity(
       contractEntityModel.contractAddress,
       contractEntityModel.entityType,
       new BigNumber(contractEntityModel.timestamp),

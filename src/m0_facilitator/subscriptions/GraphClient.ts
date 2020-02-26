@@ -27,7 +27,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import WebSocket from 'ws';
 
 import Logger from '../../common/Logger';
-import ContractEntity, { M0EntityType } from '../../common/models/ContractEntity';
+import ContractEntity, { EntityType } from '../../common/models/ContractEntity';
 import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import TransactionHandler from '../TransactionHandler';
 import TransactionFetcher from './TransactionFetcher';
@@ -66,7 +66,7 @@ export default class GraphClient {
     subscriptionQry: string,
     handler: TransactionHandler,
     fetcher: TransactionFetcher,
-    contractEntityRepository: ContractEntityRepository<M0EntityType>,
+    contractEntityRepository: ContractEntityRepository,
   ): Promise<Subscription> {
     if (!subscriptionQry) {
       const err = new TypeError("Mandatory Parameter 'subscriptionQry' is missing or invalid.");
@@ -127,7 +127,7 @@ export default class GraphClient {
   private static async updateLatestUTS(
     transactions: Record<string, Record<string, any>[]>,
     subscriptionResponse: Record<string, any[]>,
-    contractEntityRepository: ContractEntityRepository<M0EntityType>,
+    contractEntityRepository: ContractEntityRepository,
   ): Promise<void> {
     const savePromises = Object.keys(transactions).map(
       async (transactionKind) => {
@@ -144,7 +144,7 @@ export default class GraphClient {
         Logger.debug(`Updating UTS to ${currentUTS} for entity ${transactionKind}`);
         const contractEntity = new ContractEntity(
           Utils.toChecksumAddress(contractAddress),
-          transactionKind as M0EntityType,
+          transactionKind as EntityType,
           currentUTS,
         );
         return contractEntityRepository.save(
