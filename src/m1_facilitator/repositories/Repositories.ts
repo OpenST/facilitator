@@ -18,6 +18,7 @@ import { InitOptions, Sequelize } from 'sequelize';
 import GatewayRepository from './GatewayRepository';
 import MessageRepository from './MessageRepository';
 import WithdrawIntentRepository from './WithdrawIntentRepository';
+import ERC20GatewayTokenPairRepository from './ERC20GatewayTokenPairRepository';
 
 export default class Repositories {
   /* Storage */
@@ -31,6 +32,8 @@ export default class Repositories {
   public gatewayRepository: GatewayRepository;
 
   public withdrawIntentRepository: WithdrawIntentRepository;
+
+  public erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
 
 
   /* Public Functions */
@@ -67,6 +70,7 @@ export default class Repositories {
     promises.push(this.gatewayRepository.notify());
     promises.push(this.messageRepository.notify());
     promises.push(this.withdrawIntentRepository.notify());
+    promises.push(this.erc20GatewayTokenPairRepository.notify());
 
     return Promise.all(promises);
   }
@@ -99,5 +103,6 @@ export default class Repositories {
     this.messageRepository = new MessageRepository(initOptions);
     this.gatewayRepository = new GatewayRepository(initOptions);
     this.withdrawIntentRepository = new WithdrawIntentRepository(initOptions);
+    this.erc20GatewayTokenPairRepository = new ERC20GatewayTokenPairRepository(initOptions);
   }
 }
