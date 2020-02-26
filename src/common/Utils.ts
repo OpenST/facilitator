@@ -28,7 +28,7 @@ export default class Utils {
   }
 
   /**
-   * Returns after removing undefined properties.
+   * Returns object after removing undefined properties.
    * @param obj Input object.
    */
   public static getDefinedOwnProps(obj: {}): string[] {

@@ -66,10 +66,10 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
           primaryKey: true,
           type: DataTypes.ENUM({
             values: [
-              // Common entities for M0 and M1 facilitator
+              // M0 entities
+              // Common entities for both origin and auxiliary chain
               EntityType.GatewayProvens,
               EntityType.StateRootAvailables,
-              // M0 facilitator entities
               // Stake & Mint Entities
               EntityType.StakeRequesteds,
               EntityType.StakeIntentDeclareds,
@@ -83,12 +83,17 @@ export default class ContractEntityRepository extends Subject<ContractEntity> {
               EntityType.RedeemProgresseds,
               EntityType.UnstakeProgresseds,
               // M1 facilitator entities
-              // Deposit and confirm deposit entities
+              // Common entities for both origin and auxiliary chain
+              EntityType.ProvenGateways,
+              EntityType.AvailableStateRoots,
+              // Deposit entities
               EntityType.DeclaredDepositIntents,
               EntityType.ConfirmedDepositIntents,
-              // Withdraw and Confirm withdraw entities
+              EntityType.CreatedUtilityTokens,
+              // Withdraw entities
               EntityType.DeclaredWithdrawIntents,
               EntityType.ConfirmedWithdrawIntents,
+
             ],
           }),
         },

@@ -24,10 +24,10 @@ import Comparable from '../observer/Comparable';
  * These entity type are supported in Mosaic-0 and Mosaic-1.
  */
 export enum EntityType {
-  // Common entities
+  // M0 entities
+  // Common entities for both origin and auxiliary chain
   StateRootAvailables = 'stateRootAvailables',
   GatewayProvens = 'gatewayProvens',
-  // M0 entities
   // Stake & Mint entities
   StakeRequesteds = 'stakeRequesteds',
   StakeIntentDeclareds = 'stakeIntentDeclareds',
@@ -41,11 +41,16 @@ export enum EntityType {
   RedeemProgresseds = 'redeemProgresseds',
   UnstakeProgresseds = 'unstakeProgresseds',
   // M1 entities
+  // Common entities for both origin and auxiliary chain
+  ProvenGateways = 'provenGateways',
+  AvailableStateRoots = 'availableStateRoots',
+  // Deposit entities
   DeclaredDepositIntents = 'declaredDepositIntents',
-  ConfirmedWithdrawIntents = 'confirmedWithdrawIntents',
-  DeclaredWithdrawIntents = 'declaredWithdrawIntents',
   ConfirmedDepositIntents = 'confirmedDepositIntents',
   CreatedUtilityTokens = 'createdUtilityTokens',
+  // Withdraw entities
+  ConfirmedWithdrawIntents = 'confirmedWithdrawIntents',
+  DeclaredWithdrawIntents = 'declaredWithdrawIntents',
 }
 
 /**

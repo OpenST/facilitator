@@ -133,7 +133,7 @@ describe('SeedData.populateDb()', (): void => {
     ContractEntityRepositoryUtil.assertion(
       contractEntity,
       contractEntityFromDb as ContractEntity,
-    ); // todo: verify the change.
+    );
   }
 
   /**
