@@ -34,7 +34,7 @@ export default class Repositories {
 
   public withdrawIntentRepository: WithdrawIntentRepository;
 
-  public contractEntitytRepository: ContractEntityRepository;
+  public contractEntityRepository: ContractEntityRepository;
 
 
   /* Public Functions */
@@ -71,7 +71,7 @@ export default class Repositories {
     promises.push(this.gatewayRepository.notify());
     promises.push(this.messageRepository.notify());
     promises.push(this.withdrawIntentRepository.notify());
-    promises.push(this.contractEntitytRepository.notify());
+    promises.push(this.contractEntityRepository.notify());
 
     return Promise.all(promises);
   }
@@ -100,7 +100,7 @@ export default class Repositories {
     };
 
     this.anchorRepository = new AnchorRepository(initOptions);
-    this.contractEntitytRepository = new ContractEntityRepository(initOptions);
+    this.contractEntityRepository = new ContractEntityRepository(initOptions);
     this.depositIntentRepository = new DepositIntentRepository(initOptions);
     this.messageRepository = new MessageRepository(initOptions);
     this.gatewayRepository = new GatewayRepository(initOptions);
