@@ -2,7 +2,7 @@ import {
   DepositIntentDeclared,
   GatewayProven,
   WithdrawIntentConfirmed,
-} from '../generated/MosaicFacilitator/ERC20Gateway';
+} from '../generated/ERC20Gateway/ERC20Gateway';
 import {
   DeclaredDepositIntent,
   ConfirmedWithdrawIntent,
@@ -12,17 +12,12 @@ import {
 export function handleDepositIntentDeclared(
   event: DepositIntentDeclared,
 ): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = DeclaredDepositIntent.load(event.transaction.from.toHex());
+  // eslint-disable-next-line prefer-const
+  let entity = new DeclaredDepositIntent(
+    // eslint-disable-next-line prefer-template
+    event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
+  );
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new DeclaredDepositIntent(event.transaction.from.toHex());
-  }
-
-  // Entity fields can be set based on event parameters
   entity.tokenAddress = event.params.valueToken;
   entity.amount = event.params.amount;
   entity.nonce = event.params.nonce;
@@ -35,24 +30,18 @@ export function handleDepositIntentDeclared(
   entity.contractAddress = event.address;
   entity.uts = event.block.timestamp;
 
-  // Entities can be written to the store with `.save()`
   entity.save();
 }
 
 export function handleGatewayProven(
   event: GatewayProven,
 ): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ProvenGateway.load(event.transaction.from.toHex());
+  // eslint-disable-next-line prefer-const
+  let entity = new ProvenGateway(
+    // eslint-disable-next-line prefer-template
+    event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
+  );
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new ProvenGateway(event.transaction.from.toHex());
-  }
-
-  // Entity fields can be set based on event parameters
   entity.provenBlockNumber = event.params.blockNumber;
   entity.gatewayAddress = event.params.remoteGateway;
   entity.blockNumber = event.block.number;
@@ -60,30 +49,23 @@ export function handleGatewayProven(
   entity.contractAddress = event.address;
   entity.uts = event.block.timestamp;
 
-  // Entities can be written to the store with `.save()`
   entity.save();
 }
 
 export function handleWithdrawIntentConfirmed(
   event: WithdrawIntentConfirmed,
 ): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ConfirmedWithdrawIntent.load(event.transaction.from.toHex());
+  // eslint-disable-next-line prefer-const
+  let entity = new ConfirmedWithdrawIntent(
+    // eslint-disable-next-line prefer-template
+    event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
+  );
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new ConfirmedWithdrawIntent(event.transaction.from.toHex());
-  }
-
-  // Entity fields can be set based on event parameters
   entity.messageHash = event.params.messageHash;
   entity.blockNumber = event.block.number;
   entity.blockHash = event.block.hash;
   entity.contractAddress = event.address;
   entity.uts = event.block.timestamp;
 
-  // Entities can be written to the store with `.save()`
   entity.save();
 }
