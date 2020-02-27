@@ -1,5 +1,5 @@
 import { StateRootAvailable } from '../generated/Anchor/Anchor';
-import { AvailableStateRoot } from '../generated/schema';
+import { AvailableStateRoot } from '../generated/AnchorSchema';
 
 // eslint-disable-next-line import/prefer-default-export
 export function handleStateRootAvailable(event: StateRootAvailable): void {
