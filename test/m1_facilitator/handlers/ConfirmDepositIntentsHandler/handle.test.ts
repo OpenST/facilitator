@@ -84,8 +84,8 @@ describe('ConfirmDepositIntentsHandler::handle', (): void => {
 
     await gatewayRepository.save(
       new Gateway(
-        confirmDepositIntentRecord.contractAddress,
-        '0x0000000000000000000000000000000000000001',
+        Gateway.getGlobalAddress(confirmDepositIntentRecord.contractAddress),
+        Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001'),
         GatewayType.ERC20,
         '0x0000000000000000000000000000000000000003',
         new BigNumber(0),

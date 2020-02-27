@@ -17,6 +17,7 @@
 
 import BigNumber from 'bignumber.js';
 import Comparable from '../../common/observer/Comparable';
+import Utils from '../../common/Utils';
 
 /**
  * Type of gateways.
@@ -107,11 +108,11 @@ export default class Gateway extends Comparable<Gateway> {
   /**
    * Generates and return global address of given gateway address.
    *
-   * @param gatewayAddress Gateway address.
+   * @param gatewayAddress Gateway contract address.
    *
    * @returns Gateway global address.
    */
   public static getGlobalAddress(gatewayAddress: string): string {
-    return gatewayAddress;
+    return Utils.toChecksumAddress(gatewayAddress);
   }
 }

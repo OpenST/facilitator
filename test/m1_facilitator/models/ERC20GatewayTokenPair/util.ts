@@ -16,7 +16,7 @@ import ERC20GatewayTokenPair from '../../../../src/m1_facilitator/models/ERC20Ga
 import assert from '../../../test_utils/assert';
 
 export interface ERC20GatewayTokenPairAttributes {
-  erc20Gateway?: string;
+  gatewayGA?: string;
   valueToken?: string;
   utilityToken?: string;
   createdAt?: Date;
@@ -27,10 +27,10 @@ export function assertERC20GatewayTokenPairAttributes(
   erc20GatewayTokenPair: ERC20GatewayTokenPair,
   attributes: ERC20GatewayTokenPairAttributes,
 ): void {
-  if (Object.prototype.hasOwnProperty.call(attributes, 'erc20Gateway')) {
+  if (Object.prototype.hasOwnProperty.call(attributes, 'gatewayGA')) {
     assert.strictEqual(
-      erc20GatewayTokenPair.erc20Gateway,
-      attributes.erc20Gateway,
+      erc20GatewayTokenPair.gatewayGA,
+      attributes.gatewayGA,
     );
   }
 

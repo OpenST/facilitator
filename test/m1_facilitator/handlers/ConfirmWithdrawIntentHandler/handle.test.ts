@@ -40,8 +40,8 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
     ({ messageRepository, gatewayRepository } = repositories);
 
     const gateway = new Gateway(
-      '0x0000000000000000000000000000000000000001',
-      '0x0000000000000000000000000000000000000002',
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001'),
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000002'),
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000003',
       new BigNumber(200),
@@ -96,8 +96,8 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
 
     await gatewayRepository.save(
       new Gateway(
-        confirmWithdrawIntentRecord.contractAddress,
-        '0x0000000000000000000000000000000000000001',
+        Gateway.getGlobalAddress(confirmWithdrawIntentRecord.contractAddress),
+        Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001'),
         GatewayType.ERC20,
         '0x0000000000000000000000000000000000000003',
         new BigNumber(0),
@@ -124,8 +124,8 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
     );
 
     const gateway = new Gateway(
-      '0x0000000000000000000000000000000000000002',
-      '0x0000000000000000000000000000000000000001',
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000002'),
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001'),
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000003',
       new BigNumber(200),
