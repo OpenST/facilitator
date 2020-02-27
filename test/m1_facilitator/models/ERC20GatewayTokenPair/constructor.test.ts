@@ -16,6 +16,7 @@ import 'mocha';
 
 import { assertERC20GatewayTokenPairAttributes } from './util';
 import ERC20GatewayTokenPair from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
+import Gateway from '../../../../src/m1_facilitator/models/Gateway';
 
 describe('ERC20GatewayTokenPair::constructor', (): void => {
   it('checks correct construction of an ERC20GatewayTokenPair', async (): Promise<void> => {
@@ -26,7 +27,7 @@ describe('ERC20GatewayTokenPair::constructor', (): void => {
     const updatedAt = new Date();
 
     const erc20GatewayTokenPair = new ERC20GatewayTokenPair(
-      erc20Gateway,
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
       utilityToken,
       createdAt,
@@ -36,7 +37,7 @@ describe('ERC20GatewayTokenPair::constructor', (): void => {
     assertERC20GatewayTokenPairAttributes(
       erc20GatewayTokenPair,
       {
-        erc20Gateway,
+        gatewayGA: Gateway.getGlobalAddress(erc20Gateway),
         valueToken,
         utilityToken,
         createdAt,
