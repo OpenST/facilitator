@@ -111,6 +111,15 @@ export class DeclaredDepositIntent extends Entity {
     this.set("depositor", Value.fromBytes(value));
   }
 
+  get messageHash(): Bytes {
+    let value = this.get("messageHash");
+    return value.toBytes();
+  }
+
+  set messageHash(value: Bytes) {
+    this.set("messageHash", Value.fromBytes(value));
+  }
+
   get blockNumber(): BigInt {
     let value = this.get("blockNumber");
     return value.toBigInt();
@@ -260,6 +269,15 @@ export class ProvenGateway extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get remoteGatewayAddress(): Bytes {
+    let value = this.get("remoteGatewayAddress");
+    return value.toBytes();
+  }
+
+  set remoteGatewayAddress(value: Bytes) {
+    this.set("remoteGatewayAddress", Value.fromBytes(value));
+  }
+
   get provenBlockNumber(): BigInt {
     let value = this.get("provenBlockNumber");
     return value.toBigInt();
@@ -267,15 +285,6 @@ export class ProvenGateway extends Entity {
 
   set provenBlockNumber(value: BigInt) {
     this.set("provenBlockNumber", Value.fromBigInt(value));
-  }
-
-  get gatewayAddress(): Bytes {
-    let value = this.get("gatewayAddress");
-    return value.toBytes();
-  }
-
-  set gatewayAddress(value: Bytes) {
-    this.set("gatewayAddress", Value.fromBytes(value));
   }
 
   get blockNumber(): BigInt {

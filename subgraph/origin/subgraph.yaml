@@ -13,9 +13,9 @@ dataSources:
       apiVersion: 0.0.3
       language: wasm/assemblyscript
       entities:
-        - DepositIntentDeclared
-        - GatewayProven
-        - WithdrawIntentConfirmed
+        - DeclaredDepositIntent
+        - ProvenGateway
+        - ConfirmedWithdrawIntent
       abis:
         - name: ERC20Gateway
           file: ../abi/ERC20Gateway.json

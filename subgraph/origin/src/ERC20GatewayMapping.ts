@@ -9,12 +9,12 @@ import {
   ProvenGateway,
 } from '../generated/schema';
 
+/* eslint-disable prefer-const */
+/* eslint-disable prefer-template */
 export function handleDepositIntentDeclared(
   event: DepositIntentDeclared,
 ): void {
-  // eslint-disable-next-line prefer-const
   let entity = new DeclaredDepositIntent(
-    // eslint-disable-next-line prefer-template
     event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
 
@@ -25,6 +25,7 @@ export function handleDepositIntentDeclared(
   entity.feeGasPrice = event.params.feeGasPrice;
   entity.feeGasLimit = event.params.feeGasLimit;
   entity.depositor = event.params.depositor;
+  entity.messageHash = event.params.messageHash;
   entity.blockNumber = event.block.number;
   entity.blockHash = event.block.hash;
   entity.contractAddress = event.address;
@@ -36,14 +37,12 @@ export function handleDepositIntentDeclared(
 export function handleGatewayProven(
   event: GatewayProven,
 ): void {
-  // eslint-disable-next-line prefer-const
   let entity = new ProvenGateway(
-    // eslint-disable-next-line prefer-template
     event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
 
   entity.provenBlockNumber = event.params.blockNumber;
-  entity.gatewayAddress = event.params.remoteGateway;
+  entity.remoteGatewayAddress = event.params.remoteGateway;
   entity.blockNumber = event.block.number;
   entity.blockHash = event.block.hash;
   entity.contractAddress = event.address;
@@ -55,9 +54,7 @@ export function handleGatewayProven(
 export function handleWithdrawIntentConfirmed(
   event: WithdrawIntentConfirmed,
 ): void {
-  // eslint-disable-next-line prefer-const
   let entity = new ConfirmedWithdrawIntent(
-    // eslint-disable-next-line prefer-template
     event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
 
