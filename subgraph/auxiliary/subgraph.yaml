@@ -3,6 +3,26 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
+    name: Anchor
+    network: dev
+    source:
+      address: "0x2Bbe4DFb364e76dA987Ac5754bB87b476cC6D80B"
+      abi: Anchor
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - AvailableStateRoot
+      abis:
+        - name: Anchor
+          file: ./../abi/Anchor.json
+      eventHandlers:
+        - event: StateRootAvailable(uint256,bytes32)
+          handler: handleStateRootAvailable
+      file: ./src/AnchorMapping.ts
+
+  - kind: ethereum/contract
     name: ERC20Cogateway
     network: mainnet
     source:
