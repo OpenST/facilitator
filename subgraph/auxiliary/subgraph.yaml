@@ -24,7 +24,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: ERC20Cogateway
-    network: mainnet
+    network: dev
     source:
       address: "0xdbbb5c822ccfac3ea49e32215565c6aafb257a30"
       abi: ERC20Cogateway
