@@ -66,8 +66,9 @@ describe('SeedDataInitializer::isValidSeedData', (): void => {
       config.repos,
     );
 
-    assert.isNotNull(
+    assert.strictEqual(
       await seedDataInitialiser.isValidSeedData(gatewayAddress),
+      true,
       `Seed data validation failed for ${gatewayAddress}`,
     );
   });

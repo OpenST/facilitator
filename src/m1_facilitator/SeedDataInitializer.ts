@@ -31,8 +31,10 @@ export default class SeedDataInitializer {
   }
 
   /**
-   * Gateway global address is used for vallidating seed data as it is used in manifest file
-   * and if the gateway record is present, then it can be used for deriving other attributes also.
+   * Verifies if the database is initialized with correct seed data. To do the
+   * verification, the ERC20Gateway address from the manifest file is checked
+   * if it is already stored in the database. If its stored then its verified.
+   *
    * @param gatewayAddress Gateway address for which seed data is to be verified.
    *
    * @returns Returns true if the gateway record is present for the given gateway address.
