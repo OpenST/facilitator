@@ -21,15 +21,11 @@ import Comparable from '../../common/observer/Comparable';
 /**
  * Type of gateways.
  */
-/**
- * Type of gateways.
- */
 export enum GatewayType {
   CONSENSUS = 'consensus',
   MOST = 'most',
   ERC20 = 'erc20',
-  NFT = 'nft',
-  ERC20Gateway = "ERC20Gateway"
+  NFT = 'nft'
 }
 
 /**

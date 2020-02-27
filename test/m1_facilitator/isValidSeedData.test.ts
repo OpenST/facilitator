@@ -19,7 +19,7 @@ import Gateway, { GatewayType } from '../../src/m1_facilitator/models/Gateway';
 import Repositories from '../../src/m1_facilitator/repositories/Repositories';
 import SeedDataInitializer from '../../src/m1_facilitator/SeedDataInitializer';
 
-describe('SeedDataInitializer::verifySeedData', (): void => {
+describe('SeedDataInitializer::isValidSeedData', (): void => {
   let config: {
     repos: Repositories;
   };
@@ -58,7 +58,7 @@ describe('SeedDataInitializer::verifySeedData', (): void => {
       updatedAt,
     );
 
-    const createdGateway = await config.repos.gatewayRepository.save(
+    await config.repos.gatewayRepository.save(
       gateway,
     );
 
@@ -66,12 +66,9 @@ describe('SeedDataInitializer::verifySeedData', (): void => {
       config.repos,
     );
 
-    const gatewayrecord = await config.repos.gatewayRepository.get(createdGateway.gatewayGA);
-
     assert.isNotNull(
-      gatewayrecord
-      && await seedDataInitialiser.isValidSeedData(gatewayrecord.gatewayGA),
-      'Record must not be null for the gateway address.',
+      await seedDataInitialiser.isValidSeedData(gatewayAddress),
+      `Seed data validation failed for ${gatewayAddress}`,
     );
   });
 });
