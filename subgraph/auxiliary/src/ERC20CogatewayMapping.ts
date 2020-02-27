@@ -1,22 +1,23 @@
+/* eslint-disable prefer-template */
+import { BigInt } from "@graphprotocol/graph-ts"
 import {
-  DepositIntentConfirmed as DepositIntentConfirmedEvent,
-  GatewayProven as GatewayProvenEvent,
-  ProxyCreation as ProxyCreationEvent,
-  UtilityTokenCreated as UtilityTokenCreatedEvent,
-  WithdrawIntentDeclared as WithdrawIntentDeclaredEvent
-} from "../generated/Contract/ERC20Cogateway";
-import {
+  Contract,
   DepositIntentConfirmed,
   GatewayProven,
-  ProxyCreation,
   UtilityTokenCreated,
   WithdrawIntentDeclared
-} from "../generated/ERC20CogatewaySchema";
+} from "../generated/ERC20Cogateway/ERC20Cogateway"
+import {
+  ConfirmedDepositIntent,
+  ProvenGateway,
+  CreatedUtilityToken,
+  DeclaredWithdrawIntent
+} from "../generated/ERC20CogatewaySchema"
 
 export function handleDepositIntentConfirmed(
-  event: DepositIntentConfirmedEvent
+  event: DepositIntentConfirmed
 ): void {
-  let entity = new DepositIntentConfirmed(
+  let entity = new ConfirmedDepositIntent(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   );
   entity.messageHash = event.params.messageHash;
@@ -27,12 +28,13 @@ export function handleDepositIntentConfirmed(
   entity.save();
 }
 
-export function handleGatewayProven(event: GatewayProvenEvent): void {
-  let entity = new GatewayProven(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+export function handleGatewayProven(event: GatewayProven): void {
+  let entity = new ProvenGateway(
+    // eslint-disable-next-line prefer-template
+    event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
   entity.remoteGateway = event.params.remoteGateway;
-  entity.gatewayProveBlockNumber = event.params.blockNumber;
+  entity.gatewayProvenBlockNumber = event.params.blockNumber;
   entity.blockNumber = event.block.number;
   entity.blockHash = event.block.hash;
   entity.contractAddress = event.address;
@@ -40,22 +42,8 @@ export function handleGatewayProven(event: GatewayProvenEvent): void {
   entity.save();
 }
 
-export function handleProxyCreation(event: ProxyCreationEvent): void {
-  let entity = new ProxyCreation(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  );
-  entity.proxy = event.params.proxy;
-  entity.blockNumber = event.block.number;
-  entity.blockHash = event.block.hash;
-  entity.contractAddress = event.address;
-  entity.uts = event.block.timestamp;
-  entity.save();
-}
-
-export function handleUtilityTokenCreated(
-  event: UtilityTokenCreatedEvent
-): void {
-  let entity = new UtilityTokenCreated(
+export function handleUtilityTokenCreated(event: UtilityTokenCreated): void {
+  let entity = new CreatedUtilityToken(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   );
   entity.valueToken = event.params.valueToken;
@@ -68,9 +56,9 @@ export function handleUtilityTokenCreated(
 }
 
 export function handleWithdrawIntentDeclared(
-  event: WithdrawIntentDeclaredEvent
+  event: WithdrawIntentDeclared
 ): void {
-  let entity = new WithdrawIntentDeclared(
+  let entity = new DeclaredWithdrawIntent(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   );
   entity.amount = event.params.amount;

@@ -11,7 +11,8 @@ import {
   EthereumTuple,
   Bytes,
   Address,
-  BigInt
+  BigInt,
+  CallResult
 } from "@graphprotocol/graph-ts";
 
 export class DepositIntentConfirmed extends EthereumEvent {
@@ -147,92 +148,272 @@ export class Contract extends SmartContract {
 
   DEPOSIT_INTENT_TYPEHASH(): Bytes {
     let result = super.call("DEPOSIT_INTENT_TYPEHASH", []);
+
     return result[0].toBytes();
+  }
+
+  try_DEPOSIT_INTENT_TYPEHASH(): CallResult<Bytes> {
+    let result = super.tryCall("DEPOSIT_INTENT_TYPEHASH", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   DOMAIN_SEPARATOR_VERSION(): string {
     let result = super.call("DOMAIN_SEPARATOR_VERSION", []);
+
     return result[0].toString();
+  }
+
+  try_DOMAIN_SEPARATOR_VERSION(): CallResult<string> {
+    let result = super.tryCall("DOMAIN_SEPARATOR_VERSION", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toString());
   }
 
   INBOX_OFFSET(): i32 {
     let result = super.call("INBOX_OFFSET", []);
+
     return result[0].toI32();
+  }
+
+  try_INBOX_OFFSET(): CallResult<i32> {
+    let result = super.tryCall("INBOX_OFFSET", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toI32());
   }
 
   MESSAGE_TYPEHASH(): Bytes {
     let result = super.call("MESSAGE_TYPEHASH", []);
+
     return result[0].toBytes();
+  }
+
+  try_MESSAGE_TYPEHASH(): CallResult<Bytes> {
+    let result = super.tryCall("MESSAGE_TYPEHASH", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   MMB_CHANNEL_TYPEHASH(): Bytes {
     let result = super.call("MMB_CHANNEL_TYPEHASH", []);
+
     return result[0].toBytes();
+  }
+
+  try_MMB_CHANNEL_TYPEHASH(): CallResult<Bytes> {
+    let result = super.tryCall("MMB_CHANNEL_TYPEHASH", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   MMB_DOMAIN_SEPARATOR_NAME(): string {
     let result = super.call("MMB_DOMAIN_SEPARATOR_NAME", []);
+
     return result[0].toString();
+  }
+
+  try_MMB_DOMAIN_SEPARATOR_NAME(): CallResult<string> {
+    let result = super.tryCall("MMB_DOMAIN_SEPARATOR_NAME", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toString());
   }
 
   MMB_DOMAIN_SEPARATOR_TYPEHASH(): Bytes {
     let result = super.call("MMB_DOMAIN_SEPARATOR_TYPEHASH", []);
+
     return result[0].toBytes();
+  }
+
+  try_MMB_DOMAIN_SEPARATOR_TYPEHASH(): CallResult<Bytes> {
+    let result = super.tryCall("MMB_DOMAIN_SEPARATOR_TYPEHASH", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   MMB_DOMAIN_SEPARATOR_VERSION(): string {
     let result = super.call("MMB_DOMAIN_SEPARATOR_VERSION", []);
+
     return result[0].toString();
+  }
+
+  try_MMB_DOMAIN_SEPARATOR_VERSION(): CallResult<string> {
+    let result = super.tryCall("MMB_DOMAIN_SEPARATOR_VERSION", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toString());
   }
 
   OUTBOX_OFFSET(): i32 {
     let result = super.call("OUTBOX_OFFSET", []);
+
     return result[0].toI32();
+  }
+
+  try_OUTBOX_OFFSET(): CallResult<i32> {
+    let result = super.tryCall("OUTBOX_OFFSET", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toI32());
   }
 
   UTILITY_TOKEN_SETUP_CALLPREFIX(): Bytes {
     let result = super.call("UTILITY_TOKEN_SETUP_CALLPREFIX", []);
+
     return result[0].toBytes();
+  }
+
+  try_UTILITY_TOKEN_SETUP_CALLPREFIX(): CallResult<Bytes> {
+    let result = super.tryCall("UTILITY_TOKEN_SETUP_CALLPREFIX", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   WITHDRAW_INTENT_TYPEHASH(): Bytes {
     let result = super.call("WITHDRAW_INTENT_TYPEHASH", []);
+
     return result[0].toBytes();
+  }
+
+  try_WITHDRAW_INTENT_TYPEHASH(): CallResult<Bytes> {
+    let result = super.tryCall("WITHDRAW_INTENT_TYPEHASH", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   encodedAccountPath(): Bytes {
     let result = super.call("encodedAccountPath", []);
+
     return result[0].toBytes();
+  }
+
+  try_encodedAccountPath(): CallResult<Bytes> {
+    let result = super.tryCall("encodedAccountPath", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   genesisERC20Gateway(): Address {
     let result = super.call("genesisERC20Gateway", []);
+
     return result[0].toAddress();
+  }
+
+  try_genesisERC20Gateway(): CallResult<Address> {
+    let result = super.tryCall("genesisERC20Gateway", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   genesisMaxStorageRootItems(): BigInt {
     let result = super.call("genesisMaxStorageRootItems", []);
+
     return result[0].toBigInt();
+  }
+
+  try_genesisMaxStorageRootItems(): CallResult<BigInt> {
+    let result = super.tryCall("genesisMaxStorageRootItems", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
   }
 
   genesisMetachainId(): Bytes {
     let result = super.call("genesisMetachainId", []);
+
     return result[0].toBytes();
+  }
+
+  try_genesisMetachainId(): CallResult<Bytes> {
+    let result = super.tryCall("genesisMetachainId", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   genesisOutboxStorageIndex(): i32 {
     let result = super.call("genesisOutboxStorageIndex", []);
+
     return result[0].toI32();
+  }
+
+  try_genesisOutboxStorageIndex(): CallResult<i32> {
+    let result = super.tryCall("genesisOutboxStorageIndex", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toI32());
   }
 
   genesisStateRootProvider(): Address {
     let result = super.call("genesisStateRootProvider", []);
+
     return result[0].toAddress();
+  }
+
+  try_genesisStateRootProvider(): CallResult<Address> {
+    let result = super.tryCall("genesisStateRootProvider", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   genesisUtilityTokenMastercopy(): Address {
     let result = super.call("genesisUtilityTokenMastercopy", []);
+
     return result[0].toAddress();
+  }
+
+  try_genesisUtilityTokenMastercopy(): CallResult<Address> {
+    let result = super.tryCall("genesisUtilityTokenMastercopy", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   hashChannelIdentifier(
@@ -245,7 +426,25 @@ export class Contract extends SmartContract {
       EthereumValue.fromAddress(_outbox),
       EthereumValue.fromAddress(_inbox)
     ]);
+
     return result[0].toBytes();
+  }
+
+  try_hashChannelIdentifier(
+    _metachainId: Bytes,
+    _outbox: Address,
+    _inbox: Address
+  ): CallResult<Bytes> {
+    let result = super.tryCall("hashChannelIdentifier", [
+      EthereumValue.fromFixedBytes(_metachainId),
+      EthereumValue.fromAddress(_outbox),
+      EthereumValue.fromAddress(_inbox)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   hashDepositIntent(
@@ -258,7 +457,25 @@ export class Contract extends SmartContract {
       EthereumValue.fromUnsignedBigInt(_amount),
       EthereumValue.fromAddress(_beneficiary)
     ]);
+
     return result[0].toBytes();
+  }
+
+  try_hashDepositIntent(
+    _valueToken: Address,
+    _amount: BigInt,
+    _beneficiary: Address
+  ): CallResult<Bytes> {
+    let result = super.tryCall("hashDepositIntent", [
+      EthereumValue.fromAddress(_valueToken),
+      EthereumValue.fromUnsignedBigInt(_amount),
+      EthereumValue.fromAddress(_beneficiary)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   hashWithdrawIntent(
@@ -273,17 +490,57 @@ export class Contract extends SmartContract {
       EthereumValue.fromUnsignedBigInt(_amount),
       EthereumValue.fromAddress(_beneficiary)
     ]);
+
     return result[0].toBytes();
+  }
+
+  try_hashWithdrawIntent(
+    _valueToken: Address,
+    _utilityToken: Address,
+    _amount: BigInt,
+    _beneficiary: Address
+  ): CallResult<Bytes> {
+    let result = super.tryCall("hashWithdrawIntent", [
+      EthereumValue.fromAddress(_valueToken),
+      EthereumValue.fromAddress(_utilityToken),
+      EthereumValue.fromUnsignedBigInt(_amount),
+      EthereumValue.fromAddress(_beneficiary)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   inboundChannelIdentifier(): Bytes {
     let result = super.call("inboundChannelIdentifier", []);
+
     return result[0].toBytes();
+  }
+
+  try_inboundChannelIdentifier(): CallResult<Bytes> {
+    let result = super.tryCall("inboundChannelIdentifier", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   inbox(param0: Bytes): boolean {
     let result = super.call("inbox", [EthereumValue.fromFixedBytes(param0)]);
+
     return result[0].toBoolean();
+  }
+
+  try_inbox(param0: Bytes): CallResult<boolean> {
+    let result = super.tryCall("inbox", [EthereumValue.fromFixedBytes(param0)]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBoolean());
   }
 
   inboxMessageHash(
@@ -300,32 +557,106 @@ export class Contract extends SmartContract {
       EthereumValue.fromUnsignedBigInt(_feeGasLimit),
       EthereumValue.fromAddress(_sender)
     ]);
+
     return result[0].toBytes();
+  }
+
+  try_inboxMessageHash(
+    _intentHash: Bytes,
+    _nonce: BigInt,
+    _feeGasPrice: BigInt,
+    _feeGasLimit: BigInt,
+    _sender: Address
+  ): CallResult<Bytes> {
+    let result = super.tryCall("inboxMessageHash", [
+      EthereumValue.fromFixedBytes(_intentHash),
+      EthereumValue.fromUnsignedBigInt(_nonce),
+      EthereumValue.fromUnsignedBigInt(_feeGasPrice),
+      EthereumValue.fromUnsignedBigInt(_feeGasLimit),
+      EthereumValue.fromAddress(_sender)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   messageInbox(): Address {
     let result = super.call("messageInbox", []);
+
     return result[0].toAddress();
+  }
+
+  try_messageInbox(): CallResult<Address> {
+    let result = super.tryCall("messageInbox", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   messageOutbox(): Address {
     let result = super.call("messageOutbox", []);
+
     return result[0].toAddress();
+  }
+
+  try_messageOutbox(): CallResult<Address> {
+    let result = super.tryCall("messageOutbox", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   nonces(param0: Address): BigInt {
     let result = super.call("nonces", [EthereumValue.fromAddress(param0)]);
+
     return result[0].toBigInt();
+  }
+
+  try_nonces(param0: Address): CallResult<BigInt> {
+    let result = super.tryCall("nonces", [EthereumValue.fromAddress(param0)]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
   }
 
   outboundChannelIdentifier(): Bytes {
     let result = super.call("outboundChannelIdentifier", []);
+
     return result[0].toBytes();
+  }
+
+  try_outboundChannelIdentifier(): CallResult<Bytes> {
+    let result = super.tryCall("outboundChannelIdentifier", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   outbox(param0: Bytes): boolean {
     let result = super.call("outbox", [EthereumValue.fromFixedBytes(param0)]);
+
     return result[0].toBoolean();
+  }
+
+  try_outbox(param0: Bytes): CallResult<boolean> {
+    let result = super.tryCall("outbox", [
+      EthereumValue.fromFixedBytes(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBoolean());
   }
 
   outboxMessageHash(
@@ -342,46 +673,232 @@ export class Contract extends SmartContract {
       EthereumValue.fromUnsignedBigInt(_feeGasLimit),
       EthereumValue.fromAddress(_sender)
     ]);
+
     return result[0].toBytes();
+  }
+
+  try_outboxMessageHash(
+    _intentHash: Bytes,
+    _nonce: BigInt,
+    _feeGasPrice: BigInt,
+    _feeGasLimit: BigInt,
+    _sender: Address
+  ): CallResult<Bytes> {
+    let result = super.tryCall("outboxMessageHash", [
+      EthereumValue.fromFixedBytes(_intentHash),
+      EthereumValue.fromUnsignedBigInt(_nonce),
+      EthereumValue.fromUnsignedBigInt(_feeGasPrice),
+      EthereumValue.fromUnsignedBigInt(_feeGasLimit),
+      EthereumValue.fromAddress(_sender)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   outboxStorageIndex(): i32 {
     let result = super.call("outboxStorageIndex", []);
+
     return result[0].toI32();
+  }
+
+  try_outboxStorageIndex(): CallResult<i32> {
+    let result = super.tryCall("outboxStorageIndex", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toI32());
   }
 
   stateRootProvider(): Address {
     let result = super.call("stateRootProvider", []);
+
     return result[0].toAddress();
+  }
+
+  try_stateRootProvider(): CallResult<Address> {
+    let result = super.tryCall("stateRootProvider", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   storageAccount(): Address {
     let result = super.call("storageAccount", []);
+
     return result[0].toAddress();
+  }
+
+  try_storageAccount(): CallResult<Address> {
+    let result = super.tryCall("storageAccount", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   storageRoots(param0: BigInt): Bytes {
     let result = super.call("storageRoots", [
       EthereumValue.fromUnsignedBigInt(param0)
     ]);
+
     return result[0].toBytes();
+  }
+
+  try_storageRoots(param0: BigInt): CallResult<Bytes> {
+    let result = super.tryCall("storageRoots", [
+      EthereumValue.fromUnsignedBigInt(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 
   utilityTokenMasterCopy(): Address {
     let result = super.call("utilityTokenMasterCopy", []);
+
     return result[0].toAddress();
+  }
+
+  try_utilityTokenMasterCopy(): CallResult<Address> {
+    let result = super.tryCall("utilityTokenMasterCopy", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   utilityTokens(param0: Address): Address {
     let result = super.call("utilityTokens", [
       EthereumValue.fromAddress(param0)
     ]);
+
     return result[0].toAddress();
+  }
+
+  try_utilityTokens(param0: Address): CallResult<Address> {
+    let result = super.tryCall("utilityTokens", [
+      EthereumValue.fromAddress(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   valueToken(): Address {
     let result = super.call("valueToken", []);
+
     return result[0].toAddress();
+  }
+
+  try_valueToken(): CallResult<Address> {
+    let result = super.tryCall("valueToken", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  withdraw(
+    _amount: BigInt,
+    _beneficiary: Address,
+    _feeGasPrice: BigInt,
+    _feeGasLimit: BigInt,
+    _utilityToken: Address
+  ): Bytes {
+    let result = super.call("withdraw", [
+      EthereumValue.fromUnsignedBigInt(_amount),
+      EthereumValue.fromAddress(_beneficiary),
+      EthereumValue.fromUnsignedBigInt(_feeGasPrice),
+      EthereumValue.fromUnsignedBigInt(_feeGasLimit),
+      EthereumValue.fromAddress(_utilityToken)
+    ]);
+
+    return result[0].toBytes();
+  }
+
+  try_withdraw(
+    _amount: BigInt,
+    _beneficiary: Address,
+    _feeGasPrice: BigInt,
+    _feeGasLimit: BigInt,
+    _utilityToken: Address
+  ): CallResult<Bytes> {
+    let result = super.tryCall("withdraw", [
+      EthereumValue.fromUnsignedBigInt(_amount),
+      EthereumValue.fromAddress(_beneficiary),
+      EthereumValue.fromUnsignedBigInt(_feeGasPrice),
+      EthereumValue.fromUnsignedBigInt(_feeGasLimit),
+      EthereumValue.fromAddress(_utilityToken)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
+  }
+
+  confirmDeposit(
+    _valueToken: Address,
+    _amount: BigInt,
+    _beneficiary: Address,
+    _feeGasPrice: BigInt,
+    _feeGasLimit: BigInt,
+    _depositor: Address,
+    _blockNumber: BigInt,
+    _rlpParentNodes: Bytes
+  ): Bytes {
+    let result = super.call("confirmDeposit", [
+      EthereumValue.fromAddress(_valueToken),
+      EthereumValue.fromUnsignedBigInt(_amount),
+      EthereumValue.fromAddress(_beneficiary),
+      EthereumValue.fromUnsignedBigInt(_feeGasPrice),
+      EthereumValue.fromUnsignedBigInt(_feeGasLimit),
+      EthereumValue.fromAddress(_depositor),
+      EthereumValue.fromUnsignedBigInt(_blockNumber),
+      EthereumValue.fromBytes(_rlpParentNodes)
+    ]);
+
+    return result[0].toBytes();
+  }
+
+  try_confirmDeposit(
+    _valueToken: Address,
+    _amount: BigInt,
+    _beneficiary: Address,
+    _feeGasPrice: BigInt,
+    _feeGasLimit: BigInt,
+    _depositor: Address,
+    _blockNumber: BigInt,
+    _rlpParentNodes: Bytes
+  ): CallResult<Bytes> {
+    let result = super.tryCall("confirmDeposit", [
+      EthereumValue.fromAddress(_valueToken),
+      EthereumValue.fromUnsignedBigInt(_amount),
+      EthereumValue.fromAddress(_beneficiary),
+      EthereumValue.fromUnsignedBigInt(_feeGasPrice),
+      EthereumValue.fromUnsignedBigInt(_feeGasLimit),
+      EthereumValue.fromAddress(_depositor),
+      EthereumValue.fromUnsignedBigInt(_blockNumber),
+      EthereumValue.fromBytes(_rlpParentNodes)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBytes());
   }
 }
 

@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: ERC20Cogateway
@@ -19,7 +19,7 @@ dataSources:
         - DeclaredWithdrawIntent
       abis:
         - name: ERC20Cogateway
-          file: ./abis/ERC20Cogateway.json
+          file: ERC20Cogateway/abis/ERC20Cogateway.json
       eventHandlers:
         - event: DepositIntentConfirmed(bytes32)
           handler: handleDepositIntentConfirmed
@@ -29,4 +29,4 @@ dataSources:
           handler: handleUtilityTokenCreated
         - event: WithdrawIntentDeclared(uint256,uint256,address,uint256,uint256,address,address,bytes32)
           handler: handleWithdrawIntentDeclared
-      file: ./src/ERC20CogatewayMapping.ts
+      file: ERC20Cogateway/ERC20Cogateway.wasm
