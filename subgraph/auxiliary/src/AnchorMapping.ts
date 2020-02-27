@@ -5,7 +5,8 @@ import { AvailableStateRoot } from '../generated/schema';
 export function handleStateRootAvailable(event: StateRootAvailable): void {
   // eslint-disable-next-line prefer-const
   let entity = new AvailableStateRoot(
-    `${event.transaction.hash.toHex()}-${event.logIndex.toString()}`,
+    // eslint-disable-next-line prefer-template
+    event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
 
   entity.anchoredBlockNumber = event.params._blockNumber;
