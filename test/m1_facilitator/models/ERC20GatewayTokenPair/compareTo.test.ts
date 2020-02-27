@@ -21,13 +21,13 @@ describe('ERC20GatewayTokenPair::compareTo', (): void => {
   it('checks comparision for erc20Gateway -s and valueToken -s are different', async (): Promise<void> => {
     {
       const self = new ERC20GatewayTokenPair(
-        '0xaBcD9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xaBcD9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
 
       const other = new ERC20GatewayTokenPair(
-        '0xAbCd9244d798123fde783fcc1c72d3bb8c189412', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xAbCd9244d798123fde783fcc1c72d3bb8c189412'), // gatewayGA
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
@@ -39,13 +39,13 @@ describe('ERC20GatewayTokenPair::compareTo', (): void => {
 
     {
       const self = new ERC20GatewayTokenPair(
-        '0xaBcD9244d798123fde783fcc1c72d3bb8c189412', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xaBcD9244d798123fde783fcc1c72d3bb8c189412'), // gatewayGA
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
 
       const other = new ERC20GatewayTokenPair(
-        '0xAbCd9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xAbCd9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
@@ -57,13 +57,13 @@ describe('ERC20GatewayTokenPair::compareTo', (): void => {
 
     {
       const self = new ERC20GatewayTokenPair(
-        '0xaBcD9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xaBcD9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
 
       const other = new ERC20GatewayTokenPair(
-        '0xAbCd9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xAbCd9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189414', // valueToken
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
@@ -75,13 +75,13 @@ describe('ERC20GatewayTokenPair::compareTo', (): void => {
 
     {
       const self = new ERC20GatewayTokenPair(
-        '0xaBcD9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xaBcD9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189414', // valueToken
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
 
       const other = new ERC20GatewayTokenPair(
-        '0xAbCd9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xAbCd9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
@@ -95,13 +95,13 @@ describe('ERC20GatewayTokenPair::compareTo', (): void => {
   it('checks comparision for erc20Gateway -s and valueToken -s are the same', async (): Promise<void> => {
     {
       const self = new ERC20GatewayTokenPair(
-        '0xaBcD9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xaBcD9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
 
       const other = new ERC20GatewayTokenPair(
-        '0xAbCd9244d798123fde783fcc1c72d3bb8c189411', // gatewayGA
+        ERC20GatewayTokenPair.getGlobalAddress('0xAbCd9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
@@ -113,13 +113,13 @@ describe('ERC20GatewayTokenPair::compareTo', (): void => {
 
     {
       const self = new ERC20GatewayTokenPair(
-        '0xaBcD9244d798123fde783fcc1c72d3bb8c189411', // erc20Gateway
+        ERC20GatewayTokenPair.getGlobalAddress('0xaBcD9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );
 
       const other = new ERC20GatewayTokenPair(
-        '0xAbCd9244d798123fde783fcc1c72d3bb8c189411', // erc20Gateway
+        ERC20GatewayTokenPair.getGlobalAddress('0xAbCd9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189416', // utilityToken
       );
@@ -131,13 +131,13 @@ describe('ERC20GatewayTokenPair::compareTo', (): void => {
 
     {
       const self = new ERC20GatewayTokenPair(
-        '0xaBcD9244d798123fde783fcc1c72d3bb8c189411', // erc20Gateway
+        ERC20GatewayTokenPair.getGlobalAddress('0xaBcD9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xaBcD9244d798123fde783fcc1c72d3bb8c189416', // utilityToken
       );
 
       const other = new ERC20GatewayTokenPair(
-        '0xAbCd9244d798123fde783fcc1c72d3bb8c189411', // erc20Gateway
+        ERC20GatewayTokenPair.getGlobalAddress('0xAbCd9244d798123fde783fcc1c72d3bb8c189411'), // gatewayGA
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189413', // valueToken
         '0xAbCd9244d798123fde783fcc1c72d3bb8c189415', // utilityToken
       );

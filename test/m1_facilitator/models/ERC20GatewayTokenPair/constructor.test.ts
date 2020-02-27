@@ -36,7 +36,7 @@ describe('ERC20GatewayTokenPair::constructor', (): void => {
     assertERC20GatewayTokenPairAttributes(
       erc20GatewayTokenPair,
       {
-        erc20Gateway,
+        gatewayGA: ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
         valueToken,
         utilityToken,
         createdAt,
