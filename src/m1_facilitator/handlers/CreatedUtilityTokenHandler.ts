@@ -12,9 +12,11 @@
 // See the License for the specific
 
 import ERC20GatewayTokenPair from '../models/ERC20GatewayTokenPair';
+import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
 import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import Utils from '../../common/Utils';
+import Logger from '../../common/Logger';
 
 /**
  * It represents record of CreatedUtilityTokens entity.
@@ -35,6 +37,12 @@ export default class CreatedUtilityTokenHandler {
   /** Instance of GatewayRepository. */
   public gatewayRepository: GatewayRepository;
 
+  /**
+   * Constructor of CreatedUtilityTokenHandler with params.
+   *
+   * @param erc20GatewayTokenPairRepository Instance of ERC20GatewayTokenPairRepository.
+   * @param gatewayRepository Instance of GatewayRepository.
+   */
   public constructor(
     erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository,
     gatewayRepository: GatewayRepository,
@@ -52,27 +60,35 @@ export default class CreatedUtilityTokenHandler {
    * @param records List of CreatedUtilityTokens entity.
    */
   public async handle(records: CreatedUtilityTokenHandlerInterface[]): Promise<void> {
-    const promiseCollection = records.map(async (record): Promise<void> => {
+    const savePromises = records.map(async (record): Promise<void> => {
       const gatewayRecord = await this.gatewayRepository.get(
-        Utils.toChecksumAddress(record.contractAddress),
+        Gateway.getGlobalAddress(record.contractAddress),
       );
-      if (gatewayRecord !== null) {
-        const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
-          Utils.toChecksumAddress(record.contractAddress),
-          Utils.toChecksumAddress(record.valueTokenAddress),
+      if (gatewayRecord === null) {
+        Logger.warn(
+          'There is no gateway model in the gateway repository '
+          + `matching to ${record.contractAddress}.`,
         );
-        if (erc20GatewayTokenPairRecord === null) {
-          await this.erc20GatewayTokenPairRepository.save(
-            new ERC20GatewayTokenPair(
-              Utils.toChecksumAddress(gatewayRecord.remoteGA),
-              Utils.toChecksumAddress(record.valueTokenAddress),
-              Utils.toChecksumAddress(record.utilityTokenAddress),
-            ),
-          );
-        }
+        return;
+      }
+      Logger.debug(`Gateway record found for ${record.contractAddress}`);
+      const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
+        Utils.toChecksumAddress(record.contractAddress),
+        Utils.toChecksumAddress(record.valueTokenAddress),
+      );
+      if (erc20GatewayTokenPairRecord === null) {
+        const erc20GatewayTokenPair = await this.erc20GatewayTokenPairRepository.save(
+          new ERC20GatewayTokenPair(
+            Utils.toChecksumAddress(gatewayRecord.remoteGA),
+            Utils.toChecksumAddress(record.valueTokenAddress),
+            Utils.toChecksumAddress(record.utilityTokenAddress),
+          ),
+        );
+        Logger.debug(`Creating ERC20GatewayTokenPair object: ${JSON.stringify(erc20GatewayTokenPair)}`);
       }
     });
 
-    await Promise.all(promiseCollection);
+    await Promise.all(savePromises);
+    Logger.debug('Created ERC20GatewayTokenPair record');
   }
 }

@@ -36,6 +36,7 @@ export default class Repositories {
   public withdrawIntentRepository: WithdrawIntentRepository;
 
   public erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
+
   public contractEntityRepository: ContractEntityRepository;
 
 

@@ -28,7 +28,7 @@ import assert = require('assert');
  * See: http://docs.sequelizejs.com/manual/typescript.html#usage
  */
 class ERC20GatewayTokenPairModel extends Model {
-  public readonly erc20Gateway!: string;
+  public readonly gatewayGA!: string;
 
   public readonly valueToken!: string;
 
@@ -57,7 +57,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
 
     ERC20GatewayTokenPairModel.init(
       {
-        erc20Gateway: {
+        gatewayGA: {
           type: DataTypes.STRING,
           primaryKey: true,
           allowNull: false,
@@ -114,7 +114,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
     );
 
     const upsertedModel: ERC20GatewayTokenPair | null = await this.get(
-      erc20GatewayTokenPair.erc20Gateway, erc20GatewayTokenPair.valueToken,
+      erc20GatewayTokenPair.gatewayGA, erc20GatewayTokenPair.valueToken,
     );
     assert(upsertedModel !== undefined);
 
@@ -127,17 +127,17 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
    * Returns a ERC20GatewayTokenPair model with the specified erc20 gateway
    * address and value token or null if there is no one.
    *
-   * @param erc20Gateway ERC20Gateway address of the ERC20GatewayTokenPair model.
+   * @param gatewayGA Gateway global address of the ERC20GatewayTokenPair model.
    * @param valueToken Value token address of the ERC20GatewayTokenPair model.
    *
    * @returns ERC20GatewayTokenPair model if exists, otherwise null.
    */
   public async get(
-    erc20Gateway: string, valueToken: string,
+    gatewayGA: string, valueToken: string,
   ): Promise<ERC20GatewayTokenPair | null> {
     const databaseModel = await ERC20GatewayTokenPairModel.findOne({
       where: {
-        erc20Gateway,
+        gatewayGA,
         valueToken,
       },
     });
@@ -164,7 +164,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
     databaseModel: ERC20GatewayTokenPairModel,
   ): ERC20GatewayTokenPair {
     return new ERC20GatewayTokenPair(
-      databaseModel.erc20Gateway,
+      databaseModel.gatewayGA,
       databaseModel.valueToken,
       databaseModel.utilityToken,
       databaseModel.createdAt,

@@ -26,7 +26,7 @@ describe('ERC20GatewayTokenPair::constructor', (): void => {
     const updatedAt = new Date();
 
     const erc20GatewayTokenPair = new ERC20GatewayTokenPair(
-      erc20Gateway,
+      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
       valueToken,
       utilityToken,
       createdAt,
