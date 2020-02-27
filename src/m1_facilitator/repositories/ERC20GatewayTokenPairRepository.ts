@@ -124,7 +124,7 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
   }
 
   /**
-   * Returns a ERC20GatewayTokenPair model with the specified erc20 gateway
+   * Returns a ERC20GatewayTokenPair model with the specified erc20 gateway global
    * address and value token or null if there is no one.
    *
    * @param gatewayGA Gateway global address of the ERC20GatewayTokenPair model.

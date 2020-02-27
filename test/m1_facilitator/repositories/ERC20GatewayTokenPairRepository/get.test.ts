@@ -19,6 +19,7 @@ import { assertERC20GatewayTokenPairAttributes } from '../../models/ERC20Gateway
 import assert from '../../../test_utils/assert';
 import ERC20GatewayTokenPair from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 import ERC20GatewayTokenPairRepository from '../../../../src/m1_facilitator/repositories/ERC20GatewayTokenPairRepository';
+import Gateway from '../../../../src/m1_facilitator/models/Gateway';
 
 interface TestConfiguration {
   erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
@@ -49,7 +50,7 @@ describe('ERC20GatewayTokenPairRepository::get', (): void => {
     const utilityToken = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
 
     const erc20GatewayTokenPair = new ERC20GatewayTokenPair(
-      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
       utilityToken,
     );
@@ -59,7 +60,7 @@ describe('ERC20GatewayTokenPairRepository::get', (): void => {
     );
 
     const retrievedObject = await config.erc20GatewayTokenPairRepository.get(
-      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
     );
     assert(retrievedObject !== null);
@@ -67,7 +68,7 @@ describe('ERC20GatewayTokenPairRepository::get', (): void => {
     assertERC20GatewayTokenPairAttributes(
       retrievedObject as ERC20GatewayTokenPair,
       {
-        gatewayGA: ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+        gatewayGA: Gateway.getGlobalAddress(erc20Gateway),
         valueToken,
         utilityToken,
       },

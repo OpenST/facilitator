@@ -19,6 +19,7 @@ import { assertERC20GatewayTokenPairAttributes } from '../../models/ERC20Gateway
 import assert from '../../../test_utils/assert';
 import ERC20GatewayTokenPair from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 import ERC20GatewayTokenPairRepository from '../../../../src/m1_facilitator/repositories/ERC20GatewayTokenPairRepository';
+import Gateway from '../../../../src/m1_facilitator/models/Gateway';
 
 interface TestConfiguration {
   erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
@@ -49,7 +50,7 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
     const utilityToken = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
 
     const erc20GatewayTokenPair = new ERC20GatewayTokenPair(
-      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
       utilityToken,
     );
@@ -61,14 +62,14 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
     assertERC20GatewayTokenPairAttributes(
       returnedObject,
       {
-        gatewayGA: ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+        gatewayGA: Gateway.getGlobalAddress(erc20Gateway),
         valueToken,
         utilityToken,
       },
     );
 
     const storedObject = await config.erc20GatewayTokenPairRepository.get(
-      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
     );
     assert(storedObject !== null);
@@ -76,7 +77,7 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
     assertERC20GatewayTokenPairAttributes(
       storedObject as ERC20GatewayTokenPair,
       {
-        gatewayGA: ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+        gatewayGA: Gateway.getGlobalAddress(erc20Gateway),
         valueToken,
         utilityToken,
       },
@@ -89,7 +90,7 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
     const utilityToken = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
 
     const erc20GatewayTokenPair = new ERC20GatewayTokenPair(
-      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
       utilityToken,
     );
@@ -100,7 +101,7 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
 
     const updatedUtilityToken = '0xbb9bc244d798123fde783fcc1c72d3bb8c189414';
     const updatedERC20GatewayTokenPair = new ERC20GatewayTokenPair(
-      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
       updatedUtilityToken,
     );
@@ -112,14 +113,14 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
     assertERC20GatewayTokenPairAttributes(
       returnedObject,
       {
-        gatewayGA: ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+        gatewayGA: Gateway.getGlobalAddress(erc20Gateway),
         valueToken,
         utilityToken: updatedUtilityToken,
       },
     );
 
     const storedObject = await config.erc20GatewayTokenPairRepository.get(
-      ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+      Gateway.getGlobalAddress(erc20Gateway),
       valueToken,
     );
     assert(storedObject !== null);
@@ -127,7 +128,7 @@ describe('ERC20GatewayTokenPairRepository::save', (): void => {
     assertERC20GatewayTokenPairAttributes(
       storedObject as ERC20GatewayTokenPair,
       {
-        gatewayGA: ERC20GatewayTokenPair.getGlobalAddress(erc20Gateway),
+        gatewayGA: Gateway.getGlobalAddress(erc20Gateway),
         valueToken,
         utilityToken: updatedUtilityToken,
       },

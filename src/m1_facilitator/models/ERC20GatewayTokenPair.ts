@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Utils from '../../common/Utils';
 import Comparable from '../../common/observer/Comparable';
 
 import assert = require('assert');
@@ -94,16 +93,5 @@ export default class ERC20GatewayTokenPair extends Comparable<ERC20GatewayTokenP
     }
 
     return this.valueToken.localeCompare(other.valueToken, 'en', { sensitivity: 'base' });
-  }
-
-  /**
-   * Generates and return global address of given gateway contract address.
-   *
-   * @param gatewayAddress Anchor contract address.
-   *
-   * @returns Gateway global address.
-   */
-  public static getGlobalAddress(gatewayAddress: string): string {
-    return Utils.toChecksumAddress(gatewayAddress);
   }
 }
