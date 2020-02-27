@@ -30,7 +30,8 @@
     "devchain:deploySubgraph:eip20Token": "bash ./test_integration/m0_facilitator/scripts/eip20_token/deploy_subgraph.sh",
     "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/create_staker_redeemer.ts",
     "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_stake_testnet.ts",
-    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_redeem_testnet.ts"
+    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_redeem_testnet.ts",
+    "test:subgraph": "bash ./subgraph/verify-subgraph.sh origin && bash ./subgraph/verify-subgraph.sh auxiliary"
   },
   "repository": {
     "type": "git",
