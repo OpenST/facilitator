@@ -3,8 +3,8 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: MosaicFacilitator
-    network: goerli
+    name: Anchor
+    network: dev
     source:
       address: "0x4fDF26dc9a99D11FfB39a2d88a7E39E49544602a"
       abi: Anchor

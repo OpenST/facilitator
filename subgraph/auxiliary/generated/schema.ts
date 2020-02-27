@@ -42,22 +42,13 @@ export class AvailableStateRoot extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get blockHeight(): BigInt {
-    let value = this.get("blockHeight");
+  get anchoredBlockNumber(): BigInt {
+    let value = this.get("anchoredBlockNumber");
     return value.toBigInt();
   }
 
-  set blockHeight(value: BigInt) {
-    this.set("blockHeight", Value.fromBigInt(value));
-  }
-
-  get stateRoot(): Bytes {
-    let value = this.get("stateRoot");
-    return value.toBytes();
-  }
-
-  set stateRoot(value: Bytes) {
-    this.set("stateRoot", Value.fromBytes(value));
+  set anchoredBlockNumber(value: BigInt) {
+    this.set("anchoredBlockNumber", Value.fromBigInt(value));
   }
 
   get blockNumber(): BigInt {
