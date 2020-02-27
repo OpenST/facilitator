@@ -65,7 +65,7 @@ export default class GatewayProvenHandler {
    * handle() function accepts an array subgraph gateway-proven entities.
    * If there is no model in the gateway repository matching to a gateway
    * global address of an entity, the function logs a warning without failing.
-   * Otherwise, it updates a model in the gateway repository matchin to a
+   * Otherwise, it updates a model in the gateway repository matching to a
    * gateway global address of an entity with the new block number (of a gateway
    * proof). The gateway repository will throw an exception if the newly
    * proposed block number is less than or equal to the stored one.
