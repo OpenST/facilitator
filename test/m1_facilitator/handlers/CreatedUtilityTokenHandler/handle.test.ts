@@ -45,7 +45,7 @@ describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
     ({ erc20GatewayTokenPairRepository, gatewayRepository } = repositories);
     gateway = new Gateway(
       Gateway.getGlobalAddress(records[0].contractAddress),
-      gatewayAddress1,
+      Gateway.getGlobalAddress(gatewayAddress1),
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000003',
       new BigNumber(200),
@@ -93,7 +93,7 @@ describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
   it('should handle multiple records', async (): Promise<void> => {
     const gateway2 = new Gateway(
       Gateway.getGlobalAddress(records[1].contractAddress),
-      gatewayAddress2,
+      Gateway.getGlobalAddress(gatewayAddress2),
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000003',
       new BigNumber(200),

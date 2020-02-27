@@ -74,8 +74,8 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     );
 
     const gateway = new Gateway(
-      withdrawIntentEntityRecords[0].contractAddress,
-      '0x0000000000000000000000000000000000000005',
+      Gateway.getGlobalAddress(withdrawIntentEntityRecords[0].contractAddress),
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000005'),
       GatewayType.ERC20,
       Anchor.getGlobalAddress('0x0000000000000000000000000000000000000007'),
       new BigNumber(0),
