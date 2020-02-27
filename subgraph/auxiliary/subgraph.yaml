@@ -1,0 +1,35 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: ERC20Cogateway
+    network: dev
+    source:
+      address: "0x4fDF26dc9a99D11FfB39a2d88a7E39E49544602a"
+      abi: ERC20Cogateway
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - ConfirmedDepositIntent
+        - ProvenGateway
+        - ProxyCreation
+        - CreatedUtilityToken
+        - DeclaredWithdrawIntent
+      abis:
+        - name: ERC20Cogateway
+          file: ./abis/ERC20Cogateway.json
+      eventHandlers:
+        - event: DepositIntentConfirmed(bytes32)
+          handler: handleDepositIntentConfirmed
+        - event: GatewayProven(address,uint256)
+          handler: handleGatewayProven
+        - event: ProxyCreation(address)
+          handler: handleProxyCreation
+        - event: UtilityTokenCreated(address,address)
+          handler: handleUtilityTokenCreated
+        - event: WithdrawIntentDeclared(uint256,uint256,address,uint256,uint256,address,address,bytes32)
+          handler: handleWithdrawIntentDeclared
+      file: ./src/ERC20CogatewayMapping.ts

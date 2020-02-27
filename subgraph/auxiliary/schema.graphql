@@ -1,0 +1,53 @@
+type DepositIntentConfirmed @entity {
+  id: ID!
+  messageHash: Bytes! # bytes32
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
+
+type GatewayProven @entity {
+  id: ID!
+  remoteGateway: Bytes! # address
+  gatewayProveBlockNumber: BigInt! # uint256
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
+
+type ProxyCreation @entity {
+  id: ID!
+  proxy: Bytes! # address
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
+
+type UtilityTokenCreated @entity {
+  id: ID!
+  valueToken: Bytes! # address
+  utilityToken: Bytes! # address
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
+
+type WithdrawIntentDeclared @entity {
+  id: ID!
+  amount: BigInt! # uint256
+  nonce: BigInt! # uint256
+  beneficiary: Bytes! # address
+  feeGasPrice: BigInt! # uint256
+  feeGasLimit: BigInt! # uint256
+  withdrawer: Bytes! # address
+  utilityToken: Bytes! # address
+  messageHash: Bytes! # bytes32
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}

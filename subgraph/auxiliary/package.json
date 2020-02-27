@@ -1,0 +1,16 @@
+{
+  "name": "aux-erc20-gateways",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ mosaic/aux-erc20-gateways",
+    "create-local": "graph create --node http://localhost:8020/ mosaic/aux-erc20-gateways",
+    "remove-local": "graph remove --node http://localhost:8020/ mosaic/aux-erc20-gateways",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 mosaic/aux-erc20-gateways"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.12.0",
+    "@graphprotocol/graph-ts": "0.11.0"
+  }
+}
