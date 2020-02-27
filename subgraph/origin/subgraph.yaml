@@ -6,7 +6,7 @@ dataSources:
     name: Anchor
     network: dev
     source:
-      address: "0x2Bbe4DFb364e76dA987Ac5754bB87b476cC6D80B"
+      address: "0x4fDF26dc9a99D11FfB39a2d88a7E39E49544602a"
       abi: Anchor
     mapping:
       kind: ethereum/events
@@ -16,7 +16,7 @@ dataSources:
         - AvailableStateRoot
       abis:
         - name: Anchor
-          file: ./../abi/Anchor.json
+          file: ../abi/Anchor.json
       eventHandlers:
         - event: StateRootAvailable(uint256,bytes32)
           handler: handleStateRootAvailable

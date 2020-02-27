@@ -1,5 +1,5 @@
 {
-  "name": "aux-erc20-gateways",
+  "name": "mosaic-subgraph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
@@ -10,7 +10,7 @@
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 mosaic/aux-erc20-gateways"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.12.0",
-    "@graphprotocol/graph-ts": "0.11.0"
+    "@graphprotocol/graph-cli": "0.16.1",
+    "@graphprotocol/graph-ts": "0.16.0"
   }
 }

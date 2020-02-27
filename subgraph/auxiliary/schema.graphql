@@ -46,6 +46,11 @@ type WithdrawIntentDeclared @entity {
   withdrawer: Bytes! # address
   utilityToken: Bytes! # address
   messageHash: Bytes! # bytes32
+}
+
+type AvailableStateRoot @entity {
+  id: ID!
+  anchoredBlockNumber: BigInt! # uint256
   blockNumber: BigInt! # uint256
   blockHash: Bytes! # bytes32
   contractAddress: Bytes! # address
