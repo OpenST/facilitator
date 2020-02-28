@@ -47,7 +47,11 @@ export default class FacilitatorInit implements Command {
    *  - Throws an error if a database file exists and a force flag it not set to true.
    *  - If force flag is true and database file exists, it clears and re-initializes
    *    the database.
-   *  - Create seed data records i.e. gateway, anchor and contract entities.
+   *  - It creates records of gateway, anchor and contract entities. It makes
+   *    web3 call to fetch other information like cogateway address, origin
+   *    anchor, auxiliary anchor, lastAnchoredBlockHeight from gateway address.
+   *    Contract entities records are also created with current block timestamp.
+   *
    */
   public async execute(): Promise<void> {
     const manifest = Manifest.fromFile(this.manifestPath);

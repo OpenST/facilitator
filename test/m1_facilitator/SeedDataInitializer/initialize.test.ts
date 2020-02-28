@@ -14,7 +14,7 @@
 
 import Web3 from 'web3';
 import sinon from 'sinon';
-import * as Mosaic from 'Mosaic';
+import Mosaic from 'Mosaic';
 
 import BigNumber from 'bignumber.js';
 import Repositories
@@ -27,6 +27,7 @@ import assert from '../../test_utils/assert';
 import ContractEntityRepository
   from '../../../src/common/repositories/ContractEntityRepository';
 import { EntityType } from '../../../src/common/models/ContractEntity';
+import Utils from '../../../src/common/Utils';
 
 function assertGateway(
   gateway: Gateway | null,
@@ -208,6 +209,11 @@ describe('SeedDataInitializer:initialize', () => {
       sinon.fake.returns(fakeAnchor),
     );
 
+    sinon.replace(
+      Utils,
+      'latestBlockTimestamp',
+      sinon.fake.resolves(new BigNumber(1)),
+    );
 
     await new SeedDataInitializer(repositories).initialize(
       originWeb3,

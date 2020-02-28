@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import Web3 from 'web3';
-import * as Mosaic from 'Mosaic';
+import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
 
 import Anchor from './models/Anchor';
@@ -41,7 +41,9 @@ export default class SeedDataInitializer {
   }
 
   /**
-   * Generate and save records that should be populated as seed data.
+   * Generate and save records that should be populated as seed data. It makes
+   *    web3 call to fetch other information like cogateway address, origin
+   *    anchor, auxiliary anchor, lastAnchoredBlockHeight from gateway address.
    * - Saves erc20Gateway record.
    * - Saves erc20Cogateway record.
    * - Saves origin anchor record.
@@ -154,29 +156,29 @@ export default class SeedDataInitializer {
   /**
    * Returns list of contract entities.
    *
-   * @param gatewayAddresses Gateway address.
+   * @param erc20GatewayAddresses ERC20 Gateway address.
    * @param originLastBlockTimeStamp Origin chain last block timestamp.
    * @param auxiliaryLastBlockTimeStamp Auxiliary chain last block timestamp.
-   * @param cogatewayAddress Cogateway address.
+   * @param erc20CogatewayAddress ERC20 Cogateway address.
    * @param originAnchorAddress Origin anchor address.
    * @param auxiliaryAnchorAddress Auxiliary anchor address.
    */
   private static getContractEntities(
-    gatewayAddresses: string,
+    erc20GatewayAddresses: string,
     originLastBlockTimeStamp: BigNumber,
     auxiliaryLastBlockTimeStamp: BigNumber,
-    cogatewayAddress: string,
+    erc20CogatewayAddress: string,
     originAnchorAddress: string,
     auxiliaryAnchorAddress: string,
   ): ContractEntity[] {
     return [
       new ContractEntity(
-        gatewayAddresses,
+        erc20GatewayAddresses,
         EntityType.ProvenGateways,
         originLastBlockTimeStamp,
       ),
       new ContractEntity(
-        cogatewayAddress,
+        erc20CogatewayAddress,
         EntityType.ProvenGateways,
         auxiliaryLastBlockTimeStamp,
       ),
@@ -191,27 +193,27 @@ export default class SeedDataInitializer {
         auxiliaryLastBlockTimeStamp,
       ),
       new ContractEntity(
-        gatewayAddresses,
+        erc20GatewayAddresses,
         EntityType.DeclaredDepositIntents,
         originLastBlockTimeStamp,
       ),
       new ContractEntity(
-        cogatewayAddress,
+        erc20CogatewayAddress,
         EntityType.ConfirmedDepositIntents,
         auxiliaryLastBlockTimeStamp,
       ),
       new ContractEntity(
-        cogatewayAddress,
+        erc20CogatewayAddress,
         EntityType.CreatedUtilityTokens,
         auxiliaryLastBlockTimeStamp,
       ),
       new ContractEntity(
-        gatewayAddresses,
+        erc20GatewayAddresses,
         EntityType.ConfirmedWithdrawIntents,
         originLastBlockTimeStamp,
       ),
       new ContractEntity(
-        cogatewayAddress,
+        erc20CogatewayAddress,
         EntityType.DeclaredWithdrawIntents,
         auxiliaryLastBlockTimeStamp,
       ),
