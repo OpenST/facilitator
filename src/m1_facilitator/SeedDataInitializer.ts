@@ -46,7 +46,8 @@ export default class SeedDataInitializer {
    * - Saves erc20Cogateway record.
    * - Saves origin anchor record.
    * - Saves auxiliary anchor record.
-   * - Save contract entity records.
+   * - Save contract entity records with the updated timestamp value of last
+   *   block timestamp.
    *
    * @param originWeb3 Instance of origin web3.
    * @param auxiliaryWeb3 Instance of auxiliary web3.
@@ -107,12 +108,13 @@ export default class SeedDataInitializer {
       new BigNumber(originLatestAnchoredStateRootBlockHeight),
     );
 
-    const currentTimeStamp = Utils.getCurrentTimestampInMillis();
-
+    const originLastBlockTimestamp = await Utils.latestBlockTimestamp(originWeb3);
+    const auxiliaryLastBlockTimestamp = await Utils.latestBlockTimestamp(auxiliaryWeb3);
 
     const contractEntities = SeedDataInitializer.getContractEntities(
       erc20GatewayAddress,
-      currentTimeStamp,
+      originLastBlockTimestamp,
+      auxiliaryLastBlockTimestamp,
       cogatewayAddress,
       originAnchorAddress,
       auxiliaryAnchorAddress,
@@ -153,63 +155,65 @@ export default class SeedDataInitializer {
    * Returns list of contract entities.
    *
    * @param gatewayAddresses Gateway address.
-   * @param currentTimeStamp Current timestamp.
+   * @param originLastBlockTimeStamp Origin chain last block timestamp.
+   * @param auxiliaryLastBlockTimeStamp Auxiliary chain last block timestamp.
    * @param cogatewayAddress Cogateway address.
    * @param originAnchorAddress Origin anchor address.
    * @param auxiliaryAnchorAddress Auxiliary anchor address.
    */
   private static getContractEntities(
     gatewayAddresses: string,
-    currentTimeStamp: BigNumber,
+    originLastBlockTimeStamp: BigNumber,
+    auxiliaryLastBlockTimeStamp: BigNumber,
     cogatewayAddress: string,
     originAnchorAddress: string,
     auxiliaryAnchorAddress: string,
-  ) {
+  ): ContractEntity[] {
     return [
       new ContractEntity(
         gatewayAddresses,
         EntityType.ProvenGateways,
-        currentTimeStamp,
+        originLastBlockTimeStamp,
       ),
       new ContractEntity(
         cogatewayAddress,
         EntityType.ProvenGateways,
-        currentTimeStamp,
+        auxiliaryLastBlockTimeStamp,
       ),
       new ContractEntity(
         originAnchorAddress,
         EntityType.AvailableStateRoots,
-        currentTimeStamp,
+        originLastBlockTimeStamp,
       ),
       new ContractEntity(
         auxiliaryAnchorAddress,
         EntityType.AvailableStateRoots,
-        currentTimeStamp,
+        auxiliaryLastBlockTimeStamp,
       ),
       new ContractEntity(
         gatewayAddresses,
         EntityType.DeclaredDepositIntents,
-        currentTimeStamp,
+        originLastBlockTimeStamp,
       ),
       new ContractEntity(
         cogatewayAddress,
         EntityType.ConfirmedDepositIntents,
-        currentTimeStamp,
+        auxiliaryLastBlockTimeStamp,
       ),
       new ContractEntity(
         cogatewayAddress,
         EntityType.CreatedUtilityTokens,
-        currentTimeStamp,
+        auxiliaryLastBlockTimeStamp,
       ),
       new ContractEntity(
         gatewayAddresses,
         EntityType.ConfirmedWithdrawIntents,
-        currentTimeStamp,
+        originLastBlockTimeStamp,
       ),
       new ContractEntity(
         cogatewayAddress,
         EntityType.DeclaredWithdrawIntents,
-        currentTimeStamp,
+        auxiliaryLastBlockTimeStamp,
       ),
     ];
   }

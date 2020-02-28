@@ -16,7 +16,7 @@ import path from 'path';
 import os from 'os';
 
 /**
- * Provide methods to calculate folder and file paths.
+ * Provide methods for default mosaic path and facilitator database file path.
  */
 export default class Directory {
   /**

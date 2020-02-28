@@ -14,6 +14,7 @@
 
 import * as Web3Utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
+import Web3 from 'web3';
 
 /**
  * This class contains general purpose functions.
@@ -45,10 +46,10 @@ export default class Utils {
   }
 
   /**
-   * @return returns the number of milliseconds elapsed
-   * since January 1, 1970, 00:00:00 UTC as BigNumber object.
+   *  Returns the last block timestamp.
    */
-  public static getCurrentTimestampInMillis(): BigNumber {
-    return new BigNumber(Date.now());
+  public static async latestBlockTimestamp(web3: Web3): Promise<BigNumber> {
+    const block = await web3.eth.getBlock('latest');
+    return new BigNumber(block.timestamp);
   }
 }
