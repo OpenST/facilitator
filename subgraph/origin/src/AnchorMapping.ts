@@ -1,11 +1,9 @@
 import { StateRootAvailable } from '../generated/Anchor/Anchor';
 import { AvailableStateRoot } from '../generated/AnchorSchema';
 
-// eslint-disable-next-line import/prefer-default-export
+/* eslint-disable import/prefer-default-export, prefer-const, prefer-template */
 export function handleStateRootAvailable(event: StateRootAvailable): void {
-  // eslint-disable-next-line prefer-const
   let entity = new AvailableStateRoot(
-    // eslint-disable-next-line prefer-template
     event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
 
