@@ -134,13 +134,13 @@ export class ProvenGateway extends Entity {
     this.set("remoteGateway", Value.fromBytes(value));
   }
 
-  get gatewayProvenBlockNumber(): BigInt {
-    let value = this.get("gatewayProvenBlockNumber");
+  get provenBlockNumber(): BigInt {
+    let value = this.get("provenBlockNumber");
     return value.toBigInt();
   }
 
-  set gatewayProvenBlockNumber(value: BigInt) {
-    this.set("gatewayProvenBlockNumber", Value.fromBigInt(value));
+  set provenBlockNumber(value: BigInt) {
+    this.set("provenBlockNumber", Value.fromBigInt(value));
   }
 
   get blockNumber(): BigInt {

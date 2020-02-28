@@ -141,9 +141,9 @@ export class WithdrawIntentDeclared__Params {
   }
 }
 
-export class Contract extends SmartContract {
-  static bind(address: Address): Contract {
-    return new Contract("Contract", address);
+export class ERC20Cogateway extends SmartContract {
+  static bind(address: Address): ERC20Cogateway {
+    return new ERC20Cogateway("ERC20Cogateway", address);
   }
 
   DEPOSIT_INTENT_TYPEHASH(): Bytes {

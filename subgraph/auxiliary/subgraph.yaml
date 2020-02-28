@@ -39,7 +39,7 @@ dataSources:
         - DeclaredWithdrawIntent
       abis:
         - name: ERC20Cogateway
-          file: ./abis/ERC20Cogateway.json
+          file: ../abi/ERC20Cogateway.json
       eventHandlers:
         - event: DepositIntentConfirmed(bytes32)
           handler: handleDepositIntentConfirmed

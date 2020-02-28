@@ -1,24 +1,22 @@
-/* eslint-disable prefer-const, prefer-template */
-import { BigInt } from "@graphprotocol/graph-ts"
+/* eslint-disable import/prefer-default-export, prefer-const, prefer-template */
 import {
-  Contract,
   DepositIntentConfirmed,
   GatewayProven,
   UtilityTokenCreated,
-  WithdrawIntentDeclared
-} from "../generated/ERC20Cogateway/ERC20Cogateway"
+  WithdrawIntentDeclared,
+} from '../generated/ERC20Cogateway/ERC20Cogateway';
 import {
   ConfirmedDepositIntent,
   ProvenGateway,
   CreatedUtilityToken,
-  DeclaredWithdrawIntent
-} from "../generated/ERC20CogatewaySchema"
+  DeclaredWithdrawIntent,
+} from '../generated/ERC20CogatewaySchema';
 
 export function handleDepositIntentConfirmed(
-  event: DepositIntentConfirmed
+  event: DepositIntentConfirmed,
 ): void {
   let entity = new ConfirmedDepositIntent(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
   entity.messageHash = event.params.messageHash;
   entity.blockNumber = event.block.number;
@@ -33,7 +31,7 @@ export function handleGatewayProven(event: GatewayProven): void {
     event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
   entity.remoteGateway = event.params.remoteGateway;
-  entity.gatewayProvenBlockNumber = event.params.blockNumber;
+  entity.provenBlockNumber = event.params.blockNumber;
   entity.blockNumber = event.block.number;
   entity.blockHash = event.block.hash;
   entity.contractAddress = event.address;
@@ -43,7 +41,7 @@ export function handleGatewayProven(event: GatewayProven): void {
 
 export function handleUtilityTokenCreated(event: UtilityTokenCreated): void {
   let entity = new CreatedUtilityToken(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
   entity.valueToken = event.params.valueToken;
   entity.utilityToken = event.params.utilityToken;
@@ -58,7 +56,7 @@ export function handleWithdrawIntentDeclared(
   event: WithdrawIntentDeclared
 ): void {
   let entity = new DeclaredWithdrawIntent(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
   entity.amount = event.params.amount;
   entity.nonce = event.params.nonce;
