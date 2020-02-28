@@ -22,6 +22,9 @@ import Repositories from './repositories/Repositories';
 import ContractEntity, { EntityType } from '../common/models/ContractEntity';
 import Utils from '../common/Utils';
 
+/**
+ * Initializes the seed data in repositories and validate the seeded data.
+ */
 export default class SeedDataInitializer {
   /** Instance of Repositories class. */
   private repositories: Repositories;
@@ -128,6 +131,22 @@ export default class SeedDataInitializer {
 
     await this.repositories.anchorRepository.save(originAnchor);
     await this.repositories.anchorRepository.save(auxiliaryAnchor);
+  }
+  
+  /**
+   * Verifies if the database is initialized with correct seed data. To do the
+   * verification, the ERC20Gateway address from the manifest file is checked
+   * if it is already stored in the database. If its stored then its verified.
+   *
+   * @param gatewayAddress Gateway address for which seed data is to be verified.
+   *
+   * @returns Returns true if the gateway record is present for the given gateway address.
+   */
+  public async isValidSeedData(gatewayAddress: string): Promise<boolean> {
+    const gatewayGA = Gateway.getGlobalAddress(gatewayAddress);
+    const gatewayRecord = await this.repositories.gatewayRepository.get(gatewayGA);
+
+    return (gatewayRecord !== null);
   }
 
   /**

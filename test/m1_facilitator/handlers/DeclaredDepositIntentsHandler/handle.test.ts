@@ -44,8 +44,8 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     const repositories = await Repositories.create();
     ({ depositIntentRepository, gatewayRepository, messageRepository } = repositories);
     const gateway = new Gateway(
-      record1.contractAddress,
-      '0x0000000000000000000000000000000000000010',
+      Gateway.getGlobalAddress(record1.contractAddress),
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000010'),
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000001',
       new BigNumber(200),
@@ -187,8 +187,8 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     };
 
     const gateway1 = new Gateway(
-      record2.contractAddress,
-      '0x0000000000000000000000000000000000000010',
+      Gateway.getGlobalAddress(record2.contractAddress),
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000010'),
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000001',
       new BigNumber(200),
