@@ -16,8 +16,8 @@ import Web3 from 'web3';
 import * as Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
 
-import Gateway, { GatewayType } from './models/Gateway';
 import Anchor from './models/Anchor';
+import Gateway, { GatewayType } from './models/Gateway';
 import Repositories from './repositories/Repositories';
 import ContractEntity, { EntityType } from '../common/models/ContractEntity';
 import Utils from '../common/Utils';
@@ -42,22 +42,22 @@ export default class SeedDataInitializer {
 
   /**
    * Generate and save records that should be populated as seed data.
-   * - Save ERC20Gateway record
-   * - Save ERC20goGateway record
-   * - Save Origin anchor record
-   * - Save auxiliary anchor record
+   * - Saves erc20Gateway record.
+   * - Saves erc20Cogateway record.
+   * - Saves origin anchor record.
+   * - Saves auxiliary anchor record.
    * - Save contract entity records.
    *
    * @param originWeb3 Instance of origin web3.
    * @param auxiliaryWeb3 Instance of auxiliary web3.
-   * @param gatewayAddresses Gateway address.
+   * @param erc20GatewayAddress ERC20 Gateway address.
    */
   public async initialize(
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
-    gatewayAddresses: string,
+    erc20GatewayAddress: string,
   ): Promise<void> {
-    const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, gatewayAddresses);
+    const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
     const cogatewayAddress = await erc20Gateway.methods.messageOutbox().call();
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(
       auxiliaryWeb3,
@@ -76,13 +76,13 @@ export default class SeedDataInitializer {
       auxiliaryAnchorAddress,
     );
 
-    const originLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
+    const auxiliaryLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
       .getLatestStateRootBlockNumber().call();
-    const auxiliaryLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
+    const originLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
       .getLatestStateRootBlockNumber().call();
 
     const originGateway = new Gateway(
-      Gateway.getGlobalAddress(gatewayAddresses),
+      Gateway.getGlobalAddress(erc20GatewayAddress),
       Gateway.getGlobalAddress(cogatewayAddress),
       GatewayType.ERC20,
       Anchor.getGlobalAddress(originAnchorAddress),
@@ -91,7 +91,7 @@ export default class SeedDataInitializer {
 
     const auxiliaryGateway = new Gateway(
       Gateway.getGlobalAddress(cogatewayAddress),
-      Gateway.getGlobalAddress(gatewayAddresses),
+      Gateway.getGlobalAddress(erc20GatewayAddress),
       GatewayType.ERC20,
       Anchor.getGlobalAddress(auxiliaryAnchorAddress),
       new BigNumber(0),
@@ -99,19 +99,19 @@ export default class SeedDataInitializer {
 
     const originAnchor = new Anchor(
       Anchor.getGlobalAddress(originAnchorAddress),
-      new BigNumber(originLatestAnchoredStateRootBlockHeight),
+      new BigNumber(auxiliaryLatestAnchoredStateRootBlockHeight),
     );
 
     const auxiliaryAnchor = new Anchor(
       Anchor.getGlobalAddress(auxiliaryAnchorAddress),
-      new BigNumber(auxiliaryLatestAnchoredStateRootBlockHeight),
+      new BigNumber(originLatestAnchoredStateRootBlockHeight),
     );
 
-    const currentTimeStamp = Utils.getCurrentTimestamp();
+    const currentTimeStamp = Utils.getCurrentTimestampInMillis();
 
 
     const contractEntities = SeedDataInitializer.getContractEntities(
-      gatewayAddresses,
+      erc20GatewayAddress,
       currentTimeStamp,
       cogatewayAddress,
       originAnchorAddress,
@@ -126,13 +126,13 @@ export default class SeedDataInitializer {
 
     await Promise.all(saveContractEntityPromises);
 
-    await this.repositories.gatewayRepository.save(originGateway);
-    await this.repositories.gatewayRepository.save(auxiliaryGateway);
-
     await this.repositories.anchorRepository.save(originAnchor);
     await this.repositories.anchorRepository.save(auxiliaryAnchor);
+
+    await this.repositories.gatewayRepository.save(auxiliaryGateway);
+    await this.repositories.gatewayRepository.save(originGateway);
   }
-  
+
   /**
    * Verifies if the database is initialized with correct seed data. To do the
    * verification, the ERC20Gateway address from the manifest file is checked

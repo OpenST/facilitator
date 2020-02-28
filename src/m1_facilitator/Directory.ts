@@ -16,13 +16,13 @@ import path from 'path';
 import os from 'os';
 
 /**
- * Provide method to calculate folder and file path.
+ * Provide methods to calculate folder and file paths.
  */
 export default class Directory {
   /**
-   * Returns mosaic folder path
+   * Returns mosaic folder path.
    */
-  public static getMosaicPath() {
+  public static getMosaicDefaultPath() {
     return path.join(
       os.homedir(),
       '.mosaic',
@@ -30,8 +30,9 @@ export default class Directory {
   }
 
   /**
-   * Returns path of facilitator database file.
-   * @param architectureLayout Architecture layout
+   * Returns full path of facilitator database file.
+   *
+   * @param architectureLayout Architecture layout.
    * @param gatewayAddresses Address of gateway contract.
    */
   public static getFacilitatorDatabaseFile(
@@ -39,7 +40,7 @@ export default class Directory {
     gatewayAddresses: string,
   ) {
     return path.join(
-      Directory.getMosaicPath(),
+      Directory.getMosaicDefaultPath(),
       architectureLayout,
       `${gatewayAddresses}.db`,
     );

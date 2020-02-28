@@ -44,9 +44,9 @@ export default class FacilitatorInit implements Command {
    * Executes facilitator init command
    *  - Load manifest file, if file does not exists it will throw an error.
    *  - Creates database file if does not exist.
-   *  - Throw error if database file exists and force flag is true.
-   *  - If force flag is true and database file exists, it creates new database
-   *    file.
+   *  - Throws an error if a database file exists and a force flag it not set to true.
+   *  - If force flag is true and database file exists, it clears and re-initializes
+   *    the database.
    *  - Create seed data records i.e. gateway, anchor and contract entities.
    */
   public async execute(): Promise<void> {
@@ -58,7 +58,7 @@ export default class FacilitatorInit implements Command {
       gatewayAddresses,
     );
 
-    const databaseFileExists = fs.existsSync(databaseFilePath);
+    const databaseFileExists = await fs.pathExists(databaseFilePath);
 
     if (!this.isForceInit && databaseFileExists) {
       throw new Error(`Database already initialized at location ${databaseFilePath}.`
@@ -66,13 +66,13 @@ export default class FacilitatorInit implements Command {
     }
 
     if (this.isForceInit && databaseFileExists) {
-      fs.removeSync(databaseFilePath);
+      await fs.remove(databaseFilePath);
     }
 
     // Ensures that the file exists. If the file that is requested to be
     // created is in directories that do not exist,
     // these directories are created.
-    fs.ensureFileSync(databaseFilePath);
+    await fs.ensureFile(databaseFilePath);
 
     const originWeb3 = manifest.metachain.originChain.web3;
     const auxiliaryWeb3 = manifest.metachain.auxiliaryChain.web3;

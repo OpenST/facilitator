@@ -45,11 +45,10 @@ export default class Utils {
   }
 
   /**
-   * @return Current timestamp as BigNumber object.
+   * @return returns the number of milliseconds elapsed
+   * since January 1, 1970, 00:00:00 UTC as BigNumber object.
    */
-  public static getCurrentTimestamp(): BigNumber {
-    const currentTimestampInMs = new Date().getTime();
-    const currentTimestampInS = Math.round(currentTimestampInMs / 1000);
-    return new BigNumber(currentTimestampInS);
+  public static getCurrentTimestampInMillis(): BigNumber {
+    return new BigNumber(Date.now());
   }
 }
