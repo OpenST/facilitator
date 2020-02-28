@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const, prefer-template */
 import {
   DepositIntentDeclared,
   GatewayProven,
@@ -9,8 +10,6 @@ import {
   ProvenGateway,
 } from '../generated/ERC20GatewaySchema';
 
-/* eslint-disable prefer-const */
-/* eslint-disable prefer-template */
 export function handleDepositIntentDeclared(
   event: DepositIntentDeclared,
 ): void {
@@ -42,7 +41,7 @@ export function handleGatewayProven(
   );
 
   entity.provenBlockNumber = event.params.blockNumber;
-  entity.remoteGatewayAddress = event.params.remoteGateway;
+  entity.remoteGateway = event.params.remoteGateway;
   entity.blockNumber = event.block.number;
   entity.blockHash = event.block.hash;
   entity.contractAddress = event.address;

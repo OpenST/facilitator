@@ -345,13 +345,13 @@ export class ProvenGateway extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get remoteGatewayAddress(): Bytes {
-    let value = this.get("remoteGatewayAddress");
+  get remoteGateway(): Bytes {
+    let value = this.get("remoteGateway");
     return value.toBytes();
   }
 
-  set remoteGatewayAddress(value: Bytes) {
-    this.set("remoteGatewayAddress", Value.fromBytes(value));
+  set remoteGateway(value: Bytes) {
+    this.set("remoteGateway", Value.fromBytes(value));
   }
 
   get provenBlockNumber(): BigInt {

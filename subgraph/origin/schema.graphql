@@ -34,7 +34,7 @@ type ConfirmedWithdrawIntent @entity {
 
 type ProvenGateway @entity {
   id: ID!
-  remoteGatewayAddress: Bytes! # address
+  remoteGateway: Bytes! # address
   provenBlockNumber: BigInt! # uint256
   blockNumber: BigInt! # uint256
   blockHash: Bytes! # bytes32
