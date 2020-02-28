@@ -5,9 +5,9 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ mosaic/aux-erc20gateway",
-    "create-local": "graph create --node http://172.16.0.191:9425 mosaic/aux-erc20gateway",
+    "create-local": "graph create --node http://localhost:8020/ mosaic/aux-erc20gateway",
     "remove-local": "graph remove --node http://localhost:8020/ mosaic/aux-erc20gateway",
-    "deploy-local": "graph deploy --node http://172.16.0.191:9425 --ipfs http://172.16.0.191:6406 mosaic/aux-erc20gateway"
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 mosaic/aux-erc20gateway"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.16.1",
