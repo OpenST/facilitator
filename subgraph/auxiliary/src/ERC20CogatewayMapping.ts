@@ -1,4 +1,4 @@
-/* eslint-disable prefer-template */
+/* eslint-disable prefer-const, prefer-template */
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
   Contract,
@@ -30,7 +30,6 @@ export function handleDepositIntentConfirmed(
 
 export function handleGatewayProven(event: GatewayProven): void {
   let entity = new ProvenGateway(
-    // eslint-disable-next-line prefer-template
     event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
   entity.remoteGateway = event.params.remoteGateway;
