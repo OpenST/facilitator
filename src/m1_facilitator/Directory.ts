@@ -22,7 +22,7 @@ export default class Directory {
   /**
    * Returns mosaic folder path.
    */
-  public static getMosaicDefaultPath() {
+  public static getMosaicDefaultPath(): string {
     return path.join(
       os.homedir(),
       '.mosaic',
@@ -38,7 +38,7 @@ export default class Directory {
   public static getFacilitatorDatabaseFile(
     architectureLayout: string,
     gatewayAddresses: string,
-  ) {
+  ): string {
     return path.join(
       Directory.getMosaicDefaultPath(),
       architectureLayout,
