@@ -9,13 +9,13 @@ type AvailableStateRoot @entity {
 
 type DeclaredDepositIntent @entity {
   id: ID!
-  tokenAddress: Bytes! # address
   amount: BigInt! # uint256
   nonce: BigInt!  # uint256
   beneficiary: Bytes! # address
   feeGasPrice: BigInt! # uint256
   feeGasLimit: BigInt! # uint256
   depositor: Bytes! # address
+  valueToken: Bytes! # address
   messageHash: Bytes! # bytes32
   blockNumber: BigInt! # uint256
   blockHash: Bytes! # bytes32

@@ -21,12 +21,12 @@ dataSources:
         - event: StateRootAvailable(uint256,bytes32)
           handler: handleStateRootAvailable
       file: ./src/AnchorMapping.ts
-      
+
   - kind: ethereum/contract
     name: ERC20Gateway
     network: dev
     source:
-      address: "0xdbbb5c822ccfac3ea49e32215565c6aafb257a30"
+      address: "0xdbbb5c822ccfac3ea49e32215565c9aafb757a30"
       abi: ERC20Gateway
     mapping:
       kind: ethereum/events

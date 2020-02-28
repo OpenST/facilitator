@@ -18,13 +18,13 @@ export function handleDepositIntentDeclared(
     event.transaction.hash.toHex() + '_' + event.logIndex.toString(),
   );
 
-  entity.tokenAddress = event.params.valueToken;
   entity.amount = event.params.amount;
   entity.nonce = event.params.nonce;
   entity.beneficiary = event.params.beneficiary;
   entity.feeGasPrice = event.params.feeGasPrice;
   entity.feeGasLimit = event.params.feeGasLimit;
   entity.depositor = event.params.depositor;
+  entity.valueToken = event.params.valueToken;
   entity.messageHash = event.params.messageHash;
   entity.blockNumber = event.block.number;
   entity.blockHash = event.block.hash;

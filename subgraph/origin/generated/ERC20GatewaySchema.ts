@@ -124,15 +124,6 @@ export class DeclaredDepositIntent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get tokenAddress(): Bytes {
-    let value = this.get("tokenAddress");
-    return value.toBytes();
-  }
-
-  set tokenAddress(value: Bytes) {
-    this.set("tokenAddress", Value.fromBytes(value));
-  }
-
   get amount(): BigInt {
     let value = this.get("amount");
     return value.toBigInt();
@@ -185,6 +176,15 @@ export class DeclaredDepositIntent extends Entity {
 
   set depositor(value: Bytes) {
     this.set("depositor", Value.fromBytes(value));
+  }
+
+  get valueToken(): Bytes {
+    let value = this.get("valueToken");
+    return value.toBytes();
+  }
+
+  set valueToken(value: Bytes) {
+    this.set("valueToken", Value.fromBytes(value));
   }
 
   get messageHash(): Bytes {
