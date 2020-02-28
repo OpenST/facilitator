@@ -15,7 +15,7 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { DataTypes, InitOptions, Model } from 'sequelize';
+import { DataTypes, InitOptions, Model, Op } from 'sequelize';
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
 import Message, { MessageType, MessageStatus } from '../models/Message';
 import Subject from '../../common/observer/Subject';
