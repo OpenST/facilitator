@@ -14,7 +14,8 @@
 
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
-import Logger from '../../common/Logger';
+import Transaction from '../models/Transaction';
+import TransactionRepository from '../repositories/TransactionRepository';
 
 interface TxOptionInterface {
   from: string;
@@ -22,48 +23,41 @@ interface TxOptionInterface {
   nonce: BigNumber;
 }
 
+/**
+ * Transaction executor class makes sure transactions are executed in a sequential order. Transaction repository act as
+ * queue and stores transactions history.
+ * It's responsibilites:
+ * - Queueing transaction in TransactionRepository
+ * - Execute transactions
+ * - Makes sure nonce are in proper order
+ */
 export default class TransactionExecutor {
   private readonly web3: Web3;
 
-  private readonly rawTx: any;
-
-  private readonly inputTxOption: TxOptionInterface;
+  public readonly transactionRepository: TransactionRepository;
 
   /**
    * Constructor.
    *
    * @param web3 The web3 instance to be used for fetching nonce.
-   * @param tx Raw transaction object.
-   * @param inputTxOption Transaction options.
+   * @param transactionRepository Transaction repository instance.
    */
-  public constructor(web3: Web3, rawTx: any, inputTxOption: TxOptionInterface) {
+  public constructor(web3: Web3, transactionRepository: TransactionRepository) {
     this.web3 = web3;
-    this.rawTx = rawTx;
-    this.inputTxOption = inputTxOption;
-    this.execute.bind(this);
+    this.transactionRepository = transactionRepository;
   }
 
   /**
-   * This method submits a raw transaction and returns transaction hash.
+   * This method enqueue transactions to queue i.e. TransactionRepository.
+   * @param rawTx Raw transaction object.
+   * @param inputTxOption Tx option object
    */
-  public async execute(): Promise<string> {
-    return new Promise(async (onResolve, onReject): Promise<void> => {
-      const txOption = Object.assign({}, this.inputTxOption);
-      if (this.inputTxOption.gas === undefined) {
-        txOption.gas = await this.rawTx.estimateGas(this.inputTxOption).catch((e: Error): number => {
-          Logger.error(`Error on estimating gas, using default value: ${e.message}`);
-          return 6000000;
-        });
-        Logger.debug(`Transaction gas estimates  ${txOption.gas}`);
-      }
-      if (this.inputTxOption.nonce === undefined) {
-        const account: Account = new Account(this.inputTxOption.from);
-        txOption.nonce = await account.getNonce(this.web3);
-        Logger.debug(`Nonce to be used for transaction sender: ${txOption.from} is ${txOption.nonce}`);
-      }
-      this.rawTx.send(txOption)
-        .on('transactionHash', (hash: string): void => onResolve(hash))
-        .on('error', (error: Error): void => onReject(error));
-    });
+  public async add(rawTx: any, inputTxOption: TxOptionInterface): Promise<void> {
+    const transaction = new Transaction(
+      inputTxOption.from,
+      inputTxOption.gas,
+      rawTx,
+    );
+    await this.transactionRepository.save(transaction);
   }
 }
