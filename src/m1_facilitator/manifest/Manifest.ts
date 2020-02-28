@@ -16,8 +16,8 @@ import fs from 'fs-extra';
 import yaml from 'js-yaml';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
-import schema from './manifest.schema.json';
 import Web3 from 'web3';
+import schema from './manifest.schema.json';
 
 /**
  * Interface of facilitator manifest file input chain data. It represents below:
