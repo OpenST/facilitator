@@ -22,3 +22,7 @@ src/**/**/*.js.map
 # Packaging output
 lib/**
 openst-facilitator-*.tgz
+
+# Subgraph build files
+src/subgraph/auxiliary/build/**
+src/subgraph/origin/build/**
