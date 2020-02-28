@@ -216,6 +216,36 @@ export default class MessageRepository extends Subject<Message> {
     return this.convertToMessage(messageModel);
   }
 
+  /**
+   *
+   * @param gatewayAddress Gateway address.
+   * @param blockHeight Block height
+   *
+   * @returns Messages which satisfy the `where` condition.
+   */
+  public async getMessagesForConfirmation(
+    gatewayAddress: string,
+    blockHeight: BigNumber,
+  ): Promise<Message[]> {
+    const messageModels = await MessageModel.findAll({
+      where: {
+        [Op.and]: {
+          gatewayAddress,
+          sourceDeclarationBlockHeight: {
+            [Op.lte]: blockHeight,
+          },
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
+        },
+      },
+    });
+
+    const messages: Message[] = messageModels.map(
+      message => this.convertToMessage(message),
+    );
+    return messages;
+  }
+
   /* Private Functions */
 
   /**

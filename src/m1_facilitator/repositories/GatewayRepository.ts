@@ -193,10 +193,10 @@ export default class GatewayRepository extends Subject<Gateway> {
     const gatewayModel = await GatewayModel.findOne({
       where: {
         anchorGA,
-      }
+      },
     });
 
-    if(gatewayModel === null) {
+    if (gatewayModel === null) {
       return null;
     }
 
