@@ -13,15 +13,25 @@
 // limitations under the License.
 
 import { DataTypes, Model, InitOptions } from 'sequelize';
+import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
 
 import Anchor from '../models/Anchor';
-import Subject from '../../m0_facilitator/observer/Subject';
-import Utils from '../../m0_facilitator/Utils';
+import Subject from '../../common/observer/Subject';
+import Utils from '../../common/Utils';
 
 import assert = require('assert');
 
 /* eslint-disable class-methods-use-this */
+
+export class LastAnchoredBlockNumberIsNotStrictlyGrowingError extends Error {
+  public constructor(current: BigNumber, update: BigNumber) {
+    super(`Failed to set lastAnchoredBlockNumber to ${update} `
+      + `as the current value is ${current}`);
+
+    Object.setPrototypeOf(this, LastAnchoredBlockNumberIsNotStrictlyGrowingError.prototype);
+  }
+}
 
 /**
  * An interface, that represents an anchor database model.
@@ -45,6 +55,11 @@ class AnchorModel extends Model {
  * On construction it initializes underlying database model.
  */
 export default class AnchorRepository extends Subject<Anchor> {
+  /* Storage */
+
+  private mutex: Mutex;
+
+
   /* Public Functions */
 
   /**
@@ -53,6 +68,8 @@ export default class AnchorRepository extends Subject<Anchor> {
    */
   public constructor(initOptions: InitOptions) {
     super();
+
+    this.mutex = new Mutex();
 
     AnchorModel.init(
       {
@@ -91,16 +108,34 @@ export default class AnchorRepository extends Subject<Anchor> {
    * @returns Upserted anchor model (with all saved fields).
    */
   public async save(anchor: Anchor): Promise<Anchor> {
-    await AnchorRepository.assertAnchoredBlockNumber(anchor);
+    const release = await this.mutex.acquire();
+    try {
+      const anchorDatabaseModel = await AnchorModel.findOne({
+        where: {
+          anchorGA: anchor.anchorGA,
+        },
+      });
 
-    const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
+      if (anchorDatabaseModel !== null
+        && anchor.lastAnchoredBlockNumber.isLessThanOrEqualTo(
+          anchorDatabaseModel.lastAnchoredBlockNumber,
+        )) {
+        throw new LastAnchoredBlockNumberIsNotStrictlyGrowingError(
+          anchorDatabaseModel.lastAnchoredBlockNumber,
+          anchor.lastAnchoredBlockNumber,
+        );
+      }
 
-    await AnchorModel.upsert(
-      anchor,
-      {
-        fields: definedOwnProps,
-      },
-    );
+      const definedOwnProps: string[] = Utils.getDefinedOwnProps(anchor);
+      await AnchorModel.upsert(
+        anchor,
+        {
+          fields: definedOwnProps,
+        },
+      );
+    } finally {
+      release();
+    }
 
     const upsertedModel: Anchor | null = await this.get(anchor.anchorGA);
     assert(upsertedModel !== undefined);
@@ -149,29 +184,6 @@ export default class AnchorRepository extends Subject<Anchor> {
       new BigNumber(anchorDatabaseModel.lastAnchoredBlockNumber),
       anchorDatabaseModel.createdAt,
       anchorDatabaseModel.updatedAt,
-    );
-  }
-
-  /**
-   * assertAnchoredBlockNumber() function asserts that stored (if exists)
-   * `lastAnchoredBlockNumber` matching to the anchorGA of the given anchor is
-   * less than the `lastAnchoredBlockNumber` of the given anchor.
-   *
-   * @param anchor An anchor model to assert validity against the stored one.
-   */
-  private static async assertAnchoredBlockNumber(anchor: Anchor): Promise<void> {
-    const anchorDatabaseModel = await AnchorModel.findOne({
-      where: {
-        anchorGA: anchor.anchorGA,
-      },
-    });
-
-    if (anchorDatabaseModel === null) {
-      return;
-    }
-
-    assert(
-      anchor.lastAnchoredBlockNumber.isGreaterThan(anchorDatabaseModel.lastAnchoredBlockNumber),
     );
   }
 }

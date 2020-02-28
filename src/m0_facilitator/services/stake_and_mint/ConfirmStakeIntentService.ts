@@ -30,7 +30,7 @@ import Logger from '../../../common/Logger';
 import Gateway from '../../models/Gateway';
 import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
-import Observer from '../../observer/Observer';
+import Observer from '../../../common/observer/Observer';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';

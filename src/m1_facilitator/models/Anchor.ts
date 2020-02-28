@@ -14,7 +14,8 @@
 
 import BigNumber from 'bignumber.js';
 
-import Comparable from '../../m0_facilitator/observer/Comparable';
+import Utils from '../../common/Utils';
+import Comparable from '../../common/observer/Comparable';
 
 import assert = require('assert');
 
@@ -85,6 +86,6 @@ export default class Anchor extends Comparable<Anchor> {
    * @returns Anchor global address.
    */
   public static getGlobalAddress(anchorContractAddress: string): string {
-    return anchorContractAddress;
+    return Utils.toChecksumAddress(anchorContractAddress);
   }
 }

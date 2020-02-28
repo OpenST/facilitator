@@ -17,7 +17,7 @@
 
 import sinon from 'sinon';
 
-import ContractEntityRepository from '../../../../src/m0_facilitator/repositories/ContractEntityRepository';
+import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
 import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
 import Subscriber from '../../../../src/m0_facilitator/subscriptions/Subscriber';
 import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';

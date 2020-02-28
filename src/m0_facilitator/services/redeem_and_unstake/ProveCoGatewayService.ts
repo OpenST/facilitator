@@ -28,7 +28,7 @@ import { EIP20Gateway } from '@openst/mosaic-contracts/dist/interacts/EIP20Gatew
 import { ORIGIN_GAS_PRICE } from '../../Constants';
 import Logger from '../../../common/Logger';
 import AuxiliaryChain from '../../models/AuxiliaryChain';
-import Observer from '../../observer/Observer';
+import Observer from '../../../common/observer/Observer';
 import GatewayRepository from '../../repositories/GatewayRepository';
 import { MessageDirection, MessageRepository } from '../../repositories/MessageRepository';
 import Utils from '../../Utils';

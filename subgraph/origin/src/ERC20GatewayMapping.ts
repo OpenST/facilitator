@@ -7,7 +7,7 @@ import {
   DeclaredDepositIntent,
   ConfirmedWithdrawIntent,
   ProvenGateway,
-} from '../generated/schema';
+} from '../generated/ERC20GatewaySchema';
 
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-template */

@@ -14,7 +14,7 @@
 //
 // ----------------------------------------------------------------------------
 
-import Logger from '../../common/Logger';
+import Logger from '../Logger';
 import Comparable from './Comparable';
 import Observer from './Observer';
 

@@ -71,18 +71,6 @@ const Utils = {
     });
   },
 
-  getDefinedOwnProps(obj: {}): string[] {
-    const nonUndefinedOwnedProps: string[] = [];
-    Object.entries(obj).forEach(
-      ([key, value]): void => {
-        if (value !== undefined) {
-          nonUndefinedOwnedProps.push(key);
-        }
-      },
-    );
-    return nonUndefinedOwnedProps;
-  },
-
   /**
    * @return Current timestamp as BigNumber object.
    */

@@ -26,4 +26,20 @@ export default class Utils {
   public static toChecksumAddress(address: string): string {
     return Web3Utils.toChecksumAddress(address);
   }
+
+  /**
+   * Returns object after removing undefined properties.
+   * @param obj Input object.
+   */
+  public static getDefinedOwnProps(obj: {}): string[] {
+    const nonUndefinedOwnedProps: string[] = [];
+    Object.entries(obj).forEach(
+      ([key, value]): void => {
+        if (value !== undefined) {
+          nonUndefinedOwnedProps.push(key);
+        }
+      },
+    );
+    return nonUndefinedOwnedProps;
+  }
 }

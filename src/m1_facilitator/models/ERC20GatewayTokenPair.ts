@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Comparable from '../../m0_facilitator/observer/Comparable';
+import Comparable from '../../common/observer/Comparable';
 
 import assert = require('assert');
 
@@ -21,8 +21,8 @@ import assert = require('assert');
  * from other parts of implementation.
  */
 export default class ERC20GatewayTokenPair extends Comparable<ERC20GatewayTokenPair> {
-  /** ERC20Gateway address. */
-  public readonly erc20Gateway: string;
+  /** Gateway global address. */
+  public readonly gatewayGA: string;
 
   /** Value token address. */
   public readonly valueToken: string;
@@ -39,18 +39,18 @@ export default class ERC20GatewayTokenPair extends Comparable<ERC20GatewayTokenP
   /**
    * Constructs an ERC20GatewayTokenPair model from the given parameter.
    *
-   * @param erc20Gateway Newly created erc20GatewayTokenPair's erc20 gateway address.
+   * @param gatewayGA Newly created erc20GatewayTokenPair's gateway global address.
    * @param valueToken Newly created erc20GatewayTokenPair's value token address.
    * @param utilityToken Newly created erc20GatewayTokenPair's utility token address.
    * @param [createdAt] Specifies the model creation date.
    * @param [updatedAt] Specifies the model update date.
    *
-   * @pre erc20Gateway is not an empty string.
+   * @pre gatewayGA is not an empty string.
    * @pre valueToken is not an empty string.
    * @pre utilityToken is not an empty string.
    */
   public constructor(
-    erc20Gateway: string,
+    gatewayGA: string,
     valueToken: string,
     utilityToken: string,
     createdAt?: Date,
@@ -58,11 +58,11 @@ export default class ERC20GatewayTokenPair extends Comparable<ERC20GatewayTokenP
   ) {
     super();
 
-    assert(erc20Gateway !== '');
+    assert(gatewayGA !== '');
     assert(valueToken !== '');
     assert(utilityToken !== '');
 
-    this.erc20Gateway = erc20Gateway;
+    this.gatewayGA = gatewayGA;
     this.valueToken = valueToken;
     this.utilityToken = utilityToken;
 
@@ -84,8 +84,8 @@ export default class ERC20GatewayTokenPair extends Comparable<ERC20GatewayTokenP
    *          `< 0` if the current object is less than the given one.
    */
   public compareTo(other: ERC20GatewayTokenPair): number {
-    const erc20GatewaysComparison: number = this.erc20Gateway.localeCompare(
-      other.erc20Gateway, 'en', { sensitivity: 'base' },
+    const erc20GatewaysComparison: number = this.gatewayGA.localeCompare(
+      other.gatewayGA, 'en', { sensitivity: 'base' },
     );
 
     if (erc20GatewaysComparison !== 0) {

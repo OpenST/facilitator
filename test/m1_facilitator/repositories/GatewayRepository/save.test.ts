@@ -39,8 +39,8 @@ describe('Gateway::save', (): void => {
     config = {
       repos: await Repositories.create(),
     };
-    gatewayGA = '0x0000000000000000000000000000000000000001';
-    remoteGA = '0x0000000000000000000000000000000000000002';
+    gatewayGA = Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001');
+    remoteGA = Gateway.getGlobalAddress('0x0000000000000000000000000000000000000002');
     gatewayType = GatewayType.CONSENSUS;
     destinationGA = '0x0000000000000000000000000000000000000003';
     remoteGatewayLastProvenBlockNumber = new BigNumber(100);
