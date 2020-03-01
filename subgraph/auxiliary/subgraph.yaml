@@ -21,3 +21,32 @@ dataSources:
         - event: StateRootAvailable(uint256,bytes32)
           handler: handleStateRootAvailable
       file: ./src/AnchorMapping.ts
+
+  - kind: ethereum/contract
+    name: ERC20Cogateway
+    network: dev
+    source:
+      address: "0xdbbb5c822ccfac3ea49e32215565c6aafb257a30"
+      abi: ERC20Cogateway
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - ConfirmedDepositIntent
+        - ProvenGateway
+        - CreatedUtilityToken
+        - DeclaredWithdrawIntent
+      abis:
+        - name: ERC20Cogateway
+          file: ../abi/ERC20Cogateway.json
+      eventHandlers:
+        - event: DepositIntentConfirmed(bytes32)
+          handler: handleDepositIntentConfirmed
+        - event: GatewayProven(address,uint256)
+          handler: handleGatewayProven
+        - event: UtilityTokenCreated(address,address)
+          handler: handleUtilityTokenCreated
+        - event: WithdrawIntentDeclared(uint256,uint256,address,uint256,uint256,address,address,bytes32)
+          handler: handleWithdrawIntentDeclared
+      file: ./src/ERC20CogatewayMapping.ts
