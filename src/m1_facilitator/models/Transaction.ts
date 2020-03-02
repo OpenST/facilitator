@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import BigNumber from 'bignumber.js';
+import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import Comparable from '../../common/observer/Comparable';
 
 /**
@@ -22,20 +23,23 @@ export default class Transaction extends Comparable<Transaction> {
   /** Avatar account address */
   public readonly avatarAccount: string;
 
-  /** Gas limit value at which transaction was sent */
-  public readonly gas: BigNumber;
-
   /** Raw transaction object */
-  public readonly rawTx: any; // TODO type
+  public readonly rawTx: any;
+
+  /** Gas price value at which transaction was sent */
+  public readonly gasPrice: BigNumber;
+
+  /** Gas limit value at which transaction was sent */
+  public gas?: BigNumber;
 
   /** Unique auto incremented id */
-  public readonly id?: BigNumber;
+  public id?: BigNumber;
 
   /** Transaction hash */
-  public readonly transactionHash?: string;
+  public transactionHash?: string;
 
   /** Avatar account current nonce */
-  public readonly nonce?: BigNumber;
+  public nonce?: BigNumber;
 
   /** Specifies the creation date of the anchor model. */
   public readonly createdAt?: Date;
@@ -47,8 +51,9 @@ export default class Transaction extends Comparable<Transaction> {
    * Transaction model constructor.
    *
    * @param avatarAccount Avatar account address.
-   * @params gas Gas limit at which transaction was sent.
    * @param rawTx Raw transaction object.
+   * @params gasPrice Gas price at which transaction was sent.
+   * @params gas Gas limit at which transaction was sent.
    * @param id Unique auto increment id.
    * @param transactionHash Transaction hash.
    * @param nonce Nonce of the transaction.
@@ -57,8 +62,9 @@ export default class Transaction extends Comparable<Transaction> {
    */
   public constructor(
     avatarAccount: string,
-    gas: BigNumber,
     rawTx: any,
+    gasPrice: BigNumber,
+    gas?: BigNumber,
     id?: BigNumber,
     transactionHash?: string,
     nonce?: BigNumber,
@@ -69,6 +75,7 @@ export default class Transaction extends Comparable<Transaction> {
     this.rawTx = rawTx;
     this.avatarAccount = avatarAccount;
     this.gas = gas;
+    this.gasPrice = gasPrice;
     this.id = id;
     this.transactionHash = transactionHash;
     this.nonce = nonce;

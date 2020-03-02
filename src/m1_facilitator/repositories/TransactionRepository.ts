@@ -17,6 +17,7 @@ import {
 } from 'sequelize';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
+import { TransactionObject } from 'web3/eth/types';
 import Subject from '../../common/observer/Subject';
 import Transaction from '../models/Transaction';
 import Utils from '../../common/Utils';
@@ -27,9 +28,11 @@ import Utils from '../../common/Utils';
 class TransactionModel extends Model {
   public readonly avatarAccount!: string;
 
-  public readonly gas!: BigNumber;
+  public readonly rawTx!: any;
 
-  public readonly rawTx!: string;
+  public readonly gasPrice!: BigNumber;
+
+  public readonly gas!: BigNumber;
 
   public readonly id!: BigNumber;
 
@@ -61,25 +64,29 @@ export default class TransactionRepository extends Subject<Transaction> {
           autoIncrement: true,
           primaryKey: true,
         },
-        transactionHash: {
+        avatarAccount: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
         rawTx: {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        avatarAccount: {
-          type: DataTypes.STRING,
+        gasPrice: {
+          type: DataTypes.DECIMAL(78),
           allowNull: false,
         },
         gas: {
           type: DataTypes.DECIMAL(78),
-          allowNull: false,
+          allowNull: true,
+        },
+        transactionHash: {
+          type: DataTypes.STRING,
+          allowNull: true,
         },
         nonce: {
           type: DataTypes.DECIMAL(78),
-          allowNull: false,
+          allowNull: true,
         },
       },
       {
@@ -95,7 +102,7 @@ export default class TransactionRepository extends Subject<Transaction> {
    *
    * @param transaction Transaction model object.
    */
-  public async save(transaction: Transaction): Promise<Transaction> {
+  public async enqueue(transaction: Transaction): Promise<Transaction> {
     let savedTransaction: Transaction | null;
     if (transaction.id && transaction.id.gt(0)) {
       const definedOwnProps: string[] = Utils.getDefinedOwnProps(transaction);
@@ -144,6 +151,23 @@ export default class TransactionRepository extends Subject<Transaction> {
     return this.convertToTransaction(transactionModel);
   }
 
+  public async dequeue(): Promise<Transaction | null> {
+    const transactionModel = await TransactionModel.findOne({
+      where: {
+        transactionHash: null,
+      },
+      order: [
+        ['id', 'ASC'],
+      ],
+    });
+
+    if (transactionModel === null) {
+      return null;
+    }
+
+    return this.convertToTransaction(transactionModel);
+  }
+
 
   /** Private Functions */
 
@@ -151,8 +175,9 @@ export default class TransactionRepository extends Subject<Transaction> {
   private convertToTransaction(transactionModel: TransactionModel): Transaction {
     return new Transaction(
       transactionModel.avatarAccount,
-      transactionModel.gas,
       transactionModel.rawTx,
+      transactionModel.gasPrice,
+      transactionModel.gas,
       transactionModel.id ? new BigNumber(transactionModel.id) : transactionModel.id,
       transactionModel.transactionHash,
       transactionModel.nonce ? new BigNumber(transactionModel.nonce) : transactionModel.nonce,
