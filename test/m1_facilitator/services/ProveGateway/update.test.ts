@@ -1,37 +1,163 @@
+// Copyright 2020 OpenST Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-
-import BigNumber from 'bignumber.js';
-import sinon from 'sinon';
 import Web3 from 'web3';
-import ProveGatewayService from '../../../../src/m1_facilitator/services/ProveGatewayService';
+import sinon from 'sinon';
+
+import { ProofGenerator } from '@openst/mosaic-proof';
+import Mosaic from 'Mosaic';
+import BigNumber from 'bignumber.js';
+import * as web3Utils from 'web3-utils';
+
+import Repositories
+  from '../../../../src/m1_facilitator/repositories/Repositories';
+import ProveGatewayService
+  from '../../../../src/m1_facilitator/services/ProveGatewayService';
+import TransactionExecutor
+  from '../../../../src/m1_facilitator/lib/TransactionExecutor';
 import Anchor from '../../../../src/m1_facilitator/models/Anchor';
+import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
+import Message, {
+  MessageStatus,
+  MessageType,
+} from '../../../../src/m1_facilitator/models/Message';
+import SpyAssert from '../../../test_utils/SpyAssert';
 
-describe('ProveGatewayService::update', (): void => {
-  const originWeb3 = new Web3(null);
-  const auxiliaryWeb3 = new Web3(null);
-
+describe('ProveGateway::update', () => {
+  let originTransactionExecutor: TransactionExecutor;
+  let auxiliaryTransactionExecutor: TransactionExecutor;
   let proveGatewayService: ProveGatewayService;
+  let outboxProofSpy: any;
+  let getERC20CogatewaySpy: any;
+  let proveGatewaySpy: any;
+  const proveGatewayRawTx = 'rawTx';
+  const anchorAddress = '0x0000000000000000000000000000000000000007';
+  const gatewayAddress = '0x0000000000000000000000000000000000000002';
+  const proof = {
+    encodedAccountValue: 'encodedAccountValue',
+    serializedAccountProof: 'serializedAccountProof',
+  };
 
-  beforeEach((): void => {
+  beforeEach(async (): Promise<void> => {
+    const repositories = await Repositories.create();
+
+    const gateway = new Gateway(
+      Gateway.getGlobalAddress(gatewayAddress),
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001'),
+      GatewayType.ERC20,
+      Anchor.getGlobalAddress(anchorAddress),
+      new BigNumber(200),
+      '0x0000000000000000000000000000000000000003',
+    );
+    await repositories.gatewayRepository.save(
+      gateway,
+    );
+
+    const depositMessage = new Message(
+      web3Utils.sha3('1'),
+      MessageType.Deposit,
+      MessageStatus.Declared,
+      MessageStatus.Undeclared,
+      gateway.gatewayGA,
+      new BigNumber('1'),
+      new BigNumber('1'),
+      new BigNumber('100'),
+      'intenthash',
+      '0x0000000000000000000000000000000000000008',
+    );
+    //
+    // const withdrawMessage = new Message(
+    //   web3Utils.sha3('1'),
+    //   MessageType.Withdraw,
+    //   MessageStatus.Declared,
+    //   MessageStatus.Undeclared,
+    //   gateway.gatewayGA,
+    //   new BigNumber('1'),
+    //   new BigNumber('1'),
+    //   new BigNumber('100'),
+    //   'intenthash',
+    //   '0x0000000000000000000000000000000000000008',
+    // );
+
+    await repositories.messageRepository.save(depositMessage);
+
+    // await repositories.messageRepository.save(withdrawMessage);
+
+    const originWeb3 = sinon.createStubInstance(Web3);
+
+    const auxiliaryWeb3 = sinon.createStubInstance(Web3);
+    originTransactionExecutor = sinon.createStubInstance(TransactionExecutor);
+    auxiliaryTransactionExecutor = sinon.createStubInstance(TransactionExecutor);
+
+    outboxProofSpy = sinon.replace(
+      ProofGenerator.prototype,
+      'getOutboxProof',
+      sinon.fake.resolves(proof),
+    );
+
+    const fakeERC20Cogateway = {
+      methods: {
+        proveGateway: () => {
+        },
+      },
+    };
+    getERC20CogatewaySpy = sinon.replace(
+      Mosaic.interacts,
+      'getERC20Cogateway',
+      sinon.fake.returns(fakeERC20Cogateway),
+    );
+
+    proveGatewaySpy = sinon.replace(
+      fakeERC20Cogateway.methods,
+      'proveGateway',
+      sinon.fake.returns(proveGatewayRawTx),
+    );
+
     proveGatewayService = new ProveGatewayService(
-      sinon.fake() as any,
-      sinon.fake() as any,
+      repositories.gatewayRepository,
+      repositories.messageRepository,
       originWeb3,
       auxiliaryWeb3,
+      originTransactionExecutor,
+      auxiliaryTransactionExecutor,
     );
   });
 
-  it('should react to update on anchor model', async (): Promise<void> => {
-    const originBlockHeight = new BigNumber(100);
-    const anchorData = new Anchor(
-      '0x0000000000000000000000000000000000000001',
-      originBlockHeight,
-      new Date(),
-      new Date(),
+
+  it('should perform prove gateway transaction', async (): Promise<void> => {
+    const anchor = new Anchor(
+      Anchor.getGlobalAddress(anchorAddress),
+      new BigNumber('250'),
     );
 
-    const reactToStub = sinon.stub(proveGatewayService, 'update');
-    console.log(reactToStub);
-    await proveGatewayService.update([anchorData]);
+    await proveGatewayService.update([anchor]);
+
+    SpyAssert.assert(auxiliaryTransactionExecutor.add, 1, [[
+      proveGatewayRawTx,
+    ]]);
+
+    SpyAssert.assert(proveGatewaySpy, 1, [[
+      anchor.lastAnchoredBlockNumber.toString(10),
+      proof.encodedAccountValue,
+      proof.serializedAccountProof,
+    ]]);
+
+    SpyAssert.assertCall(getERC20CogatewaySpy, 1);
+    SpyAssert.assert(outboxProofSpy, 1, [[
+      gatewayAddress,
+      [],
+      anchor.lastAnchoredBlockNumber.toString(10),
+    ]]);
   });
 });

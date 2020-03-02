@@ -103,7 +103,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
         anchor.lastAnchoredBlockNumber,
       );
 
-      Logger.debug(`Total pending message ${pendingMessages.length}`);
+      Logger.info(`Total pending message ${pendingMessages.length}`);
       if (pendingMessages.length > 0) {
         await this.proveGateway(
           anchor.lastAnchoredBlockNumber,
@@ -138,6 +138,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
     let targetWeb3;
     let transactionExecutor;
 
+    console.log('pendingMessageType  ', pendingMessageType);
     if (pendingMessageType === MessageType.Deposit) {
       sourceWeb3 = this.originWeb3;
       targetWeb3 = this.auxiliaryWeb3;
@@ -165,7 +166,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
   }
 
   /**
-   * This method creates prove gateaway transaction.
+   * This method creates prove gateway transaction.
    *
    * @param sourceWeb3 Instance of source web3 from account proof will be
    *                   generated.
