@@ -30,7 +30,8 @@
     "devchain:deploySubgraph:eip20Token": "bash ./test_integration/m0_facilitator/scripts/eip20_token/deploy_subgraph.sh",
     "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/create_staker_redeemer.ts",
     "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_stake_testnet.ts",
-    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_redeem_testnet.ts"
+    "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_redeem_testnet.ts",
+    "test:subgraph": "bash ./subgraph/verify-subgraph.sh origin && bash ./subgraph/verify-subgraph.sh auxiliary"
   },
   "repository": {
     "type": "git",
@@ -57,11 +58,13 @@
     "@openst/mosaic-chains": "0.1.0-alpha.9",
     "@openst/mosaic-contracts": "0.12.0",
     "@openst/mosaic-proof": "0.1.0-alpha.1",
+    "Mosaic": "file:./mosaic-1/Mosaic-0.1.0.tgz",
     "apollo-cache-inmemory": "1.6.2",
     "apollo-client": "2.6.0",
     "apollo-link-http": "1.5.15",
     "apollo-link-ws": "1.0.18",
     "async": "3.1.0",
+    "async-mutex": "0.1.4",
     "axios": "0.19.0",
     "bignumber.js": "9.0.0",
     "commander": "2.20.0",
