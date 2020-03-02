@@ -11,40 +11,64 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
-// eslint-disable-next-line import/no-duplicates
-
-import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import Mosaic from 'Mosaic';
 import { ProofGenerator } from '@openst/mosaic-proof';
 import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import { ERC20Cogateway } from 'Mosaic/dist/interacts/ERC20Cogateway';
+import { TransactionObject } from 'web3/eth/types';
 import Observer from '../../common/observer/Observer';
 import Logger from '../../common/Logger';
 import Anchor from '../models/Anchor';
 import MessageRepository from '../repositories/MessageRepository';
 import { MessageType } from '../models/Message';
 import GatewayRepository from '../repositories/GatewayRepository';
-import Utils from '../../m0_facilitator/Utils';
+import Gateway from '../models/Gateway';
+import TransactionExecutor from '../lib/TransactionExecutor';
 
+import assert = require('assert');
+
+/**
+ * Prove gateway service, it reacts on change in anchor entity.
+ */
 export default class ProveGatewayService extends Observer<Anchor> {
+  /** Instance of gateway repository. */
   private gatewayRepository: GatewayRepository;
 
+  /** Instance of message repository. */
   private messageRepository: MessageRepository;
 
+  /** Origin web3 instance. */
   private originWeb3: Web3;
 
+  /** Auxiliary web3 instance. */
   private auxiliaryWeb3: Web3;
 
+  /** Instance of origin transaction executor. */
+  private originTransactionExecutor: TransactionExecutor;
+
+  /** Instance of auxiliary transaction executor. */
+  private auxiliaryTransactionExecutor: TransactionExecutor;
+
+  /**
+   * Construct proveGatewayTransaction gateway service with params
+   *
+   * @param gatewayRepository Instance of gateway repository.
+   * @param messageRepository Instance of message repository.
+   * @param originWeb3 Origin web3 instance.
+   * @param auxiliaryWeb3 Auxiliary web3 instance.
+   * @param originTransactionExecutor Instance of origin transaction executor.
+   * @param auxiliaryTransactionExecutor Instance of auxiliary transaction executor.
+   */
   public constructor(
     gatewayRepository: GatewayRepository,
     messageRepository: MessageRepository,
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
+    originTransactionExecutor: TransactionExecutor,
+    auxiliaryTransactionExecutor: TransactionExecutor,
   ) {
     super();
 
@@ -52,82 +76,111 @@ export default class ProveGatewayService extends Observer<Anchor> {
     this.messageRepository = messageRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
+
+    this.originTransactionExecutor = originTransactionExecutor;
+    this.auxiliaryTransactionExecutor = auxiliaryTransactionExecutor;
   }
 
-
+  /**
+   * This method triggers on update in anchor entity. This method check if there
+   * are confirmation pending messages for the gateway associated with given
+   * address, then it sends prove gateway transaction.
+   *
+   * @param anchors List of anchor entities.
+   */
   public async update(anchors: Anchor[]): Promise<void> {
-    assert(anchors.length === 1);
-    const anchor = anchors[0];
-    await this.proveGateway(
-      anchor.lastAnchoredBlockNumber,
-      anchor.anchorGA,
-    );
+    // It can receive max 2 records i.e. origin and auxiliary.
+    assert(anchors.length === 1 || anchors.length === 2);
+
+    const proveGatewayPromises = anchors.map(async (anchor): Promise<void> => {
+      const gatewayRecord = await this.gatewayRepository.getByAnchor(anchor.anchorGA);
+      if (gatewayRecord === null) {
+        throw new Error('Gateway record does not exist for given gateway');
+      }
+
+      const pendingMessages = await this.messageRepository.getMessagesForConfirmation(
+        gatewayRecord.gatewayGA,
+        anchor.lastAnchoredBlockNumber,
+      );
+
+      Logger.debug(`Total pending message ${pendingMessages.length}`);
+      if (pendingMessages.length > 0) {
+        await this.proveGateway(
+          anchor.lastAnchoredBlockNumber,
+          pendingMessages[0].type,
+          gatewayRecord,
+        );
+      }
+      if (pendingMessages.length === 0) {
+        Logger.info(
+          `There are no pending messages for gateway ${gatewayRecord.gatewayGA}.`
+          + ' Hence skipping proveGateway',
+        );
+      }
+    });
+
+    await Promise.all(proveGatewayPromises);
   }
 
+  /**
+   * This method creates and sends prove gateway transaction.
+   *
+   * @param blockHeight Block height at which anchoring happens.
+   * @param pendingMessageType Message type of pending message.
+   * @param gateway Gateway record associated with the anchor.
+   */
   private async proveGateway(
     blockHeight: BigNumber,
-    anchorGA: string,
+    pendingMessageType: MessageType,
+    gateway: Gateway,
   ): Promise<void> {
-    const gatewayRecord = await this.gatewayRepository.getByAnchor(anchorGA);
-    if (gatewayRecord === null) {
-      throw new Error('Gateway record does not exist for given gateway');
-    }
-
-    const pendingMessages = await this.messageRepository.getMessagesForConfirmation(
-      gatewayRecord.gatewayGA,
-      blockHeight,
-    );
-
-    Logger.debug(`Total pending message ${pendingMessages.length}`);
-    if (pendingMessages.length === 0) {
-      Logger.info(
-        `There are no pending messages for gateway ${gatewayRecord.gatewayGA}.`
-        + ' Hence skipping proveGateway',
-      );
-    }
-
-    const messageType = pendingMessages[0].type;
     let sourceWeb3;
     let targetWeb3;
-    let targetGatewayInstance;
-    let sourceGatewayAddress;
+    let transactionExecutor;
 
-    if (messageType === MessageType.Deposit) {
+    if (pendingMessageType === MessageType.Deposit) {
       sourceWeb3 = this.originWeb3;
       targetWeb3 = this.auxiliaryWeb3;
-      targetGatewayInstance = Mosaic.interacts.getERC20Cogateway(
-        targetWeb3,
-        gatewayRecord.remoteGA,
-      );
-      sourceGatewayAddress = gatewayRecord.gatewayGA;
+      transactionExecutor = this.auxiliaryTransactionExecutor;
     } else {
       sourceWeb3 = this.auxiliaryWeb3;
       targetWeb3 = this.originWeb3;
-      targetGatewayInstance = Mosaic.interacts.getERC20Gateway(
-        targetWeb3,
-        gatewayRecord.remoteGA,
-      );
-      sourceGatewayAddress = gatewayRecord.remoteGA;
+      transactionExecutor = this.originTransactionExecutor;
     }
 
-    const transactionHash = ProveGatewayService.prove(
-      sourceWeb3,
+    const targetGatewayInstance = Mosaic.interacts.getERC20Cogateway(
       targetWeb3,
+      gateway.remoteGA,
+    );
+    const sourceGatewayAddress = gateway.gatewayGA;
+
+    const rawTransaction = await ProveGatewayService.proveGatewayTransaction(
+      sourceWeb3,
       targetGatewayInstance,
       sourceGatewayAddress,
       blockHeight,
     );
 
-    Logger.info(`Prove gateway transaction hash ${transactionHash}`);
+    await transactionExecutor.add(rawTransaction);
   }
 
-  private static async prove(
+  /**
+   * This method creates prove gateaway transaction.
+   *
+   * @param sourceWeb3 Instance of source web3 from account proof will be
+   *                   generated.
+   * @param targetGatewayInstance Instance of target web3 where prove gateway
+   *                              transaction will be done.
+   * @param sourceGatewayAddress Gateway address whose account proof will be
+   *                             generated.
+   * @param blockNumber Block number at which account proof will be generated.
+   */
+  private static async proveGatewayTransaction(
     sourceWeb3: Web3,
-    targetWeb3: Web3,
     targetGatewayInstance: ERC20Gateway | ERC20Cogateway,
     sourceGatewayAddress: string,
     blockNumber: BigNumber,
-  ): Promise<string> {
+  ): Promise<TransactionObject<string>> {
     const proofGenerator = new ProofGenerator(sourceWeb3);
     Logger.info(`Generating proof for gateway address ${sourceGatewayAddress} at blockHeight ${blockNumber.toString()}`);
     const proof = await proofGenerator.getOutboxProof(
@@ -136,24 +189,11 @@ export default class ProveGatewayService extends Observer<Anchor> {
       blockNumber.toString(10),
     );
 
-    // mock
-    const rawTx = targetGatewayInstance.methods.proveGateway(
+    return targetGatewayInstance.methods.proveGateway(
       blockNumber.toString(10),
-      proof.accountProof as any,
-      proof.storageProof as any,
-    );
-
-    const AUXILIARY_GAS_PRICE = '0x3B9ACA00';
-    const transactioOptions = {
-      from: sourceGatewayAddress,
-      gasPrice: AUXILIARY_GAS_PRICE,
-    };
-
-    // mock
-    return Utils.sendTransaction(
-      rawTx,
-      transactioOptions,
-      targetWeb3,
+      // @ts-ignore
+      proof.encodedAccountValue,
+      proof.serializedAccountProof,
     );
   }
 }
