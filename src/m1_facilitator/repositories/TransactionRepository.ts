@@ -17,7 +17,6 @@ import {
 } from 'sequelize';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { TransactionObject } from 'web3/eth/types';
 import Subject from '../../common/observer/Subject';
 import Transaction from '../models/Transaction';
 import Utils from '../../common/Utils';
@@ -26,9 +25,11 @@ import Utils from '../../common/Utils';
  * An interface, that represents an each row of TransactionRepository.
  */
 class TransactionModel extends Model {
-  public readonly avatarAccount!: string;
+  public readonly fromAddress!: string;
 
-  public readonly rawTx!: TransactionObject<string>;
+  public readonly toAddress!: string;
+
+  public readonly encodedData!: string;
 
   public readonly gasPrice!: BigNumber;
 
@@ -64,11 +65,15 @@ export default class TransactionRepository extends Subject<Transaction> {
           autoIncrement: true,
           primaryKey: true,
         },
-        avatarAccount: {
+        fromAddress: {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        rawTx: {
+        toAddress: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        encodedData: {
           type: DataTypes.TEXT,
           allowNull: false,
         },
@@ -180,10 +185,11 @@ export default class TransactionRepository extends Subject<Transaction> {
   // eslint-disable-next-line class-methods-use-this
   private convertToTransaction(transactionModel: TransactionModel): Transaction {
     return new Transaction(
-      transactionModel.avatarAccount,
-      transactionModel.rawTx,
-      transactionModel.gasPrice,
-      transactionModel.gas,
+      transactionModel.fromAddress,
+      transactionModel.toAddress,
+      transactionModel.encodedData,
+      transactionModel.gasPrice ? new BigNumber(transactionModel.gasPrice) : transactionModel.gasPrice,
+      transactionModel.gas ? new BigNumber(transactionModel.gas) : transactionModel.gas,
       transactionModel.id ? new BigNumber(transactionModel.id) : transactionModel.id,
       transactionModel.transactionHash,
       transactionModel.nonce ? new BigNumber(transactionModel.nonce) : transactionModel.nonce,

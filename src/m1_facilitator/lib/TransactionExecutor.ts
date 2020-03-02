@@ -76,12 +76,14 @@ export default class TransactionExecutor {
    * This method enqueues transactions to queue. TransactionRepository acts as
    * queue here. The method is called by services.
    *
+   * @param toAddress Contract address at which transaction needs to be sent.
    * @param rawTx Raw transaction object.
    */
-  public async add(rawTx: TransactionObject<string>): Promise<void> {
+  public async add(toAddress: string, rawTx: TransactionObject<string>): Promise<void> {
     const transaction = new Transaction(
       this.avatarAccount.address,
-      rawTx,
+      toAddress,
+      rawTx.encodeABI(),
       this.gasPrice,
     );
     await this.transactionRepository.enqueue(transaction);
@@ -138,14 +140,16 @@ export default class TransactionExecutor {
     Logger.info(`Transaction to be processed: ${JSON.stringify(transaction)}, nonce: ${nonce.toString(10)}`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
       let txOptions = {
-        from: transaction.accountAddress,
+        from: transaction.fromAddress,
+        to: transaction.toAddress,
+        data: transaction.encodedData,
+        nonce: nonce.toNumber(),
         gas: transaction.gas ? transaction.gas.toString() : transaction.gas,
         gasPrice: transaction.gasPrice.toString(),
-        nonce: nonce.toNumber(),
       };
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
-        const estimatedGas = await (transaction.rawTx).estimateGas(txOptions)
+        const estimatedGas = await this.web3.eth.estimateGas(txOptions)
           .catch((e: Error): number => {
             Logger.error('Error on estimating gas, using default value  ', e);
             return 6000000;
@@ -154,7 +158,7 @@ export default class TransactionExecutor {
         this.gas = new BigNumber(estimatedGas);
       }
       txOptions = Object.assign({ gas: this.gas }, txOptions);
-      transaction.rawTx.send(txOptions)
+      this.web3.eth.sendTransaction(txOptions)
         .on('transactionHash', (txHash: string): void => onResolve(txHash))
         .on('error', (error: Error): void => onReject(error));
     });

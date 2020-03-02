@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import BigNumber from 'bignumber.js';
-import { TransactionObject } from 'web3/eth/types';
 import Comparable from '../../common/observer/Comparable';
 
 /**
@@ -21,10 +20,13 @@ import Comparable from '../../common/observer/Comparable';
  */
 export default class Transaction extends Comparable<Transaction> {
   /** Avatar account address */
-  public readonly accountAddress: string;
+  public readonly fromAddress: string;
+
+  /** To contract address */
+  public readonly toAddress: string;
 
   /** Raw transaction object */
-  public readonly rawTx: TransactionObject<string>;
+  public readonly encodedData: string;
 
   /** Gas price value at which transaction was sent */
   public readonly gasPrice: BigNumber;
@@ -50,8 +52,10 @@ export default class Transaction extends Comparable<Transaction> {
   /**
    * Transaction model constructor.
    *
-   * @param accountAddress Avatar account address.
-   * @param rawTx Raw transaction object.
+   * @param fromAddress From account address.
+   * @param toAddress To account address.
+   * @param encodedData Encoded function call with function arguments. For more details please check:
+   *                    https://web3js.readthedocs.io/en/v1.2.0/web3-eth-abi.html#encodefunctioncall
    * @params gasPrice Gas price at which transaction was sent.
    * @params gas Gas limit at which transaction was sent.
    * @param id Unique auto increment id.
@@ -61,8 +65,9 @@ export default class Transaction extends Comparable<Transaction> {
    * @param updatedAt Time at which record is updated.
    */
   public constructor(
-    accountAddress: string,
-    rawTx: TransactionObject<string>,
+    fromAddress: string,
+    toAddress: string,
+    encodedData: string,
     gasPrice: BigNumber,
     gas?: BigNumber,
     id?: BigNumber,
@@ -72,8 +77,9 @@ export default class Transaction extends Comparable<Transaction> {
     updatedAt?: Date,
   ) {
     super();
-    this.rawTx = rawTx;
-    this.accountAddress = accountAddress;
+    this.fromAddress = fromAddress;
+    this.toAddress = toAddress;
+    this.encodedData = encodedData;
     this.gas = gas;
     this.gasPrice = gasPrice;
     this.id = id;
