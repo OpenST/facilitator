@@ -15,9 +15,11 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { DataTypes, InitOptions, Model } from 'sequelize';
+import {
+  DataTypes, InitOptions, Model, Op,
+} from 'sequelize';
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
-import Message, { MessageType, MessageStatus } from '../models/Message';
+import Message, { MessageStatus, MessageType } from '../models/Message';
 import Subject from '../../common/observer/Subject';
 import Utils from '../../common/Utils';
 
@@ -214,6 +216,43 @@ export default class MessageRepository extends Subject<Message> {
     }
 
     return this.convertToMessage(messageModel);
+  }
+
+  /**
+   * This method returns messages based on below criteria.
+   *   - Filter based gateway address.
+   *   - Source status should be declared.
+   *   - Target status should be undeclared.
+   *   - Message type should be given message type.
+   *   - source declaration block height should be less than or equals to given
+   *     block height.
+   *
+   * @param gatewayAddress Address of gateway.
+   * @param messageType Type of message.
+   * @param blockHeight Block height as big number.
+   */
+  public async getPendingMessageByGateway(
+    gatewayAddress: string,
+    messageType: MessageType,
+    blockHeight: BigNumber,
+  ): Promise<Message[]> {
+    const messageModels = await MessageModel.findAll({
+      where: {
+        [Op.and]: {
+          gatewayAddress,
+          sourceDeclarationBlockHeight: {
+            [Op.lte]: blockHeight,
+          },
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
+          type: messageType,
+        },
+      },
+    });
+
+    return messageModels.map(
+      (message): Message => this.convertToMessage(message),
+    );
   }
 
   /* Private Functions */

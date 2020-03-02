@@ -18,23 +18,26 @@ import Mosaic from 'Mosaic';
 import ProofGenerator from '@openst/mosaic-proof/lib/src/ProofGenerator';
 import BigNumber from 'bignumber.js';
 import { Error } from 'sequelize';
+import { TransactionObject } from 'web3/eth/types';
 import MessageRepository from '../repositories/MessageRepository';
 import DepositIntentRepository from '../repositories/DepositIntentRepository';
 import Observer from '../../common/observer/Observer';
 import DepositIntent from '../models/DepositIntent';
-import Message, { MessageStatus } from '../models/Message';
-import GatewayRepository from '../repositories/GatewayRepository';
+import Message, { MessageType } from '../models/Message';
 import Gateway from '../models/Gateway';
+import TransactionExecutor from '../lib/TransactionExecutor';
+
+import assert = require('assert');
 
 /**
  * This service reacts to updates in ConfirmDeposit entity.
  */
-export default class ConfirmDepositService extends Observer<DepositIntent> {
-  /** Instance of auxiliary web3. */
-  private web3: Web3;
+export default class ConfirmDepositService extends Observer<Gateway> {
+  /** Instance of origin Web3. */
+  private originWeb3: Web3;
 
-  /** Instance of gateway repository. */
-  private gatewayRepository: GatewayRepository;
+  /** Instance of auxiliary Web3. */
+  private auxiliaryWeb3: Web3;
 
   /** Instance of message repository. */
   private messageRepository: MessageRepository;
@@ -42,84 +45,119 @@ export default class ConfirmDepositService extends Observer<DepositIntent> {
   /** Instance of deposit intent repository. */
   private depositIntentRepository: DepositIntentRepository;
 
+  /** Instance of auxiliary transaction executor. */
+  private auxiliaryTransactionExecutor: TransactionExecutor;
+
   /**
+   * Construct ConfirmDepositService with the params.
    *
-   * @param web3
-   * @param messageRepository
-   * @param depositIntentRepository
-   * @param gatewayRepository
+   * @param originWeb3 Instance of origin web3.
+   * @param auxiliaryWeb3 Instance of auxiliary web3.
+   * @param messageRepository Instance of message Repository.
+   * @param depositIntentRepository Instance of deposit intent repository.
+   * @param auxiliaryTransactionExecutor Instance of auxiliary transaction executor.
    */
   public constructor(
-    web3: Web3,
+    originWeb3: Web3,
+    auxiliaryWeb3: Web3,
     messageRepository: MessageRepository,
     depositIntentRepository: DepositIntentRepository,
-    gatewayRepository: GatewayRepository,
+    auxiliaryTransactionExecutor: TransactionExecutor,
   ) {
     super();
-    this.gatewayRepository = gatewayRepository;
-    this.web3 = web3;
+    this.auxiliaryTransactionExecutor = auxiliaryTransactionExecutor;
+    this.originWeb3 = originWeb3;
+    this.auxiliaryWeb3 = auxiliaryWeb3;
     this.messageRepository = messageRepository;
     this.depositIntentRepository = depositIntentRepository;
   }
 
-  async update(depositIntents: DepositIntent[]) {
-    depositIntents.map(async (depositIntent: DepositIntent) => {
-      const { messageHash } = depositIntent;
-      const messageRecord = await this.messageRepository.get(messageHash);
+  /**
+   * Triggers on update in gateway model.This service checks for pending
+   * messages based on below condition:
+   *  1. Message Type should be Deposit
+   *  2. Source declaration block height of message should be less than equals
+   *     to remote gateway last proven block height.
+   *  3. Target status of message should be undeclared.
+   *  4. Message should be initiated from given gateway.
+   *
+   * If there are pending messages based on above criteria, confirm deposit
+   * transaction is sent.
+   *
+   * @param gateways List of gateway object.
+   */
+  public async update(gateways: Gateway[]) {
+    gateways.map(async (gateway): Promise<void> => {
+      const messages = await this.messageRepository.getPendingMessageByGateway(
+        gateway.gatewayGA,
+        MessageType.Deposit,
+        gateway.remoteGatewayLastProvenBlockNumber,
+      );
 
-      if (messageRecord !== null) {
-        const gatewayRecord = await this.gatewayRepository.get(
-          Gateway.getGlobalAddress(messageRecord.gatewayAddress),
-        );
-
-        const shouldConfirmDepositIntent = gatewayRecord
-          && ConfirmDepositService.shouldConfirmDepositIntent(
-            gatewayRecord,
-            messageRecord,
-          );
-        if (shouldConfirmDepositIntent) {
-
-        }
+      if (messages.length > 0) {
+        await this.confirmMessages(messages, gateway);
       }
     });
   }
 
-  private static shouldConfirmDepositIntent(gatewayRecord: Gateway, messageRecord: Message) {
-    return messageRecord.sourceDeclarationBlockNumber
-      && gatewayRecord.remoteGatewayLastProvenBlockNumber.isGreaterThanOrEqualTo(
-        messageRecord.sourceDeclarationBlockNumber,
-      )
-      && messageRecord.targetStatus === MessageStatus.Undeclared;
+  /**
+   * Creates and send confirm deposit transaction.
+   *
+   * @param messages List of messages which needs to be confirmed.
+   * @param gateway Instance of gateway contract.
+   */
+  private async confirmMessages(messages: Message[], gateway: Gateway): Promise<void> {
+    messages.map(async (message): Promise<void> => {
+      const depositIntent = await this.depositIntentRepository.get(message.messageHash);
+      if (depositIntent !== null) {
+        const rawTransaction = await this.confirmDepositIntentTransaction(
+          message,
+          depositIntent,
+          gateway,
+        );
+
+        await this.auxiliaryTransactionExecutor.add(rawTransaction);
+      }
+    });
   }
 
-  private static confirmDepositIntentTransaction(
+  /**
+   * Creates confirm deposit raw transaction.
+   *
+   * @param message Message Object.
+   * @param depositIntent Deposit intent object.
+   * @param gateway Gateway object.
+   */
+  private async confirmDepositIntentTransaction(
     message: Message,
     depositIntent: DepositIntent,
     gateway: Gateway,
-    web3: Web3,
-    blockNumber: BigNumber,
-  ) {
+  ): Promise<TransactionObject<string>> {
     const cogatewayAddress = gateway.remoteGA;
-    const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(web3, cogatewayAddress);
+    const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(this.auxiliaryWeb3, cogatewayAddress);
 
-    const proof = await new ProofGenerator(web3).getOutboxProof(
+    const blockNumber = gateway.remoteGatewayLastProvenBlockNumber;
+    const proof = await new ProofGenerator(this.originWeb3).getOutboxProof(
       message.gatewayAddress,
       [message.messageHash],
       blockNumber.toString(10),
     );
 
     if (proof.storageProof[0].value === '0') {
-      return Promise.reject(new Error('Storage proof is invalid'));
+      throw new Error('Storage proof is invalid');
     }
-    erc20Cogateway.methods.confirmDeposit(
-      depositIntent.tokenAddress,
-      depositIntent.amount,
-      depositIntent.beneficiary,
-      message.feeGasPrice,
-      message.feeGasLimit,
-      message.sender,
+
+    assert(proof.storageProof.length > 0);
+
+    return erc20Cogateway.methods.confirmDeposit(
+      (depositIntent.tokenAddress as string),
+      (depositIntent.amount as BigNumber).toString(10),
+      depositIntent.beneficiary as string,
+      (message.feeGasPrice as BigNumber).toString(10),
+      (message.feeGasLimit as BigNumber).toString(10),
+      message.sender as string,
+      blockNumber.toString(10),
       proof.storageProof[0].serializedProof,
-      blockNumber,
     );
   }
 }
