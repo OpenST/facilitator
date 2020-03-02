@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import BigNumber from 'bignumber.js';
-import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
+import { TransactionObject } from 'web3/eth/types';
 import Comparable from '../../common/observer/Comparable';
 
 /**
@@ -24,7 +24,7 @@ export default class Transaction extends Comparable<Transaction> {
   public readonly avatarAccount: string;
 
   /** Raw transaction object */
-  public readonly rawTx: any;
+  public readonly rawTx: TransactionObject<string>;
 
   /** Gas price value at which transaction was sent */
   public readonly gasPrice: BigNumber;
@@ -41,10 +41,10 @@ export default class Transaction extends Comparable<Transaction> {
   /** Avatar account current nonce */
   public nonce?: BigNumber;
 
-  /** Specifies the creation date of the anchor model. */
+  /** Specifies the creation date of the Transaction model. */
   public readonly createdAt?: Date;
 
-  /** Specifies the update date of the anchor model. */
+  /** Specifies the updated date of the Transaction model. */
   public readonly updatedAt?: Date;
 
   /**
@@ -62,7 +62,7 @@ export default class Transaction extends Comparable<Transaction> {
    */
   public constructor(
     avatarAccount: string,
-    rawTx: any,
+    rawTx: TransactionObject<string>,
     gasPrice: BigNumber,
     gas?: BigNumber,
     id?: BigNumber,

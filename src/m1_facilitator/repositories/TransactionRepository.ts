@@ -28,7 +28,7 @@ import Utils from '../../common/Utils';
 class TransactionModel extends Model {
   public readonly avatarAccount!: string;
 
-  public readonly rawTx!: any;
+  public readonly rawTx!: TransactionObject<string>;
 
   public readonly gasPrice!: BigNumber;
 
@@ -69,7 +69,7 @@ export default class TransactionRepository extends Subject<Transaction> {
           allowNull: false,
         },
         rawTx: {
-          type: DataTypes.STRING,
+          type: DataTypes.TEXT,
           allowNull: false,
         },
         gasPrice: {
@@ -151,6 +151,12 @@ export default class TransactionRepository extends Subject<Transaction> {
     return this.convertToTransaction(transactionModel);
   }
 
+  /**
+   * Dequeues transaction based on FIFO logic.
+   * Dequeue logic:
+   * - Ordering of Transaction is done by id in ascending order
+   * - Transaction hash is null
+   */
   public async dequeue(): Promise<Transaction | null> {
     const transactionModel = await TransactionModel.findOne({
       where: {
