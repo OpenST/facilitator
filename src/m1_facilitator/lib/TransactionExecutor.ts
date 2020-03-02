@@ -24,33 +24,27 @@ import AvatarAccount from '../manifest/AvatarAccount';
 
 /**
  * Transaction executor class makes sure transactions are executed in a sequential order. Transaction repository act as
- * queue and stores transactions history.
+ * queue and stores transactions data.
  * It's responsibilities:
- * - Queueing transaction in TransactionRepository
- * - Execute transactions
- * - Makes sure nonce are in proper order
+ * - Enqueue transaction in TransactionRepository
+ * - Makes sure AvatarAccount nonce are processed in a sequential order
+ * - Execute transactions at regular intervals
  */
 export default class TransactionExecutor {
   /** Transaction repository class. */
   private readonly transactionRepository: TransactionRepository;
 
-  /** Web3 object */
+  /** Web3 provider instance */
   private readonly web3: Web3;
 
   /** Gas price at which transaction was sent. */
   private readonly gasPrice: BigNumber;
 
-  /** Avatar account address which will send transaction. */
-  private readonly from: string;
+  /** Avatar account object. */
+  private readonly avatarAccount: AvatarAccount;
 
   /** Gas limit at which transaction was sent. */
   private gas?: BigNumber;
-
-  /** Avatar account nonce value. */
-  private nonce?: BigNumber;
-
-  /** Avatar account object. */
-  private readonly avatarAccount: AvatarAccount;
 
   /** Interval in ms at which Transaction record will be dequeued in regular interval.  */
   private readonly pollInterval: number;
@@ -61,21 +55,19 @@ export default class TransactionExecutor {
   /**
    * Constructor.
    *
-   * @param web3 The web3 instance to be used for fetching nonce.
    * @param transactionRepository Transaction repository instance.
-   * @param from From avatar account address.
-   * @param gasPrice Gas price at which transaction was sent.
+   * @param web3 The web3 provider instance to be used for fetching nonce.
+   * @param gasPrice Gas price at which transaction needs to be sent.
+   * @param avatarAccount Avatar account object.
    */
   public constructor(
     transactionRepository: TransactionRepository,
     web3: Web3,
-    from: string,
     gasPrice: BigNumber,
     avatarAccount: AvatarAccount,
   ) {
-    this.web3 = web3;
     this.transactionRepository = transactionRepository;
-    this.from = from;
+    this.web3 = web3;
     this.gasPrice = gasPrice;
     this.avatarAccount = avatarAccount;
     this.pollInterval = 1 * 60 * 1000; // in ms
@@ -90,7 +82,7 @@ export default class TransactionExecutor {
    */
   public async add(rawTx: any): Promise<void> {
     const transaction = new Transaction(
-      this.from,
+      this.avatarAccount.address,
       rawTx,
       this.gasPrice,
     );
@@ -98,7 +90,7 @@ export default class TransactionExecutor {
   }
 
   /**
-   * It processes pending transactions in regular intervals.
+   * It starts processing pending transactions in regular intervals.
    */
   public async start(): Promise<void> {
     await this.execute();
@@ -121,17 +113,18 @@ export default class TransactionExecutor {
   /**
    * Execute method does below:
    * - Dequeues transaction record in regular interval
-   * - Process the transaction and constructs transaction parameters
+   * - Process the transaction and constructs data for transaction to be executed
    * - Sends the transaction by calling sendTransaction method.
    * - Updates Transaction repository with information like transactionHash, gas, nonce
    */
   private async execute(): Promise<void> {
     const transaction = await this.transactionRepository.dequeue();
+    const nonce = await this.avatarAccount.getNonce(this.web3);
     if (transaction !== null) {
-      const txHash = await this.sendTransaction(transaction);
+      const txHash = await this.sendTransaction(transaction, nonce);
       transaction.transactionHash = txHash;
       transaction.gas = this.gas;
-      transaction.nonce = this.nonce;
+      transaction.nonce = nonce;
     }
   }
 
@@ -139,16 +132,18 @@ export default class TransactionExecutor {
    * This method submits a raw transaction and returns transaction hash.
    *
    * @param transaction Transaction repository record.
+   * @param nonce Avatar account nonce.
+   *
    * @return Transaction hash.
    */
-  private async sendTransaction(transaction: Transaction): Promise<string> {
-    Logger.info(`Transaction to be processed: ${JSON.stringify(transaction)}`);
+  private async sendTransaction(transaction: Transaction, nonce: BigNumber): Promise<string> {
+    Logger.info(`Transaction to be processed: ${JSON.stringify(transaction)}, nonce: ${nonce.toString(10)}`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
-      const txOptions = {
+      let txOptions = {
         from: transaction.avatarAccount,
         gas: transaction.gas,
         gasPrice: transaction.gasPrice,
-        nonce: this.avatarAccount.getNonce(this.web3),
+        nonce,
       };
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
@@ -158,9 +153,9 @@ export default class TransactionExecutor {
             return 6000000;
           });
         Logger.debug(`Transaction gas estimates  ${txOptions.gas}`);
-        txOptions.gas = new BigNumber(estimatedGas);
-        this.gas = txOptions.gas;
+        this.gas = new BigNumber(estimatedGas);
       }
+      txOptions = Object.assign({ gas: this.gas }, txOptions);
       transaction.rawTx.send(txOptions)
         .on('transactionHash', (txHash: string): void => onResolve(txHash))
         .on('error', (error: Error): void => onReject(error));

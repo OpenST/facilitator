@@ -24,7 +24,7 @@ const addressNonceMap: Record<string, BigNumber> = {};
  * It holds avatar account information.
  */
 export default class AvatarAccount {
-  private readonly address: string;
+  public readonly address: string;
 
   private readonly keystore: EncryptedKeystoreV3Json;
 
