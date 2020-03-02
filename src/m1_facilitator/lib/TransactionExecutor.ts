@@ -17,11 +17,12 @@ import { TransactionObject } from 'web3/eth/types';
 /**
  * Interface for transaction executor.
  */
-export default interface TransactionExecutor {
-
+export default class TransactionExecutor {
   /**
    * Method adds a raw transaction to queue.
    * @param rawtx Raw transaction object.
    */
-  add(rawtx: TransactionObject<string>): Promise<void>;
+  // @ts-ignore
+  public async add(rawtx: TransactionObject<string>): Promise<void> {
+  }
 }

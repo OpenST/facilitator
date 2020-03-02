@@ -65,11 +65,11 @@ export default class ConfirmDepositService extends Observer<Gateway> {
     auxiliaryTransactionExecutor: TransactionExecutor,
   ) {
     super();
-    this.auxiliaryTransactionExecutor = auxiliaryTransactionExecutor;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.messageRepository = messageRepository;
     this.depositIntentRepository = depositIntentRepository;
+    this.auxiliaryTransactionExecutor = auxiliaryTransactionExecutor;
   }
 
   /**
@@ -87,7 +87,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
    * @param gateways List of gateway object.
    */
   public async update(gateways: Gateway[]) {
-    gateways.map(async (gateway): Promise<void> => {
+    const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
       const messages = await this.messageRepository.getPendingMessagesByGateway(
         gateway.gatewayGA,
         MessageType.Deposit,
@@ -98,6 +98,8 @@ export default class ConfirmDepositService extends Observer<Gateway> {
         await this.confirmMessages(messages, gateway);
       }
     });
+
+    await Promise.all(confirmMessagePromises);
   }
 
   /**
@@ -107,7 +109,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
    * @param gateway Instance of gateway contract.
    */
   private async confirmMessages(messages: Message[], gateway: Gateway): Promise<void> {
-    messages.map(async (message): Promise<void> => {
+    const confirmMessageTransactionPromises = messages.map(async (message): Promise<void> => {
       const depositIntent = await this.depositIntentRepository.get(message.messageHash);
       if (depositIntent !== null) {
         const rawTransaction = await this.confirmDepositIntentTransaction(
@@ -119,6 +121,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
         await this.auxiliaryTransactionExecutor.add(rawTransaction);
       }
     });
+    await Promise.all(confirmMessageTransactionPromises);
   }
 
   /**
@@ -143,11 +146,11 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       blockNumber.toString(10),
     );
 
+    assert(proof.storageProof.length > 0);
+
     if (proof.storageProof[0].value === '0') {
       throw new Error('Storage proof is invalid');
     }
-
-    assert(proof.storageProof.length > 0);
 
     return erc20Cogateway.methods.confirmDeposit(
       (depositIntent.tokenAddress as string),
@@ -157,6 +160,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       (message.feeGasLimit as BigNumber).toString(10),
       message.sender as string,
       blockNumber.toString(10),
+      // @ts-ignore
       proof.storageProof[0].serializedProof,
     );
   }
