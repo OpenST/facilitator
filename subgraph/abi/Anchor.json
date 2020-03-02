@@ -1,0 +1,92 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_blockNumber",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "_stateRoot",
+        "type": "bytes32"
+      }
+    ],
+    "name": "StateRootAvailable",
+    "type": "event"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "consensus",
+    "outputs": [
+      {
+        "internalType": "contract ConsensusInterface",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getLatestStateRootBlockNumber",
+    "outputs": [
+      { "internalType": "uint256", "name": "blockNumber_", "type": "uint256" }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      { "internalType": "uint256", "name": "_blockNumber", "type": "uint256" }
+    ],
+    "name": "getStateRoot",
+    "outputs": [
+      { "internalType": "bytes32", "name": "stateRoot_", "type": "bytes32" }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_maxStateRoots",
+        "type": "uint256"
+      },
+      {
+        "internalType": "contract ConsensusInterface",
+        "name": "_consensus",
+        "type": "address"
+      }
+    ],
+    "name": "setup",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "internalType": "uint256", "name": "_blockNumber", "type": "uint256" },
+      { "internalType": "bytes32", "name": "_stateRoot", "type": "bytes32" }
+    ],
+    "name": "anchorStateRoot",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

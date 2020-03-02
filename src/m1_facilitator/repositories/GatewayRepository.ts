@@ -1,4 +1,3 @@
-
 // Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
+import { DataTypes, InitOptions, Model } from 'sequelize';
+import { Mutex } from 'async-mutex';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { DataTypes, InitOptions, Model } from 'sequelize';
+
 import Gateway, { GatewayType } from '../models/Gateway';
 import Utils from '../../common/Utils';
 import Subject from '../../common/observer/Subject';
 
-/**
- * An interface, that represents a row from a gateways table.
- */
+/* eslint-disable class-methods-use-this */
+
+export class LastProvenBlockNumberIsNotStrictlyGrowingError extends Error {
+  public constructor(current: BigNumber, update: BigNumber) {
+    super(`Failed to set remoteGatewayLastProvenBlockNumber to ${update} `
+      + `as the current value is ${current}`);
+
+    Object.setPrototypeOf(this, LastProvenBlockNumberIsNotStrictlyGrowingError.prototype);
+  }
+}
+
+/** An interface, that represents a row from a gateways table. */
 class GatewayModel extends Model {
   public gatewayGA!: string;
 
@@ -50,8 +58,12 @@ class GatewayModel extends Model {
  * On construction, it initializes underlying database model.
  */
 export default class GatewayRepository extends Subject<Gateway> {
+  private mutex: Mutex;
+
   public constructor(initOptions: InitOptions) {
     super();
+
+    this.mutex = new Mutex();
 
     GatewayModel.init(
       {
@@ -122,43 +134,41 @@ export default class GatewayRepository extends Subject<Gateway> {
    * @returns Newly created or updated Gateway object.
    */
   public async save(gateway: Gateway): Promise<Gateway> {
-    const gatewayModelObj = await GatewayModel.findOne(
-      {
+    const release = await this.mutex.acquire();
+    try {
+      const gatewayDatabaseModel = await GatewayModel.findOne({
         where: {
           gatewayGA: gateway.gatewayGA,
         },
-      },
-    );
+      });
 
-    let updatedGateway: Gateway | null;
-    if (gatewayModelObj === null) {
-      updatedGateway = this.convertToGateway(await GatewayModel.create(
-        gateway,
-      ));
-    } else {
+      if (gatewayDatabaseModel !== null
+        && gateway.remoteGatewayLastProvenBlockNumber.isLessThanOrEqualTo(
+          gatewayDatabaseModel.remoteGatewayLastProvenBlockNumber,
+        )) {
+        throw new LastProvenBlockNumberIsNotStrictlyGrowingError(
+          gatewayDatabaseModel.remoteGatewayLastProvenBlockNumber,
+          gateway.remoteGatewayLastProvenBlockNumber,
+        );
+      }
+
       const definedOwnProps: string[] = Utils.getDefinedOwnProps(gateway);
-      await GatewayModel.update(
+      await GatewayModel.upsert(
         gateway,
         {
-          where: {
-            gatewayGA: gateway.gatewayGA,
-          },
           fields: definedOwnProps,
         },
       );
-      updatedGateway = await this.get(
-        gateway.gatewayGA,
-      );
+    } finally {
+      release();
     }
 
-    assert(
-      updatedGateway !== null,
-      `Updated Gateway record not found for gateway global address: ${gateway.gatewayGA}`,
-    );
+    const upsertedGateway: Gateway | null = await this.get(gateway.gatewayGA);
+    assert(upsertedGateway !== undefined);
 
-    this.newUpdate(updatedGateway as Gateway);
+    this.newUpdate(upsertedGateway as Gateway);
 
-    return updatedGateway as Gateway;
+    return upsertedGateway as Gateway;
   }
 
   /**
@@ -212,14 +222,13 @@ export default class GatewayRepository extends Subject<Gateway> {
    *
    * @returns Gateway object.
    */
-  /* eslint-disable class-methods-use-this */
   private convertToGateway(gatewayModel: GatewayModel): Gateway {
     return new Gateway(
       gatewayModel.gatewayGA,
       gatewayModel.remoteGA,
       gatewayModel.gatewayType,
       gatewayModel.anchorGA,
-      gatewayModel.remoteGatewayLastProvenBlockNumber,
+      new BigNumber(gatewayModel.remoteGatewayLastProvenBlockNumber),
       gatewayModel.destinationGA,
       gatewayModel.createdAt,
       gatewayModel.updatedAt,
