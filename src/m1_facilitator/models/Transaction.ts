@@ -21,7 +21,7 @@ import Comparable from '../../common/observer/Comparable';
  */
 export default class Transaction extends Comparable<Transaction> {
   /** Avatar account address */
-  public readonly avatarAccount: string;
+  public readonly accountAddress: string;
 
   /** Raw transaction object */
   public readonly rawTx: TransactionObject<string>;
@@ -50,7 +50,7 @@ export default class Transaction extends Comparable<Transaction> {
   /**
    * Transaction model constructor.
    *
-   * @param avatarAccount Avatar account address.
+   * @param accountAddress Avatar account address.
    * @param rawTx Raw transaction object.
    * @params gasPrice Gas price at which transaction was sent.
    * @params gas Gas limit at which transaction was sent.
@@ -61,7 +61,7 @@ export default class Transaction extends Comparable<Transaction> {
    * @param updatedAt Time at which record is updated.
    */
   public constructor(
-    avatarAccount: string,
+    accountAddress: string,
     rawTx: TransactionObject<string>,
     gasPrice: BigNumber,
     gas?: BigNumber,
@@ -73,7 +73,7 @@ export default class Transaction extends Comparable<Transaction> {
   ) {
     super();
     this.rawTx = rawTx;
-    this.avatarAccount = avatarAccount;
+    this.accountAddress = accountAddress;
     this.gas = gas;
     this.gasPrice = gasPrice;
     this.id = id;

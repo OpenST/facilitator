@@ -138,7 +138,7 @@ export default class TransactionExecutor {
     Logger.info(`Transaction to be processed: ${JSON.stringify(transaction)}, nonce: ${nonce.toString(10)}`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
       let txOptions = {
-        from: transaction.avatarAccount,
+        from: transaction.accountAddress,
         gas: transaction.gas ? transaction.gas.toString() : transaction.gas,
         gasPrice: transaction.gasPrice.toString(),
         nonce: nonce.toNumber(),
