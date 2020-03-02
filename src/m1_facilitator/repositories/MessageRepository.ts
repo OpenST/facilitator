@@ -15,9 +15,11 @@
 
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
-import { DataTypes, InitOptions, Model, Op } from 'sequelize';
+import {
+  DataTypes, InitOptions, Model, Op,
+} from 'sequelize';
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
-import Message, { MessageType, MessageStatus } from '../models/Message';
+import Message, { MessageStatus, MessageType } from '../models/Message';
 import Subject from '../../common/observer/Subject';
 import Utils from '../../common/Utils';
 
@@ -217,11 +219,15 @@ export default class MessageRepository extends Subject<Message> {
   }
 
   /**
+   * This method returns messages based on below criteria.
+   *   - Filter based  on gateway address.
+   *   - Source status should be declared.
+   *   - Target status should be undeclared.
+   *   - source declaration block height should be less than or equals to given
+   *     block height.
    *
-   * @param gatewayAddress Gateway address.
-   * @param blockHeight Block height
-   *
-   * @returns Messages which satisfy the `where` condition.
+   * @param gatewayAddress Address of gateway.
+   * @param blockHeight Block height as big number.
    */
   public async getMessagesForConfirmation(
     gatewayAddress: string,
@@ -231,7 +237,7 @@ export default class MessageRepository extends Subject<Message> {
       where: {
         [Op.and]: {
           gatewayAddress,
-          sourceDeclarationBlockHeight: {
+          sourceDeclarationBlockNumber: {
             [Op.lte]: blockHeight,
           },
           sourceStatus: MessageStatus.Declared,
@@ -240,10 +246,9 @@ export default class MessageRepository extends Subject<Message> {
       },
     });
 
-    const messages: Message[] = messageModels.map(
-      message => this.convertToMessage(message),
+    return messageModels.map(
+      (message): Message => this.convertToMessage(message),
     );
-    return messages;
   }
 
   /* Private Functions */

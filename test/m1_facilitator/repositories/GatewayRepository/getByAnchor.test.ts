@@ -14,50 +14,32 @@
 //
 // ----------------------------------------------------------------------------
 
-
 import BigNumber from 'bignumber.js';
 
 import Util from './util';
 import assert from '../../../test_utils/assert';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
-import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
+import Repositories
+  from '../../../../src/m1_facilitator/repositories/Repositories';
 
 describe('Gateway::getByAnchor', (): void => {
   let config: {
     repos: Repositories;
   };
   let gateway: Gateway;
-  let gatewayGA: string;
-  let remoteGA: string;
-  let gatewayType: GatewayType;
-  let destinationGA: string;
-  let remoteGatewayLastProvenBlockNumber: BigNumber;
-  let anchorGA: string;
-  let createdAt: Date;
-  let updatedAt: Date;
-
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
     };
-    gatewayGA = '0x0000000000000000000000000000000000000001';
-    remoteGA = '0x0000000000000000000000000000000000000002';
-    gatewayType = GatewayType.CONSENSUS;
-    destinationGA = '0x0000000000000000000000000000000000000003';
-    remoteGatewayLastProvenBlockNumber = new BigNumber(100);
-    anchorGA = '0x0000000000000000000000000000000000000004';
-    createdAt = new Date();
-    updatedAt = new Date();
-
     gateway = new Gateway(
-      gatewayGA,
-      remoteGA,
-      gatewayType,
-      anchorGA,
-      remoteGatewayLastProvenBlockNumber,
-      destinationGA,
-      createdAt,
-      updatedAt,
+      '0x0000000000000000000000000000000000000001',
+      '0x0000000000000000000000000000000000000002',
+      GatewayType.CONSENSUS,
+      '0x0000000000000000000000000000000000000004',
+      new BigNumber(100),
+      '0x0000000000000000000000000000000000000003',
+      new Date(),
+      new Date(),
     );
     await config.repos.gatewayRepository.save(
       gateway,
