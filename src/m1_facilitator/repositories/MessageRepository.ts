@@ -220,7 +220,7 @@ export default class MessageRepository extends Subject<Message> {
 
   /**
    * This method returns messages based on below criteria.
-   *   - Filter based gateway address.
+   *   - Filter based  on gateway address.
    *   - Source status should be declared.
    *   - Target status should be undeclared.
    *   - Message type should be given message type.
@@ -231,7 +231,7 @@ export default class MessageRepository extends Subject<Message> {
    * @param messageType Type of message.
    * @param blockHeight Block height as big number.
    */
-  public async getPendingMessageByGateway(
+  public async getPendingMessagesByGateway(
     gatewayAddress: string,
     messageType: MessageType,
     blockHeight: BigNumber,
@@ -240,7 +240,7 @@ export default class MessageRepository extends Subject<Message> {
       where: {
         [Op.and]: {
           gatewayAddress,
-          sourceDeclarationBlockHeight: {
+          sourceDeclarationBlockNumber: {
             [Op.lte]: blockHeight,
           },
           sourceStatus: MessageStatus.Declared,
