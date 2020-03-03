@@ -112,19 +112,19 @@ describe('TransactionExecutor::add', (): void => {
       avatarAccount,
     );
     confirmDepositParams = {
-      valueToken: '0xbb9bc244d798123fde783fcc1c72d3bb8c189413',
+      valueToken: '0x0000000000000000000000000000000000000001',
       amount: '10',
-      beneficiary: '0xbb9bc244d798123fde783fcc1c72d3bb8c189413',
+      beneficiary: '0x0000000000000000000000000000000000000002',
       feeGasPrice: '10',
       feeGasLimit: '10',
-      depositor: '0xbb9bc244d798123fde783fcc1c72d3bb8c189413',
+      depositor: '0x0000000000000000000000000000000000000003',
       blockNumber: '10',
-      rlpParentNodes: '0xbb9bc244d798123fde783fcc1c72d3bb8c189413',
+      rlpParentNodes: '0x0000000000000000000000000000000000000004',
     };
   });
 
   it('should enqueue transaction successfully ', async (): Promise<void> => {
-    cogatewayAddress = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
+    cogatewayAddress = '0x0000000000000000000000000000000000000005';
     erc20Cogateway = Mosaic.interacts.getERC20Cogateway(web3, cogatewayAddress);
     // It's important here to replicate actual rawtx behaviour here
     rawTx = erc20Cogateway.methods.confirmDeposit(

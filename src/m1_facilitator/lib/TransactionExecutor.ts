@@ -21,8 +21,8 @@ import Logger from '../../common/Logger';
 import AvatarAccount from '../manifest/AvatarAccount';
 
 /**
- * Transaction executor class makes sure transactions are executed in a sequential order. Transaction repository act as
- * queue and stores transactions data.
+ * Transaction executor class makes sure transactions are executed in a sequential order.
+ * Transaction repository act as queue and stores transactions data.
  * It's responsibilities:
  * - Enqueue transaction in TransactionRepository
  * - Makes sure AvatarAccount nonce are processed in a sequential order
@@ -73,7 +73,7 @@ export default class TransactionExecutor {
   }
 
   /**
-   * This method enqueues transactions to queue. TransactionRepository acts as
+   * This method enqueue transactions to queue. TransactionRepository acts as
    * queue here. The method is called by services.
    *
    * @param toAddress Contract address at which transaction needs to be sent.
@@ -112,7 +112,7 @@ export default class TransactionExecutor {
 
   /**
    * Execute method does below:
-   * - Dequeues transaction record in regular interval
+   * - Dequeue transaction record in regular interval
    * - Process the transaction and constructs data for transaction to be executed
    * - Sends the transaction by calling sendTransaction method.
    * - Updates Transaction repository with information like transactionHash, gas, nonce
@@ -120,11 +120,12 @@ export default class TransactionExecutor {
   private async execute(): Promise<void> {
     const transaction = await this.transactionRepository.dequeue();
     const nonce = await this.avatarAccount.getNonce(this.web3);
-    if (transaction !== null) {
+    if (transaction) {
       const txHash = await this.sendTransaction(transaction, nonce);
       transaction.transactionHash = txHash;
       transaction.gas = this.gas;
       transaction.nonce = nonce;
+      this.transactionRepository.save(transaction);
     }
   }
 
@@ -144,20 +145,22 @@ export default class TransactionExecutor {
         to: transaction.toAddress,
         data: transaction.encodedData,
         nonce: nonce.toNumber(),
-        gas: transaction.gas ? transaction.gas.toString() : transaction.gas,
         gasPrice: transaction.gasPrice.toString(),
+        gas: transaction.gas && transaction.gas.toString(),
       };
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
+        console.log('inside this.web3.eth.estimateGas', this.web3.eth);
         const estimatedGas = await this.web3.eth.estimateGas(txOptions)
           .catch((e: Error): number => {
             Logger.error('Error on estimating gas, using default value  ', e);
             return 6000000;
           });
-        Logger.debug(`Transaction gas estimates  ${txOptions.gas}`);
+        console.log('estimatedGas:', estimatedGas);
+        Logger.debug(`Transaction gas estimates  ${estimatedGas}`);
         this.gas = new BigNumber(estimatedGas);
       }
-      txOptions = Object.assign({ gas: this.gas }, txOptions);
+      txOptions = Object.assign({ gas: this.gas && this.gas.toString() }, txOptions);
       this.web3.eth.sendTransaction(txOptions)
         .on('transactionHash', (txHash: string): void => onResolve(txHash))
         .on('error', (error: Error): void => onReject(error));

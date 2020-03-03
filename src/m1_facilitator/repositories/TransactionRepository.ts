@@ -158,7 +158,7 @@ export default class TransactionRepository extends Subject<Transaction> {
   }
 
   /**
-   * Dequeues transaction based on FIFO logic.
+   * Dequeue transaction based on FIFO logic.
    * Dequeue logic:
    * - Ordering of Transaction is done by id in ascending order
    * - Transaction hash is null
