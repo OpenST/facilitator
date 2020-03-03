@@ -24,7 +24,7 @@ import Message, {
 } from '../../../../src/m1_facilitator/models/Message';
 import assert from '../../../test_utils/assert';
 
-describe('MessageRepository:getPendingMessagesByGateway', () => {
+describe('MessageRepository:getPendingMessagesByGateway', (): void => {
   let messageRepository: MessageRepository;
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
   const messageType = MessageType.Deposit;

@@ -86,7 +86,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
    *
    * @param gateways List of gateway object.
    */
-  public async update(gateways: Gateway[]) {
+  public async update(gateways: Gateway[]): Promise<void> {
     const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
       const messages = await this.messageRepository.getPendingMessagesByGateway(
         gateway.gatewayGA,
