@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import {
@@ -246,6 +245,39 @@ export default class MessageRepository extends Subject<Message> {
           sourceStatus: MessageStatus.Declared,
           targetStatus: MessageStatus.Undeclared,
           type: messageType,
+        },
+      },
+    });
+
+    return messageModels.map(
+      (message): Message => this.convertToMessage(message),
+    );
+  }
+
+  /**
+   * This method returns messages based on below criteria.
+   *   - Filter based on gateway address.
+   *   - Source status should be declared.
+   *   - Target status should be undeclared.
+   *   - source declaration block height should be less than or equals to given
+   *     block height.
+   *
+   * @param gatewayAddress Address of gateway.
+   * @param blockHeight Block height as big number.
+   */
+  public async getMessagesForConfirmation(
+    gatewayAddress: string,
+    blockHeight: BigNumber,
+  ): Promise<Message[]> {
+    const messageModels = await MessageModel.findAll({
+      where: {
+        [Op.and]: {
+          gatewayAddress,
+          sourceDeclarationBlockNumber: {
+            [Op.lte]: blockHeight,
+          },
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
         },
       },
     });
