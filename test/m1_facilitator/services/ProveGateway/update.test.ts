@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import Web3 from 'web3';
-import sinon from 'sinon';
+import sinon, { SinonStubbedInstance } from 'sinon';
 
 import { ProofGenerator } from '@openst/mosaic-proof';
 import Mosaic from 'Mosaic';
@@ -35,8 +35,8 @@ import Message, {
 import SpyAssert from '../../../test_utils/SpyAssert';
 
 describe('ProveGateway::update', (): void => {
-  let originTransactionExecutor: TransactionExecutor;
-  let auxiliaryTransactionExecutor: TransactionExecutor;
+  let originTransactionExecutor: SinonStubbedInstance<TransactionExecutor>;
+  let auxiliaryTransactionExecutor: SinonStubbedInstance<TransactionExecutor>;
   let proveGatewayService: ProveGatewayService;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let outboxProofSpy: any;
@@ -117,8 +117,8 @@ describe('ProveGateway::update', (): void => {
       repositories.messageRepository,
       originWeb3,
       auxiliaryWeb3,
-      originTransactionExecutor,
-      auxiliaryTransactionExecutor,
+      originTransactionExecutor as any,
+      auxiliaryTransactionExecutor as any,
     );
   });
 
@@ -131,8 +131,8 @@ describe('ProveGateway::update', (): void => {
 
     await proveGatewayService.update([anchor]);
 
-    SpyAssert.assert(auxiliaryTransactionExecutor.add, 1, [[
-      proveGatewayRawTx,
+    SpyAssert.assert(auxiliaryTransactionExecutor.add, 2, [[
+      gatewayAddress, proveGatewayRawTx,
     ]]);
 
     SpyAssert.assert(proveGatewaySpy, 1, [[
