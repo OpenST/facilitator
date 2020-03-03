@@ -126,14 +126,4 @@ export default class Message extends Comparable<Message> {
 
     return 0;
   }
-
-  /**
-   * Check if message type is withdraw or not.
-   */
-  public isWithdrawType(): boolean {
-    if (this.type === MessageType.Withdraw) {
-      return true;
-    }
-    return false;
-  }
 }
