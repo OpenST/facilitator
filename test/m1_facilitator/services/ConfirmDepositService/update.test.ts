@@ -164,4 +164,8 @@ describe('ConfirmDepositService:update ', (): void => {
       ],
     ]);
   });
+
+  after((): void => {
+    sinon.restore();
+  });
 });

@@ -148,4 +148,8 @@ describe('ProveGateway::update', (): void => {
       anchor.lastAnchoredBlockNumber.toString(10),
     ]]);
   });
+
+  after((): void => {
+    sinon.restore();
+  });
 });
