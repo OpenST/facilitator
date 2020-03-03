@@ -36,21 +36,26 @@ import WithdrawIntent
 import ERC20GatewayTokenPair
   from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 
-describe('ConfirmWithdraw:update ', () => {
+describe('ConfirmWithdraw:update ', (): void => {
   let confirmWithdrawService: ConfirmWithdrawService;
   let gateway: Gateway;
   let message: Message;
   let withdrawIntent: WithdrawIntent;
   const confirmWithdrawRawTx = 'Some raw tx';
   const serializedProof = 'Storage proof';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let transactionExecutor: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let fakeERC20Gateway: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let getERC20GatewaySpy: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let auxiliaryWeb3: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let confirmWithdrawSpy: any;
   const utilityToken = '0x0000000000000000000000000000000000000009';
 
-  beforeEach(async () => {
+  beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
 
     gateway = new Gateway(
@@ -170,7 +175,7 @@ describe('ConfirmWithdraw:update ', () => {
     ]);
   });
 
-  after(() => {
+  after((): void => {
     sinon.restore();
   });
 });
