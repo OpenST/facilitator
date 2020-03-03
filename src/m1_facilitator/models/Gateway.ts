@@ -108,11 +108,11 @@ export default class Gateway extends Comparable<Gateway> {
   /**
    * Generates and return global address of given gateway address.
    *
-   * @param gatewayContractAddress Gateway contract address.
+   * @param gatewayAddress Gateway contract address.
    *
    * @returns Gateway global address.
    */
-  public static getGlobalAddress(gatewayContractAddress: string): string {
-    return Utils.toChecksumAddress(gatewayContractAddress);
+  public static getGlobalAddress(gatewayAddress: string): string {
+    return Utils.toChecksumAddress(gatewayAddress);
   }
 }
