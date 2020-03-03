@@ -156,13 +156,13 @@ describe('TransactionExecutor::add', (): void => {
       assert.strictEqual(
         transaction.fromAddress,
         avatarAccount.address,
-        `Expected from address is ${avatarAccount.address} but found ${transaction.fromAddress}`,
+        `Expected from address is ${avatarAccount.address} but found ${transaction.fromAddress}.`,
       );
 
       assert.strictEqual(
         transaction.toAddress,
         cogatewayAddress,
-        `Expected to address is ${cogatewayAddress} but found ${transaction.toAddress}`,
+        `Expected to address is ${cogatewayAddress} but found ${transaction.toAddress}.`,
       );
 
       assert.strictEqual(
@@ -177,20 +177,19 @@ describe('TransactionExecutor::add', (): void => {
         `Expected gasPrice is ${gasPrice.toString()} but found ${transaction.gasPrice.toString()}`,
       );
 
-      const actualId = transaction.id ? transaction.id.toNumber() : undefined;
       assert.isOk(
-        actualId,
-        `Transaction id: ${actualId} is not greater than 0`,
+        transaction.id && transaction.id.gt(0),
+        `Transaction id: ${transaction.id && transaction.id.toString()} is not greater than 0.`,
       );
 
       assert.isNotNull(
         transaction.createdAt,
-        'Created value should not be null',
+        'Created value should not be null.',
       );
 
       assert.isNotNull(
         transaction.updatedAt,
-        'Updated value should not be null',
+        'Updated value should not be null.',
       );
     }
   });
