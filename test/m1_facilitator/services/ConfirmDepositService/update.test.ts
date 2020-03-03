@@ -34,20 +34,25 @@ import SpyAssert from '../../../test_utils/SpyAssert';
 import TransactionExecutor
   from '../../../../src/m1_facilitator/lib/TransactionExecutor';
 
-describe('ConfirmDepositService:update ', () => {
+describe('ConfirmDepositService:update ', (): void => {
   let confirmDepositService: ConfirmDepositService;
   let gateway: Gateway;
   let message: Message;
   let depositIntent: DepositIntent;
   const confirmDepositRawTx = 'Some raw tx';
   const serializedProof = 'Storage proof';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let transactionExecutor: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let fakeERC20Cogateway: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let getERC20CogatewaySpy: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let auxiliaryWeb3: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let confirmDepositSpy: any;
 
-  beforeEach(async () => {
+  beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
 
     gateway = new Gateway(
@@ -90,8 +95,10 @@ describe('ConfirmDepositService:update ', () => {
 
     fakeERC20Cogateway = {
       methods: {
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         confirmDeposit: () => {
         },
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         outboxStorageIndex: () => ({
           call: () => '7',
         }),
