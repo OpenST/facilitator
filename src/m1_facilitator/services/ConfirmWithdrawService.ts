@@ -12,192 +12,157 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* eslint-disable import/no-unresolved */
-
 import assert from 'assert';
 import Mosaic from 'Mosaic';
 import { ProofGenerator } from '@openst/mosaic-proof';
 import Web3 from 'web3';
+import { TransactionObject } from 'web3/eth/types';
+import BigNumber from 'bignumber.js';
 
 import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import Gateway from '../models/Gateway';
 import Logger from '../../common/Logger';
-import Message from '../models/Message';
+import Message, { MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
 import Observer from '../../common/observer/Observer';
 import WithdrawIntentRepository from '../repositories/WithdrawIntentRepository';
-import Utils from '../../m0_facilitator/Utils';
+import TransactionExecutor from '../lib/TransactionExecutor';
+import WithdrawIntent from '../models/WithdrawIntent';
 
 /**
  * Class collects all non confirmed pending messages for withdraw and confirms those messages.
  */
 export default class ConfirmWithdrawService extends Observer<Gateway> {
-  private messageRepository: MessageRepository;
-
-  private withdrawIntentRepository: WithdrawIntentRepository;
-
-  private erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
-
+  /** Instance of origin Web3. */
   private originWeb3: Web3;
 
+  /** Instance of auxiliary Web3. */
   private auxiliaryWeb3: Web3;
 
-  private gatewayAddress: string;
+  /** Instance of message repository. */
+  private messageRepository: MessageRepository;
+
+  /** Instance of withdraw intent repository. */
+  private withdrawIntentRepository: WithdrawIntentRepository;
+
+  /** Instance of origin transaction executor. */
+  private originTransactionExecutor: TransactionExecutor;
+
+  /** Instance of erc20 gateway token pair repository. */
+  private erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
 
   /**
-   * Constructor of class ConfirmWithdrawService;
+   * Construct ConfirmDepositService with the params.
    *
-   * @param messageRepository Instance of message repository.
+   * @param originWeb3 Instance of origin web3.
+   * @param auxiliaryWeb3 Instance of auxiliary web3.
+   * @param messageRepository Instance of message Repository.
    * @param withdrawIntentRepository Instance of withdraw intent repository.
-   * @param erc20GatewayTokenPairRepository Instance of ERC20GatewayTokenPairRepository.
-   * @param originWeb3 Instance of origin chain web3.
-   * @param auxiliaryWeb3 Instance of auxiliary chain web3.
-   * @param gatewayAddress Origin chain gateway address.
+   * @param erc20GatewayTokenPairRepository Instance of token pair repository.
+   * @param originTransactionExecutor Instance of origin transaction executor.
    */
   public constructor(
+    originWeb3: Web3,
+    auxiliaryWeb3: Web3,
     messageRepository: MessageRepository,
     withdrawIntentRepository: WithdrawIntentRepository,
     erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository,
-    originWeb3: Web3,
-    auxiliaryWeb3: Web3,
-    gatewayAddress: string,
+    originTransactionExecutor: TransactionExecutor,
   ) {
     super();
-    this.messageRepository = messageRepository;
-    this.erc20GatewayTokenPairRepository = erc20GatewayTokenPairRepository;
     this.originWeb3 = originWeb3;
     this.auxiliaryWeb3 = auxiliaryWeb3;
-    this.gatewayAddress = gatewayAddress;
+    this.messageRepository = messageRepository;
+    this.withdrawIntentRepository = withdrawIntentRepository;
+    this.erc20GatewayTokenPairRepository = erc20GatewayTokenPairRepository;
+    this.originTransactionExecutor = originTransactionExecutor;
   }
 
-  public async update(gateway: Gateway[]): Promise<void> {
+  public async update(gateways: Gateway[]): Promise<void> {
     Logger.debug('Confirm withdraw service invoked');
-    assert(
-      gateway.length === 1,
-      'There should be only 1 gateway record',
-    );
-    const provenGateway: Gateway = gateway[0];
+    const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
+      const messages = await this.messageRepository.getPendingMessagesByGateway(
+        gateway.gatewayGA,
+        MessageType.Withdraw,
+        gateway.remoteGatewayLastProvenBlockNumber,
+      );
 
-    await this.confirmWithdraw(provenGateway);
+      if (messages.length > 0) {
+        await this.confirmMessages(messages, gateway);
+      }
+    });
+
+    await Promise.all(confirmMessagePromises);
   }
 
   /**
-   * Collects all ConfirmWithdraw promises and transaction is sent.
+   * Creates and send confirm withdraw transaction.
    *
-   * @param gateway Instance of Gateway model object.
+   * @param messages List of messages which needs to be confirmed.
+   * @param gateway Instance of gateway contract.
    */
-  private async confirmWithdraw(
-    gateway: Gateway,
-  ): Promise<Record<string, string>> {
-    const messages = await this.messageRepository.getMessagesForConfirmation(
-      gateway.gatewayGA,
-      gateway.remoteGatewayLastProvenBlockNumber,
-    );
+  private async confirmMessages(messages: Message[], gateway: Gateway): Promise<void> {
+    const confirmMessageTransactionPromises = messages.map(async (message): Promise<void> => {
+      const withdrawIntent = await this.withdrawIntentRepository.get(message.messageHash);
+      if (withdrawIntent !== null) {
+        const rawTransaction = await this.confirmWithdrawIntentTransaction(
+          message,
+          withdrawIntent,
+          gateway,
+        );
 
-
-    const proofGenerator = new ProofGenerator(
-      this.auxiliaryWeb3,
-    );
-
-    if (messages.length === 0) {
-      return {};
-    }
-
-    const transactionHashes: Record<string, string> = {};
-
-    const promises = messages
-      .filter((message): boolean => message.isWithdrawType())
-      .map(async (message): Promise<void> => this.confirm(proofGenerator, message, gateway)
-        .then((transactionHash): void => {
-          Logger.debug(`Message: ${message.messageHash} confirm transaction hash: ${transactionHash}`);
-          transactionHashes[message.messageHash] = transactionHash;
-        }).catch((error) => {
-          Logger.error('ConfirmRedeemIntentServiceError ', error);
-        }));
-
-    await Promise.all(promises);
-
-    return transactionHashes;
+        await this.originTransactionExecutor.add(rawTransaction);
+      }
+    });
+    await Promise.all(confirmMessageTransactionPromises);
   }
 
   /**
-   * Generates outbox proof for a messageHash and sends ConfirmWithdraw transaction.
+   * Creates confirm withdraw raw transaction.
    *
-   * @param proofGenerator Instance of ProofGenerator class.
-   * @param message Instance of Message model.
-   * @param gateway Instance of Gateway model.
+   * @param message Message Object.
+   * @param withdrawIntent Deposit intent object.
+   * @param gateway Gateway object.
    */
-  private async confirm(
-    proofGenerator: any,
+  private async confirmWithdrawIntentTransaction(
     message: Message,
+    withdrawIntent: WithdrawIntent,
     gateway: Gateway,
-  ): Promise<string> {
-    Logger.debug(`Generating proof for confirm withdraw for ${gateway.remoteGA} and message hash ${message.messageHash}`);
-    const messageBoxOffset = await Utils.getMessageBoxOffset(
-      this.originWeb3,
-      gateway.remoteGA,
-    );
+  ): Promise<TransactionObject<string>> {
+    const gatewayAddress = gateway.remoteGA;
+    const erc20gateway = Mosaic.interacts.getERC20Gateway(this.originWeb3, gatewayAddress);
 
-    const proofData = await proofGenerator.get(
-      gateway.remoteGA,
+    const blockNumber = gateway.remoteGatewayLastProvenBlockNumber;
+    const proof = await new ProofGenerator(this.auxiliaryWeb3).getOutboxProof(
+      message.gatewayAddress,
       [message.messageHash],
-      gateway.remoteGatewayLastProvenBlockNumber.toString(10),
-      messageBoxOffset,
+      blockNumber.toString(10),
+      (await erc20gateway.methods.outboxStorageIndex().call()),
     );
 
-    if (proofData.storageProof[0].value === '0') {
-      return Promise.reject(new Error('Storage Proof is invalid'));
-    }
-
-
-    Logger.debug(`Generated Proof ${JSON.stringify(proofData)}`);
-    const erc20Gateway = Mosaic.interacts.getERC20Gateway(
-      this.originWeb3,
-      this.gatewayAddress,
-    );
-
-    const ORIGIN_GAS_PRICE = '0x2540BE400';
-    const transactionOptions = {
-      from: gateway.remoteGA,
-      gasPrice: ORIGIN_GAS_PRICE,
-    };
-
-    const messageRecord = await this.messageRepository.get(message.messageHash);
-    const withdrawIntentRecord = await this.withdrawIntentRepository.get(
-      message.messageHash,
-    );
-
-    const amount = withdrawIntentRecord.amount.toString();
-    const { beneficiary } = withdrawIntentRecord;
-    const feeGasPrice = messageRecord.feeGasPrice.toString();
-    const feeGasLimit = messageRecord.feeGasLimit.toString();
-    const withdrawer = messageRecord.sender;
-    const blockNumber = gateway.remoteGatewayLastProvenBlockNumber.toString();
-
-    const erc20GatewayTokenPairRepository = await this.erc20GatewayTokenPairRepository.get(
+    const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
       gateway.remoteGA,
-      withdrawIntentRecord.tokenAddress,
+      withdrawIntent.tokenAddress as string,
     );
 
-    const utilitytoken = erc20GatewayTokenPairRepository.utilityToken;
-    const { valueToken } = erc20GatewayTokenPairRepository;
+    const utilityToken = erc20GatewayTokenPairRecord && erc20GatewayTokenPairRecord.utilityToken;
 
-    const rawTx = erc20Gateway.methods.confirmWithdraw(
-      utilitytoken,
-      valueToken,
-      beneficiary,
-      amount,
-      feeGasPrice,
-      feeGasLimit,
-      withdrawer,
-      blockNumber,
-      proofData.storageProof[0].proof,
-    );
+    assert(proof.storageProof.length > 0);
 
-    return Utils.sendTransaction(
-      rawTx,
-      transactionOptions,
-      this.originWeb3,
+    if (proof.storageProof[0].value === '0') {
+      throw new Error('Storage proof is invalid');
+    }
+    return erc20gateway.methods.confirmWithdraw(
+      (withdrawIntent.tokenAddress as string),
+      utilityToken as string,
+      (withdrawIntent.amount as BigNumber).toString(10),
+      withdrawIntent.beneficiary as string,
+      (message.feeGasPrice as BigNumber).toString(10),
+      (message.feeGasLimit as BigNumber).toString(10),
+      message.sender as string,
+      blockNumber.toString(10),
+      // @ts-ignore
+      proof.storageProof[0].serializedProof,
     );
   }
 }
