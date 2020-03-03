@@ -1,4 +1,4 @@
-// Copyright 2019 OpenST Ltd.
+// Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,21 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
-import Subscriber from './subscriptions/Subscriber';
-import Logger from '../common/Logger';
 import { SUBSCRIPTION_RESTART_DURATION } from './Constants';
+import Logger from './Logger';
+import Subscriber from './subscriptions/Subscriber';
 
-/**
- * The class defines properties and behavior of a facilitator.
- */
+/** The class defines properties and behavior of a facilitator. */
 export default class Facilitator {
-  private originSubscriber: Subscriber;
+  private readonly originSubscriber: Subscriber;
 
-  private auxiliarySubscriber: Subscriber;
+  private readonly auxiliarySubscriber: Subscriber;
 
   private subscriptionRestartHandle: NodeJS.Timer | null;
 
@@ -43,7 +39,7 @@ export default class Facilitator {
   public async start(): Promise<void> {
     await this.subscribeToSubGraphs();
     this.subscriptionRestartHandle = setInterval(
-      async () => this.restartSubscription(),
+      async (): Promise<void> => this.restartSubscription(),
       SUBSCRIPTION_RESTART_DURATION,
     );
   }
@@ -54,17 +50,19 @@ export default class Facilitator {
    */
   public async stop(): Promise<void> {
     await this.unsubscribeToSubGraphs();
-    clearInterval(this.subscriptionRestartHandle!);
+    if (this.subscriptionRestartHandle !== null) {
+      clearInterval(this.subscriptionRestartHandle);
+    }
   }
 
   // It restarts the subscription
-  private async restartSubscription() {
+  private async restartSubscription(): Promise<void> {
     await this.unsubscribeToSubGraphs();
     await this.subscribeToSubGraphs();
   }
 
   // Subscribes to origin and auxiliary subgraphs
-  private async subscribeToSubGraphs() {
+  private async subscribeToSubGraphs(): Promise<void> {
     Logger.info('Starting subscription to block chain events');
     await this.originSubscriber.subscribe();
     Logger.info('Subscription to origin block chain is done');
@@ -73,7 +71,7 @@ export default class Facilitator {
   }
 
   // UnSubscribes to origin and auxiliary subgraphs
-  private async unsubscribeToSubGraphs() {
+  private async unsubscribeToSubGraphs(): Promise<void> {
     Logger.info('Stopping subscription to block chain events');
     await this.originSubscriber.unsubscribe();
     Logger.info('Unsubscribed to origin block chain.');

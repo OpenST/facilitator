@@ -15,9 +15,8 @@
 // ----------------------------------------------------------------------------
 
 
-import FetchQueries from '../GraphQueries/FetchQueries';
-import Logger from '../../common/Logger';
-import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
+import Logger from '../Logger';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import GraphClient from './GraphClient';
 import Utils from '../Utils';
 
@@ -31,6 +30,8 @@ export default class TransactionFetcher {
 
   private contractEntityRepository: ContractEntityRepository;
 
+  private readonly fetchQueries: Record<string, string>;
+
   /**
    * Constructor
    * @param graphClient Graph client object.
@@ -39,9 +40,11 @@ export default class TransactionFetcher {
   public constructor(
     graphClient: GraphClient,
     contractEntityRepository: ContractEntityRepository,
+    fetchQueries: Record<string, string>,
   ) {
     this.graphClient = graphClient;
     this.contractEntityRepository = contractEntityRepository;
+    this.fetchQueries = fetchQueries;
   }
 
   /**
@@ -65,7 +68,7 @@ export default class TransactionFetcher {
         + `and address ${checkSumContractAddress}`);
     }
     const uts = contractEntityRecord.timestamp;
-    const fetchQuery = FetchQueries[entity];
+    const fetchQuery = this.fetchQueries[entity];
     Logger.debug(`Querying records for ${entity} for UTS ${uts}`);
     let skip = 0;
     let transactions: object[] = [];

@@ -19,12 +19,13 @@ import { HandlerNotFoundException } from './Exception';
 import ContractEntityHandler from './handlers/ContractEntityHandler';
 import Logger from '../common/Logger';
 import Repositories from './repositories/Repositories';
+import TransactionHandlerInterface from '../common/TransactionHandlerInterface';
 
 /**
  * This class knows about different kinds of handlers and it makes decision
  * on which handler to invoke when bulk transactions arrive.
  */
-export default class TransactionHandler {
+export default class TransactionHandler implements TransactionHandlerInterface {
   private readonly handlers: Record<string, ContractEntityHandler<any>>;
 
   private readonly repos: Repositories;

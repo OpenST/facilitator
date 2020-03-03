@@ -17,9 +17,9 @@
 
 import sinon from 'sinon';
 
-import Facilitator from '../../../src/m0_facilitator/Facilitator';
-import Subscriber from '../../../src/m0_facilitator/subscriptions/Subscriber';
+import Facilitator from '../../../src/common/Facilitator';
 import SpyAssert from '../../test_utils/SpyAssert';
+import Subscriber from '../../../src/common/subscriptions/Subscriber';
 
 describe('Facilitator.stop()', (): void => {
   it('should stop facilitation', async (): Promise<void> => {

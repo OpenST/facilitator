@@ -15,22 +15,22 @@
 // ----------------------------------------------------------------------------
 
 
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import ApolloClient from 'apollo-client';
-import { Subscription } from 'apollo-client/util/Observable';
 import { createHttpLink } from 'apollo-link-http';
-import { WebSocketLink } from 'apollo-link-ws';
-import BigNumber from 'bignumber.js';
-import gql from 'graphql-tag';
-import fetch from 'node-fetch';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { Subscription } from 'apollo-client/util/Observable';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { WebSocketLink } from 'apollo-link-ws';
+import ApolloClient from 'apollo-client';
+import BigNumber from 'bignumber.js';
+import fetch from 'node-fetch';
+import gql from 'graphql-tag';
 import WebSocket from 'ws';
 
-import Logger from '../../common/Logger';
-import ContractEntity, { EntityType } from '../../common/models/ContractEntity';
-import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
-import TransactionHandler from '../TransactionHandler';
+import ContractEntity, { EntityType } from '../models/ContractEntity';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import Logger from '../Logger';
 import TransactionFetcher from './TransactionFetcher';
+import TransactionHandlerInterface from '../TransactionHandlerInterface';
 import Utils from '../Utils';
 
 /**
@@ -64,7 +64,7 @@ export default class GraphClient {
    */
   public async subscribe(
     subscriptionQry: string,
-    handler: TransactionHandler,
+    handler: TransactionHandlerInterface,
     fetcher: TransactionFetcher,
     contractEntityRepository: ContractEntityRepository,
   ): Promise<Subscription> {
