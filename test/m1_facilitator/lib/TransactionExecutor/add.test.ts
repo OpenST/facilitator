@@ -84,7 +84,7 @@ function getEncodedFunctionAbi(web3: Web3, confirmDepositParams: ConfirmDepositP
   return encodedFunctionAbi;
 }
 
-describe('TransactionExecutor::add', (): void => {
+describe('TransactionExecutor::add()', (): void => {
   let avatarAccount: AvatarAccount;
   let transactionExecutor: TransactionExecutor;
   let rawTx: any;
