@@ -144,6 +144,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       message.gatewayAddress,
       [message.messageHash],
       blockNumber.toString(10),
+      (await erc20Cogateway.methods.outboxStorageIndex().call()),
     );
 
     assert(proof.storageProof.length > 0);

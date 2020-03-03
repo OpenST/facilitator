@@ -18,7 +18,7 @@ import * as web3Utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 import Mosaic from 'Mosaic';
 
-import {ProofGenerator} from '@openst/mosaic-proof';
+import { ProofGenerator } from '@openst/mosaic-proof';
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
 import ConfirmDepositService
@@ -92,6 +92,9 @@ describe('ConfirmDepositService:update ', () => {
       methods: {
         confirmDeposit: () => {
         },
+        outboxStorageIndex: () => ({
+          call: () => '7',
+        }),
       },
     };
 
