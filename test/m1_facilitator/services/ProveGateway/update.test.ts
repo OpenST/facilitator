@@ -51,11 +51,12 @@ describe('ProveGateway::update', (): void => {
     encodedAccountValue: 'encodedAccountValue',
     serializedAccountProof: 'serializedAccountProof',
   };
+  let gateway: Gateway;
 
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
 
-    const gateway = new Gateway(
+    gateway = new Gateway(
       Gateway.getGlobalAddress(gatewayAddress),
       Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001'),
       GatewayType.ERC20,
@@ -131,8 +132,8 @@ describe('ProveGateway::update', (): void => {
 
     await proveGatewayService.update([anchor]);
 
-    SpyAssert.assert(auxiliaryTransactionExecutor.add, 2, [[
-      gatewayAddress, proveGatewayRawTx,
+    SpyAssert.assert(auxiliaryTransactionExecutor.add, 1, [[
+      gateway.remoteGA, proveGatewayRawTx,
     ]]);
 
     SpyAssert.assert(proveGatewaySpy, 1, [[
