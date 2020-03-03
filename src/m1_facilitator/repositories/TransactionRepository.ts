@@ -88,6 +88,7 @@ export default class TransactionRepository extends Subject<Transaction> {
         transactionHash: {
           type: DataTypes.STRING,
           allowNull: true,
+          defaultValue: null,
         },
         nonce: {
           type: DataTypes.DECIMAL(78),
