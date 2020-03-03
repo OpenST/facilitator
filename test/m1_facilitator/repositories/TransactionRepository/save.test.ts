@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import BigNumber from 'bignumber.js';
 
 import Util from './util';
@@ -36,10 +35,10 @@ describe('TransactionRepository::enqueue', (): void => {
     fromAddress = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
     toAddress = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
     encodedData = 'encodedData';
-    gasPrice = new BigNumber(1);
-    gas = new BigNumber(2);
+    gasPrice = new BigNumber(100);
+    gas = new BigNumber(200);
     txHash = 'txHash';
-    nonce = new BigNumber(3);
+    nonce = new BigNumber(1);
     createdAt = new Date();
     updatedAt = new Date();
   });
@@ -57,7 +56,28 @@ describe('TransactionRepository::enqueue', (): void => {
       createdAt,
       updatedAt,
     );
-    const actualTransaction = await repos.transactionRepository.enqueue(expectedTransaction);
+    const actualTransaction = await repos.transactionRepository.save(expectedTransaction);
+    Util.assertTransactionAttributes(actualTransaction, actualTransaction);
+  });
+
+  it('should successfully update record in transaction repository.', async (): Promise<void> => {
+    const expectedTransaction = new Transaction(
+      fromAddress,
+      toAddress,
+      encodedData,
+      gasPrice,
+      gas,
+      undefined,
+      txHash,
+      nonce,
+      createdAt,
+      updatedAt,
+    );
+    let actualTransaction = await repos.transactionRepository.save(expectedTransaction);
+
+    expectedTransaction.nonce = new BigNumber(2);
+
+    actualTransaction = await repos.transactionRepository.save(expectedTransaction);
     Util.assertTransactionAttributes(actualTransaction, actualTransaction);
   });
 });

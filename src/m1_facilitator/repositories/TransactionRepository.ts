@@ -107,7 +107,7 @@ export default class TransactionRepository extends Subject<Transaction> {
    *
    * @param transaction Transaction model object.
    */
-  public async enqueue(transaction: Transaction): Promise<Transaction> {
+  public async save(transaction: Transaction): Promise<Transaction> {
     let savedTransaction: Transaction | null;
     if (transaction.id && transaction.id.gt(0)) {
       const definedOwnProps: string[] = Utils.getDefinedOwnProps(transaction);

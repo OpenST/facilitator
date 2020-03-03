@@ -86,7 +86,7 @@ export default class TransactionExecutor {
       rawTx.encodeABI(),
       this.gasPrice,
     );
-    await this.transactionRepository.enqueue(transaction);
+    await this.transactionRepository.save(transaction);
   }
 
   /**
