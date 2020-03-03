@@ -126,7 +126,7 @@ describe('TransactionExecutor::add', (): void => {
   it('should enqueue transaction successfully ', async (): Promise<void> => {
     cogatewayAddress = '0xbb9bc244d798123fde783fcc1c72d3bb8c189413';
     erc20Cogateway = Mosaic.interacts.getERC20Cogateway(web3, cogatewayAddress);
-    // It's important to replicate actual rawtx behaviour here in test
+    // It's important here to replicate actual rawtx behaviour here
     rawTx = erc20Cogateway.methods.confirmDeposit(
       confirmDepositParams.valueToken,
       confirmDepositParams.amount,

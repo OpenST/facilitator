@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import Web3 from 'web3';
-import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import BigNumber from 'bignumber.js';
+import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
 import Logger from '../../common/Logger';
 
 /**
@@ -50,7 +50,7 @@ export default class AvatarAccount {
   ): AvatarAccount {
     const web3Account = web3.eth.accounts.decrypt(encryptedKeystore, password);
     web3.eth.accounts.wallet.add(web3Account);
-    Logger.info(`Added account: ${web3Account.address} to web3 wallet.`);
+    Logger.debug(`Added account: ${web3Account.address} to web3 wallet.`);
     return new AvatarAccount(web3Account.address);
   }
 

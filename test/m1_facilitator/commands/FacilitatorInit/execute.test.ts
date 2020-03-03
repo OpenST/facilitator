@@ -22,14 +22,14 @@ import SpyAssert from '../../../test_utils/SpyAssert';
 import Directory from '../../../../src/m1_facilitator/Directory';
 import assert from '../../../test_utils/assert';
 
-describe('FacilitatorInit.execute', () => {
+describe('FacilitatorInit.execute', (): void => {
   const manifest = 'testdata/m1_facilitator/facilitator_manifest.yml';
   const testDBPath = 'testdata/m1_facilitator/test.db';
   let initializeSpy: any;
   let directorySpy: any;
   let facilitatorInit: FacilitatorInit;
 
-  beforeEach(() => {
+  beforeEach((): void => {
     initializeSpy = sinon.replace(
       SeedDataInitializer.prototype,
       'initialize',
@@ -67,7 +67,7 @@ describe('FacilitatorInit.execute', () => {
   });
 
 
-  afterEach(() => {
+  afterEach((): void => {
     fs.removeSync(testDBPath);
     sinon.restore();
   });

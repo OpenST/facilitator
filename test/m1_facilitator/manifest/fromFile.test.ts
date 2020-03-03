@@ -104,8 +104,8 @@ describe('Config.fromFile()', (): void => {
     const inputAvatarAccounts: Record<string, AvatarAccount> = {};
     Object.keys(inputYamlConfig.accounts).forEach((address: string): void => {
       const acc = inputYamlConfig.accounts[address] as AccountDetail;
-      const keystore = fs.readFileSync(acc.keystore_path).toString();
-      const password = fs.readFileSync(acc.keystore_password_path).toString();
+      const keystore = fs.readFileSync(acc.keystore_path).toString().trim();
+      const password = fs.readFileSync(acc.keystore_password_path).toString().trim();
       inputAvatarAccounts[address] = AvatarAccount.load(new Web3(''), JSON.parse(keystore), password);
     });
     assert.deepStrictEqual(
