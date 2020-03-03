@@ -192,6 +192,27 @@ export default class GatewayRepository extends Subject<Gateway> {
     return this.convertToGateway(gatewayModel);
   }
 
+  /**
+   * It retrieves record from Gateway model for an anchor global address.
+   *
+`   * @param anchorGA Anchor global address.
+ `  *
+   * @returns Gateway object if record present for anchor global address otherwise `null`.
+   */
+  public async getByAnchor(anchorGA: string): Promise<Gateway | null> {
+    const gatewayModel = await GatewayModel.findOne({
+      where: {
+        anchorGA,
+      },
+    });
+
+    if (gatewayModel === null) {
+      return null;
+    }
+
+    return this.convertToGateway(gatewayModel);
+  }
+
   /* Private Functions */
 
   /**

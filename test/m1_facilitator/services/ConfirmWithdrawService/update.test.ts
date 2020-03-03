@@ -21,36 +21,39 @@ import Mosaic from 'Mosaic';
 import { ProofGenerator } from '@openst/mosaic-proof';
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
-import ConfirmDepositService
-  from '../../../../src/m1_facilitator/services/ConfirmDepositService';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 import Message, {
   MessageStatus,
   MessageType,
 } from '../../../../src/m1_facilitator/models/Message';
-import DepositIntent
-  from '../../../../src/m1_facilitator/models/DepositIntent';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import TransactionExecutor
   from '../../../../src/m1_facilitator/lib/TransactionExecutor';
+import ConfirmWithdrawService
+  from '../../../../src/m1_facilitator/services/ConfirmWithdrawService';
+import WithdrawIntent
+  from '../../../../src/m1_facilitator/models/WithdrawIntent';
+import ERC20GatewayTokenPair
+  from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 
-describe('ConfirmDepositService:update ', (): void => {
-  let confirmDepositService: ConfirmDepositService;
+describe('ConfirmWithdraw:update ', (): void => {
+  let confirmWithdrawService: ConfirmWithdrawService;
   let gateway: Gateway;
   let message: Message;
-  let depositIntent: DepositIntent;
-  const confirmDepositRawTx = 'Some raw tx';
+  let withdrawIntent: WithdrawIntent;
+  const confirmWithdrawRawTx = 'Some raw tx';
   const serializedProof = 'Storage proof';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let transactionExecutor: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let fakeERC20Cogateway: any;
+  let fakeERC20Gateway: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let getERC20CogatewaySpy: any;
+  let getERC20GatewaySpy: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let auxiliaryWeb3: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let confirmDepositSpy: any;
+  let confirmWithdrawSpy: any;
+  const utilityToken = '0x0000000000000000000000000000000000000009';
 
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
@@ -66,7 +69,7 @@ describe('ConfirmDepositService:update ', (): void => {
 
     message = new Message(
       web3Utils.sha3('1'),
-      MessageType.Deposit,
+      MessageType.Withdraw,
       MessageStatus.Declared,
       MessageStatus.Undeclared,
       gateway.gatewayGA,
@@ -77,7 +80,7 @@ describe('ConfirmDepositService:update ', (): void => {
       '0x0000000000000000000000000000000000000008',
     );
 
-    depositIntent = new DepositIntent(
+    withdrawIntent = new WithdrawIntent(
       message.messageHash,
       '0x0000000000000000000000000000000000000009',
       new BigNumber(10),
@@ -85,36 +88,41 @@ describe('ConfirmDepositService:update ', (): void => {
       web3Utils.sha3('2'),
     );
 
-    await repositories.depositIntentRepository.save(depositIntent);
+    const gatwayTokenPair = new ERC20GatewayTokenPair(
+      gateway.remoteGA,
+      withdrawIntent.tokenAddress as string,
+      utilityToken,
+    );
+
+    await repositories.withdrawIntentRepository.save(withdrawIntent);
     await repositories.messageRepository.save(message);
+    await repositories.erc20GatewayTokenPairRepository.save(gatwayTokenPair)
 
     const originWeb3 = sinon.createStubInstance(Web3);
     auxiliaryWeb3 = sinon.createStubInstance(Web3);
 
     transactionExecutor = sinon.createStubInstance(TransactionExecutor);
 
-    fakeERC20Cogateway = {
+    fakeERC20Gateway = {
       methods: {
-        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-        confirmDeposit: () => {
+        confirmWithdraw: () => {
         },
-        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         outboxStorageIndex: () => ({
           call: () => '7',
         }),
       },
     };
 
-    confirmDepositSpy = sinon.replace(
-      fakeERC20Cogateway.methods,
-      'confirmDeposit',
-      sinon.fake.returns(confirmDepositRawTx),
+    confirmWithdrawSpy = sinon.replace(
+      fakeERC20Gateway.methods,
+      'confirmWithdraw',
+      sinon.fake.returns(confirmWithdrawRawTx),
     );
 
-    getERC20CogatewaySpy = sinon.replace(
+    getERC20GatewaySpy = sinon.replace(
       Mosaic.interacts,
-      'getERC20Cogateway',
-      sinon.fake.returns(fakeERC20Cogateway),
+      'getERC20Gateway',
+      sinon.fake.returns(fakeERC20Gateway),
     );
 
     const proof = {
@@ -132,30 +140,32 @@ describe('ConfirmDepositService:update ', (): void => {
       sinon.fake.returns(proof),
     );
 
-    confirmDepositService = new ConfirmDepositService(
+    confirmWithdrawService = new ConfirmWithdrawService(
       originWeb3,
       auxiliaryWeb3,
       repositories.messageRepository,
-      repositories.depositIntentRepository,
+      repositories.withdrawIntentRepository,
+      repositories.erc20GatewayTokenPairRepository,
       transactionExecutor,
     );
   });
 
-  it('should make confirm deposit transaction', async (): Promise<void> => {
-    await confirmDepositService.update([gateway]);
+  it('should make confirm withdraw transaction', async (): Promise<void> => {
+    await confirmWithdrawService.update([gateway]);
     SpyAssert.assert(
       transactionExecutor.add,
       1,
-      [[gateway.remoteGA, confirmDepositRawTx]],
+      [[confirmWithdrawRawTx]],
     );
 
-    SpyAssert.assertCall(getERC20CogatewaySpy, 1);
+    SpyAssert.assertCall(getERC20GatewaySpy, 1);
 
-    SpyAssert.assert(confirmDepositSpy, 1, [
+    SpyAssert.assert(confirmWithdrawSpy, 1, [
       [
-        depositIntent.tokenAddress,
-        (depositIntent.amount as BigNumber).toString(10),
-        depositIntent.beneficiary,
+        withdrawIntent.tokenAddress,
+        utilityToken,
+        (withdrawIntent.amount as BigNumber).toString(10),
+        withdrawIntent.beneficiary,
         (message.feeGasPrice as BigNumber).toString(10),
         (message.feeGasLimit as BigNumber).toString(10),
         message.sender as string,
