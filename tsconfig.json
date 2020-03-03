@@ -24,13 +24,15 @@
             "chai",
             "node",
             "mocha",
-            "web3"
+            "web3",
+            "sinon"
         ]
     },
     "include": [
         "index.ts",
         "src/*.ts",
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "src/**/**/*.ts"
     ],
     "exclude": [
         "node_modules"

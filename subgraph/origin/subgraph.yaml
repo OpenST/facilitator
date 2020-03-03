@@ -1,0 +1,50 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Anchor
+    network: dev
+    source:
+      address: "0x4fDF26dc9a99D11FfB39a2d88a7E39E49544602a"
+      abi: Anchor
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - AvailableStateRoot
+      abis:
+        - name: Anchor
+          file: ../abi/Anchor.json
+      eventHandlers:
+        - event: StateRootAvailable(uint256,bytes32)
+          handler: handleStateRootAvailable
+      file: ./src/AnchorMapping.ts
+
+  - kind: ethereum/contract
+    name: ERC20Gateway
+    network: dev
+    source:
+      address: "0xdbbb5c822ccfac3ea49e32215565c9aafb757a30"
+      abi: ERC20Gateway
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - DeclaredDepositIntent
+        - ProvenGateway
+        - ConfirmedWithdrawIntent
+      abis:
+        - name: ERC20Gateway
+          file: ../abi/ERC20Gateway.json
+      eventHandlers:
+        - event: DepositIntentDeclared(uint256,uint256,address,uint256,uint256,address,address,bytes32)
+          handler: handleDepositIntentDeclared
+        - event: GatewayProven(address,uint256)
+          handler: handleGatewayProven
+        - event: WithdrawIntentConfirmed(bytes32)
+          handler: handleWithdrawIntentConfirmed
+      file: ./src/ERC20GatewayMapping.ts
+

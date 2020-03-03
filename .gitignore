@@ -16,6 +16,8 @@ src/*.js
 src/*.js.map
 src/**/*.js
 src/**/*.js.map
+src/**/**/*.js
+src/**/**/*.js.map
 
 # Packaging output
 lib/**
@@ -24,3 +26,6 @@ openst-facilitator-*.tgz
 #keystore
 staker.json
 redeemer.json
+# Subgraph build files
+subgraph/auxiliary/build/**
+subgraph/origin/build/**

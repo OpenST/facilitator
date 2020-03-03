@@ -1,0 +1,43 @@
+type AvailableStateRoot @entity {
+  id: ID!
+  anchoredBlockNumber: BigInt! # uint256
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
+
+type DeclaredDepositIntent @entity {
+  id: ID!
+  amount: BigInt! # uint256
+  nonce: BigInt!  # uint256
+  beneficiary: Bytes! # address
+  feeGasPrice: BigInt! # uint256
+  feeGasLimit: BigInt! # uint256
+  depositor: Bytes! # address
+  valueToken: Bytes! # address
+  messageHash: Bytes! # bytes32
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
+
+type ConfirmedWithdrawIntent @entity {
+  id: ID!
+  messageHash: Bytes! # bytes32
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
+
+type ProvenGateway @entity {
+  id: ID!
+  remoteGateway: Bytes! # address
+  provenBlockNumber: BigInt! # uint256
+  blockNumber: BigInt! # uint256
+  blockHash: Bytes! # bytes32
+  contractAddress: Bytes! # address
+  uts: BigInt! # uint256
+}
