@@ -15,9 +15,9 @@
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
 import { Validator as JsonSchemaVerifier } from 'jsonschema';
-import { EncryptedKeystoreV3Json } from 'web3-eth-accounts';
-import schema from './manifest.schema.json';
 import Web3 from 'web3';
+import schema from './manifest.schema.json';
+import AvatarAccount from './AvatarAccount';
 
 /**
  * Interface of facilitator manifest file input chain data. It represents below:
@@ -94,26 +94,6 @@ export class DBConfig {
 
   public constructor() {
     this.path = '';
-  }
-}
-
-/**
- * It holds avatar account information.
- */
-export class AvatarAccount {
-  public readonly keystore: EncryptedKeystoreV3Json;
-
-  public readonly password: string;
-
-  /**
-   * Constructor.
-   *
-   * @param keystore Encrypted keystore.
-   * @param password Keystore password.
-   */
-  public constructor(keystore: EncryptedKeystoreV3Json, password: string) {
-    this.keystore = keystore;
-    this.password = password;
   }
 }
 
@@ -296,7 +276,11 @@ export default class Manifest {
       }
       const keystore = fs.readFileSync(acc.keystore_path).toString();
       const password = fs.readFileSync(acc.keystore_password_path).toString();
-      avatarAccounts[address] = new AvatarAccount(JSON.parse(keystore), password);
+      avatarAccounts[address] = AvatarAccount.load(
+        new Web3(''),
+        JSON.parse(keystore),
+        password,
+      );
     });
 
     return avatarAccounts;

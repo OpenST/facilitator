@@ -96,7 +96,7 @@ describe('ConfirmWithdraw:update ', (): void => {
 
     await repositories.withdrawIntentRepository.save(withdrawIntent);
     await repositories.messageRepository.save(message);
-    await repositories.erc20GatewayTokenPairRepository.save(gatwayTokenPair)
+    await repositories.erc20GatewayTokenPairRepository.save(gatwayTokenPair);
 
     const originWeb3 = sinon.createStubInstance(Web3);
     auxiliaryWeb3 = sinon.createStubInstance(Web3);
@@ -155,7 +155,7 @@ describe('ConfirmWithdraw:update ', (): void => {
     SpyAssert.assert(
       transactionExecutor.add,
       1,
-      [[confirmWithdrawRawTx]],
+      [[gateway.remoteGA, confirmWithdrawRawTx]],
     );
 
     SpyAssert.assertCall(getERC20GatewaySpy, 1);

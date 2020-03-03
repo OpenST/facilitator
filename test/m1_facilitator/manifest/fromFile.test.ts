@@ -14,18 +14,19 @@
 
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
-import Config, {
-  DBConfig, AvatarAccount, Chain, Metachain,
-} from '../../../src/m1_facilitator/manifest/Manifest'
-import assert from '../../test_utils/assert';
 import Web3 from 'web3';
+import Config, {
+  DBConfig, Chain, Metachain,
+} from '../../../src/m1_facilitator/manifest/Manifest';
+import assert from '../../test_utils/assert';
+import AvatarAccount from '../../../src/m1_facilitator/manifest/AvatarAccount';
 
 interface AccountDetail {
   keystore_path: string;
   keystore_password_path: string;
 }
 
-function assertChainObject(actualChainObject: Chain, expectChainObject:Chain) {
+function assertChainObject(actualChainObject: Chain, expectChainObject: Chain): void {
   assert.deepStrictEqual(
     actualChainObject.nodeEndpoint,
     expectChainObject.nodeEndpoint,
@@ -103,9 +104,9 @@ describe('Config.fromFile()', (): void => {
     const inputAvatarAccounts: Record<string, AvatarAccount> = {};
     Object.keys(inputYamlConfig.accounts).forEach((address: string): void => {
       const acc = inputYamlConfig.accounts[address] as AccountDetail;
-      const keystore = fs.readFileSync(acc.keystore_path).toString();
-      const password = fs.readFileSync(acc.keystore_password_path).toString();
-      inputAvatarAccounts[address] = new AvatarAccount(JSON.parse(keystore), password);
+      const keystore = fs.readFileSync(acc.keystore_path).toString().trim();
+      const password = fs.readFileSync(acc.keystore_password_path).toString().trim();
+      inputAvatarAccounts[address] = AvatarAccount.load(new Web3(''), JSON.parse(keystore), password);
     });
     assert.deepStrictEqual(
       manifest.avatarAccounts,
