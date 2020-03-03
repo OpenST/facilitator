@@ -118,7 +118,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
           gateway,
         );
 
-        await this.auxiliaryTransactionExecutor.add(rawTransaction);
+        await this.auxiliaryTransactionExecutor.add(gateway.remoteGA, rawTransaction);
       }
     });
     await Promise.all(confirmMessageTransactionPromises);

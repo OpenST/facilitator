@@ -146,7 +146,7 @@ describe('ConfirmDepositService:update ', (): void => {
     SpyAssert.assert(
       transactionExecutor.add,
       1,
-      [[confirmDepositRawTx]],
+      [[gateway.remoteGA, confirmDepositRawTx]],
     );
 
     SpyAssert.assertCall(getERC20CogatewaySpy, 1);
