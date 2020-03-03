@@ -278,8 +278,8 @@ export default class Manifest {
       const password = fs.readFileSync(acc.keystore_password_path).toString();
       avatarAccounts[address] = AvatarAccount.load(
         new Web3(''),
-        JSON.parse(keystore.trim()),
-        password.trim(),
+        JSON.parse(keystore),
+        password,
       );
     });
 

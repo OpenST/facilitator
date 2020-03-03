@@ -42,9 +42,6 @@ export default class TransactionExecutor {
   /** Avatar account object. */
   private readonly avatarAccount: AvatarAccount;
 
-  /** Gas limit at which transaction was sent. */
-  private gas?: BigNumber;
-
   /** Interval in ms at which Transaction record will be dequeued in regular interval.  */
   private readonly pollInterval: number;
 
@@ -72,7 +69,7 @@ export default class TransactionExecutor {
     this.web3 = web3;
     this.gasPrice = gasPrice;
     this.avatarAccount = avatarAccount;
-    this.pollInterval = 1 * 60 * 1000; // in ms
+    this.pollInterval = 1 * 1 * 1000; // in ms
     this.setIntervalHandle = null;
     this.mutex = new Mutex();
   }
@@ -117,27 +114,33 @@ export default class TransactionExecutor {
 
   /**
    * Execute method does below:
+   * - Checks if mutex lock is acquired or not.
+   * - If mutex lock is already acquired, skip the execute flow. If mutex lock is not already acquired,
+   *   then take the lock and execute the transaction. In the end release the lock.
    * - Dequeue transaction record in regular interval
    * - Process the transaction and constructs data for transaction to be executed
    * - Sends the transaction by calling sendTransaction method.
    * - Updates Transaction repository with information like transactionHash, gas, nonce
    */
   private async execute(): Promise<void> {
-    const release = await this.mutex.acquire();
-    const transaction = await this.transactionRepository.dequeue();
-    try {
-      const nonce = await this.avatarAccount.getNonce(this.web3);
-      if (transaction) {
-        const txHash = await this.sendTransaction(transaction, nonce);
-        transaction.transactionHash = txHash;
-        transaction.gas = this.gas;
-        transaction.nonce = nonce;
-        this.transactionRepository.save(transaction);
+    if (!this.mutex.isLocked()) {
+      const release = await this.mutex.acquire();
+      const transaction = await this.transactionRepository.dequeue();
+      try {
+        const nonce = await this.avatarAccount.getNonce(this.web3);
+        if (transaction) {
+          const response = await this.sendTransaction(transaction, nonce);
+          transaction.transactionHash = response.transactionHash;
+          transaction.gas = new BigNumber(response.gas);
+          transaction.nonce = nonce;
+          this.transactionRepository.save(transaction);
+        }
+      } catch (error) {
+        Logger.error(`TransactionExecutor: Error in executing transaction: ${transaction}.
+        Error message: ${error.message}`);
+      } finally {
+        release();
       }
-    } catch (error) {
-      Logger.error(`TransactionExecutor: Error in executing transaction: ${transaction}. Error message: ${error.message}`);
-    } finally {
-      release();
     }
   }
 
@@ -149,10 +152,13 @@ export default class TransactionExecutor {
    *
    * @return Transaction hash.
    */
-  private async sendTransaction(transaction: Transaction, nonce: BigNumber): Promise<string> {
+  private async sendTransaction(transaction: Transaction, nonce: BigNumber): Promise<{
+    transactionHash: string;
+    gas: number;
+  }> {
     Logger.info(`Transaction to be processed: ${JSON.stringify(transaction)}, nonce: ${nonce.toString(10)}`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
-      let txOptions = {
+      const txOptions = {
         from: transaction.fromAddress,
         to: transaction.toAddress,
         data: transaction.encodedData,
@@ -160,21 +166,21 @@ export default class TransactionExecutor {
         gasPrice: transaction.gasPrice.toString(),
         gas: transaction.gas && transaction.gas.toString(),
       };
+      let estimatedGas: number;
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
         console.log('inside this.web3.eth.estimateGas', this.web3.eth);
-        const estimatedGas = await this.web3.eth.estimateGas(txOptions)
+        estimatedGas = await this.web3.eth.estimateGas(txOptions)
           .catch((e: Error): number => {
             Logger.error('Error on estimating gas, using default value  ', e);
             return 6000000;
           });
         console.log('estimatedGas:', estimatedGas);
         Logger.debug(`Transaction gas estimates  ${estimatedGas}`);
-        this.gas = new BigNumber(estimatedGas);
+        txOptions.gas = estimatedGas.toString();
       }
-      txOptions = Object.assign({ gas: this.gas && this.gas.toString() }, txOptions);
       this.web3.eth.sendTransaction(txOptions)
-        .on('transactionHash', (txHash: string): void => onResolve(txHash))
+        .on('transactionHash', (txHash: string): void => onResolve({ transactionHash: txHash, gas: estimatedGas }))
         .on('error', (error: Error): void => {
           Logger.error(`Transaction failed with error: ${error.message}`);
           onReject(error);
