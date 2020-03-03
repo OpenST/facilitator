@@ -14,6 +14,7 @@
 
 import Web3 from 'web3';
 import { TransactionObject } from 'web3/eth/types';
+import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
 import Transaction from '../models/Transaction';
 import TransactionRepository from '../repositories/TransactionRepository';
@@ -50,6 +51,9 @@ export default class TransactionExecutor {
   /** Set interval handle. */
   private setIntervalHandle: NodeJS.Timer | null;
 
+  /** Mutex instance variable  */
+  private readonly mutex: Mutex;
+
   /**
    * Constructor.
    *
@@ -70,6 +74,7 @@ export default class TransactionExecutor {
     this.avatarAccount = avatarAccount;
     this.pollInterval = 1 * 60 * 1000; // in ms
     this.setIntervalHandle = null;
+    this.mutex = new Mutex();
   }
 
   /**
@@ -118,14 +123,21 @@ export default class TransactionExecutor {
    * - Updates Transaction repository with information like transactionHash, gas, nonce
    */
   private async execute(): Promise<void> {
+    const release = await this.mutex.acquire();
     const transaction = await this.transactionRepository.dequeue();
-    const nonce = await this.avatarAccount.getNonce(this.web3);
-    if (transaction) {
-      const txHash = await this.sendTransaction(transaction, nonce);
-      transaction.transactionHash = txHash;
-      transaction.gas = this.gas;
-      transaction.nonce = nonce;
-      this.transactionRepository.save(transaction);
+    try {
+      const nonce = await this.avatarAccount.getNonce(this.web3);
+      if (transaction) {
+        const txHash = await this.sendTransaction(transaction, nonce);
+        transaction.transactionHash = txHash;
+        transaction.gas = this.gas;
+        transaction.nonce = nonce;
+        this.transactionRepository.save(transaction);
+      }
+    } catch (error) {
+      Logger.error(`TransactionExecutor: Error in executing transaction: ${transaction}. Error message: ${error.message}`);
+    } finally {
+      release();
     }
   }
 
@@ -163,7 +175,10 @@ export default class TransactionExecutor {
       txOptions = Object.assign({ gas: this.gas && this.gas.toString() }, txOptions);
       this.web3.eth.sendTransaction(txOptions)
         .on('transactionHash', (txHash: string): void => onResolve(txHash))
-        .on('error', (error: Error): void => onReject(error));
+        .on('error', (error: Error): void => {
+          Logger.error(`Transaction failed with error: ${error.message}`);
+          onReject(error);
+        });
     });
   }
 }
