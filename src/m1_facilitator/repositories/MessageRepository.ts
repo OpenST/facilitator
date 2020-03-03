@@ -222,6 +222,43 @@ export default class MessageRepository extends Subject<Message> {
    *   - Filter based on gateway address.
    *   - Source status should be declared.
    *   - Target status should be undeclared.
+   *   - Message type should be given message type.
+   *   - source declaration block height should be less than or equals to given
+   *     block height.
+   *
+   * @param gatewayAddress Address of gateway.
+   * @param messageType Type of message.
+   * @param blockHeight Block height as big number.
+   */
+  public async getPendingMessagesByGateway(
+    gatewayAddress: string,
+    messageType: MessageType,
+    blockHeight: BigNumber,
+  ): Promise<Message[]> {
+    const messageModels = await MessageModel.findAll({
+      where: {
+        [Op.and]: {
+          gatewayAddress,
+          sourceDeclarationBlockNumber: {
+            [Op.lte]: blockHeight,
+          },
+          sourceStatus: MessageStatus.Declared,
+          targetStatus: MessageStatus.Undeclared,
+          type: messageType,
+        },
+      },
+    });
+
+    return messageModels.map(
+      (message): Message => this.convertToMessage(message),
+    );
+  }
+
+  /**
+   * This method returns messages based on below criteria.
+   *   - Filter based on gateway address.
+   *   - Source status should be declared.
+   *   - Target status should be undeclared.
    *   - source declaration block height should be less than or equals to given
    *     block height.
    *
