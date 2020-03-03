@@ -21,31 +21,34 @@ import Mosaic from 'Mosaic';
 import { ProofGenerator } from '@openst/mosaic-proof';
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
-import ConfirmDepositService
-  from '../../../../src/m1_facilitator/services/ConfirmDepositService';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 import Message, {
   MessageStatus,
   MessageType,
 } from '../../../../src/m1_facilitator/models/Message';
-import DepositIntent
-  from '../../../../src/m1_facilitator/models/DepositIntent';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import TransactionExecutor
   from '../../../../src/m1_facilitator/lib/TransactionExecutor';
+import ConfirmWithdrawService
+  from '../../../../src/m1_facilitator/services/ConfirmWithdrawService';
+import WithdrawIntent
+  from '../../../../src/m1_facilitator/models/WithdrawIntent';
+import ERC20GatewayTokenPair
+  from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 
-describe('ConfirmDepositService:update ', () => {
-  let confirmDepositService: ConfirmDepositService;
+describe('ConfirmWithdraw:update ', () => {
+  let confirmWithdrawService: ConfirmWithdrawService;
   let gateway: Gateway;
   let message: Message;
-  let depositIntent: DepositIntent;
-  const confirmDepositRawTx = 'Some raw tx';
+  let withdrawIntent: WithdrawIntent;
+  const confirmWithdrawRawTx = 'Some raw tx';
   const serializedProof = 'Storage proof';
   let transactionExecutor: any;
-  let fakeERC20Cogateway: any;
-  let getERC20CogatewaySpy: any;
+  let fakeERC20Gateway: any;
+  let getERC20GatewaySpy: any;
   let auxiliaryWeb3: any;
-  let confirmDepositSpy: any;
+  let confirmWithdrawSpy: any;
+  const utilityToken = '0x0000000000000000000000000000000000000009';
 
   beforeEach(async () => {
     const repositories = await Repositories.create();
@@ -61,7 +64,7 @@ describe('ConfirmDepositService:update ', () => {
 
     message = new Message(
       web3Utils.sha3('1'),
-      MessageType.Deposit,
+      MessageType.Withdraw,
       MessageStatus.Declared,
       MessageStatus.Undeclared,
       gateway.gatewayGA,
@@ -72,7 +75,7 @@ describe('ConfirmDepositService:update ', () => {
       '0x0000000000000000000000000000000000000008',
     );
 
-    depositIntent = new DepositIntent(
+    withdrawIntent = new WithdrawIntent(
       message.messageHash,
       '0x0000000000000000000000000000000000000009',
       new BigNumber(10),
@@ -80,17 +83,24 @@ describe('ConfirmDepositService:update ', () => {
       web3Utils.sha3('2'),
     );
 
-    await repositories.depositIntentRepository.save(depositIntent);
+    const gatwayTokenPair = new ERC20GatewayTokenPair(
+      gateway.remoteGA,
+      withdrawIntent.tokenAddress as string,
+      utilityToken,
+    );
+
+    await repositories.withdrawIntentRepository.save(withdrawIntent);
     await repositories.messageRepository.save(message);
+    await repositories.erc20GatewayTokenPairRepository.save(gatwayTokenPair)
 
     const originWeb3 = sinon.createStubInstance(Web3);
     auxiliaryWeb3 = sinon.createStubInstance(Web3);
 
     transactionExecutor = sinon.createStubInstance(TransactionExecutor);
 
-    fakeERC20Cogateway = {
+    fakeERC20Gateway = {
       methods: {
-        confirmDeposit: () => {
+        confirmWithdraw: () => {
         },
         outboxStorageIndex: () => ({
           call: () => '7',
@@ -98,16 +108,16 @@ describe('ConfirmDepositService:update ', () => {
       },
     };
 
-    confirmDepositSpy = sinon.replace(
-      fakeERC20Cogateway.methods,
-      'confirmDeposit',
-      sinon.fake.returns(confirmDepositRawTx),
+    confirmWithdrawSpy = sinon.replace(
+      fakeERC20Gateway.methods,
+      'confirmWithdraw',
+      sinon.fake.returns(confirmWithdrawRawTx),
     );
 
-    getERC20CogatewaySpy = sinon.replace(
+    getERC20GatewaySpy = sinon.replace(
       Mosaic.interacts,
-      'getERC20Cogateway',
-      sinon.fake.returns(fakeERC20Cogateway),
+      'getERC20Gateway',
+      sinon.fake.returns(fakeERC20Gateway),
     );
 
     const proof = {
@@ -125,30 +135,32 @@ describe('ConfirmDepositService:update ', () => {
       sinon.fake.returns(proof),
     );
 
-    confirmDepositService = new ConfirmDepositService(
+    confirmWithdrawService = new ConfirmWithdrawService(
       originWeb3,
       auxiliaryWeb3,
       repositories.messageRepository,
-      repositories.depositIntentRepository,
+      repositories.withdrawIntentRepository,
+      repositories.erc20GatewayTokenPairRepository,
       transactionExecutor,
     );
   });
 
-  it('should make confirm deposit transaction', async (): Promise<void> => {
-    await confirmDepositService.update([gateway]);
+  it('should make confirm withdraw transaction', async (): Promise<void> => {
+    await confirmWithdrawService.update([gateway]);
     SpyAssert.assert(
       transactionExecutor.add,
       1,
-      [[confirmDepositRawTx]],
+      [[confirmWithdrawRawTx]],
     );
 
-    SpyAssert.assertCall(getERC20CogatewaySpy, 1);
+    SpyAssert.assertCall(getERC20GatewaySpy, 1);
 
-    SpyAssert.assert(confirmDepositSpy, 1, [
+    SpyAssert.assert(confirmWithdrawSpy, 1, [
       [
-        depositIntent.tokenAddress,
-        (depositIntent.amount as BigNumber).toString(10),
-        depositIntent.beneficiary,
+        withdrawIntent.tokenAddress,
+        utilityToken,
+        (withdrawIntent.amount as BigNumber).toString(10),
+        withdrawIntent.beneficiary,
         (message.feeGasPrice as BigNumber).toString(10),
         (message.feeGasLimit as BigNumber).toString(10),
         message.sender as string,
