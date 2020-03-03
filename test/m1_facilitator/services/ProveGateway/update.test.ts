@@ -34,12 +34,15 @@ import Message, {
 } from '../../../../src/m1_facilitator/models/Message';
 import SpyAssert from '../../../test_utils/SpyAssert';
 
-describe('ProveGateway::update', () => {
+describe('ProveGateway::update', (): void => {
   let originTransactionExecutor: TransactionExecutor;
   let auxiliaryTransactionExecutor: TransactionExecutor;
   let proveGatewayService: ProveGatewayService;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let outboxProofSpy: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let getERC20CogatewaySpy: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let proveGatewaySpy: any;
   const proveGatewayRawTx = 'rawTx';
   const anchorAddress = '0x0000000000000000000000000000000000000007';
@@ -76,23 +79,7 @@ describe('ProveGateway::update', () => {
       'intenthash',
       '0x0000000000000000000000000000000000000008',
     );
-    //
-    // const withdrawMessage = new Message(
-    //   web3Utils.sha3('1'),
-    //   MessageType.Withdraw,
-    //   MessageStatus.Declared,
-    //   MessageStatus.Undeclared,
-    //   gateway.gatewayGA,
-    //   new BigNumber('1'),
-    //   new BigNumber('1'),
-    //   new BigNumber('100'),
-    //   'intenthash',
-    //   '0x0000000000000000000000000000000000000008',
-    // );
-
     await repositories.messageRepository.save(depositMessage);
-
-    // await repositories.messageRepository.save(withdrawMessage);
 
     const originWeb3 = sinon.createStubInstance(Web3);
 
@@ -108,6 +95,7 @@ describe('ProveGateway::update', () => {
 
     const fakeERC20Cogateway = {
       methods: {
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         proveGateway: () => {
         },
       },

@@ -138,7 +138,6 @@ export default class ProveGatewayService extends Observer<Anchor> {
     let targetWeb3;
     let transactionExecutor;
 
-    console.log('pendingMessageType  ', pendingMessageType);
     if (pendingMessageType === MessageType.Deposit) {
       sourceWeb3 = this.originWeb3;
       targetWeb3 = this.auxiliaryWeb3;

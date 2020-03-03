@@ -219,7 +219,7 @@ export default class MessageRepository extends Subject<Message> {
 
   /**
    * This method returns messages based on below criteria.
-   *   - Filter based  on gateway address.
+   *   - Filter based on gateway address.
    *   - Source status should be declared.
    *   - Target status should be undeclared.
    *   - source declaration block height should be less than or equals to given
