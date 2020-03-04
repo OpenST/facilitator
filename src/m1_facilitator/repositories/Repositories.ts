@@ -15,15 +15,16 @@
 import { InitOptions, Sequelize } from 'sequelize';
 
 import AnchorRepository from './AnchorRepository';
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import DepositIntentRepository from './DepositIntentRepository';
+import ERC20GatewayTokenPairRepository from './ERC20GatewayTokenPairRepository';
 import GatewayRepository from './GatewayRepository';
 import MessageRepository from './MessageRepository';
-import WithdrawIntentRepository from './WithdrawIntentRepository';
-import ERC20GatewayTokenPairRepository from './ERC20GatewayTokenPairRepository';
-import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
+import RepositoriesInterface from '../../common/repositories/RepositoriesInterface';
 import TransactionRepository from './TransactionRepository';
+import WithdrawIntentRepository from './WithdrawIntentRepository';
 
-export default class Repositories {
+export default class Repositories implements RepositoriesInterface {
   /* Storage */
 
   public anchorRepository: AnchorRepository;

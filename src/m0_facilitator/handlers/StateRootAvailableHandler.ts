@@ -16,11 +16,12 @@
 
 import BigNumber from 'bignumber.js';
 
-import { AuxiliaryChainRecordNotFoundException } from '../Exception';
+import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
 import Logger from '../../common/Logger';
+
+import { AuxiliaryChainRecordNotFoundException } from '../Exception';
 import AuxiliaryChain from '../models/AuxiliaryChain';
 import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
-import ContractEntityHandler from './ContractEntityHandler';
 import Utils from '../Utils';
 
 /**

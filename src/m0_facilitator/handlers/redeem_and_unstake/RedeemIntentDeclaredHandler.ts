@@ -15,17 +15,17 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import Message from '../../models/Message';
+
+import ContractEntityHandler from '../../../common/handlers/ContractEntityHandler';
 import Logger from '../../../common/Logger';
-import Utils from '../../Utils';
+
 import {
-  MessageDirection,
-  MessageRepository, MessageStatus,
-  MessageType,
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
-import ContractEntityHandler from '../ContractEntityHandler';
-import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import Utils from '../../Utils';
 
 /**
  * This class handles redeem intent declared transactions.

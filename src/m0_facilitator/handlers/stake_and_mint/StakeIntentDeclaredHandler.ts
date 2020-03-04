@@ -15,16 +15,17 @@
 // ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
+
+import ContractEntityHandler from '../../../common/handlers/ContractEntityHandler';
 import Logger from '../../../common/Logger';
 
-import Message from '../../models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
-import ContractEntityHandler from '../ContractEntityHandler';
-import Utils from '../../Utils';
-import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import Utils from '../../Utils';
 
 /**
  * This class handles stake intent declared transactions.

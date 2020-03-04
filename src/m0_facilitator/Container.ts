@@ -15,14 +15,15 @@
 // ----------------------------------------------------------------------------
 
 
-import { Config } from './Config/Config';
 import Facilitator from '../common/Facilitator';
+import Subscriptions from '../common/subscriptions/Subscriptions';
+import TransactionHandler from '../common/TransactionHandler';
+
+import { Config } from './Config/Config';
+import fetchQueries from './GraphQueries/FetchQueries';
 import Handlers from './handlers/Handlers';
 import Repositories from './repositories/Repositories';
 import Services from './services/Services';
-import Subscriptions from '../common/subscriptions/Subscriptions';
-import TransactionHandler from './TransactionHandler';
-import fetchQueries from './GraphQueries/FetchQueries';
 import subscriptionQueries from './GraphQueries/SubscriptionQueries';
 
 export default class Container {

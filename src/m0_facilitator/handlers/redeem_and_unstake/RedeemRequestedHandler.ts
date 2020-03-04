@@ -16,10 +16,13 @@
 
 import BigNumber from 'bignumber.js';
 
+import ContractEntityHandler from '../../../common/handlers/ContractEntityHandler';
 import Logger from '../../../common/Logger';
+
 import MessageTransferRequest from '../../models/MessageTransferRequest';
-import MessageTransferRequestRepository, { RequestType } from '../../repositories/MessageTransferRequestRepository';
-import ContractEntityHandler from '../ContractEntityHandler';
+import MessageTransferRequestRepository, {
+  RequestType,
+} from '../../repositories/MessageTransferRequestRepository';
 import Utils from '../../Utils';
 
 /**

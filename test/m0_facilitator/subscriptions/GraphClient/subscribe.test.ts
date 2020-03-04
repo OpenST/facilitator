@@ -27,7 +27,7 @@ import ContractEntityRepository from '../../../../src/common/repositories/Contra
 import GraphClient from '../../../../src/common/subscriptions/GraphClient';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import TransactionFetcher from '../../../../src/common/subscriptions/TransactionFetcher';
-import TransactionHandler from '../../../../src/m0_facilitator/TransactionHandler';
+import TransactionHandler from '../../../../src/common/TransactionHandler';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;

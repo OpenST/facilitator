@@ -17,9 +17,9 @@
 
 import { HandlerNotFoundException } from './Exception';
 import ContractEntityHandler from './handlers/ContractEntityHandler';
-import Logger from '../common/Logger';
-import Repositories from './repositories/Repositories';
-import TransactionHandlerInterface from '../common/TransactionHandlerInterface';
+import Logger from './Logger';
+import RepositoriesInterface from './repositories/RepositoriesInterface';
+import TransactionHandlerInterface from './TransactionHandlerInterface';
 
 /**
  * This class knows about different kinds of handlers and it makes decision
@@ -28,7 +28,7 @@ import TransactionHandlerInterface from '../common/TransactionHandlerInterface';
 export default class TransactionHandler implements TransactionHandlerInterface {
   private readonly handlers: Record<string, ContractEntityHandler<any>>;
 
-  private readonly repos: Repositories;
+  private readonly repos: RepositoriesInterface;
 
   /**
    * Constructor
@@ -38,7 +38,7 @@ export default class TransactionHandler implements TransactionHandlerInterface {
    */
   public constructor(
     handlers: Record<string, ContractEntityHandler<any>>,
-    repos: Repositories,
+    repos: RepositoriesInterface,
   ) {
     this.handlers = handlers;
     this.repos = repos;

@@ -16,14 +16,15 @@
 
 import { InitOptions, Sequelize } from 'sequelize';
 
-import Services from '../services/Services';
+import { MessageRepository } from './MessageRepository';
 import AuxiliaryChainRepository from './AuxiliaryChainRepository';
 import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import GatewayRepository from './GatewayRepository';
-import { MessageRepository } from './MessageRepository';
 import MessageTransferRequestRepository from './MessageTransferRequestRepository';
+import RepositoriesInterface from '../../common/repositories/RepositoriesInterface';
+import Services from '../services/Services';
 
-export default class Repositories {
+export default class Repositories implements RepositoriesInterface {
   /* Storage */
 
   public messageTransferRequestRepository: MessageTransferRequestRepository;
