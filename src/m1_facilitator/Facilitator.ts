@@ -17,8 +17,12 @@ import { SUBSCRIPTION_RESTART_DURATION } from '../common/Constants';
 import Logger from '../common/Logger';
 import Subscriber from '../common/subscriptions/Subscriber';
 
+import TransactionExecutor from './lib/TransactionExecutor';
+
 /** The class defines properties and behavior of a facilitator. */
 export default class Facilitator {
+  private readonly transactionExecutor: TransactionExecutor;
+
   private readonly originSubscriber: Subscriber;
 
   private readonly auxiliarySubscriber: Subscriber;
@@ -29,14 +33,24 @@ export default class Facilitator {
    * @param originSubscriber Origin subscriber instance.
    * @param auxiliarySubscriber Auxiliary subscriber instance.
    */
-  public constructor(originSubscriber: Subscriber, auxiliarySubscriber: Subscriber) {
+  public constructor(
+    transactionExecutor: TransactionExecutor,
+    originSubscriber: Subscriber,
+    auxiliarySubscriber: Subscriber,
+  ) {
+    this.transactionExecutor = transactionExecutor;
     this.originSubscriber = originSubscriber;
     this.auxiliarySubscriber = auxiliarySubscriber;
     this.subscriptionRestartHandle = null;
   }
 
-  /** Starts the facilitator by subscribing to subscription queries. */
+  /**
+   * Starts the facilitator by subscribing to subscription queries and
+   * starting the transaction executor.
+   */
   public async start(): Promise<void> {
+    await this.transactionExecutor.start();
+
     await this.subscribeToSubGraphs();
     this.subscriptionRestartHandle = setInterval(
       async (): Promise<void> => this.restartSubscription(),
@@ -45,10 +59,13 @@ export default class Facilitator {
   }
 
   /**
-   * Stops the facilitator and unsubscribe to query subscriptions.
+   * Stops the facilitator by unsubscribe to query subscriptions and stopping
+   * the transaction executor.
    * This function should be called on signint or control-c.
    */
   public async stop(): Promise<void> {
+    await this.transactionExecutor.stop();
+
     if (this.subscriptionRestartHandle !== null) {
       clearInterval(this.subscriptionRestartHandle);
     }

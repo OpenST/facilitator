@@ -29,11 +29,16 @@ commander
       }): Promise<void> => {
       try {
         const manifest = Manifest.fromFile(options.manifest);
-        const { facilitator, repositories } = await Container.create(manifest);
+        const {
+          facilitator,
+          repositories,
+        } = await Container.create(manifest);
+
         const seedDataInitializer = new SeedDataInitializer(repositories);
         assert.ok(seedDataInitializer.isValidSeedData(
           manifest.originContractAddresses.erc20_gateway,
         ));
+
         await facilitator.start();
       } catch (e) {
         Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
