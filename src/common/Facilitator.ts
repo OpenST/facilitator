@@ -49,10 +49,10 @@ export default class Facilitator {
    * This function should be called on signint or control-c.
    */
   public async stop(): Promise<void> {
-    await this.unsubscribeToSubGraphs();
     if (this.subscriptionRestartHandle !== null) {
       clearInterval(this.subscriptionRestartHandle);
     }
+    await this.unsubscribeToSubGraphs();
   }
 
   // It restarts the subscription
