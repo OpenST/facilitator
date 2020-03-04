@@ -19,6 +19,21 @@ import Container from '../Container';
 import Logger from '../../common/Logger';
 import Manifest from '../manifest/Manifest';
 import SeedDataInitializer from '../SeedDataInitializer';
+import Facilitator from '../Facilitator';
+
+let facilitator: Facilitator;
+
+async function terminationHandler(): Promise<void> {
+  Logger.info('Stopping facilitator');
+  if (facilitator) {
+    await facilitator.stop();
+  }
+  Logger.info('Facilitator stopped');
+  process.exit(0);
+}
+
+process.on('SIGINT', terminationHandler);
+process.on('SIGTERM', terminationHandler);
 
 commander
   .option('-m, --manifest <manifest>', 'Path to manifest file.')
@@ -29,12 +44,12 @@ commander
       }): Promise<void> => {
       try {
         const manifest = Manifest.fromFile(options.manifest);
-        const { facilitator, repositories } = await Container.create(manifest);
-        const seedDataInitializer = new SeedDataInitializer(repositories);
+        const containerAssets = await Container.create(manifest);
+        const seedDataInitializer = new SeedDataInitializer(containerAssets.repositories);
         assert.ok(seedDataInitializer.isValidSeedData(
           manifest.originContractAddresses.erc20_gateway,
         ));
-        await facilitator.start();
+        await containerAssets.facilitator.start();
       } catch (e) {
         Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
       }
