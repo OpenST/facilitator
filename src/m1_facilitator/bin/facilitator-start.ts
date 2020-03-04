@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import assert from 'assert';
 import commander from 'commander';
 
-import Facilitator from '../../common/Facilitator';
-import Logger from '../../common/Logger';
-
 import Container from '../Container';
+import Logger from '../../common/Logger';
 import Manifest from '../manifest/Manifest';
-
-let facilitator: Facilitator;
+import SeedDataInitializer from '../SeedDataInitializer';
 
 commander
   .option('-m, --manifest <manifest>', 'Path to manifest file.')
@@ -31,7 +29,11 @@ commander
       }): Promise<void> => {
       try {
         const manifest = Manifest.fromFile(options.manifest);
-        facilitator = await Container.create(manifest);
+        const { facilitator, repositories } = await Container.create(manifest);
+        const seedDataInitializer = new SeedDataInitializer(repositories);
+        assert.ok(seedDataInitializer.isValidSeedData(
+          manifest.originContractAddresses.erc20_gateway,
+        ));
         await facilitator.start();
       } catch (e) {
         Logger.error(`Error in facilitator start command. Reason: ${e.message}`);

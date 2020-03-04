@@ -14,9 +14,15 @@
 
 import Facilitator from '../common/Facilitator';
 import Manifest from './manifest/Manifest';
+import Repositories from './repositories/Repositories';
 
 export default class Container {
-  public static async create(manifest: Manifest): Promise<Facilitator> {
-    return manifest as any as Facilitator;
+  public static async create(
+    manifest: Manifest,
+  ): Promise<{ facilitator: Facilitator; repositories: Repositories} > {
+    return {
+      facilitator: manifest as any as Facilitator,
+      repositories: manifest as any as Repositories,
+    };
   }
 }
