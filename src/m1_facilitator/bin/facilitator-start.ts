@@ -35,9 +35,12 @@ commander
         } = await Container.create(manifest);
 
         const seedDataInitializer = new SeedDataInitializer(repositories);
-        assert.ok(seedDataInitializer.isValidSeedData(
+        const isSeedDataValid = await seedDataInitializer.isValidSeedData(
           manifest.originContractAddresses.erc20_gateway,
-        ));
+        );
+        if (!isSeedDataValid) {
+          throw new Error('Seed data validation has failed.');
+        }
 
         await facilitator.start();
       } catch (e) {
