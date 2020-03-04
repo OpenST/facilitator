@@ -19,7 +19,7 @@ import commander from 'commander';
 
 import ConfigFactory from '../Config/ConfigFactory';
 import Container from '../Container';
-import Facilitator from '../../common/Facilitator';
+import Facilitator from '../Facilitator';
 import Logger from '../../common/Logger';
 
 const facilitatorCmd = commander

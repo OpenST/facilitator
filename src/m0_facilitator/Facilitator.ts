@@ -13,9 +13,9 @@
 // limitations under the License.
 
 
-import { SUBSCRIPTION_RESTART_DURATION } from './Constants';
-import Logger from './Logger';
-import Subscriber from './subscriptions/Subscriber';
+import { SUBSCRIPTION_RESTART_DURATION } from '../common/Constants';
+import Logger from '../common/Logger';
+import Subscriber from '../common/subscriptions/Subscriber';
 
 /** The class defines properties and behavior of a facilitator. */
 export default class Facilitator {

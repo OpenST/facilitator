@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 
-import Facilitator from '../common/Facilitator';
+import Facilitator from './Facilitator';
 import Subscriptions from '../common/subscriptions/Subscriptions';
 import TransactionHandler from '../common/TransactionHandler';
 

@@ -17,7 +17,7 @@
 
 import sinon from 'sinon';
 
-import Facilitator from '../../../src/common/Facilitator';
+import Facilitator from '../../../src/m0_facilitator/Facilitator';
 import SpyAssert from '../../test_utils/SpyAssert';
 import Subscriber from '../../../src/common/subscriptions/Subscriber';
 

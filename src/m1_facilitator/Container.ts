@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Facilitator from '../common/Facilitator';
+import Facilitator from './Facilitator';
 import Manifest from './manifest/Manifest';
 import Repositories from './repositories/Repositories';
 
