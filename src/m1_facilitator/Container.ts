@@ -21,6 +21,9 @@ export default class Container {
     manifest: Manifest,
   ): Promise<{ facilitator: Facilitator; repositories: Repositories} > {
     return {
+      // The below two lines are done to make things to compile.
+      // Once Container class is implemented those will be replaced with
+      // actual objects.
       facilitator: manifest as any as Facilitator,
       repositories: manifest as any as Repositories,
     };
