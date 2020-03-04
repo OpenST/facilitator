@@ -21,6 +21,7 @@ import MessageRepository from './MessageRepository';
 import WithdrawIntentRepository from './WithdrawIntentRepository';
 import ERC20GatewayTokenPairRepository from './ERC20GatewayTokenPairRepository';
 import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
+import TransactionRepository from './TransactionRepository';
 
 export default class Repositories {
   /* Storage */
@@ -38,6 +39,8 @@ export default class Repositories {
   public erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
 
   public contractEntityRepository: ContractEntityRepository;
+
+  public transactionRepository: TransactionRepository;
 
 
   /* Public Functions */
@@ -110,5 +113,6 @@ export default class Repositories {
     this.gatewayRepository = new GatewayRepository(initOptions);
     this.withdrawIntentRepository = new WithdrawIntentRepository(initOptions);
     this.erc20GatewayTokenPairRepository = new ERC20GatewayTokenPairRepository(initOptions);
+    this.transactionRepository = new TransactionRepository(initOptions);
   }
 }

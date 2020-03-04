@@ -111,7 +111,7 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
           gateway,
         );
 
-        await this.originTransactionExecutor.add(rawTransaction);
+        await this.originTransactionExecutor.add(gateway.remoteGA, rawTransaction);
       }
     });
     await Promise.all(confirmMessageTransactionPromises);

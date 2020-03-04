@@ -161,7 +161,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
       blockHeight,
     );
 
-    await transactionExecutor.add(rawTransaction);
+    await transactionExecutor.add(gateway.remoteGA, rawTransaction);
   }
 
   /**
