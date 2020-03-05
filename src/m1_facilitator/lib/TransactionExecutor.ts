@@ -169,13 +169,11 @@ export default class TransactionExecutor {
       let estimatedGas: number;
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
-        console.log('inside this.web3.eth.estimateGas', this.web3.eth);
         estimatedGas = await this.web3.eth.estimateGas(txOptions)
           .catch((e: Error): number => {
             Logger.error('Error on estimating gas, using default value  ', e);
             return 6000000;
           });
-        console.log('estimatedGas:', estimatedGas);
         Logger.debug(`Transaction gas estimates  ${estimatedGas}`);
         txOptions.gas = estimatedGas.toString();
       }
