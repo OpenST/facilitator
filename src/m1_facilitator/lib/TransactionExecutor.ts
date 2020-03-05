@@ -121,6 +121,7 @@ export default class TransactionExecutor {
    * - Process the transaction and constructs data for transaction to be executed
    * - Sends the transaction by calling sendTransaction method.
    * - Updates Transaction repository with information like transactionHash, gas, nonce
+   *
    */
   private async execute(): Promise<void> {
     if (!this.mutex.isLocked()) {
@@ -133,7 +134,7 @@ export default class TransactionExecutor {
           transaction.transactionHash = response.transactionHash;
           transaction.gas = new BigNumber(response.gas);
           transaction.nonce = nonce;
-          this.transactionRepository.save(transaction);
+          await this.transactionRepository.save(transaction);
         }
       } catch (error) {
         Logger.error(`TransactionExecutor: Error in executing transaction: ${transaction}.
@@ -163,25 +164,21 @@ export default class TransactionExecutor {
         to: transaction.toAddress,
         data: transaction.encodedData,
         nonce: nonce.toNumber(),
-        gasPrice: transaction.gasPrice.toString(),
-        gas: transaction.gas && transaction.gas.toString(),
+        gasPrice: transaction.gasPrice.toString(10),
+        gas: transaction.gas && transaction.gas.toString(10),
       };
       let estimatedGas: number;
       if (txOptions.gas === undefined) {
         Logger.debug('Estimating gas for the transaction');
-        estimatedGas = await this.web3.eth.estimateGas(txOptions)
-          .catch((e: Error): number => {
-            Logger.error('Error on estimating gas, using default value  ', e);
-            return 6000000;
-          });
+        estimatedGas = await this.web3.eth.estimateGas(txOptions);
         Logger.debug(`Transaction gas estimates  ${estimatedGas}`);
-        txOptions.gas = estimatedGas.toString();
+        txOptions.gas = estimatedGas.toString(10);
       }
       this.web3.eth.sendTransaction(txOptions)
         .on('transactionHash', (txHash: string): void => onResolve({ transactionHash: txHash, gas: estimatedGas }))
-        .on('error', (error: Error): void => {
-          Logger.error(`Transaction failed with error: ${error.message}`);
-          onReject(error);
+        .on('error', (e: Error): void => {
+          Logger.error(`Transaction failed with error: ${e.message}`);
+          onReject(e);
         });
     });
   }
