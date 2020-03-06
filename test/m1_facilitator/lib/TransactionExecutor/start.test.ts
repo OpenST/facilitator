@@ -59,14 +59,14 @@ describe('TransactionExecutor.start()', (): void => {
     };
 
     dequeueSpy = sinon.replace(
-      repositories.transactionRepository,
+      repositories.originTransactionRepository,
       'dequeue',
       sinon.fake.resolves(undefined),
     );
 
     web3 = sinon.createStubInstance(Web3);
     transactionExecutor = new TransactionExecutor(
-      repositories.transactionRepository,
+      repositories.originTransactionRepository,
       web3,
       gasPrice,
       avatarAccount,
@@ -99,7 +99,7 @@ describe('TransactionExecutor.start()', (): void => {
     await transactionExecutor.start();
     SpyAssert.assert(
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      repositories.transactionRepository.dequeue,
+      repositories.originTransactionRepository.dequeue,
       1,
       [[]],
     );

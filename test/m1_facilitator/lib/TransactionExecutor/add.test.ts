@@ -106,7 +106,7 @@ describe('TransactionExecutor::add()', (): void => {
       password,
     );
     transactionExecutor = new TransactionExecutor(
-      repositories.transactionRepository,
+      repositories.originTransactionRepository,
       web3,
       gasPrice,
       avatarAccount,
@@ -139,7 +139,7 @@ describe('TransactionExecutor::add()', (): void => {
     );
 
     await transactionExecutor.add(cogatewayAddress, rawTx);
-    const transaction = await repositories.transactionRepository.dequeue();
+    const transaction = await repositories.originTransactionRepository.dequeue();
     assert.isNotNull(
       transaction,
       'transaction object should not be null.',
