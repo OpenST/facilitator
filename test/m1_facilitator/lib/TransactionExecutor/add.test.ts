@@ -86,7 +86,7 @@ function getEncodedFunctionAbi(web3: Web3, confirmDepositParams: ConfirmDepositP
 
 describe('TransactionExecutor::add()', (): void => {
   let avatarAccount: AvatarAccount;
-  let transactionExecutor: TransactionExecutor;
+  let originTransactionExecutor: TransactionExecutor;
   let rawTx: any;
   let repositories: Repositories;
   let erc20Cogateway: ERC20Cogateway;
@@ -105,7 +105,7 @@ describe('TransactionExecutor::add()', (): void => {
       web3Account.encrypt(password),
       password,
     );
-    transactionExecutor = new TransactionExecutor(
+    originTransactionExecutor = new TransactionExecutor(
       repositories.originTransactionRepository,
       web3,
       gasPrice,
@@ -138,7 +138,7 @@ describe('TransactionExecutor::add()', (): void => {
       confirmDepositParams.rlpParentNodes as any,
     );
 
-    await transactionExecutor.add(cogatewayAddress, rawTx);
+    await originTransactionExecutor.add(cogatewayAddress, rawTx);
     const transaction = await repositories.originTransactionRepository.dequeue();
     assert.isNotNull(
       transaction,
