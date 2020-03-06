@@ -11,12 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific
 
+import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
+import Logger from '../../common/Logger';
+import Utils from '../../common/Utils';
+
 import ERC20GatewayTokenPair from '../models/ERC20GatewayTokenPair';
+import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
-import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
-import Utils from '../../common/Utils';
-import Logger from '../../common/Logger';
 
 /**
  * It represents record of CreatedUtilityTokens entity.
@@ -30,7 +32,7 @@ export interface CreatedUtilityTokenHandlerInterface {
 /**
  * It handles updates from CreatedUtilityTokenHandler entity.
  */
-export default class CreatedUtilityTokenHandler {
+export default class CreatedUtilityTokenHandler extends ContractEntityHandler {
   /** Instance of ERC20GatewayTokenPairRepository. */
   public erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
 
@@ -47,6 +49,8 @@ export default class CreatedUtilityTokenHandler {
     erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository,
     gatewayRepository: GatewayRepository,
   ) {
+    super();
+
     this.erc20GatewayTokenPairRepository = erc20GatewayTokenPairRepository;
     this.gatewayRepository = gatewayRepository;
   }

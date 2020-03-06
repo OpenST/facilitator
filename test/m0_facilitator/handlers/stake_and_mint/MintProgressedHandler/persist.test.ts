@@ -23,10 +23,9 @@ import Message from '../../../../../src/m0_facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0_facilitator/repositories/MessageRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 
-describe('MintProgress.persist()', () => {
+describe('MintProgress.handle()', (): void => {
   const transactions = [{
     _messageHash: web3utils.keccak256('1'),
     _staker: '0x0000000000000000000000000000000000000001',
@@ -40,7 +39,7 @@ describe('MintProgress.persist()', () => {
     blockNumber: '10',
   }];
 
-  it('should change message state to target progressed', async () => {
+  it('should change message state to target progressed', async (): Promise<void> => {
     const save = sinon.stub();
 
     const mockedRepository = sinon.createStubInstance(MessageRepository,
@@ -50,7 +49,7 @@ describe('MintProgress.persist()', () => {
       });
     const handler = new MintProgressedHandler(mockedRepository as any);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
@@ -61,12 +60,11 @@ describe('MintProgress.persist()', () => {
     expectedModel.targetStatus = MessageStatus.Progressed;
     expectedModel.secret = transactions[0]._unlockSecret;
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
     SpyAssert.assert(save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message state if current status is not undeclared or declared', async () => {
+  it('should not change message state if current status is not undeclared or declared', async (): Promise<void> => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(
@@ -82,7 +80,7 @@ describe('MintProgress.persist()', () => {
       });
     const handler = new MintProgressedHandler(mockedRepository as any);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
@@ -92,7 +90,6 @@ describe('MintProgress.persist()', () => {
     expectedModel.targetStatus = MessageStatus.Progressed;
     expectedModel.secret = transactions[0]._unlockSecret;
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
     SpyAssert.assert(save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });

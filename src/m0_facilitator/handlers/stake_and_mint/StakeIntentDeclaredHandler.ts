@@ -30,7 +30,7 @@ import Utils from '../../Utils';
 /**
  * This class handles stake intent declared transactions.
  */
-export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Message> {
+export default class StakeIntentDeclaredHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -55,8 +55,8 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
    * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting Stake intent declared records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling Stake intent declared records: ${transactions.length}`);
     const stakeRequestModels: MessageTransferRequest[] = [];
     const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
@@ -112,7 +112,5 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler<Me
     }
     await Promise.all(saveMessagesPromises);
     Logger.debug('Messages saved');
-
-    return messageModels;
   }
 }

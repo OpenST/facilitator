@@ -24,17 +24,16 @@ import Message from '../../../../../src/m0_facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0_facilitator/repositories/MessageRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 import StubData from '../../../../test_utils/StubData';
 
-describe('StakeIntentConfirmedHandler.persist()', (): void => {
+describe('StakeIntentConfirmedHandler.handle()', (): void => {
   let transactions: any = [];
   let saveStub: any;
   let messageRecord: Message;
   let message: Message;
   let sinonMessageRepositoryMock: any;
-  beforeEach(async () => {
+  beforeEach(async (): Promise<void> => {
     transactions = [{
       id: '1',
       _messageHash: '0x000000000000000000000000000000000000000000000000000001',
@@ -58,37 +57,23 @@ describe('StakeIntentConfirmedHandler.persist()', (): void => {
     message.targetStatus = MessageStatus.Declared;
   });
 
-  it('should persist successfully when target status is undeclared', async (): Promise<void> => {
+  it('should handle successfully when target status is undeclared', async (): Promise<void> => {
     messageRecord.targetStatus = MessageStatus.Undeclared;
 
     const handler = new StakeIntentConfirmedHandler(sinonMessageRepositoryMock);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-
-    assert.deepStrictEqual(models[0], message);
     SpyAssert.assert(saveStub, 1, [[message]]);
   });
 
-  it('should persist successfully when target status is undefined', async (): Promise<void> => {
+  it('should handle successfully when target status is undefined', async (): Promise<void> => {
     messageRecord.targetStatus = undefined as unknown as MessageStatus;
 
     const handler = new StakeIntentConfirmedHandler(sinonMessageRepositoryMock);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-
-    assert.deepStrictEqual(models[0], message);
     SpyAssert.assert(saveStub, 1, [[message]]);
   });
 
@@ -110,7 +95,7 @@ describe('StakeIntentConfirmedHandler.persist()', (): void => {
     });
     const handler = new StakeIntentConfirmedHandler(mockMessageRepo as any);
 
-    const models = await handler.persist(transaction);
+    await handler.handle(transaction);
 
     const messageInstance = new Message(
       transaction[0]._messageHash,
@@ -130,13 +115,6 @@ describe('StakeIntentConfirmedHandler.persist()', (): void => {
       undefined,
     );
 
-    assert.equal(
-      models.length,
-      transaction.length,
-      'Number of models must be equal to transaction',
-    );
-
-    assert.deepStrictEqual(models[0], messageInstance);
     SpyAssert.assert(save, 1, [[messageInstance]]);
   });
 });

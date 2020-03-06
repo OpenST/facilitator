@@ -28,7 +28,7 @@ import Utils from '../../Utils';
 /**
  * This class handles stake request transactions.
  */
-export default class StakeRequestedHandler extends ContractEntityHandler<MessageTransferRequest> {
+export default class StakeRequestedHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageTransferRequestRepository: MessageTransferRequestRepository;
@@ -73,8 +73,8 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
    * @return Array of instances of MessageTransferRequest objects for stake.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<MessageTransferRequest[]> {
-    Logger.info(`Persisting stake request records: ${transactions.length} for gateway: ${this.gatewayAddress}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.info(`Handling stake request records: ${transactions.length} for gateway: ${this.gatewayAddress}`);
     const models: MessageTransferRequest[] = await Promise.all(transactions
       .filter((transaction): boolean => this.gatewayAddress === Utils.toChecksumAddress(
         transaction.gateway,
@@ -128,6 +128,5 @@ export default class StakeRequestedHandler extends ContractEntityHandler<Message
 
     await Promise.all(savePromises);
     Logger.debug('Stake requests saved');
-    return models;
   }
 }

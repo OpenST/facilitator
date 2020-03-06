@@ -21,7 +21,6 @@ import * as Web3Utils from 'web3-utils';
 import RedeemRequestedHandler from '../../../../../src/m0_facilitator/handlers/redeem_and_unstake/RedeemRequestedHandler';
 import MessageTransferRequest from '../../../../../src/m0_facilitator/models/MessageTransferRequest';
 import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0_facilitator/repositories/MessageTransferRequestRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 import Repositories from '../../../../../src/m0_facilitator/repositories/Repositories';
 import {
@@ -32,8 +31,8 @@ import {
 import Message from '../../../../../src/m0_facilitator/models/Message';
 import Util from '../../../repositories/MessageTransferRequestRepository/util';
 
-describe('RedeemRequestedHandler.persist()', (): void => {
-  it('should persist successfully when redeemRequesteds is received first time for'
+describe('RedeemRequestedHandler.handle()', (): void => {
+  it('should handle successfully when redeemRequesteds is received first time for'
     + ' redeemRequestHash', async (): Promise<void> => {
     const cogatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions = [{
@@ -59,7 +58,7 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       cogatewayAddress,
     );
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const redeemRequest = new MessageTransferRequest(
       transactions[0].redeemRequestHash,
@@ -76,12 +75,6 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       null,
     );
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-    assert.deepStrictEqual(models[0], redeemRequest);
     SpyAssert.assert(sinonMock.save, 1, [[redeemRequest]]);
     sinon.restore();
   });
@@ -161,31 +154,9 @@ describe('RedeemRequestedHandler.persist()', (): void => {
       blockNumber: '11',
     }];
 
-    const redeemRequestWithNullMessageHash = new MessageTransferRequest(
-      transactions2[0].redeemRequestHash,
-      RequestType.Redeem,
-      new BigNumber(transactions2[0].blockNumber),
-      new BigNumber(transactions2[0].amount),
-      Web3Utils.toChecksumAddress(transactions2[0].beneficiary),
-      new BigNumber(transactions2[0].gasPrice),
-      new BigNumber(transactions2[0].gasLimit),
-      new BigNumber(transactions2[0].nonce),
-      Web3Utils.toChecksumAddress(transactions2[0].cogateway),
-      Web3Utils.toChecksumAddress(transactions2[0].redeemer),
-      Web3Utils.toChecksumAddress(transactions2[0].redeemerProxy),
-      null, // Message hash should be null.
-    );
-
-    const models2 = await handler.persist(transactions2);
-
-    assert.equal(
-      models2.length,
-      transactions2.length,
-      'Number of models must be equal to transactions',
-    );
+    await handler.handle(transactions2);
 
     Util.checkInputAgainstOutput(redeemRequest, models1);
-    Util.checkInputAgainstOutput(redeemRequestWithNullMessageHash, models2[0]);
 
     sinon.restore();
   });

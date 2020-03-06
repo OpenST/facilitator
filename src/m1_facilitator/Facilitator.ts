@@ -21,7 +21,9 @@ import TransactionExecutor from './lib/TransactionExecutor';
 
 /** The class defines properties and behavior of a facilitator. */
 export default class Facilitator {
-  private readonly transactionExecutor: TransactionExecutor;
+  private readonly originTransactionExecutor: TransactionExecutor;
+
+  private readonly auxiliaryTransactionExecutor: TransactionExecutor;
 
   private readonly originSubscriber: Subscriber;
 
@@ -34,11 +36,13 @@ export default class Facilitator {
    * @param auxiliarySubscriber Auxiliary subscriber instance.
    */
   public constructor(
-    transactionExecutor: TransactionExecutor,
+    originTransactionExecutor: TransactionExecutor,
+    auxiliaryTransactionExecutor: TransactionExecutor,
     originSubscriber: Subscriber,
     auxiliarySubscriber: Subscriber,
   ) {
-    this.transactionExecutor = transactionExecutor;
+    this.originTransactionExecutor = originTransactionExecutor;
+    this.auxiliaryTransactionExecutor = auxiliaryTransactionExecutor;
     this.originSubscriber = originSubscriber;
     this.auxiliarySubscriber = auxiliarySubscriber;
     this.subscriptionRestartHandle = null;
@@ -49,7 +53,8 @@ export default class Facilitator {
    * starting the transaction executor.
    */
   public async start(): Promise<void> {
-    await this.transactionExecutor.start();
+    await this.originTransactionExecutor.start();
+    await this.auxiliaryTransactionExecutor.start();
 
     await this.subscribeToSubGraphs();
     this.subscriptionRestartHandle = setInterval(
@@ -64,7 +69,8 @@ export default class Facilitator {
    * This function should be called on signint or control-c.
    */
   public async stop(): Promise<void> {
-    await this.transactionExecutor.stop();
+    await this.originTransactionExecutor.stop();
+    await this.auxiliaryTransactionExecutor.stop();
 
     if (this.subscriptionRestartHandle !== null) {
       clearInterval(this.subscriptionRestartHandle);

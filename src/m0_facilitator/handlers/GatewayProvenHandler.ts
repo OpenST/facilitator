@@ -21,7 +21,6 @@ import BigNumber from 'bignumber.js';
 import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
 import Logger from '../../common/Logger';
 
-import Gateway from '../models/Gateway';
 import GatewayRepository from '../repositories/GatewayRepository';
 import Utils from '../Utils';
 
@@ -31,7 +30,7 @@ import Utils from '../Utils';
  * This class handles GatewayProven transactions and updates lastRemoteGatewayProvenBlockHeight
  * in Gateway model.
  */
-export default class GatewayProvenHandler extends ContractEntityHandler<Gateway> {
+export default class GatewayProvenHandler extends ContractEntityHandler {
   private readonly GatewayRepository: GatewayRepository;
 
   public constructor(gatewayRepository: GatewayRepository) {
@@ -49,8 +48,8 @@ export default class GatewayProvenHandler extends ContractEntityHandler<Gateway>
    *
    * @return List of instances of Gateway objects.
    */
-  public async persist(transactions: any[]): Promise<Gateway[]> {
-    Logger.debug(`Persisting prove gateway records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling prove gateway records: ${transactions.length}`);
     const transaction = transactions[transactions.length - 1];
     const gatewayAddress = Utils.toChecksumAddress(transaction._gateway);
     const gateway = await this.GatewayRepository.get(gatewayAddress);
@@ -66,7 +65,5 @@ export default class GatewayProvenHandler extends ContractEntityHandler<Gateway>
       Logger.debug(`Gateway:${gatewayAddress} lastRemoteGatewayProvenBlockHeight updated to ${
         currentLastRemoteGatewayProvenBlockHeight}`);
     }
-
-    return [gateway!];
   }
 }

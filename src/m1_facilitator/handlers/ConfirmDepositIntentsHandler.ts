@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import MessageRepository from '../repositories/MessageRepository';
-import Message, { MessageStatus, MessageType } from '../models/Message';
+import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
+
 import GatewayRepository from '../repositories/GatewayRepository';
+import Message, { MessageStatus, MessageType } from '../models/Message';
+import MessageRepository from '../repositories/MessageRepository';
 
 import assert = require('assert');
 
 /**
  * This class handles the updates from ConfirmDepositIntents entity.
  */
-export default class ConfirmDepositIntentsHandler {
+export default class ConfirmDepositIntentsHandler extends ContractEntityHandler {
   /* Instance of message repository. */
   private messageRepository: MessageRepository;
 
@@ -38,6 +40,8 @@ export default class ConfirmDepositIntentsHandler {
     messageRepository: MessageRepository,
     gatewayRepository: GatewayRepository,
   ) {
+    super();
+
     this.gatewayRepository = gatewayRepository;
     this.messageRepository = messageRepository;
   }

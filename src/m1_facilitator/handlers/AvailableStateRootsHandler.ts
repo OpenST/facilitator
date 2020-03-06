@@ -13,9 +13,13 @@
 // limitations under the License.
 
 import BigNumber from 'bignumber.js';
-import AnchorRepository from '../repositories/AnchorRepository';
+
+import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
 import Utils from '../../common/Utils';
+
+import AnchorRepository from '../repositories/AnchorRepository';
 import Anchor from '../models/Anchor';
+
 
 /** Represents record of AvailableStateRootsEntity. */
 interface AvailableStateRootsEntityInterface {
@@ -26,7 +30,7 @@ interface AvailableStateRootsEntityInterface {
 /**
  * This class handles the updates from AvailableStateRoots entity.
  */
-export default class AvailableStateRootsHandler {
+export default class AvailableStateRootsHandler extends ContractEntityHandler {
   /* Instance of anchor repository. */
   private anchorRepository: AnchorRepository;
 
@@ -36,6 +40,8 @@ export default class AvailableStateRootsHandler {
    * @param anchorRepository Instance of Anchor repository.
    */
   public constructor(anchorRepository: AnchorRepository) {
+    super();
+
     this.anchorRepository = anchorRepository;
   }
 

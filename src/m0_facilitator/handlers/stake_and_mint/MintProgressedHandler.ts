@@ -27,7 +27,7 @@ import Utils from '../../Utils';
 /**
  * This class handles mint progress transactions.
  */
-export default class MintProgressedHandler extends ContractEntityHandler<Message> {
+export default class MintProgressedHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -42,12 +42,10 @@ export default class MintProgressedHandler extends ContractEntityHandler<Message
    * This method parses progress mint transaction and returns message model object.
    *
    * @param transactions Transaction objects.
-   *
-   * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting mint progress records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling mint progress records: ${transactions.length}`);
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -79,7 +77,5 @@ export default class MintProgressedHandler extends ContractEntityHandler<Message
     }
 
     await Promise.all(savePromises);
-
-    return models;
   }
 }

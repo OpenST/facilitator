@@ -28,7 +28,7 @@ import Utils from '../../Utils';
 /**
  * This class handles StakeIntentConfirmed event.
  */
-export default class StakeIntentConfirmedHandler extends ContractEntityHandler<Message> {
+export default class StakeIntentConfirmedHandler extends ContractEntityHandler {
   private messageRepository: MessageRepository;
 
   /**
@@ -44,9 +44,9 @@ export default class StakeIntentConfirmedHandler extends ContractEntityHandler<M
    * @param transactions Transaction objects.
    * @return Array of instances of Message objects.
    */
-  public async persist(transactions: any[]): Promise<Message[]> {
+  public async handle(transactions: any[]): Promise<void> {
     let message: Message | null;
-    Logger.debug(`Persisting Stake intent confirm records: ${transactions.length}`);
+    Logger.debug(`Handling Stake intent confirm records: ${transactions.length}`);
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         const messageHash = transaction._messageHash;
@@ -77,6 +77,5 @@ export default class StakeIntentConfirmedHandler extends ContractEntityHandler<M
 
     await Promise.all(savePromises);
     Logger.debug('Messages saved');
-    return models;
   }
 }

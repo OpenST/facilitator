@@ -30,7 +30,7 @@ import Utils from '../../Utils';
 /**
  * This class handles redeem intent declared transactions.
  */
-export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<Message> {
+export default class RedeemIntentDeclaredHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -55,8 +55,8 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
    * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting Redeem intent declared records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling Redeem intent declared records: ${transactions.length}`);
     const redeemRequestModels: MessageTransferRequest[] = [];
     const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
@@ -111,7 +111,5 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
     }
     await Promise.all(saveMessagesPromises);
     Logger.debug('Messages saved');
-
-    return messageModels;
   }
 }

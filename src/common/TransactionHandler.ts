@@ -26,7 +26,7 @@ import TransactionHandlerInterface from './TransactionHandlerInterface';
  * on which handler to invoke when bulk transactions arrive.
  */
 export default class TransactionHandler implements TransactionHandlerInterface {
-  private readonly handlers: Record<string, ContractEntityHandler<any>>;
+  private readonly handlers: Record<string, ContractEntityHandler>;
 
   private readonly repos: RepositoriesInterface;
 
@@ -37,7 +37,7 @@ export default class TransactionHandler implements TransactionHandlerInterface {
    * @param repos Container holding all repositories
    */
   public constructor(
-    handlers: Record<string, ContractEntityHandler<any>>,
+    handlers: Record<string, ContractEntityHandler>,
     repos: RepositoriesInterface,
   ) {
     this.handlers = handlers;
@@ -53,7 +53,7 @@ export default class TransactionHandler implements TransactionHandlerInterface {
    */
   public async handle(bulkTransactions: any): Promise<void> {
     Logger.debug(`BulkTransactions records: ${JSON.stringify(bulkTransactions)}`);
-    const persistPromises = Object.keys(bulkTransactions).map(
+    const handlePromises = Object.keys(bulkTransactions).map(
       async (transactionKind): Promise<any> => {
         Logger.debug(`Handling records of kind ${transactionKind}`);
         const handler = this.handlers[transactionKind];
@@ -65,13 +65,13 @@ export default class TransactionHandler implements TransactionHandlerInterface {
         }
         const transactions = bulkTransactions[transactionKind];
         if (transactions.length > 0) {
-          return handler.persist(transactions);
+          return handler.handle(transactions);
         }
         return Promise.resolve();
       },
     );
 
-    await Promise.all(persistPromises);
+    await Promise.all(handlePromises);
 
     await this.repos.notify();
   }

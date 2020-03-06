@@ -27,7 +27,7 @@ import Utils from '../../Utils';
 /**
  * This class handles unstake progress transactions.
  */
-export default class UnstakeProgressedHandler extends ContractEntityHandler<Message> {
+export default class UnstakeProgressedHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -39,15 +39,13 @@ export default class UnstakeProgressedHandler extends ContractEntityHandler<Mess
   }
 
   /**
-   * This method parses progress unstake transaction and returns message model object.
+   * This method parses progress unstake transaction.
    *
    * @param transactions Transaction objects.
-   *
-   * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting unstake progress records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling unstake progress records: ${transactions.length}`);
     const messages: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -86,7 +84,5 @@ export default class UnstakeProgressedHandler extends ContractEntityHandler<Mess
     }
 
     await Promise.all(savePromises);
-
-    return messages;
   }
 }

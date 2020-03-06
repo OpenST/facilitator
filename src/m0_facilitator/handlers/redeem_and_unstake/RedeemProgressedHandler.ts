@@ -28,7 +28,7 @@ import Utils from '../../Utils';
 /**
  * This class handles redeem progress transactions.
  */
-export default class RedeemProgressedHandler extends ContractEntityHandler<Message> {
+export default class RedeemProgressedHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -47,8 +47,8 @@ export default class RedeemProgressedHandler extends ContractEntityHandler<Messa
    * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting Redeem progress records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling Redeem progress records: ${transactions.length}`);
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -83,6 +83,5 @@ export default class RedeemProgressedHandler extends ContractEntityHandler<Messa
 
     await Promise.all(savePromises);
     Logger.debug('Messages saved');
-    return models;
   }
 }

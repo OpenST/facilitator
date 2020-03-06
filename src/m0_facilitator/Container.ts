@@ -15,11 +15,11 @@
 // ----------------------------------------------------------------------------
 
 
-import Facilitator from './Facilitator';
 import Subscriptions from '../common/subscriptions/Subscriptions';
 import TransactionHandler from '../common/TransactionHandler';
 
 import { Config } from './Config/Config';
+import Facilitator from './Facilitator';
 import fetchQueries from './GraphQueries/FetchQueries';
 import Handlers from './handlers/Handlers';
 import Repositories from './repositories/Repositories';

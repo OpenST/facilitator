@@ -22,7 +22,6 @@ import * as Web3Utils from 'web3-utils';
 import StakeRequestedHandler from '../../../../../src/m0_facilitator/handlers/stake_and_mint/StakeRequestedHandler';
 import MessageTransferRequest from '../../../../../src/m0_facilitator/models/MessageTransferRequest';
 import MessageTransferRequestRepository, { RequestType } from '../../../../../src/m0_facilitator/repositories/MessageTransferRequestRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 import Repositories from '../../../../../src/m0_facilitator/repositories/Repositories';
 import Message from '../../../../../src/m0_facilitator/models/Message';
@@ -33,8 +32,8 @@ import {
 } from '../../../../../src/m0_facilitator/repositories/MessageRepository';
 import Util from '../../../repositories/MessageTransferRequestRepository/util';
 
-describe('StakeRequestedHandler.persist()', (): void => {
-  it('should persist successfully when stakeRequesteds is received first time for'
+describe('StakeRequestedHandler.handle()', (): void => {
+  it('should handle successfully when stakeRequesteds is received first time for'
     + ' requestHash', async (): Promise<void> => {
     const gatewayAddress = '0x0000000000000000000000000000000000000002';
     const transactions = [{
@@ -60,7 +59,7 @@ describe('StakeRequestedHandler.persist()', (): void => {
       gatewayAddress,
     );
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const stakeRequest = new MessageTransferRequest(
       transactions[0].stakeRequestHash,
@@ -77,12 +76,6 @@ describe('StakeRequestedHandler.persist()', (): void => {
       null,
     );
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-    assert.deepStrictEqual(models[0], stakeRequest);
     SpyAssert.assert(saveStub, 1, [[stakeRequest]]);
     sinon.restore();
   });
@@ -159,31 +152,9 @@ describe('StakeRequestedHandler.persist()', (): void => {
       blockNumber: '11',
     }];
 
-    const stakeRequestWithNullMessageHash = new MessageTransferRequest(
-      transactions2[0].stakeRequestHash,
-      RequestType.Stake,
-      new BigNumber(transactions2[0].blockNumber),
-      new BigNumber(transactions2[0].amount),
-      Web3Utils.toChecksumAddress(transactions2[0].beneficiary),
-      new BigNumber(transactions2[0].gasPrice),
-      new BigNumber(transactions2[0].gasLimit),
-      new BigNumber(transactions2[0].nonce),
-      Web3Utils.toChecksumAddress(transactions2[0].gateway),
-      Web3Utils.toChecksumAddress(transactions2[0].staker),
-      Web3Utils.toChecksumAddress(transactions2[0].stakerProxy),
-      null, // Message hash should be null.
-    );
-
-    const models2 = await handler.persist(transactions2);
-
-    assert.equal(
-      models2.length,
-      transactions2.length,
-      'Number of models must be equal to transactions',
-    );
+    await handler.handle(transactions2);
 
     Util.checkInputAgainstOutput(stakeRequest, models1);
-    Util.checkInputAgainstOutput(stakeRequestWithNullMessageHash, models2[0]);
 
     sinon.restore();
   });

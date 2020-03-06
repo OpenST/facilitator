@@ -28,7 +28,7 @@ import Utils from '../../Utils';
 /**
  * This class handles stake progress transactions.
  */
-export default class StakeProgressedHandler extends ContractEntityHandler<Message> {
+export default class StakeProgressedHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -47,8 +47,8 @@ export default class StakeProgressedHandler extends ContractEntityHandler<Messag
    * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting Stake progress records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling Stake progress records: ${transactions.length}`);
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -83,6 +83,5 @@ export default class StakeProgressedHandler extends ContractEntityHandler<Messag
 
     await Promise.all(savePromises);
     Logger.debug('Messages saved');
-    return models;
   }
 }
