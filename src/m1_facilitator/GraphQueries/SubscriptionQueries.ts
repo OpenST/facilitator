@@ -13,10 +13,84 @@
 // limitations under the License.
 
 
+const availableStateRootSubscriptionQuery = 'subscription{availableStateRoots(orderBy: uts,'
+  + ' orderDirection:'
+  + ' desc, first: 1){'
++ '   id'
++ '   contractAddress '
++ '   uts '
++ '  }'
++ '}';
+
+const provenGatewaysSubscriptionQuery = 'subscription{provenGateways(orderBy: uts, orderDirection: desc, first: 1){'
++ '   id'
++ '   contractAddress '
++ '   uts '
++ '  }'
++ '}';
+
+
 const SubscriptionQueries: Record<string, Record<string, string>> = {
   origin: {
+
+    // Deposit entities in origin
+
+    declaredDepositIntents: 'subscription{declaredDepositIntents('
+    + ' orderBy: uts, orderDirection: desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
+    // Withdraw entities
+
+    availableStateRoots: availableStateRootSubscriptionQuery,
+
+    provenGateways: provenGatewaysSubscriptionQuery,
+
+    confirmedWithdrawIntents: 'subscription{confirmedWithdrawIntents(orderBy: uts, orderDirection:'
+    + ' desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
   },
   auxiliary: {
+
+    // Deposit entities in auxiliary
+
+    confirmedDepositIntents: 'subscription{confirmedDepositIntents('
+    + ' orderBy: uts, orderDirection: desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
+    availableStateRoots: availableStateRootSubscriptionQuery,
+
+    provenGateways: provenGatewaysSubscriptionQuery,
+
+    createdUtilityTokens: 'subscription{createdUtilityTokens(orderBy: uts, orderDirection:'
+    + ' desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
+    // Withdraw entities
+
+    declaredWithdrawIntents: 'subscription{declaredWithdrawIntents('
+    + ' orderBy: uts, orderDirection: desc, first: 1){'
+    + '   id'
+    + '   contractAddress '
+    + '   uts '
+    + '  }'
+    + '}',
+
   },
 };
 
