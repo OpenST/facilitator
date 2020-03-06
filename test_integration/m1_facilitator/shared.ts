@@ -43,6 +43,19 @@ class Contract {
   public erc20Cogateway: Gen0ERC20Cogateway;
 
   public utilityTokenMasterCopy: UtilityToken;
+
+  public constructor() {
+    // eslint-disable-next-line no-object-literal-type-assertion
+    this.originAnchor = {} as Anchor;
+    // eslint-disable-next-line no-object-literal-type-assertion
+    this.auxiliaryAnchor = {} as Anchor;
+    // eslint-disable-next-line no-object-literal-type-assertion
+    this.erc20Gateway = {} as ERC20Gateway;
+    // eslint-disable-next-line no-object-literal-type-assertion
+    this.erc20Cogateway = {} as Gen0ERC20Cogateway;
+    // eslint-disable-next-line no-object-literal-type-assertion
+    this.utilityTokenMasterCopy = {} as UtilityToken;
+  }
 }
 
 export class Shared {

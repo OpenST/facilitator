@@ -34,7 +34,7 @@ export default class Utils {
     const deploymentTransaction = new web3.eth.Contract(
       contractABI,
     ).deploy({
-      arguments: [],
+      arguments: args,
       data: bin,
     });
 
