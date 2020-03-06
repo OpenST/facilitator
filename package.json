@@ -31,7 +31,9 @@
     "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/create_staker_redeemer.ts",
     "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_stake_testnet.ts",
     "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_redeem_testnet.ts",
-    "test:subgraph": "bash ./subgraph/verify-subgraph.sh origin && bash ./subgraph/verify-subgraph.sh auxiliary"
+    "test:subgraph": "bash ./subgraph/verify-subgraph.sh origin && bash ./subgraph/verify-subgraph.sh auxiliary",
+    "deploy:subgraph:origin": "ts-node subgraph/src/DeployOriginSubgraph.ts",
+    "deploy:subgraph:auxiliary": "ts-node subgraph/src/DeployAuxiliarySubgraph.ts"
   },
   "repository": {
     "type": "git",
@@ -58,6 +60,7 @@
     "@openst/mosaic-chains": "0.1.0-alpha.9",
     "@openst/mosaic-contracts": "0.12.0",
     "@openst/mosaic-proof": "0.1.0-alpha.1",
+    "@types/mustache": "^4.0.1",
     "Mosaic": "file:./mosaic-1/Mosaic-0.1.0.tgz",
     "apollo-cache-inmemory": "1.6.2",
     "apollo-client": "2.6.0",
@@ -75,6 +78,7 @@
     "jq": "1.7.2",
     "js-yaml": "3.13.1",
     "jsonschema": "1.2.4",
+    "mustache": "3.0.1",
     "node-fetch": "2.6.0",
     "sequelize": "6.0.0-beta.1",
     "sqlite3": "4.0.8",
@@ -84,7 +88,8 @@
     "web3-eth-accounts": "1.0.0-beta.55",
     "web3-utils": "1.0.0-beta.55",
     "winston": "3.2.1",
-    "ws": "7.0.0"
+    "ws": "7.0.0",
+    "@graphprotocol/graph-cli": "0.12.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "0.1.3",
