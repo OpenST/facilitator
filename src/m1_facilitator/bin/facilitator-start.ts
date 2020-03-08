@@ -43,11 +43,9 @@ commander
       }): Promise<void> => {
       try {
         const manifest = Manifest.fromFile(options.manifest);
-		let repositories;
-        {
-          facilitator,
-          repositories,
-        } = await Container.create(manifest);
+        const assets = await Container.create(manifest);
+        const { repositories } = assets;
+        facilitator = assets.facilitator;
 
         const seedDataInitializer = new SeedDataInitializer(repositories);
         const isSeedDataValid = await seedDataInitializer.isValidSeedData(
@@ -57,7 +55,7 @@ commander
           throw new Error('Seed data validation has failed.');
         }
 
-         await facilitator.start();
+        await facilitator.start();
       } catch (e) {
         Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
       }
