@@ -118,10 +118,10 @@ export default class Repositories implements RepositoriesInterface {
     this.withdrawIntentRepository = new WithdrawIntentRepository(initOptions);
     this.erc20GatewayTokenPairRepository = new ERC20GatewayTokenPairRepository(initOptions);
     this.originTransactionRepository = new TransactionRepository(
-      initOptions, 'OriginTransaction', 'origin_transaction',
+      initOptions, 'OriginTransaction', 'origin_transactions',
     );
     this.auxiliaryTransactionRepository = new TransactionRepository(
-      initOptions, 'AuxiliaryTransaction', 'auxiliary_transaction',
+      initOptions, 'AuxiliaryTransaction', 'auxiliary_transactions',
     );
   }
 }
