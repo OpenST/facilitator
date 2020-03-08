@@ -28,7 +28,21 @@ import subscriptionQueries from './GraphQueries/SubscriptionQueries';
 import TransactionExecutor from './lib/TransactionExecutor';
 
 
+/**
+ * Container class instantiates all components to enable the facilitator.
+ * The main components are: repositories, transaction handlers, services,
+ * subgraph subscription clients (for origin and auxiliary chains) and
+ * transaction executors (for origin and auxiliary chains).
+ */
 export default class Container {
+  /**
+   * create() functions instantiates all main components, creates facilitator
+   * object and returns it.
+   *
+   * @param manifest The manifest file of facilitator.
+   *
+   * @return A faciliator object and repositories container object.
+   */
   public static async create(
     manifest: Manifest,
   ): Promise<{ facilitator: Facilitator; repositories: Repositories} > {
