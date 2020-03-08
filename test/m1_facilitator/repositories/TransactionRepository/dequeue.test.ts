@@ -60,14 +60,14 @@ describe('TransactionRepository::dequeue', (): void => {
 
   it('should successfully dequeue', async (): Promise<void> => {
     expectedTransaction.transactionHash = undefined;
-    await repos.transactionRepository.save(expectedTransaction);
-    const actualTransaction = await repos.transactionRepository.dequeue();
+    await repos.originTransactionRepository.save(expectedTransaction);
+    const actualTransaction = await repos.originTransactionRepository.dequeue();
     Util.assertTransactionAttributes(actualTransaction as Transaction, expectedTransaction);
   });
 
   it('should not dequeue if no Transaction with `undefined` transaction hash exists', async (): Promise<void> => {
-    await repos.transactionRepository.save(expectedTransaction);
-    const actualTransaction = await repos.transactionRepository.dequeue();
+    await repos.originTransactionRepository.save(expectedTransaction);
+    const actualTransaction = await repos.originTransactionRepository.dequeue();
     assert.strictEqual(
       actualTransaction,
       null,

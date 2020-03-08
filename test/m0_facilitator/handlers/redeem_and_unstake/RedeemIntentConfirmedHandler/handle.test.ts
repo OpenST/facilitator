@@ -23,11 +23,10 @@ import Message from '../../../../../src/m0_facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0_facilitator/repositories/MessageRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 import StubData from '../../../../test_utils/StubData';
 
-describe('RedeemIntentConfirmedHandler.persist()', (): void => {
+describe('RedeemIntentConfirmedHandler.handle()', (): void => {
   let transactions: any = [];
   let saveStub: any;
   let existingMessageRecord: Message;
@@ -71,36 +70,22 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     outputMessage.direction = direction;
   });
 
-  it('should persist successfully when target status is undeclared', async (): Promise<void> => {
+  it('should handle successfully when target status is undeclared', async (): Promise<void> => {
     existingMessageRecord.targetStatus = MessageStatus.Undeclared;
 
     const handler = new RedeemntentConfirmedHandler(sinonMessageRepositoryMock);
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-
-    assert.deepStrictEqual(models[0], outputMessage);
     SpyAssert.assert(sinonMessageRepositoryMock.save, 1, [[outputMessage]]);
   });
 
-  it('should persist successfully when target status is undefined', async (): Promise<void> => {
+  it('should handle successfully when target status is undefined', async (): Promise<void> => {
     existingMessageRecord.targetStatus = undefined as unknown as MessageStatus;
 
     const handler = new RedeemntentConfirmedHandler(sinonMessageRepositoryMock);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
-
-    assert.deepStrictEqual(models[0], outputMessage);
     SpyAssert.assert(sinonMessageRepositoryMock.save, 1, [[outputMessage]]);
   });
 
@@ -113,7 +98,7 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
     });
     const handler = new RedeemntentConfirmedHandler(mockMessageRepo as any);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const outputMessage = new Message(
       transactions[0]._messageHash,
@@ -133,13 +118,6 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
       undefined,
     );
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transaction',
-    );
-
-    assert.deepStrictEqual(models[0], outputMessage);
     SpyAssert.assert(mockMessageRepo.save, 1, [[outputMessage]]);
   });
 
@@ -149,15 +127,9 @@ describe('RedeemIntentConfirmedHandler.persist()', (): void => {
 
       const handler = new RedeemntentConfirmedHandler(sinonMessageRepositoryMock);
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       outputMessage.targetStatus = existingMessageRecord.targetStatus;
-      assert.deepStrictEqual(models[0], outputMessage);
       SpyAssert.assert(sinonMessageRepositoryMock.save, 1, [[outputMessage]]);
     });
 });

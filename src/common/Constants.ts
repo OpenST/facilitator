@@ -12,5 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/* eslint-disable import/prefer-default-export */
 
+/**
+ * Defines an interval in which the facilitator re-subscribes to the origin
+ * and auxiliary subgraph nodes.
+ */
 export const SUBSCRIPTION_RESTART_DURATION = 10 * 60 * 1000;

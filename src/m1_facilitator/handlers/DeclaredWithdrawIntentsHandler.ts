@@ -14,12 +14,13 @@
 
 import BigNumber from 'bignumber.js';
 
-import WithdrawIntentRepository
-  from '../repositories/WithdrawIntentRepository';
-import MessageRepository from '../repositories/MessageRepository';
-import Message, { MessageStatus, MessageType } from '../models/Message';
-import WithdrawIntent from '../models/WithdrawIntent';
+import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
+
 import GatewayRepository from '../repositories/GatewayRepository';
+import Message, { MessageStatus, MessageType } from '../models/Message';
+import MessageRepository from '../repositories/MessageRepository';
+import WithdrawIntent from '../models/WithdrawIntent';
+import WithdrawIntentRepository from '../repositories/WithdrawIntentRepository';
 
 /** Represents record of DeclaredWithdrawIntentsEntity. */
 interface DeclaredWithdrawIntentsEntityInterface {
@@ -37,7 +38,7 @@ interface DeclaredWithdrawIntentsEntityInterface {
 /**
  * This class handles the updates from DeclaredWithdrawIntents.
  */
-export default class DeclaredWithdrawIntentsHandler {
+export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandler {
   /* Withdraw intent repository. */
   private withdrawIntentRepository: WithdrawIntentRepository;
 
@@ -58,6 +59,8 @@ export default class DeclaredWithdrawIntentsHandler {
     messageRepository: MessageRepository,
     gatewayRepository: GatewayRepository,
   ) {
+    super();
+
     this.gatewayRepository = gatewayRepository;
     this.withdrawIntentRepository = withdrawIntentRepository;
     this.messageRepository = messageRepository;

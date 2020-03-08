@@ -1,4 +1,4 @@
-// Copyright 2019 OpenST Ltd.
+// Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,15 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 /* eslint-disable import/prefer-default-export */
 
-/** This will be thrown when handler implementation not found. */
+/**
+ * This exception is thrown if a handler implementation for the given
+ * transaction kind was not found while handling transactions in the
+ * TransactionHandler module.
+ */
 export class HandlerNotFoundException extends Error {
-  public constructor(message: string) {
+  public constructor(transactionKind: string) {
+    const message = `Handler implementation for a '${transactionKind}' `
+    + 'transaction kind was not found.';
+
     super(message);
+
     Object.setPrototypeOf(this, HandlerNotFoundException.prototype);
     this.name = 'HandlerNotFoundException';
   }

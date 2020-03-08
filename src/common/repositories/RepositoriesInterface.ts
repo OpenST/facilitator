@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/** Defines an abstract interface to repositories container. */
 export default interface RepositoriesInterface {
+
+  /**
+   * The notify() function notifies all registered listeners of repositories
+   * within repositories container.
+   */
   notify(): Promise<void[][]>;
-};
+}

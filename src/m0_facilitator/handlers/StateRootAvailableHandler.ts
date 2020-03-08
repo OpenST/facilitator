@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
 
@@ -20,14 +18,13 @@ import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
 import Logger from '../../common/Logger';
 
 import { AuxiliaryChainRecordNotFoundException } from '../Exception';
-import AuxiliaryChain from '../models/AuxiliaryChain';
 import AuxiliaryChainRepository from '../repositories/AuxiliaryChainRepository';
 import Utils from '../Utils';
 
 /**
  * This class handles Anchor event
  */
-export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain> {
+export default class AnchorHandler extends ContractEntityHandler {
   private auxiliaryChainRepository: AuxiliaryChainRepository;
 
   private auxiliaryChainID: number;
@@ -47,13 +44,15 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
    *
    * @param transactions Bulk transactions.
    */
-  public async persist(transactions: any[]): Promise<AuxiliaryChain[]> {
-    Logger.debug(`Started persisting Anchor records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Started handling Anchor records: ${transactions.length}`);
     const chainRecord = await this.auxiliaryChainRepository.get(this.auxiliaryChainID);
     let hasChanged = false;
     if (chainRecord === null) {
       Logger.error(`Auxiliary chain record not found for chain ${this.auxiliaryChainID}`);
-      throw new AuxiliaryChainRecordNotFoundException(`Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`);
+      throw new AuxiliaryChainRecordNotFoundException(
+        `Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`,
+      );
     }
     let anchorBlockHeight: BigNumber;
     let anchorAddress: string;
@@ -83,17 +82,15 @@ export default class AnchorHandler extends ContractEntityHandler<AuxiliaryChain>
     Logger.debug(`Change in latest anchor state root is?:  ${hasChanged}`);
     // No change in block height of interested anchor.
     if (!hasChanged) {
-      return [];
+      return;
     }
     if (isAuxChainEntity) {
       chainRecord.lastOriginBlockHeight = anchorBlockHeight;
-      Logger.debug(`Persisting lastOriginBlockHeight to ${anchorBlockHeight}`);
+      Logger.debug(`Handling lastOriginBlockHeight to ${anchorBlockHeight}`);
     } else {
       chainRecord.lastAuxiliaryBlockHeight = anchorBlockHeight;
-      Logger.debug(`Persisting lastAuxiliaryBlockHeight to ${anchorBlockHeight}`);
+      Logger.debug(`Handling lastAuxiliaryBlockHeight to ${anchorBlockHeight}`);
     }
     await this.auxiliaryChainRepository.save(chainRecord);
-    // This is returned in the case when higher latest anchored block height is received.
-    return [chainRecord];
   }
 }

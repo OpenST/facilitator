@@ -56,7 +56,7 @@ describe('TransactionRepository::enqueue', (): void => {
       createdAt,
       updatedAt,
     );
-    const actualTransaction = await repos.transactionRepository.save(expectedTransaction);
+    const actualTransaction = await repos.originTransactionRepository.save(expectedTransaction);
     Util.assertTransactionAttributes(actualTransaction, actualTransaction);
   });
 
@@ -73,11 +73,11 @@ describe('TransactionRepository::enqueue', (): void => {
       createdAt,
       updatedAt,
     );
-    let actualTransaction = await repos.transactionRepository.save(expectedTransaction);
+    let actualTransaction = await repos.originTransactionRepository.save(expectedTransaction);
 
     expectedTransaction.nonce = new BigNumber(2);
 
-    actualTransaction = await repos.transactionRepository.save(expectedTransaction);
+    actualTransaction = await repos.originTransactionRepository.save(expectedTransaction);
     Util.assertTransactionAttributes(actualTransaction, actualTransaction);
   });
 });

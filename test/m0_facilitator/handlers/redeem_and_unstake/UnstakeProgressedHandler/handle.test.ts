@@ -22,10 +22,9 @@ import Message from '../../../../../src/m0_facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0_facilitator/repositories/MessageRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 
-describe('ProgressUnstake.persist()', () => {
+describe('ProgressUnstake.handle()', (): void => {
   const transactions = [{
     _messageHash: web3utils.keccak256('1'),
     _redeemer: '0x0000000000000000000000000000000000000001',
@@ -39,7 +38,7 @@ describe('ProgressUnstake.persist()', () => {
     blockNumber: '10',
   }];
 
-  it('should change message state to progressed', async () => {
+  it('should change message state to progressed', async (): Promise<void> => {
     const save = sinon.stub();
 
     const mockedRepository = sinon.createStubInstance(MessageRepository,
@@ -49,7 +48,7 @@ describe('ProgressUnstake.persist()', () => {
       });
     const handler = new UnstakeProgressedHandler(mockedRepository as any);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
@@ -61,12 +60,11 @@ describe('ProgressUnstake.persist()', () => {
     expectedModel.gatewayAddress = transactions[0].contractAddress;
     expectedModel.secret = transactions[0]._unlockSecret;
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
     SpyAssert.assert(mockedRepository.save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message record state if current status is already progressed', async () => {
+  it('should not change message record state if current status is already progressed', async (): Promise<void> => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(
@@ -82,7 +80,7 @@ describe('ProgressUnstake.persist()', () => {
       });
     const handler = new UnstakeProgressedHandler(mockedRepository as any);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
@@ -92,12 +90,11 @@ describe('ProgressUnstake.persist()', () => {
     expectedModel.targetStatus = MessageStatus.Progressed;
     expectedModel.secret = transactions[0]._unlockSecret;
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
     SpyAssert.assert(mockedRepository.save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });
 
-  it('should not change message record state if current status is not Declared', async () => {
+  it('should not change message record state if current status is not Declared', async (): Promise<void> => {
     const save = sinon.stub();
 
     const existingMessageWithProgressStatus = new Message(
@@ -113,7 +110,7 @@ describe('ProgressUnstake.persist()', () => {
       });
     const handler = new UnstakeProgressedHandler(mockedRepository as any);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
@@ -123,7 +120,6 @@ describe('ProgressUnstake.persist()', () => {
     expectedModel.targetStatus = existingMessageWithProgressStatus.targetStatus;
     expectedModel.secret = transactions[0]._unlockSecret;
 
-    assert.equal(models.length, transactions.length, 'Number of models must be equal to transactions');
     SpyAssert.assert(mockedRepository.save, 1, [[expectedModel]]);
     SpyAssert.assert(mockedRepository.get, 1, [[transactions[0]._messageHash]]);
   });

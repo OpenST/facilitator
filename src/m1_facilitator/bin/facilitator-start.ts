@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import assert from 'assert';
 import commander from 'commander';
 
 import Container from '../Container';
@@ -44,12 +43,21 @@ commander
       }): Promise<void> => {
       try {
         const manifest = Manifest.fromFile(options.manifest);
-        const containerAssets = await Container.create(manifest);
-        const seedDataInitializer = new SeedDataInitializer(containerAssets.repositories);
-        assert.ok(seedDataInitializer.isValidSeedData(
+		let repositories;
+        {
+          facilitator,
+          repositories,
+        } = await Container.create(manifest);
+
+        const seedDataInitializer = new SeedDataInitializer(repositories);
+        const isSeedDataValid = await seedDataInitializer.isValidSeedData(
           manifest.originContractAddresses.erc20_gateway,
-        ));
-        await containerAssets.facilitator.start();
+        );
+        if (!isSeedDataValid) {
+          throw new Error('Seed data validation has failed.');
+        }
+
+         await facilitator.start();
       } catch (e) {
         Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
       }

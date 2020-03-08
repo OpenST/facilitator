@@ -11,15 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
-import Facilitator from './Facilitator';
 import Subscriptions from '../common/subscriptions/Subscriptions';
 import TransactionHandler from '../common/TransactionHandler';
 
 import { Config } from './Config/Config';
+import Facilitator from './Facilitator';
 import fetchQueries from './GraphQueries/FetchQueries';
 import Handlers from './handlers/Handlers';
 import Repositories from './repositories/Repositories';

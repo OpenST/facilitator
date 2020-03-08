@@ -52,9 +52,9 @@ describe('TransactionHandler.handle()', (): void => {
       gatewayAddress,
     );
 
-    const persistSpy = sinon.replace(
+    const handleSpy = sinon.replace(
       stakeRequestedHandler,
-      'persist',
+      'handle',
       sinon.fake.resolves([aStakeRequest]),
     );
 
@@ -75,7 +75,7 @@ describe('TransactionHandler.handle()', (): void => {
 
     await transactionHandler.handle(bulkTransactions);
 
-    SpyAssert.assert(persistSpy, 1, [[bulkTransactions.stakeRequesteds]]);
+    SpyAssert.assert(handleSpy, 1, [[bulkTransactions.stakeRequesteds]]);
     SpyAssert.assert(reposNotifySpy, 1, [[]]);
   });
 

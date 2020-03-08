@@ -55,7 +55,7 @@ class TransactionModel extends Model {
 export default class TransactionRepository extends Subject<Transaction> {
   /* Public Functions */
 
-  public constructor(initOptions: InitOptions) {
+  public constructor(initOptions: InitOptions, modelName: string, tableName: string) {
     super();
 
     TransactionModel.init(
@@ -97,8 +97,8 @@ export default class TransactionRepository extends Subject<Transaction> {
       },
       {
         ...initOptions,
-        modelName: 'Transaction',
-        tableName: 'transactions',
+        modelName,
+        tableName,
       },
     );
   }

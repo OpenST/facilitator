@@ -24,7 +24,6 @@ import Message from '../../../../../src/m0_facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0_facilitator/repositories/MessageRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 import {
   default as MessageTransferRequestRepository,
@@ -32,7 +31,7 @@ import {
 } from '../../../../../src/m0_facilitator/repositories/MessageTransferRequestRepository';
 import StubData from '../../../../test_utils/StubData';
 
-describe('RedeemIntentDeclaredHandler.persist()', (): void => {
+describe('RedeemIntentDeclaredHandler.handle()', (): void => {
   const transactions = [{
     _messageHash: Web3Utils.keccak256('1'),
     _redeemer: '0x0000000000000000000000000000000000000001',
@@ -73,7 +72,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
@@ -86,11 +85,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       expectedModel.gatewayAddress = transactions[0].contractAddress;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(
         mockedMessageRepository.get,
@@ -125,7 +119,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
@@ -135,11 +129,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       expectedModel.sourceStatus = MessageStatus.Declared;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(
         mockedMessageRepository1.get,
@@ -182,7 +171,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(bulkTransactions);
+      await handler.handle(bulkTransactions);
 
       const expectedModel1 = new Message(
         bulkTransactions[0]._messageHash,
@@ -206,11 +195,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       expectedModel2.gatewayAddress = bulkTransactions[1].contractAddress;
       expectedModel2.sourceDeclarationBlockHeight = new BigNumber(bulkTransactions[1].blockNumber);
 
-      assert.equal(
-        models.length,
-        bulkTransactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 2, [[expectedModel1], [expectedModel2]]);
       SpyAssert.assert(
         mockedMessageRepository.get,
@@ -239,7 +223,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       mockedMessageTransferRequestRepository as any,
     );
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
     const expectedModel = new Message(
       transactions[0]._messageHash,
@@ -248,11 +232,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
     );
     expectedModel.sourceStatus = MessageStatus.Progressed;
 
-    assert.equal(
-      models.length,
-      transactions.length,
-      'Number of models must be equal to transactions',
-    );
     SpyAssert.assert(save, 1, [[expectedModel]]);
     SpyAssert.assert(
       mockedMessageRepository.get,
@@ -281,7 +260,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
@@ -290,11 +269,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       );
       expectedModel.sourceStatus = MessageStatus.Declared;
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(
         mockedMessageRepository.get,
@@ -330,7 +304,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const messageModels = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedMessageModel = new Message(
         transactions[0]._messageHash,
@@ -346,11 +320,6 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       );
 
       // Validate message models
-      assert.equal(
-        messageModels.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
       SpyAssert.assert(messageSave, 1, [[expectedMessageModel]]);
 
@@ -387,7 +356,7 @@ describe('RedeemIntentDeclaredHandler.persist()', (): void => {
       mockedMessageRepository as any,
       mockedMessageTransferRequestRepository as any,
     );
-    await handler.persist(transactions);
+    await handler.handle(transactions);
 
     SpyAssert.assert(
       mockedMessageTransferRequestRepository.getBySenderProxyNonce,

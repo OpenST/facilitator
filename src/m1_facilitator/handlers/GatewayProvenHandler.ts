@@ -16,9 +16,13 @@ import * as Web3Utils from 'web3-utils';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 
-import Gateway from '../models/Gateway';
-import GatewayRepository, { LastProvenBlockNumberIsNotStrictlyGrowingError } from '../repositories/GatewayRepository';
+import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
 import Logger from '../../common/Logger';
+
+import Gateway from '../models/Gateway';
+import GatewayRepository, {
+  LastProvenBlockNumberIsNotStrictlyGrowingError,
+} from '../repositories/GatewayRepository';
 
 
 /**
@@ -53,11 +57,13 @@ class GatewayProven {
 }
 
 /** GatewayProvenHandler class handles gateway-proven subgraph entities. */
-export default class GatewayProvenHandler {
+export default class GatewayProvenHandler extends ContractEntityHandler {
   private readonly gatewayRepository: GatewayRepository;
 
   /** Constructs GatewayProvenHandler from the specified arguments. */
   public constructor(gatewayRepository: GatewayRepository) {
+    super();
+
     this.gatewayRepository = gatewayRepository;
   }
 
