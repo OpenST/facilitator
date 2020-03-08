@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/** Defines an interface for transaction handler classes. */
 export default interface TransactionHandlerInterface {
+
+  /**
+   * The handle() function accepts transactions of different kinds
+   * and appropriately handles them.
+   */
   handle(bulkTransactions: any): Promise<void>;
 }
