@@ -26,8 +26,10 @@ export interface ServicesInterface {
   proveGatewayService: ProveGatewayService;
 }
 
+/** Creates M1 facilitator services and attach them to corresponding repositories. */
 export default class Services implements ServicesInterface {
   /* Storage */
+
   public readonly confirmDepositService: ConfirmDepositService;
 
   public readonly confirmWithdrawService: ConfirmWithdrawService;
@@ -81,6 +83,7 @@ export default class Services implements ServicesInterface {
 
 
   /* Private Functions */
+
   private constructor(
     confirmDepositService: ConfirmDepositService,
     confirmWithdrawService: ConfirmWithdrawService,
