@@ -11,14 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
-import Logger from '../Logger';
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
-import GraphClient from './GraphClient';
+import Logger from '../Logger';
 import Utils from '../Utils';
+
+import GraphClient from './GraphClient';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -34,8 +33,11 @@ export default class TransactionFetcher {
 
   /**
    * Constructor
+   *
    * @param graphClient Graph client object.
    * @param contractEntityRepository ContractEntityRepository.
+   * @param fetchQueries Graphql fetch queries to retrieve entity info
+   *                     from graph node graphql database.
    */
   public constructor(
     graphClient: GraphClient,
