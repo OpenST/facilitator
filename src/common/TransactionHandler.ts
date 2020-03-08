@@ -1,4 +1,4 @@
-// Copyright 2019 OpenST Ltd.
+// Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
 import { HandlerNotFoundException } from './Exception';
@@ -22,19 +20,28 @@ import RepositoriesInterface from './repositories/RepositoriesInterface';
 import TransactionHandlerInterface from './TransactionHandlerInterface';
 
 /**
- * This class knows about different kinds of handlers and it makes decision
- * on which handler to invoke when bulk transactions arrive.
+ * The class enables a bulk handling of different transaction kinds.
+ * During a instantiation, the class receives handlers mapped to different
+ * transaction kinds.
+ * TransactionHandler::handle() function handles bulk transactions of different
+ * kinds by calling corresponding handler's handle() function. Afterwards,
+ * Repositories.notify() function is called as handlers might persist
+ * transactions into different repositories.
  */
 export default class TransactionHandler implements TransactionHandlerInterface {
+  /** Storage */
   private readonly handlers: Record<string, ContractEntityHandler>;
 
   private readonly repos: RepositoriesInterface;
 
+
+  /* Special Functions */
+
   /**
-   * Constructor
+   * Constructs a transaction handler object from the given parameters.
    *
-   * @param handlers This is mapping of handler kind with specific handler instance.
-   * @param repos Container holding all repositories
+   * @param handlers Transaction handlers mapped to different kinds of transactions.
+   * @param repos Repositories container.
    */
   public constructor(
     handlers: Record<string, ContractEntityHandler>,
@@ -47,26 +54,32 @@ export default class TransactionHandler implements TransactionHandlerInterface {
   /**
    * This method accept bulkTransactions and handles them with specific handlers.
    *
-   * New handler can be registered in HandlerFactory class.
+   * The function receives bulk transactions of different kinds and
+   * calls corresponding (mapped) handler if any. Transactions are handled
+   * in parallel (no specific order).
    *
-   * @param bulkTransactions List of bulkTransactions.
+   * @throws HandlerNotFoundException if there is no handler mapped to a
+   *         transaction.
+   *
+   * @param bulkTransactions Bulk transactions of different kinds.
    */
   public async handle(bulkTransactions: any): Promise<void> {
-    Logger.debug(`BulkTransactions records: ${JSON.stringify(bulkTransactions)}`);
+    Logger.debug(`bulkTransactions records: ${JSON.stringify(bulkTransactions)}`);
+
     const handlePromises = Object.keys(bulkTransactions).map(
-      async (transactionKind): Promise<any> => {
+      async (transactionKind): Promise<void> => {
         Logger.debug(`Handling records of kind ${transactionKind}`);
+
         const handler = this.handlers[transactionKind];
-        if (typeof handler === 'undefined') {
-          Logger.error(`Contract entity handler not found for ${transactionKind}`);
-          throw new HandlerNotFoundException(
-            `Handler implementation not found for ${transactionKind}`,
-          );
+        if (handler === undefined) {
+          throw new HandlerNotFoundException(transactionKind);
         }
+
         const transactions = bulkTransactions[transactionKind];
         if (transactions.length > 0) {
-          return handler.handle(transactions);
+          return Promise.resolve(handler.handle(transactions));
         }
+
         return Promise.resolve();
       },
     );
