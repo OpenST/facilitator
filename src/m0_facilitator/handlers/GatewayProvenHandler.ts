@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
 import assert from 'assert';
@@ -27,8 +25,8 @@ import Utils from '../Utils';
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 /**
- * This class handles GatewayProven transactions and updates lastRemoteGatewayProvenBlockHeight
- * in Gateway model.
+ * This class handles GatewayProven transactions and updates
+ * lastRemoteGatewayProvenBlockHeight in Gateway model.
  */
 export default class GatewayProvenHandler extends ContractEntityHandler {
   private readonly GatewayRepository: GatewayRepository;
@@ -40,13 +38,11 @@ export default class GatewayProvenHandler extends ContractEntityHandler {
   }
 
   /**
-   * This method parses gatewayProven transactions and returns Gateway object.
+   * This method parses gatewayProven transactions.
    * It extracts gateway model with highest block height and updates proven
    * blockHeight in Gateway model.
    *
    * @param transactions Transaction objects.
-   *
-   * @return List of instances of Gateway objects.
    */
   public async handle(transactions: any[]): Promise<void> {
     Logger.debug(`Handling prove gateway records: ${transactions.length}`);
@@ -59,7 +55,8 @@ export default class GatewayProvenHandler extends ContractEntityHandler {
     const currentLastRemoteGatewayProvenBlockHeight = new BigNumber(transaction._blockHeight);
     if (gateway && gateway.lastRemoteGatewayProvenBlockHeight
       && gateway.lastRemoteGatewayProvenBlockHeight.lt(currentLastRemoteGatewayProvenBlockHeight)) {
-      Logger.debug(`Updating lastRemoteGatewayProvenBlockHeight to ${currentLastRemoteGatewayProvenBlockHeight}`);
+      Logger.debug('Updating lastRemoteGatewayProvenBlockHeight to '
+      + `${currentLastRemoteGatewayProvenBlockHeight}`);
       gateway.lastRemoteGatewayProvenBlockHeight = currentLastRemoteGatewayProvenBlockHeight;
       await this.GatewayRepository.save(gateway);
       Logger.debug(`Gateway:${gatewayAddress} lastRemoteGatewayProvenBlockHeight updated to ${
