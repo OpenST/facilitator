@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
 
@@ -52,7 +50,9 @@ export default class AnchorHandler extends ContractEntityHandler {
     let hasChanged = false;
     if (chainRecord === null) {
       Logger.error(`Auxiliary chain record not found for chain ${this.auxiliaryChainID}`);
-      throw new AuxiliaryChainRecordNotFoundException(`Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`);
+      throw new AuxiliaryChainRecordNotFoundException(
+        `Cannot find record for auxiliary chain id ${this.auxiliaryChainID}`,
+      );
     }
     let anchorBlockHeight: BigNumber;
     let anchorAddress: string;
