@@ -18,6 +18,9 @@ export default interface TransactionHandlerInterface {
   /**
    * The handle() function accepts transactions of different kinds
    * and appropriately handles them.
+   *
+   * @throws HandlerNotFoundException if there is no handler mapped to a
+   *         transaction.
    */
   handle(bulkTransactions: any): Promise<void>;
 }
