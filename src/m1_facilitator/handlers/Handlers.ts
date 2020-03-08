@@ -25,26 +25,7 @@ import DeclaredWithdrawIntentsHandler from './DeclaredWithdrawIntentsHandler';
 import GatewayProvenHandler from './GatewayProvenHandler';
 
 
-export default class Handlers implements Record<string, ContractEntityHandler> {
-  /* Storage */
-
-  [index: string]: ContractEntityHandler;
-
-  public readonly availableStateRoots: AvailableStateRootsHandler;
-
-  public readonly confirmedDepositIntents: ConfirmDepositIntentsHandler;
-
-  public readonly confirmedWithdrawIntents: ConfirmWithdrawIntentsHandler;
-
-  public readonly createdUtilityTokens: CreatedUtilityTokenHandler;
-
-  public readonly declaredDepositIntents: DeclaredDepositIntentsHandler;
-
-  public readonly declaredWithdrawIntents: DeclaredWithdrawIntentsHandler;
-
-  public readonly provenGateways: GatewayProvenHandler;
-
-
+export default class Handlers {
   /* Special Functions */
 
   /**
@@ -52,9 +33,9 @@ export default class Handlers implements Record<string, ContractEntityHandler> {
    *
    * @param repos Repository container object.
    *
-   * @return All supported kinds of transaction handlers.
+   * @return All supported kinds of transaction handlers mapped to entities.
    */
-  public static create(repos: Repositories): Handlers {
+  public static create(repos: Repositories): Record<string, ContractEntityHandler> {
     const availableStateRootsHandler = new AvailableStateRootsHandler(
       repos.anchorRepository,
     );
@@ -90,35 +71,14 @@ export default class Handlers implements Record<string, ContractEntityHandler> {
       repos.gatewayRepository,
     );
 
-    return new Handlers(
-      availableStateRootsHandler,
-      confirmDepositIntentsHandler,
-      confirmWithdrawIntentsHandler,
-      createdUtilityTokenHandler,
-      declaredDepositIntentsHandler,
-      declaredWithdrawIntentsHandler,
-      gatewayProvenHandler,
-    );
-  }
-
-
-  /* Private Functions */
-
-  private constructor(
-    availableStateRootsHandler: AvailableStateRootsHandler,
-    confirmDepositIntentsHandler: ConfirmDepositIntentsHandler,
-    confirmWithdrawIntentsHandler: ConfirmWithdrawIntentsHandler,
-    createdUtilityTokenHandler: CreatedUtilityTokenHandler,
-    declaredDepositIntentsHandler: DeclaredDepositIntentsHandler,
-    declaredWithdrawIntentsHandler: DeclaredWithdrawIntentsHandler,
-    gatewayProvenHandler: GatewayProvenHandler,
-  ) {
-    this.availableStateRoots = availableStateRootsHandler;
-    this.confirmedDepositIntents = confirmDepositIntentsHandler;
-    this.confirmedWithdrawIntents = confirmWithdrawIntentsHandler;
-    this.createdUtilityTokens = createdUtilityTokenHandler;
-    this.declaredDepositIntents = declaredDepositIntentsHandler;
-    this.declaredWithdrawIntents = declaredWithdrawIntentsHandler;
-    this.provenGateways = gatewayProvenHandler;
+    return {
+      availableStateRoots: availableStateRootsHandler,
+      confirmedDepositIntents: confirmDepositIntentsHandler,
+      confirmedWithdrawIntents: confirmWithdrawIntentsHandler,
+      createdUtilityTokens: createdUtilityTokenHandler,
+      declaredDepositIntents: declaredDepositIntentsHandler,
+      declaredWithdrawIntents: declaredWithdrawIntentsHandler,
+      provenGateways: gatewayProvenHandler,
+    };
   }
 }
