@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
 import ContractEntityHandler from '../../../common/handlers/ContractEntityHandler';
@@ -39,7 +37,7 @@ export default class MintProgressedHandler extends ContractEntityHandler {
   }
 
   /**
-   * This method parses progress mint transaction and returns message model object.
+   * This method parses progress mint transaction.
    *
    * @param transactions Transaction objects.
    */

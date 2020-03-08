@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
 
@@ -48,11 +46,9 @@ export default class StakeIntentDeclaredHandler extends ContractEntityHandler {
   }
 
   /**
-   * This method parses stake intent declare transaction and returns message model object.
+   * This method parses stake intent declare transaction.
    *
    * @param transactions Transaction objects.
-   *
-   * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async handle(transactions: any[]): Promise<void> {
