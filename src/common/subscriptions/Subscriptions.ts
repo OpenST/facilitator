@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
 import ContractEntityRepository from '../repositories/ContractEntityRepository';
@@ -38,11 +36,7 @@ export default class Subscriptions {
     this.auxiliarySubscriber = auxiliarySubscriber;
   }
 
-  /**
-   * This is a factory method to create subscription container.
-   * @param transactionHandler Instance of transaction handler.
-   * @param repos Repository container.
-   */
+  /** This is a factory method to create subscription container. */
   public static async create(
     transactionHandler: TransactionHandlerInterface,
     contractEntityRepository: ContractEntityRepository,
