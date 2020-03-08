@@ -14,10 +14,18 @@
 
 /* eslint-disable import/prefer-default-export */
 
-/** This will be thrown when handler implementation not found. */
+/**
+ * This exception is thrown if a handler implementation for the given
+ * transaction kind was not found while handling transactions in the
+ * TransactionHandler module.
+ */
 export class HandlerNotFoundException extends Error {
-  public constructor(message: string) {
+  public constructor(transactionKind: string) {
+    const message = `Handler implementation for a '${transactionKind}' `
+    + 'transaction kind was not found.';
+
     super(message);
+
     Object.setPrototypeOf(this, HandlerNotFoundException.prototype);
     this.name = 'HandlerNotFoundException';
   }
