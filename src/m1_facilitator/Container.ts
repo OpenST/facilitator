@@ -56,14 +56,18 @@ export default class Container {
     const originTransactionExecutor = new TransactionExecutor(
       repositories.originTransactionRepository,
       manifest.metachain.originChain.web3,
-      new BigNumber(1), // TODO - what should be the gas price?
+      new BigNumber(
+        await manifest.metachain.originChain.web3.eth.getGasPrice(),
+      ),
       manifest.avatarAccounts.origin,
     );
 
     const auxiliaryTransactionExecutor = new TransactionExecutor(
       repositories.auxiliaryTransactionRepository,
       manifest.metachain.auxiliaryChain.web3,
-      new BigNumber(1), // TODO - what should be the gas price?
+      new BigNumber(
+        await manifest.metachain.auxiliaryChain.web3.eth.getGasPrice(),
+      ),
       manifest.avatarAccounts.auxiliary,
     );
 
