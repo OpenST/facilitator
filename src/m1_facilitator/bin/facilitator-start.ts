@@ -14,10 +14,8 @@
 
 import commander from 'commander';
 
-import Container from '../Container';
 import Logger from '../../common/Logger';
-import Manifest from '../manifest/Manifest';
-import SeedDataInitializer from '../SeedDataInitializer';
+import FacilitatorStart from '../commands/FacilitatorStart';
 
 commander
   .option('-m, --manifest <manifest>', 'Path to manifest file.')
@@ -27,21 +25,7 @@ commander
         manifest: string;
       }): Promise<void> => {
       try {
-        const manifest = Manifest.fromFile(options.manifest);
-        const {
-          facilitator,
-          repositories,
-        } = await Container.create(manifest);
-
-        const seedDataInitializer = new SeedDataInitializer(repositories);
-        const isSeedDataValid = await seedDataInitializer.isValidSeedData(
-          manifest.originContractAddresses.erc20_gateway,
-        );
-        if (!isSeedDataValid) {
-          throw new Error('Seed data validation has failed.');
-        }
-
-        await facilitator.start();
+        await new FacilitatorStart(options.manifest).execute();
       } catch (e) {
         Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
       }
