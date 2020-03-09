@@ -16,6 +16,7 @@ import {
   DataTypes, Model, InitOptions,
 } from 'sequelize';
 import assert from 'assert';
+import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
 import Subject from '../../common/observer/Subject';
 import Transaction from '../models/Transaction';
@@ -53,6 +54,9 @@ class TransactionModel extends Model {
  * On construction it initializes underlying sequelize model.
  */
 export default class TransactionRepository extends Subject<Transaction> {
+  private mutex: Mutex;
+
+
   /* Public Functions */
 
   public constructor(initOptions: InitOptions) {
@@ -101,6 +105,8 @@ export default class TransactionRepository extends Subject<Transaction> {
         tableName: 'transactions',
       },
     );
+
+    this.mutex = new Mutex();
   }
 
   /**
@@ -109,25 +115,30 @@ export default class TransactionRepository extends Subject<Transaction> {
    * @param transaction Transaction model object.
    */
   public async save(transaction: Transaction): Promise<Transaction> {
+    const release = await this.mutex.acquire();
     let savedTransaction: Transaction | null;
-    if (transaction.id && transaction.id.gt(0)) {
-      const definedOwnProps: string[] = Utils.getDefinedOwnProps(transaction);
-      await TransactionModel.update(
-        transaction,
-        {
-          where: {
-            id: transaction.id.toNumber(),
+    try {
+      if (transaction.id && transaction.id.gt(0)) {
+        const definedOwnProps: string[] = Utils.getDefinedOwnProps(transaction);
+        await TransactionModel.update(
+          transaction,
+          {
+            where: {
+              id: transaction.id.toNumber(),
+            },
+            fields: definedOwnProps,
           },
-          fields: definedOwnProps,
-        },
-      );
-      savedTransaction = await this.get(
-        transaction.id,
-      );
-    } else {
-      savedTransaction = this.convertToTransaction(await TransactionModel.create(
-        transaction,
-      ));
+        );
+        savedTransaction = await this.get(
+          transaction.id,
+        );
+      } else {
+        savedTransaction = this.convertToTransaction(await TransactionModel.create(
+          transaction,
+        ));
+      }
+    } finally {
+      release();
     }
 
     assert(
