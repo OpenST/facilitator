@@ -24,10 +24,11 @@ commander
     force?: boolean;
 
   }): Promise<void> => {
+    console.log('init called');
     try {
       await new FacilitatorInit(options.manifest, options.force ? options.force : false)
         .execute();
     } catch (e) {
       Logger.error(`Error in facilitator init command. Reason: ${e.message}`);
     }
-  });
+  }).parse(process.argv);

@@ -16,7 +16,7 @@ services:
       postgres_pass: 'postgres'
       postgres_db:  'mosaic_origin'
       ipfs: 'ipfs:5001'
-      ethereum: 'dev:http://localhost:8546'
+      ethereum: '${origin_ethereum}'
       RUST_LOG: info
       GRAPH_LOG: info
       ETHEREUM_POLLING_INTERVAL: 3000
@@ -53,7 +53,7 @@ services:
       postgres_pass: 'postgres'
       postgres_db:  'mosaic_auxiliary'
       ipfs: 'ipfs:5001'
-      ethereum: 'dev:http://localhost:9546'
+      ethereum: '${auxiliary_ethereum}'
       RUST_LOG: info
       GRAPH_LOG: info
       ETHEREUM_POLLING_INTERVAL: 3000

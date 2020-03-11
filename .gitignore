@@ -28,3 +28,4 @@ subgraph/auxiliary/build/**
 subgraph/origin/build/**
 subgraph/origin/subgraph.yaml
 subgraph/auxiliary/subgraph.yaml
+test_integration/m1_facilitator/manifest.yaml
