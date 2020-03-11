@@ -28,6 +28,7 @@ commander
         await new FacilitatorStart(options.manifest).execute();
       } catch (e) {
         Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
+        process.exit(1);
       }
     },
   );
