@@ -19,7 +19,7 @@ import Subscriber from '../../../src/common/subscriptions/Subscriber';
 import Facilitator from '../../../src/m1_facilitator/Facilitator';
 import SpyAssert from '../../test_utils/SpyAssert';
 
-describe('Facilitator:stop ', () => {
+describe('Facilitator:stop ', (): void => {
   it('should stop facilitator', async (): Promise<void> => {
     const originTransactionExecutor = sinon.createStubInstance(TransactionExecutor);
 
