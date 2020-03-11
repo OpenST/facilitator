@@ -31,7 +31,7 @@
     "create_keys:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/create_staker_redeemer.ts",
     "request_stake:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_stake_testnet.ts",
     "request_redeem:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m0_facilitator/bin/request_redeem_testnet.ts",
-    "test:subgraph": "bash ./subgraph/verify-subgraph.sh origin && bash ./subgraph/verify-subgraph.sh auxiliary",
+    "test:subgraph": "cd subgraph/test && sh ./test.sh",
     "deploy:subgraph:origin": "ts-node subgraph/src/DeployOriginSubgraph.ts",
     "deploy:subgraph:auxiliary": "ts-node subgraph/src/DeployAuxiliarySubgraph.ts"
   },

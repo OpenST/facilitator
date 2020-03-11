@@ -1,0 +1,39 @@
+version: "3"
+services:
+  graph_node:
+    image: graphprotocol/graph-node:v0.16.0
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8020:8020'
+    depends_on:
+      - postgres
+      - ipfs
+      - geth_node
+    environment:
+      postgres_host: postgres:5432
+      postgres_user: 'postgres'
+      postgres_pass: 'postgres'
+      postgres_db:  'mosaic'
+      ipfs: 'ipfs:5001'
+      ethereum: '${ethereum}'
+      RUST_LOG: info
+      GRAPH_LOG: info
+      ETHEREUM_POLLING_INTERVAL: 3000
+      ETHEREUM_REORG_THRESHOLD: 0
+  geth_node:
+    image: augurproject/dev-node-geth:v1.9.9
+    ports:
+      - "9546:8545"
+  postgres:
+    image: postgres:alpine
+    ports:
+      - '6432:5432'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'mosaic'
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.22-rc1
+    ports:
+      - '5001:5001'
