@@ -15,7 +15,7 @@
 import waitPort = require('wait-port');
 
 const originPort = 8546;
-const auxiliaryPort = 8547;
+const auxiliaryPort = 9546;
 
 const asyncSleep = async (ms: number): Promise<number> => new Promise(
   resolve => setTimeout(resolve, ms),
