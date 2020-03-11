@@ -17,15 +17,18 @@
 
 import sinon from 'sinon';
 
-import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
-import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';
 import assert from '../../../test_utils/assert';
+import fetchQueries from '../../../../src/m0_facilitator/GraphQueries/FetchQueries';
+import GraphClient from '../../../../src/common/subscriptions/GraphClient';
+import TransactionFetcher from '../../../../src/common/subscriptions/TransactionFetcher';
 
-describe('TransactionFetcher.constructor()', () => {
-  it('should construct with correct parameters', async () => {
+describe('TransactionFetcher.constructor()', (): void => {
+  it('should construct with correct parameters', async (): Promise<void> => {
     const mockApolloClient = sinon.stub as any;
     const graphClient = new GraphClient(mockApolloClient);
-    const transactionFetcher = new TransactionFetcher(graphClient, sinon.mock() as any);
+    const transactionFetcher = new TransactionFetcher(
+      graphClient, sinon.mock() as any, fetchQueries,
+    );
 
     assert(
       transactionFetcher,

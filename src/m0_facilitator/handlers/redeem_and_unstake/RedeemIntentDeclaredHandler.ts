@@ -11,26 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 import BigNumber from 'bignumber.js';
-import Message from '../../models/Message';
+
+import ContractEntityHandler from '../../../common/handlers/ContractEntityHandler';
 import Logger from '../../../common/Logger';
-import Utils from '../../Utils';
+
 import {
-  MessageDirection,
-  MessageRepository, MessageStatus,
-  MessageType,
+  MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
-import ContractEntityHandler from '../ContractEntityHandler';
-import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import Message from '../../models/Message';
 import MessageTransferRequest from '../../models/MessageTransferRequest';
+import MessageTransferRequestRepository from '../../repositories/MessageTransferRequestRepository';
+import Utils from '../../Utils';
 
 /**
  * This class handles redeem intent declared transactions.
  */
-export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<Message> {
+export default class RedeemIntentDeclaredHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -48,15 +46,13 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
   }
 
   /**
-   * This method parses redeem intent declare transaction and returns message model object.
+   * This method parses redeem intent declare transaction.
    *
    * @param transactions Transaction objects.
-   *
-   * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting Redeem intent declared records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling Redeem intent declared records: ${transactions.length}`);
     const redeemRequestModels: MessageTransferRequest[] = [];
     const messageModels: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
@@ -111,7 +107,5 @@ export default class RedeemIntentDeclaredHandler extends ContractEntityHandler<M
     }
     await Promise.all(saveMessagesPromises);
     Logger.debug('Messages saved');
-
-    return messageModels;
   }
 }

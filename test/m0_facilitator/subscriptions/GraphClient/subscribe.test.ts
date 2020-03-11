@@ -15,19 +15,19 @@
 // ----------------------------------------------------------------------------
 
 
-import ApolloClient from 'apollo-client';
 import { Observer } from 'apollo-client/util/Observable';
+import ApolloClient from 'apollo-client';
 import BigNumber from 'bignumber.js';
 import gql from 'graphql-tag';
 import sinon from 'sinon';
 
+import assert from '../../../test_utils/assert';
 import ContractEntity, { EntityType } from '../../../../src/common/models/ContractEntity';
 import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
-import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
-import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';
-import TransactionHandler from '../../../../src/m0_facilitator/TransactionHandler';
-import assert from '../../../test_utils/assert';
+import GraphClient from '../../../../src/common/subscriptions/GraphClient';
 import SpyAssert from '../../../test_utils/SpyAssert';
+import TransactionFetcher from '../../../../src/common/subscriptions/TransactionFetcher';
+import TransactionHandler from '../../../../src/common/TransactionHandler';
 
 describe('GraphClient.subscribe()', () => {
   let graphClient: GraphClient;

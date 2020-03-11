@@ -11,17 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
+import Subscriptions from '../common/subscriptions/Subscriptions';
+import TransactionHandler from '../common/TransactionHandler';
+
+import { Config } from './Config/Config';
 import Facilitator from './Facilitator';
+import fetchQueries from './GraphQueries/FetchQueries';
 import Handlers from './handlers/Handlers';
 import Repositories from './repositories/Repositories';
 import Services from './services/Services';
-import Subscriptions from './subscriptions/Subscriptions';
-import TransactionHandler from './TransactionHandler';
-import { Config } from './Config/Config';
+import subscriptionQueries from './GraphQueries/SubscriptionQueries';
 
 export default class Container {
   /**
@@ -48,11 +49,14 @@ export default class Container {
     const configAuxChainId = config.facilitator.auxChainId;
     const subscriptions = await Subscriptions.create(
       transactionHandler,
-      repositories,
+      repositories.contractEntityRepository,
+      fetchQueries,
       config.facilitator.chains[configOriginChain].subGraphWs,
       config.facilitator.chains[configOriginChain].subGraphRpc,
+      subscriptionQueries.origin,
       config.facilitator.chains[configAuxChainId].subGraphWs,
       config.facilitator.chains[configAuxChainId].subGraphRpc,
+      subscriptionQueries.auxiliary,
     );
 
     const services = Services.create(repositories, config);

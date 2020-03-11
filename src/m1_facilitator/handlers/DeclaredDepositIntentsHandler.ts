@@ -14,6 +14,8 @@
 
 import BigNumber from 'bignumber.js';
 
+import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
+
 import DepositIntent from '../models/DepositIntent';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import GatewayRepository from '../repositories/GatewayRepository';
@@ -37,7 +39,7 @@ interface DeclaredDepositIntentsEntityInterface {
 /**
  * It handles updates from DeclaredDepositIntents entity.
  */
-export default class DeclaredDepositIntentsHandler {
+export default class DeclaredDepositIntentsHandler extends ContractEntityHandler {
   /** Instance of DepositIntentRepository. */
   private readonly depositIntentRepository: DepositIntentRepository;
 
@@ -59,6 +61,8 @@ export default class DeclaredDepositIntentsHandler {
     gatewayRepository: GatewayRepository,
     messageRepository: MessageRepository,
   ) {
+    super();
+
     this.depositIntentRepository = depositIntentRepository;
     this.gatewayRepository = gatewayRepository;
     this.messageRepository = messageRepository;

@@ -14,16 +14,18 @@
 
 import { InitOptions, Sequelize } from 'sequelize';
 
+import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
+import RepositoriesInterface from '../../common/repositories/RepositoriesInterface';
+
 import AnchorRepository from './AnchorRepository';
 import DepositIntentRepository from './DepositIntentRepository';
+import ERC20GatewayTokenPairRepository from './ERC20GatewayTokenPairRepository';
 import GatewayRepository from './GatewayRepository';
 import MessageRepository from './MessageRepository';
-import WithdrawIntentRepository from './WithdrawIntentRepository';
-import ERC20GatewayTokenPairRepository from './ERC20GatewayTokenPairRepository';
-import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
 import TransactionRepository from './TransactionRepository';
+import WithdrawIntentRepository from './WithdrawIntentRepository';
 
-export default class Repositories {
+export default class Repositories implements RepositoriesInterface {
   /* Storage */
 
   public anchorRepository: AnchorRepository;
@@ -40,7 +42,9 @@ export default class Repositories {
 
   public contractEntityRepository: ContractEntityRepository;
 
-  public transactionRepository: TransactionRepository;
+  public originTransactionRepository: TransactionRepository;
+
+  public auxiliaryTransactionRepository: TransactionRepository;
 
 
   /* Public Functions */
@@ -113,6 +117,11 @@ export default class Repositories {
     this.gatewayRepository = new GatewayRepository(initOptions);
     this.withdrawIntentRepository = new WithdrawIntentRepository(initOptions);
     this.erc20GatewayTokenPairRepository = new ERC20GatewayTokenPairRepository(initOptions);
-    this.transactionRepository = new TransactionRepository(initOptions);
+    this.originTransactionRepository = new TransactionRepository(
+      initOptions, 'OriginTransaction', 'origin_transactions',
+    );
+    this.auxiliaryTransactionRepository = new TransactionRepository(
+      initOptions, 'AuxiliaryTransaction', 'auxiliary_transactions',
+    );
   }
 }

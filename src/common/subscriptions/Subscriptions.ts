@@ -11,16 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
-import SubscriptionQueries from '../GraphQueries/SubscriptionQueries';
-import Repositories from '../repositories/Repositories';
-import TransactionHandler from '../TransactionHandler';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
 import GraphClient from './GraphClient';
 import Subscriber from './Subscriber';
 import TransactionFetcher from './TransactionFetcher';
+import TransactionHandlerInterface from '../TransactionHandlerInterface';
 
 /**
  * This class is container that holds instances of all the subscriptions.
@@ -39,45 +36,46 @@ export default class Subscriptions {
     this.auxiliarySubscriber = auxiliarySubscriber;
   }
 
-  /**
-   * This is a factory method to create subscription container.
-   * @param transactionHandler Instance of transaction handler.
-   * @param repos Repository container.
-   */
+  /** This is a factory method to create subscription container. */
   public static async create(
-    transactionHandler: TransactionHandler,
-    repos: Repositories,
+    transactionHandler: TransactionHandlerInterface,
+    contractEntityRepository: ContractEntityRepository,
+    fetchQueries: Record<string, string>,
     originSubGraphWs: string,
     originSubGraphRpc: string,
+    originSubscriptionQueries: Record<string, string>,
     auxiliarySubGraphWs: string,
     auxiliarySubGraphRpc: string,
+    auxiliarySubscriptionQueries: Record<string, string>,
   ): Promise<Subscriptions> {
     const originTransactionFetcher: TransactionFetcher = new TransactionFetcher(
       GraphClient.getClient(
         'http',
         originSubGraphRpc,
       ),
-      repos.contractEntityRepository,
+      contractEntityRepository,
+      fetchQueries,
     );
     // Subscription to origin subgraph queries
     const originSubscriber = new Subscriber(
       GraphClient.getClient('ws', originSubGraphWs),
-      SubscriptionQueries.origin,
+      originSubscriptionQueries,
       transactionHandler,
       originTransactionFetcher,
-      repos.contractEntityRepository,
+      contractEntityRepository,
     );
     // Subscription to auxiliary subgraph queries
     const auxiliaryTransactionFetcher: TransactionFetcher = new TransactionFetcher(
       GraphClient.getClient('http', auxiliarySubGraphRpc),
-      repos.contractEntityRepository,
+      contractEntityRepository,
+      fetchQueries,
     );
     const auxiliarySubscriber = new Subscriber(
       GraphClient.getClient('ws', auxiliarySubGraphWs),
-      SubscriptionQueries.auxiliary,
+      auxiliarySubscriptionQueries,
       transactionHandler,
       auxiliaryTransactionFetcher,
-      repos.contractEntityRepository,
+      contractEntityRepository,
     );
     return new Subscriptions(originSubscriber, auxiliarySubscriber);
   }

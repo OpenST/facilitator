@@ -18,16 +18,16 @@
 import BigNumber from 'bignumber.js';
 import sinon from 'sinon';
 
-import FetchQueries from '../../../../src/m0_facilitator/GraphQueries/FetchQueries';
-import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
-import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
-import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';
 import assert from '../../../test_utils/assert';
+import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
+import FetchQueries from '../../../../src/m0_facilitator/GraphQueries/FetchQueries';
+import GraphClient from '../../../../src/common/subscriptions/GraphClient';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
+import TransactionFetcher from '../../../../src/common/subscriptions/TransactionFetcher';
 
-describe('TransactionFetcher.fetch()', () => {
-  it('should work with correct parameters', async () => {
+describe('TransactionFetcher.fetch()', (): void => {
+  it('should work with correct parameters', async (): Promise<void> => {
     const mockApolloClient = sinon.stub as any;
     const mockedContractEntityRepo = sinon.createStubInstance(ContractEntityRepository);
 
@@ -97,6 +97,7 @@ describe('TransactionFetcher.fetch()', () => {
     const transactionFetcher = new TransactionFetcher(
       graphClient,
       mockedContractEntityRepo as any,
+      FetchQueries,
     );
 
     const response = await transactionFetcher.fetch(subscriptionResponse);

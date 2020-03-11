@@ -57,8 +57,8 @@ describe('TransactionRepository::get', (): void => {
       createdAt,
       updatedAt,
     );
-    const createdTransaction = await repos.transactionRepository.save(expectedTransaction);
-    const actualTransaction = await repos.transactionRepository.get(
+    const createdTransaction = await repos.originTransactionRepository.save(expectedTransaction);
+    const actualTransaction = await repos.originTransactionRepository.get(
       createdTransaction.id as BigNumber,
     );
     assert(actualTransaction !== null);
