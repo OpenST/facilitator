@@ -60,7 +60,6 @@
     "@openst/mosaic-chains": "0.1.0-alpha.9",
     "@openst/mosaic-contracts": "0.12.0",
     "@openst/mosaic-proof": "0.1.0-alpha.1",
-    "@types/mustache": "^4.0.1",
     "Mosaic": "file:./mosaic-1/Mosaic-0.1.0.tgz",
     "apollo-cache-inmemory": "1.6.2",
     "apollo-client": "2.6.0",
@@ -88,8 +87,7 @@
     "web3-eth-accounts": "1.0.0-beta.55",
     "web3-utils": "1.0.0-beta.55",
     "winston": "3.2.1",
-    "ws": "7.0.0",
-    "@graphprotocol/graph-cli": "0.12.0"
+    "ws": "7.0.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "0.1.3",
@@ -108,6 +106,7 @@
     "@types/validator": "10.11.1",
     "@types/web3": "1.0.19",
     "@types/ws": "6.0.1",
+    "@types/mustache": "4.0.1",
     "@typescript-eslint/eslint-plugin": "1.10.2",
     "@typescript-eslint/parser": "1.10.2",
     "@typescript-eslint/typescript-estree": "1.10.2",

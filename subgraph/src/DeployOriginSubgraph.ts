@@ -17,6 +17,7 @@ import assert from 'assert';
 
 import * as web3Utils from 'web3-utils';
 import SubgraphDeployer from './SubgraphDeployer';
+import Logger from '../../src/common/Logger';
 
 const originSubgraphDirectory = path.join(__dirname, '../origin');
 const originSubgraphName = 'mosaic/origin-erc20gateway';
@@ -67,5 +68,6 @@ try {
     erc20Gateway: params.erc20Gateway,
   });
 } catch (e) {
-  console.log('Error in deployment of subgraph ', e.message);
+  Logger.error(`Error in deployment of subgraph ${e.message}`);
+  process.exit(1);
 }
