@@ -26,3 +26,5 @@ openst-facilitator-*.tgz
 # Subgraph build files
 subgraph/auxiliary/build/**
 subgraph/origin/build/**
+subgraph/origin/subgraph.yaml
+subgraph/auxiliary/subgraph.yaml

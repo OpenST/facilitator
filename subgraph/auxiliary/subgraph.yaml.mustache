@@ -6,7 +6,7 @@ dataSources:
     name: Anchor
     network: dev
     source:
-      address: "0x2Bbe4DFb364e76dA987Ac5754bB87b476cC6D80B"
+      address: "{{auxiliaryAnchor}}"
       abi: Anchor
     mapping:
       kind: ethereum/events
@@ -26,7 +26,7 @@ dataSources:
     name: ERC20Cogateway
     network: dev
     source:
-      address: "0xdbbb5c822ccfac3ea49e32215565c6aafb257a30"
+      address: "{{erc20Cogateway}}"
       abi: ERC20Cogateway
     mapping:
       kind: ethereum/events
