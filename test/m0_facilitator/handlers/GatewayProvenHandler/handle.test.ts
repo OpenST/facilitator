@@ -32,7 +32,7 @@ let config: TestConfigInterface;
 let gatewayAddress: string;
 let gateway: Gateway;
 
-describe('ProveGatewayhandler.persist()', (): void => {
+describe('ProveGatewayhandler.handle()', (): void => {
   beforeEach(async (): Promise<void> => {
     config = {
       repos: await Repositories.create(),
@@ -45,7 +45,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
     );
   });
 
-  it('should persist successfully', async (): Promise<void> => {
+  it('should handle successfully', async (): Promise<void> => {
     const updatedLastRemoteProvenBlockHeight = new BigNumber('10');
     const proveGatewayTransactions = [{
       id: '1',
@@ -59,17 +59,10 @@ describe('ProveGatewayhandler.persist()', (): void => {
     }];
 
     const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
-    const updatedGateways = await handler.persist(proveGatewayTransactions);
-    const updatedGateway = updatedGateways[0];
-
-    assert.deepEqual(
-      updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
-      updatedLastRemoteProvenBlockHeight,
-      'Error updating GatewayProven block height in Gateway model.',
-    );
+    await handler.handle(proveGatewayTransactions);
   });
 
-  it('It should throw error when Gateway doesn"t exist', async (): Promise<void> => {
+  it('It should throw error when Gateway doesn\'t exist', async (): Promise<void> => {
     const updatedLastRemoteProvenBlockHeight = new BigNumber('10');
     const invalidGateway = 'invalidGateway';
     const proveGatewayTransactions = [{
@@ -86,7 +79,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
     const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
 
     assert.isRejected(
-      handler.persist(proveGatewayTransactions),
+      handler.handle(proveGatewayTransactions),
       `Cannot find record for gateway: ${invalidGateway}`,
       'Invalid Gateway record.',
     );
@@ -107,14 +100,7 @@ describe('ProveGatewayhandler.persist()', (): void => {
     }];
 
     const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
-    const updatedGateways = await handler.persist(proveGatewayTransactions);
-    const updatedGateway = updatedGateways[0];
-
-    assert.deepEqual(
-      updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
-      gateway.lastRemoteGatewayProvenBlockHeight,
-      'It should not update lower GatewayProven block height.',
-    );
+    await handler.handle(proveGatewayTransactions);
   });
 
   it('should not update when received provenGatewayBlock height is equal to already updated'
@@ -132,13 +118,6 @@ describe('ProveGatewayhandler.persist()', (): void => {
     }];
 
     const handler = new GatewayProvenHandler(config.repos.gatewayRepository);
-    const updatedGateways = await handler.persist(proveGatewayTransactions);
-    const updatedGateway = updatedGateways[0];
-
-    assert.deepEqual(
-      updatedGateway && updatedGateway.lastRemoteGatewayProvenBlockHeight,
-      gateway.lastRemoteGatewayProvenBlockHeight,
-      'It should not update already updated equal GatewayProven block height.',
-    );
+    await handler.handle(proveGatewayTransactions);
   });
 });

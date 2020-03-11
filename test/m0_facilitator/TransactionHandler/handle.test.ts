@@ -17,13 +17,13 @@
 
 import sinon from 'sinon';
 
-import StakeRequestedHandler from '../../../src/m0_facilitator/handlers/stake_and_mint/StakeRequestedHandler';
-import Repositories from '../../../src/m0_facilitator/repositories/Repositories';
-import TransactionHandler from '../../../src/m0_facilitator/TransactionHandler';
-import assert from '../../test_utils/assert';
-import SpyAssert from '../../test_utils/SpyAssert';
-import StubData from '../../test_utils/StubData';
 import { RequestType } from '../../../src/m0_facilitator/repositories/MessageTransferRequestRepository';
+import assert from '../../test_utils/assert';
+import Repositories from '../../../src/m0_facilitator/repositories/Repositories';
+import SpyAssert from '../../test_utils/SpyAssert';
+import StakeRequestedHandler from '../../../src/m0_facilitator/handlers/stake_and_mint/StakeRequestedHandler';
+import StubData from '../../test_utils/StubData';
+import TransactionHandler from '../../../src/common/TransactionHandler';
 
 describe('TransactionHandler.handle()', (): void => {
   const gatewayAddress = '0x0000000000000000000000000000000000000001';
@@ -52,9 +52,9 @@ describe('TransactionHandler.handle()', (): void => {
       gatewayAddress,
     );
 
-    const persistSpy = sinon.replace(
+    const handleSpy = sinon.replace(
       stakeRequestedHandler,
-      'persist',
+      'handle',
       sinon.fake.resolves([aStakeRequest]),
     );
 
@@ -75,7 +75,7 @@ describe('TransactionHandler.handle()', (): void => {
 
     await transactionHandler.handle(bulkTransactions);
 
-    SpyAssert.assert(persistSpy, 1, [[bulkTransactions.stakeRequesteds]]);
+    SpyAssert.assert(handleSpy, 1, [[bulkTransactions.stakeRequesteds]]);
     SpyAssert.assert(reposNotifySpy, 1, [[]]);
   });
 

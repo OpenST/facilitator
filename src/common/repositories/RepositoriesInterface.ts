@@ -1,4 +1,4 @@
-// Copyright 2019 OpenST Ltd.
+// Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,20 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
-/**
- * An abstract interface to different transaction entity handlers.
- * Descendant classes implements persist method.
- */
-export default abstract class ContractEntityHandler<T> {
+/** Defines an abstract interface to repositories container. */
+export default interface RepositoriesInterface {
+
   /**
-   * Parses transaction collection and persists entities.
-   *
-   * @param any Transactions to parse.
-   *
-   * @return An array of model objects.
+   * The notify() function notifies all registered listeners of repositories
+   * within repositories container.
    */
-  abstract async persist(any: any[]): Promise<T[]>;
+  notify(): Promise<void[][]>;
 }

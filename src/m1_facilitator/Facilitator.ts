@@ -17,8 +17,14 @@ import { SUBSCRIPTION_RESTART_DURATION } from '../common/Constants';
 import Logger from '../common/Logger';
 import Subscriber from '../common/subscriptions/Subscriber';
 
+import TransactionExecutor from './lib/TransactionExecutor';
+
 /** The class defines properties and behavior of a facilitator. */
 export default class Facilitator {
+  private readonly originTransactionExecutor: TransactionExecutor;
+
+  private readonly auxiliaryTransactionExecutor: TransactionExecutor;
+
   private readonly originSubscriber: Subscriber;
 
   private readonly auxiliarySubscriber: Subscriber;
@@ -26,17 +32,32 @@ export default class Facilitator {
   private subscriptionRestartHandle: NodeJS.Timer | null;
 
   /**
+   * @param originTransactionExecutor Instance of origin transaction executor.
+   * @param auxiliaryTransactionExecutor Instance of auxiliary transaction executor.
    * @param originSubscriber Origin subscriber instance.
    * @param auxiliarySubscriber Auxiliary subscriber instance.
    */
-  public constructor(originSubscriber: Subscriber, auxiliarySubscriber: Subscriber) {
+  public constructor(
+    originTransactionExecutor: TransactionExecutor,
+    auxiliaryTransactionExecutor: TransactionExecutor,
+    originSubscriber: Subscriber,
+    auxiliarySubscriber: Subscriber,
+  ) {
+    this.originTransactionExecutor = originTransactionExecutor;
+    this.auxiliaryTransactionExecutor = auxiliaryTransactionExecutor;
     this.originSubscriber = originSubscriber;
     this.auxiliarySubscriber = auxiliarySubscriber;
     this.subscriptionRestartHandle = null;
   }
 
-  /** Starts the facilitator by subscribing to subscription queries. */
+  /**
+   * Starts the facilitator by subscribing to subscription queries and
+   * starting the transaction executor.
+   */
   public async start(): Promise<void> {
+    await this.originTransactionExecutor.start();
+    await this.auxiliaryTransactionExecutor.start();
+
     await this.subscribeToSubGraphs();
     this.subscriptionRestartHandle = setInterval(
       async (): Promise<void> => this.restartSubscription(),
@@ -45,10 +66,14 @@ export default class Facilitator {
   }
 
   /**
-   * Stops the facilitator and unsubscribe to query subscriptions.
+   * Stops the facilitator by unsubscribe to query subscriptions and stopping
+   * the transaction executor.
    * This function should be called on signint or control-c.
    */
   public async stop(): Promise<void> {
+    await this.originTransactionExecutor.stop();
+    await this.auxiliaryTransactionExecutor.stop();
+
     if (this.subscriptionRestartHandle !== null) {
       clearInterval(this.subscriptionRestartHandle);
     }

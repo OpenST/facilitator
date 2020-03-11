@@ -24,7 +24,7 @@ import SpyAssert from '../../../test_utils/SpyAssert';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 describe('TransactionExecutor.start()', (): void => {
   let avatarAccount: AvatarAccount;
-  let transactionExecutor: TransactionExecutor;
+  let originTransactionExecutor: TransactionExecutor;
   let repositories: Repositories;
   let web3: Web3;
   let toAddress: string;
@@ -59,14 +59,14 @@ describe('TransactionExecutor.start()', (): void => {
     };
 
     dequeueSpy = sinon.replace(
-      repositories.transactionRepository,
+      repositories.originTransactionRepository,
       'dequeue',
       sinon.fake.resolves(undefined),
     );
 
     web3 = sinon.createStubInstance(Web3);
-    transactionExecutor = new TransactionExecutor(
-      repositories.transactionRepository,
+    originTransactionExecutor = new TransactionExecutor(
+      repositories.originTransactionRepository,
       web3,
       gasPrice,
       avatarAccount,
@@ -76,7 +76,7 @@ describe('TransactionExecutor.start()', (): void => {
   it('should work properly when no transaction is dequeued', async (): Promise<void> => {
     // Overrides infinite loop of setInterval
     const clock = sinon.useFakeTimers();
-    await transactionExecutor.start();
+    await originTransactionExecutor.start();
     SpyAssert.assert(
       // eslint-disable-next-line @typescript-eslint/unbound-method
       dequeueSpy,
@@ -93,13 +93,13 @@ describe('TransactionExecutor.start()', (): void => {
   });
 
   it('should work properly when transaction is dequeued', async (): Promise<void> => {
-    await transactionExecutor.add(toAddress, fakeRawTx);
+    await originTransactionExecutor.add(toAddress, fakeRawTx);
     // Overrides infinite loop of setInterval
     const clock = sinon.useFakeTimers();
-    await transactionExecutor.start();
+    await originTransactionExecutor.start();
     SpyAssert.assert(
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      repositories.transactionRepository.dequeue,
+      repositories.originTransactionRepository.dequeue,
       1,
       [[]],
     );

@@ -1,4 +1,4 @@
-// Copyright 2019 OpenST Ltd.
+// Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,11 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
+/* eslint-disable import/prefer-default-export */
 
-export const ORIGIN_GAS_PRICE = '0x2540BE400'; // 10 Gwei
-export const AUXILIARY_GAS_PRICE = '0x3B9ACA00'; // 1 Gwei
-export const MESSAGE_BOX_OFFSET = '7';
-export const MAX_VALUE = 999999999999999999999999999999999999999999999999999999999999999999999999999999;
+/**
+ * Defines an interval in which the facilitator re-subscribes to the origin
+ * and auxiliary subgraph nodes.
+ */
+export const SUBSCRIPTION_RESTART_DURATION = 10 * 60 * 1000;

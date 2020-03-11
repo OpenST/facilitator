@@ -17,10 +17,10 @@
 
 import commander from 'commander';
 
+import ConfigFactory from '../Config/ConfigFactory';
 import Container from '../Container';
 import Facilitator from '../Facilitator';
 import Logger from '../../common/Logger';
-import ConfigFactory from '../Config/ConfigFactory';
 
 const facilitatorCmd = commander
   .arguments('[origin_chain] [aux_chain_id]');

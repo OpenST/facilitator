@@ -20,11 +20,10 @@ import sinon from 'sinon';
 
 import StateRootAvailableHandler from '../../../../src/m0_facilitator/handlers/StateRootAvailableHandler';
 import AuxiliaryChainRepository from '../../../../src/m0_facilitator/repositories/AuxiliaryChainRepository';
-import assert from '../../../test_utils/assert';
 import SpyAssert from '../../../test_utils/SpyAssert';
 import StubData from '../../../test_utils/StubData';
 
-describe('StateRootAvailableHandler.persist()', () => {
+describe('StateRootAvailableHandler.handle()', (): void => {
   const auxiliaryChainId = 123;
   const coAnchorAddress = '0x0000000000000000000000000000000000000003';
   const someOtherAnchor = '0x0000000000000000000000000000000000000004';
@@ -34,7 +33,7 @@ describe('StateRootAvailableHandler.persist()', () => {
     _blockHeight: blockHeight.toString(10),
   }];
 
-  it('should save latest block height of interested anchor', async () => {
+  it('should save latest block height of interested anchor', async (): Promise<void> => {
     const save = sinon.stub();
     const transactionsWithInterestedAnchor = [{
       contractAddress: coAnchorAddress,
@@ -52,18 +51,16 @@ describe('StateRootAvailableHandler.persist()', () => {
       });
     const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
-    const models = await handler.persist(transactionsWithInterestedAnchor);
+    await handler.handle(transactionsWithInterestedAnchor);
 
     const expectedModel = StubData.getAuxiliaryChainRecord(
       coAnchorAddress,
       blockHeight,
     );
-    assert.equal(models.length, transactionsWithInterestedAnchor.length, 'Number of models must be equal to transactions');
-    assert.deepStrictEqual(models[0], expectedModel);
     SpyAssert.assert(save, 1, [[expectedModel]]);
   });
 
-  it('should not save latest block height for non interested anchor', async () => {
+  it('should not save latest block height for non interested anchor', async (): Promise<void> => {
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
       coAnchorAddress,
@@ -76,13 +73,12 @@ describe('StateRootAvailableHandler.persist()', () => {
       });
     const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
-    assert.equal(models.length, 0, 'Number of saved models must be equal to zero');
     SpyAssert.assert(save, 0, [[]]);
   });
 
-  it('should not save latest block height for interested anchor with lower block height', async () => {
+  it('should not save latest block height for interested anchor with lower block height', async (): Promise<void> => {
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
       coAnchorAddress,
@@ -95,13 +91,12 @@ describe('StateRootAvailableHandler.persist()', () => {
       });
     const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
-    assert.equal(models.length, 0, 'Number of saved models must be equal to zero');
     SpyAssert.assert(save, 0, [[]]);
   });
 
-  it('should not save latest block height for interested anchor with equal block height', async () => {
+  it('should not save latest block height for interested anchor with equal block height', async (): Promise<void> => {
     const save = sinon.stub();
     const auxiliaryChainRecord = StubData.getAuxiliaryChainRecord(
       coAnchorAddress,
@@ -114,9 +109,8 @@ describe('StateRootAvailableHandler.persist()', () => {
       });
     const handler = new StateRootAvailableHandler(sinonMock as any, auxiliaryChainId);
 
-    const models = await handler.persist(transactions);
+    await handler.handle(transactions);
 
-    assert.equal(models.length, 0, 'Number of saved models must be equal to zero');
     SpyAssert.assert(save, 0, [[]]);
   });
 });

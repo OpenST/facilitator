@@ -24,7 +24,6 @@ import Message from '../../../../../src/m0_facilitator/models/Message';
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../../../../src/m0_facilitator/repositories/MessageRepository';
-import assert from '../../../../test_utils/assert';
 import SpyAssert from '../../../../test_utils/SpyAssert';
 import StubData from '../../../../test_utils/StubData';
 import {
@@ -32,7 +31,7 @@ import {
   RequestType,
 } from '../../../../../src/m0_facilitator/repositories/MessageTransferRequestRepository';
 
-describe('StakeIntentDeclaredHandler.persist()', (): void => {
+describe('StakeIntentDeclaredHandler.handle()', (): void => {
   const transactions = [{
     _messageHash: Web3Utils.keccak256('1'),
     _staker: '0x0000000000000000000000000000000000000001',
@@ -73,7 +72,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
@@ -86,11 +85,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       expectedModel.gatewayAddress = transactions[0].contractAddress;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
       SpyAssert.assert(
@@ -120,7 +114,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
@@ -130,11 +124,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       expectedModel.sourceStatus = MessageStatus.Declared;
       expectedModel.sourceDeclarationBlockHeight = new BigNumber(transactions[0].blockNumber);
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(
         mockedMessageRepository.get,
@@ -163,7 +152,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
@@ -172,11 +161,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       );
       expectedModel.sourceStatus = MessageStatus.Progressed;
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(
         mockedMessageRepository.get,
@@ -205,7 +189,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const models = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedModel = new Message(
         transactions[0]._messageHash,
@@ -214,11 +198,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       );
       expectedModel.sourceStatus = MessageStatus.Declared;
 
-      assert.equal(
-        models.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(save, 1, [[expectedModel]]);
       SpyAssert.assert(
         mockedMessageRepository.get,
@@ -254,7 +233,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
         mockedMessageTransferRequestRepository as any,
       );
 
-      const messageModels = await handler.persist(transactions);
+      await handler.handle(transactions);
 
       const expectedMessageModel = new Message(
         transactions[0]._messageHash,
@@ -270,11 +249,6 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       );
 
       // Validate message models
-      assert.equal(
-        messageModels.length,
-        transactions.length,
-        'Number of models must be equal to transactions',
-      );
       SpyAssert.assert(mockedMessageRepository.get, 1, [[transactions[0]._messageHash]]);
       SpyAssert.assert(messageSave, 1, [[expectedMessageModel]]);
 
@@ -311,7 +285,7 @@ describe('StakeIntentDeclaredHandler.persist()', (): void => {
       mockedMessageRepository as any,
       mockedMessageTransferRequestRepository as any,
     );
-    await handler.persist(transactions);
+    await handler.handle(transactions);
 
     SpyAssert.assert(
       mockedMessageTransferRequestRepository.getBySenderProxyNonce,

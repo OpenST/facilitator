@@ -17,13 +17,13 @@
 
 import sinon from 'sinon';
 
-import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
-import GraphClient from '../../../../src/m0_facilitator/subscriptions/GraphClient';
-import Subscriber from '../../../../src/m0_facilitator/subscriptions/Subscriber';
-import TransactionFetcher from '../../../../src/m0_facilitator/subscriptions/TransactionFetcher';
-import TransactionHandler from '../../../../src/m0_facilitator/TransactionHandler';
 import assert from '../../../test_utils/assert';
+import ContractEntityRepository from '../../../../src/common/repositories/ContractEntityRepository';
+import GraphClient from '../../../../src/common/subscriptions/GraphClient';
 import SpyAssert from '../../../test_utils/SpyAssert';
+import Subscriber from '../../../../src/common/subscriptions/Subscriber';
+import TransactionFetcher from '../../../../src/common/subscriptions/TransactionFetcher';
+import TransactionHandler from '../../../../src/common/TransactionHandler';
 
 describe('Subscriber.subscribe()', () => {
   let mockApolloClient: any;

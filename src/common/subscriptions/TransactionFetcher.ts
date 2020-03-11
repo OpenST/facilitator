@@ -11,15 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
-import FetchQueries from '../GraphQueries/FetchQueries';
-import Logger from '../../common/Logger';
-import ContractEntityRepository from '../../common/repositories/ContractEntityRepository';
-import GraphClient from './GraphClient';
+import ContractEntityRepository from '../repositories/ContractEntityRepository';
+import Logger from '../Logger';
 import Utils from '../Utils';
+
+import GraphClient from './GraphClient';
 
 /**
  * The class fetches the transactions based on contract address and uts.
@@ -31,17 +29,24 @@ export default class TransactionFetcher {
 
   private contractEntityRepository: ContractEntityRepository;
 
+  private readonly fetchQueries: Record<string, string>;
+
   /**
    * Constructor
+   *
    * @param graphClient Graph client object.
    * @param contractEntityRepository ContractEntityRepository.
+   * @param fetchQueries Graphql fetch queries to retrieve entity info
+   *                     from graph node graphql database.
    */
   public constructor(
     graphClient: GraphClient,
     contractEntityRepository: ContractEntityRepository,
+    fetchQueries: Record<string, string>,
   ) {
     this.graphClient = graphClient;
     this.contractEntityRepository = contractEntityRepository;
+    this.fetchQueries = fetchQueries;
   }
 
   /**
@@ -65,7 +70,7 @@ export default class TransactionFetcher {
         + `and address ${checkSumContractAddress}`);
     }
     const uts = contractEntityRecord.timestamp;
-    const fetchQuery = FetchQueries[entity];
+    const fetchQuery = this.fetchQueries[entity];
     Logger.debug(`Querying records for ${entity} for UTS ${uts}`);
     let skip = 0;
     let transactions: object[] = [];

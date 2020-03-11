@@ -11,22 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// ----------------------------------------------------------------------------
 
 
+import ContractEntityHandler from '../../../common/handlers/ContractEntityHandler';
 import Logger from '../../../common/Logger';
-import Message from '../../models/Message';
+
 import {
   MessageDirection, MessageRepository, MessageStatus, MessageType,
 } from '../../repositories/MessageRepository';
-import ContractEntityHandler from '../ContractEntityHandler';
+import Message from '../../models/Message';
 import Utils from '../../Utils';
 
 /**
  * This class handles mint progress transactions.
  */
-export default class MintProgressedHandler extends ContractEntityHandler<Message> {
+export default class MintProgressedHandler extends ContractEntityHandler {
   /* Storage */
 
   private readonly messageRepository: MessageRepository;
@@ -38,15 +37,13 @@ export default class MintProgressedHandler extends ContractEntityHandler<Message
   }
 
   /**
-   * This method parses progress mint transaction and returns message model object.
+   * This method parses progress mint transaction.
    *
    * @param transactions Transaction objects.
-   *
-   * @return Array of instances of message model objects.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async persist(transactions: any[]): Promise<Message[]> {
-    Logger.debug(`Persisting mint progress records: ${transactions.length}`);
+  public async handle(transactions: any[]): Promise<void> {
+    Logger.debug(`Handling mint progress records: ${transactions.length}`);
     const models: Message[] = await Promise.all(transactions.map(
       async (transaction): Promise<Message> => {
         let message = await this.messageRepository.get(transaction._messageHash);
@@ -78,7 +75,5 @@ export default class MintProgressedHandler extends ContractEntityHandler<Message
     }
 
     await Promise.all(savePromises);
-
-    return models;
   }
 }
