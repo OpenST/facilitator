@@ -18,6 +18,7 @@ import * as web3Utils from 'web3-utils';
 
 import SubgraphDeployer from './SubgraphDeployer';
 import Logger from '../../src/common/Logger';
+import { ENDPOINT_REGEX } from './Constants';
 
 const auxiliarySubgraphDirectory = path.join(__dirname, '../auxiliary');
 const auxiliarySubgraphName = 'mosaic/aux-erc20gateway';
@@ -46,6 +47,17 @@ function parseArguments(): {
   if (!web3Utils.isAddress(erc20Cogateway)) {
     throw new Error(`Invalid cogateway address ${erc20Cogateway}`);
   }
+
+  const regex = new RegExp(ENDPOINT_REGEX);
+
+  if (!regex.test(graphAdminRPCEndpoint)) {
+    throw new Error(`Invalid graph admin rpc endpoint ${graphAdminRPCEndpoint}`);
+  }
+
+  if (!regex.test(ipfsEndpoint)) {
+    throw new Error(`Invalid ipfs endpoint ${ipfsEndpoint}`);
+  }
+
   return {
     auxiliaryAnchor,
     erc20Cogateway,

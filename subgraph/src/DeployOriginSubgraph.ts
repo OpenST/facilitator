@@ -18,6 +18,7 @@ import assert from 'assert';
 import * as web3Utils from 'web3-utils';
 import SubgraphDeployer from './SubgraphDeployer';
 import Logger from '../../src/common/Logger';
+import {ENDPOINT_REGEX} from "./Constants";
 
 const originSubgraphDirectory = path.join(__dirname, '../origin');
 const originSubgraphName = 'mosaic/origin-erc20gateway';
@@ -45,6 +46,16 @@ function parseArguments(): {
 
   if (!web3Utils.isAddress(erc20Gateway)) {
     throw new Error(`Invalid gateway address ${erc20Gateway}`);
+  }
+
+  const regex = new RegExp(ENDPOINT_REGEX);
+
+  if (!regex.test(graphAdminRPCEndpoint)) {
+    throw new Error(`Invalid graph admin rpc endpoint ${graphAdminRPCEndpoint}`);
+  }
+
+  if (!regex.test(ipfsEndpoint)) {
+    throw new Error(`Invalid ipfs endpoint ${ipfsEndpoint}`);
   }
 
   return {
