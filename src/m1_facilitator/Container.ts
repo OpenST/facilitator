@@ -14,7 +14,6 @@
 
 import BigNumber from 'bignumber.js';
 
-import ContractEntityHandler from '../common/handlers/ContractEntityHandler';
 import Subscriptions from '../common/subscriptions/Subscriptions';
 import TransactionHandler from '../common/TransactionHandler';
 
@@ -50,21 +49,25 @@ export default class Container {
 
     const handlers = Handlers.create(repositories);
     const transactionHandler = new TransactionHandler(
-      handlers as Record<string, ContractEntityHandler>,
+      handlers,
       repositories,
     );
 
     const originTransactionExecutor = new TransactionExecutor(
       repositories.originTransactionRepository,
       manifest.metachain.originChain.web3,
-      new BigNumber(0), // TODO - what should be the gas price?
+      new BigNumber(
+        await manifest.metachain.originChain.web3.eth.getGasPrice(),
+      ),
       manifest.avatarAccounts.origin,
     );
 
     const auxiliaryTransactionExecutor = new TransactionExecutor(
       repositories.auxiliaryTransactionRepository,
       manifest.metachain.auxiliaryChain.web3,
-      new BigNumber(0), // TODO - what should be the gas price?
+      new BigNumber(
+        await manifest.metachain.auxiliaryChain.web3.eth.getGasPrice(),
+      ),
       manifest.avatarAccounts.auxiliary,
     );
 

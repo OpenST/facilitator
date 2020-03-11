@@ -285,5 +285,30 @@ Facilitator can be started in below two ways :-
   
   Refer detailed document [here](demo/README.md). 
  
+### Deploy mosaic subgraph
+    
+  ##### Deploy origin subgraph: 
+  ```bash
+  npm run deploy:subgraph:origin <originAchorAddress> <gatewayAddress> <graphAdminRpcEndpoint> <ipfsEndpoint>
 
+```
 
+where: 
+
+`originAchorAddress` is the address of origin anchor contract.
+`gatewayAddress` is the address of origin gateway contract.
+`graphAdminRpcEndpoint` is admin RPC endpoint of graph node.
+`ipfsEndPoint` is IPFS endpoint.
+
+  ##### Deploy auxiliary subgraph:
+
+```bash
+npm run deploy:subgraph:auxiliary <auxiliaryAnchorAddress> <coGatwayAddress> <graphAdminRpcEndpoint> <ipfsEndpoint>
+```
+
+where: 
+
+`auxiliaryAchorAddress` is the address of origin anchor contract.
+`coGatwayAddress` is the address of auxiliary cogateway contract.
+`graphAdminRpcEndpoint` is admin RPC endpoint of graph node.
+`ipfsEndPoint` is IPFS endpoint.

@@ -25,7 +25,7 @@ export default class AvatarAccount {
   public readonly address: string;
 
   /** This instance variable is used to persist nonce in-memory */
-  private addressNonceMap: Record<string, BigNumber> = {};
+  private nonce: BigNumber | undefined;
 
   /**
    * Constructor.
@@ -34,6 +34,7 @@ export default class AvatarAccount {
    */
   private constructor(address: string) {
     this.address = address;
+    this.nonce = undefined;
   }
 
   /**
@@ -63,12 +64,12 @@ export default class AvatarAccount {
    * @returns The nonce wrapped in a Promise.
    */
   public async getNonce(web3: Web3): Promise<BigNumber> {
-    if (this.addressNonceMap[this.address]) {
-      this.addressNonceMap[this.address] = this.addressNonceMap[this.address].plus(1);
+    if (this.nonce) {
+      this.nonce = this.nonce.plus(1);
     } else {
       const nonce = await web3.eth.getTransactionCount(this.address, 'pending');
-      this.addressNonceMap[this.address] = new BigNumber(nonce);
+      this.nonce = new BigNumber(nonce);
     }
-    return this.addressNonceMap[this.address];
+    return this.nonce;
   }
 }

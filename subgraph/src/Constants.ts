@@ -12,23 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import commander from 'commander';
-
-import Logger from '../../common/Logger';
-import FacilitatorStart from '../commands/FacilitatorStart';
-
-commander
-  .option('-m, --manifest <manifest>', 'Path to manifest file.')
-  .action(
-    async (
-      options: {
-        manifest: string;
-      }): Promise<void> => {
-      try {
-        await new FacilitatorStart(options.manifest).execute();
-      } catch (e) {
-        Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
-        process.exit(1);
-      }
-    },
-  );
+/**
+ * Regex to validate graph admin rpc and ipfs endpoint.
+ */
+export const ENDPOINT_REGEX = '^(http|https)://(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])(:[0-9]+)?/?(.*)$';

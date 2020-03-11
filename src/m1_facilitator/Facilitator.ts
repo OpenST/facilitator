@@ -32,6 +32,8 @@ export default class Facilitator {
   private subscriptionRestartHandle: NodeJS.Timer | null;
 
   /**
+   * @param originTransactionExecutor Instance of origin transaction executor.
+   * @param auxiliaryTransactionExecutor Instance of auxiliary transaction executor.
    * @param originSubscriber Origin subscriber instance.
    * @param auxiliarySubscriber Auxiliary subscriber instance.
    */
