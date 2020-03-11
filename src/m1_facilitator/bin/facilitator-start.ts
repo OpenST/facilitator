@@ -14,8 +14,23 @@
 
 import commander from 'commander';
 
-import Logger from '../../common/Logger';
+import Facilitator from '../Facilitator';
 import FacilitatorStart from '../commands/FacilitatorStart';
+import Logger from '../../common/Logger';
+
+let facilitator: Facilitator;
+
+async function terminationHandler(): Promise<void> {
+  Logger.info('Stopping facilitator');
+  if (facilitator) {
+    await facilitator.stop();
+  }
+  Logger.info('Facilitator stopped');
+  process.exit(0);
+}
+
+process.on('SIGINT', terminationHandler);
+process.on('SIGTERM', terminationHandler);
 
 commander
   .option('-m, --manifest <manifest>', 'Path to manifest file.')
