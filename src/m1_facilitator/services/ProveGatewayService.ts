@@ -193,9 +193,6 @@ export default class ProveGatewayService extends Observer<Anchor> {
       [],
       blockNumber.toString(10),
     );
-    if (proof.storageProof[0].value === '0') {
-      throw new Error('ProveGatewayService::storage proof is invalid');
-    }
     return targetGatewayInstance.methods.proveGateway(
       blockNumber.toString(10),
       // @ts-ignore
