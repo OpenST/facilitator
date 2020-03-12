@@ -22,9 +22,11 @@ export default class Deposit {
     const initialOriginAccountBalance = {};
     const expectedOriginAccountBalance = {};
     const initialAuxiliaryAccountBalance = {};
+    const finalAuxiliaryAccountBalance = {};
+
+    let testDepositorAccounts = [];
 
     for (let i = 0; i < iterations; i += 1) {
-      let testDepositorAccounts = [];
       // eslint-disable-next-line no-await-in-loop
       testDepositorAccounts = await AddressHandler.getRandomAddresses(
         depositorCount,
@@ -35,7 +37,6 @@ export default class Deposit {
       await Faucet.fundAccounts(testDepositorAccounts, originChainId);
       // eslint-disable-next-line no-await-in-loop
       await Faucet.fundAccounts(testDepositorAccounts, auxiliaryChainId);
-
 
       const initialBalancePromises = testDepositorAccounts.map(
         async (account: any): Promise<void> => {
@@ -71,7 +72,7 @@ export default class Deposit {
           });
 
           // console.log(txReceipt);
-          // TODO: Login to decode event
+          // TODO: Logic to decode event
           if (testDataObject[i]) {
             testDataObject[i].push(txReceipt);
           } else {
@@ -86,7 +87,22 @@ export default class Deposit {
       // eslint-disable-next-line no-await-in-loop
       await new Promise(done => setTimeout(done, pollingInterval));
     }
+
     await new Promise(done => setTimeout(done, timeoutInterval));
+
+    const finalAuxiliaryBalancePromises = testDepositorAccounts.map(
+      async (account: any): Promise<void> => {
+        const auxiliaryBalance = await AddressHandler.getBalance(
+          account.address,
+          auxiliaryWsEndpoint,
+        );
+        finalAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
+      },
+    );
+    // eslint-disable-next-line no-await-in-loop
+    await Promise.all(finalAuxiliaryBalancePromises);
+
+    // TODO: generate report
   }
 
   private static async createDepositTransactionObject(account: any): Promise<any> {
