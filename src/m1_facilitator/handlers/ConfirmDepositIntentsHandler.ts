@@ -17,6 +17,7 @@ import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
 import GatewayRepository from '../repositories/GatewayRepository';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
+import Logger from '../../common/Logger';
 
 import assert = require('assert');
 
@@ -59,12 +60,14 @@ export default class ConfirmDepositIntentsHandler extends ContractEntityHandler 
     messageHash: string;
     contractAddress: string;
   }[]): Promise<void> {
+    Logger.info(`ConfirmDepositIntentsHandler::records received: ${records.length}`);
     const savePromises = records.map(async (record): Promise<void> => {
       let message = await this.messageRepository.get(record.messageHash);
 
       if (message === null) {
         const gatewayRecord = await this.gatewayRepository.get(record.contractAddress);
         if (gatewayRecord !== null) {
+          Logger.info(`ConfirmDepositIntentsHandler::record found: ${gatewayRecord.gatewayGA}`);
           message = new Message(
             record.messageHash,
             MessageType.Deposit,
@@ -80,10 +83,12 @@ export default class ConfirmDepositIntentsHandler extends ContractEntityHandler 
 
           message.targetStatus = MessageStatus.Declared;
           await this.messageRepository.save(message);
+          Logger.debug(`ConfirmDepositIntentsHandler::saved message: ${JSON.stringify(message)}`);
         }
       }
     });
 
     await Promise.all(savePromises);
+    Logger.debug('ConfirmDepositIntentsHandler::saved message repository records');
   }
 }

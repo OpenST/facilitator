@@ -19,6 +19,7 @@ import Utils from '../../common/Utils';
 
 import AnchorRepository from '../repositories/AnchorRepository';
 import Anchor from '../models/Anchor';
+import Logger from '../../common/Logger';
 
 
 /** Represents record of AvailableStateRootsEntity. */
@@ -55,7 +56,7 @@ export default class AvailableStateRootsHandler extends ContractEntityHandler {
    */
   public async handle(records: AvailableStateRootsEntityInterface[]): Promise<void> {
     const contractAddressVsBlockNumberMap = new Map();
-
+    Logger.info(`AvailableStateRootHandler::records received: ${records.length}`);
     records.forEach((record): void => {
       const contractAddress = Utils.toChecksumAddress(record.contractAddress);
       const blockNumber = new BigNumber(record.blockNumber);
@@ -74,11 +75,14 @@ export default class AvailableStateRootsHandler extends ContractEntityHandler {
           Anchor.getGlobalAddress(contractAddress),
         );
         if (modelRecord !== null && modelRecord.lastAnchoredBlockNumber.isLessThan(blockNumber)) {
+          Logger.info(`AvailableStateRootHandler::record found: ${modelRecord.anchorGA}`);
           modelRecord.lastAnchoredBlockNumber = blockNumber;
           await this.anchorRepository.save(modelRecord);
+          Logger.debug(`AvailableStateRootHandler::saved anchorRepository: ${JSON.stringify(modelRecord)}`);
         }
       });
 
     await Promise.all(savePromises);
+    Logger.debug('AvailableStateRootHandler::saved anchor repository records');
   }
 }

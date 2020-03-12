@@ -26,6 +26,7 @@ import DepositIntent from '../models/DepositIntent';
 import Message, { MessageType } from '../models/Message';
 import Gateway from '../models/Gateway';
 import TransactionExecutor from '../lib/TransactionExecutor';
+import Logger from '../../common/Logger';
 
 import assert = require('assert');
 
@@ -87,6 +88,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
    * @param gateways List of gateway object.
    */
   public async update(gateways: Gateway[]): Promise<void> {
+    Logger.info(`ConfirmDepositService::updated gateway records ${gateways.length}`);
     const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
       const messages = await this.messageRepository.getPendingMessagesByGateway(
         gateway.gatewayGA,
@@ -95,6 +97,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       );
 
       if (messages.length > 0) {
+        Logger.info(`ConfirmDepositService::messages to confirm: ${messages.length}`);
         await this.confirmMessages(messages, gateway);
       }
     });
@@ -112,13 +115,16 @@ export default class ConfirmDepositService extends Observer<Gateway> {
     const confirmMessageTransactionPromises = messages.map(async (message): Promise<void> => {
       const depositIntent = await this.depositIntentRepository.get(message.messageHash);
       if (depositIntent !== null) {
-        const rawTransaction = await this.confirmDepositIntentTransaction(
-          message,
-          depositIntent,
-          gateway,
-        );
-
-        await this.auxiliaryTransactionExecutor.add(gateway.remoteGA, rawTransaction);
+        try {
+          const rawTransaction = await this.confirmDepositIntentTransaction(
+            message,
+            depositIntent,
+            gateway,
+          );
+          await this.auxiliaryTransactionExecutor.add(gateway.remoteGA, rawTransaction);
+        } catch (err) {
+          Logger.error(`ConfirmDepositService::Error in confirmDepositIntentTransaction ${err}`);
+        }
       }
     });
     await Promise.all(confirmMessageTransactionPromises);
@@ -150,7 +156,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
     assert(proof.storageProof.length > 0);
 
     if (proof.storageProof[0].value === '0') {
-      throw new Error('Storage proof is invalid');
+      throw new Error('ConfirmDepositService::Storage proof is invalid');
     }
 
     return erc20Cogateway.methods.confirmDeposit(
