@@ -30,15 +30,15 @@ const generateFacilitatorManifest = (shared: Shared) => ({
         {
           avatar_account: '0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7',
           node_endpoint: endpoints.origin.chain,
-          graph_ws_endpoint: endpoints.origin.graph_ws,
-          graph_rpc_endpoint: endpoints.origin.graph_rpc,
+          graph_ws_endpoint: `${endpoints.origin.graph_ws}/subgraphs/name/mosaic/origin-erc20gateway`,
+          graph_rpc_endpoint: `${endpoints.origin.graph_rpc}/subgraphs/name/mosaic/origin-erc20gateway`,
         },
       auxiliary:
         {
           avatar_account: '0x81Df1244dEd6EF44a90a67526E4Ec4497d807F96',
           node_endpoint: endpoints.auxilary.chain,
-          graph_ws_endpoint: endpoints.auxilary.graph_ws,
-          graph_rpc_endpoint: endpoints.auxilary.graph_rpc,
+          graph_ws_endpoint: `${endpoints.auxilary.graph_ws}/subgraphs/name/mosaic/aux-erc20gateway`,
+          graph_rpc_endpoint: `${endpoints.auxilary.graph_rpc}/subgraphs/name/mosaic/aux-erc20gateway`,
         },
     },
   accounts:

@@ -18,6 +18,7 @@ import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import Web3 from 'web3';
 import schema from './manifest.schema.json';
 import AvatarAccount from './AvatarAccount';
+import Directory from '../Directory';
 
 /**
  * Interface of facilitator manifest file input chain data. It represents below:
@@ -202,6 +203,10 @@ export default class Manifest {
     this.avatarAccounts = config.accounts;
     this.originContractAddresses = config.origin_contract_addresses;
     this.facilitateTokens = new Set(config.facilitate_tokens);
+    this.dbConfig.path = Directory.getFacilitatorDatabaseFile(
+      this.architectureLayout,
+      this.originContractAddresses.erc20_gateway,
+    );
   }
 
   /**

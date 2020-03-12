@@ -128,8 +128,8 @@ export default class TransactionExecutor {
       const release = await this.mutex.acquire();
       const transaction = await this.transactionRepository.dequeue();
       try {
-        const nonce = await this.avatarAccount.getNonce(this.web3);
         if (transaction) {
+          const nonce = await this.avatarAccount.getNonce(this.web3);
           const response = await this.sendTransaction(transaction, nonce);
           transaction.transactionHash = response.transactionHash;
           transaction.gas = new BigNumber(response.gas);

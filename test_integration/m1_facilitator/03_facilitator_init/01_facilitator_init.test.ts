@@ -24,12 +24,13 @@ describe('Facilitator init ', () => {
   it('should perform facilitator init', () => {
     const manifestFilePath = path.join(__dirname, '..', 'manifest.yaml');
     const executablePath = path.join(__dirname, '..', '..', '..');
-    const command = `sh ${executablePath}/facilitator_m1 init --manifest ${manifestFilePath}`;
+    const command = `sh ${executablePath}/facilitator_m1 init --manifest ${manifestFilePath} -f`;
 
     const manifest = generateFacilitatorManifest(shared);
     fs.writeFileSync(manifestFilePath, jsYaml.dump(manifest));
     execSync(command, {
       cwd: executablePath,
+      stdio: ['inherit', 'inherit', 'inherit'],
     });
   });
 });

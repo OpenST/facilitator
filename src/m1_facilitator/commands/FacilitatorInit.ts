@@ -14,7 +14,6 @@
 
 import fs from 'fs-extra';
 import Manifest from '../manifest/Manifest';
-import Directory from '../Directory';
 import Repositories from '../repositories/Repositories';
 import SeedDataInitializer from '../SeedDataInitializer';
 import Command from './Command';
@@ -59,10 +58,7 @@ export default class FacilitatorInit implements Command {
     const manifest = Manifest.fromFile(this.manifestPath);
     Logger.info('Manifest loaded');
     const gatewayAddresses = manifest.originContractAddresses.erc20_gateway;
-    const databaseFilePath = Directory.getFacilitatorDatabaseFile(
-      manifest.architectureLayout,
-      gatewayAddresses,
-    );
+    const databaseFilePath = manifest.dbConfig.path;
 
     const databaseFileExists = await fs.pathExists(databaseFilePath);
 
@@ -85,6 +81,7 @@ export default class FacilitatorInit implements Command {
     const auxiliaryWeb3 = manifest.metachain.auxiliaryChain.web3;
 
     const repositories = await Repositories.create(databaseFilePath);
+    Logger.debug('Initializing seed data');
     await new SeedDataInitializer(repositories).initialize(
       originWeb3,
       auxiliaryWeb3,

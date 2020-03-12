@@ -15,21 +15,26 @@
 import path from 'path';
 import fs from 'fs';
 import jsYaml from 'js-yaml';
-import { execSync } from 'child_process';
+import { spawn } from 'child_process';
 import shared from '../shared';
 import generateFacilitatorManifest
   from '../03_facilitator_init/FacilitatorManifestGenerator';
 
 describe('Start facilitator', () => {
-  it.skip('should start facilitator', () => {
+  it('should start facilitator', async (): Promise<void> => {
     const manifestFilePath = path.join(__dirname, '..', 'manifest.yaml');
     const executablePath = path.join(__dirname, '..', '..', '..');
     const command = `sh ${executablePath}/facilitator_m1 start --manifest ${manifestFilePath}`;
 
     const manifest = generateFacilitatorManifest(shared);
     fs.writeFileSync(manifestFilePath, jsYaml.dump(manifest));
-    execSync(command, {
+    const child: any = spawn(command, [], {
       cwd: executablePath,
+      stdio: ['inherit', 'inherit', 'inherit'],
+      shell: true,
     });
+
+    // Note: Ensuring that facilitator starts before doing any transactions.
+    await new Promise(done => setTimeout(done, 30000));
   });
 });
