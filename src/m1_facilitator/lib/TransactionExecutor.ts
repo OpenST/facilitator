@@ -127,22 +127,30 @@ export default class TransactionExecutor {
   private async execute(): Promise<void> {
     if (!this.mutex.isLocked()) {
       const release = await this.mutex.acquire();
+      Logger.debug('TransactionExecutor:: transaction executor invoked.');
       const transaction = await this.transactionRepository.dequeue();
       try {
         if (transaction) {
+          Logger.debug('TransactionExecutor:: Executing transaction');
           const nonce = await this.avatarAccount.getNonce(this.web3);
+          Logger.debug(`TransactionExecutor::Executing transaction ${transaction.id && transaction.id.toString(10)}`);
           const response = await this.sendTransaction(transaction, nonce);
           transaction.transactionHash = response.transactionHash;
           transaction.gas = new BigNumber(response.gas);
           transaction.nonce = nonce;
           await this.transactionRepository.save(transaction);
+          Logger.debug(`TransactionExecutor::Saving transaction ${transaction.id && transaction.id.toString(10)}`);
         }
       } catch (error) {
-        Logger.error(`TransactionExecutor::Error in executing transaction: ${transaction}.
+        Logger.debug('TransactionExecutor::Decreasing nonce in case of error');
+        this.avatarAccount.adjustNonce();
+        Logger.error(`TransactionExecutor::Error in executing transaction:`
+          + `${transaction && transaction.id && transaction.id.toString(10)}.
         Error message: ${error.message}`);
       } finally {
         release();
       }
+      Logger.debug('TransactionExecutor:: Transaction execution done');
     }
   }
 
@@ -158,7 +166,9 @@ export default class TransactionExecutor {
     transactionHash: string;
     gas: number;
   }> {
-    Logger.debug(`Transaction to be processed: ${JSON.stringify(transaction)}, nonce: ${nonce.toString(10)}.`);
+    Logger.info(`Sending transaction ${transaction.id}`)
+    Logger.debug(`TransactionExecutor::Transaction to be processed: ${JSON.stringify(transaction)}`);
+    Logger.debug(`TransactionExecutor::Nonce: ${nonce.toString(10)}.`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
       const txOptions = {
         from: transaction.fromAddress,

@@ -140,6 +140,8 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
         );
         messageObj.sender = depositor;
         Logger.debug(`Creating message object ${JSON.stringify(messageObj)}`);
+      } else {
+        Logger.warn(`DeclaredDepositIntentsHandler::gateway record not found for gatewayGA ${contractAddress}`);
       }
     }
     if (messageObj !== null
@@ -178,6 +180,8 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
       );
       await this.depositIntentRepository.save(depositIntent);
       Logger.debug(`DeclaredDepositIntentsHandler::saved deposit intent ${depositIntent}`);
+    }{
+      Logger.warn(`DeclaredDepositIntentsHandler:: Deposit intent already exists: ${messageHash}`);
     }
   }
 }

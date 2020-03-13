@@ -79,6 +79,8 @@ export default class AvailableStateRootsHandler extends ContractEntityHandler {
           modelRecord.lastAnchoredBlockNumber = blockNumber;
           await this.anchorRepository.save(modelRecord);
           Logger.debug(`AvailableStateRootHandler::saved anchorRepository: ${JSON.stringify(modelRecord)}`);
+        } else {
+          Logger.warn(`Available stateroot record not found for address ${contractAddress}`);
         }
       });
 
