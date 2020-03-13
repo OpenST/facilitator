@@ -62,6 +62,7 @@ export default class Utils {
     const calculatedTransactionOptions = {
       ...txOptions,
       gas: (await rawTx.estimateGas({ from: txOptions.from })).toString(),
+      gasPrice: txOptions.gasPrice? txOptions.gasPrice: '0x01',
     };
     return rawTx.send(calculatedTransactionOptions);
   }

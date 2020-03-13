@@ -15,10 +15,10 @@
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import Mosaic from 'Mosaic';
-import { ProofGenerator } from '@openst/mosaic-proof';
 import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import { ERC20Cogateway } from 'Mosaic/dist/interacts/ERC20Cogateway';
 import { TransactionObject } from 'web3/eth/types';
+import ProofGenerator from '../../ProofGenerator';
 import Observer from '../../common/observer/Observer';
 import Logger from '../../common/Logger';
 import Anchor from '../models/Anchor';
@@ -99,7 +99,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
       }
 
       const pendingMessages = await this.messageRepository.getMessagesForConfirmation(
-        gatewayRecord.gatewayGA,
+        gatewayRecord.remoteGA,
         anchor.lastAnchoredBlockNumber,
       );
 
@@ -150,9 +150,9 @@ export default class ProveGatewayService extends Observer<Anchor> {
 
     const targetGatewayInstance = Mosaic.interacts.getERC20Cogateway(
       targetWeb3,
-      gateway.remoteGA,
+      gateway.gatewayGA,
     );
-    const sourceGatewayAddress = gateway.gatewayGA;
+    const sourceGatewayAddress = gateway.remoteGA;
 
     const rawTransaction = await ProveGatewayService.proveGatewayTransaction(
       sourceWeb3,
@@ -161,7 +161,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
       blockHeight,
     );
 
-    await transactionExecutor.add(gateway.remoteGA, rawTransaction);
+    await transactionExecutor.add(gateway.gatewayGA, rawTransaction);
   }
 
   /**
@@ -183,9 +183,8 @@ export default class ProveGatewayService extends Observer<Anchor> {
   ): Promise<TransactionObject<string>> {
     const proofGenerator = new ProofGenerator(sourceWeb3);
     Logger.info(`Generating proof for gateway address ${sourceGatewayAddress} at blockHeight ${blockNumber.toString()}`);
-    const proof = await proofGenerator.getOutboxProof(
+    const proof = await proofGenerator.generate(
       sourceGatewayAddress,
-      [],
       blockNumber.toString(10),
     );
 

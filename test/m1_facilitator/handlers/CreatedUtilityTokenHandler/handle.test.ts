@@ -23,13 +23,13 @@ import assert from '../../../test_utils/assert';
 
 describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
   const records = [{
-    valueTokenAddress: '0x0000000000000000000000000000000000000040',
-    utilityTokenAddress: '0x0000000000000000000000000000000000000041',
+    valueToken: '0x0000000000000000000000000000000000000040',
+    utilityToken: '0x0000000000000000000000000000000000000041',
     contractAddress: '0x0000000000000000000000000000000000000042',
   },
   {
-    valueTokenAddress: '0x0000000000000000000000000000000000000090',
-    utilityTokenAddress: '0x0000000000000000000000000000000000000091',
+    valueToken: '0x0000000000000000000000000000000000000090',
+    utilityToken: '0x0000000000000000000000000000000000000091',
     contractAddress: '0x0000000000000000000000000000000000000092',
   }];
 
@@ -62,17 +62,17 @@ describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
 
   async function assertERC20GatewayPair(record: {
     gatewayGA: string;
-    valueTokenAddress: string;
-    utilityTokenAddress: string;
+    valueToken: string;
+    utilityToken: string;
   }): Promise<void> {
     const erc20GatewayPair = await erc20GatewayTokenPairRepository.get(
       record.gatewayGA,
-      record.valueTokenAddress,
+      record.valueToken,
     );
 
     assert.strictEqual(
       erc20GatewayPair && erc20GatewayPair.utilityToken,
-      record.utilityTokenAddress,
+      record.utilityToken,
       'Incorrect utility token address',
     );
   }
@@ -84,8 +84,8 @@ describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
     await assertERC20GatewayPair(
       {
         gatewayGA: Gateway.getGlobalAddress(gatewayAddress1),
-        valueTokenAddress: records[0].valueTokenAddress,
-        utilityTokenAddress: records[0].utilityTokenAddress,
+        valueToken: records[0].valueToken,
+        utilityToken: records[0].utilityToken,
       },
     );
   });
@@ -106,16 +106,16 @@ describe('CreatedUtilityTokenHandler:handle', async (): Promise<void> => {
     await assertERC20GatewayPair(
       {
         gatewayGA: Gateway.getGlobalAddress(gatewayAddress1),
-        valueTokenAddress: records[0].valueTokenAddress,
-        utilityTokenAddress: records[0].utilityTokenAddress,
+        valueToken: records[0].valueToken,
+        utilityToken: records[0].utilityToken,
       },
     );
 
     await assertERC20GatewayPair(
       {
         gatewayGA: Gateway.getGlobalAddress(gatewayAddress2),
-        valueTokenAddress: records[1].valueTokenAddress,
-        utilityTokenAddress: records[1].utilityTokenAddress,
+        valueToken: records[1].valueToken,
+        utilityToken: records[1].utilityToken,
       },
     );
   });

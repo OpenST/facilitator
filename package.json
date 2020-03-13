@@ -88,7 +88,8 @@
     "web3-eth-accounts": "1.0.0-beta.55",
     "web3-utils": "1.0.0-beta.55",
     "winston": "3.2.1",
-    "ws": "7.0.0"
+    "ws": "7.0.0",
+    "rlp": "2.2.4"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "0.1.3",
