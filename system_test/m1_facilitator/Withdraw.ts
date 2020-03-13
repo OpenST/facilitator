@@ -21,10 +21,13 @@ export default class Withdraw {
     const auxiliaryChainId = config.chains.auxiliary.chainId;
 
     const testDataObject = {};
-    const initialOriginAccountBalance = {};
-    const expectedOriginAccountBalance = {};
-    const initialAuxiliaryAccountBalance = {};
-    const finalOriginAccountBalance = {};
+    interface Balance {
+      [key: string]: number;
+    }
+    const initialOriginAccountBalance: Balance = {};
+    const expectedOriginAccountBalance: Balance = {};
+    const initialAuxiliaryAccountBalance: Balance = {};
+    const finalOriginAccountBalance: Balance = {};
 
     let testWithdrawerAccounts = [];
     let totalUniqueDepositorAccounts = [];

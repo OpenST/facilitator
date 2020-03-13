@@ -21,10 +21,14 @@ export default class Deposit {
     const originChainId = config.chains.origin.chainId;
 
     const testDataObject = {};
-    const initialOriginAccountBalance = {};
-    const expectedOriginAccountBalance = {};
-    const initialAuxiliaryAccountBalance = {};
-    const finalAuxiliaryAccountBalance = {};
+
+    interface Balance {
+      [key: string]: number;
+    }
+    const initialOriginAccountBalance: Balance = {};
+    const expectedOriginAccountBalance: Balance = {};
+    const initialAuxiliaryAccountBalance: Balance = {};
+    const finalAuxiliaryAccountBalance: Balance = {};
 
     let testDepositorAccounts = [];
     let totalUniqueDepositorAccounts = [];
