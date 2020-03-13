@@ -18,7 +18,7 @@ import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
 import { Error } from 'sequelize';
 import { TransactionObject } from 'web3/eth/types';
-import ProofGenerator from '../../ProofGenerator';
+import ProofGenerator from '../../common/ProofGenerator';
 import MessageRepository from '../repositories/MessageRepository';
 import DepositIntentRepository from '../repositories/DepositIntentRepository';
 import Observer from '../../common/observer/Observer';

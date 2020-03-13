@@ -18,7 +18,7 @@ import Mosaic from 'Mosaic';
 import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import { ERC20Cogateway } from 'Mosaic/dist/interacts/ERC20Cogateway';
 import { TransactionObject } from 'web3/eth/types';
-import ProofGenerator from '../../ProofGenerator';
+import ProofGenerator from '../../common/ProofGenerator';
 import Observer from '../../common/observer/Observer';
 import Logger from '../../common/Logger';
 import Anchor from '../models/Anchor';

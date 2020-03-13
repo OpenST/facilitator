@@ -16,8 +16,8 @@ import { execSync } from 'child_process';
 import shared from '../shared';
 import endpoints from '../endpoints';
 
-describe('Deploy origin and auxiliary subgraph  ', () => {
-  it('should deploy origin subgraph', () => {
+describe('Deploy origin and auxiliary subgraph  ', (): void => {
+  it('should deploy origin subgraph', (): void => {
     const originAchorAddress = shared.contracts.originAnchor.address;
     const gatewayAddress = shared.contracts.erc20Gateway.address;
     const graphAdminRpcEndpoint = endpoints.origin.graph_rpc_admin;
@@ -30,7 +30,7 @@ describe('Deploy origin and auxiliary subgraph  ', () => {
     );
   });
 
-  it('should deploy auxiliary subgraph', () => {
+  it('should deploy auxiliary subgraph', (): void => {
     const auxiliaryAchorAddress = shared.contracts.auxiliaryAnchor.address;
     const cogatewayAddress = shared.contracts.erc20Cogateway.address;
     const graphAdminRpcEndpoint = endpoints.auxilary.graph_rpc_admin;
