@@ -24,7 +24,7 @@ import docker from '../docker';
 import shared from '../shared';
 import Utils from '../utils';
 
-describe('Deployment of contract ', () => {
+describe('Deployment of contract ', (): void => {
   before(async (): Promise<void> => {
     const { rpcEndpointOrigin, rpcEndpointAuxiliary } = await docker();
     shared.origin.web3 = new Web3(rpcEndpointOrigin);

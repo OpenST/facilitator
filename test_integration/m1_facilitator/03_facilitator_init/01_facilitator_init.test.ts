@@ -20,8 +20,8 @@ import path from 'path';
 import generateFacilitatorManifest from './FacilitatorManifestGenerator';
 import shared from '../shared';
 
-describe('Facilitator init ', () => {
-  it('should perform facilitator init', () => {
+describe('Facilitator init ', (): void => {
+  it('should perform facilitator init', (): void => {
     const manifestFilePath = path.join(__dirname, '..', 'manifest.yaml');
     const executablePath = path.join(__dirname, '..', '..', '..');
     const command = `sh ${executablePath}/facilitator_m1 init --manifest ${manifestFilePath}`;
