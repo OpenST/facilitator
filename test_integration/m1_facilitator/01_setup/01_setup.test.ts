@@ -18,7 +18,7 @@ import Utils from '../utils';
 
 const MAX_STATE_ROOTS = '100';
 
-describe('Setup contracts ', () => {
+describe('Setup contracts ', (): void => {
   it('should setup anchors', async (): Promise<void> => {
     const originTransactionObject = shared.contracts.originAnchor.methods.setup(
       MAX_STATE_ROOTS,
@@ -56,7 +56,7 @@ describe('Setup contracts ', () => {
       'Coconsensus Address must match',
     );
   });
-  it('should setup erc20 gateways', async (): Promise<void> => {
+  it('should setup erc20 gateway', async (): Promise<void> => {
     const params = {
       metachainId: shared.metachainId,
       erc20Cogateway: shared.contracts.erc20Cogateway.address,
@@ -83,7 +83,7 @@ describe('Setup contracts ', () => {
     assert.strictEqual(
       await shared.contracts.erc20Gateway.methods.stateRootProvider().call(),
       params.stateRootProvider,
-      'Stateroot provider must match',
+      'State root provider must match',
     );
   });
 

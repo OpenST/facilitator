@@ -14,15 +14,16 @@
 
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+import { Contract } from 'web3-eth-contract';
 
 export default class Utils {
   /**
    *
-   * @param web3
-   * @param contractABI
-   * @param bin
-   * @param args
-   * @param deployer
+   * @param web3 Web3 instance.
+   * @param contractABI ABI of contract.
+   * @param bin Bin of contract.
+   * @param args Contract constructor arguments.
+   * @param deployer Deployer address.
    */
   public static async deploy(
     web3: Web3,
@@ -30,7 +31,7 @@ export default class Utils {
     bin: string,
     args: string[],
     deployer: string,
-  ) {
+  ): Promise<Contract> {
     const deploymentTransaction = new web3.eth.Contract(
       contractABI,
     ).deploy({
