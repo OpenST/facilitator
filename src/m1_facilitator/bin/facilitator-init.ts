@@ -24,7 +24,6 @@ commander
     force?: boolean;
 
   }): Promise<void> => {
-    console.log('init called');
     try {
       await new FacilitatorInit(options.manifest, options.force ? options.force : false)
         .execute();
