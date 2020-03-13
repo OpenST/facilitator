@@ -1,3 +1,4 @@
+import { Account } from 'web3-eth-accounts';
 import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 
@@ -8,11 +9,13 @@ import Utils from '../common/Utils';
 
 export default class Withdraw {
   public static async withdrawSystemTest(): Promise<void> {
-    const { withdrawerCount } = config.testData.withdraw;
-    const { concurrencyCount } = config.testData.withdraw;
-    const { iterations } = config.testData.withdraw;
-    const { pollingInterval } = config.testData.withdraw;
-    const { timeoutInterval } = config.testData.withdraw;
+    const {
+      withdrawerCount,
+      concurrencyCount,
+      iterations,
+      pollingInterval,
+      timeoutInterval,
+    } = config.testData.withdraw;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const auxiliaryChainId = config.chains.auxiliary.chainId;
@@ -24,6 +27,7 @@ export default class Withdraw {
     const finalOriginAccountBalance = {};
 
     let testWithdrawerAccounts = [];
+    let totalUniqueDepositorAccounts = [];
 
     for (let i = 0; i < iterations; i += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -36,16 +40,21 @@ export default class Withdraw {
       await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId);
 
       const initialBalancePromises = testWithdrawerAccounts.map(
-        async (account: any): Promise<void> => {
-          const originBalance = await AddressHandler.getBalance(
+        async (account: Account): Promise<void> => {
+          const { valueToken } = config.chains.origin;
+          const { utilityToken } = config.chains.auxiliary;
+
+          const originBalance = await AddressHandler.getOriginTokenBalance(
             account.address,
             originWsEndpoint,
+            valueToken,
           );
           initialOriginAccountBalance[account.address] = originBalance;
 
-          const auxiliaryBalance = await AddressHandler.getBalance(
+          const auxiliaryBalance = await AddressHandler.getAuxiliaryTokenBalance(
             account.address,
             auxiliaryWsEndpoint,
+            utilityToken,
           );
           initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
         },
@@ -54,7 +63,7 @@ export default class Withdraw {
       await Promise.all(initialBalancePromises);
 
       const withdrawTransactionPromises = testWithdrawerAccounts.map(
-        async (account: any): Promise<void> => {
+        async (account: Account): Promise<void> => {
           const { txObject, withdrawAmount } = await this.createWithdrawTransactionObject(account);
           if (expectedOriginAccountBalance[account.address]) {
             expectedOriginAccountBalance[account.address] += withdrawAmount;
@@ -99,15 +108,22 @@ export default class Withdraw {
       await Promise.all(withdrawTransactionPromises);
       // eslint-disable-next-line no-await-in-loop
       await new Promise(done => setTimeout(done, pollingInterval));
+
+      const uniqueAddresses = testWithdrawerAccounts.filter(
+        async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
+      );
+      totalUniqueDepositorAccounts = totalUniqueDepositorAccounts.concat(uniqueAddresses);
     }
 
     await new Promise(done => setTimeout(done, timeoutInterval));
 
     const finalOriginBalancePromises = testWithdrawerAccounts.map(
-      async (account: any): Promise<void> => {
-        const originBalance = await AddressHandler.getBalance(
+      async (account: Account): Promise<void> => {
+        const { valueToken } = config.chains.origin;
+        const originBalance = await AddressHandler.getOriginTokenBalance(
           account.address,
           originWsEndpoint,
+          valueToken,
         );
         finalOriginAccountBalance[account.address] = originBalance;
       },
@@ -116,9 +132,11 @@ export default class Withdraw {
     await Promise.all(finalOriginBalancePromises);
 
     // TODO: generate report
+
+    // TODO: refund to faucet
   }
 
-  private static async createWithdrawTransactionObject(account: any): Promise<any> {
+  private static async createWithdrawTransactionObject(account: Account): Promise<any> {
     const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
     const auxiliaryWeb3 = new Web3(config.chains.auxiliary.wsEndpoint);
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);

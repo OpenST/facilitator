@@ -1,9 +1,9 @@
 const config = {
   chains: {
     origin: {
-      wsEndpoint: '',
+      wsEndpoint: 'https://rpc.slock.it/goerli',
       graphEndpoint: '',
-      valueToken: '',
+      valueToken: '0xd426b22f3960d01189a3d548b45a7202489ff4de',
       gateway: '',
       chainId: 5,
     },

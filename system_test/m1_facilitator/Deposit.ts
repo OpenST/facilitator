@@ -1,3 +1,4 @@
+import { Account } from 'web3-eth-accounts';
 import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 
@@ -8,11 +9,13 @@ import Utils from '../common/Utils';
 
 export default class Deposit {
   public static async depositSystemTest(): Promise<void> {
-    const { depositorCount } = config.testData.deposit;
-    const { concurrencyCount } = config.testData.deposit;
-    const { iterations } = config.testData.deposit;
-    const { pollingInterval } = config.testData.deposit;
-    const { timeoutInterval } = config.testData.deposit;
+    const {
+      depositorCount,
+      concurrencyCount,
+      iterations,
+      pollingInterval,
+      timeoutInterval,
+    } = config.testData.deposit;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const originChainId = config.chains.origin.chainId;
@@ -37,17 +40,21 @@ export default class Deposit {
       await Faucet.fundAccounts(testDepositorAccounts, originChainId);
 
       const initialBalancePromises = testDepositorAccounts.map(
-        async (account: any): Promise<void> => {
-          // TODO: Update to get the ERC20 token balance
-          const originBalance = await AddressHandler.getBalance(
+        async (account: Account): Promise<void> => {
+          const { valueToken } = config.chains.origin;
+          const { utilityToken } = config.chains.auxiliary;
+
+          const originBalance = await AddressHandler.getOriginTokenBalance(
             account.address,
             originWsEndpoint,
+            valueToken,
           );
           initialOriginAccountBalance[account.address] = originBalance;
 
-          const auxiliaryBalance = await AddressHandler.getBalance(
+          const auxiliaryBalance = await AddressHandler.getAuxiliaryTokenBalance(
             account.address,
             auxiliaryWsEndpoint,
+            utilityToken,
           );
           initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
         },
@@ -56,7 +63,7 @@ export default class Deposit {
       await Promise.all(initialBalancePromises);
 
       const depositTransactionPromises = testDepositorAccounts.map(
-        async (account: any): Promise<void> => {
+        async (account: Account): Promise<void> => {
           const { txObject, depositAmount } = await this.createDepositTransactionObject(account);
           if (expectedOriginAccountBalance[account.address]) {
             expectedOriginAccountBalance[account.address] += depositAmount;
@@ -70,8 +77,6 @@ export default class Deposit {
             gas: (await txObject.estimateGas({ from: account.address })),
           });
 
-          // console.log(txReceipt);
-          // TODO: Logic to decode event
           const {
             amount,
             nonce,
@@ -105,7 +110,7 @@ export default class Deposit {
       await new Promise(done => setTimeout(done, pollingInterval));
 
       const uniqueAddresses = testDepositorAccounts.filter(
-        async (item: any, index, ar): Promise<any> => ar.indexOf(item) === index,
+        async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
       );
       totalUniqueDepositorAccounts = totalUniqueDepositorAccounts.concat(uniqueAddresses);
     }
@@ -113,11 +118,13 @@ export default class Deposit {
     await new Promise(done => setTimeout(done, timeoutInterval));
 
     const finalAuxiliaryBalancePromises = testDepositorAccounts.map(
-      async (account: any): Promise<void> => {
-        // TODO: Update to get the ERC20 token balance
-        const auxiliaryBalance = await AddressHandler.getBalance(
+      async (account: Account): Promise<void> => {
+        const { utilityToken } = config.chains.auxiliary;
+
+        const auxiliaryBalance = await AddressHandler.getAuxiliaryTokenBalance(
           account.address,
           auxiliaryWsEndpoint,
+          utilityToken,
         );
         finalAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
       },
@@ -130,7 +137,7 @@ export default class Deposit {
     // TODO: refund to faucet
   }
 
-  private static async createDepositTransactionObject(account: any): Promise<any> {
+  private static async createDepositTransactionObject(account: Account): Promise<any> {
     const erc20GatewayAddress = config.chains.origin.gateway;
     const originWeb3 = new Web3(config.chains.origin.wsEndpoint);
     const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
