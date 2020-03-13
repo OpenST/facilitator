@@ -18,7 +18,7 @@ import * as web3Utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 import Mosaic from 'Mosaic';
 
-import { ProofGenerator } from '@openst/mosaic-proof';
+import ProofGenerator from '../../../../src/ProofGenerator';
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
@@ -72,7 +72,7 @@ describe('ConfirmWithdraw:update ', (): void => {
       MessageType.Withdraw,
       MessageStatus.Declared,
       MessageStatus.Undeclared,
-      gateway.gatewayGA,
+      gateway.remoteGA,
       new BigNumber('1'),
       new BigNumber('1'),
       new BigNumber('100'),
@@ -89,7 +89,7 @@ describe('ConfirmWithdraw:update ', (): void => {
     );
 
     const gatwayTokenPair = new ERC20GatewayTokenPair(
-      gateway.remoteGA,
+      gateway.gatewayGA,
       withdrawIntent.tokenAddress as string,
       utilityToken,
     );
@@ -136,7 +136,7 @@ describe('ConfirmWithdraw:update ', (): void => {
 
     sinon.replace(
       ProofGenerator.prototype,
-      'getOutboxProof',
+      'generate',
       sinon.fake.returns(proof),
     );
 
@@ -155,7 +155,7 @@ describe('ConfirmWithdraw:update ', (): void => {
     SpyAssert.assert(
       transactionExecutor.add,
       1,
-      [[gateway.remoteGA, confirmWithdrawRawTx]],
+      [[gateway.gatewayGA, confirmWithdrawRawTx]],
     );
 
     SpyAssert.assertCall(getERC20GatewaySpy, 1);

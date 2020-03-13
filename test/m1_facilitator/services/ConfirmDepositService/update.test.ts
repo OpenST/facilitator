@@ -18,7 +18,7 @@ import * as web3Utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 import Mosaic from 'Mosaic';
 
-import { ProofGenerator } from '@openst/mosaic-proof';
+import ProofGenerator from '../../../../src/ProofGenerator';
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
 import ConfirmDepositService
@@ -56,8 +56,8 @@ describe('ConfirmDepositService:update ', (): void => {
     const repositories = await Repositories.create();
 
     gateway = new Gateway(
-      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000002'),
       Gateway.getGlobalAddress('0x0000000000000000000000000000000000000001'),
+      Gateway.getGlobalAddress('0x0000000000000000000000000000000000000002'),
       GatewayType.ERC20,
       '0x0000000000000000000000000000000000000003',
       new BigNumber(200),
@@ -69,7 +69,7 @@ describe('ConfirmDepositService:update ', (): void => {
       MessageType.Deposit,
       MessageStatus.Declared,
       MessageStatus.Undeclared,
-      gateway.gatewayGA,
+      gateway.remoteGA,
       new BigNumber('1'),
       new BigNumber('1'),
       new BigNumber('100'),
@@ -128,7 +128,7 @@ describe('ConfirmDepositService:update ', (): void => {
 
     sinon.replace(
       ProofGenerator.prototype,
-      'getOutboxProof',
+      'generate',
       sinon.fake.returns(proof),
     );
 
@@ -146,7 +146,7 @@ describe('ConfirmDepositService:update ', (): void => {
     SpyAssert.assert(
       transactionExecutor.add,
       1,
-      [[gateway.remoteGA, confirmDepositRawTx]],
+      [[gateway.gatewayGA, confirmDepositRawTx]],
     );
 
     SpyAssert.assertCall(getERC20CogatewaySpy, 1);

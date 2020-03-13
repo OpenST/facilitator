@@ -15,10 +15,10 @@
 import Web3 from 'web3';
 import sinon, { SinonStubbedInstance } from 'sinon';
 
-import { ProofGenerator } from '@openst/mosaic-proof';
 import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
 import * as web3Utils from 'web3-utils';
+import ProofGenerator from '../../../../src/ProofGenerator';
 
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
@@ -73,7 +73,7 @@ describe('ProveGateway::update', (): void => {
       MessageType.Deposit,
       MessageStatus.Declared,
       MessageStatus.Undeclared,
-      gateway.gatewayGA,
+      gateway.remoteGA,
       new BigNumber('1'),
       new BigNumber('1'),
       new BigNumber('100'),
@@ -90,7 +90,7 @@ describe('ProveGateway::update', (): void => {
 
     outboxProofSpy = sinon.replace(
       ProofGenerator.prototype,
-      'getOutboxProof',
+      'generate',
       sinon.fake.resolves(proof),
     );
 
@@ -133,7 +133,7 @@ describe('ProveGateway::update', (): void => {
     await proveGatewayService.update([anchor]);
 
     SpyAssert.assert(auxiliaryTransactionExecutor.add, 1, [[
-      gateway.remoteGA, proveGatewayRawTx,
+      gateway.gatewayGA, proveGatewayRawTx,
     ]]);
 
     SpyAssert.assert(proveGatewaySpy, 1, [[
@@ -144,8 +144,7 @@ describe('ProveGateway::update', (): void => {
 
     SpyAssert.assertCall(getERC20CogatewaySpy, 1);
     SpyAssert.assert(outboxProofSpy, 1, [[
-      gatewayAddress,
-      [],
+      gateway.remoteGA,
       anchor.lastAnchoredBlockNumber.toString(10),
     ]]);
   });
