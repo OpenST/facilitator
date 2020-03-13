@@ -18,7 +18,7 @@ import sinon, { SinonStubbedInstance } from 'sinon';
 import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
 import * as web3Utils from 'web3-utils';
-import ProofGenerator from '../../../../src/ProofGenerator';
+import ProofGenerator from '../../../../src/common/ProofGenerator';
 
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';

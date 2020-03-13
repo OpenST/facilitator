@@ -15,7 +15,7 @@
 import Web3 from 'web3';
 import * as Web3Utils from 'web3-utils';
 import { GetProof } from 'web3-eth';
-import Logger from './common/Logger';
+import Logger from './Logger';
 
 const RLP = require('rlp');
 
