@@ -69,6 +69,7 @@ export default class FacilitatorInit implements Command {
     }
 
     if (this.isForceInit && databaseFileExists) {
+      Logger.debug('Removing existing database file');
       await fs.remove(databaseFilePath);
     }
 

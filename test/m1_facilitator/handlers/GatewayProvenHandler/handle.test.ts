@@ -55,7 +55,7 @@ describe('GatewayProvenHandler::handle', (): void => {
     const entity: GatewayProvenEntityInterface = {
       contractAddress: Utils.generateRundomAddress(),
       remoteGateway: Utils.generateRundomAddress(),
-      blockNumber: '2',
+      provenBlockNumber: '2',
     };
 
     return assert.isFulfilled(
@@ -82,7 +82,7 @@ describe('GatewayProvenHandler::handle', (): void => {
       config.gatewayProvenHandler.handle([{
         contractAddress: gatewayGA,
         remoteGateway: remoteGA,
-        blockNumber: remoteGatewayLastProvenBlockNumber.toString(),
+        provenBlockNumber: remoteGatewayLastProvenBlockNumber.toString(),
       }]),
     );
   });
@@ -106,7 +106,7 @@ describe('GatewayProvenHandler::handle', (): void => {
       config.gatewayProvenHandler.handle([{
         contractAddress: gatewayGA,
         remoteGateway: remoteGA,
-        blockNumber: remoteGatewayLastProvenBlockNumber.minus(1).toString(),
+        provenBlockNumber: remoteGatewayLastProvenBlockNumber.minus(1).toString(),
       }]),
     );
   });
@@ -131,7 +131,7 @@ describe('GatewayProvenHandler::handle', (): void => {
     await config.gatewayProvenHandler.handle([{
       contractAddress: gatewayGA,
       remoteGateway: remoteGA,
-      blockNumber: newRemoteGatewayLastProvenBlockNumber.toString(),
+      provenBlockNumber: newRemoteGatewayLastProvenBlockNumber.toString(),
     }]);
 
     const storedGatewayModel = await config.gatewayRepository.get(gatewayGA);

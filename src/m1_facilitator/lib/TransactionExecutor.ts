@@ -168,7 +168,7 @@ export default class TransactionExecutor {
         gas: transaction.gas && transaction.gas.toString(10),
       };
       let estimatedGas: number;
-      if (txOptions.gas === undefined) {
+      if (!txOptions.gas) {
         Logger.debug('Estimating gas for the transaction');
         estimatedGas = await this.web3.eth.estimateGas(txOptions);
         Logger.debug(`Transaction gas estimates  ${estimatedGas}`);

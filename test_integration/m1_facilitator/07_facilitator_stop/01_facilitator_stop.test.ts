@@ -16,7 +16,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 
 describe('Facilitator stop ', () => {
-  it('should stop facilitator', () => {
+  it.skip('should stop facilitator', () => {
     const killFacilitator = path.join(__dirname, '..', 'kill_facilitator_process.sh');
     execSync(
       ` sh ${killFacilitator}`,

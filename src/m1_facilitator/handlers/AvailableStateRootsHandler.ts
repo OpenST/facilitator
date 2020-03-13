@@ -24,7 +24,7 @@ import Anchor from '../models/Anchor';
 /** Represents record of AvailableStateRootsEntity. */
 interface AvailableStateRootsEntityInterface {
   contractAddress: string;
-  blockNumber: string;
+  anchoredBlockNumber: string;
 }
 
 /**
@@ -58,8 +58,8 @@ export default class AvailableStateRootsHandler extends ContractEntityHandler {
 
     records.forEach((record): void => {
       const contractAddress = Utils.toChecksumAddress(record.contractAddress);
-      const blockNumber = new BigNumber(record.blockNumber);
-      if (!contractAddressVsBlockNumberMap.has(record.contractAddress)) {
+      const blockNumber = new BigNumber(record.anchoredBlockNumber);
+      if (!contractAddressVsBlockNumberMap.has(contractAddress)) {
         contractAddressVsBlockNumberMap.set(contractAddress, blockNumber);
       }
       if (contractAddressVsBlockNumberMap.get(contractAddress).isLessThan(blockNumber)) {

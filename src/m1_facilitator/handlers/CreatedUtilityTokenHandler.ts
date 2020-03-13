@@ -24,8 +24,8 @@ import GatewayRepository from '../repositories/GatewayRepository';
  * It represents record of CreatedUtilityTokens entity.
  */
 export interface CreatedUtilityTokenHandlerInterface {
-  valueTokenAddress: string;
-  utilityTokenAddress: string;
+  valueToken: string;
+  utilityToken: string;
   contractAddress: string;
 }
 
@@ -69,7 +69,7 @@ export default class CreatedUtilityTokenHandler extends ContractEntityHandler {
         Gateway.getGlobalAddress(record.contractAddress),
       );
       if (gatewayRecord === null) {
-        Logger.warn(
+        Logger.error(
           'There is no gateway model in the gateway repository '
           + `matching to ${record.contractAddress}.`,
         );
@@ -77,15 +77,17 @@ export default class CreatedUtilityTokenHandler extends ContractEntityHandler {
       }
       Logger.debug(`Gateway record found for ${record.contractAddress}`);
       const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
-        Utils.toChecksumAddress(record.contractAddress),
-        Utils.toChecksumAddress(record.valueTokenAddress),
+        Utils.toChecksumAddress(gatewayRecord.remoteGA),
+        Utils.toChecksumAddress(record.valueToken),
       );
+
+      Logger.debug(`ERC20 gateway pair record found ${erc20GatewayTokenPairRecord === null}`);
       if (erc20GatewayTokenPairRecord === null) {
         const erc20GatewayTokenPair = await this.erc20GatewayTokenPairRepository.save(
           new ERC20GatewayTokenPair(
             Utils.toChecksumAddress(gatewayRecord.remoteGA),
-            Utils.toChecksumAddress(record.valueTokenAddress),
-            Utils.toChecksumAddress(record.utilityTokenAddress),
+            Utils.toChecksumAddress(record.valueToken),
+            Utils.toChecksumAddress(record.utilityToken),
           ),
         );
         Logger.debug(`Creating ERC20GatewayTokenPair object: ${JSON.stringify(erc20GatewayTokenPair)}`);

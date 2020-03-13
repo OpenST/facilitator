@@ -23,17 +23,19 @@ import DepositIntentRepository from '../repositories/DepositIntentRepository';
 import MessageRepository from '../repositories/MessageRepository';
 import Utils from '../../common/Utils';
 import Logger from '../../common/Logger';
+import Gateway from '../models/Gateway';
 
 /** It represents record of DeclaredDepositIntents entity. */
 interface DeclaredDepositIntentsEntityInterface {
   contractAddress: string;
   messageHash: string;
-  valueTokenAddress: string;
+  valueToken: string;
   beneficiary: string;
   amount: string;
   feeGasPrice: string;
   feeGasLimit: string;
   blockNumber: string;
+  depositor: string;
 }
 
 /**
@@ -86,10 +88,11 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
           record.feeGasPrice,
           record.feeGasLimit,
           record.blockNumber,
+          record.depositor,
         );
         await this.handleDepositIntent(
           record.messageHash,
-          record.valueTokenAddress,
+          record.valueToken,
           record.amount,
           record.beneficiary,
         );
@@ -107,6 +110,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
    * @param feeGasPrice GasPrice which depositor will be paying.
    * @param feeGasLimit GasLimit which depositor will be paying.
    * @param blockNumber Block number at which deposit transaction is mined.
+   * @param depositor Address of depositor.
    */
   private async handleMessage(
     contractAddress: string,
@@ -114,10 +118,13 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
     feeGasPrice: string,
     feeGasLimit: string,
     blockNumber: string,
+    depositor: string,
   ): Promise<void> {
     let messageObj = await this.messageRepository.get(messageHash);
     if (messageObj === null) {
-      const gatewayRecord = await this.gatewayRepository.get(contractAddress);
+      const gatewayRecord = await this.gatewayRepository.get(
+        Gateway.getGlobalAddress(contractAddress),
+      );
       if (gatewayRecord !== null) {
         messageObj = new Message(
           messageHash,
@@ -129,6 +136,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
           new BigNumber(feeGasLimit),
           new BigNumber(blockNumber),
         );
+        messageObj.sender = depositor;
         Logger.debug(`Creating message object ${JSON.stringify(messageObj)}`);
       }
     }

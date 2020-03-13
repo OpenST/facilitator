@@ -77,7 +77,7 @@ export default class TransactionFetcher {
     const response: any = {};
     while (true) {
       const variables = {
-        contractAddress: checkSumContractAddress,
+        contractAddress: entityRecord.contractAddress,
         uts,
         skip,
         limit: this.queryLimit,
