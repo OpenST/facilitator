@@ -89,6 +89,7 @@ export default class TransactionExecutor {
       this.gasPrice,
     );
     await this.transactionRepository.save(transaction);
+    Logger.debug(`TransactionExecutor::Transaction: ${JSON.stringify(transaction)} queued successfully.`);
   }
 
   /**
@@ -137,7 +138,7 @@ export default class TransactionExecutor {
           await this.transactionRepository.save(transaction);
         }
       } catch (error) {
-        Logger.error(`TransactionExecutor: Error in executing transaction: ${transaction}.
+        Logger.error(`TransactionExecutor::Error in executing transaction: ${transaction}.
         Error message: ${error.message}`);
       } finally {
         release();
@@ -157,7 +158,7 @@ export default class TransactionExecutor {
     transactionHash: string;
     gas: number;
   }> {
-    Logger.info(`Transaction to be processed: ${JSON.stringify(transaction)}, nonce: ${nonce.toString(10)}`);
+    Logger.debug(`Transaction to be processed: ${JSON.stringify(transaction)}, nonce: ${nonce.toString(10)}.`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
       const txOptions = {
         from: transaction.fromAddress,
@@ -169,15 +170,15 @@ export default class TransactionExecutor {
       };
       let estimatedGas: number;
       if (!txOptions.gas) {
-        Logger.debug('Estimating gas for the transaction');
+        Logger.info('TransactionExecutor::Estimating gas for the transaction');
         estimatedGas = await this.web3.eth.estimateGas(txOptions);
-        Logger.debug(`Transaction gas estimates  ${estimatedGas}`);
+        Logger.info(`TransactionExecutor::estimated gas  ${estimatedGas}`);
         txOptions.gas = estimatedGas.toString(10);
       }
       this.web3.eth.sendTransaction(txOptions)
         .on('transactionHash', (txHash: string): void => onResolve({ transactionHash: txHash, gas: estimatedGas }))
         .on('error', (e: Error): void => {
-          Logger.error(`Transaction failed with error: ${e.message}`);
+          Logger.error(`TransactionExecutor::Transaction failed with error: ${e.message}`);
           onReject(e);
         });
     });
