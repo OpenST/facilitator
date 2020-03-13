@@ -17,7 +17,7 @@ import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 import { TransactionObject } from 'web3/eth/types';
 import BigNumber from 'bignumber.js';
-import ProofGenerator from '../../ProofGenerator';
+import ProofGenerator from '../../common/ProofGenerator';
 
 import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import Gateway from '../models/Gateway';

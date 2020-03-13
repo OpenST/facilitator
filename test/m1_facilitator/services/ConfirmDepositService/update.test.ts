@@ -18,7 +18,7 @@ import * as web3Utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 import Mosaic from 'Mosaic';
 
-import ProofGenerator from '../../../../src/ProofGenerator';
+import ProofGenerator from '../../../../src/common/ProofGenerator';
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
 import ConfirmDepositService
