@@ -75,12 +75,12 @@ interface ManifestInfo {
 }
 
 /** Enum of architecture layouts which facilitator supports. */
-enum ArchitectureLayout {
+export enum ArchitectureLayout {
   MOSAIC1 = 'MOSAIC1',
 }
 
 /** Enum of different personas which facilitator supports. */
-enum Personas {
+export enum Personas {
   FACILITATOR = 'facilitator',
   VALIDATOR = 'validator'
 }

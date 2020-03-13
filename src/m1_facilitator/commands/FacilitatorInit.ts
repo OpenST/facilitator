@@ -18,6 +18,7 @@ import Directory from '../Directory';
 import Repositories from '../repositories/Repositories';
 import SeedDataInitializer from '../SeedDataInitializer';
 import Command from './Command';
+import Logger from '../../common/Logger';
 
 /**
  * Implements logic for facilitator init.
@@ -54,8 +55,9 @@ export default class FacilitatorInit implements Command {
    *
    */
   public async execute(): Promise<void> {
+    Logger.info('Initialing facilitator');
     const manifest = Manifest.fromFile(this.manifestPath);
-
+    Logger.info('Manifest loaded');
     const gatewayAddresses = manifest.originContractAddresses.erc20_gateway;
     const databaseFilePath = Directory.getFacilitatorDatabaseFile(
       manifest.architectureLayout,
@@ -64,6 +66,7 @@ export default class FacilitatorInit implements Command {
 
     const databaseFileExists = await fs.pathExists(databaseFilePath);
 
+    Logger.debug(`Database already exists ${databaseFileExists}`);
     if (!this.isForceInit && databaseFileExists) {
       throw new Error(`Database already initialized at location ${databaseFilePath}.`
         + ' Pass force option parameter for force init');

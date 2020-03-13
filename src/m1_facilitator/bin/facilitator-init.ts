@@ -30,4 +30,4 @@ commander
     } catch (e) {
       Logger.error(`Error in facilitator init command. Reason: ${e.message}`);
     }
-  });
+  }).parse(process.argv);
