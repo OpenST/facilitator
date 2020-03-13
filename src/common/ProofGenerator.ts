@@ -80,16 +80,12 @@ export default class ProofGenerator {
     blockNumber: string = 'latest',
   ): Promise<ProofData> {
     return new Promise((resolve, reject): void => {
-      console.log('address  ', address);
-      console.log('storageKeys  ', storageKeys);
-      console.log('blockNumber  ', blockNumber);
       this.web3.eth.getProof(
         address,
         storageKeys,
         blockNumber,
         (error: Error, result: GetProof): void => {
           if (result) {
-            console.log('result  ',result);
             try {
               // `as any as` is used here because as per the code, the result
               // should be of type GetProof, but its returning GetProof.result.

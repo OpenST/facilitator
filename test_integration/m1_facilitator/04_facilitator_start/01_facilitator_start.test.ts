@@ -21,7 +21,7 @@ import generateFacilitatorManifest
   from '../03_facilitator_init/FacilitatorManifestGenerator';
 
 describe('Start facilitator', async (): Promise<void> => {
-  it.skip('should start facilitator', async (): Promise<void> => {
+  it('should start facilitator', async (): Promise<void> => {
     const manifestFilePath = path.join(__dirname, '..', 'manifest.yaml');
     const executablePath = path.join(__dirname, '..', '..', '..');
     const command = `sh ${executablePath}/facilitator_m1 start --manifest ${manifestFilePath}`;

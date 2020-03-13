@@ -153,6 +153,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       [message.messageHash],
     );
 
+    Logger.debug(`Received Proof ${JSON.stringify(proof)}`);
     assert(proof.storageProof.length > 0);
 
     if (proof.storageProof[0].value === '0') {

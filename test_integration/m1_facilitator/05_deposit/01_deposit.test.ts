@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
+import { assert } from 'chai';
 import shared from '../shared';
 import Utils from '../utils';
+import Repositories
+  from '../../../src/m1_facilitator/repositories/Repositories';
+import { ArchitectureLayout } from '../../../src/m1_facilitator/manifest/Manifest';
+import Directory from '../../../src/m1_facilitator/Directory';
 
 describe('Deposit token ', () => {
   let depositParams: {
@@ -47,7 +53,8 @@ describe('Deposit token ', () => {
   });
 
   it('should anchor state root', async (): Promise<void> => {
-    const gatewayAddress = await shared.contracts.erc20Cogateway.methods.genesisERC20Gateway().call();
+    const gatewayAddress = await shared.contracts.erc20Cogateway
+      .methods.genesisERC20Gateway().call();
 
     console.log('gateway address ', gatewayAddress);
 
@@ -62,6 +69,40 @@ describe('Deposit token ', () => {
         block.stateRoot,
       ),
       { from: shared.anchorCoconsensusAddress },
+    );
+  });
+
+  it('should assert balances', async (): Promise<void> => {
+    const repositories = await Repositories.create(
+      Directory.getFacilitatorDatabaseFile(
+        ArchitectureLayout.MOSAIC1,
+        shared.contracts.erc20Gateway.address,
+      ),
+    );
+    await Utils.waitForCondition(async (): Promise<boolean> => {
+      const tokenPair = await repositories.erc20GatewayTokenPairRepository.get(
+        shared.contracts.erc20Gateway.address,
+        shared.contracts.valueToken.address,
+      );
+
+      return tokenPair !== null;
+    });
+
+    const utilityTokenAddress = await shared.contracts.erc20Cogateway
+      .methods.utilityTokens(
+        shared.contracts.valueToken.address,
+      ).call();
+
+    const utilityToken = Mosaic.interacts.getUtilityToken(
+      shared.auxiliary.web3, utilityTokenAddress,
+    );
+
+    const balance = new BigNumber(
+      await utilityToken.methods.balanceOf(shared.auxiliary.deployer).call(),
+    );
+    assert.isOk(
+      balance.eq(depositParams.amount),
+      `Beneficiary should have balance ${depositParams.amount.toString(10)}`,
     );
   });
 });
