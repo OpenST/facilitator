@@ -64,6 +64,7 @@ export default class CreatedUtilityTokenHandler extends ContractEntityHandler {
    * @param records List of CreatedUtilityTokens entity.
    */
   public async handle(records: CreatedUtilityTokenHandlerInterface[]): Promise<void> {
+    Logger.info(`CreatedUtilityTokenHandler::records received: ${records.length}`);
     const savePromises = records.map(async (record): Promise<void> => {
       const gatewayRecord = await this.gatewayRepository.get(
         Gateway.getGlobalAddress(record.contractAddress),
@@ -75,7 +76,7 @@ export default class CreatedUtilityTokenHandler extends ContractEntityHandler {
         );
         return;
       }
-      Logger.debug(`Gateway record found for ${record.contractAddress}`);
+      Logger.debug(`CreatedUtilityTokenHandler::Gateway record found for gateway address ${record.contractAddress}`);
       const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
         Utils.toChecksumAddress(record.contractAddress),
         Utils.toChecksumAddress(record.valueTokenAddress),
@@ -88,11 +89,11 @@ export default class CreatedUtilityTokenHandler extends ContractEntityHandler {
             Utils.toChecksumAddress(record.utilityTokenAddress),
           ),
         );
-        Logger.debug(`Creating ERC20GatewayTokenPair object: ${JSON.stringify(erc20GatewayTokenPair)}`);
+        Logger.debug(`CreatedUtilityTokenHandler::Creating ERC20GatewayTokenPair object: ${JSON.stringify(erc20GatewayTokenPair)}`);
       }
     });
 
     await Promise.all(savePromises);
-    Logger.debug('Created ERC20GatewayTokenPair record');
+    Logger.debug('CreatedUtilityTokenHandler::saved ERC20GatewayTokenPair records');
   }
 }

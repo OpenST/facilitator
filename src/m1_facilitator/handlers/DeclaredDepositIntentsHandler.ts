@@ -78,6 +78,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
    * @param records List of DeclaredDepositIntent entity.
    */
   public async handle(records: DeclaredDepositIntentsEntityInterface[]): Promise<void> {
+    Logger.info(`DeclaredDepositIntentsHandler::records received: ${records.length}`);
     const promisesCollection = records.map(
       async (record): Promise<void> => {
         await this.handleMessage(
@@ -96,7 +97,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
       },
     );
     await Promise.all(promisesCollection);
-    Logger.debug('Messages saved');
+    Logger.debug('DeclaredDepositIntentsHandler::messages saved');
   }
 
   /**
@@ -119,6 +120,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
     if (messageObj === null) {
       const gatewayRecord = await this.gatewayRepository.get(contractAddress);
       if (gatewayRecord !== null) {
+        Logger.info(`DeclaredDepositIntentsHandler::gateway record found for gatewayGA ${gatewayRecord.gatewayGA}`);
         messageObj = new Message(
           messageHash,
           MessageType.Deposit,
@@ -129,7 +131,6 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
           new BigNumber(feeGasLimit),
           new BigNumber(blockNumber),
         );
-        Logger.debug(`Creating message object ${JSON.stringify(messageObj)}`);
       }
     }
     if (messageObj !== null
@@ -138,6 +139,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
     ) {
       messageObj.sourceStatus = MessageStatus.Declared;
       await this.messageRepository.save(messageObj);
+      Logger.debug(`DeclaredDepositIntentsHandler::saved message ${JSON.stringify(messageObj)}`);
     }
   }
 
@@ -166,7 +168,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
         Utils.toChecksumAddress(beneficiary),
       );
       await this.depositIntentRepository.save(depositIntent);
-      Logger.debug(`Deposit intent ${depositIntent} saved.`);
+      Logger.debug(`DeclaredDepositIntentsHandler::saved deposit intent ${depositIntent}`);
     }
   }
 }
