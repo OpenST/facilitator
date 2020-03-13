@@ -58,11 +58,11 @@ export default class Deposit {
 
       const depositTransactionPromises = testDepositorAccounts.map(
         async (account: any): Promise<void> => {
-          const { txObject, amount } = await this.createDepositTransactionObject(account);
+          const { txObject, depositAmount } = await this.createDepositTransactionObject(account);
           if (expectedOriginAccountBalance[account.address]) {
-            expectedOriginAccountBalance[account.address] += amount;
+            expectedOriginAccountBalance[account.address] += depositAmount;
           } else {
-            expectedOriginAccountBalance[account.address] = amount;
+            expectedOriginAccountBalance[account.address] = depositAmount;
           }
           // TODO: what should be the gasPrice?
           const txReceipt = await txObject.send({
@@ -73,12 +73,30 @@ export default class Deposit {
 
           // console.log(txReceipt);
           // TODO: Logic to decode event
-          if (testDataObject[i]) {
-            testDataObject[i].push(txReceipt);
-          } else {
+          const {
+            amount,
+            nonce,
+            beneficiary,
+            feeGasPrice,
+            feeGasLimit,
+            depositor,
+            valueToken,
+            messageHash,
+          } = txReceipt.events.DepositIntentDeclared.returnValues;
+
+          if (!testDataObject[i]) {
             testDataObject[i] = [];
-            testDataObject[i].push(txReceipt);
           }
+          testDataObject[i].push({
+            amount,
+            nonce,
+            beneficiary,
+            feeGasPrice,
+            feeGasLimit,
+            depositor,
+            valueToken,
+            messageHash,
+          });
         },
       );
 
@@ -132,7 +150,7 @@ export default class Deposit {
         testGasLimit,
         valueToken,
       ),
-      amount: testAmount,
+      depositAmount: testAmount,
     };
   }
 }
