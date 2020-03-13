@@ -25,7 +25,7 @@ export default class Withdraw {
 
     let testWithdrawerAccounts = [];
 
-    for(let i = 0; i < iterations; i += 1) {
+    for (let i = 0; i < iterations; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       testWithdrawerAccounts = await AddressHandler.getRandomAddresses(
         withdrawerCount,
@@ -79,7 +79,7 @@ export default class Withdraw {
             messageHash,
           } = txReceipt.events.WithdrawIntentDeclared.returnValues;
 
-          if(!testDataObject[i]) {
+          if (!testDataObject[i]) {
             testDataObject[i] = [];
           }
 
@@ -93,7 +93,7 @@ export default class Withdraw {
             utilityToken,
             messageHash,
           });
-        }
+        },
       );
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(withdrawTransactionPromises);
@@ -133,7 +133,7 @@ export default class Withdraw {
 
     const { minGasLimit } = config.testData.withdraw;
     const { maxGasLimit } = config.testData.withdraw;
-    const testGasLimit = await Utils.getRandomNumber(minGasPrice, maxGasPrice);
+    const testGasLimit = await Utils.getRandomNumber(minGasLimit, maxGasLimit);
 
     const { utilityToken } = config.chains.auxiliary;
 

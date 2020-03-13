@@ -24,6 +24,7 @@ export default class Deposit {
     const finalAuxiliaryAccountBalance = {};
 
     let testDepositorAccounts = [];
+    let totalUniqueDepositorAccounts = [];
 
     for (let i = 0; i < iterations; i += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -37,6 +38,7 @@ export default class Deposit {
 
       const initialBalancePromises = testDepositorAccounts.map(
         async (account: any): Promise<void> => {
+          // TODO: Update to get the ERC20 token balance
           const originBalance = await AddressHandler.getBalance(
             account.address,
             originWsEndpoint,
@@ -68,6 +70,8 @@ export default class Deposit {
             gas: (await txObject.estimateGas({ from: account.address })),
           });
 
+          // console.log(txReceipt);
+          // TODO: Logic to decode event
           const {
             amount,
             nonce,
@@ -99,12 +103,18 @@ export default class Deposit {
       await Promise.all(depositTransactionPromises);
       // eslint-disable-next-line no-await-in-loop
       await new Promise(done => setTimeout(done, pollingInterval));
+
+      const uniqueAddresses = testDepositorAccounts.filter(
+        async (item: any, index, ar): Promise<any> => ar.indexOf(item) === index,
+      );
+      totalUniqueDepositorAccounts = totalUniqueDepositorAccounts.concat(uniqueAddresses);
     }
 
     await new Promise(done => setTimeout(done, timeoutInterval));
 
     const finalAuxiliaryBalancePromises = testDepositorAccounts.map(
       async (account: any): Promise<void> => {
+        // TODO: Update to get the ERC20 token balance
         const auxiliaryBalance = await AddressHandler.getBalance(
           account.address,
           auxiliaryWsEndpoint,
@@ -116,6 +126,8 @@ export default class Deposit {
     await Promise.all(finalAuxiliaryBalancePromises);
 
     // TODO: generate report
+
+    // TODO: refund to faucet
   }
 
   private static async createDepositTransactionObject(account: any): Promise<any> {
