@@ -14,6 +14,12 @@
 
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+import { TransactionObject } from 'web3/eth/types';
+import { Anchor } from 'Mosaic/dist/interacts/Anchor';
+import BigNumber from 'bignumber.js';
+import shared from './shared';
+import { utils } from 'web3';
+import { Chain } from '../../src/m1_facilitator/manifest/Manifest';
 
 export default class Utils {
   /**
@@ -58,11 +64,45 @@ export default class Utils {
       gasPrice?: string;
       from: string;
     },
-  ): Promise<string> {
+  ): Promise<any> {
     const calculatedTransactionOptions = {
       ...txOptions,
       gas: (await rawTx.estimateGas({ from: txOptions.from })).toString(),
     };
+    //console.log(`${calculatedTransactionOptions} Send transaction data receipt`);
     return rawTx.send(calculatedTransactionOptions);
+  }
+
+  /** It performs anchoring on origin and auxiliary chains
+   *
+   * @param anchor Anchor instance of origin or auxiliary.
+   * @param from Address of the account who is the sender of the anchoring of state root.
+   */
+
+  public static async performAnchor(
+    anchor: Anchor,
+    from: string,
+    web3: Web3,
+  ): Promise<any> {
+    const block = await (web3.eth.getBlock('latest'));
+    const blockNumber = new BigNumber(block.number);
+
+    const rawTx = anchor.methods.anchorStateRoot(
+      blockNumber.toString(10),
+      block.stateRoot,
+    );
+
+    const tx = await utils.sendTransaction(
+      rawTx,
+      {
+        from,
+      },
+    );
+
+    return {
+      tx,
+      blockNumber,
+      stateRoot: block.stateRoot,
+    };
   }
 }

@@ -17,7 +17,7 @@ import { Anchor } from 'Mosaic/dist/interacts/Anchor';
 import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import { UtilityToken } from 'Mosaic/dist/interacts/UtilityToken';
 import { Gen0ERC20Cogateway } from 'Mosaic/dist/interacts/Gen0ERC20Cogateway';
-import {ERC20I} from "Mosaic/dist/interacts/ERC20I";
+import { ERC20I } from 'Mosaic/dist/interacts/ERC20I';
 
 class Chain {
   public web3: Web3;
