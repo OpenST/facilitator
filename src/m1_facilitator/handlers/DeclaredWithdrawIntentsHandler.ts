@@ -23,6 +23,7 @@ import WithdrawIntent from '../models/WithdrawIntent';
 import WithdrawIntentRepository from '../repositories/WithdrawIntentRepository';
 import Gateway from '../models/Gateway';
 import Logger from '../../common/Logger';
+import Utils from '../../common/Utils';
 
 /** Represents record of DeclaredWithdrawIntentsEntity. */
 interface DeclaredWithdrawIntentsEntityInterface {
@@ -166,7 +167,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       );
       message.feeGasPrice = feeGasPrice;
       message.feeGasLimit = feeGasLimit;
-      message.sender = sender;
+      message.sender = Utils.toChecksumAddress(sender);
       message.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     }
     message.sourceStatus = MessageStatus.Declared;

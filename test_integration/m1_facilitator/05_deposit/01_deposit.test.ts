@@ -14,6 +14,7 @@
 
 import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
+import * as web3Utils from 'web3-utils';
 import { assert } from 'chai';
 import shared from '../shared';
 import Utils from '../utils';
@@ -21,6 +22,10 @@ import Repositories
   from '../../../src/m1_facilitator/repositories/Repositories';
 import { ArchitectureLayout } from '../../../src/m1_facilitator/manifest/Manifest';
 import Directory from '../../../src/m1_facilitator/Directory';
+import {
+  MessageStatus,
+  MessageType,
+} from '../../../src/m1_facilitator/models/Message';
 
 describe('Deposit token ', () => {
   let depositParams: {
@@ -28,13 +33,20 @@ describe('Deposit token ', () => {
     beneficiary: string;
     feeGasPrice: BigNumber;
     feeGasLimit: BigNumber;
+    sender: string;
   };
+
+  let messageHash: string;
+  let declarationBlockNumber: string;
+  let anchorBlockNumber: BigNumber;
+
   it('should deposit token', async (): Promise<void> => {
     depositParams = {
       amount: new BigNumber(100),
       beneficiary: shared.auxiliary.deployer,
-      feeGasPrice: new BigNumber(0),
-      feeGasLimit: new BigNumber(0),
+      feeGasPrice: new BigNumber(1),
+      feeGasLimit: new BigNumber(1),
+      sender: shared.origin.deployer,
     };
     await Utils.sendTransaction(shared.contracts.valueToken.methods.approve(
       shared.contracts.erc20Gateway.address,
@@ -42,27 +54,30 @@ describe('Deposit token ', () => {
     ),
     { from: shared.origin.deployer });
 
-    await Utils.sendTransaction(shared.contracts.erc20Gateway.methods.deposit(
-      depositParams.amount.toString(10),
-      depositParams.beneficiary,
-      depositParams.feeGasPrice.toString(10),
-      depositParams.feeGasLimit.toString(10),
-      shared.contracts.valueToken.address,
-    ),
-    { from: shared.origin.deployer });
+    const receipt = await Utils.sendTransaction(
+      shared.contracts.erc20Gateway.methods.deposit(
+        depositParams.amount.toString(10),
+        depositParams.beneficiary,
+        depositParams.feeGasPrice.toString(10),
+        depositParams.feeGasLimit.toString(10),
+        shared.contracts.valueToken.address,
+      ),
+      { from: depositParams.sender },
+    );
+
+    // @ts-ignore
+    ({ messageHash } = receipt.events.DepositIntentDeclared.returnValues);
+    // @ts-ignore
+    declarationBlockNumber = receipt.blockNumber;
   });
 
   it('should anchor state root', async (): Promise<void> => {
-    const gatewayAddress = await shared.contracts.erc20Cogateway
-      .methods.genesisERC20Gateway().call();
-
-    console.log('gateway address ', gatewayAddress);
-
     // Note: Ensuring that facilitator starts before doing any transactions.
     await new Promise(done => setTimeout(done, 3000));
 
     const block = await shared.origin.web3.eth.getBlock('latest');
 
+    anchorBlockNumber = new BigNumber(block.number);
     await Utils.sendTransaction(
       shared.contracts.auxiliaryAnchor.methods.anchorStateRoot(
         block.number,
@@ -72,7 +87,7 @@ describe('Deposit token ', () => {
     );
   });
 
-  it('should assert balances', async (): Promise<void> => {
+  it('Assert balances', async (): Promise<void> => {
     const repositories = await Repositories.create(
       Directory.getFacilitatorDatabaseFile(
         ArchitectureLayout.MOSAIC1,
@@ -100,9 +115,127 @@ describe('Deposit token ', () => {
     const balance = new BigNumber(
       await utilityToken.methods.balanceOf(shared.auxiliary.deployer).call(),
     );
+
+    const reward = depositParams.feeGasLimit.multipliedBy(depositParams.feeGasPrice);
+    const mintBalance = depositParams.amount.minus(reward);
     assert.isOk(
-      balance.eq(depositParams.amount),
-      `Beneficiary should have balance ${depositParams.amount.toString(10)}`,
+      balance.eq(mintBalance),
+      `Beneficiary should have balance ${mintBalance.toString(10)}`,
+    );
+  });
+
+  it('Assert database state', async (): Promise<void> => {
+    const gatewayAddresses = shared.contracts.erc20Gateway.address;
+    const repositories = await Repositories.create(
+      Directory.getFacilitatorDatabaseFile(
+        ArchitectureLayout.MOSAIC1,
+        gatewayAddresses,
+      ),
+    );
+
+    const {
+      messageRepository,
+      gatewayRepository,
+      depositIntentRepository,
+      erc20GatewayTokenPairRepository,
+      anchorRepository,
+    } = repositories;
+
+    const message = await messageRepository.get(messageHash);
+
+    assert.isOk(message !== null, 'Message should exist');
+    assert.strictEqual(
+      message && message.sourceStatus,
+      MessageStatus.Declared,
+      'Source message status must be declared',
+    );
+    assert.strictEqual(
+      message && message.targetStatus,
+      MessageStatus.Declared,
+      'Target message status must be declared',
+    );
+    assert.strictEqual(
+      message && message.sender,
+      depositParams.sender,
+      'Message sender must match',
+    );
+    assert.isOk(
+      message
+      && message.sourceDeclarationBlockNumber
+      && message.sourceDeclarationBlockNumber.isEqualTo(
+        new BigNumber(declarationBlockNumber),
+      ),
+      'Message declaration block number must match',
+    );
+    assert.strictEqual(
+      message && message.type,
+      MessageType.Deposit,
+      'Message declaration block number must match',
+    );
+    assert.strictEqual(
+      message && message.gatewayAddress,
+      gatewayAddresses,
+      'Gateway address must match',
+    );
+    assert.isOk(
+      message && message.feeGasPrice
+      && message.feeGasPrice.isEqualTo(depositParams.feeGasPrice),
+      'Fee gas price must match',
+    );
+    assert.isOk(
+      message && message.feeGasLimit
+      && message.feeGasLimit.isEqualTo(depositParams.feeGasLimit),
+      'Fee gas limit must match',
+    );
+
+    const depositIntent = await depositIntentRepository.get(messageHash);
+
+    assert.isOk(
+      depositIntent && depositIntent.amount
+      && depositIntent.amount.isEqualTo(depositParams.amount),
+      'Deposit amount must match',
+    );
+
+    assert.strictEqual(
+      depositIntent && depositIntent.beneficiary,
+      depositParams.beneficiary,
+      'Beneficiary address must match',
+    );
+
+    const valueToken = shared.contracts.valueToken.address;
+    assert.strictEqual(
+      depositIntent && depositIntent.tokenAddress,
+      valueToken,
+      'Value token address must match',
+    );
+
+    const gatewayRecord = await gatewayRepository.get(
+      shared.contracts.erc20Cogateway.address,
+    );
+
+    assert.isOk(
+      gatewayRecord && gatewayRecord.remoteGatewayLastProvenBlockNumber
+      && gatewayRecord.remoteGatewayLastProvenBlockNumber.isEqualTo(anchorBlockNumber),
+      'Remote gateway last broken block number should be same as anchor height',
+    );
+
+    const tokenPairRecord = await erc20GatewayTokenPairRepository.get(
+      gatewayAddresses,
+      valueToken,
+    );
+
+    assert.isOk(tokenPairRecord !== null, 'Token pair repository record must exists');
+
+    assert.isOk(
+      tokenPairRecord && web3Utils.isAddress(tokenPairRecord.utilityToken),
+      'Utility token address must exists in token pair record',
+    );
+    const auxAnchor = await anchorRepository.get(shared.contracts.auxiliaryAnchor.address);
+
+    assert.isOk(
+      auxAnchor && auxAnchor.lastAnchoredBlockNumber
+      && auxAnchor.lastAnchoredBlockNumber.isEqualTo(anchorBlockNumber),
+      'Anchor block height must be updated',
     );
   });
 });

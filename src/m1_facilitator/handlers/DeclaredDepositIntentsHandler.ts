@@ -138,7 +138,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
           new BigNumber(feeGasLimit),
           new BigNumber(blockNumber),
         );
-        messageObj.sender = depositor;
+        messageObj.sender = Utils.toChecksumAddress(depositor);
         Logger.debug(`Creating message object ${JSON.stringify(messageObj)}`);
       } else {
         Logger.warn(`DeclaredDepositIntentsHandler::gateway record not found for gatewayGA ${contractAddress}`);
