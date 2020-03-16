@@ -105,6 +105,7 @@ export default class ProofGenerator {
             try {
               // `as any as` is used here because as per the code, the result
               // should be of type GetProof, but its returning GetProof.result.
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const proofData = result as any as ProofData;
 
               proofData.serializedAccountProof = ProofGenerator.serializeProof(

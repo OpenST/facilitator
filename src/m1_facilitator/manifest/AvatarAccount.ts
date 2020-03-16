@@ -77,7 +77,7 @@ export default class AvatarAccount {
    * This method decreases the nonce by 1. This should be called when nonce
    * take by `getNonce` is not consumed due to error.
    */
-  public adjustNonce(): void {
+  public decreaseNonce(): void {
     if (this.nonce) {
       this.nonce = this.nonce.minus(1);
     }

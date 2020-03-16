@@ -143,8 +143,8 @@ export default class TransactionExecutor {
         }
       } catch (error) {
         Logger.debug('TransactionExecutor::Decreasing nonce in case of error');
-        this.avatarAccount.adjustNonce();
-        Logger.error(`TransactionExecutor::Error in executing transaction:`
+        this.avatarAccount.decreaseNonce();
+        Logger.error('TransactionExecutor::Error in executing transaction:'
           + `${transaction && transaction.id && transaction.id.toString(10)}.
         Error message: ${error.message}`);
       } finally {
@@ -166,7 +166,7 @@ export default class TransactionExecutor {
     transactionHash: string;
     gas: number;
   }> {
-    Logger.info(`Sending transaction ${transaction.id}`)
+    Logger.info(`Sending transaction ${transaction.id}`);
     Logger.debug(`TransactionExecutor::Transaction to be processed: ${JSON.stringify(transaction)}`);
     Logger.debug(`TransactionExecutor::Nonce: ${nonce.toString(10)}.`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
