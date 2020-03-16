@@ -20,6 +20,7 @@ import Config, {
 } from '../../../src/m1_facilitator/manifest/Manifest';
 import assert from '../../test_utils/assert';
 import AvatarAccount from '../../../src/m1_facilitator/manifest/AvatarAccount';
+import Utils from '../../../src/common/Utils';
 
 interface AccountDetail {
   keystore_path: string;
@@ -120,9 +121,12 @@ describe('Config.fromFile()', (): void => {
       `Expected value is ${inputYamlConfig.origin_contract_addresses} but found ${manifest.originContractAddresses}.`,
     );
 
+    const checksumTokens = inputYamlConfig.facilitate_tokens.map(
+      (token: string): string => Utils.toChecksumAddress(token),
+    );
     assert.deepStrictEqual(
       manifest.facilitateTokens,
-      new Set(inputYamlConfig.facilitate_tokens),
+      new Set(checksumTokens),
       'Mismatch in facilitate token values.',
     );
   });

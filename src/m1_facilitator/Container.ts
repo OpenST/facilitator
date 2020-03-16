@@ -47,7 +47,7 @@ export default class Container {
   ): Promise<{ facilitator: Facilitator; repositories: Repositories} > {
     const repositories = await Repositories.create(manifest.dbConfig.path);
 
-    const handlers = Handlers.create(repositories);
+    const handlers = Handlers.create(repositories, manifest.facilitateTokens);
     const transactionHandler = new TransactionHandler(
       handlers,
       repositories,

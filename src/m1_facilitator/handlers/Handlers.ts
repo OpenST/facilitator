@@ -32,10 +32,14 @@ export default class Handlers {
    * create() function instantiates all transaction handlers.
    *
    * @param repos Repository container object.
+   * @param facilitateTokens Array of tokens to be facilitated.
    *
    * @return All supported kinds of transaction handlers mapped to entities.
    */
-  public static create(repos: Repositories): Record<string, ContractEntityHandler> {
+  public static create(
+    repos: Repositories,
+    facilitateTokens: Set<string>,
+  ): Record<string, ContractEntityHandler> {
     const availableStateRootsHandler = new AvailableStateRootsHandler(
       repos.anchorRepository,
     );
@@ -59,6 +63,7 @@ export default class Handlers {
       repos.depositIntentRepository,
       repos.gatewayRepository,
       repos.messageRepository,
+      facilitateTokens,
     );
 
     const declaredWithdrawIntentsHandler = new DeclaredWithdrawIntentsHandler(

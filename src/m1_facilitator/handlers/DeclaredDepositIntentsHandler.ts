@@ -49,27 +49,34 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
   /** Instance of GatewayRepository. */
   private readonly gatewayRepository: GatewayRepository;
 
+  /** Stores unique list of tokens to be facilitated */
+  private readonly facilitateTokens: Set<string>;
+
   /**
    * Constructor for DeclaredDepositIntentHandler.
    *
    * @param depositIntentRepository Instance of DepositIntentRepository.
    * @param gatewayRepository Instance of GatewayRepository.
    * @param messageRepository Instance of MessageRepository.
+   * @param facilitateTokens Array of tokens to be facilitated.
    */
   public constructor(
     depositIntentRepository: DepositIntentRepository,
     gatewayRepository: GatewayRepository,
     messageRepository: MessageRepository,
+    facilitateTokens: Set<string>,
   ) {
     super();
 
     this.depositIntentRepository = depositIntentRepository;
     this.gatewayRepository = gatewayRepository;
     this.messageRepository = messageRepository;
+    this.facilitateTokens = facilitateTokens || new Set();
   }
 
   /**
    * Handles DeclaredDepositIntents entity records.
+   * - It filter records which has value token not in facilitateTokens list.
    * - It creates a message record and updates it's source status to `Declared`.
    * - It creates `DepositIntent` record.
    * - This handler only reacts to DepositIntentDeclared event of ERC20Gateway which are populated
@@ -78,7 +85,9 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
    * @param records List of DeclaredDepositIntent entity.
    */
   public async handle(records: DeclaredDepositIntentsEntityInterface[]): Promise<void> {
-    const promisesCollection = records.map(
+    const promisesCollection = records.filter(
+      (rec): boolean => this.isFacilitateToken(rec.valueTokenAddress),
+    ).map(
       async (record): Promise<void> => {
         await this.handleMessage(
           record.contractAddress,
@@ -168,5 +177,17 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
       await this.depositIntentRepository.save(depositIntent);
       Logger.debug(`Deposit intent ${depositIntent} saved.`);
     }
+  }
+
+  /**
+   * Checks if value token address needs to be facilitated.
+   *
+   * @param valueTokenAddress Value token address.
+   */
+  private isFacilitateToken(valueTokenAddress: string): boolean {
+    if (this.facilitateTokens.size === 0 || this.facilitateTokens.has(valueTokenAddress)) {
+      return true;
+    }
+    return false;
   }
 }

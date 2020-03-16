@@ -18,6 +18,7 @@ import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import Web3 from 'web3';
 import schema from './manifest.schema.json';
 import AvatarAccount from './AvatarAccount';
+import Utils from '../../common/Utils';
 
 /**
  * Interface of facilitator manifest file input chain data. It represents below:
@@ -226,6 +227,7 @@ export default class Manifest {
       }
       manifestConfig.metachain = Manifest.getMetachain(manifestConfig);
       manifestConfig.accounts = Manifest.getAvatarAccounts(manifestConfig);
+      manifestConfig.facilitate_tokens = Manifest.toChecksumAddress(manifestConfig);
       return new Manifest(manifestConfig);
     }
 
@@ -284,5 +286,16 @@ export default class Manifest {
     });
 
     return avatarAccounts;
+  }
+
+  /**
+   * Converts tokens to be facilitated in checksum format.
+   * @param config  @param config Facilitator input yaml object.
+   */
+  private static toChecksumAddress(config: ManifestInfo): string[] {
+    if (config.facilitate_tokens) {
+      return config.facilitate_tokens.map((token): string => Utils.toChecksumAddress(token));
+    }
+    return [];
   }
 }
