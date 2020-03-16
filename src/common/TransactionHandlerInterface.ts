@@ -23,4 +23,4 @@ export default interface TransactionHandlerInterface {
    *         transaction.
    */
   handle(bulkTransactions: any): Promise<void>;
-}
+};

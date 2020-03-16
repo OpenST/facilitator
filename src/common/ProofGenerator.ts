@@ -41,14 +41,30 @@ export interface ProofData {
   block_number?: string;
 }
 
+/**
+ * Generates and account proof.
+ */
 export default class ProofGenerator {
+  /** Web3 instance. */
   private web3: Web3;
 
 
+  /**
+   * Creates proof generator instance with params.
+   * @param web3 Instance of web3.
+   */
   public constructor(web3: Web3) {
     this.web3 = web3;
   }
 
+  /**
+   * Generate merkle proof for account and storage.
+   *
+   * @param address Ethereum address of account.
+   * @param blockNumber Block number at which proof will be generated.
+   * @param storageOffset Storage offset in EVM.
+   * @param keys Array of storage keys.
+   */
   public async generate(
     address: string,
     blockNumber: string,
@@ -80,16 +96,12 @@ export default class ProofGenerator {
     blockNumber: string = 'latest',
   ): Promise<ProofData> {
     return new Promise((resolve, reject): void => {
-      console.log('address  ', address);
-      console.log('storageKeys  ', storageKeys);
-      console.log('blockNumber  ', blockNumber);
       this.web3.eth.getProof(
         address,
         storageKeys,
         blockNumber,
         (error: Error, result: GetProof): void => {
           if (result) {
-            console.log('result  ',result);
             try {
               // `as any as` is used here because as per the code, the result
               // should be of type GetProof, but its returning GetProof.result.
