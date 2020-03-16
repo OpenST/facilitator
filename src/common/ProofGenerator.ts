@@ -41,14 +41,30 @@ export interface ProofData {
   block_number?: string;
 }
 
+/**
+ * Generates and account proof.
+ */
 export default class ProofGenerator {
+  /** Web3 instance. */
   private web3: Web3;
 
 
+  /**
+   * Creates proof generator instance with params.
+   * @param web3 Instance of web3.
+   */
   public constructor(web3: Web3) {
     this.web3 = web3;
   }
 
+  /**
+   * Generate merkle proof for account and storage.
+   *
+   * @param address Ethereum address of account.
+   * @param blockNumber Block number at which proof will be generated.
+   * @param storageOffset Storage offset in EVM.
+   * @param keys Array of storage keys.
+   */
   public async generate(
     address: string,
     blockNumber: string,
