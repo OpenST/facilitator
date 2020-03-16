@@ -21,7 +21,7 @@ import path from 'path';
 import generateFacilitatorManifest from './FacilitatorManifestGenerator';
 import shared from '../shared';
 
-describe('Facilitator init ', () => {
+describe('Facilitator init ', (): void => {
   it('should perform facilitator init', async (): Promise<void> => {
     const manifestFilePath = path.join(__dirname, '..', 'manifest.yaml');
     const executablePath = path.join(__dirname, '..', '..', '..');

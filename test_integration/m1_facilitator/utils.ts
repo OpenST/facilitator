@@ -14,21 +14,25 @@
 
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+<<<<<<< HEAD
 import { TransactionObject } from 'web3/eth/types';
 import { Anchor } from 'Mosaic/dist/interacts/Anchor';
 import BigNumber from 'bignumber.js';
 import shared from './shared';
 import { utils } from 'web3';
 import { Chain } from '../../src/m1_facilitator/manifest/Manifest';
+=======
+import { Contract } from 'web3-eth-contract';
+>>>>>>> facilitator_integration_tests_deposit
 
 export default class Utils {
   /**
    *
-   * @param web3
-   * @param contractABI
-   * @param bin
-   * @param args
-   * @param deployer
+   * @param web3 Web3 instance.
+   * @param contractABI ABI of contract.
+   * @param bin Bin of contract.
+   * @param args Contract constructor arguments.
+   * @param deployer Deployer address.
    */
   public static async deploy(
     web3: Web3,
@@ -36,7 +40,7 @@ export default class Utils {
     bin: string,
     args: string[],
     deployer: string,
-  ) {
+  ): Promise<Contract> {
     const deploymentTransaction = new web3.eth.Contract(
       contractABI,
     ).deploy({
@@ -74,6 +78,7 @@ export default class Utils {
     return rawTx.send(calculatedTransactionOptions);
   }
 
+<<<<<<< HEAD
   /** It performs anchoring on origin and auxiliary chains
    *
    * @param anchor Anchor instance of origin or auxiliary.
@@ -105,5 +110,31 @@ export default class Utils {
       blockNumber,
       stateRoot: block.stateRoot,
     };
+=======
+  /**
+   * This function accepts a function which returns a boolean value when resolves. This function
+   * keep evaluating boolean function till boolean function returns `true` or
+   * timeout happens.
+   * @param boolFunction A function which returns boolean value.
+   * @param intervalTime Interval after which boolean function is evaluated.
+   * @param maxInterval Maximum number of attempts.
+   */
+  public static async waitForCondition(
+    boolFunction: Function,
+    intervalTime: number = 2000,
+    maxInterval: number = 60,
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      let count = 0;
+      const timer = setInterval(async (): Promise<void> => {
+        count += 1;
+        const isTrue = await boolFunction();
+        if (isTrue || count > maxInterval) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, intervalTime);
+    });
+>>>>>>> facilitator_integration_tests_deposit
   }
 }

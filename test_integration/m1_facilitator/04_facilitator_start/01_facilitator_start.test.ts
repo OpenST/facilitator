@@ -20,7 +20,7 @@ import shared from '../shared';
 import generateFacilitatorManifest
   from '../03_facilitator_init/FacilitatorManifestGenerator';
 
-describe('Start facilitator', () => {
+describe('Start facilitator', async (): Promise<void> => {
   it('should start facilitator', async (): Promise<void> => {
     const manifestFilePath = path.join(__dirname, '..', 'manifest.yaml');
     const executablePath = path.join(__dirname, '..', '..', '..');
@@ -28,7 +28,7 @@ describe('Start facilitator', () => {
 
     const manifest = generateFacilitatorManifest(shared);
     fs.writeFileSync(manifestFilePath, jsYaml.dump(manifest));
-    const child: any = spawn(command, [], {
+    spawn(command, [], {
       cwd: executablePath,
       stdio: ['inherit', 'inherit', 'inherit'],
       shell: true,

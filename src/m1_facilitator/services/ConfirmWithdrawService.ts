@@ -17,7 +17,7 @@ import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 import { TransactionObject } from 'web3/eth/types';
 import BigNumber from 'bignumber.js';
-import ProofGenerator from '../../ProofGenerator';
+import ProofGenerator from '../../common/ProofGenerator';
 
 import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import Gateway from '../models/Gateway';
@@ -79,7 +79,7 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
   }
 
   public async update(gateways: Gateway[]): Promise<void> {
-    Logger.debug('Confirm withdraw service invoked');
+    Logger.info(`ConfirmWithdrawService::updated gateway records: ${gateways.length}`);
     const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
       const messages = await this.messageRepository.getPendingMessagesByGateway(
         gateway.remoteGA,
@@ -105,13 +105,17 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     const confirmMessageTransactionPromises = messages.map(async (message): Promise<void> => {
       const withdrawIntent = await this.withdrawIntentRepository.get(message.messageHash);
       if (withdrawIntent !== null) {
-        const rawTransaction = await this.confirmWithdrawIntentTransaction(
-          message,
-          withdrawIntent,
-          gateway,
-        );
+        try {
+          const rawTransaction = await this.confirmWithdrawIntentTransaction(
+            message,
+            withdrawIntent,
+            gateway,
+          );
 
-        await this.originTransactionExecutor.add(gateway.gatewayGA, rawTransaction);
+          await this.originTransactionExecutor.add(gateway.gatewayGA, rawTransaction);
+        } catch (err) {
+          Logger.error(`ConfirmDepositService::confirmDepositIntentTransaction error: ${err}`);
+        }
       }
     });
     await Promise.all(confirmMessageTransactionPromises);
@@ -152,7 +156,7 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     assert(proof.storageProof.length > 0);
 
     if (proof.storageProof[0].value === '0') {
-      throw new Error('Storage proof is invalid');
+      throw new Error('ConfirmWithdrawService::Storage proof is invalid');
     }
     return erc20gateway.methods.confirmWithdraw(
       (withdrawIntent.tokenAddress as string),

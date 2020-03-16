@@ -18,7 +18,7 @@ import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
 import { Error } from 'sequelize';
 import { TransactionObject } from 'web3/eth/types';
-import ProofGenerator from '../../ProofGenerator';
+import ProofGenerator from '../../common/ProofGenerator';
 import MessageRepository from '../repositories/MessageRepository';
 import DepositIntentRepository from '../repositories/DepositIntentRepository';
 import Observer from '../../common/observer/Observer';
@@ -89,6 +89,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
    */
   public async update(gateways: Gateway[]): Promise<void> {
     Logger.debug('Confirm deposit service triggered');
+    Logger.info(`ConfirmDepositService::updated gateway records ${gateways.length}`);
     const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
       Logger.debug(`Searching pending messages for gateway: ${gateway.remoteGA} type:${MessageType.Deposit} and last prove block number ${gateway.remoteGatewayLastProvenBlockNumber.toString(10)}`);
       const messages = await this.messageRepository.getPendingMessagesByGateway(
@@ -100,6 +101,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       Logger.debug(`Total pending messages ${messages.length}`);
 
       if (messages.length > 0) {
+        Logger.info(`ConfirmDepositService::messages to confirm: ${messages.length}`);
         await this.confirmMessages(messages, gateway);
       }
     });
@@ -117,13 +119,17 @@ export default class ConfirmDepositService extends Observer<Gateway> {
     const confirmMessageTransactionPromises = messages.map(async (message): Promise<void> => {
       const depositIntent = await this.depositIntentRepository.get(message.messageHash);
       if (depositIntent !== null) {
-        const rawTransaction = await this.confirmDepositIntentTransaction(
-          message,
-          depositIntent,
-          gateway,
-        );
+        try {
+          const rawTransaction = await this.confirmDepositIntentTransaction(
+            message,
+            depositIntent,
+            gateway,
+          );
 
-        await this.auxiliaryTransactionExecutor.add(gateway.gatewayGA, rawTransaction);
+          await this.auxiliaryTransactionExecutor.add(gateway.gatewayGA, rawTransaction);
+        } catch (err) {
+          Logger.error(`ConfirmDepositService::Error in confirmDepositIntentTransaction ${err}`);
+        }
       }
     });
     await Promise.all(confirmMessageTransactionPromises);
@@ -153,10 +159,11 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       [message.messageHash],
     );
 
+    Logger.debug(`Received Proof ${JSON.stringify(proof)}`);
     assert(proof.storageProof.length > 0);
 
     if (proof.storageProof[0].value === '0') {
-      throw new Error('Storage proof is invalid');
+      throw new Error('ConfirmDepositService::Storage proof is invalid');
     }
 
     return erc20Cogateway.methods.confirmDeposit(

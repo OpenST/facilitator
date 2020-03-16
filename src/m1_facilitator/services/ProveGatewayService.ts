@@ -18,7 +18,7 @@ import Mosaic from 'Mosaic';
 import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import { ERC20Cogateway } from 'Mosaic/dist/interacts/ERC20Cogateway';
 import { TransactionObject } from 'web3/eth/types';
-import ProofGenerator from '../../ProofGenerator';
+import ProofGenerator from '../../common/ProofGenerator';
 import Observer from '../../common/observer/Observer';
 import Logger from '../../common/Logger';
 import Anchor from '../models/Anchor';
@@ -89,13 +89,14 @@ export default class ProveGatewayService extends Observer<Anchor> {
    * @param anchors List of anchor entities.
    */
   public async update(anchors: Anchor[]): Promise<void> {
+    Logger.info(`ProveGatewayService::updated anchor records ${anchors.length}`);
     // It can receive max 2 records i.e. origin and auxiliary.
     assert(anchors.length === 1 || anchors.length === 2);
 
     const proveGatewayPromises = anchors.map(async (anchor): Promise<void> => {
       const gatewayRecord = await this.gatewayRepository.getByAnchor(anchor.anchorGA);
       if (gatewayRecord === null) {
-        throw new Error('Gateway record does not exist for given gateway');
+        throw new Error(`ProveGatewayService::Gateway record does not exist for given anchor: ${anchor.anchorGA}`);
       }
 
       const pendingMessages = await this.messageRepository.getMessagesForConfirmation(
@@ -103,7 +104,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
         anchor.lastAnchoredBlockNumber,
       );
 
-      Logger.info(`Total pending message ${pendingMessages.length}`);
+      Logger.info(`ProveGatewayService::Total pending message ${pendingMessages.length}`);
       if (pendingMessages.length > 0) {
         await this.proveGateway(
           anchor.lastAnchoredBlockNumber,
@@ -113,7 +114,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
       }
       if (pendingMessages.length === 0) {
         Logger.info(
-          `There are no pending messages for gateway ${gatewayRecord.gatewayGA}.`
+          `ProveGatewayService::There are no pending messages for gateway ${gatewayRecord.gatewayGA}.`
           + ' Hence skipping proveGateway',
         );
       }
@@ -154,14 +155,18 @@ export default class ProveGatewayService extends Observer<Anchor> {
     );
     const sourceGatewayAddress = gateway.remoteGA;
 
-    const rawTransaction = await ProveGatewayService.proveGatewayTransaction(
-      sourceWeb3,
-      targetGatewayInstance,
-      sourceGatewayAddress,
-      blockHeight,
-    );
+    try {
+      const rawTransaction = await ProveGatewayService.proveGatewayTransaction(
+        sourceWeb3,
+        targetGatewayInstance,
+        sourceGatewayAddress,
+        blockHeight,
+      );
 
-    await transactionExecutor.add(gateway.gatewayGA, rawTransaction);
+      await transactionExecutor.add(gateway.gatewayGA, rawTransaction);
+    } catch (err) {
+      Logger.error(`ProveGatewayService::proveGatewayTransaction error: ${err}`);
+    }
   }
 
   /**
@@ -182,12 +187,12 @@ export default class ProveGatewayService extends Observer<Anchor> {
     blockNumber: BigNumber,
   ): Promise<TransactionObject<string>> {
     const proofGenerator = new ProofGenerator(sourceWeb3);
-    Logger.info(`Generating proof for gateway address ${sourceGatewayAddress} at blockHeight ${blockNumber.toString()}`);
+    Logger.info(`ProveGatewayService::Generating proof for gateway address ${sourceGatewayAddress} at
+    blockHeight ${blockNumber.toString()}`);
     const proof = await proofGenerator.generate(
       sourceGatewayAddress,
       blockNumber.toString(10),
     );
-
     return targetGatewayInstance.methods.proveGateway(
       blockNumber.toString(10),
       // @ts-ignore
