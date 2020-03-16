@@ -14,10 +14,10 @@
 
 import assert from 'assert';
 import Mosaic from 'Mosaic';
-import { ProofGenerator } from '@openst/mosaic-proof';
 import Web3 from 'web3';
 import { TransactionObject } from 'web3/eth/types';
 import BigNumber from 'bignumber.js';
+import ProofGenerator from '../../common/ProofGenerator';
 
 import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import Gateway from '../models/Gateway';
@@ -82,7 +82,7 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     Logger.info(`ConfirmWithdrawService::updated gateway records: ${gateways.length}`);
     const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
       const messages = await this.messageRepository.getPendingMessagesByGateway(
-        gateway.gatewayGA,
+        gateway.remoteGA,
         MessageType.Withdraw,
         gateway.remoteGatewayLastProvenBlockNumber,
       );
@@ -111,7 +111,8 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
             withdrawIntent,
             gateway,
           );
-          await this.originTransactionExecutor.add(gateway.remoteGA, rawTransaction);
+
+          await this.originTransactionExecutor.add(gateway.gatewayGA, rawTransaction);
         } catch (err) {
           Logger.error(`ConfirmDepositService::confirmDepositIntentTransaction error: ${err}`);
         }
@@ -132,19 +133,21 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     withdrawIntent: WithdrawIntent,
     gateway: Gateway,
   ): Promise<TransactionObject<string>> {
-    const gatewayAddress = gateway.remoteGA;
+    const gatewayAddress = gateway.gatewayGA;
     const erc20gateway = Mosaic.interacts.getERC20Gateway(this.originWeb3, gatewayAddress);
 
     const blockNumber = gateway.remoteGatewayLastProvenBlockNumber;
-    const proof = await new ProofGenerator(this.auxiliaryWeb3).getOutboxProof(
+    const offset = await erc20gateway.methods.outboxStorageIndex().call();
+
+    const proof = await new ProofGenerator(this.auxiliaryWeb3).generate(
       message.gatewayAddress,
-      [message.messageHash],
       blockNumber.toString(10),
-      (await erc20gateway.methods.outboxStorageIndex().call()),
+      offset.toString(),
+      [message.messageHash],
     );
 
     const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
-      gateway.remoteGA,
+      gatewayAddress,
       withdrawIntent.tokenAddress as string,
     );
 

@@ -63,7 +63,34 @@ export default class Utils {
     const calculatedTransactionOptions = {
       ...txOptions,
       gas: (await rawTx.estimateGas({ from: txOptions.from })).toString(),
+      gasPrice: txOptions.gasPrice? txOptions.gasPrice: '0x01',
     };
     return rawTx.send(calculatedTransactionOptions);
+  }
+
+  /**
+   * This function accepts a function which returns a boolean value when resolves. This function
+   * keep evaluating boolean function till boolean function returns `true` or
+   * timeout happens.
+   * @param boolFunction A function which returns boolean value.
+   * @param intervalTime Interval after which boolean function is evaluated.
+   * @param maxInterval Maximum number of attempts.
+   */
+  public static async waitForCondition(
+    boolFunction: Function,
+    intervalTime: number = 2000,
+    maxInterval: number = 60,
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      let count = 0;
+      const timer = setInterval(async (): Promise<void> => {
+        count += 1;
+        const isTrue = await boolFunction();
+        if (isTrue || count > maxInterval) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, intervalTime);
+    });
   }
 }

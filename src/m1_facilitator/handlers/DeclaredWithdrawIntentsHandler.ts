@@ -21,7 +21,9 @@ import Message, { MessageStatus, MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
 import WithdrawIntent from '../models/WithdrawIntent';
 import WithdrawIntentRepository from '../repositories/WithdrawIntentRepository';
+import Gateway from '../models/Gateway';
 import Logger from '../../common/Logger';
+import Utils from '../../common/Utils';
 
 /** Represents record of DeclaredWithdrawIntentsEntity. */
 interface DeclaredWithdrawIntentsEntityInterface {
@@ -81,7 +83,9 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     const savePromises = records.map(async (record): Promise<void> => {
       const { messageHash, contractAddress } = record;
 
-      const gatewayRecord = await this.gatewayRepository.get(contractAddress);
+      const gatewayRecord = await this.gatewayRepository.get(
+        Gateway.getGlobalAddress(contractAddress),
+      );
 
       if (gatewayRecord !== null) {
         Logger.info(`DeclaredWithdrawIntentsHandler::gateway record found for gatewayGA ${gatewayRecord.gatewayGA}`);
@@ -163,7 +167,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       );
       message.feeGasPrice = feeGasPrice;
       message.feeGasLimit = feeGasLimit;
-      message.sender = sender;
+      message.sender = Utils.toChecksumAddress(sender);
       message.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     }
     message.sourceStatus = MessageStatus.Declared;

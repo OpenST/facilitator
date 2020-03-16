@@ -46,4 +46,4 @@ commander
         process.exit(1);
       }
     },
-  );
+  ).parse(process.argv);

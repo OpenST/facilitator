@@ -12,8 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import facilitator from 'commander';
+import path from 'path';
+import { execSync } from 'child_process';
 
-facilitator.command('init', 'Initializes the facilitator and loads the configuration.')
-  .command('start', 'Starts the facilitator.')
-  .parse(process.argv);
+describe('Facilitator stop ', (): void => {
+  it('should stop facilitator', (): void => {
+    const killFacilitator = path.join(__dirname, '..', 'kill_facilitator_process.sh');
+    execSync(
+      ` sh ${killFacilitator}`,
+      { stdio: [process.stdout, process.stderr], env: process.env },
+    );
+  });
+});

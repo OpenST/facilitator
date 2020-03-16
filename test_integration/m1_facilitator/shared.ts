@@ -17,6 +17,7 @@ import { Anchor } from 'Mosaic/dist/interacts/Anchor';
 import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import { UtilityToken } from 'Mosaic/dist/interacts/UtilityToken';
 import { Gen0ERC20Cogateway } from 'Mosaic/dist/interacts/Gen0ERC20Cogateway';
+import {ERC20I} from "Mosaic/dist/interacts/ERC20I";
 
 // eslint-disable no-object-literal-type-assertion
 class Chain {
@@ -45,12 +46,16 @@ class Contract {
 
   public utilityTokenMasterCopy: UtilityToken;
 
+  public valueToken: ERC20I;
+
   public constructor() {
     this.originAnchor = {} as Anchor;
     this.auxiliaryAnchor = {} as Anchor;
     this.erc20Gateway = {} as ERC20Gateway;
     this.erc20Cogateway = {} as Gen0ERC20Cogateway;
     this.utilityTokenMasterCopy = {} as UtilityToken;
+    // eslint-disable-next-line no-object-literal-type-assertion
+    this.valueToken = {} as ERC20I;
   }
 }
 

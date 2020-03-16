@@ -15,21 +15,42 @@
 import { execSync } from 'child_process';
 import jsYaml from 'js-yaml';
 import fs from 'fs';
+import * as web3Utils from 'web3-utils';
 
 import path from 'path';
 import generateFacilitatorManifest from './FacilitatorManifestGenerator';
 import shared from '../shared';
 
 describe('Facilitator init ', (): void => {
-  it('should perform facilitator init', (): void => {
+  it('should perform facilitator init', async (): Promise<void> => {
     const manifestFilePath = path.join(__dirname, '..', 'manifest.yaml');
     const executablePath = path.join(__dirname, '..', '..', '..');
-    const command = `sh ${executablePath}/facilitator_m1 init --manifest ${manifestFilePath}`;
-
+    const command = `sh ${executablePath}/facilitator_m1 init --manifest ${manifestFilePath} -f`;
     const manifest = generateFacilitatorManifest(shared);
     fs.writeFileSync(manifestFilePath, jsYaml.dump(manifest));
     execSync(command, {
       cwd: executablePath,
+      stdio: ['inherit', 'inherit', 'inherit'],
     });
+
+    const originAvatar = manifest.metachain.origin.avatar_account;
+    const auxiliaryAvatar = manifest.metachain.auxiliary.avatar_account;
+
+    // Funding facilitator avatar account
+    await shared.origin.web3.eth.sendTransaction(
+      {
+        from: shared.origin.deployer,
+        to: originAvatar,
+        value: web3Utils.toWei('1', 'ether'),
+      },
+    );
+    // Funding facilitator avatar account
+    await shared.auxiliary.web3.eth.sendTransaction(
+      {
+        from: shared.auxiliary.deployer,
+        to: auxiliaryAvatar,
+        value: web3Utils.toWei('1', 'ether'),
+      },
+    );
   });
 });

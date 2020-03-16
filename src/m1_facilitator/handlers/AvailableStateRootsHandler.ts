@@ -25,7 +25,7 @@ import Logger from '../../common/Logger';
 /** Represents record of AvailableStateRootsEntity. */
 interface AvailableStateRootsEntityInterface {
   contractAddress: string;
-  blockNumber: string;
+  anchoredBlockNumber: string;
 }
 
 /**
@@ -59,8 +59,8 @@ export default class AvailableStateRootsHandler extends ContractEntityHandler {
     Logger.info(`AvailableStateRootHandler::records received: ${records.length}`);
     records.forEach((record): void => {
       const contractAddress = Utils.toChecksumAddress(record.contractAddress);
-      const blockNumber = new BigNumber(record.blockNumber);
-      if (!contractAddressVsBlockNumberMap.has(record.contractAddress)) {
+      const blockNumber = new BigNumber(record.anchoredBlockNumber);
+      if (!contractAddressVsBlockNumberMap.has(contractAddress)) {
         contractAddressVsBlockNumberMap.set(contractAddress, blockNumber);
       }
       if (contractAddressVsBlockNumberMap.get(contractAddress).isLessThan(blockNumber)) {
@@ -79,6 +79,8 @@ export default class AvailableStateRootsHandler extends ContractEntityHandler {
           modelRecord.lastAnchoredBlockNumber = blockNumber;
           await this.anchorRepository.save(modelRecord);
           Logger.debug(`AvailableStateRootHandler::saved anchorRepository: ${JSON.stringify(modelRecord)}`);
+        } else {
+          Logger.warn(`Available stateroot record not found for address ${contractAddress}`);
         }
       });
 

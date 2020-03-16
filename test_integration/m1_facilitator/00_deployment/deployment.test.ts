@@ -13,13 +13,15 @@
 // limitations under the License.
 
 import Web3 from 'web3';
+import * as web3Utils from 'web3-utils';
 import Mosaic from 'Mosaic';
-
+import ERC20Mock from 'openzeppelin-solidity/build/contracts/ERC20Mock.json';
 import { AbiItem } from 'web3-utils';
 import { Anchor } from 'Mosaic/dist/interacts/Anchor';
 import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import { UtilityToken } from 'Mosaic/dist/interacts/UtilityToken';
 import { Gen0ERC20Cogateway } from 'Mosaic/dist/interacts/Gen0ERC20Cogateway';
+import { ERC20I } from 'Mosaic/dist/interacts/ERC20I';
 import docker from '../docker';
 import shared from '../shared';
 import Utils from '../utils';
@@ -40,6 +42,20 @@ describe('Deployment of contract ', (): void => {
     [shared.auxiliary.deployer, shared.anchorCoconsensusAddress] = shared.auxiliary.accounts;
 
     shared.metachainId = shared.origin.web3.utils.randomHex(32);
+  });
+
+  it('should value token', async (): Promise<void> => {
+    const erc20 = ERC20Mock;
+    shared.contracts.valueToken = (await Utils.deploy(
+      shared.origin.web3,
+      erc20.abi as AbiItem[],
+      erc20.bytecode,
+      [
+        shared.origin.deployer,
+        web3Utils.toWei('1000000000000000000', 'ether'),
+      ],
+      shared.origin.deployer,
+    )) as ERC20I;
   });
 
   it('should deploy anchors', async (): Promise<void> => {

@@ -28,27 +28,27 @@ const generateFacilitatorManifest = (shared: Shared) => ({
     {
       origin:
         {
-          avatar_account: '0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7',
+          avatar_account: '0x296a65814a2c07bf7a8ee310a212a4796dc0123a',
           node_endpoint: endpoints.origin.chain,
-          graph_ws_endpoint: endpoints.origin.graph_ws,
-          graph_rpc_endpoint: endpoints.origin.graph_rpc,
+          graph_ws_endpoint: `${endpoints.origin.graph_ws}/subgraphs/name/mosaic/origin-erc20gateway`,
+          graph_rpc_endpoint: `${endpoints.origin.graph_rpc}/subgraphs/name/mosaic/origin-erc20gateway`,
         },
       auxiliary:
         {
-          avatar_account: '0x81Df1244dEd6EF44a90a67526E4Ec4497d807F96',
+          avatar_account: '0x296a65814a2c07bf7a8ee310a212a4796dc0123a',
           node_endpoint: endpoints.auxilary.chain,
-          graph_ws_endpoint: endpoints.auxilary.graph_ws,
-          graph_rpc_endpoint: endpoints.auxilary.graph_rpc,
+          graph_ws_endpoint: `${endpoints.auxilary.graph_ws}/subgraphs/name/mosaic/aux-erc20gateway`,
+          graph_rpc_endpoint: `${endpoints.auxilary.graph_rpc}/subgraphs/name/mosaic/aux-erc20gateway`,
         },
     },
   accounts:
     {
-      '0xac7E36b3cdDb14Bf1c67dC21fFB24C73d03d8FF7':
+      '0x296a65814a2c07bf7a8ee310a212a4796dc0123a':
         {
           keystore_path: 'testdata/m1_facilitator/origin_keystore.json',
           keystore_password_path: 'testdata/m1_facilitator/origin_password',
         },
-      '0x81Df1244dEd6EF44a90a67526E4Ec4497d807F96':
+      '0x61bd2fd5c5ebb902b2b86d13f0b00b353ceec017':
         {
           keystore_path: 'testdata/m1_facilitator/aux_keystore.json',
           keystore_password_path: 'testdata/m1_facilitator/aux_password',
