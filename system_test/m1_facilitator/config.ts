@@ -43,6 +43,14 @@ const config = {
       maxGasLimit: 5,
     },
   },
+  accounts:
+  [
+    '0x3EC46ea7786b3804b5AE74BF9F6d68356e219629',
+    '0x0972Af988933F5d016FdE0f862E8920AE2Ca5892',
+    '0xA40fe6fcA6276D7656fCd188585ec8EFfc11E1bc',
+    '0x020657dd3773Bf00826e06Af22220E4ACaeaddfF',
+    '0xCf88610C6547Fb0e3849e6C2d00e95ba4cAe77b9',
+  ],
 };
 
 export default config;
