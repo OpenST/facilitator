@@ -56,14 +56,15 @@ class TransactionModel {
 export default class TransactionRepository extends Subject<Transaction> {
   private mutex: Mutex;
 
-  private modelInstance: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private transactionModel: any;
 
   /* Public Functions */
 
   public constructor(initOptions: InitOptions, modelName: string, tableName: string) {
     super();
 
-    this.modelInstance = initOptions.sequelize.define(
+    this.transactionModel = initOptions.sequelize.define(
       modelName,
       {
         id: {
@@ -121,7 +122,7 @@ export default class TransactionRepository extends Subject<Transaction> {
     try {
       if (transaction.id && transaction.id.gt(0)) {
         const definedOwnProps: string[] = Utils.getDefinedOwnProps(transaction);
-        await this.modelInstance.update(
+        await this.transactionModel.update(
           transaction,
           {
             where: {
@@ -134,7 +135,7 @@ export default class TransactionRepository extends Subject<Transaction> {
           transaction.id,
         );
       } else {
-        savedTransaction = this.convertToTransaction(await this.modelInstance.create(
+        savedTransaction = this.convertToTransaction(await this.transactionModel.create(
           transaction,
         ));
       }
@@ -156,7 +157,7 @@ export default class TransactionRepository extends Subject<Transaction> {
    * @param id Unique auto increment transaction id.
    */
   public async get(id: BigNumber): Promise<Transaction | null> {
-    const transactionModel = await this.modelInstance.findOne({
+    const transactionModel = await this.transactionModel.findOne({
       where: {
         id: id.toNumber(),
       },
@@ -176,7 +177,7 @@ export default class TransactionRepository extends Subject<Transaction> {
    * - Transaction hash is null
    */
   public async dequeue(): Promise<Transaction | null> {
-    const transactionModel = await this.modelInstance.findOne({
+    const transactionModel = await this.transactionModel.findOne({
       where: {
         transactionHash: null,
       },
