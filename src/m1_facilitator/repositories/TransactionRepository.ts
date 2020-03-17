@@ -198,7 +198,6 @@ export default class TransactionRepository extends Subject<Transaction> {
 
   // eslint-disable-next-line class-methods-use-this
   private convertToTransaction(transactionModel: TransactionModel): Transaction {
-    console.log('transactionModel in convertToTransaction : ', transactionModel);
     return new Transaction(
       transactionModel.fromAddress,
       transactionModel.toAddress,
