@@ -14,16 +14,7 @@
 
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
-<<<<<<< HEAD
-import { TransactionObject } from 'web3/eth/types';
-import { Anchor } from 'Mosaic/dist/interacts/Anchor';
-import BigNumber from 'bignumber.js';
-import shared from './shared';
-import { utils } from 'web3';
-import { Chain } from '../../src/m1_facilitator/manifest/Manifest';
-=======
 import { Contract } from 'web3-eth-contract';
->>>>>>> facilitator_integration_tests_deposit
 
 export default class Utils {
   /**
@@ -78,39 +69,6 @@ export default class Utils {
     return rawTx.send(calculatedTransactionOptions);
   }
 
-<<<<<<< HEAD
-  /** It performs anchoring on origin and auxiliary chains
-   *
-   * @param anchor Anchor instance of origin or auxiliary.
-   * @param from Address of the account who is the sender of the anchoring of state root.
-   */
-
-  public static async performAnchor(
-    anchor: Anchor,
-    from: string,
-    web3: Web3,
-  ): Promise<any> {
-    const block = await (web3.eth.getBlock('latest'));
-    const blockNumber = new BigNumber(block.number);
-
-    const rawTx = anchor.methods.anchorStateRoot(
-      blockNumber.toString(10),
-      block.stateRoot,
-    );
-
-    const tx = await utils.sendTransaction(
-      rawTx,
-      {
-        from,
-      },
-    );
-
-    return {
-      tx,
-      blockNumber,
-      stateRoot: block.stateRoot,
-    };
-=======
   /**
    * This function accepts a function which returns a boolean value when resolves. This function
    * keep evaluating boolean function till boolean function returns `true` or
@@ -135,6 +93,5 @@ export default class Utils {
         }
       }, intervalTime);
     });
->>>>>>> facilitator_integration_tests_deposit
   }
 }
