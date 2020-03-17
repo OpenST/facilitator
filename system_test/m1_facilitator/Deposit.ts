@@ -142,7 +142,7 @@ export default class Deposit {
       messageHashes,
     );
 
-    // TODO: refund to faucet
+    await Faucet.refundOSTToFaucet(totalUniqueDepositorAccounts);
   }
 
   private static async createDepositTransactionObject(account: Account): Promise<any> {
