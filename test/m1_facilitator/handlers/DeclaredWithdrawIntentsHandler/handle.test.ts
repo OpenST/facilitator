@@ -48,7 +48,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     {
       messageHash: web3Utils.sha3('1'),
       contractAddress: '0x0000000000000000000000000000000000000001',
-      utilityTokenAddress: '0x0000000000000000000000000000000000000002',
+      utilityToken: '0x0000000000000000000000000000000000000002',
       amount: '2',
       beneficiary: '0x0000000000000000000000000000000000000003',
       feeGasPrice: '2',
@@ -59,7 +59,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     {
       messageHash: web3Utils.sha3('2'),
       contractAddress: '0x0000000000000000000000000000000000000001',
-      utilityTokenAddress: '0x0000000000000000000000000000000000000002',
+      utilityToken: '0x0000000000000000000000000000000000000002',
       amount: '3',
       beneficiary: '0x0000000000000000000000000000000000000004',
       feeGasPrice: '2',
@@ -97,7 +97,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
   async function assertWithdrawIntent(withdrawIntentEntityRecord: {
     messageHash: string;
     contractAddress: string;
-    utilityTokenAddress: string;
+    utilityToken: string;
     amount: string;
     beneficiary: string;
     feeGasPrice: string;
@@ -192,7 +192,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
 
     assert.strictEqual(
       withdrawIntentRecord && withdrawIntentRecord.tokenAddress,
-      withdrawIntentEntityRecord.utilityTokenAddress,
+      withdrawIntentEntityRecord.utilityToken,
       'Token address must match',
     );
 
@@ -243,7 +243,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       {
         messageHash: web3Utils.sha3('1'),
         contractAddress: '0x0000000000000000000000000000000000000001', // Cogateway address
-        utilityTokenAddress: '0x0000000000000000000000000000000000000002',
+        utilityToken: '0x0000000000000000000000000000000000000002',
         amount: '2',
         beneficiary: '0x0000000000000000000000000000000000000003',
         feeGasPrice: '2',
@@ -258,7 +258,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     const erc20GatewayTokenPairModel = new ERC20GatewayTokenPair(
       Utils.toChecksumAddress(gatewayAddress),
       Utils.toChecksumAddress(valueTokenAddress),
-      Utils.toChecksumAddress(record[0].utilityTokenAddress),
+      Utils.toChecksumAddress(record[0].utilityToken),
     );
     await erc20GatewayTokenPairRepository.save(
       erc20GatewayTokenPairModel,

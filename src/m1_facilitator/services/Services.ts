@@ -59,7 +59,6 @@ export default class Services implements ServicesInterface {
       manifest.metachain.auxiliaryChain.web3,
       repos.messageRepository,
       repos.withdrawIntentRepository,
-      repos.erc20GatewayTokenPairRepository,
       originTransactionExecutor,
     );
     repos.gatewayRepository.attach(confirmWithdrawService);

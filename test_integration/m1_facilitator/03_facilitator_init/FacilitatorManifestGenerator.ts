@@ -35,7 +35,7 @@ const generateFacilitatorManifest = (shared: Shared) => ({
         },
       auxiliary:
         {
-          avatar_account: '0x296a65814a2c07bf7a8ee310a212a4796dc0123a',
+          avatar_account: '0x61bd2fd5c5ebb902b2b86d13f0b00b353ceec017',
           node_endpoint: endpoints.auxilary.chain,
           graph_ws_endpoint: `${endpoints.auxilary.graph_ws}/subgraphs/name/mosaic/aux-erc20gateway`,
           graph_rpc_endpoint: `${endpoints.auxilary.graph_rpc}/subgraphs/name/mosaic/aux-erc20gateway`,
