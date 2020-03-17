@@ -46,7 +46,7 @@ export default class Withdraw {
     const finalOriginAccountBalance: Balance = {};
 
     let testWithdrawerAccounts = [];
-    let totalUniqueDepositorAccounts = [];
+    let totalWithdrawerAccounts = [];
 
     for (let i = 0; i < iterations; i += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -108,10 +108,7 @@ export default class Withdraw {
       // eslint-disable-next-line no-await-in-loop
       await new Promise(done => setTimeout(done, pollingInterval));
 
-      const uniqueAddresses = testWithdrawerAccounts.filter(
-        async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
-      );
-      totalUniqueDepositorAccounts = totalUniqueDepositorAccounts.concat(uniqueAddresses);
+      totalWithdrawerAccounts = totalWithdrawerAccounts.concat(testWithdrawerAccounts);
     }
 
     await new Promise(done => setTimeout(done, timeoutInterval));
@@ -130,10 +127,6 @@ export default class Withdraw {
     // eslint-disable-next-line no-await-in-loop
     await Promise.all(finalOriginBalancePromises);
 
-    // TODO: refund to faucet
-
-    // TODO: generate report
-
     Withdraw.generateReport(
       initialAuxiliaryAccountBalance,
       expectedAuxiliaryAccountBalance,
@@ -142,6 +135,12 @@ export default class Withdraw {
       testWithdrawerAccounts,
       messageHashes,
     );
+
+    const totalUniqueWithdrawerAccounts = totalWithdrawerAccounts.filter(
+      async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
+    );
+
+    await Faucet.refundGasTOFaucet(totalUniqueWithdrawerAccounts);
   }
 
   private static async createWithdrawTransactionObject(account: Account): Promise<any> {
