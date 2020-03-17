@@ -149,6 +149,32 @@ export default class ERC20GatewayTokenPairRepository extends Subject<ERC20Gatewa
     return this.convertToModel(databaseModel);
   }
 
+  /**
+   * Returns a ERC20GatewayTokenPair model with the specified erc20 gateway global
+   * address and utility token or null if there is no one.
+   *
+   * @param gatewayGA Gateway global address of the ERC20GatewayTokenPair model.
+   * @param utilityToken Utility token address of the ERC20GatewayTokenPair model.
+   *
+   * @returns ERC20GatewayTokenPair model if exists, otherwise null.
+   */
+  public async getByUtilityToken(
+    gatewayGA: string, utilityToken: string,
+  ): Promise<ERC20GatewayTokenPair | null> {
+    const databaseModel = await ERC20GatewayTokenPairModel.findOne({
+      where: {
+        gatewayGA,
+        utilityToken,
+      },
+    });
+
+    if (databaseModel === null) {
+      return null;
+    }
+
+    return this.convertToModel(databaseModel);
+  }
+
 
   /* Private Functions */
 

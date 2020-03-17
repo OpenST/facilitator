@@ -32,12 +32,17 @@ import GatewayRepository
   from '../../../../src/m1_facilitator/repositories/GatewayRepository';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
 import Anchor from '../../../../src/m1_facilitator/models/Anchor';
+import ERC20GatewayTokenPair from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
+import ERC20GatewayTokenPairRepository from '../../../../src/m1_facilitator/repositories/ERC20GatewayTokenPairRepository';
+import Utils from '../../../../src/common/Utils';
 
 describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
   let handler: DeclaredWithdrawIntentsHandler;
   let messageRepository: MessageRepository;
   let withdrawIntentRepository: WithdrawIntentRepository;
   let gatewayRepository: GatewayRepository;
+  let erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
+  let repositories: Repositories;
 
   const withdrawIntentEntityRecords = [
     {
@@ -65,12 +70,16 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
   ];
 
   beforeEach(async (): Promise<void> => {
-    const repositories = await Repositories.create();
-    ({ messageRepository, withdrawIntentRepository, gatewayRepository } = repositories);
+    repositories = await Repositories.create();
+    ({
+      messageRepository, withdrawIntentRepository, gatewayRepository, erc20GatewayTokenPairRepository,
+    } = repositories);
     handler = new DeclaredWithdrawIntentsHandler(
       repositories.withdrawIntentRepository,
       repositories.messageRepository,
       repositories.gatewayRepository,
+      repositories.erc20GatewayTokenPairRepository,
+      new Set(),
     );
 
     const gateway = new Gateway(
@@ -226,6 +235,72 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       messageRecord && messageRecord.sourceStatus,
       MessageStatus.Declared,
       'Message source status must be declared',
+    );
+  });
+
+  it('should filter records which should not be facilitated', async (): Promise<void> => {
+    const record = [
+      {
+        messageHash: web3Utils.sha3('1'),
+        contractAddress: '0x0000000000000000000000000000000000000001', // Cogateway address
+        utilityTokenAddress: '0x0000000000000000000000000000000000000002',
+        amount: '2',
+        beneficiary: '0x0000000000000000000000000000000000000003',
+        feeGasPrice: '2',
+        feeGasLimit: '2',
+        withdrawer: '0x0000000000000000000000000000000000000005',
+        blockNumber: '100',
+      },
+    ];
+    const supportedTokens = new Set(['0x0000000000000000000000000000000000000022']);
+    const valueTokenAddress = '0x0000000000000000000000000000000000000012';
+    const gatewayAddress = '0x0000000000000000000000000000000000000011';
+    const erc20GatewayTokenPairModel = new ERC20GatewayTokenPair(
+      Utils.toChecksumAddress(gatewayAddress),
+      Utils.toChecksumAddress(valueTokenAddress),
+      Utils.toChecksumAddress(record[0].utilityTokenAddress),
+    );
+    await erc20GatewayTokenPairRepository.save(
+      erc20GatewayTokenPairModel,
+    );
+
+    const gateway = new Gateway(
+      Gateway.getGlobalAddress(record[0].contractAddress),
+      gatewayAddress,
+      GatewayType.ERC20,
+      '0x0000000000000000000000000000000000000099',
+      new BigNumber(100),
+    );
+    await gatewayRepository.save(
+      gateway,
+    );
+
+    handler = new DeclaredWithdrawIntentsHandler(
+      repositories.withdrawIntentRepository,
+      repositories.messageRepository,
+      repositories.gatewayRepository,
+      repositories.erc20GatewayTokenPairRepository,
+      supportedTokens,
+    );
+    await handler.handle(record);
+
+    const message = await messageRepository.get(
+      record[0].messageHash,
+    );
+
+    assert.strictEqual(
+      message,
+      null,
+      'Message should not be saved.',
+    );
+
+    const withdrawIntent = await withdrawIntentRepository.get(
+      record[0].messageHash,
+    );
+    assert.strictEqual(
+      withdrawIntent,
+      null,
+      'Withdraw intent record should not be saved.',
     );
   });
 });
