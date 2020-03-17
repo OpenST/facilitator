@@ -19,7 +19,6 @@ import { TransactionObject } from 'web3/eth/types';
 import BigNumber from 'bignumber.js';
 import ProofGenerator from '../../common/ProofGenerator';
 
-import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
 import Gateway from '../models/Gateway';
 import Logger from '../../common/Logger';
 import Message, { MessageType } from '../models/Message';
@@ -48,8 +47,6 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
   /** Instance of origin transaction executor. */
   private originTransactionExecutor: TransactionExecutor;
 
-  /** Instance of erc20 gateway token pair repository. */
-  private erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
 
   /**
    * Construct ConfirmDepositService with the params.
@@ -58,7 +55,6 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
    * @param auxiliaryWeb3 Instance of auxiliary web3.
    * @param messageRepository Instance of message Repository.
    * @param withdrawIntentRepository Instance of withdraw intent repository.
-   * @param erc20GatewayTokenPairRepository Instance of token pair repository.
    * @param originTransactionExecutor Instance of origin transaction executor.
    */
   public constructor(
@@ -66,7 +62,6 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     auxiliaryWeb3: Web3,
     messageRepository: MessageRepository,
     withdrawIntentRepository: WithdrawIntentRepository,
-    erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository,
     originTransactionExecutor: TransactionExecutor,
   ) {
     super();
@@ -74,7 +69,6 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     this.auxiliaryWeb3 = auxiliaryWeb3;
     this.messageRepository = messageRepository;
     this.withdrawIntentRepository = withdrawIntentRepository;
-    this.erc20GatewayTokenPairRepository = erc20GatewayTokenPairRepository;
     this.originTransactionExecutor = originTransactionExecutor;
   }
 
@@ -114,7 +108,7 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
 
           await this.originTransactionExecutor.add(gateway.gatewayGA, rawTransaction);
         } catch (err) {
-          Logger.error(`ConfirmDepositService::confirmDepositIntentTransaction error: ${err}`);
+          Logger.error(`ConfirmWithdrawService::confirmWithdrawIntentTransaction error: ${err}`);
         }
       }
     });
@@ -146,13 +140,13 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
       [message.messageHash],
     );
 
-    const erc20GatewayTokenPairRecord = await this.erc20GatewayTokenPairRepository.get(
-      gatewayAddress,
-      withdrawIntent.tokenAddress as string,
+    const utilityTokenInteract = Mosaic.interacts.getUtilityToken(
+      this.auxiliaryWeb3,
+      withdrawIntent.tokenAddress,
     );
 
-    const utilityToken = erc20GatewayTokenPairRecord && erc20GatewayTokenPairRecord.utilityToken;
-
+    const valueToken = await utilityTokenInteract.methods.valueToken().call();
+    Logger.debug(`ConfirmWithdrawService:: Storage Proof s${proof.storageProof[0]}`);
     assert(proof.storageProof.length > 0);
 
     if (proof.storageProof[0].value === '0') {
@@ -160,7 +154,7 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     }
     return erc20gateway.methods.confirmWithdraw(
       (withdrawIntent.tokenAddress as string),
-      utilityToken as string,
+      valueToken,
       (withdrawIntent.amount as BigNumber).toString(10),
       withdrawIntent.beneficiary as string,
       (message.feeGasPrice as BigNumber).toString(10),

@@ -59,11 +59,11 @@ export default class Utils {
       gasPrice?: string;
       from: string;
     },
-  ): Promise<string> {
+  ): Promise<any> {
     const calculatedTransactionOptions = {
       ...txOptions,
       gas: (await rawTx.estimateGas({ from: txOptions.from })).toString(),
-      gasPrice: txOptions.gasPrice? txOptions.gasPrice: '0x01',
+      gasPrice: txOptions.gasPrice ? txOptions.gasPrice : '0x01',
     };
     return rawTx.send(calculatedTransactionOptions);
   }
@@ -79,7 +79,7 @@ export default class Utils {
   public static async waitForCondition(
     boolFunction: Function,
     intervalTime: number = 2000,
-    maxInterval: number = 60,
+    maxInterval: number = 100,
   ): Promise<void> {
     return new Promise((resolve) => {
       let count = 0;
