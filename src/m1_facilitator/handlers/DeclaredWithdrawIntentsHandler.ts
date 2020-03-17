@@ -98,6 +98,8 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     const supportedTokenRecords = await this.getSupportedTokenRecords(records);
     const savePromises = supportedTokenRecords.map(async (record): Promise<void> => {
       const { messageHash, contractAddress } = record;
+
+      Logger.debug(`Received withdraw intent record for messageHash ${messageHash}`);
       const gatewayRecord = await this.gatewayRepository.get(
         Gateway.getGlobalAddress(contractAddress),
       );
@@ -137,8 +139,10 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     amount: BigNumber,
     beneficiary: string,
   ): Promise<void> {
+    Logger.debug(`DeclaredWithdrawIntentsHandler::Getting withdraw intent record for messageHash ${messageHash}`);
     let withdrawIntentRecord = await this.withdrawIntentRepository.get(messageHash);
     if (withdrawIntentRecord === null) {
+      Logger.debug(`DeclaredWithdrawIntentsHandler::Withdraw intent record doesn't exists for mesasgehash: ${messageHash}`);
       withdrawIntentRecord = new WithdrawIntent(
         messageHash,
         utilityTokenAddress,
@@ -168,9 +172,11 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     sender: string,
     sourceDeclarationBlockNumber: BigNumber,
   ): Promise<void> {
+    Logger.debug(`DeclaredWithdrawIntentsHandler::Getting message record for messageHash ${messageHash}`);
     let message = await this.messageRepository.get(messageHash);
 
     if (message === null) {
+      Logger.debug(`DeclaredWithdrawIntentsHandler::Message record does not exists for messageHash ${messageHash}`);
       message = new Message(
         messageHash,
         MessageType.Withdraw,

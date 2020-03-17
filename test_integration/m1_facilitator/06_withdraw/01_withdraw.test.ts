@@ -1,80 +1,88 @@
 import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
-// import Web3 from 'web3';
-import * as web3Utils from 'web3-utils';
-
-// import { UtilityToken } from '@openst/mosaic-contracts/dist/interacts/UtilityToken';
-// import Interacts from '@openst/mosaic-contracts/dist/interacts/Interacts';
-// import { ERC20Cogateway } from 'Mosaic/dist/interacts/ERC20Cogateway';
 import shared from '../shared';
 import Utils from '../utils';
 import assert from '../../../test/test_utils/assert';
-// import Assert from '../Assert';
-import Repositories from '../../../src/m1_facilitator/repositories/Repositories';
+import Repositories
+  from '../../../src/m1_facilitator/repositories/Repositories';
 import Directory from '../../../src/m1_facilitator/Directory';
 import { ArchitectureLayout } from '../../../src/m1_facilitator/manifest/Manifest';
-import Logger from '../../../src/common/Logger';
 import {
   MessageStatus,
   MessageType,
 } from '../../../src/m1_facilitator/models/Message';
 
-describe('withdraw and confirm withdraw facilitator process', async (): Promise<void> => {
+describe('withdraw', async (): Promise<void> => {
   let declarationBlockNumber: string;
   let withdrawMessageHash: string;
-  let withdrawerAddress: string;
   let anchorBlockNumber: BigNumber;
   let withdrawParams: {
     withdrawalAmount: BigNumber;
-    withdrawerAddress: string;
+    beneficiary: string;
     feeGasPrice: BigNumber;
     feeGasLimit: BigNumber;
     sender: string;
+    tokenAddress: string;
   };
 
-  before(() => {
-    withdrawerAddress = shared.origin.deployer;
-  });
-
   it('Should withdraw successfully', async (): Promise<void> => {
+    const utilityTokenAddress = await shared.contracts.erc20Cogateway
+      .methods.utilityTokens(
+        shared.contracts.valueToken.address,
+      ).call();
+
     withdrawParams = {
       withdrawalAmount: new BigNumber(80),
-      withdrawerAddress,
-      feeGasPrice: new BigNumber(3),
-      feeGasLimit: new BigNumber(15),
-      sender: shared.origin.deployer,
+      beneficiary: shared.origin.deployer,
+      feeGasPrice: new BigNumber(1),
+      feeGasLimit: new BigNumber(1),
+      sender: shared.auxiliary.deployer,
+      tokenAddress: utilityTokenAddress,
     };
 
-    //Approve Utility Token
-    await Utils.sendTransaction(shared.contracts.valueToken.methods.approve(
+    const utilityToken = Mosaic.interacts.getUtilityToken(
+      shared.auxiliary.web3, utilityTokenAddress,
+    );
+
+    const balance = await utilityToken.methods.balanceOf(withdrawParams.sender).call();
+    console.log('balance  ', balance);
+
+    // Approve Utility Token
+    const approval = await Utils.sendTransaction(utilityToken.methods.approve(
       shared.contracts.erc20Cogateway.address,
       withdrawParams.withdrawalAmount.toString(10),
     ),
     {
-      from: withdrawerAddress,
+      from: withdrawParams.sender,
     });
+
+    console.log(approval);
 
     const tx = await Utils.sendTransaction(
       shared.contracts.erc20Cogateway.methods.withdraw(
         withdrawParams.withdrawalAmount.toString(10),
-        withdrawerAddress,
+        withdrawParams.beneficiary,
         withdrawParams.feeGasPrice.toString(10),
         withdrawParams.feeGasLimit.toString(10),
-        shared.contracts.valueToken.address,
+        utilityTokenAddress,
       ),
       { from: withdrawParams.sender },
     );
 
-    ({ withdrawMessageHash } = tx.events.WithdrawIntentDeclared.returnvalues);
+    console.log('withdraw receipt  ', tx);
+
+    withdrawMessageHash = tx.events.WithdrawIntentDeclared.returnValues.messageHash;
 
     declarationBlockNumber = tx.blockNumber;
+
+    console.log('withdraw message hash  ', withdrawMessageHash);
   });
 
   it('should anchor state root', async (): Promise<void> => {
     // Note: Ensuring that facilitator starts before doing any transactions.
     await new Promise(done => setTimeout(done, 3000));
 
-    const block = await shared.origin.web3.eth.getBlock('latest');
+    const block = await shared.auxiliary.web3.eth.getBlock('latest');
 
     anchorBlockNumber = new BigNumber(block.number);
     await Utils.sendTransaction(
@@ -94,38 +102,31 @@ describe('withdraw and confirm withdraw facilitator process', async (): Promise<
       ),
     );
     await Utils.waitForCondition(async (): Promise<boolean> => {
-      const tokenPair = await repositories.erc20GatewayTokenPairRepository.get(
-        shared.contracts.erc20Cogateway.address,
-        shared.contracts.valueToken.address,
+      const message = await repositories.messageRepository.get(
+        withdrawMessageHash,
       );
 
-      return tokenPair !== null;
+      return message !== null && message.targetStatus === MessageStatus.Declared;
     });
 
-    const utilityTokenAddress = await shared.contracts.erc20Cogateway
-      .methods.utilityTokens(
-        shared.contracts.valueToken.address,
-      ).call();
-
-    const utilityToken = Mosaic.interacts.getUtilityToken(
-      shared.auxiliary.web3, utilityTokenAddress,
+    const valueToken = Mosaic.interacts.getUtilityToken(
+      shared.origin.web3, shared.contracts.valueToken.address,
     );
 
     const balance = new BigNumber(
-      await utilityToken.methods.balanceOf(shared.auxiliary.deployer).call(),
+      await valueToken.methods.balanceOf(withdrawParams.beneficiary).call(),
     );
 
     const reward = withdrawParams.feeGasLimit.multipliedBy(withdrawParams.feeGasPrice);
     const finalWithdrawalAmount = withdrawParams.withdrawalAmount.minus(reward);
-    Logger.debug('TO verify balance of withdrawer after withdrawal: ', finalWithdrawalAmount.toString(10));
     assert.isOk(
       balance.eq(finalWithdrawalAmount),
       `Beneficiary should have balance ${finalWithdrawalAmount.toString(10)}`,
     );
   });
 
-  it('Assert entry made in database', async (): Promise<void> => {
-    const gatewayAddresses = shared.contracts.erc20Cogateway.address;
+  it('Assert database state', async (): Promise<void> => {
+    const gatewayAddresses = shared.contracts.erc20Gateway.address;
     const repositories = await Repositories.create(
       Directory.getFacilitatorDatabaseFile(
         ArchitectureLayout.MOSAIC1,
@@ -137,7 +138,6 @@ describe('withdraw and confirm withdraw facilitator process', async (): Promise<
       messageRepository,
       gatewayRepository,
       withdrawIntentRepository,
-      erc20GatewayTokenPairRepository,
       anchorRepository,
     } = repositories;
 
@@ -169,12 +169,12 @@ describe('withdraw and confirm withdraw facilitator process', async (): Promise<
     );
     assert.strictEqual(
       message && message.type,
-      MessageType.Deposit,
-      'Block number at message declaration must be same',
+      MessageType.Withdraw,
+      'Message type should be withdraw',
     );
     assert.strictEqual(
       message && message.gatewayAddress,
-      gatewayAddresses,
+      shared.contracts.erc20Cogateway.address,
       'Gateway address must match',
     );
     assert.isOk(
@@ -198,19 +198,18 @@ describe('withdraw and confirm withdraw facilitator process', async (): Promise<
 
     assert.strictEqual(
       withdrawIntent && withdrawIntent.beneficiary,
-      withdrawParams.withdrawerAddress,
-      'Withdrawer address must match',
+      withdrawParams.beneficiary,
+      'Beneficiary address must match',
     );
 
-    const valueToken = shared.contracts.valueToken.address;
     assert.strictEqual(
       withdrawIntent && withdrawIntent.tokenAddress,
-      valueToken,
-      'Value token address must match',
+      withdrawParams.tokenAddress,
+      'Token address must match',
     );
 
     const gatewayRecord = await gatewayRepository.get(
-      shared.contracts.erc20Cogateway.address,
+      shared.contracts.erc20Gateway.address,
     );
 
     assert.isOk(
@@ -219,17 +218,6 @@ describe('withdraw and confirm withdraw facilitator process', async (): Promise<
       'Remote gateway last broken block number should be same as anchor height',
     );
 
-    const tokenPairRecord = await erc20GatewayTokenPairRepository.get(
-      gatewayAddresses,
-      valueToken,
-    );
-
-    assert.isOk(tokenPairRecord !== null, 'Token pair repository record must exists');
-
-    assert.isOk(
-      tokenPairRecord && web3Utils.isAddress(tokenPairRecord.utilityToken),
-      'Utility token address must exists in token pair record',
-    );
     const originAnchor = await anchorRepository.get(shared.contracts.originAnchor.address);
 
     assert.isOk(

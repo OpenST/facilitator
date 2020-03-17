@@ -80,7 +80,7 @@ export default class Utils {
   public static async waitForCondition(
     boolFunction: Function,
     intervalTime: number = 2000,
-    maxInterval: number = 60,
+    maxInterval: number = 100,
   ): Promise<void> {
     return new Promise((resolve) => {
       let count = 0;
