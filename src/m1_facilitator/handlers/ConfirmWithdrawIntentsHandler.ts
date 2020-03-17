@@ -19,6 +19,7 @@ import Message, { MessageStatus, MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
 import Logger from '../../common/Logger';
 import Utils from '../../common/Utils';
+import Gateway from '../models/Gateway';
 
 import assert = require('assert');
 
@@ -64,7 +65,7 @@ export default class ConfirmWithdrawIntentsHandler extends ContractEntityHandler
     Logger.info(`ConfirmWithdrawIntentsHandler::records received: ${records.length}`);
     const savePromises = records.map(async (record): Promise<void> => {
       const gatewayRecord = await this.gatewayRepository.get(
-        Utils.toChecksumAddress(record.contractAddress),
+        Gateway.getGlobalAddress(Utils.toChecksumAddress(record.contractAddress)),
       );
       if (gatewayRecord !== null) {
         Logger.info(`ConfirmWithdrawIntentsHandler::gateway record found for gatewayGA: ${gatewayRecord.gatewayGA}`);
