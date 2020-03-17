@@ -18,6 +18,7 @@ import { Validator as JsonSchemaVerifier } from 'jsonschema';
 import Web3 from 'web3';
 import schema from './manifest.schema.json';
 import AvatarAccount from './AvatarAccount';
+import Utils from '../../common/Utils';
 import Directory from '../Directory';
 
 /**
@@ -194,10 +195,10 @@ export default class Manifest {
       architecture_layout: string;
       personas: string[];
       origin_contract_addresses: Record<string, string>;
-      facilitate_tokens: string[];
     },
     metachain: Metachain,
     accounts: Record<string, AvatarAccount>,
+    facilitate_tokens: string[],
   ) {
     this.version = config.version;
     this.architectureLayout = config.architecture_layout as ArchitectureLayout;
@@ -206,7 +207,7 @@ export default class Manifest {
     this.dbConfig = new DBConfig();
     this.avatarAccounts = accounts;
     this.originContractAddresses = config.origin_contract_addresses;
-    this.facilitateTokens = new Set(config.facilitate_tokens);
+    this.facilitateTokens = new Set(facilitate_tokens);
     this.dbConfig.path = Directory.getFacilitatorDatabaseFile(
       this.architectureLayout,
       this.originContractAddresses.erc20_gateway,
@@ -239,7 +240,8 @@ export default class Manifest {
         metachain.originChain.web3,
         metachain.auxiliaryChain.web3,
       );
-      return new Manifest(inputManifestConfig, metachain, accounts);
+      const facilitate_tokens = Manifest.getSupportedTokens(inputManifestConfig);
+      return new Manifest(inputManifestConfig, metachain, accounts, facilitate_tokens);
     }
 
     throw new Error(`Manifest file path ${manifestPath} doesn't exist.`);
@@ -311,5 +313,16 @@ export default class Manifest {
     });
 
     return avatarAccounts;
+  }
+
+  /**
+   * Converts tokens to be facilitated in checksum format.
+   * @param config  @param config Facilitator input yaml object.
+   */
+  private static getSupportedTokens(config: ManifestInfo): string[] {
+    if (config.facilitate_tokens) {
+      return config.facilitate_tokens.map((token): string => Utils.toChecksumAddress(token));
+    }
+    return [];
   }
 }

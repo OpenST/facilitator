@@ -41,7 +41,7 @@
           }
         },
         "facilitate_tokens": {
-          "type": "array",
+          "type": [ "array", "null"],
           "additionalProperties": false,
           "items": {
             "$ref": "#/definitions/Address"
