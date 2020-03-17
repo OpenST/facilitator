@@ -18,6 +18,7 @@ import GatewayRepository from '../repositories/GatewayRepository';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
 import Logger from '../../common/Logger';
+import Utils from '../../common/Utils';
 
 import assert = require('assert');
 
@@ -62,7 +63,9 @@ export default class ConfirmWithdrawIntentsHandler extends ContractEntityHandler
   public async handle(records: ConfirmWithdrawIntentsEntityInterface[]): Promise<void> {
     Logger.info(`ConfirmWithdrawIntentsHandler::records received: ${records.length}`);
     const savePromises = records.map(async (record): Promise<void> => {
-      const gatewayRecord = await this.gatewayRepository.get(record.contractAddress);
+      const gatewayRecord = await this.gatewayRepository.get(
+        Utils.toChecksumAddress(record.contractAddress),
+      );
       if (gatewayRecord !== null) {
         Logger.info(`ConfirmWithdrawIntentsHandler::gateway record found for gatewayGA: ${gatewayRecord.gatewayGA}`);
         let message = await this.messageRepository.get(record.messageHash);

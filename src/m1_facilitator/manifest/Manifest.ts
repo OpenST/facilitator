@@ -297,19 +297,20 @@ export default class Manifest {
       }
       const keystore = fs.readFileSync(acc.keystore_path).toString();
       const password = fs.readFileSync(acc.keystore_password_path).toString();
-      let web3 = new Web3('');
 
       if (config.metachain.origin.avatar_account === address) {
-        web3 = originWeb3;
+        avatarAccounts[address] = AvatarAccount.load(
+          originWeb3,
+          JSON.parse(keystore),
+          password,
+        );
+      } else if (config.metachain.auxiliary.avatar_account === address) {
+        avatarAccounts[address] = AvatarAccount.load(
+          auxiliaryWeb3,
+          JSON.parse(keystore),
+          password,
+        );
       }
-      if (config.metachain.auxiliary.avatar_account === address) {
-        web3 = auxiliaryWeb3;
-      }
-      avatarAccounts[address] = AvatarAccount.load(
-        web3,
-        JSON.parse(keystore),
-        password,
-      );
     });
 
     return avatarAccounts;

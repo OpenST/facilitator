@@ -33,7 +33,9 @@ describe('withdraw', async (): Promise<void> => {
 
     withdrawParams = {
       withdrawalAmount: new BigNumber(80),
-      beneficiary: shared.origin.deployer,
+      beneficiary: shared.origin.web3.eth.accounts.create(
+        'beneficiary',
+      ).address,
       feeGasPrice: new BigNumber(1),
       feeGasLimit: new BigNumber(1),
       sender: shared.auxiliary.deployer,
@@ -44,11 +46,8 @@ describe('withdraw', async (): Promise<void> => {
       shared.auxiliary.web3, utilityTokenAddress,
     );
 
-    const balance = await utilityToken.methods.balanceOf(withdrawParams.sender).call();
-    console.log('balance  ', balance);
-
     // Approve Utility Token
-    const approval = await Utils.sendTransaction(utilityToken.methods.approve(
+    await Utils.sendTransaction(utilityToken.methods.approve(
       shared.contracts.erc20Cogateway.address,
       withdrawParams.withdrawalAmount.toString(10),
     ),
@@ -56,9 +55,8 @@ describe('withdraw', async (): Promise<void> => {
       from: withdrawParams.sender,
     });
 
-    console.log(approval);
 
-    const tx = await Utils.sendTransaction(
+    const receipt = await Utils.sendTransaction(
       shared.contracts.erc20Cogateway.methods.withdraw(
         withdrawParams.withdrawalAmount.toString(10),
         withdrawParams.beneficiary,
@@ -69,13 +67,8 @@ describe('withdraw', async (): Promise<void> => {
       { from: withdrawParams.sender },
     );
 
-    console.log('withdraw receipt  ', tx);
-
-    withdrawMessageHash = tx.events.WithdrawIntentDeclared.returnValues.messageHash;
-
-    declarationBlockNumber = tx.blockNumber;
-
-    console.log('withdraw message hash  ', withdrawMessageHash);
+    withdrawMessageHash = receipt.events.WithdrawIntentDeclared.returnValues.messageHash;
+    declarationBlockNumber = receipt.blockNumber;
   });
 
   it('should anchor state root', async (): Promise<void> => {
@@ -98,7 +91,7 @@ describe('withdraw', async (): Promise<void> => {
     const repositories = await Repositories.create(
       Directory.getFacilitatorDatabaseFile(
         ArchitectureLayout.MOSAIC1,
-        shared.contracts.erc20Cogateway.address,
+        shared.contracts.erc20Gateway.address,
       ),
     );
     await Utils.waitForCondition(async (): Promise<boolean> => {
@@ -121,7 +114,7 @@ describe('withdraw', async (): Promise<void> => {
     const finalWithdrawalAmount = withdrawParams.withdrawalAmount.minus(reward);
     assert.isOk(
       balance.eq(finalWithdrawalAmount),
-      `Beneficiary should have balance ${finalWithdrawalAmount.toString(10)}`,
+      `Beneficiary should have balance ${finalWithdrawalAmount.toString(10)} but found ${balance.toString(10)}`,
     );
   });
 
