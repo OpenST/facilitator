@@ -35,7 +35,7 @@ export default class Withdraw {
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const auxiliaryChainId = config.chains.auxiliary.chainId;
 
-    const testDataObject = {};
+    const messageHashes: string[] = [];
     interface Balance {
       [key: string]: number;
     }
@@ -97,30 +97,10 @@ export default class Withdraw {
           });
 
           const {
-            amount,
-            nonce,
-            beneficiary,
-            feeGasPrice,
-            feeGasLimit,
-            withdrawer,
-            utilityToken,
             messageHash,
           } = txReceipt.events.WithdrawIntentDeclared.returnValues;
 
-          if (!testDataObject[i]) {
-            testDataObject[i] = [];
-          }
-
-          testDataObject[i].push({
-            amount,
-            nonce,
-            beneficiary,
-            feeGasPrice,
-            feeGasLimit,
-            withdrawer,
-            utilityToken,
-            messageHash,
-          });
+          messageHashes.push(messageHash);
         },
       );
       // eslint-disable-next-line no-await-in-loop
@@ -160,7 +140,7 @@ export default class Withdraw {
       initialOriginAccountBalance,
       finalOriginAccountBalance,
       testWithdrawerAccounts,
-      testDataObject,
+      messageHashes,
     );
   }
 
@@ -201,7 +181,7 @@ export default class Withdraw {
     initialOriginAccountBalance: any,
     finalOriginAccountBalance: any,
     testWithdrawerAccounts: Account[],
-    testDataObject: any,
+    messageHashes: string[],
   ): Promise<void> {
     const { utilityToken } = config.chains.auxiliary;
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
@@ -253,10 +233,8 @@ export default class Withdraw {
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
 
     Logger.info('MessageHash \t Success');
-    testDataObject.map(
-      async (testData: any): Promise<void> => {
-        const { messageHash } = testData;
-
+    messageHashes.map(
+      async (messageHash: string): Promise<void> => {
         // To check that messageHash exists in the outbox mapping.
         const messageStatus = erc20Cogateway.methods.outbox.call(messageHash);
         Logger.info(`${messageHash} \t ${messageStatus}`);

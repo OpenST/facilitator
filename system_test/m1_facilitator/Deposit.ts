@@ -35,8 +35,7 @@ export default class Deposit {
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const originChainId = config.chains.origin.chainId;
 
-    const testDataObject: any = {};
-
+    const messageHashes: string[] = [];
     interface Balance {
       [key: string]: number;
     }
@@ -97,29 +96,10 @@ export default class Deposit {
           });
 
           const {
-            amount,
-            nonce,
-            beneficiary,
-            feeGasPrice,
-            feeGasLimit,
-            depositor,
-            valueToken,
             messageHash,
           } = txReceipt.events.DepositIntentDeclared.returnValues;
 
-          if (!testDataObject[i]) {
-            testDataObject[i] = [];
-          }
-          testDataObject[i].push({
-            amount,
-            nonce,
-            beneficiary,
-            feeGasPrice,
-            feeGasLimit,
-            depositor,
-            valueToken,
-            messageHash,
-          });
+          messageHashes.push(messageHash);
         },
       );
 
@@ -158,7 +138,7 @@ export default class Deposit {
       initialAuxiliaryAccountBalance,
       finalAuxiliaryAccountBalance,
       testDepositorAccounts,
-      testDataObject,
+      messageHashes,
     );
 
     // TODO: refund to faucet
@@ -201,7 +181,7 @@ export default class Deposit {
     initialAuxiliaryAccountBalance: any,
     finalAuxiliaryAccountBalance: any,
     testDepositorAccounts: Account[],
-    testDataObject: any,
+    messageHashes: string[],
   ): Promise<void> {
     const { valueToken } = config.chains.origin;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
@@ -250,10 +230,8 @@ export default class Deposit {
     const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
 
     Logger.info('MessageHash \t Success');
-    testDataObject.map(
-      async (testData: any): Promise<void> => {
-        const { messageHash } = testData;
-
+    messageHashes.map(
+      async (messageHash: any): Promise<void> => {
         // To check that messageHash exists in the outbox mapping.
         const messageStatus = erc20Gateway.methods.outbox.call(messageHash);
         Logger.info(`${messageHash} \t ${messageStatus}`);
