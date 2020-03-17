@@ -40,7 +40,7 @@ export default class WithdrawIntent extends Comparable<WithdrawIntent> {
    * Constructor to set fields of WithdrawIntent model.
    *
    * @param messageHash Message hash.
-   * @param [tokenAddress] Value token address.
+   * @param [tokenAddress] Utility token address.
    * @param [amount] Withdraw amount.
    * @param [beneficiary] Beneficiary address.
    * *@param [intentHash] Withdraw intent hash.
