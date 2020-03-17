@@ -6,6 +6,7 @@ const config = {
       valueToken: '0xd426b22f3960d01189a3d548b45a7202489ff4de',
       gateway: '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56',
       chainId: 5,
+      faucet: '0x743a8310a7482c56fcfc616d3e59013934ba3496',
     },
     auxiliary: {
       wsEndpoint: 'wss://chain.mosaicdao.org/hadapsar/wss',
@@ -13,6 +14,7 @@ const config = {
       utilityToken: '',
       cogateway: '0x25a1CE197371735D6EDccC178F90841a7CEc23bb',
       chainId: 1405,
+      faucet: '0x73e4876c03412139751895879c203d1fe0a0e004',
     },
   },
   testData: {

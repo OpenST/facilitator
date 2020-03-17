@@ -45,7 +45,7 @@ export default class Deposit {
     const finalAuxiliaryAccountBalance: Balance = {};
 
     let testDepositorAccounts = [];
-    let totalUniqueDepositorAccounts: any[] = [];
+    let totalDepositorAccounts: any[] = [];
 
     for (let i = 0; i < iterations; i += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -108,10 +108,7 @@ export default class Deposit {
       // eslint-disable-next-line no-await-in-loop
       await new Promise(done => setTimeout(done, pollingInterval));
 
-      const uniqueAddresses = testDepositorAccounts.filter(
-        async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
-      );
-      totalUniqueDepositorAccounts = totalUniqueDepositorAccounts.concat(uniqueAddresses);
+      totalDepositorAccounts = totalDepositorAccounts.concat(testDepositorAccounts);
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -131,6 +128,10 @@ export default class Deposit {
     );
     // eslint-disable-next-line no-await-in-loop
     await Promise.all(finalAuxiliaryBalancePromises);
+
+    const totalUniqueDepositorAccounts = totalDepositorAccounts.filter(
+      async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
+    );
 
     Deposit.generateReport(
       initialOriginAccountBalance,
