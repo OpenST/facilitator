@@ -70,6 +70,8 @@ export default class Handlers {
       repos.withdrawIntentRepository,
       repos.messageRepository,
       repos.gatewayRepository,
+      repos.erc20GatewayTokenPairRepository,
+      facilitateTokens,
     );
 
     const gatewayProvenHandler = new GatewayProvenHandler(

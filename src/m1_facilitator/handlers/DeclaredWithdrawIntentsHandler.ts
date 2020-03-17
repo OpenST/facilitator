@@ -21,6 +21,8 @@ import Message, { MessageStatus, MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
 import WithdrawIntent from '../models/WithdrawIntent';
 import WithdrawIntentRepository from '../repositories/WithdrawIntentRepository';
+import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
+import Utils from '../../common/Utils';
 
 /** Represents record of DeclaredWithdrawIntentsEntity. */
 interface DeclaredWithdrawIntentsEntityInterface {
@@ -48,26 +50,40 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
   /* Message repository. */
   private messageRepository: MessageRepository;
 
+  /* ERC20GatewayTokenPair repository. */
+  private erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
+
+  /* Unique list of value token addresses to be facilitated. */
+  private facilitateTokens: Set<string>;
+
   /**
    * Construct DeclaredWithdrawIntentsHandler with params.
+   *
    * @param withdrawIntentRepository Instance of withdraw intent repository.
    * @param messageRepository Instance of message repository.
    * @param gatewayRepository Instance of gateway repository.
+   * @param erc20GatewayTokenPairRepository Instance of ERC20TokenPair repository.
+   * @param facilitateTokens Value tokens to be facilitated.
    */
   public constructor(
     withdrawIntentRepository: WithdrawIntentRepository,
     messageRepository: MessageRepository,
     gatewayRepository: GatewayRepository,
+    erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository,
+    facilitateTokens: Set<string>,
   ) {
     super();
 
     this.gatewayRepository = gatewayRepository;
     this.withdrawIntentRepository = withdrawIntentRepository;
     this.messageRepository = messageRepository;
+    this.erc20GatewayTokenPairRepository = erc20GatewayTokenPairRepository;
+    this.facilitateTokens = facilitateTokens;
   }
 
   /**
    * Handles DeclaredWithdrawIntents entity records.
+   * - Filters non supported tokens.
    * - It creates a message record and updates it's source status to `Declared`.
    * - It creates `WithdrawIntent` record.
    * - This handler only reacts to the events of cogateways which are populated
@@ -76,29 +92,28 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
    * @param records List of declared withdraw intents.
    */
   public async handle(records: DeclaredWithdrawIntentsEntityInterface[]): Promise<void> {
-    const savePromises = records.map(async (record): Promise<void> => {
+    const supportedTokenRecords = await this.getSupportedTokenRecords(records);
+    const savePromises = supportedTokenRecords.map(async (record): Promise<void> => {
       const { messageHash, contractAddress } = record;
-
       const gatewayRecord = await this.gatewayRepository.get(contractAddress);
 
       if (gatewayRecord !== null) {
         await this.handleMessage(
           messageHash,
-          contractAddress,
+          Utils.toChecksumAddress(contractAddress),
           new BigNumber(record.feeGasPrice),
           new BigNumber(record.feeGasLimit),
-          record.withdrawer,
+          Utils.toChecksumAddress(record.withdrawer),
           new BigNumber(record.blockNumber),
         );
         await this.handleWithdrawIntent(
           messageHash,
-          record.utilityTokenAddress,
+          Utils.toChecksumAddress(record.utilityTokenAddress),
           new BigNumber(record.amount),
-          record.beneficiary,
+          Utils.toChecksumAddress(record.beneficiary),
         );
       }
     });
-
     await Promise.all(savePromises);
   }
 
@@ -163,5 +178,56 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     }
     message.sourceStatus = MessageStatus.Declared;
     await this.messageRepository.save(message);
+  }
+
+  /**
+   * Filters non supported tokens and returns records with suported tokens.
+   * @param records List of declared withdraw intents.
+   */
+  private async getSupportedTokenRecords(
+    records: DeclaredWithdrawIntentsEntityInterface[],
+  ): Promise<DeclaredWithdrawIntentsEntityInterface[]> {
+    const supportedTokenRecords: DeclaredWithdrawIntentsEntityInterface[] = [];
+    for (let i = 0; i < records.length; i += 1) {
+      const record = records[i];
+      // eslint-disable-next-line no-await-in-loop
+      const isFacilitateToken = await this.isFacilitateToken(
+        record.contractAddress,
+        record.utilityTokenAddress,
+      );
+      if (isFacilitateToken) {
+        supportedTokenRecords.push(record);
+      }
+    }
+    return supportedTokenRecords;
+  }
+
+  /**
+   * Checks if utility token => value token address needs to be facilitated.
+   *
+   * @param coGatewayAddress Cogateway contract address .
+   * @param utilityTokenAddress Value token address.
+   */
+  private async isFacilitateToken(
+    coGatewayAddress: string,
+    utilityTokenAddress: string,
+  ): Promise<boolean> {
+    if (this.facilitateTokens.size === 0) {
+      return true;
+    }
+    const gatewayRecord = await this.gatewayRepository.get(coGatewayAddress);
+    if (gatewayRecord) {
+      const erc20GatewayTokenPair = await this.erc20GatewayTokenPairRepository.getByUtilityToken(
+        gatewayRecord.remoteGA,
+        utilityTokenAddress,
+      );
+      if (!erc20GatewayTokenPair) {
+        return false;
+      }
+      if (this.facilitateTokens.has(erc20GatewayTokenPair.valueToken)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

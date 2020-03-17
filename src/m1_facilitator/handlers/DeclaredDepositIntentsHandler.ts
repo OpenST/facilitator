@@ -49,7 +49,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
   /** Instance of GatewayRepository. */
   private readonly gatewayRepository: GatewayRepository;
 
-  /** Stores unique list of tokens to be facilitated */
+  /** Unique list of tokens to be facilitated */
   private readonly facilitateTokens: Set<string>;
 
   /**
