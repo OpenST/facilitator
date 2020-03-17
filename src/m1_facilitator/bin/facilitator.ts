@@ -15,5 +15,5 @@
 import facilitator from 'commander';
 
 facilitator.command('init', 'Initializes the facilitator and loads the configuration.')
-facilitator.command('start', 'Starts the facilitator.')
+  .command('start', 'Starts the facilitator.')
   .parse(process.argv);
