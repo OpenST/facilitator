@@ -4,14 +4,14 @@ const config = {
       wsEndpoint: 'https://rpc.slock.it/goerli',
       graphEndpoint: '',
       valueToken: '0xd426b22f3960d01189a3d548b45a7202489ff4de',
-      gateway: '',
+      gateway: '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56',
       chainId: 5,
     },
     auxiliary: {
-      wsEndpoint: '',
+      wsEndpoint: 'wss://chain.mosaicdao.org/hadapsar/wss',
       graphEndpoint: '',
       utilityToken: '',
-      cogateway: '',
+      cogateway: '0x25a1CE197371735D6EDccC178F90841a7CEc23bb',
       chainId: 1405,
     },
   },
@@ -45,11 +45,11 @@ const config = {
   },
   accounts:
   [
-    '0x3EC46ea7786b3804b5AE74BF9F6d68356e219629',
-    '0x0972Af988933F5d016FdE0f862E8920AE2Ca5892',
-    '0xA40fe6fcA6276D7656fCd188585ec8EFfc11E1bc',
-    '0x020657dd3773Bf00826e06Af22220E4ACaeaddfF',
-    '0xCf88610C6547Fb0e3849e6C2d00e95ba4cAe77b9',
+    '0x9e895536741F3fb427ff6aD101F790d8A06ac770',
+    '0x43b957b219e63C7590324b5508b7cA7AE8133554',
+    '0xf795B8084C5E0394d77B6d024F0ec0B0D457cCFd',
+    '0xB18CEc01bCb6cf741Db8423627444721f498cC30',
+    '0xeBC9cb91c92B713C6b373DE9C4d42fF167D9cE70',
   ],
 };
 

@@ -20,6 +20,7 @@ import config from './config';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Utils from '../common/Utils';
+import Logger from '../../src/common/Logger';
 
 export default class Deposit {
   public static async depositSystemTest(): Promise<void> {
@@ -151,7 +152,14 @@ export default class Deposit {
     // eslint-disable-next-line no-await-in-loop
     await Promise.all(finalAuxiliaryBalancePromises);
 
-    // TODO: generate report
+    Deposit.generateReport(
+      initialOriginAccountBalance,
+      expectedOriginAccountBalance,
+      initialAuxiliaryAccountBalance,
+      finalAuxiliaryAccountBalance,
+      testDepositorAccounts,
+      testDataObject,
+    );
 
     // TODO: refund to faucet
   }
@@ -185,5 +193,71 @@ export default class Deposit {
       ),
       depositAmount: testAmount,
     };
+  }
+
+  private static async generateReport(
+    initialOriginAccountBalance: any,
+    expectedOriginAccountBalance: any,
+    initialAuxiliaryAccountBalance: any,
+    finalAuxiliaryAccountBalance: any,
+    testDepositorAccounts: Account[],
+    testDataObject: any,
+  ): Promise<void> {
+    const { valueToken } = config.chains.origin;
+    const originWsEndpoint = config.chains.origin.wsEndpoint;
+    Logger.info('\t\t Origin \t\t');
+    Logger.info('Address \t Balance Before Deposit \t Balance After Deposit \t Expected Balance Change \t Actual Balance Change \t Success(T/F)');
+    testDepositorAccounts.map(
+      async (account: Account): Promise<void> => {
+        const balanceBeforeDeposit = initialOriginAccountBalance[account.address];
+        const balanceAfterDeposit = await AddressHandler.getOriginTokenBalance(
+          account.address,
+          originWsEndpoint,
+          valueToken,
+        );
+
+        const expectedBalanceChange = expectedOriginAccountBalance[account.address];
+        const actualBalanceChange = balanceAfterDeposit - balanceBeforeDeposit;
+        const success = (expectedBalanceChange === actualBalanceChange);
+
+        Logger.info(`${account.address} \t ${balanceBeforeDeposit} \t ${balanceAfterDeposit} \t ${expectedBalanceChange} \t ${actualBalanceChange} \t ${success}`);
+      },
+    );
+    Logger.info('\t\t Metachain \t\t');
+    Logger.info('Address \t Balance Before Confirm Deposit \t Balance After Confirm Deposit \t Expected Balance Change \t Actual Balance Change \t Success(T/F)');
+
+    const { utilityToken } = config.chains.auxiliary;
+    const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
+    testDepositorAccounts.map(
+      async (account: Account): Promise<void> => {
+        const balanceBeforeConfirmDeposit = initialAuxiliaryAccountBalance[account.address];
+        const balanceAfterConfirmDeposit = await AddressHandler.getAuxiliaryTokenBalance(
+          account.address,
+          auxiliaryWsEndpoint,
+          utilityToken,
+        );
+
+        const expectedBalanceChange = finalAuxiliaryAccountBalance[account.address] - initialAuxiliaryAccountBalance[account.address];
+        const actualBalanceChange = balanceAfterConfirmDeposit - balanceBeforeConfirmDeposit;
+        const success = (expectedBalanceChange === actualBalanceChange);
+        Logger.info(`${account.address} \t ${balanceBeforeConfirmDeposit} \t ${balanceAfterConfirmDeposit} \t ${expectedBalanceChange} \t ${actualBalanceChange} \t ${success}`);
+      },
+    );
+
+    // TO DO: message status report
+    const erc20GatewayAddress = config.chains.origin.gateway;
+    const originWeb3 = new Web3(originWsEndpoint);
+    const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
+
+    Logger.info('MessageHash \t Success');
+    testDataObject.map(
+      async (testData: any): Promise<void> => {
+        const { messageHash } = testData;
+
+        // To check that messageHash exists in the outbox mapping.
+        const messageStatus = erc20Gateway.methods.outbox.call(messageHash);
+        Logger.info(`${messageHash} \t ${messageStatus}`);
+      },
+    );
   }
 }
