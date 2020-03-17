@@ -30,7 +30,7 @@ import Utils from '../../common/Utils';
 interface DeclaredWithdrawIntentsEntityInterface {
   messageHash: string;
   contractAddress: string;
-  utilityTokenAddress: string;
+  utilityToken: string;
   amount: string;
   beneficiary: string;
   feeGasPrice: string;
@@ -115,7 +115,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
         );
         await this.handleWithdrawIntent(
           messageHash,
-          Utils.toChecksumAddress(record.utilityTokenAddress),
+          Utils.toChecksumAddress(record.utilityToken),
           new BigNumber(record.amount),
           Utils.toChecksumAddress(record.beneficiary),
         );
@@ -207,7 +207,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       // eslint-disable-next-line no-await-in-loop
       const isTokenSupported = await this.isTokenSupported(
         record.contractAddress,
-        record.utilityTokenAddress,
+        record.utilityToken,
       );
       if (isTokenSupported) {
         supportedTokenRecords.push(record);
