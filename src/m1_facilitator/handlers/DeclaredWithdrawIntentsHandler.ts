@@ -56,7 +56,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
   private erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
 
   /* Unique list of value token addresses to be facilitated. */
-  private facilitateTokens: Set<string>;
+  private supportedTokens: Set<string>;
 
   /**
    * Construct DeclaredWithdrawIntentsHandler with params.
@@ -65,14 +65,14 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
    * @param messageRepository Instance of message repository.
    * @param gatewayRepository Instance of gateway repository.
    * @param erc20GatewayTokenPairRepository Instance of ERC20TokenPair repository.
-   * @param facilitateTokens Value tokens to be facilitated.
+   * @param supportedTokens Value tokens to be facilitated.
    */
   public constructor(
     withdrawIntentRepository: WithdrawIntentRepository,
     messageRepository: MessageRepository,
     gatewayRepository: GatewayRepository,
     erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository,
-    facilitateTokens: Set<string>,
+    supportedTokens: Set<string>,
   ) {
     super();
 
@@ -80,7 +80,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     this.withdrawIntentRepository = withdrawIntentRepository;
     this.messageRepository = messageRepository;
     this.erc20GatewayTokenPairRepository = erc20GatewayTokenPairRepository;
-    this.facilitateTokens = facilitateTokens;
+    this.supportedTokens = supportedTokens;
   }
 
   /**
@@ -199,11 +199,11 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     for (let i = 0; i < records.length; i += 1) {
       const record = records[i];
       // eslint-disable-next-line no-await-in-loop
-      const isFacilitateToken = await this.isFacilitateToken(
+      const isTokenSupported = await this.isTokenSupported(
         record.contractAddress,
         record.utilityTokenAddress,
       );
-      if (isFacilitateToken) {
+      if (isTokenSupported) {
         supportedTokenRecords.push(record);
       }
     }
@@ -216,11 +216,11 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
    * @param coGatewayAddress Cogateway contract address .
    * @param utilityTokenAddress Value token address.
    */
-  private async isFacilitateToken(
+  private async isTokenSupported(
     coGatewayAddress: string,
     utilityTokenAddress: string,
   ): Promise<boolean> {
-    if (this.facilitateTokens.size === 0) {
+    if (this.supportedTokens.size === 0) {
       return true;
     }
     const gatewayRecord = await this.gatewayRepository.get(coGatewayAddress);
@@ -232,7 +232,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       if (!erc20GatewayTokenPair) {
         return false;
       }
-      if (this.facilitateTokens.has(erc20GatewayTokenPair.valueToken)) {
+      if (this.supportedTokens.has(erc20GatewayTokenPair.valueToken)) {
         return true;
       }
     }

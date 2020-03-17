@@ -238,7 +238,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
     );
   });
 
-  it('should filter records which does not need to be facilitated', async (): Promise<void> => {
+  it('should filter records which should not be facilitated', async (): Promise<void> => {
     const record = [
       {
         messageHash: web3Utils.sha3('1'),
@@ -252,7 +252,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
         blockNumber: '100',
       },
     ];
-    const facilitateTokens = new Set(['0x0000000000000000000000000000000000000022']);
+    const supportedTokens = new Set(['0x0000000000000000000000000000000000000022']);
     const valueTokenAddress = '0x0000000000000000000000000000000000000012';
     const gatewayAddress = '0x0000000000000000000000000000000000000011';
     const erc20GatewayTokenPairModel = new ERC20GatewayTokenPair(
@@ -280,7 +280,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       repositories.messageRepository,
       repositories.gatewayRepository,
       repositories.erc20GatewayTokenPairRepository,
-      facilitateTokens,
+      supportedTokens,
     );
     await handler.handle(record);
 

@@ -52,7 +52,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
   private readonly gatewayRepository: GatewayRepository;
 
   /** Unique list of tokens to be facilitated */
-  private readonly facilitateTokens: Set<string>;
+  private readonly supportedTokens: Set<string>;
 
   /**
    * Constructor for DeclaredDepositIntentHandler.
@@ -60,25 +60,25 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
    * @param depositIntentRepository Instance of DepositIntentRepository.
    * @param gatewayRepository Instance of GatewayRepository.
    * @param messageRepository Instance of MessageRepository.
-   * @param facilitateTokens Array of tokens to be facilitated.
+   * @param supportedTokens Array of tokens to be facilitated.
    */
   public constructor(
     depositIntentRepository: DepositIntentRepository,
     gatewayRepository: GatewayRepository,
     messageRepository: MessageRepository,
-    facilitateTokens: Set<string>,
+    supportedTokens: Set<string>,
   ) {
     super();
 
     this.depositIntentRepository = depositIntentRepository;
     this.gatewayRepository = gatewayRepository;
     this.messageRepository = messageRepository;
-    this.facilitateTokens = facilitateTokens || new Set();
+    this.supportedTokens = supportedTokens || new Set();
   }
 
   /**
    * Handles DeclaredDepositIntents entity records.
-   * - It filter records which has value token not in facilitateTokens list.
+   * - It filter records which has value token not in supportedTokens list.
    * - It creates a message record and updates it's source status to `Declared`.
    * - It creates `DepositIntent` record.
    * - This handler only reacts to DepositIntentDeclared event of ERC20Gateway which are populated
@@ -89,7 +89,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
   public async handle(records: DeclaredDepositIntentsEntityInterface[]): Promise<void> {
     Logger.info(`DeclaredDepositIntentsHandler::records received: ${records.length}`);
     const promisesCollection = records.filter(
-      (rec): boolean => this.isFacilitateToken(rec.valueToken),
+      (rec): boolean => this.isTokenSupported(rec.valueToken),
     ).map(
       async (record): Promise<void> => {
         await this.handleMessage(
@@ -199,10 +199,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
    *
    * @param valueTokenAddress Value token address.
    */
-  private isFacilitateToken(valueTokenAddress: string): boolean {
-    if (this.facilitateTokens.size === 0 || this.facilitateTokens.has(valueTokenAddress)) {
-      return true;
-    }
-    return false;
+  private isTokenSupported(valueTokenAddress: string): boolean {
+    return (this.supportedTokens.size === 0 || this.supportedTokens.has(valueTokenAddress));
   }
 }

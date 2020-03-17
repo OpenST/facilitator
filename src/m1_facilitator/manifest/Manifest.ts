@@ -240,7 +240,7 @@ export default class Manifest {
         metachain.originChain.web3,
         metachain.auxiliaryChain.web3,
       );
-      const facilitate_tokens = Manifest.toChecksumAddress(inputManifestConfig);
+      const facilitate_tokens = Manifest.getSupportedTokens(inputManifestConfig);
       return new Manifest(inputManifestConfig, metachain, accounts, facilitate_tokens);
     }
 
@@ -319,7 +319,7 @@ export default class Manifest {
    * Converts tokens to be facilitated in checksum format.
    * @param config  @param config Facilitator input yaml object.
    */
-  private static toChecksumAddress(config: ManifestInfo): string[] {
+  private static getSupportedTokens(config: ManifestInfo): string[] {
     if (config.facilitate_tokens) {
       return config.facilitate_tokens.map((token): string => Utils.toChecksumAddress(token));
     }
