@@ -78,6 +78,7 @@ export default class ProofGenerator {
     Logger.debug(`Generating proof: keys ${keys}`);
     const storageKeys = storageOffset
       ? [ProofGenerator.storagePath(storageOffset, keys)] : [];
+    Logger.debug(`Storage keys  ${storageKeys}`);
     const blockNumberInHex = Web3Utils.toHex(blockNumber);
     return this.fetchProof(address, storageKeys, blockNumberInHex);
   }

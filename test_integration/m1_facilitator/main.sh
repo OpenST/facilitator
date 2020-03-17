@@ -4,7 +4,6 @@ IP=`ifconfig ${NEaT_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo
 
 origin_ethereum=dev:http://${IP}:8546 auxiliary_ethereum=dev:http://${IP}:9546 docker-compose up &
 sleep 1m
-docker ps
 mocha -t 1800000 --require ts-node/register --require source-map-support/register --recursive ./**/*.test.ts
 TEST_STATUS=$?
 docker-compose down

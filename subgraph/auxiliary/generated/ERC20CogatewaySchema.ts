@@ -282,7 +282,7 @@ export class DeclaredWithdrawIntent extends Entity {
       "Cannot save DeclaredWithdrawIntent entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("WithdrawIntentDeclared", id.toString(), this);
+    store.set("DeclaredWithdrawIntent", id.toString(), this);
   }
 
   static load(id: string): DeclaredWithdrawIntent | null {
