@@ -59,7 +59,7 @@ export default class Container {
       new BigNumber(
         await manifest.metachain.originChain.web3.eth.getGasPrice(),
       ),
-      manifest.avatarAccounts.origin,
+      manifest.avatarAccounts[manifest.metachain.originChain.avatarAccount],
     );
 
     const auxiliaryTransactionExecutor = new TransactionExecutor(
@@ -68,7 +68,7 @@ export default class Container {
       new BigNumber(
         await manifest.metachain.auxiliaryChain.web3.eth.getGasPrice(),
       ),
-      manifest.avatarAccounts.auxiliary,
+      manifest.avatarAccounts[manifest.metachain.auxiliaryChain.avatarAccount],
     );
 
     Services.create(

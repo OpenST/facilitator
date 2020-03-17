@@ -16,11 +16,12 @@ import fs from 'fs-extra';
 import yaml from 'js-yaml';
 import Web3 from 'web3';
 import Config, {
-  DBConfig, Chain, Metachain,
+  DBConfig, Chain, Metachain, ArchitectureLayout,
 } from '../../../src/m1_facilitator/manifest/Manifest';
 import assert from '../../test_utils/assert';
 import AvatarAccount from '../../../src/m1_facilitator/manifest/AvatarAccount';
 import Utils from '../../../src/common/Utils';
+import Directory from '../../../src/m1_facilitator/Directory';
 
 interface AccountDetail {
   keystore_path: string;
@@ -96,6 +97,10 @@ describe('Config.fromFile()', (): void => {
     assertChainObject(manifest.metachain.auxiliaryChain, expectedMetachain.auxiliaryChain);
 
     const dbConfig = new DBConfig();
+    dbConfig.path = Directory.getFacilitatorDatabaseFile(
+      ArchitectureLayout.MOSAIC1,
+      inputYamlConfig.origin_contract_addresses.erc20_gateway,
+    );
     assert.deepStrictEqual(
       manifest.dbConfig,
       dbConfig,

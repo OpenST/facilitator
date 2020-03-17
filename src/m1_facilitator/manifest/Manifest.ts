@@ -19,6 +19,7 @@ import Web3 from 'web3';
 import schema from './manifest.schema.json';
 import AvatarAccount from './AvatarAccount';
 import Utils from '../../common/Utils';
+import Directory from '../Directory';
 
 /**
  * Interface of facilitator manifest file input chain data. It represents below:
@@ -76,12 +77,12 @@ interface ManifestInfo {
 }
 
 /** Enum of architecture layouts which facilitator supports. */
-enum ArchitectureLayout {
+export enum ArchitectureLayout {
   MOSAIC1 = 'MOSAIC1',
 }
 
 /** Enum of different personas which facilitator supports. */
-enum Personas {
+export enum Personas {
   FACILITATOR = 'facilitator',
   VALIDATOR = 'validator'
 }
@@ -185,24 +186,32 @@ export default class Manifest {
    * Constructor.
    *
    * @param config Facilitator input config object.
+   * @param metachain
+   * @param accounts
    */
-  private constructor(config: {
-    version: string;
-    architecture_layout: string;
-    personas: string[];
-    metachain: Metachain;
-    accounts: Record<string, AvatarAccount>;
-    origin_contract_addresses: Record<string, string>;
-    facilitate_tokens: string[];
-  }) {
+  private constructor(
+    config: {
+      version: string;
+      architecture_layout: string;
+      personas: string[];
+      origin_contract_addresses: Record<string, string>;
+    },
+    metachain: Metachain,
+    accounts: Record<string, AvatarAccount>,
+    facilitate_tokens: string[],
+  ) {
     this.version = config.version;
     this.architectureLayout = config.architecture_layout as ArchitectureLayout;
     this.personas = config.personas as Personas[];
-    this.metachain = config.metachain;
+    this.metachain = metachain;
     this.dbConfig = new DBConfig();
-    this.avatarAccounts = config.accounts;
+    this.avatarAccounts = accounts;
     this.originContractAddresses = config.origin_contract_addresses;
-    this.facilitateTokens = new Set(config.facilitate_tokens);
+    this.facilitateTokens = new Set(facilitate_tokens);
+    this.dbConfig.path = Directory.getFacilitatorDatabaseFile(
+      this.architectureLayout,
+      this.originContractAddresses.erc20_gateway,
+    );
   }
 
   /**
@@ -217,18 +226,22 @@ export default class Manifest {
    */
   public static fromFile(manifestPath: string): Manifest {
     if (fs.existsSync(manifestPath)) {
-      let manifestConfig;
+      let inputManifestConfig: ManifestInfo;
       try {
-        manifestConfig = yaml.safeLoad(fs.readFileSync(manifestPath, 'utf8'));
+        inputManifestConfig = yaml.safeLoad(fs.readFileSync(manifestPath, 'utf8'));
         const jsonSchemaVerifier = new JsonSchemaVerifier();
-        jsonSchemaVerifier.validate(manifestConfig, schema, { throwError: true });
+        jsonSchemaVerifier.validate(inputManifestConfig, schema, { throwError: true });
       } catch (e) {
         throw new Error(`Error reading facilitator manifest: ${manifestPath}, Exception: ${e.message}`);
       }
-      manifestConfig.metachain = Manifest.getMetachain(manifestConfig);
-      manifestConfig.accounts = Manifest.getAvatarAccounts(manifestConfig);
-      manifestConfig.facilitate_tokens = Manifest.toChecksumAddress(manifestConfig);
-      return new Manifest(manifestConfig);
+      const metachain = Manifest.getMetachain(inputManifestConfig);
+      const accounts = Manifest.getAvatarAccounts(
+        inputManifestConfig,
+        metachain.originChain.web3,
+        metachain.auxiliaryChain.web3,
+      );
+      const facilitate_tokens = Manifest.toChecksumAddress(inputManifestConfig);
+      return new Manifest(inputManifestConfig, metachain, accounts, facilitate_tokens);
     }
 
     throw new Error(`Manifest file path ${manifestPath} doesn't exist.`);
@@ -265,8 +278,14 @@ export default class Manifest {
    * Constructs avatar account objects.
    *
    * @param config Facilitator input yaml object
+   * @param originWeb3
+   * @param auxiliaryWeb3
    */
-  private static getAvatarAccounts(config: ManifestInfo): Record<string, AvatarAccount> {
+  private static getAvatarAccounts(
+    config: ManifestInfo,
+    originWeb3: Web3,
+    auxiliaryWeb3: Web3,
+  ): Record<string, AvatarAccount> {
     const avatarAccounts: Record<string, AvatarAccount> = {};
     Object.keys(config.accounts).forEach((address: string): void => {
       const acc = config.accounts[address];
@@ -278,8 +297,16 @@ export default class Manifest {
       }
       const keystore = fs.readFileSync(acc.keystore_path).toString();
       const password = fs.readFileSync(acc.keystore_password_path).toString();
+      let web3 = new Web3('');
+
+      if (config.metachain.origin.avatar_account === address) {
+        web3 = originWeb3;
+      }
+      if (config.metachain.auxiliary.avatar_account === address) {
+        web3 = auxiliaryWeb3;
+      }
       avatarAccounts[address] = AvatarAccount.load(
-        new Web3(''),
+        web3,
         JSON.parse(keystore),
         password,
       );

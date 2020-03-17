@@ -34,12 +34,13 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
   const record1 = {
     contractAddress: '0x0000000000000000000000000000000000000001',
     messageHash: web3utils.sha3('2'),
-    valueTokenAddress: '0x0000000000000000000000000000000000000002',
+    valueToken: '0x0000000000000000000000000000000000000002',
     beneficiary: '0x0000000000000000000000000000000000000050',
     amount: '20',
     feeGasLimit: '20',
     feeGasPrice: '20',
     blockNumber: '100',
+    depositor: '0x0000000000000000000000000000000000000070',
   };
   beforeEach(async (): Promise<void> => {
     repositories = await Repositories.create();
@@ -69,6 +70,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     feeGasLimit: string;
     feeGasPrice: string;
     blockNumber: string;
+    depositor: string;
   }): Promise<void> {
     const message = await messageRepository.get(record.messageHash);
 
@@ -121,7 +123,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
 
   async function assertDepositIntentRepository(record: {
     messageHash: string;
-    valueTokenAddress: string;
+    valueToken: string;
     amount: string;
     beneficiary: string;
   }): Promise<void> {
@@ -137,7 +139,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
 
     assert.strictEqual(
       depositIntent && depositIntent.tokenAddress,
-      record.valueTokenAddress,
+      record.valueToken,
       'Incorrect value token address',
     );
 
@@ -180,12 +182,13 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     const record2 = {
       contractAddress: '0x0000000000000000000000000000000000000060',
       messageHash: web3utils.sha3('20'),
-      valueTokenAddress: '0x0000000000000000000000000000000000000062',
+      valueToken: '0x0000000000000000000000000000000000000062',
       feeGasLimit: '20',
       feeGasPrice: '40',
       blockNumber: '100',
       beneficiary: '0x0000000000000000000000000000000000000070',
       amount: '20',
+      depositor: '0x0000000000000000000000000000000000000070',
     };
 
     const gateway1 = new Gateway(

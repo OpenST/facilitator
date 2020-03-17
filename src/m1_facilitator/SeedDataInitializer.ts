@@ -21,6 +21,7 @@ import Gateway, { GatewayType } from './models/Gateway';
 import Repositories from './repositories/Repositories';
 import ContractEntity, { EntityType } from '../common/models/ContractEntity';
 import Utils from '../common/Utils';
+import Logger from '../common/Logger';
 
 /**
  * Initializes the seed data in repositories and validate the seeded data.
@@ -148,6 +149,7 @@ export default class SeedDataInitializer {
    */
   public async isValidSeedData(gatewayAddress: string): Promise<boolean> {
     const gatewayGA = Gateway.getGlobalAddress(gatewayAddress);
+    Logger.debug(`Verifying seed data for gateway ${gatewayGA}`);
     const gatewayRecord = await this.repositories.gatewayRepository.get(gatewayGA);
 
     return (gatewayRecord !== null);

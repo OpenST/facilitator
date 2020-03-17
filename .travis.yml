@@ -14,6 +14,7 @@ env:
     - TEST_SUITE="test:integration:baseToken"
     - TEST_SUITE="test:integration:eip20Token"
     - TEST_SUITE="test:subgraph"
+    - TEST_SUITE="test:integration:m1"
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose

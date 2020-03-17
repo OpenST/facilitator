@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Defines an interface for transaction handler classes. */
-export default interface TransactionHandlerInterface {
+import path from 'path';
+import { execSync } from 'child_process';
 
-  /**
-   * The handle() function accepts transactions of different kinds
-   * and appropriately handles them.
-   *
-   * @throws HandlerNotFoundException if there is no handler mapped to a
-   *         transaction.
-   */
-  handle(bulkTransactions: any): Promise<void>;
-};
+describe('Facilitator stop ', (): void => {
+  it('should stop facilitator', (): void => {
+    const killFacilitator = path.join(__dirname, '..', 'kill_facilitator_process.sh');
+    execSync(
+      ` sh ${killFacilitator}`,
+      { stdio: [process.stdout, process.stderr], env: process.env },
+    );
+  });
+});

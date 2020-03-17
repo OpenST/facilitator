@@ -86,8 +86,8 @@ describe('TransactionExecutor.start()', (): void => {
 
     SpyAssert.assert(
       getNonceSpy,
-      1,
-      [[web3]],
+      0,
+      [[]],
     );
     clock.restore();
   });
@@ -106,7 +106,7 @@ describe('TransactionExecutor.start()', (): void => {
 
     SpyAssert.assert(
       getNonceSpy,
-      1,
+      0,
       [[web3]],
     );
     clock.restore();

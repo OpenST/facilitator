@@ -35,18 +35,18 @@ describe('AvailableStateRootsHandler::handle', (): void => {
   it('should save higher block height ', async (): Promise<void> => {
     const existingRecord = {
       contractAddress: '0x0000000000000000000000000000000000000001',
-      blockNumber: '1',
+      anchoredBlockNumber: '1',
     };
 
     const newRecord = {
       contractAddress: '0x0000000000000000000000000000000000000001',
-      blockNumber: '2',
+      anchoredBlockNumber: '2',
     };
 
     await anchorRepository.save(
       new Anchor(
         Anchor.getGlobalAddress(existingRecord.contractAddress),
-        new BigNumber(existingRecord.blockNumber),
+        new BigNumber(existingRecord.anchoredBlockNumber),
       ),
     );
     await handler.handle([newRecord]);
@@ -56,26 +56,28 @@ describe('AvailableStateRootsHandler::handle', (): void => {
     assert.isOk(
       anchorRecord
       && anchorRecord.lastAnchoredBlockNumber
-      && anchorRecord.lastAnchoredBlockNumber.isEqualTo(new BigNumber(newRecord.blockNumber)),
-      `It must update latest anchor block number to ${newRecord.blockNumber} for contract ${newRecord.contractAddress}`,
+      && anchorRecord.lastAnchoredBlockNumber.isEqualTo(
+        new BigNumber(newRecord.anchoredBlockNumber),
+      ),
+      `It must update latest anchor block number to ${newRecord.anchoredBlockNumber} for contract ${newRecord.contractAddress}`,
     );
   });
 
   it('should not save lower block height', async (): Promise<void> => {
     const existingRecord = {
       contractAddress: '0x0000000000000000000000000000000000000001',
-      blockNumber: '2',
+      anchoredBlockNumber: '2',
     };
 
     const newRecord = {
       contractAddress: '0x0000000000000000000000000000000000000001',
-      blockNumber: '1',
+      anchoredBlockNumber: '1',
     };
 
     await anchorRepository.save(
       new Anchor(
         Anchor.getGlobalAddress(existingRecord.contractAddress),
-        new BigNumber(existingRecord.blockNumber),
+        new BigNumber(existingRecord.anchoredBlockNumber),
       ),
     );
 
@@ -86,7 +88,9 @@ describe('AvailableStateRootsHandler::handle', (): void => {
     assert.isOk(
       anchorRecord
       && anchorRecord.lastAnchoredBlockNumber
-      && anchorRecord.lastAnchoredBlockNumber.isEqualTo(new BigNumber(existingRecord.blockNumber)),
+      && anchorRecord.lastAnchoredBlockNumber.isEqualTo(
+        new BigNumber(existingRecord.anchoredBlockNumber),
+      ),
       'It must not update latest anchor block number.',
     );
   });
@@ -94,24 +98,24 @@ describe('AvailableStateRootsHandler::handle', (): void => {
   it('should only save higher blockHeight for multiple records of same anchor', async (): Promise<void> => {
     const existingRecord = {
       contractAddress: '0x0000000000000000000000000000000000000001',
-      blockNumber: '2',
+      anchoredBlockNumber: '2',
     };
 
     await anchorRepository.save(
       new Anchor(
         Anchor.getGlobalAddress(existingRecord.contractAddress),
-        new BigNumber(existingRecord.blockNumber),
+        new BigNumber(existingRecord.anchoredBlockNumber),
       ),
     );
 
     const newRecords = [
       {
         contractAddress: '0x0000000000000000000000000000000000000001',
-        blockNumber: '1',
+        anchoredBlockNumber: '1',
       },
       {
         contractAddress: '0x0000000000000000000000000000000000000001',
-        blockNumber: '3',
+        anchoredBlockNumber: '3',
       },
     ];
 
@@ -122,7 +126,9 @@ describe('AvailableStateRootsHandler::handle', (): void => {
     assert.isOk(
       anchorRecord
       && anchorRecord.lastAnchoredBlockNumber
-      && anchorRecord.lastAnchoredBlockNumber.isEqualTo(new BigNumber(newRecords[1].blockNumber)),
+      && anchorRecord.lastAnchoredBlockNumber.isEqualTo(
+        new BigNumber(newRecords[1].anchoredBlockNumber),
+      ),
       'It must update highest latest anchor block number'
       + ` to ${newRecords[1].contractAddress} for address ${newRecords[1].contractAddress}`,
     );
@@ -131,7 +137,7 @@ describe('AvailableStateRootsHandler::handle', (): void => {
   it('should not save for non tracked anchors', async (): Promise<void> => {
     const untrackedRecord = {
       contractAddress: '0x0000000000000000000000000000000000000002',
-      blockNumber: '2',
+      anchoredBlockNumber: '2',
     };
 
     await handler.handle([untrackedRecord]);
@@ -147,35 +153,35 @@ describe('AvailableStateRootsHandler::handle', (): void => {
   it('should save higher block height for multiple anchors', async (): Promise<void> => {
     const existingRecord = [{
       contractAddress: '0x0000000000000000000000000000000000000001',
-      blockNumber: '1',
+      anchoredBlockNumber: '1',
     },
     {
       contractAddress: '0x0000000000000000000000000000000000000002',
-      blockNumber: '1',
+      anchoredBlockNumber: '1',
     },
     ];
 
     const newRecords = [{
       contractAddress: '0x0000000000000000000000000000000000000001',
-      blockNumber: '2',
+      anchoredBlockNumber: '2',
     },
     {
       contractAddress: '0x0000000000000000000000000000000000000002',
-      blockNumber: '2',
+      anchoredBlockNumber: '2',
     },
     ];
 
     await anchorRepository.save(
       new Anchor(
         Anchor.getGlobalAddress(existingRecord[0].contractAddress),
-        new BigNumber(existingRecord[0].blockNumber),
+        new BigNumber(existingRecord[0].anchoredBlockNumber),
       ),
     );
 
     await anchorRepository.save(
       new Anchor(
         Anchor.getGlobalAddress(existingRecord[1].contractAddress),
-        new BigNumber(existingRecord[1].blockNumber),
+        new BigNumber(existingRecord[1].anchoredBlockNumber),
       ),
     );
     await handler.handle(newRecords);
@@ -186,17 +192,21 @@ describe('AvailableStateRootsHandler::handle', (): void => {
     assert.isOk(
       anchorRecord1
       && anchorRecord1.lastAnchoredBlockNumber
-      && anchorRecord1.lastAnchoredBlockNumber.isEqualTo(new BigNumber(newRecords[0].blockNumber)),
+      && anchorRecord1.lastAnchoredBlockNumber.isEqualTo(
+        new BigNumber(newRecords[0].anchoredBlockNumber),
+      ),
       'It must update highest latest anchor block number'
-      + ` to ${newRecords[0].blockNumber} for contract ${newRecords[0].contractAddress}`,
+      + ` to ${newRecords[0].anchoredBlockNumber} for contract ${newRecords[0].contractAddress}`,
     );
 
     assert.isOk(
       anchorRecord2
       && anchorRecord2.lastAnchoredBlockNumber
-      && anchorRecord2.lastAnchoredBlockNumber.isEqualTo(new BigNumber(newRecords[1].blockNumber)),
+      && anchorRecord2.lastAnchoredBlockNumber.isEqualTo(
+        new BigNumber(newRecords[1].anchoredBlockNumber),
+      ),
       'It must update highest latest anchor block number'
-      + ` to ${newRecords[1].blockNumber} for contract ${newRecords[1].contractAddress}`,
+      + ` to ${newRecords[1].anchoredBlockNumber} for contract ${newRecords[1].contractAddress}`,
     );
   });
 });

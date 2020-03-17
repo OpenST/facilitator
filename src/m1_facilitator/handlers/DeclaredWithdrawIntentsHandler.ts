@@ -22,6 +22,8 @@ import MessageRepository from '../repositories/MessageRepository';
 import WithdrawIntent from '../models/WithdrawIntent';
 import WithdrawIntentRepository from '../repositories/WithdrawIntentRepository';
 import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
+import Gateway from '../models/Gateway';
+import Logger from '../../common/Logger';
 import Utils from '../../common/Utils';
 
 /** Represents record of DeclaredWithdrawIntentsEntity. */
@@ -92,12 +94,15 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
    * @param records List of declared withdraw intents.
    */
   public async handle(records: DeclaredWithdrawIntentsEntityInterface[]): Promise<void> {
+    Logger.info(`DeclaredWithdrawIntentsHandler::records received ${records.length}`);
     const supportedTokenRecords = await this.getSupportedTokenRecords(records);
     const savePromises = supportedTokenRecords.map(async (record): Promise<void> => {
       const { messageHash, contractAddress } = record;
-      const gatewayRecord = await this.gatewayRepository.get(contractAddress);
-
+      const gatewayRecord = await this.gatewayRepository.get(
+        Gateway.getGlobalAddress(contractAddress),
+      );
       if (gatewayRecord !== null) {
+        Logger.info(`DeclaredWithdrawIntentsHandler::gateway record found for gatewayGA ${gatewayRecord.gatewayGA}`);
         await this.handleMessage(
           messageHash,
           Utils.toChecksumAddress(contractAddress),
@@ -115,6 +120,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       }
     });
     await Promise.all(savePromises);
+    Logger.info('DeclaredWithdrawIntentsHandler::messages saved');
   }
 
   /**
@@ -141,6 +147,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       );
     }
     await this.withdrawIntentRepository.save(withdrawIntentRecord);
+    Logger.info(`DeclaredWithdrawIntentsHandler:: saved withdrawIntentRecord having messageHash ${withdrawIntentRecord.messageHash}`);
   }
 
   /**
@@ -173,11 +180,12 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       );
       message.feeGasPrice = feeGasPrice;
       message.feeGasLimit = feeGasLimit;
-      message.sender = sender;
+      message.sender = Utils.toChecksumAddress(sender);
       message.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     }
     message.sourceStatus = MessageStatus.Declared;
     await this.messageRepository.save(message);
+    Logger.info(`DeclaredWithdrawIntentsHandler::saved message having messageHash: ${message.messageHash}`);
   }
 
   /**

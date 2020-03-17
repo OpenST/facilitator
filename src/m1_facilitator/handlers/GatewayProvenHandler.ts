@@ -31,7 +31,7 @@ import GatewayRepository, {
 export interface GatewayProvenEntityInterface {
   contractAddress: string;
   remoteGateway: string;
-  blockNumber: string;
+  provenBlockNumber: string;
 }
 
 /**
@@ -48,11 +48,11 @@ class GatewayProven {
   public constructor(entity: GatewayProvenEntityInterface) {
     assert(Web3Utils.isAddress(entity.contractAddress));
     assert(Web3Utils.isAddress(entity.remoteGateway));
-    assert(entity.blockNumber !== '');
+    assert(entity.provenBlockNumber !== '');
 
     this.gatewayAddress = Web3Utils.toChecksumAddress(entity.contractAddress);
     this.remoteGatewayAddress = Web3Utils.toChecksumAddress(entity.remoteGateway);
-    this.blockNumber = new BigNumber(entity.blockNumber);
+    this.blockNumber = new BigNumber(entity.provenBlockNumber);
   }
 }
 
@@ -77,8 +77,9 @@ export default class GatewayProvenHandler extends ContractEntityHandler {
    * proposed block number is less than or equal to the stored one.
    * The function catches the exception and logs a warning without failing.
    */
-  public async handle(entities: GatewayProvenEntityInterface[]): Promise<void> {
-    const savePromises = entities.map(async (entity): Promise<void> => {
+  public async handle(records: GatewayProvenEntityInterface[]): Promise<void> {
+    Logger.info(`GatewayProven::records received ${records.length}`);
+    const savePromises = records.map(async (entity): Promise<void> => {
       const gatewayProven = new GatewayProven(entity);
 
       const gatewayModel: Gateway | null = await this.gatewayRepository.get(
@@ -103,6 +104,7 @@ export default class GatewayProvenHandler extends ContractEntityHandler {
 
       try {
         await this.gatewayRepository.save(updatedGatewayModel);
+        Logger.info(`GatewayProven::saved gateway having gatewayGA ${updatedGatewayModel.gatewayGA}`);
       } catch (e) {
         if (e instanceof LastProvenBlockNumberIsNotStrictlyGrowingError) {
           Logger.warn(e.message);
@@ -113,5 +115,6 @@ export default class GatewayProvenHandler extends ContractEntityHandler {
     });
 
     await Promise.all(savePromises);
+    Logger.info('GatewayProven::gateway records saved');
   }
 }
