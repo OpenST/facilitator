@@ -12,32 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import axios from 'axios';
+import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import Command from './Command';
-import Manifest from '../manifest/Manifest';
+import Command from '../../../../src/m1_facilitator/commands/Command';
+import Manifest from '../../../../src/m1_facilitator/manifest/Manifest';
 
-const BN = require('bn.js');
-const axios = require('axios');
+// Threshold below which avatar account will be funded from faucet.
+const AVATAR_ACCOUNT_THRESHOLD = new BigNumber(50);
 
-const THRESHOLD = new BN(50);
+const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
-async function fundFromFaucet(beneficiary: string, chain: string): Promise<void> {
-  console.log(`Funding ${beneficiary} for chain ${chain}`);
-  const response = await axios.post(
-    'https://faucet.mosaicdao.org',
-    {
-      beneficiary: `${beneficiary}@${chain}`,
-    },
-  );
-  console.log(`Transaction hash is ${response.data.txHash}`);
+enum Chains {
+  Goerli = '5',
+  Hadapsar = '1405',
 }
 
-async function checkBalance(account: string, auxWeb3: Web3): Promise<void> {
+/**
+ * Returns balance of avatar account.
+ */
+async function checkBalance(account: string, auxWeb3: Web3): Promise<BigNumber> {
   const auxAvatarBalance = await auxWeb3.eth.getBalance(account);
-  console.log('Auxilary Avatar Balance ==>', auxAvatarBalance.toString());
-  if (new BN(auxAvatarBalance) < THRESHOLD) {
-    fundFromFaucet(account, '1405');
-  }
+  return new BigNumber(auxAvatarBalance);
 }
 
 export default class FundAvatar implements Command {
@@ -57,12 +53,19 @@ export default class FundAvatar implements Command {
    */
   public async execute(): Promise<void> {
     const manifest = Manifest.fromFile(this.manifestPath);
-    Object.keys(manifest.avatarAccounts).forEach((address: string): void => {
-      const acc = manifest.avatarAccounts[address];
-      checkBalance(
-        acc.address,
-        manifest.metachain.auxiliaryChain.web3,
-      );
-    });
+    const acc = manifest.metachain.auxiliaryChain.avatarAccount;
+    if (await checkBalance(acc, manifest.metachain.auxiliaryChain.web3)
+      < AVATAR_ACCOUNT_THRESHOLD) {
+      this.fundFromFaucet(acc, Chains.Hadapsar);
+    }
+  }
+
+  private async fundFromFaucet(beneficiary: string, chain: string): Promise<void> {
+    await axios.post(
+      FAUCET_URL,
+      {
+        beneficiary: `${beneficiary}@${chain}`,
+      },
+    );
   }
 }

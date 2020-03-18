@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import fundAvatar from 'commander';
-import FundAvatar from '../commands/FundAvatar';
-import Logger from '../../common/Logger';
+import FundAvatar from './Fund_Avatar';
+import Logger from '../../../../src/common/Logger';
 
 fundAvatar.option('-m, --manifest <manifest>', 'Path to manifest file')
   .action(
