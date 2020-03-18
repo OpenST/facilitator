@@ -1,13 +1,13 @@
 # User documentation - Hadapsar Testnet
 
-The following documentation will help you in understanding the steps required to move the ERC20 tokens between the origin chain and the metachain
+The following documentation will help you in understanding the steps required to move the ERC20 tokens between the Goerli testnet and hadapsar testnet 1405
 
 ## Move any ERC20 token from Goerli testnet to hadapsar testnet 1405
 
 1. To connect to the origin chain:
   RPC endpoint: https://rpc.slock.it/goerli
 1. Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
-1. Ensure that the account has sufficient value tokens
+1. Ensure that the account has sufficient value token [balance](#balance)
   - If using OST as value token then, fund the account using
   ```sh
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@5"}' https://faucet.mosaicdao.org
@@ -95,7 +95,7 @@ The following documentation will help you in understanding the steps required to
   ```sh
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
   ```
-1. Ensure that the account has sufficient Utility Token balance [balance](#balance)
+1. Ensure that the account has sufficient Utility Token [balance](#balance)
 1. Perform withdraw transaction
   Create `withdraw.js` as,
   ```js
@@ -172,8 +172,8 @@ The following documentation will help you in understanding the steps required to
   ```
 
 ## Balance
-1. Check the ERC20 token balance on the origin
-    Create `originTokenBalance.js` as,
+1. Check the ERC20 token balance on the Göerli testnet(origin)
+  Create `originTokenBalance.js` as,
   ```js
   const Web3 = require('web3');
 
@@ -205,8 +205,9 @@ The following documentation will help you in understanding the steps required to
   - Install dependencies using
   ```sh
   npm install --save web3
-1. Check the ERC20 token balance on the metachain
-    Create `metachainTokenBalance.js` as,
+  ```
+1. Check the ERC20 token balance on the Hadapsar testnet(metachain)
+  Create `metachainTokenBalance.js` as,
   ```js
   const Web3 = require('web3');
 
