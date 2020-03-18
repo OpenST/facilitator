@@ -127,7 +127,6 @@ export default class TransactionExecutor {
   private async execute(): Promise<void> {
     if (!this.mutex.isLocked()) {
       const release = await this.mutex.acquire();
-      Logger.debug('TransactionExecutor:: transaction executor invoked.');
       const transaction = await this.transactionRepository.dequeue();
       try {
         if (transaction) {
@@ -150,7 +149,6 @@ export default class TransactionExecutor {
       } finally {
         release();
       }
-      Logger.debug('TransactionExecutor:: Transaction execution done');
     }
   }
 
