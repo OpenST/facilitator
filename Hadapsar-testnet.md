@@ -68,14 +68,16 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         type: 'function',
       }];
       const erc20GatewayContractAddress = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
-      const web3Origin = new Web3('https://rpc.slock.it/goerli');
+      const web3 = new Web3('https://rpc.slock.it/goerli');
 
-      const account = '<ACCOUNT_ADDRESS>';
       const privateKey = '<YOUR_PRIVATE_KEY>';
       const amount = '<AMOUNT_TO_APPROVE>';
       const valueTokenAddress = '<VALUE_TOKEN_ADDRESS>';
 
-      const erc20ValueTokenContract = new web3Origin.eth.Contract(
+      const web3Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+      const account = web3Account.address;
+
+      const erc20ValueTokenContract = new web3.eth.Contract(
         erc20TokenApproveABI,
         valueTokenAddress,
       );
@@ -83,8 +85,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const approveData = erc20ValueTokenContract.methods
         .approve(erc20GatewayContractAddress, amount)
         .encodeABI();
-      const nonce = await web3Origin.eth.getTransactionCount(account);
-      const gasLimit = await web3Origin.eth.estimateGas({
+      const nonce = await web3.eth.getTransactionCount(account);
+      const gasLimit = await web3.eth.estimateGas({
         from: account,
         to: valueTokenAddress,
         data: approveData,
@@ -99,8 +101,9 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         gasPrice: 10000000000,
       };
 
-      const signedTx = await web3Origin.eth.accounts.signTransaction(rawTxApprove, privateKey);
-      const transactionReceipt = await web3Origin.eth.sendSignedTransaction(
+      const signedTx = await web3.eth.accounts.signTransaction(rawTxApprove, privateKey);
+      web3.transactionConfirmationBlocks = 3;
+      const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
 
@@ -113,7 +116,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   performApproveERC20GatewayTransaction();
   ```
   **Note:**
-  - Add the values for `account`, `privateKey`, `amount`, `valueTokenAddress` and run using
+  - Add the values for `privateKey`, `amount`, `valueTokenAddress` and run using
   ```sh
   node approveERC20Gateway.js
   ```
@@ -146,8 +149,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         type: 'function',
       }];
       const erc20GatewayContractAddress = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
+      const web3 = new Web3('https://rpc.slock.it/goerli');
 
-      const account = '<ACCOUNT_ADDRESS>';
       const privateKey = '<YOUR_PRIVATE_KEY>';
       const amount = '<AMOUNT_TO_DEPOSIT>';
       const beneficiary = '<BENEFICIARY_ADDRESS>';
@@ -155,9 +158,10 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const feeGasLimit = '<FEE_GAS_LIMIT>';
       const valueTokenAddress = '<VALUE_TOKEN_ADDRESS>';
 
-      const web3Origin = new Web3('https://rpc.slock.it/goerli');
+      const web3Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+      const account = web3Account.address;
 
-      const erc20GatewayContract = new web3Origin.eth.Contract(
+      const erc20GatewayContract = new web3.eth.Contract(
         erc20GatewayContractDepositABI,
         erc20GatewayContractAddress,
       );
@@ -165,8 +169,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const depositData = erc20GatewayContract.methods
         .deposit(amount, beneficiary, feeGasPrice, feeGasLimit, valueTokenAddress)
         .encodeABI();
-      const nonce = await web3Origin.eth.getTransactionCount(account);
-      const gasLimit = await web3Origin.eth.estimateGas({
+      const nonce = await web3.eth.getTransactionCount(account);
+      const gasLimit = await web3.eth.estimateGas({
         from: account,
         to: erc20GatewayContractAddress,
         data: depositData,
@@ -181,8 +185,9 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         gasPrice: 10000000000,
       };
 
-      const signedTx = await web3Origin.eth.accounts.signTransaction(rawTxDeposit, privateKey);
-      const transactionReceipt = await web3Origin.eth.sendSignedTransaction(
+      const signedTx = await web3.eth.accounts.signTransaction(rawTxDeposit, privateKey);
+      web3.transactionConfirmationBlocks = 3;
+      const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
 
@@ -195,7 +200,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   performDepositTransaction();
   ```
   **Note:**
-  - Add the values for `account`, `privateKey`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit`, `valueTokenAddress` and run using
+  - Add the values for `privateKey`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit`, `valueTokenAddress` and run using
   ```sh
   node deposit.js
   ```
@@ -228,14 +233,16 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         type: 'function',
       }];
       const erc20CogatewayContractAddress = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
-      const web3Metachain = new Web3('https://chain.mosaicdao.org/hadapsar');
+      const web3 = new Web3('https://chain.mosaicdao.org/hadapsar');
 
-      const account = '<ACCOUNT_ADDRESS>';
       const privateKey = '<YOUR_PRIVATE_KEY>';
       const amount = '<AMOUNT_TO_APPROVE>';
       const utilityTokenTokenAddress = '<UTILITY_TOKEN_ADDRESS>';
 
-      const erc20UtilityTokenContract = new web3Metachain.eth.Contract(
+      const web3Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+      const account = web3Account.address;
+
+      const erc20UtilityTokenContract = new web3.eth.Contract(
         erc20TokenApproveABI,
         utilityTokenTokenAddress,
       );
@@ -243,8 +250,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const approveData = erc20UtilityTokenContract.methods
         .approve(erc20CogatewayContractAddress, amount)
         .encodeABI();
-      const nonce = await web3Metachain.eth.getTransactionCount(account);
-      const gasLimit = await web3Metachain.eth.estimateGas({
+      const nonce = await web3.eth.getTransactionCount(account);
+      const gasLimit = await web3.eth.estimateGas({
         from: account,
         to: utilityTokenTokenAddress,
         data: approveData,
@@ -259,8 +266,9 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         gasPrice: 10000000000,
       };
 
-      const signedTx = await web3Metachain.eth.accounts.signTransaction(rawTxApprove, privateKey);
-      const transactionReceipt = await web3Metachain.eth.sendSignedTransaction(
+      const signedTx = await web3.eth.accounts.signTransaction(rawTxApprove, privateKey);
+      web3.transactionConfirmationBlocks = 3;
+      const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
 
@@ -273,7 +281,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   performApproveERC20CogatewayTransaction();
   ```
   **Note:**
-  - Add the values for `account`, `privateKey`, `amount`, `utilityTokenTokenAddress` and run using
+  - Add the values for `privateKey`, `amount`, `utilityTokenTokenAddress` and run using
   ```sh
   node approveERC20Cogateway.js
   ```
@@ -309,8 +317,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         type: 'function',
       }];
       const erc20CogatewayContractAddress = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
+      const web3 = new Web3('https://chain.mosaicdao.org/hadapsar');
 
-      const account = '<ACCOUNT_ADDRESS>';
       const privateKey = '<YOUR_PRIVATE_KEY>';
       const utilityTokenAddress = '<UTILITY_TOKEN_ADDRESS>';
       const amount = '<AMOUNT_TO_WITHDRAW>';
@@ -318,9 +326,10 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const feeGasPrice = '<FEE_GAS_PRICE>';
       const feeGasLimit = '<FEE_GAS_LIMIT>';
 
-      const web3Metachain = new Web3('https://chain.mosaicdao.org/hadapsar');
+      const web3Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+      const account = web3Account.address;
 
-      const erc20CogatewayContract = new web3Metachain.eth.Contract(
+      const erc20CogatewayContract = new web3.eth.Contract(
         erc20CogatewayContractWithdrawABI,
         erc20CogatewayContractAddress,
       );
@@ -328,8 +337,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const withdrawData = erc20CogatewayContract.methods
         .withdraw(amount, beneficiary, feeGasPrice, feeGasLimit, utilityTokenAddress)
         .encodeABI();
-      const nonce = await web3Metachain.eth.getTransactionCount(account);
-      const gasLimit = await web3Metachain.eth.estimateGas({
+      const nonce = await web3.eth.getTransactionCount(account);
+      const gasLimit = await web3.eth.estimateGas({
         from: account,
         to: erc20CogatewayContractAddress,
         data: withdrawData,
@@ -344,8 +353,9 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         gasPrice: 10000000000,
       };
 
-      const signedTx = await web3Metachain.eth.accounts.signTransaction(rawTxWithdraw, privateKey);
-      const transactionReceipt = await web3Metachain.eth.sendSignedTransaction(
+      const signedTx = await web3.eth.accounts.signTransaction(rawTxWithdraw, privateKey);
+      web3.transactionConfirmationBlocks = 3;
+      const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
 
@@ -358,7 +368,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   performWithdrawTransaction();
   ```
   **Note:**
-  - Add the values for `account`, `privateKey`, `utilityTokenAddress`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit` and run using
+  - Add the values for `privateKey`, `utilityTokenAddress`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit` and run using
   ```sh
   node withdraw.js
   ```
