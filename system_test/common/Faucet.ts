@@ -1,10 +1,11 @@
 import axios from 'axios';
 import Mosaic from 'Mosaic';
+import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
+import Tx from 'ethereumjs-tx';
 import Web3 from 'web3';
 
-import Tx from 'ethereumjs-tx';
-
 import AddressHandler from './AddressHandler';
+import Utils from './Utils';
 import config from '../m1_facilitator/config';
 
 export default class Faucet {
@@ -16,18 +17,20 @@ export default class Faucet {
       const web3 = new Web3(wsEndpoint);
       const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
 
-      const txObject = valueTokenInstance.methods.transfer(faucet, balance);
-      await txObject.send({
+      const txObject: TransactionObject<boolean> = valueTokenInstance.methods.transfer(
+        faucet,
+        balance,
+      );
+      await Utils.sendTransaction(txObject, {
         from: account.address,
         gasPrice: '0x3B9ACA00',
-        gas: (await txObject.estimateGas({ from: account.address })),
       });
     });
   }
 
-  public static async refundGasTOFaucet(accounts: any[]): Promise<void> {
+  public static async refundGasToFaucet(accounts: any[]): Promise<void> {
     accounts.map(async (account: any): Promise<void> => {
-      const { wsEndpoint, faucet } = config.chains.auxiliary;
+      const { wsEndpoint, faucet, chainId } = config.chains.auxiliary;
       const balance = await AddressHandler.getBalance(account, wsEndpoint);
       const web3 = new Web3(wsEndpoint);
 
@@ -37,8 +40,8 @@ export default class Faucet {
         value: balance,
         nonce: web3.eth.getTransactionCount(account.address),
         gasPrice: 0x3B9ACA00,
-        gas: 23000,
-        chainId: config.chains.auxiliary.chainId,
+        gas: web3.utils.toHex(23000),
+        chainId,
       };
 
       const { privateKey } = account;

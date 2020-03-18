@@ -22,6 +22,10 @@ import Faucet from '../common/Faucet';
 import Utils from '../common/Utils';
 import Logger from '../../src/common/Logger';
 
+interface Balance {
+  [key: string]: number;
+}
+
 export default class Withdraw {
   public static async withdrawSystemTest(): Promise<void> {
     const {
@@ -36,9 +40,6 @@ export default class Withdraw {
     const auxiliaryChainId = config.chains.auxiliary.chainId;
 
     const messageHashes: string[] = [];
-    interface Balance {
-      [key: string]: number;
-    }
 
     const initialAuxiliaryAccountBalance: Balance = {};
     const expectedAuxiliaryAccountBalance: Balance = {};
@@ -89,11 +90,9 @@ export default class Withdraw {
           } else {
             expectedAuxiliaryAccountBalance[account.address] = withdrawAmount;
           }
-          // TODO: what should be the gasPrice?
-          const txReceipt = await txObject.send({
+          const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
             gasPrice: '0x3B9ACA00',
-            gas: (await txObject.estimateGas({ from: account.address })),
           });
 
           const {
@@ -140,7 +139,7 @@ export default class Withdraw {
       async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
     );
 
-    await Faucet.refundGasTOFaucet(totalUniqueWithdrawerAccounts);
+    await Faucet.refundGasToFaucet(totalUniqueWithdrawerAccounts);
   }
 
   private static async createWithdrawTransactionObject(account: Account): Promise<any> {
@@ -175,10 +174,10 @@ export default class Withdraw {
   }
 
   private static async generateReport(
-    initialAuxiliaryAccountBalance: any,
-    expectedAuxiliaryAccountBalance: any,
-    initialOriginAccountBalance: any,
-    finalOriginAccountBalance: any,
+    initialAuxiliaryAccountBalance: Balance,
+    expectedAuxiliaryAccountBalance: Balance,
+    initialOriginAccountBalance: Balance,
+    finalOriginAccountBalance: Balance,
     testWithdrawerAccounts: Account[],
     messageHashes: string[],
   ): Promise<void> {
@@ -219,14 +218,14 @@ export default class Withdraw {
           valueToken,
         );
 
-        const expectedBalanceChange = finalOriginAccountBalance[account.address] - initialOriginAccountBalance[account.address];
+        const expectedBalanceChange = finalOriginAccountBalance[account.address]
+          - initialOriginAccountBalance[account.address];
         const actualBalanceChange = balanceAfterConfirmWithdraw - balanceBeforeConfirmWithdraw;
         const success = (expectedBalanceChange === actualBalanceChange);
         Logger.info(`${account.address} \t ${balanceBeforeConfirmWithdraw} \t ${balanceAfterConfirmWithdraw} \t ${expectedBalanceChange} \t ${actualBalanceChange} \t ${success}`);
       },
     );
 
-    // TO DO: message status report
     const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
     const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
@@ -235,7 +234,7 @@ export default class Withdraw {
     messageHashes.map(
       async (messageHash: string): Promise<void> => {
         // To check that messageHash exists in the outbox mapping.
-        const messageStatus = erc20Cogateway.methods.outbox.call(messageHash);
+        const messageStatus = await erc20Cogateway.methods.outbox(messageHash).call();
         Logger.info(`${messageHash} \t ${messageStatus}`);
       },
     );

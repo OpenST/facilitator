@@ -22,6 +22,10 @@ import Faucet from '../common/Faucet';
 import Utils from '../common/Utils';
 import Logger from '../../src/common/Logger';
 
+interface Balance {
+  [key: string]: number;
+}
+
 export default class Deposit {
   public static async depositSystemTest(): Promise<void> {
     const {
@@ -36,9 +40,7 @@ export default class Deposit {
     const originChainId = config.chains.origin.chainId;
 
     const messageHashes: string[] = [];
-    interface Balance {
-      [key: string]: number;
-    }
+
     const initialOriginAccountBalance: Balance = {};
     const expectedOriginAccountBalance: Balance = {};
     const initialAuxiliaryAccountBalance: Balance = {};
@@ -88,11 +90,9 @@ export default class Deposit {
           } else {
             expectedOriginAccountBalance[account.address] = depositAmount;
           }
-          // TODO: what should be the gasPrice?
-          const txReceipt = await txObject.send({
+          const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
             gasPrice: '0x3B9ACA00',
-            gas: (await txObject.estimateGas({ from: account.address })),
           });
 
           const {
@@ -177,10 +177,10 @@ export default class Deposit {
   }
 
   private static async generateReport(
-    initialOriginAccountBalance: any,
-    expectedOriginAccountBalance: any,
-    initialAuxiliaryAccountBalance: any,
-    finalAuxiliaryAccountBalance: any,
+    initialOriginAccountBalance: Balance,
+    expectedOriginAccountBalance: Balance,
+    initialAuxiliaryAccountBalance: Balance,
+    finalAuxiliaryAccountBalance: Balance,
     testDepositorAccounts: Account[],
     messageHashes: string[],
   ): Promise<void> {
@@ -218,23 +218,23 @@ export default class Deposit {
           utilityToken,
         );
 
-        const expectedBalanceChange = finalAuxiliaryAccountBalance[account.address] - initialAuxiliaryAccountBalance[account.address];
+        const expectedBalanceChange = finalAuxiliaryAccountBalance[account.address]
+          - initialAuxiliaryAccountBalance[account.address];
         const actualBalanceChange = balanceAfterConfirmDeposit - balanceBeforeConfirmDeposit;
         const success = (expectedBalanceChange === actualBalanceChange);
         Logger.info(`${account.address} \t ${balanceBeforeConfirmDeposit} \t ${balanceAfterConfirmDeposit} \t ${expectedBalanceChange} \t ${actualBalanceChange} \t ${success}`);
       },
     );
 
-    // TO DO: message status report
     const erc20GatewayAddress = config.chains.origin.gateway;
     const originWeb3 = new Web3(originWsEndpoint);
     const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
 
     Logger.info('MessageHash \t Success');
     messageHashes.map(
-      async (messageHash: any): Promise<void> => {
+      async (messageHash: string): Promise<void> => {
         // To check that messageHash exists in the outbox mapping.
-        const messageStatus = erc20Gateway.methods.outbox.call(messageHash);
+        const messageStatus = await erc20Gateway.methods.outbox(messageHash).call();
         Logger.info(`${messageHash} \t ${messageStatus}`);
       },
     );
