@@ -66,13 +66,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         'stateMutability': 'nonpayable',
         'type': 'function',
       }];
-      const valueTokenAddress = '0xd426b22f3960d01189a3d548b45a7202489ff4de';
       const erc20GatewayContractAddress = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
       const web3Origin = new Web3('https://rpc.slock.it/goerli');
 
       const account = '<ACCOUNT_ADDRESS>';
       const privateKey = '<YOUR_PRIVATE_KEY>';
       const amount = '<AMOUNT_TO_APPROVE>';
+      const valueTokenAddress = '<VALUE_TOKEN_ADDRESS>';
 
       const erc20ValueTokenContract = new web3Origin.eth.Contract(
         erc20TokenApproveABI,
@@ -112,7 +112,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   performApproveERC20GatewayTransaction();
   ```
   **Note:**
-  - Add the values for `account`, `privateKey`, `amount` and run using
+  - Add the values for `account`, `privateKey`, `amount`, `valueTokenAddress` and run using
   ```sh
   node approveERC20Gateway.js
   ```
@@ -124,6 +124,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
   Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 
+4. Ensure that the account has sufficient token [balance](#balance) on the origin chain
 ### Perform deposit transaction
   Create `deposit.js` as,
   ```js
@@ -152,10 +153,10 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const beneficiary = '<BENEFICIARY_ADDRESS>';
       const feeGasPrice = '<FEE_GAS_PRICE>';
       const feeGasLimit = '<FEE_GAS_LIMIT>';
+      const valueTokenAddress = '<VALUE_TOKEN_ADDRESS>';
 
       const web3Origin = new Web3('https://rpc.slock.it/goerli');
 
-      const valueTokenAddress = '0xd426b22f3960d01189a3d548b45a7202489ff4de';
       const erc20GatewayContract = new web3Origin.eth.Contract(
         erc20GatewayContractDepositABI,
         erc20GatewayContractAddress,
@@ -194,7 +195,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   performDepositTransaction();
   ```
   **Note:**
-  - Add the values for `account`, `privateKey`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit` and run using
+  - Add the values for `account`, `privateKey`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit`, `valueTokenAddress` and run using
   ```sh
   node deposit.js
   ```
@@ -206,15 +207,9 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 ## Withdraw ERC20 utility token from the hadapsar testnet 1405 to get equivalent ERC20 token on Göerli testnet
 
 ### Prerequisite
-1. To connect to the hadapsar testnet(metachain):
-
-  RPC endpoint: https://chain.mosaicdao.org/hadapsar
-
-  WS endpoint: wss://chain.mosaicdao.org/hadapsar/wss
-2. Ensure that the account has sufficient Utility Token [balance](#balance)
-3. Ethereum account should be unlocked.
+1. Ethereum account should be unlocked.
   < Steps to unlock account >
-4. Ethereum account should approve ERC20Gateway for token transfer.
+2. Ethereum account should approve ERC20Gateway for token transfer.
   Create approveERC20Cogateway.js as,
   ```js
   const Web3 = require('web3');
@@ -285,11 +280,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```sh
   npm install --save web3
   ```
-5. Ethereum account should have base token (gas) to do the withdraw transactions.
-Get the gas for the hadapsar testnet(metachain)(TODO: check if this is valid for the new chain or not)
+3. Ethereum account should have base token (gas) to do the withdraw transactions.
+
+  Get the gas for the hadapsar testnet(metachain)
   ```sh
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
   ```
+4. Ensure that the account has sufficient Utility Token [balance](#balance) on the metachain
 
 ### Perform withdraw transaction
   Create `withdraw.js` as,
@@ -380,7 +377,8 @@ Get the gas for the hadapsar testnet(metachain)(TODO: check if this is valid for
   const web3Origin = new Web3('https://chain.mosaicdao.org/hadapsar');
 
   const account = '<ACCOUNT_ADDRESS>';
-  const valueTokenAddress = '0xd426b22f3960d01189a3d548b45a7202489ff4de';
+  const valueTokenAddress = '<VALUE_TOKEN_ADDRESS>';
+
   const tokenBalanceABI = [{
     "constant": true,
     "inputs": [{ "internalType": "address", "name": "_owner", "type": "address" }],
@@ -398,7 +396,7 @@ Get the gas for the hadapsar testnet(metachain)(TODO: check if this is valid for
     });
   ```
   **Note:**
-  - Add the value for `account` and run using
+  - Add the value for `account`, `valueTokenAddress` and run using
   ```sh
   node originTokenBalance.js
   ```
