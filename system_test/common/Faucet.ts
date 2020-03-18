@@ -6,14 +6,14 @@ import Web3 from 'web3';
 
 import AddressHandler from './AddressHandler';
 import Utils from './Utils';
-import config from '../m1_facilitator/config';
 
 export default class Faucet {
   public static async refundOSTToFaucet(accounts: any[]): Promise<void> {
+    const config = await Utils.getConfig();
     accounts.map(async (account: any): Promise<void> => {
       const { valueToken, wsEndpoint, faucet } = config.chains.origin;
 
-      const balance = await AddressHandler.getOriginTokenBalance(account, wsEndpoint, valueToken);
+      const balance = await AddressHandler.getTokenBalance(account, wsEndpoint, valueToken);
       const web3 = new Web3(wsEndpoint);
       const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
 
@@ -29,6 +29,7 @@ export default class Faucet {
   }
 
   public static async refundGasToFaucet(accounts: any[]): Promise<void> {
+    const config = await Utils.getConfig();
     accounts.map(async (account: any): Promise<void> => {
       const { wsEndpoint, faucet, chainId } = config.chains.auxiliary;
       const balance = await AddressHandler.getBalance(account, wsEndpoint);

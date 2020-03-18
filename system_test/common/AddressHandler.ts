@@ -19,7 +19,6 @@ import path from 'path';
 import Web3 from 'web3';
 
 import Utils from './Utils';
-import config from '../m1_facilitator/config';
 
 export default class AddressHandler {
   public static async validateAddresses(addresses: string[]): Promise<boolean> {
@@ -41,6 +40,7 @@ export default class AddressHandler {
     totalAccountCount: number,
     concurrencyCount: number,
   ): Promise<any[]> {
+    const config = await Utils.getConfig();
     const configAddresses = config.accounts;
     const randomAddresses = [];
 
@@ -70,26 +70,14 @@ export default class AddressHandler {
     return +balance;
   }
 
-  public static async getOriginTokenBalance(
+  public static async getTokenBalance(
     account: string,
     wsEndpoint: string,
-    valueToken: string,
+    tokenAddress: string,
   ): Promise<number> {
-    const originWeb3 = new Web3(wsEndpoint);
-    const valueTokenInstance = Mosaic.interacts.getERC20I(originWeb3, valueToken);
-    const balance = await valueTokenInstance.methods.balanceOf(account).call();
-
-    return +balance;
-  }
-
-  public static async getAuxiliaryTokenBalance(
-    account: string,
-    wsEndpoint: string,
-    utilityToken: string,
-  ): Promise<number> {
-    const auxiliaryWeb3 = new Web3(wsEndpoint);
-    const utilityTokenInstance = Mosaic.interacts.getERC20I(auxiliaryWeb3, utilityToken);
-    const balance = await utilityTokenInstance.methods.balanceOf(account).call();
+    const web3 = new Web3(wsEndpoint);
+    const tokenInstance = Mosaic.interacts.getERC20I(web3, tokenAddress);
+    const balance = await tokenInstance.methods.balanceOf(account).call();
 
     return +balance;
   }

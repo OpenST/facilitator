@@ -1,5 +1,5 @@
 import { TransactionReceipt } from 'web3-core';
-
+import fs from 'fs';
 import Logger from '../../src/common/Logger';
 
 export default class Utils {
@@ -20,5 +20,12 @@ export default class Utils {
         .on('receipt', (receipt: TransactionReceipt): void => onResolve(receipt))
         .on('error', (error: Error): void => onReject(error));
     });
+  }
+
+  public static async getConfig(): Promise<any> {
+    const configFile = fs.readFileSync('system_test/m1_facilitator/config.json');
+    const config = JSON.parse(configFile.toString());
+
+    return config;
   }
 }

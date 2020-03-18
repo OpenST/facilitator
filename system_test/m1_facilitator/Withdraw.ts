@@ -16,7 +16,6 @@ import { Account } from 'web3-eth-accounts';
 import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 
-import config from './config';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Utils from '../common/Utils';
@@ -28,6 +27,7 @@ interface Balance {
 
 export default class Withdraw {
   public static async withdrawSystemTest(): Promise<void> {
+    const config = await Utils.getConfig();
     const {
       withdrawerCount,
       concurrencyCount,
@@ -64,14 +64,14 @@ export default class Withdraw {
           const { valueToken } = config.chains.origin;
           const { utilityToken } = config.chains.auxiliary;
 
-          const auxiliaryBalance = await AddressHandler.getAuxiliaryTokenBalance(
+          const auxiliaryBalance = await AddressHandler.getTokenBalance(
             account.address,
             auxiliaryWsEndpoint,
             utilityToken,
           );
           initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
 
-          const originBalance = await AddressHandler.getOriginTokenBalance(
+          const originBalance = await AddressHandler.getTokenBalance(
             account.address,
             originWsEndpoint,
             valueToken,
@@ -115,7 +115,7 @@ export default class Withdraw {
     const finalOriginBalancePromises = testWithdrawerAccounts.map(
       async (account: Account): Promise<void> => {
         const { valueToken } = config.chains.origin;
-        const originBalance = await AddressHandler.getOriginTokenBalance(
+        const originBalance = await AddressHandler.getTokenBalance(
           account.address,
           originWsEndpoint,
           valueToken,
@@ -143,6 +143,7 @@ export default class Withdraw {
   }
 
   private static async createWithdrawTransactionObject(account: Account): Promise<any> {
+    const config = await Utils.getConfig();
     const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
     const auxiliaryWeb3 = new Web3(config.chains.auxiliary.wsEndpoint);
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
@@ -181,6 +182,7 @@ export default class Withdraw {
     testWithdrawerAccounts: Account[],
     messageHashes: string[],
   ): Promise<void> {
+    const config = await Utils.getConfig();
     const { utilityToken } = config.chains.auxiliary;
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
 
@@ -190,7 +192,7 @@ export default class Withdraw {
     testWithdrawerAccounts.map(
       async (account: Account): Promise<void> => {
         const balanceBeforeWithdraw = initialAuxiliaryAccountBalance[account.address];
-        const balanceAfterWithdraw = await AddressHandler.getAuxiliaryTokenBalance(
+        const balanceAfterWithdraw = await AddressHandler.getTokenBalance(
           account.address,
           auxiliaryWsEndpoint,
           utilityToken,
@@ -212,7 +214,7 @@ export default class Withdraw {
     testWithdrawerAccounts.map(
       async (account: Account): Promise<void> => {
         const balanceBeforeConfirmWithdraw = initialOriginAccountBalance[account.address];
-        const balanceAfterConfirmWithdraw = await AddressHandler.getOriginTokenBalance(
+        const balanceAfterConfirmWithdraw = await AddressHandler.getTokenBalance(
           account.address,
           originWsEndpoint,
           valueToken,

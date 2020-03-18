@@ -16,7 +16,6 @@ import { Account } from 'web3-eth-accounts';
 import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 
-import config from './config';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Utils from '../common/Utils';
@@ -28,6 +27,7 @@ interface Balance {
 
 export default class Deposit {
   public static async depositSystemTest(): Promise<void> {
+    const config = await Utils.getConfig();
     const {
       depositorCount,
       concurrencyCount,
@@ -64,14 +64,14 @@ export default class Deposit {
           const { valueToken } = config.chains.origin;
           const { utilityToken } = config.chains.auxiliary;
 
-          const originBalance = await AddressHandler.getOriginTokenBalance(
+          const originBalance = await AddressHandler.getTokenBalance(
             account.address,
             originWsEndpoint,
             valueToken,
           );
           initialOriginAccountBalance[account.address] = originBalance;
 
-          const auxiliaryBalance = await AddressHandler.getAuxiliaryTokenBalance(
+          const auxiliaryBalance = await AddressHandler.getTokenBalance(
             account.address,
             auxiliaryWsEndpoint,
             utilityToken,
@@ -90,9 +90,10 @@ export default class Deposit {
           } else {
             expectedOriginAccountBalance[account.address] = depositAmount;
           }
-          const txReceipt = await Utils.sendTransaction(txObject, {
+          const txReceipt = await txObject.send({
             from: account.address,
             gasPrice: '0x3B9ACA00',
+            gas: (await txObject.estimateGas({ from: account.address })),
           });
 
           const {
@@ -118,7 +119,7 @@ export default class Deposit {
       async (account: Account): Promise<void> => {
         const { utilityToken } = config.chains.auxiliary;
 
-        const auxiliaryBalance = await AddressHandler.getAuxiliaryTokenBalance(
+        const auxiliaryBalance = await AddressHandler.getTokenBalance(
           account.address,
           auxiliaryWsEndpoint,
           utilityToken,
@@ -146,6 +147,8 @@ export default class Deposit {
   }
 
   private static async createDepositTransactionObject(account: Account): Promise<any> {
+    const config = await Utils.getConfig();
+
     const erc20GatewayAddress = config.chains.origin.gateway;
     const originWeb3 = new Web3(config.chains.origin.wsEndpoint);
     const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
@@ -184,6 +187,7 @@ export default class Deposit {
     testDepositorAccounts: Account[],
     messageHashes: string[],
   ): Promise<void> {
+    const config = await Utils.getConfig();
     const { valueToken } = config.chains.origin;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
     Logger.info('\t\t Origin \t\t');
@@ -191,7 +195,7 @@ export default class Deposit {
     testDepositorAccounts.map(
       async (account: Account): Promise<void> => {
         const balanceBeforeDeposit = initialOriginAccountBalance[account.address];
-        const balanceAfterDeposit = await AddressHandler.getOriginTokenBalance(
+        const balanceAfterDeposit = await AddressHandler.getTokenBalance(
           account.address,
           originWsEndpoint,
           valueToken,
@@ -212,7 +216,7 @@ export default class Deposit {
     testDepositorAccounts.map(
       async (account: Account): Promise<void> => {
         const balanceBeforeConfirmDeposit = initialAuxiliaryAccountBalance[account.address];
-        const balanceAfterConfirmDeposit = await AddressHandler.getAuxiliaryTokenBalance(
+        const balanceAfterConfirmDeposit = await AddressHandler.getTokenBalance(
           account.address,
           auxiliaryWsEndpoint,
           utilityToken,
