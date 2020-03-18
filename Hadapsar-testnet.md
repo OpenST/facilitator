@@ -4,7 +4,7 @@ The following documentation will help you in understanding the steps required to
 
 ## Move any ERC20 token from Goerli testnet to hadapsar testnet 1405
 
-1. To connect to the origin chain:
+1. To connect to the Goerli testnet(origin chain):
   RPC endpoint: https://rpc.slock.it/goerli
 1. Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 1. Ensure that the account has sufficient value token [balance](#balance)
@@ -53,13 +53,18 @@ The following documentation will help you in understanding the steps required to
         .deposit(amount, beneficiary, feeGasPrice, feeGasLimit, valueTokenAddress)
         .encodeABI();
       const nonce = await web3Origin.eth.getTransactionCount(account);
+      const gasLimit = await web3Metachain.eth.estimateGas({
+        from: account,
+        to: erc20GatewayContractAddress,
+        data: depositData
+      });
 
       const rawTxDeposit = {
         from: account,
         nonce: `0x${nonce.toString(16)}`,
         data: depositData,
         to: erc20GatewayContractAddress,
-        gasLimit: 6500000,
+        gasLimit: gasLimit,
         gasPrice: 10000000000,
       };
 
@@ -86,12 +91,14 @@ The following documentation will help you in understanding the steps required to
   npm install --save web3 ethereumjs-tx
   ```
 
-## Move the ERC20 tokens back to Goerli testnet hadapsar testnet 1405
+## Move the ERC20 tokens back to Goerli testnet from hadapsar testnet 1405
 
-1. To connect to the metachain:
+1. To connect to the hadapsar testnet(metachain):
+
   RPC endpoint: https://chain.mosaicdao.org/hadapsar
+
   WS endpoint: wss://chain.mosaicdao.org/hadapsar/wss
-1. Get the gas for the metachain(TODO: check if this is valid for the new chain or not)
+1. Get the gas for the hadapsar testnet(metachain)(TODO: check if this is valid for the new chain or not)
   ```sh
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
   ```
@@ -137,13 +144,18 @@ The following documentation will help you in understanding the steps required to
         .withdraw(amount, beneficiary, feeGasPrice, feeGasLimit, utilityTokenAddress)
         .encodeABI();
       const nonce = await web3Metachain.eth.getTransactionCount(account);
+      const gasLimit = await web3Metachain.eth.estimateGas({
+        from: account,
+        to: erc20CogatewayContractAddress,
+        data: withdrawData
+      });
 
       const rawTxWithdraw = {
         from: account,
         nonce: `0x${nonce.toString(16)}`,
         data: withdrawData,
         to: erc20CogatewayContractAddress,
-        gasLimit: 6500000,
+        gasLimit: gasLimit,
         gasPrice: 10000000000,
       };
 
