@@ -27,7 +27,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```
 
 ### Faucets to get the base tokens for the transactions.
-- **Georli faucet**
+- **Göerli faucet**
   Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 - **OST Prime faucet**
   ```
@@ -50,9 +50,79 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 1. Ethereum account should be unlocked.<br/>
   < Steps to unlock account >
 1. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
-  < Steps to approve the account >
+  Create `approveERC20Gateway.js` as,
+  ```js
+  const Web3 = require('web3');
+
+  const performApproveERC20GatewayTransaction = async () => {
+    try {
+      const erc20TokenApproveABI = [{
+        'constant': false,
+        'inputs': [{ 'internalType': 'address', 'name': '_spender', 'type': 'address' },
+          { 'internalType': 'uint256', 'name': '_value', 'type': 'uint256' }],
+        'name': 'approve',
+        'outputs': [{ 'internalType': 'bool', 'name': 'success_', 'type': 'bool' }],
+        'payable': false,
+        'stateMutability': 'nonpayable',
+        'type': 'function',
+      }];
+      const valueTokenAddress = '0xd426b22f3960d01189a3d548b45a7202489ff4de';
+      const erc20GatewayContractAddress = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
+      const web3Origin = new Web3('https://rpc.slock.it/goerli');
+
+      const account = '<ACCOUNT_ADDRESS>';
+      const privateKey = '<YOUR_PRIVATE_KEY>';
+      const amount = '<AMOUNT_TO_APPROVE>';
+
+      const erc20ValueTokenContract = new web3Origin.eth.Contract(
+        erc20TokenApproveABI,
+        valueTokenAddress,
+      );
+
+      const approveData = erc20ValueTokenContract.methods
+        .approve(erc20GatewayContractAddress, amount)
+        .encodeABI();
+      const nonce = await web3Origin.eth.getTransactionCount(account);
+      const gasLimit = await web3Origin.eth.estimateGas({
+        from: account,
+        to: valueTokenAddress,
+        data: approveData,
+      });
+
+      const rawTxApprove = {
+        from: account,
+        nonce: `0x${nonce.toString(16)}`,
+        data: approveData,
+        to: valueTokenAddress,
+        gasLimit,
+        gasPrice: 10000000000,
+      };
+
+      const signedTx = await web3Origin.eth.accounts.signTransaction(rawTxApprove, privateKey);
+      const transactionReceipt = await web3Origin.eth.sendSignedTransaction(
+        signedTx.raw || signedTx.rawTransaction,
+      );
+
+      console.log(transactionReceipt);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  performApproveERC20GatewayTransaction();
+  ```
+  **Note:**
+  - Add the values for `account`, `privateKey`, `amount` and run using
+  ```sh
+  node approveERC20Gateway.js
+  ```
+  - Install dependencies using
+  ```sh
+  npm install --save web3
+  ```
 1. Ethereum account should have base token (gas) to do the deposit transactions.
-    < Link to the faucet >
+
+  Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 
 ### Perform deposit transaction
   Create `deposit.js` as,
@@ -130,7 +200,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```
   - Install dependencies using
   ```sh
-  npm install --save web3 ethereumjs-tx
+  npm install --save web3
   ```
 
 ## Move the ERC20 tokens back to Goerli testnet from hadapsar testnet 1405
@@ -222,7 +292,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```
   - Install dependencies using
   ```sh
-  npm install --save web3 ethereumjs-tx
+  npm install --save web3
   ```
 
 ## Balance
