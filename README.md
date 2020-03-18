@@ -318,7 +318,44 @@ where:
 
 Facilitator is an executable which facilitates `deposit & withdrawal` of any EIP20 tokens using ERC20Gateways.
 
-1. Deploy subgraphs:
+1. Prerequisites:
+
+    i. Tested with node version `v11.12.0`.
+
+    ii. Docker version `18.09.7`.
+
+    iii. Docker compose version `1.23.2`.
+
+    iv. Install mosaic chains.
+   ```
+   npm i @openst/mosaic-chains -g
+   ```
+   v. Install facilitator 
+   ```
+   npm i @openst/facilitator -g
+   ``` 
+2. Starting chains: 
+
+    You can skip this step, if there is an existing chain pair and graph node is already running. 
+   
+    *Start origin chain*: 
+
+      mosaic start <origin-chain-identifier>
+            
+   *Start meta chain*:
+ 
+      mosaic start <metachain> --origin <origin-chain-identifier>
+      
+   *Example*:
+
+      mosaic start ropsten
+      mosaic start 1405 --origin ropsten
+
+      
+    Once chains have been successfully started, it will display web3 endpoint, graph admin rpc endpoint, graph ws endpoint and ipfs url. `Please keep a copy of these urls`. These URLs will be needed in 
+    further steps.
+
+3. Deploy subgraphs:
 
     i. Deploy origin subgraph: Subgraphs for origin chain must be deployed for facilitator to run. Below is the command to deploy subgraph at origin chain :
 
@@ -336,7 +373,9 @@ Facilitator is an executable which facilitates `deposit & withdrawal` of any EIP
     * Replace `<graphAdminRpcEndpoint>` with the admin rpc endpoint of graph node for auxiliary chain.
     * Replace `<ipfsEndpoint>` with the ipfs endpoint of graph node for auxiliary chain.
 
-3. Manifest file is required to initialize and start facilitator. It must be an valid yaml file. Format for manifest file :
+    Note: If subgraph deployment fails, then check node version to be 11.12.0.
+
+4. Manifest file is required to initialize and start facilitator. It must be an valid yaml file. Format for manifest file :
 ```
 version: v0.14
 architecture_layout: MOSAIC1
@@ -365,7 +404,7 @@ origin_contract_addresses:
 facilitate_tokens:
     - "<supported_tokens>"
 ```
-* Create account on origin and metachain nodes. At origin, fund avatar account with ETH. At metachain, fund avatar account with base coin. Save the keystore files. For each account, create a password file.
+* Create account on origin and auxiliary nodes. At origin, fund avatar account with ETH. At auxiliary, fund avatar account with base coin. Save the keystore files. For each account, create a password file.
 * Replace `<account_at_origin_chain>` with the address generated at origin node.
 * Replace `<account_at_auxiliary_chain>` with the address generated at auxiliary node.
 * Replace `<origin_chain_url>` with endpoint of origin chain.
@@ -409,7 +448,7 @@ facilitate_tokens:
     - "0x0000000000000000000000000000000000000012"
 ```
 
-3. **Facilitator init**: It loads manifest file, creates database and initializes seed data.
+5. **Facilitator init**: It loads manifest file, creates database and initializes seed data.
 
 ```
 ./facilitator_m1 init --manifest <manifest>
@@ -422,7 +461,7 @@ Example:
 ./facilitator_m1 init --manifest facilitator_manifest.yml
 ```
 
-4. **Facilitator start**: Facilitator start command loads manifest file and starts facilitation process.
+6. **Facilitator start**: Facilitator start command loads manifest file and starts facilitation process.
 
 ```
 ./facilitator_m1 start --manifest  facilitator_manifest.yml
