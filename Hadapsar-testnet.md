@@ -1,23 +1,23 @@
 # Hadapsar Testnet - Move any ERC20 tokens
 
 ## Overview
-A dApp developer can use the mosaic metachains to create any dApps. This can be done by moving any ERC20 tokens from the origin chain (Goerli) to the mosaic metachain hadapsar 1405 to get an equivalent amount of ERC20 tokens (utility tokens).
+A dApp developer can use the mosaic metachains to create any dApps. This can be done by moving any ERC20 tokens from the origin chain(Göerli) to the mosaic metachain(Hadapsar-1405) to get an equivalent amount of ERC20 tokens (utility tokens).
 Following are the advantage.
 - Lower transaction cost.
 - Faster transactions.
 - Value of ERC20 tokens(utility token) on the metachain is backed by the value of the deposited ERC20 token on the origin chain.
 
 
-The following document will help to understand the steps required to move any ERC20 tokens between the Goerli testnet and hadapsar testnet 1405.
+The following document will help to understand the steps required to move any ERC20 tokens between the Göerli testnet and hadapsar testnet 1405.
 - **Deposit**<br/>
-Any ERC20 token can be moved from origin chain (Goerli) to the metachain(Hadapsar-1405) by depositing the ERC20 token on the origin chain. An equivalent amount of ERC20 utility tokens (minus the fees) will be minted on the metachain.
+Any ERC20 token can be moved from origin chain(Göerli) to the metachain(Hadapsar-1405) by depositing the ERC20 token on the origin chain. An equivalent amount of ERC20 utility tokens (minus the fees) will be minted on the metachain.
 - **Withdraw**<br/>
-Any ERC20 utility token can be moved from metachain(Hadapsar-1405) to the origin chain(Goerli) by burning the ERC20 utility token on the metachain. An equivalent amount of ERC20 token (minus the fees) will be released to the beneficiary address on the origin chain.
+Any ERC20 utility token can be moved from metachain(Hadapsar-1405) to the origin chain(Göerli) by burning the ERC20 utility token on the metachain. An equivalent amount of ERC20 token (minus the fees) will be released to the beneficiary address on the origin chain.
 - **Fee**<br/>
 A small fee is deducted from the ERC20 token by the facilitator that moves the token between the chains. The user can define what fees he is willing to pay.
 
 ### Endpoints
-- **Goerli endpoint**
+- **Göerli endpoint**
   ```
   https://rpc.slock.it/goerli
   ```
@@ -39,17 +39,18 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```
 
 ### Contract addresses
-- **Goerli**
+- **Göerli**
   - ERC20Gateway: `0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56`
 - **Hadapsar-1405**
   - ERC20Cogateway: `0x25a1CE197371735D6EDccC178F90841a7CEc23bb`
 
-## Deposit any ERC20 token on the Goerli testnet to get equivalent ERC20 utility tokens on hadapsar testnet 1405
+## Deposit any ERC20 token on the Göerli testnet to get equivalent ERC20 utility tokens on hadapsar testnet 1405
 
 ### Prerequisite
 1. Ethereum account should be unlocked.<br/>
   < Steps to unlock account >
-2. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
+2. Ensure that the account has sufficient token [balance](#balance) on the origin chain
+3. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
   Create `approveERC20Gateway.js` as,
   ```js
   const Web3 = require('web3');
@@ -57,14 +58,14 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const performApproveERC20GatewayTransaction = async () => {
     try {
       const erc20TokenApproveABI = [{
-        'constant': false,
-        'inputs': [{ 'internalType': 'address', 'name': '_spender', 'type': 'address' },
-          { 'internalType': 'uint256', 'name': '_value', 'type': 'uint256' }],
-        'name': 'approve',
-        'outputs': [{ 'internalType': 'bool', 'name': 'success_', 'type': 'bool' }],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'function',
+        constant: false,
+        inputs: [{ internalType: 'address', name: '_spender', type: 'address' },
+          { internalType: 'uint256', name: '_value', type: 'uint256' }],
+        name: 'approve',
+        outputs: [{ internalType: 'bool', name: 'success_', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
       }];
       const erc20GatewayContractAddress = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
       const web3Origin = new Web3('https://rpc.slock.it/goerli');
@@ -120,11 +121,10 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```sh
   npm install --save web3
   ```
-3. Ethereum account should have base token (gas) to do the deposit transactions.
-
+4. Check the approved token [balance](#Allowance) on the origin chain(Göerli)
+5. Ethereum account should have base token (gas) to do the deposit transactions.<br>
   Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 
-4. Ensure that the account has sufficient token [balance](#balance) on the origin chain
 ### Perform deposit transaction
   Create `deposit.js` as,
   ```js
@@ -133,17 +133,17 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const performDepositTransaction = async () => {
     try {
       const erc20GatewayContractDepositABI = [{
-        'constant': false,
-        'inputs': [{ 'internalType': 'uint256', 'name': '_amount', 'type': 'uint256' },
-          { 'internalType': 'address', 'name': '_beneficiary', 'type': 'address' },
-          { 'internalType': 'uint256', 'name': '_feeGasPrice', 'type': 'uint256' },
-          { 'internalType': 'uint256', 'name': '_feeGasLimit', 'type': 'uint256' },
-          { 'internalType': 'address', 'name': '_valueToken', 'type': 'address' }],
-        'name': 'deposit',
-        'outputs': [{ 'internalType': 'bytes32', 'name': 'messageHash_', 'type': 'bytes32' }],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'function',
+        constant: false,
+        inputs: [{ internalType: 'uint256', name: '_amount', type: 'uint256' },
+          { internalType: 'address', name: '_beneficiary', type: 'address' },
+          { internalType: 'uint256', name: '_feeGasPrice', type: 'uint256' },
+          { internalType: 'uint256', name: '_feeGasLimit', type: 'uint256' },
+          { internalType: 'address', name: '_valueToken', type: 'address' }],
+        name: 'deposit',
+        outputs: [{ internalType: 'bytes32', name: 'messageHash_', type: 'bytes32' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
       }];
       const erc20GatewayContractAddress = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
 
@@ -209,7 +209,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 ### Prerequisite
 1. Ethereum account should be unlocked.
   < Steps to unlock account >
-2. Ethereum account should approve ERC20Gateway for token transfer.
+2. Ensure that the account has sufficient Utility Token [balance](#balance) on the metachain(Hadapsar-1405)
+3. Ethereum account should approve ERC20Gateway for token transfer.
   Create approveERC20Cogateway.js as,
   ```js
   const Web3 = require('web3');
@@ -217,14 +218,14 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const performApproveERC20CogatewayTransaction = async () => {
     try {
       const erc20TokenApproveABI = [{
-        'constant': false,
-        'inputs': [{ 'internalType': 'address', 'name': '_spender', 'type': 'address' },
-          { 'internalType': 'uint256', 'name': '_value', 'type': 'uint256' }],
-        'name': 'approve',
-        'outputs': [{ 'internalType': 'bool', 'name': 'success_', 'type': 'bool' }],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'function',
+        constant: false,
+        inputs: [{ internalType: 'address', name: '_spender', type: 'address' },
+          { internalType: 'uint256', name: '_value', type: 'uint256' }],
+        name: 'approve',
+        outputs: [{ internalType: 'bool', name: 'success_', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
       }];
       const erc20CogatewayContractAddress = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
       const web3Metachain = new Web3('https://chain.mosaicdao.org/hadapsar');
@@ -280,13 +281,12 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```sh
   npm install --save web3
   ```
-3. Ethereum account should have base token (gas) to do the withdraw transactions.
-
-  Get the gas for the hadapsar testnet(metachain)
+4. Check the [approved](#Allowance) token balance on the metachain(Hadapsar-1405)
+5. Ethereum account should have base token (gas) to do the withdraw transactions.<br>
+  Get the gas for the metachain(Hadapsar-1405)
   ```sh
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
   ```
-4. Ensure that the account has sufficient Utility Token [balance](#balance) on the metachain
 
 ### Perform withdraw transaction
   Create `withdraw.js` as,
@@ -296,17 +296,17 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const performWithdrawTransaction = async () => {
     try {
       const erc20CogatewayContractWithdrawABI = [{
-        'constant': false,
-        'inputs': [{ 'internalType': 'uint256', 'name': '_amount', 'type': 'uint256' },
-          { 'internalType': 'address', 'name': '_beneficiary', 'type': 'address' },
-          { 'internalType': 'uint256', 'name': '_feeGasPrice', 'type': 'uint256' },
-          { 'internalType': 'uint256', 'name': '_feeGasLimit', 'type': 'uint256' },
-          { 'internalType': 'address', 'name': '_utilityToken', 'type': 'address' }],
-        'name': 'withdraw',
-        'outputs': [{ 'internalType': 'bytes32', 'name': 'messageHash_', 'type': 'bytes32' }],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'function',
+        constant: false,
+        inputs: [{ internalType: 'uint256', name: '_amount', type: 'uint256' },
+          { internalType: 'address', name: '_beneficiary', type: 'address' },
+          { internalType: 'uint256', name: '_feeGasPrice', type: 'uint256' },
+          { internalType: 'uint256', name: '_feeGasLimit', type: 'uint256' },
+          { internalType: 'address', name: '_utilityToken', type: 'address' }],
+        name: 'withdraw',
+        outputs: [{ internalType: 'bytes32', name: 'messageHash_', type: 'bytes32' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
       }];
       const erc20CogatewayContractAddress = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
 
@@ -368,70 +368,79 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```
 
 ## Balance
-1. Check the ERC20 token balance on the Göerli testnet(origin)
-  Create `originTokenBalance.js` as,
+1. To check the ERC20 token balance on the chains
+  Create `tokenBalance.js` as,
   ```js
   const Web3 = require('web3');
 
-  const web3Origin = new Web3('https://chain.mosaicdao.org/hadapsar');
-
+  const rpcURL = '<CHAIN_RPC_URL>';
   const account = '<ACCOUNT_ADDRESS>';
-  const valueTokenAddress = '<VALUE_TOKEN_ADDRESS>';
+  const tokenAddress = '<VALUE_TOKEN_ADDRESS>';
+
+  const web3 = new Web3(rpcUrl);
 
   const tokenBalanceABI = [{
-    "constant": true,
-    "inputs": [{ "internalType": "address", "name": "_owner", "type": "address" }],
-    "name": "balanceOf",
-    "outputs": [{ "internalType": "uint256", "name": "balance_", "type": "uint256" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    constant: true,
+    inputs: [{ internalType: 'address', name: '_owner', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ internalType: 'uint256', name: 'balance_', type: 'uint256' }],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
   }];
-  const valueTokenContract = web3Origin.eth.contract(tokenBalanceABI).at(valueTokenAddress);
-  valueTokenContract.balanceOf
-    .call(account)
+  const tokenContract = new web3.eth.Contract(tokenBalanceABI, tokenAddress);
+
+  tokenContract.methods.balanceOf(account)
+    .call()
     .then((balance) => {
       console.log(+balance);
     });
   ```
   **Note:**
-  - Add the value for `account`, `valueTokenAddress` and run using
+  - Add the value for `rpcURL`, `account`, `tokenAddress` and run using
   ```sh
-  node originTokenBalance.js
+  node tokenBalance.js
   ```
   - Install dependencies using
   ```sh
   npm install --save web3
   ```
-1. Check the ERC20 token balance on the Hadapsar testnet(metachain)
-  Create `metachainTokenBalance.js` as,
+
+## Allowance
+1. To check the ERC20 token allowance balances on the chains
+  Create `approvedBalance.js` as,
   ```js
   const Web3 = require('web3');
 
-  const web3Metachain = new Web3('https://rpc.mosaicdao.org/goerli');
-
+  const rpcURL = '<CHAIN_RPC_URL>';
   const account = '<ACCOUNT_ADDRESS>';
-  const utilityTokenAddress = '<UTILITY_TOKEN_ADDRESS>';
+  const tokenAddress = '<VALUE_TOKEN_ADDRESS>';
+  const gatewayContractAddress = '<GATEWAY_CONTRACT_ADDRESS>';
+
+  const web3 = new Web3(rpcURL);
+
   const tokenBalanceABI = [{
-    "constant": true,
-    "inputs": [{ "internalType": "address", "name": "_owner", "type": "address" }],
-    "name": "balanceOf",
-    "outputs": [{ "internalType": "uint256", "name": "balance_", "type": "uint256" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    constant: true,
+    inputs: [{ internalType: 'address', name: '_owner', type: 'address' },
+      { internalType: 'address', name: '_spender', type: 'address' }],
+    name: 'allowance',
+    outputs: [{ internalType: 'uint256', name: 'allowance_', type: 'uint256' }],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
   }];
-  const utilityTokenContract = web3Metachain.eth.contract(tokenBalanceABI).at(utilityTokenAddress);
-  utilityTokenContract.balanceOf
-    .call(account)
+  const tokenContract = new web3.eth.Contract(tokenBalanceABI, tokenAddress);
+
+  tokenContract.methods.allowance(account, gatewayContractAddress)
+    .call()
     .then((balance) => {
-      console.log(balance);
+      console.log(+balance);
     });
   ```
   **Note:**
-  - Add the values for `account` and `utilityTokenAddress` and run using
+  - Add the value for `rpcURL`, `account`, `tokenAddress`, `gatewayContractAddress` and run using
   ```sh
-  node metachainTokenBalance.js
+  node approvedBalance.js
   ```
   - Install dependencies using
   ```sh
