@@ -32,17 +32,11 @@ async function fundFromFaucet(beneficiary: string, chain: string): Promise<void>
   console.log(`Transaction hash is ${response.data.txHash}`);
 }
 
-async function checkBalance(account: string, auxWeb3: Web3, originWeb3: Web3): Promise<void> {
+async function checkBalance(account: string, auxWeb3: Web3): Promise<void> {
   const auxAvatarBalance = await auxWeb3.eth.getBalance(account);
   console.log('Auxilary Avatar Balance ==>', auxAvatarBalance.toString());
   if (new BN(auxAvatarBalance) < THRESHOLD) {
     fundFromFaucet(account, '1405');
-  }
-
-  const originAvatarBalance = await originWeb3.eth.getBalance(account);
-  console.log('Origin Avatar Balance ==>', auxAvatarBalance.toString());
-  if (new BN(originAvatarBalance) < THRESHOLD) {
-    fundFromFaucet(account, '5');
   }
 }
 
@@ -68,7 +62,6 @@ export default class FundAvatar implements Command {
       checkBalance(
         acc.address,
         manifest.metachain.auxiliaryChain.web3,
-        manifest.metachain.originChain.web3,
       );
     });
   }
