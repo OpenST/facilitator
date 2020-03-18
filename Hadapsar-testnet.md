@@ -53,7 +53,7 @@ The following documentation will help you in understanding the steps required to
         .deposit(amount, beneficiary, feeGasPrice, feeGasLimit, valueTokenAddress)
         .encodeABI();
       const nonce = await web3Origin.eth.getTransactionCount(account);
-      const gasLimit = await web3Metachain.eth.estimateGas({
+      const gasLimit = await web3Origin.eth.estimateGas({
         from: account,
         to: erc20GatewayContractAddress,
         data: depositData
