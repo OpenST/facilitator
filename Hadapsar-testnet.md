@@ -1,18 +1,60 @@
-# User documentation - Hadapsar Testnet
+# Hadapsar Testnet - Move any ERC20 tokens
 
-The following documentation will help you in understanding the steps required to move the ERC20 tokens between the Goerli testnet and hadapsar testnet 1405
+## Overview
+A dApp developer can use the mosaic metachains to create any dApps. This can be done by moving any ERC20 tokens from the origin chain (Goerli) to the mosaic metachain hadapsar 1405 to get an equivalent amount of ERC20 tokens (utility tokens).
+Following are the advantage.
+- Lower transaction cost.
+- Faster transactions.
+- Value of ERC20 tokens(utility token) on the metachain is backed by the value of the deposited ERC20 token on the origin chain.
 
-## Move any ERC20 token from Goerli testnet to hadapsar testnet 1405
 
-1. To connect to the Goerli testnet(origin chain):
-  RPC endpoint: https://rpc.slock.it/goerli
-1. Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
-1. Ensure that the account has sufficient value token [balance](#balance)
-  - If using OST as value token then, fund the account using
-  ```sh
-  curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@5"}' https://faucet.mosaicdao.org
+The following document will help to understand the steps required to move any ERC20 tokens between the Goerli testnet and hadapsar testnet 1405.
+- **Deposit**<br/>
+Any ERC20 token can be moved from origin chain (Goerli) to the metachain(Hadapsar-1405) by depositing the ERC20 token on the origin chain. An equivalent amount of ERC20 utility tokens (minus the fees) will be minted on the metachain.
+- **Withdraw**<br/>
+Any ERC20 utility token can be moved from metachain(Hadapsar-1405) to the origin chain(Goerli) by burning the ERC20 utility token on the metachain. An equivalent amount of ERC20 token (minus the fees) will be released to the beneficiary address on the origin chain.
+- **Fee**<br/>
+A small fee is deducted from the ERC20 token by the facilitator that moves the token between the chains. The user can define what fees he is willing to pay.
+
+### Endpoints
+- **Goerli endpoint**
   ```
-1. Perform deposit transaction
+  https://rpc.slock.it/goerli
+  ```
+- **Hadapsar-1405 endpoint**
+  ```
+  https://chain.mosaicdao.org/hadapsar
+  ```
+
+### Faucets to get the base tokens for the transactions.
+- **Georli faucet**
+  Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
+- **OST Prime faucet**
+  ```
+  https://faucet.mosaicdao.org
+  ```
+  To get OST prime in the `beneficiaryAddress` please use the following curl command
+  ```sh
+  curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
+  ```
+
+### Contract addresses
+- **Goerli**
+  - ERC20Gateway: `0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56`
+- **Hadapsar-1405**
+  - ERC20Cogateway: `0x25a1CE197371735D6EDccC178F90841a7CEc23bb`
+
+## Deposit any ERC20 token on the Goerli testnet to get equivalent ERC20 utility tokens on hadapsar testnet 1405
+
+### Prerequisite
+1. Ethereum account should be unlocked.<br/>
+  < Steps to unlock account >
+1. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
+  < Steps to approve the account >
+1. Ethereum account should have base token (gas) to do the deposit transactions.
+    < Link to the faucet >
+
+### Perform deposit transaction
   Create `deposit.js` as,
   ```js
   const Web3 = require('web3');
@@ -41,7 +83,7 @@ The following documentation will help you in understanding the steps required to
       const feeGasPrice = '<FEE_GAS_PRICE>';
       const feeGasLimit = '<FEE_GAS_LIMIT>';
 
-      const web3Origin = new Web3('https://rpc.mosaicdao.org/goerli');
+      const web3Origin = new Web3('https://rpc.slock.it/goerli');
 
       const valueTokenAddress = '0xd426b22f3960d01189a3d548b45a7202489ff4de';
       const erc20GatewayContract = new web3Origin.eth.Contract(
