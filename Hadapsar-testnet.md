@@ -169,7 +169,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const gasLimit = await web3Origin.eth.estimateGas({
         from: account,
         to: erc20GatewayContractAddress,
-        data: depositData
+        data: depositData,
       });
 
       const rawTxDeposit = {
@@ -177,7 +177,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         nonce: `0x${nonce.toString(16)}`,
         data: depositData,
         to: erc20GatewayContractAddress,
-        gasLimit: gasLimit,
+        gasLimit,
         gasPrice: 10000000000,
       };
 
@@ -332,7 +332,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const gasLimit = await web3Metachain.eth.estimateGas({
         from: account,
         to: erc20CogatewayContractAddress,
-        data: withdrawData
+        data: withdrawData,
       });
 
       const rawTxWithdraw = {
@@ -340,7 +340,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         nonce: `0x${nonce.toString(16)}`,
         data: withdrawData,
         to: erc20CogatewayContractAddress,
-        gasLimit: gasLimit,
+        gasLimit,
         gasPrice: 10000000000,
       };
 
@@ -356,7 +356,6 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   };
 
   performWithdrawTransaction();
-
   ```
   **Note:**
   - Add the values for `account`, `privateKey`, `utilityTokenAddress`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit` and run using
