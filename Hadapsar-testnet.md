@@ -1,4 +1,4 @@
-# User documentation - M1-facilitator
+# User documentation - Hadapsar Testnet
 
 The following documentation will help you in understanding the steps required to move the ERC20 tokens between the origin chain and the metachain
 
@@ -86,8 +86,7 @@ The following documentation will help you in understanding the steps required to
   npm install --save web3 ethereumjs-tx
   ```
 
-
-## Move the ERC20 tokens tokens back to Goerli testnet hadapsar testnet 1405
+## Move the ERC20 tokens back to Goerli testnet hadapsar testnet 1405
 
 1. To connect to the metachain:
   RPC endpoint: https://chain.mosaicdao.org/hadapsar
