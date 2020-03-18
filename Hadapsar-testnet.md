@@ -49,7 +49,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 ### Prerequisite
 1. Ethereum account should be unlocked.<br/>
   < Steps to unlock account >
-1. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
+2. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
   Create `approveERC20Gateway.js` as,
   ```js
   const Web3 = require('web3');
@@ -120,7 +120,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```sh
   npm install --save web3
   ```
-1. Ethereum account should have base token (gas) to do the deposit transactions.
+3. Ethereum account should have base token (gas) to do the deposit transactions.
 
   Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 
@@ -203,19 +203,95 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   npm install --save web3
   ```
 
-## Move the ERC20 tokens back to Goerli testnet from hadapsar testnet 1405
+## Withdraw ERC20 utility token from the hadapsar testnet 1405 to get equivalent ERC20 token on Göerli testnet
 
+### Prerequisite
 1. To connect to the hadapsar testnet(metachain):
 
   RPC endpoint: https://chain.mosaicdao.org/hadapsar
 
   WS endpoint: wss://chain.mosaicdao.org/hadapsar/wss
-1. Get the gas for the hadapsar testnet(metachain)(TODO: check if this is valid for the new chain or not)
+2. Ensure that the account has sufficient Utility Token [balance](#balance)
+3. Ethereum account should be unlocked.
+  < Steps to unlock account >
+4. Ethereum account should approve ERC20Gateway for token transfer.
+  Create approveERC20Cogateway.js as,
+  ```js
+  const Web3 = require('web3');
+
+  const performApproveERC20CogatewayTransaction = async () => {
+    try {
+      const erc20TokenApproveABI = [{
+        'constant': false,
+        'inputs': [{ 'internalType': 'address', 'name': '_spender', 'type': 'address' },
+          { 'internalType': 'uint256', 'name': '_value', 'type': 'uint256' }],
+        'name': 'approve',
+        'outputs': [{ 'internalType': 'bool', 'name': 'success_', 'type': 'bool' }],
+        'payable': false,
+        'stateMutability': 'nonpayable',
+        'type': 'function',
+      }];
+      const erc20CogatewayContractAddress = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
+      const web3Metachain = new Web3('https://chain.mosaicdao.org/hadapsar');
+
+      const account = '<ACCOUNT_ADDRESS>';
+      const privateKey = '<YOUR_PRIVATE_KEY>';
+      const amount = '<AMOUNT_TO_APPROVE>';
+      const utilityTokenTokenAddress = '<UTILITY_TOKEN_ADDRESS>';
+
+      const erc20UtilityTokenContract = new web3Metachain.eth.Contract(
+        erc20TokenApproveABI,
+        utilityTokenTokenAddress,
+      );
+
+      const approveData = erc20UtilityTokenContract.methods
+        .approve(erc20CogatewayContractAddress, amount)
+        .encodeABI();
+      const nonce = await web3Metachain.eth.getTransactionCount(account);
+      const gasLimit = await web3Metachain.eth.estimateGas({
+        from: account,
+        to: utilityTokenTokenAddress,
+        data: approveData,
+      });
+
+      const rawTxApprove = {
+        from: account,
+        nonce: `0x${nonce.toString(16)}`,
+        data: approveData,
+        to: utilityTokenTokenAddress,
+        gasLimit,
+        gasPrice: 10000000000,
+      };
+
+      const signedTx = await web3Metachain.eth.accounts.signTransaction(rawTxApprove, privateKey);
+      const transactionReceipt = await web3Metachain.eth.sendSignedTransaction(
+        signedTx.raw || signedTx.rawTransaction,
+      );
+
+      console.log(transactionReceipt);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  performApproveERC20CogatewayTransaction();
+  ```
+  **Note:**
+  - Add the values for `account`, `privateKey`, `amount`, `utilityTokenTokenAddress` and run using
+  ```sh
+  node approveERC20Cogateway.js
+  ```
+  - Install dependencies using
+  ```sh
+  npm install --save web3
+  ```
+5. Ethereum account should have base token (gas) to do the withdraw transactions.
+Get the gas for the hadapsar testnet(metachain)(TODO: check if this is valid for the new chain or not)
   ```sh
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
   ```
-1. Ensure that the account has sufficient Utility Token [balance](#balance)
-1. Perform withdraw transaction
+
+### Perform withdraw transaction
   Create `withdraw.js` as,
   ```js
   const Web3 = require('web3');
