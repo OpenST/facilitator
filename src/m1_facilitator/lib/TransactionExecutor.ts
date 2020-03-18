@@ -82,6 +82,7 @@ export default class TransactionExecutor {
    * @param rawTx Raw transaction object.
    */
   public async add(toAddress: string, rawTx: TransactionObject<string>): Promise<void> {
+    Logger.info('TransactionExecutor:: Adding the transaction in queue');
     const transaction = new Transaction(
       this.avatarAccount.address,
       toAddress,
