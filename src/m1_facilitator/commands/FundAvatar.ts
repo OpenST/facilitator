@@ -19,7 +19,7 @@ import Manifest from '../manifest/Manifest';
 const BN = require('bn.js');
 const axios = require('axios');
 
-const THRESHOLD = new BN(100);
+const THRESHOLD = new BN(50);
 
 async function fundFromFaucet(beneficiary: string, chain: string): Promise<void> {
   console.log(`Funding ${beneficiary} for chain ${chain}`);
@@ -32,11 +32,17 @@ async function fundFromFaucet(beneficiary: string, chain: string): Promise<void>
   console.log(`Transaction hash is ${response.data.txHash}`);
 }
 
-async function checkBalance(account: string, web3: Web3): Promise<void> {
-  const avatarBalance = await web3.eth.getBalance(account);
-  console.log('Avatar Balance ==>', avatarBalance.toString());
-  if (new BN(avatarBalance) < THRESHOLD) {
+async function checkBalance(account: string, auxWeb3: Web3, originWeb3: Web3): Promise<void> {
+  const auxAvatarBalance = await auxWeb3.eth.getBalance(account);
+  console.log('Auxilary Avatar Balance ==>', auxAvatarBalance.toString());
+  if (new BN(auxAvatarBalance) < THRESHOLD) {
     fundFromFaucet(account, '1405');
+  }
+
+  const originAvatarBalance = await originWeb3.eth.getBalance(account);
+  console.log('Origin Avatar Balance ==>', auxAvatarBalance.toString());
+  if (new BN(originAvatarBalance) < THRESHOLD) {
+    fundFromFaucet(account, '5');
   }
 }
 
@@ -59,7 +65,11 @@ export default class FundAvatar implements Command {
     const manifest = Manifest.fromFile(this.manifestPath);
     Object.keys(manifest.avatarAccounts).forEach((address: string): void => {
       const acc = manifest.avatarAccounts[address];
-      checkBalance(acc.address, manifest.metachain.auxiliaryChain.web3);
+      checkBalance(
+        acc.address,
+        manifest.metachain.auxiliaryChain.web3,
+        manifest.metachain.originChain.web3,
+      );
     });
   }
 }
