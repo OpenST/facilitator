@@ -273,7 +273,6 @@ describe('SeedDataInitializer:initialize', () => {
       originAnchorAddress,
       auxiliaryAnchorAddress,
     );
-    sinon.restore();
   });
 
   it('should initialize seed data when for supporting older testnet', async (): Promise<void> => {
@@ -351,5 +350,7 @@ describe('SeedDataInitializer:initialize', () => {
     );
   });
 
-  sinon.restore();
+  afterEach(async (): Promise<void> => {
+    sinon.restore();
+  });
 });
