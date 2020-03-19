@@ -316,7 +316,7 @@ export default class MessageRepository extends Subject<Message> {
         : messageModel.sourceDeclarationBlockNumber,
       messageModel.intentHash,
       messageModel.sender,
-      messageModel.nonce,
+      new BigNumber(messageModel.nonce),
       messageModel.createdAt,
       messageModel.updatedAt,
     );
