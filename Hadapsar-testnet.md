@@ -481,43 +481,25 @@ node approvedBalance.js
 
 ## Account Creation
 To create a keystore and save it in the required format
-Create `accountCreation.js` as,
+Create `createAccount.js` as,
 ```js
 const fs = require('fs');
-const inquirer = require('inquirer');
 const path = require('path');
 const Web3 = require('web3');
 
 async function createAccount() {
-  const answer = await inquirer.prompt([
-    {
-      type: 'password',
-      name: 'password',
-      message: 'Password to generate an ethereum account.',
-      validate(input) {
-        return input.length > 0;
-      },
-    },
-    {
-      type: 'path',
-      name: 'path',
-      default: __dirname,
-      message: 'Path to store the keystore file.',
-      validate(input) {
-        return input.length > 0;
-      },
-    },
-  ]);
+  const password = '<PASSWORD>';
 
+  const keystoreFilePath = __dirname;
   const web3 = new Web3(null);
   const ethereumAccount = web3.eth.accounts.create(web3.utils.randomHex(32));
-  const encryptedAccount = ethereumAccount.encrypt(answer.password);
+  const encryptedAccount = ethereumAccount.encrypt(password);
 
-  const filePath = path.join(answer.path, '/', `${ethereumAccount.address}.json`);
+  const filePath = path.join(keystoreFilePath, '/', `${ethereumAccount.address}.json`);
   fs.writeFileSync(filePath, JSON.stringify(encryptedAccount, null, '    '));
 
-  const passwordFilePath = path.join(answer.path, '/', `${ethereumAccount.address}.password`);
-  fs.writeFileSync(passwordFilePath, JSON.stringify(answer.password, null, '    '));
+  const passwordFilePath = path.join(keystoreFilePath, '/', `${ethereumAccount.address}.password`);
+  fs.writeFileSync(passwordFilePath, JSON.stringify(password, null, '    '));
 }
 
 createAccount();
@@ -527,7 +509,7 @@ createAccount();
 ```sh
 npm install --save web3 inquirer
 ```
-- Run
+- Add the value for `password` and run
 ```sh
-node accountCreation.js
+node createAccount.js
 ```
