@@ -19,16 +19,13 @@ import Command from '../../../src/m1_facilitator/commands/Command';
 import Manifest from '../../../src/m1_facilitator/manifest/Manifest';
 
 // Threshold amount in wei below which avatar account will be funded from faucet.
-const AVATAR_ACCOUNT_THRESHOLD = new BigNumber(1000000000000000000);
+const AVATAR_ACCOUNT_THRESHOLD = new BigNumber('1000000000000000000');
 
 const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
-enum Chains {
-  Goerli = '5',
-  Hadapsar = '1405',
-}
+const HADAPSAR = '1405';
 
-/**
+/*
  * Returns balance of avatar account in wei.
  */
 async function checkBalance(account: string, web3: Web3): Promise<BigNumber> {
@@ -52,21 +49,16 @@ export default class FundFacilitatorAccount implements Command {
    * Executes fundFacilitatorAccount command
    */
   public async execute(): Promise<void> {
-    console.log('Inside Execute');
     const manifest = Manifest.fromFile(this.manifestPath);
     const account = manifest.metachain.auxiliaryChain.avatarAccount;
     if ((await checkBalance(account, manifest.metachain.auxiliaryChain.web3))
       .lt(AVATAR_ACCOUNT_THRESHOLD)) {
-      this.fundFromFaucet(account, Chains.Hadapsar);
+      await axios.post(
+        FAUCET_URL,
+        {
+          beneficiary: `${account}@${HADAPSAR}`,
+        },
+      );
     }
-  }
-
-  private async fundFromFaucet(beneficiary: string, chain: string): Promise<void> {
-    await axios.post(
-      FAUCET_URL,
-      {
-        beneficiary: `${beneficiary}@${chain}`,
-      },
-    );
   }
 }
