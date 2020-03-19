@@ -31,8 +31,8 @@ enum Chains {
 /**
  * Returns balance of avatar account in wei.
  */
-async function checkBalance(account: string, auxWeb3: Web3): Promise<BigNumber> {
-  const accountBalance = await auxWeb3.eth.getBalance(account);
+async function checkBalance(account: string, web3: Web3): Promise<BigNumber> {
+  const accountBalance = await web3.eth.getBalance(account);
   return new BigNumber(accountBalance);
 }
 
@@ -52,11 +52,12 @@ export default class FundFacilitatorAccount implements Command {
    * Executes fundFacilitatorAccount command
    */
   public async execute(): Promise<void> {
+    console.log('Inside Execute');
     const manifest = Manifest.fromFile(this.manifestPath);
-    const acc = manifest.metachain.auxiliaryChain.avatarAccount;
-    if ((await checkBalance(acc, manifest.metachain.auxiliaryChain.web3))
+    const account = manifest.metachain.auxiliaryChain.avatarAccount;
+    if ((await checkBalance(account, manifest.metachain.auxiliaryChain.web3))
       .lt(AVATAR_ACCOUNT_THRESHOLD)) {
-      this.fundFromFaucet(acc, Chains.Hadapsar);
+      this.fundFromFaucet(account, Chains.Hadapsar);
     }
   }
 

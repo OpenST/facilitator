@@ -16,6 +16,11 @@ import fundFacilitatorAccount from 'commander';
 import FundFacilitatorAccount from './Fund_Facilitator_Account';
 import Logger from '../../../src/common/Logger';
 
+
+/**
+ * To excute fundFacilitatorAccount command,
+ * ./fundFacilitatorAccount -m <manifest_file_path>
+ */
 fundFacilitatorAccount.option('-m, --manifest <manifest>', 'Path to manifest file')
   .action(
     async (
