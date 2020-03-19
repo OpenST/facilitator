@@ -136,4 +136,75 @@ describe('MessageRepository:getPendingMessagesByGateway', (): void => {
       'Message hash must match',
     );
   });
+
+  it('should return pending message order by sender and nonce', async (): Promise<void> => {
+    const sender = '0x0000000000000000000000000000000000000010';
+    const gateway = '0x0000000000000000000000000000000000000110';
+    const messageNonceZero = new Message(
+      web3Utils.sha3('nonce-0'),
+      messageType,
+      MessageStatus.Declared,
+      MessageStatus.Undeclared,
+      gateway,
+      new BigNumber('1'),
+      new BigNumber('1'),
+      new BigNumber('100'),
+      web3Utils.sha3('123'),
+      sender,
+      new BigNumber(0),
+    );
+
+    const messageNonceOne = new Message(
+      web3Utils.sha3('nonce-1'),
+      messageType,
+      MessageStatus.Declared,
+      MessageStatus.Undeclared,
+      gateway,
+      new BigNumber('1'),
+      new BigNumber('1'),
+      new BigNumber('100'),
+      web3Utils.sha3('321'),
+      sender,
+      new BigNumber(1),
+    );
+
+    await messageRepository.save(messageNonceOne);
+    await messageRepository.save(messageNonceZero);
+
+    const pendingMessages = await messageRepository.getPendingMessagesByGateway(
+      gateway,
+      messageType,
+      new BigNumber('150'),
+    );
+
+    assert.strictEqual(
+      pendingMessages.length,
+      2,
+      'Total messages received must be 2',
+    );
+
+    assert.strictEqual(
+      pendingMessages[0].messageHash,
+      messageNonceZero.messageHash,
+      'First pending message must be with zero nonce',
+    );
+
+    assert.isOk(
+      pendingMessages[0].nonce
+      && pendingMessages[0].nonce.isEqualTo(new BigNumber(0)),
+      'First pending message must be with zero nonce',
+    );
+
+    assert.strictEqual(
+      pendingMessages[1].messageHash,
+      messageNonceOne.messageHash,
+      'Second pending message must be with one nonce',
+    );
+
+    assert.isOk(
+      pendingMessages[1].nonce
+      && pendingMessages[1].nonce.isEqualTo(new BigNumber(1)),
+      'Second pending message must be with 1 nonce',
+    );
+  });
 });

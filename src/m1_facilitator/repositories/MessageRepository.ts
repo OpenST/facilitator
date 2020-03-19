@@ -15,7 +15,7 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import {
-  DataTypes, InitOptions, Model, Op,
+  DataTypes, InitOptions, Model, Op, literal,
 } from 'sequelize';
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
 import Message, { MessageStatus, MessageType } from '../models/Message';
@@ -252,6 +252,9 @@ export default class MessageRepository extends Subject<Message> {
           type: messageType,
         },
       },
+      order: [
+        [literal('sender, nonce'), 'asc'],
+      ],
     });
 
     return messageModels.map(
