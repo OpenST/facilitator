@@ -39,6 +39,10 @@ export default class Deposit {
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const originChainId = config.chains.origin.chainId;
 
+    const originWeb3 = new Web3(originWsEndpoint);
+    originWeb3.transactionConfirmationBlocks = 1;
+    const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
+
     const messageHashes: string[] = [];
 
     const initialOriginAccountBalance: Balance = {};
@@ -55,46 +59,57 @@ export default class Deposit {
         depositorCount,
         concurrencyCount,
       );
+      // eslint-disable-next-line no-await-in-loop
+      await Utils.addAccountsToWeb3Wallet(testDepositorAccounts, originWeb3);
 
       // eslint-disable-next-line no-await-in-loop
-      await Faucet.fundAccounts(testDepositorAccounts, originChainId);
+      await Faucet.fundAccounts(testDepositorAccounts, originChainId, originWeb3);
 
       const initialBalancePromises = testDepositorAccounts.map(
         async (account: Account): Promise<void> => {
           const { valueToken } = config.chains.origin;
-          const { utilityToken } = config.chains.auxiliary;
+          // const { utilityToken } = config.chains.auxiliary;
 
           const originBalance = await AddressHandler.getTokenBalance(
             account.address,
-            originWsEndpoint,
+            originWeb3,
             valueToken,
           );
           initialOriginAccountBalance[account.address] = originBalance;
 
+          // TO DO: (node:7600) UnhandledPromiseRejectionWarning:
+          // Error: This contract object doesn't have address set yet, please set an address first.
           const auxiliaryBalance = await AddressHandler.getTokenBalance(
             account.address,
-            auxiliaryWsEndpoint,
+            auxiliaryWeb3,
             utilityToken,
           );
-          initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
+
+          console.log('aux balance :- ', auxiliaryBalance);
+
         },
       );
+
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(initialBalancePromises);
 
       const depositTransactionPromises = testDepositorAccounts.map(
         async (account: Account): Promise<void> => {
-          const { txObject, depositAmount } = await this.createDepositTransactionObject(account);
+          originWeb3.transactionConfirmationBlocks = 1;
+          const { txObject, depositAmount } = await this.createDepositTransactionObject(
+            account,
+            originWeb3,
+          );
           if (expectedOriginAccountBalance[account.address]) {
             expectedOriginAccountBalance[account.address] += depositAmount;
           } else {
             expectedOriginAccountBalance[account.address] = depositAmount;
           }
-          const txReceipt = await txObject.send({
+
+          const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
-            gasPrice: '0x3B9ACA00',
-            gas: (await txObject.estimateGas({ from: account.address })),
           });
+          console.log('Deposit txReceipt :-', txReceipt);
 
           const {
             messageHash,
@@ -104,11 +119,12 @@ export default class Deposit {
         },
       );
 
+      // TO DO: timeout interval logic suggested by sarvesh.
+
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(depositTransactionPromises);
       // eslint-disable-next-line no-await-in-loop
       await new Promise(done => setTimeout(done, pollingInterval));
-
       totalDepositorAccounts = totalDepositorAccounts.concat(testDepositorAccounts);
     }
 
@@ -146,12 +162,11 @@ export default class Deposit {
     await Faucet.refundOSTToFaucet(totalUniqueDepositorAccounts);
   }
 
-  private static async createDepositTransactionObject(account: Account): Promise<any> {
+  private static async createDepositTransactionObject(account: Account, web3: any): Promise<any> {
     const config = await Utils.getConfig();
 
     const erc20GatewayAddress = config.chains.origin.gateway;
-    const originWeb3 = new Web3(config.chains.origin.wsEndpoint);
-    const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
+    const erc20Gateway = Mosaic.interacts.getERC20Gateway(web3, erc20GatewayAddress);
 
     const { minAmount } = config.testData.deposit;
     const { maxAmount } = config.testData.deposit;
@@ -166,6 +181,18 @@ export default class Deposit {
     const testGasLimit = await Utils.getRandomNumber(minGasLimit, maxGasLimit);
 
     const { valueToken } = config.chains.origin;
+    const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
+
+    // TO DO: approve
+    const approveRawTx = valueTokenInstance.methods.approve(
+      erc20GatewayAddress,
+      testAmount,
+    );
+
+    const txReceipt = await Utils.sendTransaction(approveRawTx, {
+      from: account.address,
+    });
+    console.log('Approve txReceipt :-', txReceipt);
 
     return {
       txObject: erc20Gateway.methods.deposit(

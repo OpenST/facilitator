@@ -9,7 +9,7 @@
       "faucet": "0x743a8310a7482c56fcfc616d3e59013934ba3496"
     },
     "auxiliary": {
-      "wsEndpoint": "wss://chain.mosaicdao.org/hadapsar/wss",
+      "wsEndpoint": "https://chain.mosaicdao.org/hadapsar/wss/",
       "graphEndpoint": "",
       "utilityToken": "",
       "cogateway": "0x25a1CE197371735D6EDccC178F90841a7CEc23bb",
@@ -21,7 +21,7 @@
     "deposit": {
       "iterations": 1,
       "depositorCount": 2,
-      "concurrencyCount": 3,
+      "concurrencyCount": 1,
       "pollingInterval": 1,
       "timeoutInterval": 20,
       "minAmount": 150,

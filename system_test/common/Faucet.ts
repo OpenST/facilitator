@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Mosaic from 'Mosaic';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
-import Tx from 'ethereumjs-tx';
+// import Tx from 'ethereumjs-tx';
 import Web3 from 'web3';
 
 import AddressHandler from './AddressHandler';
@@ -34,30 +34,27 @@ export default class Faucet {
       const { wsEndpoint, faucet, chainId } = config.chains.auxiliary;
       const balance = await AddressHandler.getBalance(account, wsEndpoint);
       const web3 = new Web3(wsEndpoint);
+      web3.eth.accounts.wallet.add(account);
 
+      // const nonce =  web3.eth.getTransactionCount(account.address);
       const rawTransaction = {
         from: account.address,
         to: faucet,
         value: balance,
-        nonce: web3.eth.getTransactionCount(account.address),
         gasPrice: 0x3B9ACA00,
         gas: web3.utils.toHex(23000),
         chainId,
       };
-
-      const { privateKey } = account;
-      // eslint-disable-next-line no-buffer-constructor
-      const privateKeyHex = new Buffer(privateKey, 'hex');
-      const tx = new Tx(rawTransaction);
-      tx.sign(privateKeyHex);
-      const serializedTx = tx.serialize();
-      await web3.eth.sendTransaction(serializedTx);
+      await web3.eth.sendTransaction(rawTransaction);
     });
   }
 
-  public static async fundAccounts(accounts: any[], chain: number): Promise<void> {
+  public static async fundAccounts(accounts: any[], chain: number, originWeb3: any): Promise<void> {
     accounts.map(async (account: any): Promise<void> => {
-      await this.fundFromFaucet(account.address, chain);
+      const balance = await AddressHandler.getBalance(account.address, originWeb3);
+      if (balance < 100) {
+        await this.fundFromFaucet(account.address, chain);
+      }
     });
   }
 

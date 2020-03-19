@@ -11,7 +11,9 @@ export default class Utils {
     const txOptions = Object.assign({}, txOption);
 
     if (txOptions.gas === undefined) {
+      console.log('Estimating gas :-');
       txOptions.gas = await tx.estimateGas(txOptions);
+      console.log(txOptions.gas);
     }
 
     return new Promise(async (onResolve, onReject): Promise<void> => {
@@ -27,5 +29,13 @@ export default class Utils {
     const config = JSON.parse(configFile.toString());
 
     return config;
+  }
+
+  public static async addAccountsToWeb3Wallet(accounts: any[], web3: any): Promise<void> {
+    accounts.map(
+      async (account: any): Promise<void> => {
+        await web3.eth.accounts.wallet.add(account);
+      },
+    );
   }
 }

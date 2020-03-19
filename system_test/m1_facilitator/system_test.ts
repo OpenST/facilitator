@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import Deposit from './Deposit';
-import Withdraw from './Withdraw';
+// import Withdraw from './Withdraw';
 
 Deposit.depositSystemTest();
-Withdraw.withdrawSystemTest();
+// Withdraw.withdrawSystemTest();

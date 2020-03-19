@@ -63,19 +63,16 @@ export default class AddressHandler {
     return randomAddresses;
   }
 
-  public static async getBalance(account: string, wsEndpoint: string): Promise<number> {
-    const web3 = new Web3(wsEndpoint);
+  public static async getBalance(account: string, web3: any): Promise<number> {
     const balance = await web3.eth.getBalance(account);
-
-    return +balance;
+    return balance;
   }
 
   public static async getTokenBalance(
     account: string,
-    wsEndpoint: string,
+    web3: any,
     tokenAddress: string,
   ): Promise<number> {
-    const web3 = new Web3(wsEndpoint);
     const tokenInstance = Mosaic.interacts.getERC20I(web3, tokenAddress);
     const balance = await tokenInstance.methods.balanceOf(account).call();
 
