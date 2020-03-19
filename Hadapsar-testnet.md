@@ -27,7 +27,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```
 
 ### Faucets to get the base tokens for the transactions.
-- **Göerli faucet**
+- **Göerli faucet**<br>
   Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 - **OST Prime faucet**
   ```
@@ -53,18 +53,18 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   npm install --save web3
   ```
 2. Keystore
-  - If keystore exists with the account address `0xabc`
-    - Then save the keystore as `0xabc.json` and the password as `0xabc.password` in the same directory
-  - Else, to generate keystore and save it in the required format follow [this](#account-creation)
+    - If keystore exists with the account address `0xabc`
+      - Then save the keystore as `0xabc.json` and the password as `0xabc.password` in the same directory
+    - Else, to generate keystore and save it in the required format follow [this](#account-creation)
 3. The account should have sufficient token [balance](#balance) on the origin chain(Göerli)
 4. The account should have base token (gas) to do the deposit transactions.<br>
   Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 5. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
   Create `approveERC20Gateway.js` as,
   ```js
-  const Web3 = require('web3');
   const fs = require('fs');
   const path = require('path');
+  const Web3 = require('web3');
 
   const performApproveERC20GatewayTransaction = async () => {
     try {
@@ -119,7 +119,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       };
 
       const signedTx = await web3.eth.accounts.signTransaction(rawTxApprove, privateKey);
-      web3.transactionConfirmationBlocks = 3;
+      web3.transactionConfirmationBlocks = 1;
       const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
@@ -133,18 +133,18 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   performApproveERC20GatewayTransaction();
   ```
   **Note:**
-  - Add the values for `privateKey`, `amount`, `valueTokenAddress` and run
+  - Add the values for `accountAddress`, `amount`, `valueTokenAddress` and run
   ```sh
   node approveERC20Gateway.js
   ```
-6. Check the approved token [allowance](#Allowance) on the origin chain(Göerli)
+6. Check the approved token [allowance](#allowance) on the origin chain(Göerli)
 
 ### Perform deposit transaction
   Create `deposit.js` as,
   ```js
-  const Web3 = require('web3');
   const fs = require('fs');
   const path = require('path');
+  const Web3 = require('web3');
 
   const performDepositTransaction = async () => {
     try {
@@ -205,7 +205,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       };
 
       const signedTx = await web3.eth.accounts.signTransaction(rawTxDeposit, privateKey);
-      web3.transactionConfirmationBlocks = 3;
+      web3.transactionConfirmationBlocks = 1;
       const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
@@ -242,12 +242,12 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   ```sh
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
   ```
-5. Ethereum account should approve `ERC20Cogateway` for token transfer.
-  Create approveERC20Cogateway.js as,
+5. Ethereum account should approve `ERC20Cogateway` for token transfer.<br>
+  Create `approveERC20Cogateway.js` as,
   ```js
-  const Web3 = require('web3');
   const fs = require('fs');
   const path = require('path');
+  const Web3 = require('web3');
 
   const performApproveERC20CogatewayTransaction = async () => {
     try {
@@ -302,7 +302,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       };
 
       const signedTx = await web3.eth.accounts.signTransaction(rawTxApprove, privateKey);
-      web3.transactionConfirmationBlocks = 3;
+      web3.transactionConfirmationBlocks = 1;
       const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
@@ -325,9 +325,9 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 ### Perform withdraw transaction
   Create `withdraw.js` as,
   ```js
-  const Web3 = require('web3');
   const fs = require('fs');
   const path = require('path');
+  const Web3 = require('web3');
 
   const performWithdrawTransaction = async () => {
     try {
@@ -388,7 +388,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       };
 
       const signedTx = await web3.eth.accounts.signTransaction(rawTxWithdraw, privateKey);
-      web3.transactionConfirmationBlocks = 3;
+      web3.transactionConfirmationBlocks = 1;
       const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
@@ -483,10 +483,9 @@ node approvedBalance.js
 To create a keystore and save it in the required format
 Create `accountCreation.js` as,
 ```js
-const path = require('path');
 const fs = require('fs');
-
 const inquirer = require('inquirer');
+const path = require('path');
 const Web3 = require('web3');
 
 async function createAccount() {
@@ -494,7 +493,7 @@ async function createAccount() {
     {
       type: 'password',
       name: 'password',
-      message: 'Please provide a password to generate an ethereum account.',
+      message: 'Password to generate an ethereum account.',
       validate(input) {
         return input.length > 0;
       },
@@ -503,7 +502,7 @@ async function createAccount() {
       type: 'path',
       name: 'path',
       default: __dirname,
-      message: 'Please provide a path to store the key store file.',
+      message: 'Path to store the keystore file.',
       validate(input) {
         return input.length > 0;
       },
@@ -530,5 +529,5 @@ npm install --save web3 inquirer
 ```
 - Run
 ```sh
-node approvedBalance.js
+node accountCreation.js
 ```
