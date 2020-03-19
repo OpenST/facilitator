@@ -82,6 +82,7 @@ export default class FacilitatorInit implements Command {
     const auxiliaryWeb3 = manifest.metachain.auxiliaryChain.web3;
 
     const repositories = await Repositories.create(databaseFilePath);
+    Logger.debug('all repositories created');
     Logger.debug('Initializing seed data');
     await new SeedDataInitializer(repositories).initialize(
       originWeb3,

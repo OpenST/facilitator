@@ -67,6 +67,7 @@ export default class SeedDataInitializer {
   ): Promise<void> {
     const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
     const cogatewayAddress = await erc20Gateway.methods.messageOutbox().call();
+    Logger.debug(`cogatewayAddress: ${cogatewayAddress}`);
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(
       auxiliaryWeb3,
       cogatewayAddress,
@@ -106,6 +107,11 @@ export default class SeedDataInitializer {
         .getLatestStateRootBlockHeight().call();
     }
 
+    Logger.debug(
+      `auxiliaryLatestAnchoredStateRootBlockHeight: ${auxiliaryLatestAnchoredStateRootBlockHeight},
+    originLatestAnchoredStateRootBlockHeight: ${originLatestAnchoredStateRootBlockHeight}`,
+    );
+
     const originGateway = new Gateway(
       Gateway.getGlobalAddress(erc20GatewayAddress),
       Gateway.getGlobalAddress(cogatewayAddress),
@@ -113,6 +119,7 @@ export default class SeedDataInitializer {
       Anchor.getGlobalAddress(originAnchorAddress),
       new BigNumber(0),
     );
+    Logger.debug(`originGateway: ${JSON.stringify(originGateway)}`);
 
     const auxiliaryGateway = new Gateway(
       Gateway.getGlobalAddress(cogatewayAddress),
@@ -121,19 +128,26 @@ export default class SeedDataInitializer {
       Anchor.getGlobalAddress(auxiliaryAnchorAddress),
       new BigNumber(0),
     );
+    Logger.debug(`auxiliaryGateway: ${JSON.stringify(auxiliaryGateway)}`);
 
     const originAnchor = new Anchor(
       Anchor.getGlobalAddress(originAnchorAddress),
       new BigNumber(auxiliaryLatestAnchoredStateRootBlockHeight),
     );
+    Logger.debug(`originAnchor: ${JSON.stringify(originAnchor)}`);
 
     const auxiliaryAnchor = new Anchor(
       Anchor.getGlobalAddress(auxiliaryAnchorAddress),
       new BigNumber(originLatestAnchoredStateRootBlockHeight),
     );
+    Logger.debug(`auxiliaryAnchor: ${JSON.stringify(auxiliaryAnchor)}`);
 
     const originLastBlockTimestamp = await Utils.latestBlockTimestamp(originWeb3);
     const auxiliaryLastBlockTimestamp = await Utils.latestBlockTimestamp(auxiliaryWeb3);
+    Logger.debug(
+      `originLastBlockTimestamp: ${originLastBlockTimestamp},
+      auxiliaryLastBlockTimestamp: ${auxiliaryLastBlockTimestamp}`,
+    );
 
     const contractEntities = SeedDataInitializer.getContractEntities(
       erc20GatewayAddress,
@@ -143,6 +157,7 @@ export default class SeedDataInitializer {
       originAnchorAddress,
       auxiliaryAnchorAddress,
     );
+    Logger.debug(`contractEntities: ${JSON.stringify(contractEntities)}`);
 
     const saveContractEntityPromises = contractEntities.map(
       async (contractEntity): Promise<void> => {
@@ -151,12 +166,17 @@ export default class SeedDataInitializer {
     );
 
     await Promise.all(saveContractEntityPromises);
+    Logger.debug('Contract entity repository initialized');
 
     await this.repositories.anchorRepository.save(originAnchor);
+    Logger.debug('Origin anchor repository initialized');
     await this.repositories.anchorRepository.save(auxiliaryAnchor);
+    Logger.debug('Auxiliary anchor repository initialized');
 
     await this.repositories.gatewayRepository.save(auxiliaryGateway);
+    Logger.debug('Auxiliary Gateway repository initialized');
     await this.repositories.gatewayRepository.save(originGateway);
+    Logger.debug('Origin Gateway repository initialized');
   }
 
   /**

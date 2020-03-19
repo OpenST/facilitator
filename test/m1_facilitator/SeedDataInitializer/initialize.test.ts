@@ -162,7 +162,7 @@ describe('SeedDataInitializer:initialize', () => {
   const cogatewayAddress = '0x0000000000000000000000000000000000000002';
   const originAnchorAddress = '0x0000000000000000000000000000000000000003';
   const auxiliaryAnchorAddress = '0x0000000000000000000000000000000000000002';
-  const latestAnchorBlockHeight = '1';
+  const latestAnchorBlockHeight = '0';
   const fakeERC20Gateway = {
     methods: {
       messageOutbox: () => ({
