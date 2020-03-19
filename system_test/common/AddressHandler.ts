@@ -16,7 +16,6 @@
 import Mosaic from 'Mosaic';
 import fs from 'fs';
 import path from 'path';
-import Web3 from 'web3';
 
 import Utils from './Utils';
 
@@ -39,6 +38,7 @@ export default class AddressHandler {
   public static async getRandomAddresses(
     totalAccountCount: number,
     concurrencyCount: number,
+    web3: any,
   ): Promise<any[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.accounts;
@@ -55,7 +55,6 @@ export default class AddressHandler {
         const accountKeyStore = JSON.parse(keyStore.toString());
         const accountPassword = JSON.parse(password.toString());
 
-        const web3 = new Web3(null);
         const decryptedAccount = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
         randomAddresses.push(decryptedAccount);
       }
@@ -77,5 +76,24 @@ export default class AddressHandler {
     const balance = await tokenInstance.methods.balanceOf(account).call();
 
     return +balance;
+  }
+
+  public static async getAddresses(count: number, web3: any): Promise<any[]> {
+    const config = await Utils.getConfig();
+    const configAddresses = config.accounts;
+    const accountsSelected: any[] = [];
+
+    for (let i = 0; i < count; i += 1) {
+      const accountAddress = configAddresses[i];
+      const keyStore = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.json`);
+      const password = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.password`);
+
+      const accountKeyStore = JSON.parse(keyStore.toString());
+      const accountPassword = JSON.parse(password.toString());
+
+      const decryptedAccount = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
+      accountsSelected.push(decryptedAccount);
+    }
+    return accountsSelected;
   }
 }

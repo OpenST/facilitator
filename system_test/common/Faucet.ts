@@ -34,9 +34,7 @@ export default class Faucet {
       const { wsEndpoint, faucet, chainId } = config.chains.auxiliary;
       const balance = await AddressHandler.getBalance(account, wsEndpoint);
       const web3 = new Web3(wsEndpoint);
-      web3.eth.accounts.wallet.add(account);
 
-      // const nonce =  web3.eth.getTransactionCount(account.address);
       const rawTransaction = {
         from: account.address,
         to: faucet,
@@ -50,17 +48,24 @@ export default class Faucet {
   }
 
   public static async fundAccounts(accounts: any[], chain: number, originWeb3: any): Promise<void> {
-    accounts.map(async (account: any): Promise<void> => {
-      const balance = await AddressHandler.getBalance(account.address, originWeb3);
-      if (balance < 100) {
+    const fundingPromises = accounts.map(async (account: any): Promise<void> => {
+      const config = await Utils.getConfig();
+      const { valueToken } = config.chains.origin;
+      const balance = await AddressHandler.getTokenBalance(
+        account.address,
+        originWeb3,
+        valueToken,
+      );
+      if (balance < 250) {
         await this.fundFromFaucet(account.address, chain);
       }
     });
+    await Promise.all(fundingPromises);
   }
 
   private static async fundFromFaucet(beneficiary: string, chain: number): Promise<void> {
     try {
-      console.log(`Funding ${beneficiary} for chain ${chain}`);
+      console.log(`✅Funding ${beneficiary} for chain ${chain}`);
       const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
       const response = await axios.post(
