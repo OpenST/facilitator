@@ -18,7 +18,7 @@ import Logger from '../../../src/common/Logger';
 
 
 /**
- * To excute fundFacilitatorAccount command,
+ * To execute fundFacilitatorAccount command,
  * ./fund_facilitator_account -m <manifest_file_path>
  */
 fund_facilitator_account.option('-m, --manifest <manifest>', 'Path to manifest file')
