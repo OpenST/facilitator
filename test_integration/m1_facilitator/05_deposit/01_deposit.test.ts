@@ -90,7 +90,7 @@ describe('Deposit token ', () => {
   it('Assert balances', async (): Promise<void> => {
     const repositories = await Repositories.create(
       Directory.getFacilitatorDatabaseFile(
-        ArchitectureLayout.MOSAIC1,
+        ArchitectureLayout.MOSAIC1_0_14,
         shared.contracts.erc20Gateway.address,
       ),
     );
@@ -128,7 +128,7 @@ describe('Deposit token ', () => {
     const gatewayAddresses = shared.contracts.erc20Gateway.address;
     const repositories = await Repositories.create(
       Directory.getFacilitatorDatabaseFile(
-        ArchitectureLayout.MOSAIC1,
+        ArchitectureLayout.MOSAIC1_0_14,
         gatewayAddresses,
       ),
     );
