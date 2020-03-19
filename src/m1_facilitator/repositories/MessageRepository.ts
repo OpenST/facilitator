@@ -46,6 +46,8 @@ class MessageModel extends Model {
 
   public readonly sender!: string;
 
+  public readonly nonce!: BigNumber;
+
   public readonly createdAt!: Date;
 
   public readonly updatedAt!: Date;
@@ -134,9 +136,12 @@ export default class MessageRepository extends Subject<Message> {
             min: 0,
           },
         },
-
         sender: {
           type: DataTypes.STRING,
+          allowNull: true,
+        },
+        nonce: {
+          type: DataTypes.BIGINT,
           allowNull: true,
         },
       },
@@ -311,6 +316,7 @@ export default class MessageRepository extends Subject<Message> {
         : messageModel.sourceDeclarationBlockNumber,
       messageModel.intentHash,
       messageModel.sender,
+      messageModel.nonce,
       messageModel.createdAt,
       messageModel.updatedAt,
     );

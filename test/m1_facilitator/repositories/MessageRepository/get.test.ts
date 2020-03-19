@@ -37,6 +37,7 @@ describe('MessageRepository::get', (): void => {
   let sender: string;
   let createdAt: Date;
   let updatedAt: Date;
+  let nonce: BigNumber;
 
   beforeEach(async (): Promise<void> => {
     config = {
@@ -52,6 +53,7 @@ describe('MessageRepository::get', (): void => {
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     sourceDeclarationBlockNumber = new BigNumber(300);
     sender = '0x0000000000000000000000000000000000000005';
+    nonce = new BigNumber(0);
     createdAt = new Date();
     updatedAt = new Date();
 
@@ -66,6 +68,7 @@ describe('MessageRepository::get', (): void => {
       sourceDeclarationBlockNumber,
       intentHash,
       sender,
+      nonce,
       createdAt,
       updatedAt,
     );
