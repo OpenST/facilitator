@@ -87,6 +87,7 @@ export default class FacilitatorInit implements Command {
       originWeb3,
       auxiliaryWeb3,
       gatewayAddresses,
+      manifest.architectureLayout,
     );
   }
 }

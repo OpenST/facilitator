@@ -15,6 +15,7 @@
 import Web3 from 'web3';
 import sinon from 'sinon';
 import Mosaic from 'Mosaic';
+import { interacts } from '@openst/mosaic-contracts';
 
 import BigNumber from 'bignumber.js';
 import Repositories
@@ -28,6 +29,7 @@ import ContractEntityRepository
   from '../../../src/common/repositories/ContractEntityRepository';
 import { EntityType } from '../../../src/common/models/ContractEntity';
 import Utils from '../../../src/common/Utils';
+import { ArchitectureLayout } from '../../../src/m1_facilitator/manifest/Manifest';
 
 function assertGateway(
   gateway: Gateway | null,
@@ -186,6 +188,14 @@ describe('SeedDataInitializer:initialize', () => {
     },
   };
 
+  const fakeAnchor_0_10 = {
+    methods: {
+      getLatestStateRootBlockHeight: () => ({
+        call: async (): Promise<string> => Promise.resolve(latestAnchorBlockHeight),
+      }),
+    },
+  };
+
   beforeEach(async (): Promise<void> => {
     repositories = await Repositories.create();
   });
@@ -219,6 +229,83 @@ describe('SeedDataInitializer:initialize', () => {
       originWeb3,
       auxiliaryWeb3,
       gatewayAddress,
+      ArchitectureLayout.MOSAIC1_0_14,
+    );
+
+    const gateway = await repositories.gatewayRepository.get(
+      Gateway.getGlobalAddress(gatewayAddress),
+    );
+
+    assertGateway(
+      gateway,
+      gatewayAddress,
+      cogatewayAddress,
+      originAnchorAddress,
+    );
+
+    const cogateway = await repositories.gatewayRepository.get(
+      Gateway.getGlobalAddress(cogatewayAddress),
+    );
+
+    assertGateway(
+      cogateway,
+      cogatewayAddress,
+      gatewayAddress,
+      auxiliaryAnchorAddress,
+    );
+
+    const anchor = await repositories.anchorRepository.get(
+      Anchor.getGlobalAddress(originAnchorAddress),
+    );
+
+    assertAnchor(anchor, originAnchorAddress, latestAnchorBlockHeight);
+
+    const coAnchor = await repositories.anchorRepository.get(
+      Anchor.getGlobalAddress(auxiliaryAnchorAddress),
+    );
+
+    assertAnchor(coAnchor, auxiliaryAnchorAddress, latestAnchorBlockHeight);
+
+    await assertContractEntities(
+      repositories.contractEntityRepository,
+      gatewayAddress,
+      cogatewayAddress,
+      originAnchorAddress,
+      auxiliaryAnchorAddress,
+    );
+    sinon.restore();
+  });
+
+  it('should initialize seed data when for supporting older testnet', async (): Promise<void> => {
+    sinon.replace(
+      Mosaic.interacts,
+      'getERC20Gateway',
+      sinon.fake.returns(fakeERC20Gateway),
+    );
+
+    sinon.replace(
+      Mosaic.interacts,
+      'getERC20Cogateway',
+      sinon.fake.returns(fakeERC20Cogateway),
+    );
+
+    sinon.replace(
+      interacts,
+      'getAnchor',
+      sinon.fake.returns(fakeAnchor_0_10),
+    );
+
+    sinon.replace(
+      Utils,
+      'latestBlockTimestamp',
+      sinon.fake.resolves(new BigNumber(1)),
+    );
+
+    await new SeedDataInitializer(repositories).initialize(
+      originWeb3,
+      auxiliaryWeb3,
+      gatewayAddress,
+      ArchitectureLayout.MOSAIC1_0_10,
     );
 
     const gateway = await repositories.gatewayRepository.get(
@@ -263,4 +350,6 @@ describe('SeedDataInitializer:initialize', () => {
       auxiliaryAnchorAddress,
     );
   });
+
+  sinon.restore();
 });

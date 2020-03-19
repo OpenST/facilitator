@@ -98,7 +98,7 @@ describe('Config.fromFile()', (): void => {
 
     const dbConfig = new DBConfig();
     dbConfig.path = Directory.getFacilitatorDatabaseFile(
-      ArchitectureLayout.MOSAIC1,
+      ArchitectureLayout.MOSAIC1_0_14,
       inputYamlConfig.origin_contract_addresses.erc20_gateway,
     );
     assert.deepStrictEqual(

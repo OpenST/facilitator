@@ -1,5 +1,5 @@
 version: v0.14
-architecture_layout: MOSAIC1
+architecture_layout: MOSAIC1_0_14
 personas:
   - facilitator
 metachain:

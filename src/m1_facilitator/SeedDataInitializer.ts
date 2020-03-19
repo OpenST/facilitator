@@ -15,6 +15,7 @@
 import Web3 from 'web3';
 import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
+import { interacts } from '@openst/mosaic-contracts';
 
 import Anchor from './models/Anchor';
 import Gateway, { GatewayType } from './models/Gateway';
@@ -22,6 +23,7 @@ import Repositories from './repositories/Repositories';
 import ContractEntity, { EntityType } from '../common/models/ContractEntity';
 import Utils from '../common/Utils';
 import Logger from '../common/Logger';
+import { ArchitectureLayout } from './manifest/Manifest';
 
 /**
  * Initializes the seed data in repositories and validate the seeded data.
@@ -55,11 +57,13 @@ export default class SeedDataInitializer {
    * @param originWeb3 Instance of origin web3.
    * @param auxiliaryWeb3 Instance of auxiliary web3.
    * @param erc20GatewayAddress ERC20 Gateway address.
+   * @param architectureLayout Architecture layout.
    */
   public async initialize(
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
     erc20GatewayAddress: string,
+    architectureLayout: ArchitectureLayout,
   ): Promise<void> {
     const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
     const cogatewayAddress = await erc20Gateway.methods.messageOutbox().call();
@@ -69,21 +73,38 @@ export default class SeedDataInitializer {
     );
 
     const originAnchorAddress = await erc20Gateway.methods.stateRootProvider().call();
-    const originAnchorInstance = Mosaic.interacts.getAnchor(
-      originWeb3,
-      originAnchorAddress,
-    );
-
     const auxiliaryAnchorAddress = await erc20Cogateway.methods.stateRootProvider().call();
-    const auxiliaryAnchorInstance = Mosaic.interacts.getAnchor(
-      auxiliaryWeb3,
-      auxiliaryAnchorAddress,
-    );
+    let auxiliaryLatestAnchoredStateRootBlockHeight: string;
+    let originLatestAnchoredStateRootBlockHeight: string;
+    if (ArchitectureLayout.MOSAIC1_0_14 === architectureLayout) {
+      const originAnchorInstance = Mosaic.interacts.getAnchor(
+        originWeb3,
+        originAnchorAddress,
+      );
+      const auxiliaryAnchorInstance = Mosaic.interacts.getAnchor(
+        auxiliaryWeb3,
+        auxiliaryAnchorAddress,
+      );
 
-    const auxiliaryLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
-      .getLatestStateRootBlockNumber().call();
-    const originLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
-      .getLatestStateRootBlockNumber().call();
+      auxiliaryLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
+        .getLatestStateRootBlockNumber().call();
+      originLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
+        .getLatestStateRootBlockNumber().call();
+    } else {
+      const originAnchorInstance = interacts.getAnchor(
+        originWeb3,
+        originAnchorAddress,
+      );
+      const auxiliaryAnchorInstance = interacts.getAnchor(
+        auxiliaryWeb3,
+        auxiliaryAnchorAddress,
+      );
+
+      originLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
+        .getLatestStateRootBlockHeight().call();
+      auxiliaryLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
+        .getLatestStateRootBlockHeight().call();
+    }
 
     const originGateway = new Gateway(
       Gateway.getGlobalAddress(erc20GatewayAddress),
