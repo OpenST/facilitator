@@ -21,12 +21,16 @@ import Message, { MessageStatus, MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
 import WithdrawIntent from '../models/WithdrawIntent';
 import WithdrawIntentRepository from '../repositories/WithdrawIntentRepository';
+import ERC20GatewayTokenPairRepository from '../repositories/ERC20GatewayTokenPairRepository';
+import Gateway from '../models/Gateway';
+import Logger from '../../common/Logger';
+import Utils from '../../common/Utils';
 
 /** Represents record of DeclaredWithdrawIntentsEntity. */
 interface DeclaredWithdrawIntentsEntityInterface {
   messageHash: string;
   contractAddress: string;
-  utilityTokenAddress: string;
+  utilityToken: string;
   amount: string;
   beneficiary: string;
   feeGasPrice: string;
@@ -48,26 +52,40 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
   /* Message repository. */
   private messageRepository: MessageRepository;
 
+  /* ERC20GatewayTokenPair repository. */
+  private erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository;
+
+  /* Unique list of value token addresses to be facilitated. */
+  private supportedTokens: Set<string>;
+
   /**
    * Construct DeclaredWithdrawIntentsHandler with params.
+   *
    * @param withdrawIntentRepository Instance of withdraw intent repository.
    * @param messageRepository Instance of message repository.
    * @param gatewayRepository Instance of gateway repository.
+   * @param erc20GatewayTokenPairRepository Instance of ERC20TokenPair repository.
+   * @param supportedTokens Value tokens to be facilitated.
    */
   public constructor(
     withdrawIntentRepository: WithdrawIntentRepository,
     messageRepository: MessageRepository,
     gatewayRepository: GatewayRepository,
+    erc20GatewayTokenPairRepository: ERC20GatewayTokenPairRepository,
+    supportedTokens: Set<string>,
   ) {
     super();
 
     this.gatewayRepository = gatewayRepository;
     this.withdrawIntentRepository = withdrawIntentRepository;
     this.messageRepository = messageRepository;
+    this.erc20GatewayTokenPairRepository = erc20GatewayTokenPairRepository;
+    this.supportedTokens = supportedTokens;
   }
 
   /**
    * Handles DeclaredWithdrawIntents entity records.
+   * - Filters non supported tokens.
    * - It creates a message record and updates it's source status to `Declared`.
    * - It creates `WithdrawIntent` record.
    * - This handler only reacts to the events of cogateways which are populated
@@ -76,30 +94,35 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
    * @param records List of declared withdraw intents.
    */
   public async handle(records: DeclaredWithdrawIntentsEntityInterface[]): Promise<void> {
-    const savePromises = records.map(async (record): Promise<void> => {
+    Logger.info(`DeclaredWithdrawIntentsHandler::records received ${records.length}`);
+    const supportedTokenRecords = await this.getSupportedTokenRecords(records);
+    const savePromises = supportedTokenRecords.map(async (record): Promise<void> => {
       const { messageHash, contractAddress } = record;
 
-      const gatewayRecord = await this.gatewayRepository.get(contractAddress);
-
+      Logger.debug(`Received withdraw intent record for messageHash ${messageHash}`);
+      const gatewayRecord = await this.gatewayRepository.get(
+        Gateway.getGlobalAddress(contractAddress),
+      );
       if (gatewayRecord !== null) {
+        Logger.info(`DeclaredWithdrawIntentsHandler::gateway record found for gatewayGA ${gatewayRecord.gatewayGA}`);
         await this.handleMessage(
           messageHash,
-          contractAddress,
+          Utils.toChecksumAddress(contractAddress),
           new BigNumber(record.feeGasPrice),
           new BigNumber(record.feeGasLimit),
-          record.withdrawer,
+          Utils.toChecksumAddress(record.withdrawer),
           new BigNumber(record.blockNumber),
         );
         await this.handleWithdrawIntent(
           messageHash,
-          record.utilityTokenAddress,
+          Utils.toChecksumAddress(record.utilityToken),
           new BigNumber(record.amount),
-          record.beneficiary,
+          Utils.toChecksumAddress(record.beneficiary),
         );
       }
     });
-
     await Promise.all(savePromises);
+    Logger.info('DeclaredWithdrawIntentsHandler::messages saved');
   }
 
   /**
@@ -116,8 +139,10 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     amount: BigNumber,
     beneficiary: string,
   ): Promise<void> {
+    Logger.debug(`DeclaredWithdrawIntentsHandler::Getting withdraw intent record for messageHash ${messageHash}`);
     let withdrawIntentRecord = await this.withdrawIntentRepository.get(messageHash);
     if (withdrawIntentRecord === null) {
+      Logger.debug(`DeclaredWithdrawIntentsHandler::Withdraw intent record doesn't exists for mesasgehash: ${messageHash}`);
       withdrawIntentRecord = new WithdrawIntent(
         messageHash,
         utilityTokenAddress,
@@ -126,6 +151,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       );
     }
     await this.withdrawIntentRepository.save(withdrawIntentRecord);
+    Logger.info(`DeclaredWithdrawIntentsHandler:: saved withdrawIntentRecord having messageHash ${withdrawIntentRecord.messageHash}`);
   }
 
   /**
@@ -146,9 +172,11 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     sender: string,
     sourceDeclarationBlockNumber: BigNumber,
   ): Promise<void> {
+    Logger.debug(`DeclaredWithdrawIntentsHandler::Getting message record for messageHash ${messageHash}`);
     let message = await this.messageRepository.get(messageHash);
 
     if (message === null) {
+      Logger.debug(`DeclaredWithdrawIntentsHandler::Message record does not exists for messageHash ${messageHash}`);
       message = new Message(
         messageHash,
         MessageType.Withdraw,
@@ -158,10 +186,62 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       );
       message.feeGasPrice = feeGasPrice;
       message.feeGasLimit = feeGasLimit;
-      message.sender = sender;
+      message.sender = Utils.toChecksumAddress(sender);
       message.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     }
     message.sourceStatus = MessageStatus.Declared;
     await this.messageRepository.save(message);
+    Logger.info(`DeclaredWithdrawIntentsHandler::saved message having messageHash: ${message.messageHash}`);
+  }
+
+  /**
+   * Filters non supported tokens and returns records with suported tokens.
+   * @param records List of declared withdraw intents.
+   */
+  private async getSupportedTokenRecords(
+    records: DeclaredWithdrawIntentsEntityInterface[],
+  ): Promise<DeclaredWithdrawIntentsEntityInterface[]> {
+    const supportedTokenRecords: DeclaredWithdrawIntentsEntityInterface[] = [];
+    for (let i = 0; i < records.length; i += 1) {
+      const record = records[i];
+      // eslint-disable-next-line no-await-in-loop
+      const isTokenSupported = await this.isTokenSupported(
+        record.contractAddress,
+        record.utilityToken,
+      );
+      if (isTokenSupported) {
+        supportedTokenRecords.push(record);
+      }
+    }
+    return supportedTokenRecords;
+  }
+
+  /**
+   * Checks if utility token => value token address needs to be facilitated.
+   *
+   * @param coGatewayAddress Cogateway contract address .
+   * @param utilityTokenAddress Value token address.
+   */
+  private async isTokenSupported(
+    coGatewayAddress: string,
+    utilityTokenAddress: string,
+  ): Promise<boolean> {
+    if (this.supportedTokens.size === 0) {
+      return true;
+    }
+    const gatewayRecord = await this.gatewayRepository.get(coGatewayAddress);
+    if (gatewayRecord) {
+      const erc20GatewayTokenPair = await this.erc20GatewayTokenPairRepository.getByUtilityToken(
+        gatewayRecord.remoteGA,
+        utilityTokenAddress,
+      );
+      if (!erc20GatewayTokenPair) {
+        return false;
+      }
+      if (this.supportedTokens.has(erc20GatewayTokenPair.valueToken)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

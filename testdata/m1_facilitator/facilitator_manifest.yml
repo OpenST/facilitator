@@ -23,5 +23,5 @@ accounts:
 origin_contract_addresses:
     erc20_gateway: "0xA7f056b1320fE619571849f138Cd1Ae2f2e64179"
 facilitate_tokens:
-  - "0x9AC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8"
+  - "0x9aC77F4c0ca4D0F2142D7a77175cf4F1295fb2d8"
   - "0x19F64B29789F02FFcCE2c37DFB3d65FEaDdea66a"

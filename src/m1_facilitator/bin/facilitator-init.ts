@@ -18,7 +18,7 @@ import Logger from '../../common/Logger';
 
 commander
   .option('-m, --manifest <manifest>', 'Path to manifest file')
-  .option('-f, --force <force>', 'Set this option for reinitialize facilitator')
+  .option('-f, --force', 'Set this option for reinitialize facilitator')
   .action(async (options: {
     manifest: string;
     force?: boolean;
@@ -30,4 +30,4 @@ commander
     } catch (e) {
       Logger.error(`Error in facilitator init command. Reason: ${e.message}`);
     }
-  });
+  }).parse(process.argv);

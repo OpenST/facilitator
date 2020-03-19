@@ -88,19 +88,19 @@ export default class Facilitator {
 
   // Subscribes to origin and auxiliary subgraphs
   private async subscribeToSubGraphs(): Promise<void> {
-    Logger.info('Starting subscription to block chain events');
+    Logger.info('Facilitator::Starting subscription to graph node entities');
     await this.originSubscriber.subscribe();
-    Logger.info('Subscription to origin block chain is done');
+    Logger.info('Facilitator::Subscription to origin graph node is done');
     await this.auxiliarySubscriber.subscribe();
-    Logger.info('Subscription to auxiliary block chain is done');
+    Logger.info('Facilitator::Subscription to auxiliary graph node is done');
   }
 
-  // UnSubscribes to origin and auxiliary subgraphs
+  // Unsubscribes to origin and auxiliary subgraphs
   private async unsubscribeToSubGraphs(): Promise<void> {
-    Logger.info('Stopping subscription to block chain events');
+    Logger.info('Facilitator::Stopping subscription to graph node entities');
     await this.originSubscriber.unsubscribe();
-    Logger.info('Unsubscribed to origin block chain.');
+    Logger.info('Facilitator::Unsubscribed to origin graph node.');
     await this.auxiliarySubscriber.unsubscribe();
-    Logger.info('Unsubscribed to auxiliary block chain.');
+    Logger.info('Facilitator::Unsubscribed to auxiliary graph node.');
   }
 }

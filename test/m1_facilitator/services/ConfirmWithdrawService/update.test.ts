@@ -18,7 +18,7 @@ import * as web3Utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 import Mosaic from 'Mosaic';
 
-import { ProofGenerator } from '@openst/mosaic-proof';
+import ProofGenerator from '../../../../src/common/ProofGenerator';
 import Repositories
   from '../../../../src/m1_facilitator/repositories/Repositories';
 import Gateway, { GatewayType } from '../../../../src/m1_facilitator/models/Gateway';
@@ -33,8 +33,6 @@ import ConfirmWithdrawService
   from '../../../../src/m1_facilitator/services/ConfirmWithdrawService';
 import WithdrawIntent
   from '../../../../src/m1_facilitator/models/WithdrawIntent';
-import ERC20GatewayTokenPair
-  from '../../../../src/m1_facilitator/models/ERC20GatewayTokenPair';
 
 describe('ConfirmWithdraw:update ', (): void => {
   let confirmWithdrawService: ConfirmWithdrawService;
@@ -53,7 +51,9 @@ describe('ConfirmWithdraw:update ', (): void => {
   let auxiliaryWeb3: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let confirmWithdrawSpy: any;
-  const utilityToken = '0x0000000000000000000000000000000000000009';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let getUtilityTokenSpy: any;
+  const valueToken = '0x0000000000000000000000000000000000000007';
 
   beforeEach(async (): Promise<void> => {
     const repositories = await Repositories.create();
@@ -72,7 +72,7 @@ describe('ConfirmWithdraw:update ', (): void => {
       MessageType.Withdraw,
       MessageStatus.Declared,
       MessageStatus.Undeclared,
-      gateway.gatewayGA,
+      gateway.remoteGA,
       new BigNumber('1'),
       new BigNumber('1'),
       new BigNumber('100'),
@@ -88,15 +88,9 @@ describe('ConfirmWithdraw:update ', (): void => {
       web3Utils.sha3('2'),
     );
 
-    const gatwayTokenPair = new ERC20GatewayTokenPair(
-      gateway.remoteGA,
-      withdrawIntent.tokenAddress as string,
-      utilityToken,
-    );
 
     await repositories.withdrawIntentRepository.save(withdrawIntent);
     await repositories.messageRepository.save(message);
-    await repositories.erc20GatewayTokenPairRepository.save(gatwayTokenPair);
 
     const originWeb3 = sinon.createStubInstance(Web3);
     auxiliaryWeb3 = sinon.createStubInstance(Web3);
@@ -109,6 +103,13 @@ describe('ConfirmWithdraw:update ', (): void => {
         },
         outboxStorageIndex: () => ({
           call: () => '7',
+        }),
+      },
+    };
+    const fakeUtilityToken = {
+      methods: {
+        valueToken: () => ({
+          call: () => valueToken,
         }),
       },
     };
@@ -125,6 +126,12 @@ describe('ConfirmWithdraw:update ', (): void => {
       sinon.fake.returns(fakeERC20Gateway),
     );
 
+    getUtilityTokenSpy = sinon.replace(
+      Mosaic.interacts,
+      'getUtilityToken',
+      sinon.fake.returns(fakeUtilityToken),
+    );
+
     const proof = {
       storageProof: [
         {
@@ -136,7 +143,7 @@ describe('ConfirmWithdraw:update ', (): void => {
 
     sinon.replace(
       ProofGenerator.prototype,
-      'getOutboxProof',
+      'generate',
       sinon.fake.returns(proof),
     );
 
@@ -145,7 +152,6 @@ describe('ConfirmWithdraw:update ', (): void => {
       auxiliaryWeb3,
       repositories.messageRepository,
       repositories.withdrawIntentRepository,
-      repositories.erc20GatewayTokenPairRepository,
       transactionExecutor,
     );
   });
@@ -155,15 +161,17 @@ describe('ConfirmWithdraw:update ', (): void => {
     SpyAssert.assert(
       transactionExecutor.add,
       1,
-      [[gateway.remoteGA, confirmWithdrawRawTx]],
+      [[gateway.gatewayGA, confirmWithdrawRawTx]],
     );
 
     SpyAssert.assertCall(getERC20GatewaySpy, 1);
 
+    SpyAssert.assertCall(getUtilityTokenSpy, 1);
+
     SpyAssert.assert(confirmWithdrawSpy, 1, [
       [
         withdrawIntent.tokenAddress,
-        utilityToken,
+        valueToken,
         (withdrawIntent.amount as BigNumber).toString(10),
         withdrawIntent.beneficiary,
         (message.feeGasPrice as BigNumber).toString(10),

@@ -17,6 +17,9 @@ import ContractEntityHandler from '../../common/handlers/ContractEntityHandler';
 import GatewayRepository from '../repositories/GatewayRepository';
 import Message, { MessageStatus, MessageType } from '../models/Message';
 import MessageRepository from '../repositories/MessageRepository';
+import Logger from '../../common/Logger';
+import Utils from '../../common/Utils';
+import Gateway from '../models/Gateway';
 
 import assert = require('assert');
 
@@ -59,9 +62,13 @@ export default class ConfirmWithdrawIntentsHandler extends ContractEntityHandler
    * @param records List of confirm withdraw intents.
    */
   public async handle(records: ConfirmWithdrawIntentsEntityInterface[]): Promise<void> {
+    Logger.info(`ConfirmWithdrawIntentsHandler::records received: ${records.length}`);
     const savePromises = records.map(async (record): Promise<void> => {
-      const gatewayRecord = await this.gatewayRepository.get(record.contractAddress);
+      const gatewayRecord = await this.gatewayRepository.get(
+        Gateway.getGlobalAddress(Utils.toChecksumAddress(record.contractAddress)),
+      );
       if (gatewayRecord !== null) {
+        Logger.info(`ConfirmWithdrawIntentsHandler::gateway record found for gatewayGA: ${gatewayRecord.gatewayGA}`);
         let message = await this.messageRepository.get(record.messageHash);
 
         if (message === null) {
@@ -78,9 +85,11 @@ export default class ConfirmWithdrawIntentsHandler extends ContractEntityHandler
 
           message.targetStatus = MessageStatus.Declared;
           await this.messageRepository.save(message);
+          Logger.info(`ConfirmWithdrawIntentsHandler::saved message: ${JSON.stringify(message)}`);
         }
       }
     });
     await Promise.all(savePromises);
+    Logger.debug('ConfirmWithdrawIntentsHandler::saved message repository records');
   }
 }

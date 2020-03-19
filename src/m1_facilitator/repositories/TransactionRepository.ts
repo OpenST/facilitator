@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {
-  DataTypes, Model, InitOptions,
+  DataTypes, InitOptions,
 } from 'sequelize';
 import assert from 'assert';
 import { Mutex } from 'async-mutex';
@@ -25,7 +25,7 @@ import Utils from '../../common/Utils';
 /**
  * An interface, that represents an each row of TransactionRepository.
  */
-class TransactionModel extends Model {
+class TransactionModel {
   public readonly fromAddress!: string;
 
   public readonly toAddress!: string;
@@ -56,13 +56,16 @@ class TransactionModel extends Model {
 export default class TransactionRepository extends Subject<Transaction> {
   private mutex: Mutex;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private transactionModel: any;
 
   /* Public Functions */
 
   public constructor(initOptions: InitOptions, modelName: string, tableName: string) {
     super();
 
-    TransactionModel.init(
+    this.transactionModel = initOptions.sequelize.define(
+      modelName,
       {
         id: {
           type: DataTypes.INTEGER,
@@ -101,7 +104,6 @@ export default class TransactionRepository extends Subject<Transaction> {
       },
       {
         ...initOptions,
-        modelName,
         tableName,
       },
     );
@@ -120,7 +122,7 @@ export default class TransactionRepository extends Subject<Transaction> {
     try {
       if (transaction.id && transaction.id.gt(0)) {
         const definedOwnProps: string[] = Utils.getDefinedOwnProps(transaction);
-        await TransactionModel.update(
+        await this.transactionModel.update(
           transaction,
           {
             where: {
@@ -133,7 +135,7 @@ export default class TransactionRepository extends Subject<Transaction> {
           transaction.id,
         );
       } else {
-        savedTransaction = this.convertToTransaction(await TransactionModel.create(
+        savedTransaction = this.convertToTransaction(await this.transactionModel.create(
           transaction,
         ));
       }
@@ -155,7 +157,7 @@ export default class TransactionRepository extends Subject<Transaction> {
    * @param id Unique auto increment transaction id.
    */
   public async get(id: BigNumber): Promise<Transaction | null> {
-    const transactionModel = await TransactionModel.findOne({
+    const transactionModel = await this.transactionModel.findOne({
       where: {
         id: id.toNumber(),
       },
@@ -175,7 +177,7 @@ export default class TransactionRepository extends Subject<Transaction> {
    * - Transaction hash is null
    */
   public async dequeue(): Promise<Transaction | null> {
-    const transactionModel = await TransactionModel.findOne({
+    const transactionModel = await this.transactionModel.findOne({
       where: {
         transactionHash: null,
       },

@@ -29,19 +29,21 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
   let messageRepository: MessageRepository;
   let depositIntentRepository: DepositIntentRepository;
   let gatewayRepository: GatewayRepository;
+  let repositories: Repositories;
 
   const record1 = {
     contractAddress: '0x0000000000000000000000000000000000000001',
     messageHash: web3utils.sha3('2'),
-    valueTokenAddress: '0x0000000000000000000000000000000000000002',
+    valueToken: '0x0000000000000000000000000000000000000002',
     beneficiary: '0x0000000000000000000000000000000000000050',
     amount: '20',
     feeGasLimit: '20',
     feeGasPrice: '20',
     blockNumber: '100',
+    depositor: '0x0000000000000000000000000000000000000070',
   };
   beforeEach(async (): Promise<void> => {
-    const repositories = await Repositories.create();
+    repositories = await Repositories.create();
     ({ depositIntentRepository, gatewayRepository, messageRepository } = repositories);
     const gateway = new Gateway(
       Gateway.getGlobalAddress(record1.contractAddress),
@@ -59,6 +61,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       repositories.depositIntentRepository,
       repositories.gatewayRepository,
       repositories.messageRepository,
+      new Set(),
     );
   });
 
@@ -67,6 +70,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     feeGasLimit: string;
     feeGasPrice: string;
     blockNumber: string;
+    depositor: string;
   }): Promise<void> {
     const message = await messageRepository.get(record.messageHash);
 
@@ -119,7 +123,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
 
   async function assertDepositIntentRepository(record: {
     messageHash: string;
-    valueTokenAddress: string;
+    valueToken: string;
     amount: string;
     beneficiary: string;
   }): Promise<void> {
@@ -135,7 +139,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
 
     assert.strictEqual(
       depositIntent && depositIntent.tokenAddress,
-      record.valueTokenAddress,
+      record.valueToken,
       'Incorrect value token address',
     );
 
@@ -178,12 +182,13 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     const record2 = {
       contractAddress: '0x0000000000000000000000000000000000000060',
       messageHash: web3utils.sha3('20'),
-      valueTokenAddress: '0x0000000000000000000000000000000000000062',
+      valueToken: '0x0000000000000000000000000000000000000062',
       feeGasLimit: '20',
       feeGasPrice: '40',
       blockNumber: '100',
       beneficiary: '0x0000000000000000000000000000000000000070',
       amount: '20',
+      depositor: '0x0000000000000000000000000000000000000070',
     };
 
     const gateway1 = new Gateway(
@@ -204,5 +209,43 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     await assertMessageRepository(record2);
     await assertDepositIntentRepository(record1);
     await assertDepositIntentRepository(record2);
+  });
+
+  it('should filter records which should not be facilitated', async (): Promise<void> => {
+    const record2 = {
+      contractAddress: '0x0000000000000000000000000000000000000060',
+      messageHash: web3utils.sha3('20'),
+      valueToken: '0x0000000000000000000000000000000000000062',
+      feeGasLimit: '20',
+      feeGasPrice: '40',
+      blockNumber: '100',
+      beneficiary: '0x0000000000000000000000000000000000000070',
+      amount: '20',
+      depositor: '0x0000000000000000000000000000000000000070',
+    };
+
+    declaredDepositIntentsHandler = new DeclaredDepositIntentsHandler(
+      repositories.depositIntentRepository,
+      repositories.gatewayRepository,
+      repositories.messageRepository,
+      new Set('0x0000000000000000000000000000000000000062'),
+    );
+
+    await declaredDepositIntentsHandler.handle([record2]);
+
+    const message = await messageRepository.get(record2.messageHash);
+    assert.strictEqual(
+      message,
+      null,
+      'Message should not be saved.',
+    );
+
+    const depositIntent = await depositIntentRepository.get(record2.messageHash);
+
+    assert.strictEqual(
+      depositIntent,
+      null,
+      'DepositIntent should not be saved.',
+    );
   });
 });

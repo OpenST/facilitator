@@ -1,0 +1,72 @@
+version: "3"
+services:
+  graph_node_origin:
+    image: graphprotocol/graph-node:v0.16.0
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8020:8020'
+    depends_on:
+      - postgres_origin
+      - ipfs
+      - geth_node_origin
+    environment:
+      postgres_host: postgres_origin:5432
+      postgres_user: 'postgres'
+      postgres_pass: 'postgres'
+      postgres_db:  'mosaic_origin'
+      ipfs: 'ipfs:5001'
+      ethereum: '${origin_ethereum}'
+      RUST_LOG: info
+      GRAPH_LOG: info
+      ETHEREUM_POLLING_INTERVAL: 3000
+      ETHEREUM_REORG_THRESHOLD: 0
+  geth_node_origin:
+    image: augurproject/dev-node-geth:v1.9.9
+    ports:
+      - "8546:8545"
+  postgres_origin:
+    image: postgres:alpine
+    ports:
+      - '6432:5432'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'mosaic_origin'
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.22-rc1
+    ports:
+      - '5001:5001'
+  graph_node_auxiliary:
+    image: graphprotocol/graph-node:v0.16.0
+    ports:
+      - '9000:8000'
+      - '9001:8001'
+      - '9020:8020'
+    depends_on:
+      - postgres_auxiliary
+      - ipfs
+      - geth_node_auxiliary
+    environment:
+      postgres_host: postgres_auxiliary:5432
+      postgres_user: 'postgres'
+      postgres_pass: 'postgres'
+      postgres_db:  'mosaic_auxiliary'
+      ipfs: 'ipfs:5001'
+      ethereum: '${auxiliary_ethereum}'
+      RUST_LOG: info
+      GRAPH_LOG: info
+      ETHEREUM_POLLING_INTERVAL: 3000
+      ETHEREUM_REORG_THRESHOLD: 0
+  geth_node_auxiliary:
+    image: augurproject/dev-node-geth:v1.9.9
+    ports:
+      - "9546:8545"
+  postgres_auxiliary:
+    image: postgres:alpine
+    ports:
+      - '7432:5432'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'mosaic_auxiliary'
