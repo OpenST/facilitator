@@ -18,7 +18,7 @@ import Web3 from 'web3';
 import Command from '../../../src/m1_facilitator/commands/Command';
 import Manifest from '../../../src/m1_facilitator/manifest/Manifest';
 
-// Threshold amount in wei below which avatar account will be funded from faucet.
+// Threshold amount in atto below which avatar account will be funded from faucet.
 const AVATAR_ACCOUNT_THRESHOLD = new BigNumber('1000000000000000000');
 
 const FAUCET_URL = 'https://faucet.mosaicdao.org';
@@ -26,7 +26,7 @@ const FAUCET_URL = 'https://faucet.mosaicdao.org';
 const HADAPSAR = '1405';
 
 /*
- * Returns balance of avatar account in wei.
+ * Returns balance of avatar account in atto.
  */
 async function checkBalance(account: string, web3: Web3): Promise<BigNumber> {
   const accountBalance = await web3.eth.getBalance(account);
