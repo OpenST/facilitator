@@ -18,7 +18,7 @@ import Web3 from 'web3';
 import Command from '../../../../src/m1_facilitator/commands/Command';
 import Manifest from '../../../../src/m1_facilitator/manifest/Manifest';
 
-// Threshold below which avatar account will be funded from faucet.
+// Threshold in ether below which avatar account will be funded from faucet.
 const AVATAR_ACCOUNT_THRESHOLD = new BigNumber(50);
 
 const FAUCET_URL = 'https://faucet.mosaicdao.org';
@@ -32,8 +32,9 @@ enum Chains {
  * Returns balance of avatar account.
  */
 async function checkBalance(account: string, auxWeb3: Web3): Promise<BigNumber> {
-  const auxAvatarBalance = await auxWeb3.eth.getBalance(account);
-  return new BigNumber(auxAvatarBalance);
+  const auxAvatarBalanceWei = await auxWeb3.eth.getBalance(account);
+  const auxAvatarBalanceEther = auxWeb3.utils.fromWei(auxAvatarBalanceWei, 'ether');
+  return new BigNumber(auxAvatarBalanceEther);
 }
 
 export default class FundAvatar implements Command {
@@ -54,8 +55,8 @@ export default class FundAvatar implements Command {
   public async execute(): Promise<void> {
     const manifest = Manifest.fromFile(this.manifestPath);
     const acc = manifest.metachain.auxiliaryChain.avatarAccount;
-    if (await checkBalance(acc, manifest.metachain.auxiliaryChain.web3)
-      < AVATAR_ACCOUNT_THRESHOLD) {
+    if ((await checkBalance(acc, manifest.metachain.auxiliaryChain.web3))
+      .lt(AVATAR_ACCOUNT_THRESHOLD)) {
       this.fundFromFaucet(acc, Chains.Hadapsar);
     }
   }
