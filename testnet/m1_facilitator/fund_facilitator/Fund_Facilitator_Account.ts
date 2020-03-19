@@ -15,11 +15,11 @@
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import Command from '../../../../src/m1_facilitator/commands/Command';
-import Manifest from '../../../../src/m1_facilitator/manifest/Manifest';
+import Command from '../../../src/m1_facilitator/commands/Command';
+import Manifest from '../../../src/m1_facilitator/manifest/Manifest';
 
-// Threshold in ether below which avatar account will be funded from faucet.
-const AVATAR_ACCOUNT_THRESHOLD = new BigNumber(50);
+// Threshold amount in wei below which avatar account will be funded from faucet.
+const AVATAR_ACCOUNT_THRESHOLD = new BigNumber(1000000000000000000);
 
 const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
@@ -29,19 +29,18 @@ enum Chains {
 }
 
 /**
- * Returns balance of avatar account.
+ * Returns balance of avatar account in wei.
  */
 async function checkBalance(account: string, auxWeb3: Web3): Promise<BigNumber> {
-  const auxAvatarBalanceWei = await auxWeb3.eth.getBalance(account);
-  const auxAvatarBalanceEther = auxWeb3.utils.fromWei(auxAvatarBalanceWei, 'ether');
-  return new BigNumber(auxAvatarBalanceEther);
+  const accountBalance = await auxWeb3.eth.getBalance(account);
+  return new BigNumber(accountBalance);
 }
 
-export default class FundAvatar implements Command {
+export default class FundFacilitatorAccount implements Command {
   private manifestPath: string;
 
   /**
-   * Construct FundAvatar instance with params.
+   * Construct FundFacilitatorAccount instance with params.
    *
    * @param manifestPath Path of manifest file.
    */
@@ -50,7 +49,7 @@ export default class FundAvatar implements Command {
   }
 
   /**
-   * Executes fundAvatar command
+   * Executes fundFacilitatorAccount command
    */
   public async execute(): Promise<void> {
     const manifest = Manifest.fromFile(this.manifestPath);

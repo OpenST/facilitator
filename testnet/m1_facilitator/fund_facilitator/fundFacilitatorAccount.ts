@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import fundAvatar from 'commander';
-import FundAvatar from './Fund_Avatar';
-import Logger from '../../../../src/common/Logger';
+import fundFacilitatorAccount from 'commander';
+import FundFacilitatorAccount from './Fund_Facilitator_Account';
+import Logger from '../../../src/common/Logger';
 
-fundAvatar.option('-m, --manifest <manifest>', 'Path to manifest file')
+fundFacilitatorAccount.option('-m, --manifest <manifest>', 'Path to manifest file')
   .action(
     async (
       options: {
         manifest: string;
       }): Promise<void> => {
       try {
-        await new FundAvatar(options.manifest).execute();
+        await new FundFacilitatorAccount(options.manifest).execute();
       } catch (e) {
-        Logger.error(`Error in fundAvatar command. Reason: ${e.message}`);
+        Logger.error(`Error in fundFacilitatorAccount command. Reason: ${e.message}`);
         process.exit(1);
       }
     },
