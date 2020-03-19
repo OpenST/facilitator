@@ -61,6 +61,7 @@ export default class FundFacilitatorAccount implements Command {
         },
       );
       Logger.info(`Transaction hash is ${result.data.txHash}`);
+      Logger.info(`https://view.mosaicdao.org/tx/${result.data.txHash}/internal_transactions`);
     }
   }
 }
