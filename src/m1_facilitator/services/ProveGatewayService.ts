@@ -193,6 +193,7 @@ export default class ProveGatewayService extends Observer<Anchor> {
       sourceGatewayAddress,
       blockNumber.toString(10),
     );
+    Logger.info(`proveGatewayTransaction::proof: ${JSON.stringify(proof)}`);
     return targetGatewayInstance.methods.proveGateway(
       blockNumber.toString(10),
       // @ts-ignore

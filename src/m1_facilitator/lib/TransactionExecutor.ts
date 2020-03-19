@@ -82,6 +82,7 @@ export default class TransactionExecutor {
    * @param rawTx Raw transaction object.
    */
   public async add(toAddress: string, rawTx: TransactionObject<string>): Promise<void> {
+    Logger.info('TransactionExecutor:: Adding the transaction in queue');
     const transaction = new Transaction(
       this.avatarAccount.address,
       toAddress,
@@ -127,7 +128,6 @@ export default class TransactionExecutor {
   private async execute(): Promise<void> {
     if (!this.mutex.isLocked()) {
       const release = await this.mutex.acquire();
-      Logger.debug('TransactionExecutor:: transaction executor invoked.');
       const transaction = await this.transactionRepository.dequeue();
       try {
         if (transaction) {
@@ -150,7 +150,6 @@ export default class TransactionExecutor {
       } finally {
         release();
       }
-      Logger.debug('TransactionExecutor:: Transaction execution done');
     }
   }
 
