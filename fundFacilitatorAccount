@@ -1,3 +1,0 @@
-#!/bin/bash
-
-TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./testnet/m1_facilitator/fund_facilitator/fundFacilitatorAccount.ts $@

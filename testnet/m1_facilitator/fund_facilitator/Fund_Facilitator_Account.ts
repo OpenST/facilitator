@@ -12,61 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import axios from 'axios';
-import BigNumber from 'bignumber.js';
-import Web3 from 'web3';
-import Command from '../../../src/m1_facilitator/commands/Command';
-import Manifest from '../../../src/m1_facilitator/manifest/Manifest';
+import fund_facilitator_account from 'commander';
+import FundFacilitatorAccount from './FundFacilitatorAccount';
+import Logger from '../../../src/common/Logger';
 
-// Threshold amount in wei below which avatar account will be funded from faucet.
-const AVATAR_ACCOUNT_THRESHOLD = new BigNumber(1000000000000000000);
-
-const FAUCET_URL = 'https://faucet.mosaicdao.org';
-
-enum Chains {
-  Goerli = '5',
-  Hadapsar = '1405',
-}
 
 /**
- * Returns balance of avatar account in wei.
+ * To excute fundFacilitatorAccount command,
+ * ./fund_facilitator_account -m <manifest_file_path>
  */
-async function checkBalance(account: string, web3: Web3): Promise<BigNumber> {
-  const accountBalance = await web3.eth.getBalance(account);
-  return new BigNumber(accountBalance);
-}
-
-export default class FundFacilitatorAccount implements Command {
-  private manifestPath: string;
-
-  /**
-   * Construct FundFacilitatorAccount instance with params.
-   *
-   * @param manifestPath Path of manifest file.
-   */
-  public constructor(manifestPath: string) {
-    this.manifestPath = manifestPath;
-  }
-
-  /**
-   * Executes fundFacilitatorAccount command
-   */
-  public async execute(): Promise<void> {
-    console.log('Inside Execute');
-    const manifest = Manifest.fromFile(this.manifestPath);
-    const account = manifest.metachain.auxiliaryChain.avatarAccount;
-    if ((await checkBalance(account, manifest.metachain.auxiliaryChain.web3))
-      .lt(AVATAR_ACCOUNT_THRESHOLD)) {
-      this.fundFromFaucet(account, Chains.Hadapsar);
-    }
-  }
-
-  private async fundFromFaucet(beneficiary: string, chain: string): Promise<void> {
-    await axios.post(
-      FAUCET_URL,
-      {
-        beneficiary: `${beneficiary}@${chain}`,
-      },
-    );
-  }
-}
+fund_facilitator_account.option('-m, --manifest <manifest>', 'Path to manifest file')
+  .action(
+    async (
+      options: {
+        manifest: string;
+      }): Promise<void> => {
+      try {
+        await new FundFacilitatorAccount(options.manifest).execute();
+      } catch (e) {
+        Logger.error(`Error in fundFacilitatorAccount command. Reason: ${e.message}`);
+        process.exit(1);
+      }
+    },
+  ).parse(process.argv);
