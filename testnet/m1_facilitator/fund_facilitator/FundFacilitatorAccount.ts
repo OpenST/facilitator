@@ -46,7 +46,7 @@ export default class FundFacilitatorAccount implements Command {
   }
 
   /**
-   * Executes fundFacilitatorAccount command
+   * Executes fund_facilitator_account command
    */
   public async execute(): Promise<void> {
     const manifest = Manifest.fromFile(this.manifestPath);

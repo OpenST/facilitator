@@ -30,7 +30,7 @@ fund_facilitator_account.option('-m, --manifest <manifest>', 'Path to manifest f
       try {
         await new FundFacilitatorAccount(options.manifest).execute();
       } catch (e) {
-        Logger.error(`Error in fundFacilitatorAccount command. Reason: ${e.message}`);
+        Logger.error(`Error in fund_facilitator_account command. Reason: ${e.message}`);
         process.exit(1);
       }
     },
