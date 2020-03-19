@@ -14,6 +14,7 @@
 
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import Logger from '../../../src/common/Logger';
 import Web3 from 'web3';
 import Command from '../../../src/m1_facilitator/commands/Command';
 import Manifest from '../../../src/m1_facilitator/manifest/Manifest';
@@ -53,12 +54,13 @@ export default class FundFacilitatorAccount implements Command {
     const account = manifest.metachain.auxiliaryChain.avatarAccount;
     if ((await checkBalance(account, manifest.metachain.auxiliaryChain.web3))
       .lt(FACILITATOR_ACCOUNT_THRESHOLD)) {
-      await axios.post(
+      const result = await axios.post(
         FAUCET_URL,
         {
           beneficiary: `${account}@${HADAPSAR}`,
         },
       );
+      Logger.info(`Transaction hash is ${result.data.txHash}`);
     }
   }
 }
