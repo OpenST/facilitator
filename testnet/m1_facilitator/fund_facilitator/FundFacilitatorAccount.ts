@@ -18,15 +18,15 @@ import Web3 from 'web3';
 import Command from '../../../src/m1_facilitator/commands/Command';
 import Manifest from '../../../src/m1_facilitator/manifest/Manifest';
 
-// Threshold amount in atto below which avatar account will be funded from faucet.
-const AVATAR_ACCOUNT_THRESHOLD = new BigNumber('1000000000000000000');
+// Threshold amount in atto below which facilitator account will be funded from faucet.
+const FACILITATOR_ACCOUNT_THRESHOLD = new BigNumber('1000000000000000000');
 
 const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
 const HADAPSAR = '1405';
 
 /*
- * Returns balance of avatar account in atto.
+ * Returns balance of facilitator account in atto.
  */
 async function checkBalance(account: string, web3: Web3): Promise<BigNumber> {
   const accountBalance = await web3.eth.getBalance(account);
@@ -46,13 +46,13 @@ export default class FundFacilitatorAccount implements Command {
   }
 
   /**
-   * Executes fund_facilitator_account command
+   * Executes fund_facilitator_account command.
    */
   public async execute(): Promise<void> {
     const manifest = Manifest.fromFile(this.manifestPath);
     const account = manifest.metachain.auxiliaryChain.avatarAccount;
     if ((await checkBalance(account, manifest.metachain.auxiliaryChain.web3))
-      .lt(AVATAR_ACCOUNT_THRESHOLD)) {
+      .lt(FACILITATOR_ACCOUNT_THRESHOLD)) {
       await axios.post(
         FAUCET_URL,
         {

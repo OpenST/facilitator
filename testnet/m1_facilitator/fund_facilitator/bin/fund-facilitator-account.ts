@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import fund_facilitator_account from 'commander';
-import FundFacilitatorAccount from './FundFacilitatorAccount';
-import Logger from '../../../src/common/Logger';
+import FundFacilitatorAccount from '../FundFacilitatorAccount';
+import Logger from '../../../../src/common/Logger';
 
 
 /**
- * To execute fundFacilitatorAccount command,
+ * To execute fund_facilitator_account command,
  * ./fund_facilitator_account -m <manifest_file_path>
  */
 fund_facilitator_account.option('-m, --manifest <manifest>', 'Path to manifest file')
