@@ -1,4 +1,3 @@
-
 # Hadapsar Testnet - Move any ERC20 tokens
 
 ## Overview
@@ -54,41 +53,40 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   npm install --save web3
   ```
 2. Unlock the accounts<br/>
-  The ethereum accounts should be unlocked for for any transactions.
-  In this example an encrypted keystore file and a password file is used.<br/>
+  The ethereum accounts should be unlocked for any transactions<br>
+  In the following example an encrypted keystore file and a password file is used<br/>
   **Keystore and password file**
     - An example to generate keystore is [here](#account-creation)
-    - A complete file path for keystore and password files will be required in this example.
+    - A complete file path for keystore and password files will be required in this example
 3. The account should have sufficient ERC20 token [balance](#balance) to deposit on the origin chain(Göerli)
 4. The account should have base token (gas) to do the deposit transactions.<br>
   Get the GöEth for the deposit transaction using [Faucet](https://goerli-faucet.slock.it/)
 5. Ethereum account should approve `ERC20Gateway` for token transfer.<br/>
-  Update the following constants in the following code:
+  Update these constants in the following code:
   ```js
-    TODO:  check if ACCOUNT_ADDRESS is needed, it can be derived from the keystore file.
-    TODO: Add comment to explain what this represents.
-    const ACCOUNT_ADDRESS = '<ACCOUNT_ADDRESS>';
-    const DEPOSIT_AMOUNT = '<AMOUNT_TO_APPROVE>';
-    const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
-    const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
-    const ERC20_TOKEN_CONTRACT_ADDRESS = '<VALUE_TOKEN_ADDRESS>';
+  // The amount to be approved
+  const APPROVE_AMOUNT = '<APPROVE_AMOUNT>';
+  // The absolute file path of the keystore file
+  const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
+  // The absolute file path of the keystore password
+  const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
+  // The ERC20 contract address for the value token on origin chain(Göerli)
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
   ```
   Create `approveERC20Gateway.js` as,
   ```js
   const fs = require('fs');
-  const path = require('path');
   const Web3 = require('web3');
 
   const ERC20_GATEWAY_CONTRACT_ADDRESS = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
-  const GOERLI_ENDPOINT = 'https://rpc.slock.it/goerli'
+  const GOERLI_ENDPOINT = 'https://rpc.slock.it/goerli';
 
   // Please update the following constant values
-  const ACCOUNT_ADDRESS = '<ACCOUNT_ADDRESS>';
-  const DEPOSIT_AMOUNT = '<AMOUNT_TO_APPROVE>';
+  const APPROVE_AMOUNT = '<APPROVE_AMOUNT>';
   const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
   const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
-  const ERC20_TOKEN_CONTRACT_ADDRESS = '<VALUE_TOKEN_ADDRESS>';
-  
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
+
   const performApproveERC20GatewayTransaction = async () => {
     try {
       const erc20TokenApproveABI = [{
@@ -107,6 +105,8 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       const accountKeyStore = JSON.parse(keyStore.toString());
       const accountPassword = JSON.parse(password.toString());
 
+      const accountAddress = `0x${accountKeyStore.address}`;
+
       const web3Account = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
       const { privateKey } = web3Account;
       web3.eth.accounts.wallet.add(web3Account);
@@ -117,17 +117,17 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
       );
 
       const approveData = erc20ValueTokenContract.methods
-        .approve(ERC20_GATEWAY_CONTRACT_ADDRESS, amount)
+        .approve(ERC20_GATEWAY_CONTRACT_ADDRESS, APPROVE_AMOUNT)
         .encodeABI();
       const nonce = await web3.eth.getTransactionCount(accountAddress);
       const gasLimit = await web3.eth.estimateGas({
-        from: ACCOUNT_ADDRESS,
+        from: accountAddress,
         to: ERC20_TOKEN_CONTRACT_ADDRESS,
         data: approveData,
       });
 
       const rawTxApprove = {
-        from: ACCOUNT_ADDRESS,
+        from: accountAddress,
         nonce: `0x${nonce.toString(16)}`,
         data: approveData,
         to: ERC20_TOKEN_CONTRACT_ADDRESS,
@@ -149,19 +149,46 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
   performApproveERC20GatewayTransaction();
   ```
-  **Note:**
-  - Add the values for `accountAddress`, `amount`, `valueTokenAddress` and run
+  To execute `approveERC20Gateway.js`, run
   ```sh
   node approveERC20Gateway.js
   ```
 6. Check the approved token [allowance](#allowance) on the origin chain(Göerli)
 
 ### Perform deposit transaction
+  Update these constants in the following code:
+  ```js
+  // The absolute file path of the keystore file
+  const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
+  // The absolute file path of the keystore password
+  const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
+  // The amount to deposit
+  const DEPOSIT_AMOUNT = '<DEPOSIT_AMOUNT>';
+  // The beneficiary address which will get the equivalent ERC20 utility token on metachain(Hadapsar-1405)
+  const BENEFICIARY_ADDRESS = '<BENEFICIARY_ADDRESS>';
+  // The gas price at which the fee will be calculated
+  const FEE_GAS_PRICE = '<FEE_GAS_PRICE>';
+  // The gas limit at which the fee will be capped
+  const FEE_GAS_LIMIT = '<FEE_GAS_LIMIT>';
+  // The ERC20 contract address for the value token on origin chain(Göerli)
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
+  ```
   Create `deposit.js` as,
   ```js
-  const fs = require('fs');
-  const path = require('path');
   const Web3 = require('web3');
+  const fs = require('fs');
+
+  const ERC20_GATEWAY_CONTRACT_ADDRESS = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
+  const GOERLI_ENDPOINT = 'https://rpc.slock.it/goerli';
+
+  // Please update the following constant values
+  const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
+  const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
+  const DEPOSIT_AMOUNT = '<DEPOSIT_AMOUNT>';
+  const BENEFICIARY_ADDRESS = '<BENEFICIARY_ADDRESS>';
+  const FEE_GAS_PRICE = '<FEE_GAS_PRICE>';
+  const FEE_GAS_LIMIT = '<FEE_GAS_LIMIT>';
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
 
   const performDepositTransaction = async () => {
     try {
@@ -178,20 +205,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         stateMutability: 'nonpayable',
         type: 'function',
       }];
-      const erc20GatewayContractAddress = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
-      const web3 = new Web3('https://rpc.slock.it/goerli');
-
-      const accountAddress = '<ACCOUNT_ADDRESS>';
-      const amount = '<AMOUNT_TO_DEPOSIT>';
-      const beneficiary = '<BENEFICIARY_ADDRESS>';
-      const feeGasPrice = '<FEE_GAS_PRICE>';
-      const feeGasLimit = '<FEE_GAS_LIMIT>';
-      const valueTokenAddress = '<VALUE_TOKEN_ADDRESS>';
-
-      const keyStore = fs.readFileSync(path.join(__dirname, '/', `${accountAddress}.json`));
-      const password = fs.readFileSync(path.join(__dirname, '/', `${accountAddress}.password`));
+      const web3 = new Web3(GOERLI_ENDPOINT);
+      const keyStore = fs.readFileSync(ACCOUNT_KEYSTORE_FILE_PATH);
+      const password = fs.readFileSync(ACCOUNT_PASSWORD_FILE_PATH);
       const accountKeyStore = JSON.parse(keyStore.toString());
       const accountPassword = JSON.parse(password.toString());
+
+      const accountAddress = `0x${accountKeyStore.address}`;
 
       const web3Account = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
       const { privateKey } = web3Account;
@@ -199,16 +219,22 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
       const erc20GatewayContract = new web3.eth.Contract(
         erc20GatewayContractDepositABI,
-        erc20GatewayContractAddress,
+        ERC20_GATEWAY_CONTRACT_ADDRESS,
       );
 
       const depositData = erc20GatewayContract.methods
-        .deposit(amount, beneficiary, feeGasPrice, feeGasLimit, valueTokenAddress)
+        .deposit(
+          DEPOSIT_AMOUNT,
+          BENEFICIARY_ADDRESS,
+          FEE_GAS_PRICE,
+          FEE_GAS_LIMIT,
+          ERC20_TOKEN_CONTRACT_ADDRESS,
+        )
         .encodeABI();
       const nonce = await web3.eth.getTransactionCount(accountAddress);
       const gasLimit = await web3.eth.estimateGas({
         from: accountAddress,
-        to: erc20GatewayContractAddress,
+        to: ERC20_GATEWAY_CONTRACT_ADDRESS,
         data: depositData,
       });
 
@@ -216,13 +242,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         from: accountAddress,
         nonce: `0x${nonce.toString(16)}`,
         data: depositData,
-        to: erc20GatewayContractAddress,
+        to: ERC20_GATEWAY_CONTRACT_ADDRESS,
         gasLimit,
         gasPrice: 10000000000,
       };
 
       const signedTx = await web3.eth.accounts.signTransaction(rawTxDeposit, privateKey);
-      web3.transactionConfirmationBlocks = 1;
+      web3.transactionConfirmationBlocks = 3;
       const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
@@ -235,8 +261,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
   performDepositTransaction();
   ```
-  **Note:**
-  - Add the values for `accountAddress`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit`, `valueTokenAddress` and run
+  To execute `deposit.js`, run
   ```sh
   node deposit.js
   ```
@@ -260,11 +285,30 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   curl -H "Content-Type: text/json" -d '{"beneficiary": "<beneficiaryAddress>@1405"}' https://faucet.mosaicdao.org
   ```
 5. Ethereum account should approve `ERC20Cogateway` for token transfer.<br>
+  Update these constants in the following code:
+  ```js
+  // The amount to be approved
+  const APPROVE_AMOUNT = '<APPROVE_AMOUNT>';
+  // The absolute file path of the keystore file
+  const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
+  // The absolute file path of the keystore password
+  const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
+  // The ERC20 contract address for the utility token on metachain(Hadapsar-1405)
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
+  ```
   Create `approveERC20Cogateway.js` as,
   ```js
-  const fs = require('fs');
-  const path = require('path');
   const Web3 = require('web3');
+  const fs = require('fs');
+
+  const ERC20_COGATEWAY_CONTRACT_ADDRESS = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
+  const HADAPSAR_ENDPOINT = 'https://chain.mosaicdao.org/hadapsar';
+
+  // Please update the following constant values
+  const APPROVE_AMOUNT = '<APPROVE_AMOUNT>';
+  const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
+  const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
 
   const performApproveERC20CogatewayTransaction = async () => {
     try {
@@ -278,17 +322,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         stateMutability: 'nonpayable',
         type: 'function',
       }];
-      const erc20CogatewayContractAddress = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
-      const web3 = new Web3('https://chain.mosaicdao.org/hadapsar');
-
-      const accountAddress = '<ACCOUNT_ADDRESS>';
-      const amount = '<AMOUNT_TO_APPROVE>';
-      const utilityTokenTokenAddress = '<UTILITY_TOKEN_ADDRESS>';
-
-      const keyStore = fs.readFileSync(path.join(__dirname, '/', `${accountAddress}.json`));
-      const password = fs.readFileSync(path.join(__dirname, '/', `${accountAddress}.password`));
+      const web3 = new Web3(HADAPSAR_ENDPOINT);
+      const keyStore = fs.readFileSync(ACCOUNT_KEYSTORE_FILE_PATH);
+      const password = fs.readFileSync(ACCOUNT_PASSWORD_FILE_PATH);
       const accountKeyStore = JSON.parse(keyStore.toString());
       const accountPassword = JSON.parse(password.toString());
+
+      const accountAddress = `0x${accountKeyStore.address}`;
 
       const web3Account = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
       const { privateKey } = web3Account;
@@ -296,16 +336,16 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
       const erc20UtilityTokenContract = new web3.eth.Contract(
         erc20TokenApproveABI,
-        utilityTokenTokenAddress,
+        ERC20_TOKEN_CONTRACT_ADDRESS,
       );
 
       const approveData = erc20UtilityTokenContract.methods
-        .approve(erc20CogatewayContractAddress, amount)
+        .approve(ERC20_COGATEWAY_CONTRACT_ADDRESS, APPROVE_AMOUNT)
         .encodeABI();
       const nonce = await web3.eth.getTransactionCount(accountAddress);
       const gasLimit = await web3.eth.estimateGas({
         from: accountAddress,
-        to: utilityTokenTokenAddress,
+        to: ERC20_TOKEN_CONTRACT_ADDRESS,
         data: approveData,
       });
 
@@ -313,13 +353,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         from: accountAddress,
         nonce: `0x${nonce.toString(16)}`,
         data: approveData,
-        to: utilityTokenTokenAddress,
+        to: ERC20_TOKEN_CONTRACT_ADDRESS,
         gasLimit,
         gasPrice: 10000000000,
       };
 
       const signedTx = await web3.eth.accounts.signTransaction(rawTxApprove, privateKey);
-      web3.transactionConfirmationBlocks = 1;
+      web3.transactionConfirmationBlocks = 3;
       const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
@@ -332,19 +372,46 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
   performApproveERC20CogatewayTransaction();
   ```
-  **Note:**
-  - Add the values for `accountAddress`, `amount`, `utilityTokenTokenAddress` and run
+  To execute `approveERC20Cogateway.js`, run
   ```sh
   node approveERC20Cogateway.js
   ```
 6. Check the approved token [allowance](#Allowance) on the metachain(Hadapsar-1405)
 
 ### Perform withdraw transaction
+  Update these constants in the following code:
+  ```js
+  // The absolute file path of the keystore file
+  const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
+  // The absolute file path of the keystore password
+  const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
+  // The amount to withdraw
+  const WITHDRAW_AMOUNT = '<WITHDRAW_AMOUNT>';
+  // The beneficiary address which will get the equivalent ERC20 token on origin chain(Göerli)
+  const BENEFICIARY_ADDRESS = '<BENEFICIARY_ADDRESS>';
+  // The gas price at which the fee will be calculated
+  const FEE_GAS_PRICE = '<FEE_GAS_PRICE>';
+  // The gas limit at which the fee will be capped
+  const FEE_GAS_LIMIT = '<FEE_GAS_LIMIT>';
+  // The ERC20 contract address for the utility token on metachain(Hadapsar-1405)
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
+  ```
   Create `withdraw.js` as,
   ```js
-  const fs = require('fs');
-  const path = require('path');
   const Web3 = require('web3');
+  const fs = require('fs');
+
+  const ERC20_COGATEWAY_CONTRACT_ADDRESS = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
+  const HADAPSAR_ENDPOINT = 'https://chain.mosaicdao.org/hadapsar';
+
+  // Please update the following constant values
+  const ACCOUNT_KEYSTORE_FILE_PATH = '<ACCOUNT_KEYSTORE_FILE_PATH>';
+  const ACCOUNT_PASSWORD_FILE_PATH = '<ACCOUNT_PASSWORD_FILE_PATH>';
+  const WITHDRAW_AMOUNT = '<WITHDRAW_AMOUNT>';
+  const BENEFICIARY_ADDRESS = '<BENEFICIARY_ADDRESS>';
+  const FEE_GAS_PRICE = '<FEE_GAS_PRICE>';
+  const FEE_GAS_LIMIT = '<FEE_GAS_LIMIT>';
+  const ERC20_TOKEN_CONTRACT_ADDRESS = '<TOKEN_ADDRESS>';
 
   const performWithdrawTransaction = async () => {
     try {
@@ -361,20 +428,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         stateMutability: 'nonpayable',
         type: 'function',
       }];
-      const erc20CogatewayContractAddress = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
-      const web3 = new Web3('https://chain.mosaicdao.org/hadapsar');
-
-      const accountAddress = '<ACCOUNT_ADDRESS>';
-      const utilityTokenAddress = '<UTILITY_TOKEN_ADDRESS>';
-      const amount = '<AMOUNT_TO_WITHDRAW>';
-      const beneficiary = '<BENEFICIARY_ADDRESS>';
-      const feeGasPrice = '<FEE_GAS_PRICE>';
-      const feeGasLimit = '<FEE_GAS_LIMIT>';
-
-      const keyStore = fs.readFileSync(path.join(__dirname, '/', `${accountAddress}.json`));
-      const password = fs.readFileSync(path.join(__dirname, '/', `${accountAddress}.password`));
+      const web3 = new Web3(HADAPSAR_ENDPOINT);
+      const keyStore = fs.readFileSync(ACCOUNT_KEYSTORE_FILE_PATH);
+      const password = fs.readFileSync(ACCOUNT_PASSWORD_FILE_PATH);
       const accountKeyStore = JSON.parse(keyStore.toString());
       const accountPassword = JSON.parse(password.toString());
+
+      const accountAddress = `0x${accountKeyStore.address}`;
 
       const web3Account = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
       const { privateKey } = web3Account;
@@ -382,16 +442,22 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
       const erc20CogatewayContract = new web3.eth.Contract(
         erc20CogatewayContractWithdrawABI,
-        erc20CogatewayContractAddress,
+        ERC20_COGATEWAY_CONTRACT_ADDRESS,
       );
 
       const withdrawData = erc20CogatewayContract.methods
-        .withdraw(amount, beneficiary, feeGasPrice, feeGasLimit, utilityTokenAddress)
+        .withdraw(
+          WITHDRAW_AMOUNT,
+          BENEFICIARY_ADDRESS,
+          FEE_GAS_PRICE,
+          FEE_GAS_LIMIT,
+          ERC20_TOKEN_CONTRACT_ADDRESS,
+        )
         .encodeABI();
       const nonce = await web3.eth.getTransactionCount(accountAddress);
       const gasLimit = await web3.eth.estimateGas({
         from: accountAddress,
-        to: erc20CogatewayContractAddress,
+        to: ERC20_COGATEWAY_CONTRACT_ADDRESS,
         data: withdrawData,
       });
 
@@ -399,13 +465,13 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
         from: accountAddress,
         nonce: `0x${nonce.toString(16)}`,
         data: withdrawData,
-        to: erc20CogatewayContractAddress,
+        to: ERC20_COGATEWAY_CONTRACT_ADDRESS,
         gasLimit,
         gasPrice: 10000000000,
       };
 
       const signedTx = await web3.eth.accounts.signTransaction(rawTxWithdraw, privateKey);
-      web3.transactionConfirmationBlocks = 1;
+      web3.transactionConfirmationBlocks = 3;
       const transactionReceipt = await web3.eth.sendSignedTransaction(
         signedTx.raw || signedTx.rawTransaction,
       );
@@ -417,24 +483,34 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   };
 
   performWithdrawTransaction();
+
   ```
-  **Note:**
-  - Add the values for `accountAddress`, `utilityTokenAddress`, `amount`, `beneficiary`, `feeGasPrice`, `feeGasLimit` and run
+  To execute `withdraw.js`, run
   ```sh
   node withdraw.js
   ```
 
 ## Balance
 To check the ERC20 token balance on the chains<br>
+Update these constants in the following code:
+```js
+// The RPC endpoint of the chain
+const RPC_ENDPOINT = '<RPC_ENDPOINT>';
+// The ethereum account address
+const ACCOUNT_ADDRESS = '<ACCOUNT_ADDRESS>';
+// The ERC20 token contract address
+const TOKEN_ADDRESS = '<TOKEN_ADDRESS>';
+```
 Create `tokenBalance.js` as,
 ```js
 const Web3 = require('web3');
 
-const rpcEndpoint = '<RPC_ENDPOINT>';
-const account = '<ACCOUNT_ADDRESS>';
-const tokenAddress = '<VALUE_TOKEN_ADDRESS>';
+// Please update the following constant values
+const RPC_ENDPOINT = '<RPC_ENDPOINT>';
+const ACCOUNT_ADDRESS = '<ACCOUNT_ADDRESS>';
+const TOKEN_ADDRESS = '<TOKEN_ADDRESS>';
 
-const web3 = new Web3(rpcEndpoint);
+const web3 = new Web3(RPC_ENDPOINT);
 
 const tokenBalanceABI = [{
   constant: true,
@@ -445,32 +521,42 @@ const tokenBalanceABI = [{
   stateMutability: 'view',
   type: 'function',
 }];
-const tokenContract = new web3.eth.Contract(tokenBalanceABI, tokenAddress);
+const tokenContract = new web3.eth.Contract(tokenBalanceABI, TOKEN_ADDRESS);
 
-tokenContract.methods.balanceOf(account)
+tokenContract.methods.balanceOf(ACCOUNT_ADDRESS)
   .call()
   .then((balance) => {
     console.log(+balance);
   });
 ```
-**Note:**
-- Add the value for `rpcEndpoint`, `account`, `tokenAddress` and run
+To execute `tokenBalance.js`, run
 ```sh
 node tokenBalance.js
-  ```
+```
 
 ## Allowance
 To check the ERC20 token allowance balances on the chains<br>
+Update these constants in the following code:
+```js
+// The RPC endpoint of the chain
+const RPC_ENDPOINT = '<RPC_ENDPOINT>';
+// The ethereum account address
+const ACCOUNT_ADDRESS = '<ACCOUNT_ADDRESS>';
+// The ERC20 token contract address
+const TOKEN_ADDRESS = '<TOKEN_ADDRESS>';
+// The Gateway or Cogateway contract address of origin chain(Göerli) or metachain(Hadapsar-1405) respectively
+const GATEWAY_CONTRACT_ADDRESS = '<GATEWAY_CONTRACT_ADDRESS>';
+```
 Create `approvedBalance.js` as,
 ```js
 const Web3 = require('web3');
 
-const rpcEndpoint = '<RPC_ENDPOINT>';
-const account = '<ACCOUNT_ADDRESS>';
-const tokenAddress = '<VALUE_TOKEN_ADDRESS>';
-const gatewayContractAddress = '<GATEWAY_CONTRACT_ADDRESS>';
+const RPC_ENDPOINT = '<RPC_ENDPOINT>';
+const ACCOUNT_ADDRESS = '<ACCOUNT_ADDRESS>';
+const TOKEN_ADDRESS = '<VALUE_TOKEN_ADDRESS>';
+const GATEWAY_CONTRACT_ADDRESS = '<GATEWAY_CONTRACT_ADDRESS>';
 
-const web3 = new Web3(rpcEndpoint);
+const web3 = new Web3(RPC_ENDPOINT);
 
 const tokenBalanceABI = [{
   constant: true,
@@ -482,51 +568,50 @@ const tokenBalanceABI = [{
   stateMutability: 'view',
   type: 'function',
 }];
-const tokenContract = new web3.eth.Contract(tokenBalanceABI, tokenAddress);
+const tokenContract = new web3.eth.Contract(tokenBalanceABI, TOKEN_ADDRESS);
 
-tokenContract.methods.allowance(account, gatewayContractAddress)
+tokenContract.methods.allowance(ACCOUNT_ADDRESS, GATEWAY_CONTRACT_ADDRESS)
   .call()
   .then((balance) => {
     console.log(+balance);
   });
 ```
-**Note:**
-- Add the value for `rpcEndpoint`, `account`, `tokenAddress`, `gatewayContractAddress` and run
+To execute `approvedBalance.js`, run
 ```sh
 node approvedBalance.js
 ```
 
 ## Account Creation
-To create a keystore and save it in the required format
+To create a keystore and save it in the required format<br>
+Update the following constant in the following code:
+```js
+// The password for the keystore
+const PASSWORD = '<PASSWORD>';
+```
 Create `createAccount.js` as,
 ```js
 const fs = require('fs');
 const path = require('path');
 const Web3 = require('web3');
 
-async function createAccount() {
-  const password = '<PASSWORD>';
+// Please update the following constant value
+const PASSWORD = '<PASSWORD>';
 
-  const keystoreFilePath = __dirname;
-  const web3 = new Web3(null);
-  const ethereumAccount = web3.eth.accounts.create(web3.utils.randomHex(32));
-  const encryptedAccount = ethereumAccount.encrypt(password);
+const keystoreFilePath = __dirname;
+const web3 = new Web3(null);
+const ethereumAccount = web3.eth.accounts.create(web3.utils.randomHex(32));
+const encryptedAccount = ethereumAccount.encrypt(PASSWORD);
 
-  const filePath = path.join(keystoreFilePath, '/', `${ethereumAccount.address}.json`);
-  fs.writeFileSync(filePath, JSON.stringify(encryptedAccount, null, '    '));
+const filePath = path.join(keystoreFilePath, '/', `${ethereumAccount.address}.json`);
+fs.writeFileSync(filePath, JSON.stringify(encryptedAccount, null, '    '));
 
-  const passwordFilePath = path.join(keystoreFilePath, '/', `${ethereumAccount.address}.password`);
-  fs.writeFileSync(passwordFilePath, JSON.stringify(password, null, '    '));
-}
-
-createAccount();
+const passwordFilePath = path.join(keystoreFilePath, '/', `${ethereumAccount.address}.password`);
+fs.writeFileSync(passwordFilePath, JSON.stringify(PASSWORD, null, '    '));
+console.log(`Generated account address: ${ethereumAccount.address}`);
+console.log(`Encrypted keystore path: ${filePath}`);
+console.log(`Encrypted keystore password path: ${passwordFilePath}`);
 ```
-**Note:**
-- Install dependencies using
-```sh
-npm install --save web3 inquirer
-```
-- Add the value for `password` and run
+To execute `createAccount.js`, run
 ```sh
 node createAccount.js
 ```
