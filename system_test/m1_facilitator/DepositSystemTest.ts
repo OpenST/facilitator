@@ -154,7 +154,14 @@ export default class DepositSystemTest {
       // send report
 
 
+
     }
+
+    console.log('finalOriginAccountBalance  ',finalOriginAccountBalance);
+    console.log('initialAuxiliaryAccountBalance  ',initialAuxiliaryAccountBalance);
+    console.log('finalOriginAccountBalance  ',finalOriginAccountBalance);
+    console.log('finalOriginAccountBalance  ',finalOriginAccountBalance);
+
   }
 
   /**
@@ -166,7 +173,7 @@ export default class DepositSystemTest {
    */
   private static async deposit(
     depositorAccounts: Account[],
-    originWeb3,
+    originWeb3: Web3,
     expectedOriginAccountBalance: Map<string, BigNumber>,
     initialOriginAccountBalance: Map<string, BigNumber>,
   ): Promise<string[]> {
@@ -177,8 +184,14 @@ export default class DepositSystemTest {
           account,
           originWeb3,
         );
-        if (!expectedOriginAccountBalance.get(account.address)) {
-          expectedOriginAccountBalance.set(account.address, initialOriginAccountBalance.get(account.address));
+        if (
+          !expectedOriginAccountBalance.get(account.address) &&
+          initialOriginAccountBalance.get(account.address)
+        ) {
+          expectedOriginAccountBalance.set(
+            account.address,
+            initialOriginAccountBalance.get(account.address),
+          );
         }
         // Subtract deposit amount from initial balance.
         expectedOriginAccountBalance.set(

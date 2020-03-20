@@ -35,7 +35,7 @@
     "test:subgraph": "cd subgraph/test && sh ./test.sh",
     "deploy:subgraph:origin": "ts-node subgraph/src/DeployOriginSubgraph.ts",
     "deploy:subgraph:auxiliary": "ts-node subgraph/src/DeployAuxiliarySubgraph.ts",
-    "test:system_test": "ts-node system_test/m1_facilitator/system_test.ts"
+    "test:system_test": "ts-node system_test/m1_facilitator/SystemTest.ts"
   },
   "repository": {
     "type": "git",
