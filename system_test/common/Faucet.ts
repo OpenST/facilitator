@@ -1,7 +1,6 @@
 import axios from 'axios';
 import Mosaic from 'Mosaic';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
-// import Tx from 'ethereumjs-tx';
 import Web3 from 'web3';
 
 import AddressHandler from './AddressHandler';

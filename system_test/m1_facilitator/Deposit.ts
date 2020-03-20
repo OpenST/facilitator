@@ -35,12 +35,12 @@ export default class Deposit {
       // timeoutInterval,
     } = config.testData.deposit;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
-    // const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
+    const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const originChainId = config.chains.origin.chainId;
 
     const originWeb3 = new Web3(originWsEndpoint);
     originWeb3.transactionConfirmationBlocks = 1;
-    // const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
+    const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
 
     let depositMessageHash: string;
     const messageHashes: string[] = [];
@@ -48,6 +48,7 @@ export default class Deposit {
     const initialOriginAccountBalance: Balance = {};
     const finalOriginAccountBalance: Balance = {};
     const expectedOriginAccountBalance: Balance = {};
+    const initialAuxiliaryAccountBalance: Balance = {};
 
     let testDepositorAccounts = [];
 
@@ -73,6 +74,25 @@ export default class Deposit {
           initialOriginAccountBalance[account.address] = originBalance.toString(10);
         },
       );
+
+      const initialAuxiliaryAccountBalancePromises = testDepositorAccounts.map(
+        async (account: any): Promise<void> => {
+          const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
+          const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(
+            auxiliaryWeb3,
+            erc20CogatewayAddress,
+          );
+
+          const utilityTokenAddress = erc20Cogateway.methods.utilityTokens(valueToken).call();
+          const auxiliaryBalance = await AddressHandler.getTokenBalance(
+            account.address,
+            auxiliaryWeb3,
+            utilityTokenAddress,
+          );
+          initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
+        },
+      );
+
       const depositTransactionPromises = testDepositorAccounts.map(
         // eslint-disable-next-line no-loop-func
         async (account: any): Promise<void> => {
@@ -99,6 +119,8 @@ export default class Deposit {
       await Promise.all(depositTransactionPromises);
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(initialOriginAccountBalancePromises);
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.all(initialAuxiliaryAccountBalancePromises);
 
       // final origin balances
       const finalOriginAccountBalancePromises = testDepositorAccounts.map(
