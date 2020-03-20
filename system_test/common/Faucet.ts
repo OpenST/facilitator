@@ -2,17 +2,18 @@ import axios from 'axios';
 import Mosaic from 'Mosaic';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import Web3 from 'web3';
+import { Account } from 'web3-eth-accounts';
 
 import AddressHandler from './AddressHandler';
 import Utils from './Utils';
 
 export default class Faucet {
-  public static async refundOSTToFaucet(accounts: any[]): Promise<void> {
+  public static async refundOSTToFaucet(accounts: Account[]): Promise<void> {
     const config = await Utils.getConfig();
-    accounts.map(async (account: any): Promise<void> => {
+    accounts.map(async (account: Account): Promise<void> => {
       const { valueToken, wsEndpoint, faucet } = config.chains.origin;
 
-      const balance = await AddressHandler.getTokenBalance(account, wsEndpoint, valueToken);
+      const balance = await AddressHandler.getTokenBalance(account.address, wsEndpoint, valueToken);
       const web3 = new Web3(wsEndpoint);
       const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
 
@@ -27,11 +28,11 @@ export default class Faucet {
     });
   }
 
-  public static async refundGasToFaucet(accounts: any[]): Promise<void> {
+  public static async refundGasToFaucet(accounts: Account[]): Promise<void> {
     const config = await Utils.getConfig();
-    accounts.map(async (account: any): Promise<void> => {
+    accounts.map(async (account: Account): Promise<void> => {
       const { wsEndpoint, faucet, chainId } = config.chains.auxiliary;
-      const balance = await AddressHandler.getBalance(account, wsEndpoint);
+      const balance = await AddressHandler.getBalance(account.address, wsEndpoint);
       const web3 = new Web3(wsEndpoint);
 
       const gasPrice = 0x3B9ACA00;
@@ -49,9 +50,8 @@ export default class Faucet {
     });
   }
 
-  public static async fundAccounts(accounts: any[], chain: number, originWeb3: any): Promise<void> {
-    const fundingPromises = accounts.map(async (account: any): Promise<void> => {
-      console.log('Account address for funding :-', account.address);
+  public static async fundAccounts(accounts: Account[], chain: number, originWeb3: any): Promise<void> {
+    const fundingPromises = accounts.map(async (account: Account): Promise<void> => {
       const config = await Utils.getConfig();
       const { valueToken } = config.chains.origin;
       const balance = await AddressHandler.getTokenBalance(

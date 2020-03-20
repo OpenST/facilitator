@@ -16,7 +16,7 @@
 import Mosaic from 'Mosaic';
 import fs from 'fs';
 import path from 'path';
-
+import { Account } from 'web3-eth-accounts';
 import Utils from './Utils';
 
 export default class AddressHandler {
@@ -31,7 +31,7 @@ export default class AddressHandler {
     totalAccountCount: number,
     concurrencyCount: number,
     web3: any,
-  ): Promise<any[]> {
+  ): Promise<Account[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.accounts;
     const randomAddresses = [];
@@ -70,10 +70,10 @@ export default class AddressHandler {
     return +balance;
   }
 
-  public static async getAddresses(count: number, web3: any): Promise<any[]> {
+  public static async getAddresses(count: number, web3: any): Promise<Account[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.accounts;
-    const accountsSelected: any[] = [];
+    const accountsSelected: Account[] = [];
 
     for (let i = 0; i < count; i += 1) {
       const accountAddress = configAddresses[i];

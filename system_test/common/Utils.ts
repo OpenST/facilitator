@@ -1,4 +1,4 @@
-import {TransactionReceipt} from 'web3-core';
+import { TransactionReceipt } from 'web3-core';
 import fs from 'fs';
 import Logger from '../../src/common/Logger';
 
@@ -13,9 +13,7 @@ export default class Utils {
     const txOptions = Object.assign({}, txOption);
 
     if (txOptions.gas === undefined) {
-      console.log('Estimating gas :-');
       txOptions.gas = await tx.estimateGas(txOptions);
-      console.log(txOptions.gas);
     }
 
     return new Promise(async (onResolve, onReject): Promise<void> => {
