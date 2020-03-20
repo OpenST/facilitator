@@ -46,7 +46,7 @@ describe('FacilitatorInit.execute', (): void => {
   it('should execute facilitator init', async (): Promise<void> => {
     await facilitatorInit.execute();
 
-    SpyAssert.assert(directorySpy, 1, [['MOSAIC1_0_14', '0xA7f056b1320fE619571849f138Cd1Ae2f2e64179']]);
+    SpyAssert.assert(directorySpy, 1, [['MOSAIC_0_14_GEN_1', '0xA7f056b1320fE619571849f138Cd1Ae2f2e64179']]);
     SpyAssert.assertCall(initializeSpy, 1);
   });
 

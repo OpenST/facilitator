@@ -188,7 +188,7 @@ describe('SeedDataInitializer:initialize', () => {
     },
   };
 
-  const fakeAnchor_0_10 = {
+  const fakeAnchor_Gen0 = {
     methods: {
       getLatestStateRootBlockHeight: () => ({
         call: async (): Promise<string> => Promise.resolve(latestAnchorBlockHeight),
@@ -229,7 +229,7 @@ describe('SeedDataInitializer:initialize', () => {
       originWeb3,
       auxiliaryWeb3,
       gatewayAddress,
-      ArchitectureLayout.MOSAIC1_0_14,
+      ArchitectureLayout.MOSAIC_0_14_GEN_1,
     );
 
     const gateway = await repositories.gatewayRepository.get(
@@ -275,7 +275,7 @@ describe('SeedDataInitializer:initialize', () => {
     );
   });
 
-  it('should initialize seed data when for supporting older testnet', async (): Promise<void> => {
+  it('should initialize seed data when facilitator is running on GEN0 testnet', async (): Promise<void> => {
     sinon.replace(
       Mosaic.interacts,
       'getERC20Gateway',
@@ -291,7 +291,7 @@ describe('SeedDataInitializer:initialize', () => {
     sinon.replace(
       interacts,
       'getAnchor',
-      sinon.fake.returns(fakeAnchor_0_10),
+      sinon.fake.returns(fakeAnchor_Gen0),
     );
 
     sinon.replace(
@@ -304,7 +304,7 @@ describe('SeedDataInitializer:initialize', () => {
       originWeb3,
       auxiliaryWeb3,
       gatewayAddress,
-      ArchitectureLayout.MOSAIC1_0_10,
+      ArchitectureLayout.MOSAIC_0_14_GEN_0,
     );
 
     const gateway = await repositories.gatewayRepository.get(

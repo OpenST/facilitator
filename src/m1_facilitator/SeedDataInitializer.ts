@@ -77,7 +77,7 @@ export default class SeedDataInitializer {
     const auxiliaryAnchorAddress = await erc20Cogateway.methods.stateRootProvider().call();
     let auxiliaryLatestAnchoredStateRootBlockHeight: string;
     let originLatestAnchoredStateRootBlockHeight: string;
-    if (ArchitectureLayout.MOSAIC1_0_14 === architectureLayout) {
+    if (ArchitectureLayout.MOSAIC_0_14_GEN_1 === architectureLayout) {
       const originAnchorInstance = Mosaic.interacts.getAnchor(
         originWeb3,
         originAnchorAddress,

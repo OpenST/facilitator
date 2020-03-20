@@ -15,7 +15,7 @@
         "architecture_layout": {
           "type": "string",
           "additionalProperties": false,
-          "enum": ["MOSAIC1_0_14", "MOSAIC1_0_10"]
+          "enum": ["MOSAIC_0_14_GEN_0", "MOSAIC_0_14_GEN_1"]
         },
         "personas": {
           "type": "array",
