@@ -17,7 +17,7 @@
       "faucet": "0x73e4876c03412139751895879c203d1fe0a0e004"
     }
   },
-  "testData": {
+  "testConfig": {
     "deposit": {
       "iterations": 1,
       "depositorCount": 1,

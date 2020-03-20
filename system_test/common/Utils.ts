@@ -1,6 +1,8 @@
-import { TransactionReceipt } from 'web3-core';
+import {TransactionReceipt} from 'web3-core';
 import fs from 'fs';
 import Logger from '../../src/common/Logger';
+
+const CONFIG_PATH = 'system_test/m1_facilitator/config.json';
 
 export default class Utils {
   public static async getRandomNumber(min: number, max: number): Promise<number> {
@@ -24,11 +26,12 @@ export default class Utils {
     });
   }
 
+  /**
+   * Reads and return config.
+   */
   public static async getConfig(): Promise<any> {
-    const configFile = fs.readFileSync('system_test/m1_facilitator/config.json');
-    const config = JSON.parse(configFile.toString());
-
-    return config;
+    const configFile = fs.readFileSync(CONFIG_PATH);
+    return JSON.parse(configFile.toString());
   }
 
   public static async addAccountsToWeb3Wallet(accounts: any[], web3: any): Promise<void> {

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Deposit from './Deposit';
+import DepositSystemTest from './DepositSystemTest';
 // import Withdraw from './Withdraw';
 
-Deposit.depositSystemTest();
+DepositSystemTest.run();
 // Withdraw.withdrawSystemTest();

@@ -30,7 +30,7 @@ export default class Withdraw {
     const {
       concurrencyCount,
       iterations,
-    } = config.testData.withdraw;
+    } = config.testConfig.withdraw;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const auxiliaryChainId = config.chains.auxiliary.chainId;
@@ -109,16 +109,18 @@ export default class Withdraw {
     const auxiliaryWeb3 = new Web3(config.chains.auxiliary.wsEndpoint);
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
 
-    const { minAmount } = config.testData.withdraw;
-    const { maxAmount } = config.testData.withdraw;
+    const {
+      minAmount,
+      maxAmount,
+      minGasPrice,
+      maxGasPrice,
+      minGasLimit,
+      maxGasLimit
+    } = config.testConfig.withdraw;
+
     const testAmount = await Utils.getRandomNumber(minAmount, maxAmount);
 
-    const { minGasPrice } = config.testData.withdraw;
-    const { maxGasPrice } = config.testData.withdraw;
     const testGasprice = await Utils.getRandomNumber(minGasPrice, maxGasPrice);
-
-    const { minGasLimit } = config.testData.withdraw;
-    const { maxGasLimit } = config.testData.withdraw;
     const testGasLimit = await Utils.getRandomNumber(minGasLimit, maxGasLimit);
 
     const { utilityToken } = config.chains.auxiliary;
