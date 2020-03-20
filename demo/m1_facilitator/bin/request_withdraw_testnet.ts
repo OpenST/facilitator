@@ -27,7 +27,7 @@ async function readInput(): Promise<WithdrawInputInfo> {
     {
       type: 'string',
       name: 'web3EndPoint',
-      default: 'https://rpc.slock.it/goerli',
+      default: 'https://chain.mosaicdao.org/hadapsar',
       message: 'Enter metachain(Hadapsar-1405) end point:',
     },
     {

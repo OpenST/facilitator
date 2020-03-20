@@ -23,7 +23,7 @@ async function createActor(): Promise<void> {
     {
       type: 'string',
       name: 'actor',
-      message: 'select actor type i.e. depositor or withdrawer',
+      message: 'Select actor type i.e. depositor or withdrawer:',
       validate(input: string): boolean {
         return input === 'depositor' || input === 'withdrawer';
       },
@@ -31,7 +31,7 @@ async function createActor(): Promise<void> {
     {
       type: 'password',
       name: 'password',
-      message: 'select password for keystore file',
+      message: 'Select password for keystore file:',
       validate(input: string): boolean {
         return input.length > 0;
       },
@@ -39,7 +39,7 @@ async function createActor(): Promise<void> {
     {
       type: 'string',
       name: 'shouldFundDepositor',
-      message: 'Should fund OST to depositor on origin chain with faucet (y/n)?',
+      message: 'Should fund OST to depositor on origin chain with faucet (y/n)?:',
       validate(input: string): boolean {
         return input === 'y' || input === 'n';
       },
@@ -48,7 +48,7 @@ async function createActor(): Promise<void> {
     {
       type: 'string',
       name: 'shouldFundWithdrawer',
-      message: 'Should fund base token to withdrawer on metachain with faucet (y/n)?',
+      message: 'Should fund base token to withdrawer on metachain with faucet (y/n)?:',
       validate(input: string): boolean {
         return input === 'y' || input === 'n';
       },
