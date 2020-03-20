@@ -16,17 +16,20 @@
 import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 
+import BigNumber from 'bignumber.js';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
+import Logger from '../../src/common/Logger';
 import Utils from '../common/Utils';
 // import UtilsIntegration from '../../test_integration/m1_facilitator/utils';
 
 interface Balance {
-  [key: string]: string;
+  [key: string]: BigNumber;
 }
 
 export default class Deposit {
   public static async depositSystemTest(): Promise<void> {
+    Logger.info('Starting deposit system test');
     const config = await Utils.getConfig();
     const {
       concurrencyCount,
@@ -55,6 +58,7 @@ export default class Deposit {
     const { valueToken } = config.chains.origin;
 
     for (let i = 0; i < iterations; i += 1) {
+      Logger.info(`Deposit iteration ${i}`);
       // eslint-disable-next-line no-await-in-loop
       testDepositorAccounts = await AddressHandler.getAddresses(concurrencyCount, originWeb3);
 
@@ -71,7 +75,7 @@ export default class Deposit {
             originWeb3,
             valueToken,
           );
-          initialOriginAccountBalance[account.address] = originBalance.toString(10);
+          initialOriginAccountBalance[account.address] = new BigNumber(originBalance);
         },
       );
 
@@ -83,13 +87,14 @@ export default class Deposit {
             erc20CogatewayAddress,
           );
 
-          const utilityTokenAddress = erc20Cogateway.methods.utilityTokens(valueToken).call();
+          const utilityTokenAddress = await erc20Cogateway.methods.utilityTokens(valueToken).call();
           const auxiliaryBalance = await AddressHandler.getTokenBalance(
             account.address,
             auxiliaryWeb3,
             utilityTokenAddress,
           );
-          initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
+          initialAuxiliaryAccountBalance[account.address] = new BigNumber(auxiliaryBalance);
+          console.log('Auxiliary account token balance :-', auxiliaryBalance);
         },
       );
 
@@ -109,6 +114,8 @@ export default class Deposit {
           const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
           });
+
+          console.log('Deposit Receipt :-', txReceipt);
           // @ts-ignore
           depositMessageHash = txReceipt.events.DepositIntentDeclared.returnValues.messageHash;
           // console.log('deposit txReceipt:-', txReceipt);
@@ -130,14 +137,14 @@ export default class Deposit {
             originWeb3,
             valueToken,
           );
-          finalOriginAccountBalance[account.address] = originBalance.toString(10);
+          finalOriginAccountBalance[account.address] = new BigNumber(originBalance);
         },
       );
 
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(finalOriginAccountBalancePromises);
       console.log('Initial Origin account token balances :-', initialOriginAccountBalance);
-      console.log('Fianl Origin account token balances', finalOriginAccountBalance);
+      console.log('Final Origin account token balances', finalOriginAccountBalance);
     }
   }
 
@@ -167,9 +174,10 @@ export default class Deposit {
       testAmount,
     );
 
-    await Utils.sendTransaction(approveRawTx, {
+    const approvalReceipt = await Utils.sendTransaction(approveRawTx, {
       from: account.address,
     });
+    console.log('Approval Receipt :-', approvalReceipt);
     console.log('testAmount :-', testAmount);
 
     return {

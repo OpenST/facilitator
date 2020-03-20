@@ -48,6 +48,7 @@ export default class Faucet {
 
   public static async fundAccounts(accounts: any[], chain: number, originWeb3: any): Promise<void> {
     const fundingPromises = accounts.map(async (account: any): Promise<void> => {
+      console.log('Account address for funding :-', account.address);
       const config = await Utils.getConfig();
       const { valueToken } = config.chains.origin;
       const balance = await AddressHandler.getTokenBalance(
