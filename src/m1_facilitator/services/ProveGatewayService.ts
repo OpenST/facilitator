@@ -114,8 +114,8 @@ export default class ProveGatewayService extends Observer<Anchor> {
       }
       if (pendingMessages.length === 0) {
         Logger.info(
-          `ProveGatewayService::There are no pending messages for gateway ${gatewayRecord.gatewayGA}.`
-          + ' Hence skipping proveGateway',
+          `ProveGatewayService::There are no pending messages for gateway ${gatewayRecord.gatewayGA},`
+          + ` lastAnchoredBlockNumber: ${anchor.lastAnchoredBlockNumber.toString(10)}, Hence skipping proveGateway`,
         );
       }
     });

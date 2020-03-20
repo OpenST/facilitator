@@ -28,6 +28,6 @@ commander
       await new FacilitatorInit(options.manifest, options.force ? options.force : false)
         .execute();
     } catch (e) {
-      Logger.error(`Error in facilitator init command. Reason: ${e.message}`);
+      Logger.error(`facilitator-init::Error in facilitator init command. Reason: ${e.message}`);
     }
   }).parse(process.argv);
