@@ -34,11 +34,14 @@ export default class Faucet {
       const balance = await AddressHandler.getBalance(account, wsEndpoint);
       const web3 = new Web3(wsEndpoint);
 
+      const gasPrice = 0x3B9ACA00;
+      const transactionFee = 2300 * gasPrice;
+
       const rawTransaction = {
         from: account.address,
         to: faucet,
-        value: balance,
-        gasPrice: 0x3B9ACA00,
+        value: balance - transactionFee,
+        gasPrice,
         gas: web3.utils.toHex(23000),
         chainId,
       };
