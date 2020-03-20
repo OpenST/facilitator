@@ -68,6 +68,7 @@ export default class Deposit {
       // eslint-disable-next-line no-await-in-loop
       await Faucet.fundAccounts(testDepositorAccounts, originChainId, originWeb3);
 
+      Logger.info('Getting initial origin account balances');
       const initialOriginAccountBalancePromises = testDepositorAccounts.map(
         async (account: any): Promise<void> => {
           const originBalance = await AddressHandler.getTokenBalance(
@@ -79,6 +80,7 @@ export default class Deposit {
         },
       );
 
+      Logger.info('Getting initial auxiliary account balances');
       const initialAuxiliaryAccountBalancePromises = testDepositorAccounts.map(
         async (account: any): Promise<void> => {
           const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
@@ -111,6 +113,7 @@ export default class Deposit {
           } else {
             expectedOriginAccountBalance[account.address] = depositAmount;
           }
+          Logger.info(`Sending deposit transaction request for ${account.address}`);
           const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
           });
@@ -122,14 +125,18 @@ export default class Deposit {
           messageHashes.push(depositMessageHash);
         },
       );
+      Logger.info('Resolving deposit transaction promises.');
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(depositTransactionPromises);
+      Logger.info('Resolving initial account balance promises.');
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(initialOriginAccountBalancePromises);
+      Logger.info('Resolving initial auxiliary account balance promises');
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(initialAuxiliaryAccountBalancePromises);
 
       // final origin balances
+      Logger.info('Getting final account balances on origin');
       const finalOriginAccountBalancePromises = testDepositorAccounts.map(
         async (account: any): Promise<void> => {
           const originBalance = await AddressHandler.getTokenBalance(
@@ -149,6 +156,7 @@ export default class Deposit {
   }
 
   private static async createDepositTransactionObject(account: any, web3: any): Promise<any> {
+    Logger.info(`Generating deposit transaction object for ${account.address}`);
     const config = await Utils.getConfig();
 
     const erc20GatewayAddress = config.chains.origin.gateway;

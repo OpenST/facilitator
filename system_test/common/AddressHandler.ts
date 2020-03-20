@@ -21,18 +21,10 @@ import Utils from './Utils';
 
 export default class AddressHandler {
   public static async validateAddresses(addresses: string[]): Promise<boolean> {
-    let flag = 0;
     const filePath = 'system_test/m1_facilitator/accounts';
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    addresses.map((address) => {
-      if (!fs.existsSync(path.join(filePath, '/', `${address}.json`))) {
-        flag = 1;
-      }
-    });
-    if (flag === 0) {
-      return true;
-    }
-    return false;
+    return addresses.filter(
+      (address): boolean => fs.existsSync(path.join(filePath, '/', `${address}.json`)),
+    ).length > 0;
   }
 
   public static async getRandomAddresses(
