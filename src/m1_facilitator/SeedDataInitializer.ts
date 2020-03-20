@@ -15,7 +15,7 @@
 import Web3 from 'web3';
 import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
-import { interacts } from '@openst/mosaic-contracts';
+import { interacts as m0interacts } from '@openst/mosaic-contracts';
 
 import Anchor from './models/Anchor';
 import Gateway, { GatewayType } from './models/Gateway';
@@ -78,6 +78,7 @@ export default class SeedDataInitializer {
     let auxiliaryLatestAnchoredStateRootBlockHeight: string;
     let originLatestAnchoredStateRootBlockHeight: string;
     if (ArchitectureLayout.MOSAIC_0_14_GEN_1 === architectureLayout) {
+      Logger.debug('Getting anchor instance for Gen1');
       const originAnchorInstance = Mosaic.interacts.getAnchor(
         originWeb3,
         originAnchorAddress,
@@ -92,11 +93,12 @@ export default class SeedDataInitializer {
       originLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
         .getLatestStateRootBlockNumber().call();
     } else {
-      const originAnchorInstance = interacts.getAnchor(
+      Logger.debug('Getting anchor instance for Gen0');
+      const originAnchorInstance = m0interacts.getAnchor(
         originWeb3,
         originAnchorAddress,
       );
-      const auxiliaryAnchorInstance = interacts.getAnchor(
+      const auxiliaryAnchorInstance = m0interacts.getAnchor(
         auxiliaryWeb3,
         auxiliaryAnchorAddress,
       );
