@@ -63,6 +63,7 @@ export default class Withdraw {
     });
 
     console.log('Request withdraw done with transaction hash: ', receipt.transactionHash);
+    console.log('Request withdraw done with message hash: ', receipt.events.WithdrawIntentDeclared.returnValues.messageHash);
     console.log(`🤝 Facilitators are moving your tokens to origin chain. Check beneficiary ${withdrawRequestParams.beneficiary} balance on origin chain after few minutes.`);
     console.log(`Check beneficiary account on etherscan https://goerli.etherscan.io/address/${withdrawRequestParams.beneficiary}`);
   }

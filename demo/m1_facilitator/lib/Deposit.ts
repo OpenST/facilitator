@@ -63,6 +63,7 @@ export default class Deposit {
     });
 
     console.log('Request deposit done with transaction hash: ', receipt.transactionHash);
+    console.log('Request deposit done with message hash: ', receipt.events.DepositIntentDeclared.returnValues.messageHash);
     console.log(`🤝 Facilitators are moving your tokens to metachain. Check beneficiary ${depositRequestParams.beneficiary} balance on metachain after few minutes.`);
     console.log(`Check beneficiary account on view https://view.mosaicdao.org/address/${depositRequestParams.beneficiary}/transactions`);
   }
