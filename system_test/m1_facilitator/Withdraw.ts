@@ -19,7 +19,6 @@ import Web3 from 'web3';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Utils from '../common/Utils';
-import Logger from '../../src/common/Logger';
 
 interface Balance {
   [key: string]: number;
@@ -29,35 +28,32 @@ export default class Withdraw {
   public static async withdrawSystemTest(): Promise<void> {
     const config = await Utils.getConfig();
     const {
-      withdrawerCount,
       concurrencyCount,
       iterations,
-      pollingInterval,
-      timeoutInterval,
     } = config.testData.withdraw;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
     const auxiliaryChainId = config.chains.auxiliary.chainId;
+
+    const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
 
     const messageHashes: string[] = [];
 
     const initialAuxiliaryAccountBalance: Balance = {};
     const expectedAuxiliaryAccountBalance: Balance = {};
     const initialOriginAccountBalance: Balance = {};
-    const finalOriginAccountBalance: Balance = {};
 
     let testWithdrawerAccounts = [];
-    let totalWithdrawerAccounts = [];
 
     for (let i = 0; i < iterations; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      testWithdrawerAccounts = await AddressHandler.getRandomAddresses(
-        withdrawerCount,
+      testWithdrawerAccounts = await AddressHandler.getAddresses(
         concurrencyCount,
+        auxiliaryWeb3,
       );
 
       // eslint-disable-next-line no-await-in-loop
-      await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId);
+      await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId, auxiliaryWeb3);
 
       const initialBalancePromises = testWithdrawerAccounts.map(
         async (account: Account): Promise<void> => {
@@ -92,9 +88,9 @@ export default class Withdraw {
           }
           const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
-            gasPrice: '0x3B9ACA00',
           });
 
+          // @ts-ignore
           const {
             messageHash,
           } = txReceipt.events.WithdrawIntentDeclared.returnValues;
@@ -104,42 +100,7 @@ export default class Withdraw {
       );
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(withdrawTransactionPromises);
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise(done => setTimeout(done, pollingInterval));
-
-      totalWithdrawerAccounts = totalWithdrawerAccounts.concat(testWithdrawerAccounts);
     }
-
-    await new Promise(done => setTimeout(done, timeoutInterval));
-
-    const finalOriginBalancePromises = testWithdrawerAccounts.map(
-      async (account: Account): Promise<void> => {
-        const { valueToken } = config.chains.origin;
-        const originBalance = await AddressHandler.getTokenBalance(
-          account.address,
-          originWsEndpoint,
-          valueToken,
-        );
-        finalOriginAccountBalance[account.address] = originBalance;
-      },
-    );
-    // eslint-disable-next-line no-await-in-loop
-    await Promise.all(finalOriginBalancePromises);
-
-    Withdraw.generateReport(
-      initialAuxiliaryAccountBalance,
-      expectedAuxiliaryAccountBalance,
-      initialOriginAccountBalance,
-      finalOriginAccountBalance,
-      testWithdrawerAccounts,
-      messageHashes,
-    );
-
-    const totalUniqueWithdrawerAccounts = totalWithdrawerAccounts.filter(
-      async (item, index, ar): Promise<boolean> => ar.indexOf(item) === index,
-    );
-
-    await Faucet.refundGasToFaucet(totalUniqueWithdrawerAccounts);
   }
 
   private static async createWithdrawTransactionObject(account: Account): Promise<any> {
@@ -162,6 +123,10 @@ export default class Withdraw {
 
     const { utilityToken } = config.chains.auxiliary;
 
+    await utilityToken.methods.approve(
+      erc20CogatewayAddress,
+      testAmount,
+    );
     return {
       txObject: erc20Cogateway.methods.withdraw(
         testAmount,
@@ -172,73 +137,5 @@ export default class Withdraw {
       ),
       withdrawAmount: testAmount,
     };
-  }
-
-  private static async generateReport(
-    initialAuxiliaryAccountBalance: Balance,
-    expectedAuxiliaryAccountBalance: Balance,
-    initialOriginAccountBalance: Balance,
-    finalOriginAccountBalance: Balance,
-    testWithdrawerAccounts: Account[],
-    messageHashes: string[],
-  ): Promise<void> {
-    const config = await Utils.getConfig();
-    const { utilityToken } = config.chains.auxiliary;
-    const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
-
-    Logger.info('Withdraw flow');
-    Logger.info('\t\t Metachain \t\t');
-    Logger.info('Address \t Balance Before Withdraw \t Balance After Withdraw \t Expected Balance Change \t Actual Balance Change \t Success(T/F)');
-    testWithdrawerAccounts.map(
-      async (account: Account): Promise<void> => {
-        const balanceBeforeWithdraw = initialAuxiliaryAccountBalance[account.address];
-        const balanceAfterWithdraw = await AddressHandler.getTokenBalance(
-          account.address,
-          auxiliaryWsEndpoint,
-          utilityToken,
-        );
-
-        const expectedBalanceChange = expectedAuxiliaryAccountBalance[account.address];
-        const actualBalanceChange = balanceAfterWithdraw - balanceBeforeWithdraw;
-        const success = (expectedBalanceChange === actualBalanceChange);
-
-        Logger.info(`${account.address} \t ${balanceBeforeWithdraw} \t ${balanceAfterWithdraw} \t ${expectedBalanceChange} \t ${actualBalanceChange} \t ${success}`);
-      },
-    );
-
-    Logger.info('\t\t Origin \t\t');
-    Logger.info('Address \t Balance Before Withdraw \t Balance After Withdraw \t Expected Balance Change \t Actual Balance Change \t Success(T/F)');
-
-    const { valueToken } = config.chains.origin;
-    const originWsEndpoint = config.chains.origin.wsEndpoint;
-    testWithdrawerAccounts.map(
-      async (account: Account): Promise<void> => {
-        const balanceBeforeConfirmWithdraw = initialOriginAccountBalance[account.address];
-        const balanceAfterConfirmWithdraw = await AddressHandler.getTokenBalance(
-          account.address,
-          originWsEndpoint,
-          valueToken,
-        );
-
-        const expectedBalanceChange = finalOriginAccountBalance[account.address]
-          - initialOriginAccountBalance[account.address];
-        const actualBalanceChange = balanceAfterConfirmWithdraw - balanceBeforeConfirmWithdraw;
-        const success = (expectedBalanceChange === actualBalanceChange);
-        Logger.info(`${account.address} \t ${balanceBeforeConfirmWithdraw} \t ${balanceAfterConfirmWithdraw} \t ${expectedBalanceChange} \t ${actualBalanceChange} \t ${success}`);
-      },
-    );
-
-    const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
-    const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
-    const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
-
-    Logger.info('MessageHash \t Success');
-    messageHashes.map(
-      async (messageHash: string): Promise<void> => {
-        // To check that messageHash exists in the outbox mapping.
-        const messageStatus = await erc20Cogateway.methods.outbox(messageHash).call();
-        Logger.info(`${messageHash} \t ${messageStatus}`);
-      },
-    );
   }
 }
