@@ -82,7 +82,7 @@ export default class TransactionExecutor {
    * @param rawTx Raw transaction object.
    */
   public async add(toAddress: string, rawTx: TransactionObject<string>): Promise<void> {
-    Logger.info('TransactionExecutor:: Adding the transaction in queue');
+    Logger.info('TransactionExecutor::Adding the transaction in queue');
     const transaction = new Transaction(
       this.avatarAccount.address,
       toAddress,
@@ -126,12 +126,14 @@ export default class TransactionExecutor {
    *
    */
   private async execute(): Promise<void> {
+    Logger.debug('TransactionExecutor::Invoking execute');
     if (!this.mutex.isLocked()) {
+      Logger.debug('TransactionExecutor::mutex acquired');
       const release = await this.mutex.acquire();
       const transaction = await this.transactionRepository.dequeue();
       try {
         if (transaction) {
-          Logger.debug('TransactionExecutor:: Executing transaction');
+          Logger.debug('TransactionExecutor::Executing transaction');
           const nonce = await this.avatarAccount.getNonce(this.web3);
           Logger.debug(`TransactionExecutor::Executing transaction ${transaction.id && transaction.id.toString(10)}`);
           const response = await this.sendTransaction(transaction, nonce);
@@ -139,7 +141,10 @@ export default class TransactionExecutor {
           transaction.gas = new BigNumber(response.gas);
           transaction.nonce = nonce;
           await this.transactionRepository.save(transaction);
-          Logger.debug(`TransactionExecutor::Saving transaction ${transaction.id && transaction.id.toString(10)}`);
+          Logger.info(
+            `TransactionExecutor::Saving transaction ${transaction.id && transaction.id.toString(10)},
+            transaction hash: ${transaction.transactionHash}`,
+          );
         }
       } catch (error) {
         Logger.debug('TransactionExecutor::Decreasing nonce in case of error');
@@ -149,6 +154,7 @@ export default class TransactionExecutor {
         Error message: ${error.message}`);
       } finally {
         release();
+        Logger.debug('TransactionExecutor::mutex released');
       }
     }
   }

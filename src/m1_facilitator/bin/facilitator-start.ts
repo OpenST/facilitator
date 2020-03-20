@@ -21,11 +21,11 @@ import Logger from '../../common/Logger';
 let facilitator: Facilitator;
 
 async function terminationHandler(): Promise<void> {
-  Logger.info('Stopping facilitator');
+  Logger.info('facilitator-start::Stopping facilitator');
   if (facilitator) {
     await facilitator.stop();
   }
-  Logger.info('Facilitator stopped');
+  Logger.info('facilitator-start::Facilitator stopped');
   process.exit(0);
 }
 
@@ -42,7 +42,7 @@ commander
       try {
         await new FacilitatorStart(options.manifest).execute();
       } catch (e) {
-        Logger.error(`Error in facilitator start command. Reason: ${e.message}`);
+        Logger.error(`facilitator-start::Error in facilitator start command. Reason: ${e.message}`);
         process.exit(1);
       }
     },

@@ -54,22 +54,22 @@ export default class FacilitatorInit implements Command {
    *
    */
   public async execute(): Promise<void> {
-    Logger.info('Initialing facilitator');
+    Logger.info('FacilitatorInit::Initialing facilitator');
     const manifest = Manifest.fromFile(this.manifestPath);
-    Logger.info('Manifest loaded');
+    Logger.info('FacilitatorInit::Manifest loaded');
     const gatewayAddresses = manifest.originContractAddresses.erc20_gateway;
     const databaseFilePath = manifest.dbConfig.path;
 
     const databaseFileExists = await fs.pathExists(databaseFilePath);
 
-    Logger.debug(`Database already exists ${databaseFileExists}`);
+    Logger.debug(`FacilitatorInit::Database already exists ${databaseFileExists}`);
     if (!this.isForceInit && databaseFileExists) {
       throw new Error(`Database already initialized at location ${databaseFilePath}.`
         + ' Pass force option parameter for force init');
     }
 
     if (this.isForceInit && databaseFileExists) {
-      Logger.debug('Removing existing database file');
+      Logger.debug('FacilitatorInit::Removing existing database file');
       await fs.remove(databaseFilePath);
     }
 
@@ -82,8 +82,8 @@ export default class FacilitatorInit implements Command {
     const auxiliaryWeb3 = manifest.metachain.auxiliaryChain.web3;
 
     const repositories = await Repositories.create(databaseFilePath);
-    Logger.debug('all repositories created');
-    Logger.debug('Initializing seed data');
+    Logger.debug('FacilitatorInit::all repositories created');
+    Logger.debug('FacilitatorInit::Initializing seed data');
     await new SeedDataInitializer(repositories).initialize(
       originWeb3,
       auxiliaryWeb3,
