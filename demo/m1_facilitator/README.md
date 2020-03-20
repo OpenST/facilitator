@@ -2,26 +2,31 @@
 The following scripts will help you in moving the ERC20 tokens(like OST) from the origin chain(Göerli) to the mosaic metachain(Hadapsar-1405) where you can get the equivalent amount of ERC20 tokens (utility tokens).
 
 ## Prerequisites
-1. Web3 RPC for the origin chain (Göerli)
-  - If you want to use public göerli node<br>
-    **RPC:** `https://rpc.slock.it/goerli`
-  - You can run a Göerli full node by installing [mosaic chains](https://github.com/mosaicdao/mosaic-chains) npm package (in your dev dependencies):
-    ```sh
-    npm i @openst/mosaic-chains --save-dev
-    ```
-    and run
-    ```sh
-    ./node-modules/.bin/mosaic start goerli -g
-    ```
-    Once the chain is synced use the RPC url for deposit requests
-2. Web3 RPC for the metachain (Hadapsar)
-  - If you want to use the public hadapsar node<br>
-  **RPC:** `https://chain.mosaicdao.org/hadapsar`
-3. Clone facilitator repository
+1. Web3 RPC for the origin chain (Göerli) and metachain(Hadapsar-1405)
+    1. If you want to use public nodes RPC urls:
+        - Göerli node<br>
+        **RPC:** `https://rpc.slock.it/goerli`
+        - Public hadapsar node<br>
+        **RPC:** `https://chain.mosaicdao.org/hadapsar`
+    2. If you want to run full node
+        - Install [mosaic chains](https://github.com/mosaicdao/mosaic-chains) npm package (in your dev dependencies):
+        ```sh
+        npm i @openst/mosaic-chains --save-dev
+        ```
+        - To run Göerli full node, run
+        ```sh
+        ./node-modules/.bin/mosaic start goerli -g
+        ```
+        - To run Hadapsar-1405 full node, run
+        ```sh
+        ./node-modules/.bin/mosaic start 1405 --origin goerli -g
+        ```
+    **Note:** Once the chains are synced use the local RPC url for deposit and withdraw requests
+2. Clone facilitator repository
   ```sh
   git clone https://github.com/mosaicdao/facilitator
   ```
-4. Install dependencies
+3. Install dependencies
   ```sh
   cd facilitator
   npm ci
@@ -32,7 +37,7 @@ Make sure that the prerequisites are met
 1. Create depositor
   - Run the below script to create depositor account
   ```sh
-  npm run create_keys:m1:testnet
+  npm run create_keys:testnet:m1
   ```
   - Enter `depositor` when asked `Select actor type i.e. depositor or withdrawer:`
   - Next, enter the password to the keystore file
