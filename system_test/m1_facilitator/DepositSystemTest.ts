@@ -125,10 +125,10 @@ export default class DepositSystemTest {
       // wait for facilitator to finish the job
       await utils.waitForCondition(
         async (): Promise<boolean> => {
-          for (let i = 0; i < messageHashes.length; i++) {
-            const isDeclared = await erc20Cogateway.methods.inbox(messageHashes[i]).call();
+          for (let j = 0; j < messageHashes.length; j += 1) {
+            const isDeclared = await erc20Cogateway.methods.inbox(messageHashes[j]).call();
             if (!isDeclared) {
-              return false
+              return false;
             }
           }
           return true;
@@ -147,11 +147,11 @@ export default class DepositSystemTest {
 
       // assert balance on utitliy token
       // Note: the check must be changed to "greater than" only while
-      //       running the complete system test.
+      //       running the complete system test. As the utilityToken is not available
 
       for (let j = 0; j < accounts.length; j += 1) {
         // @ts-ignore
-        // const initialBalance = initialAuxiliaryAccountBalance.get(accounts[i]);
+        // const initialBalance = initialAuxiliaryAccountBalance.get(accounts[j]);
         // @ts-ignore
         // const finalBalance = finalAuxiliaryAccountBalance.get(accounts[j]);
         // assert.ok(
@@ -167,6 +167,15 @@ export default class DepositSystemTest {
       console.log('initialAuxiliaryAccountBalance  ', initialAuxiliaryAccountBalance);
       console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
       console.log('finalOriginAccountBalance  ', finalAuxiliaryAccountBalance);
+
+      this.generateReport(
+        initialOriginAccountBalance,
+        finalOriginAccountBalance,
+        expectedOriginAccountBalance,
+        accounts,
+        messageHashes,
+        auxiliaryWeb3,
+      );
     }
     resolve();
   }
@@ -300,5 +309,46 @@ export default class DepositSystemTest {
       ),
       depositAmount: testAmount,
     };
+  }
+
+  private static async generateReport(
+    initialOriginAccountBalance: Map<string, BigNumber>,
+    finalOriginAccountBalance: Map<string, BigNumber>,
+    expectedOriginAccountBalance: Map<string, BigNumber>,
+    accounts: string[],
+    depositMessageHashes: string[],
+    auxiliaryWeb3: Web3,
+  ) {
+    Logger.info('\t\t Balance Report (Deposit flow) \t\t')
+    Logger.info('\t\t Origin \t\t');
+    Logger.info('Address \t Balance Before Deposit \t Expected Balance After Deposit \t Actual Balance After Deposit \t Success(T/F)');
+
+    for (let i = 0; i < accounts.length; i += 1) {
+      // @ts-ignore
+      const initialBalance = initialOriginAccountBalance.get(accounts[i]).toString(10);
+      // @ts-ignore
+      const expectedBalance = expectedOriginAccountBalance.get(accounts[i]).toString(10);
+      // @ts-ignore
+      const finalBalance = finalOriginAccountBalance.get(accounts[i]).toString(10);
+      const success = finalBalance === expectedBalance ? true : false;
+
+      Logger.info(`${accounts[i]} \t ${initialBalance} \t ${expectedBalance} \t ${finalBalance} \t ${success}`);
+    }
+
+    Logger.info('\t\t MessageHash Report \t\t');
+
+    const config = await Utils.getConfig();
+    const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
+    const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(
+      auxiliaryWeb3,
+      erc20CogatewayAddress,
+    );
+
+    Logger.info('MessageHash \t\t Success(T/F)');
+    for (let i = 0; i < depositMessageHashes.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const success = await erc20Cogateway.methods.inbox(depositMessageHashes[i]).call();
+      Logger.info(`${depositMessageHashes[i]} \t\t ${success}`);
+    }
   }
 }
