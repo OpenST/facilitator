@@ -21,18 +21,17 @@ export default class Deposit {
   ): Promise<void> {
     const web3 = new Web3(originRpcEndpoint);
 
-    // To reduce wait time on testnet.
     web3.transactionConfirmationBlocks = 1;
     const keystore = JSON.parse(fs.readFileSync(depositorKeystore).toString());
     const depositorAccount = web3.eth.accounts.decrypt(keystore, password);
     web3.eth.accounts.wallet.add(depositorAccount);
     const depositorAddress = depositorAccount.address;
-    console.log(`Requesting deposit from depositor ${depositorAddress}`);
+    console.log(`\nRequesting deposit from depositor ${depositorAddress}`);
     const tokenInstance = Mosaic.interacts.getERC20I(
       web3,
       valueTokenAddress,
     );
-    console.log('Approving value tokens to ERC20Gateway.');
+    console.log('\nApproving value tokens to ERC20Gateway.');
     const approveRawTx = tokenInstance.methods.approve(
       erc20GatewayAddress,
       depositRequestParams.amountToDeposit,
@@ -45,7 +44,7 @@ export default class Deposit {
 
     console.log('Value token approval to ERC20Gateway done transaction hash: ', approvalReceipt.transactionHash);
 
-    console.log('Requesting Deposit.');
+    console.log('\nRequesting Deposit');
 
     const erc20GatewayInstance = Mosaic.interacts.getERC20Gateway(web3, erc20GatewayAddress);
 
@@ -62,9 +61,14 @@ export default class Deposit {
       gasPrice,
     });
 
-    console.log('Request deposit done with transaction hash: ', receipt.transactionHash);
-    console.log('Request deposit done with message hash: ', receipt.events.DepositIntentDeclared.returnValues.messageHash);
-    console.log(`🤝 Facilitators are moving your tokens to metachain. Check beneficiary ${depositRequestParams.beneficiary} balance on metachain after few minutes.`);
+    console.log('\nDeposit request done');
+    console.log('Deposit amount \t\t:', depositRequestParams.amountToDeposit);
+    console.log('Beneficiary Address \t:', depositRequestParams.beneficiary);
+    console.log('Deposit GasPrice \t:', depositRequestParams.gasPrice);
+    console.log('Deposit GasLimit \t:', depositRequestParams.gasLimit);
+    console.log('Transaction hash \t:', receipt.transactionHash);
+    console.log('Message hash \t\t:', receipt.events.DepositIntentDeclared.returnValues.messageHash);
+    console.log(`\n🤝 Facilitators are moving your tokens to metachain. Check beneficiary ${depositRequestParams.beneficiary} balance on metachain after few minutes.`);
     console.log(`Check beneficiary account on view https://view.mosaicdao.org/address/${depositRequestParams.beneficiary}/transactions`);
   }
 }

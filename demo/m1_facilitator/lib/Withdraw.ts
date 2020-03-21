@@ -21,18 +21,17 @@ export default class Withdraw {
   ): Promise<void> {
     const web3 = new Web3(metachainRpcEndpoint);
 
-    // To reduce wait time on testnet.
     web3.transactionConfirmationBlocks = 1;
     const keystore = JSON.parse(fs.readFileSync(withdrawerKeystore).toString());
     const withdrawerAccount = web3.eth.accounts.decrypt(keystore, password);
     web3.eth.accounts.wallet.add(withdrawerAccount);
     const withdrawerAddress = withdrawerAccount.address;
-    console.log(`Requesting deposit from depositor ${withdrawerAddress}`);
+    console.log(`\nRequesting withdraw from withdrawer ${withdrawerAddress}`);
     const tokenInstance = Mosaic.interacts.getERC20I(
       web3,
       utilityTokenAddress,
     );
-    console.log('Approving utility tokens to ERC20Cogateway.');
+    console.log('\nApproving utility tokens to ERC20Cogateway.');
     const approveRawTx = tokenInstance.methods.approve(
       erc20CogatewayAddress,
       withdrawRequestParams.amountToWithdraw,
@@ -45,7 +44,7 @@ export default class Withdraw {
 
     console.log('Utility token approval to ERC20Cogateway done transaction hash: ', approvalReceipt.transactionHash);
 
-    console.log('Requesting Withdraw.');
+    console.log('\nRequesting Withdraw');
 
     const erc20CogatewayInstance = Mosaic.interacts.getERC20Cogateway(web3, erc20CogatewayAddress);
 
@@ -62,9 +61,14 @@ export default class Withdraw {
       gasPrice,
     });
 
-    console.log('Request withdraw done with transaction hash: ', receipt.transactionHash);
-    console.log('Request withdraw done with message hash: ', receipt.events.WithdrawIntentDeclared.returnValues.messageHash);
-    console.log(`🤝 Facilitators are moving your tokens to origin chain. Check beneficiary ${withdrawRequestParams.beneficiary} balance on origin chain after few minutes.`);
+    console.log('\nWithdraw request done');
+    console.log('Withdraw amount \t:', withdrawRequestParams.amountToWithdraw);
+    console.log('Beneficiary Address \t:', withdrawRequestParams.beneficiary);
+    console.log('Withdraw GasPrice \t:', withdrawRequestParams.gasPrice);
+    console.log('Withdraw GasLimit \t:', withdrawRequestParams.gasLimit);
+    console.log('Transaction hash \t:', receipt.transactionHash);
+    console.log('Messagehash \t\t:', receipt.events.WithdrawIntentDeclared.returnValues.messageHash);
+    console.log(`\n🤝 Facilitators are moving your tokens to origin chain. Check beneficiary ${withdrawRequestParams.beneficiary} balance on origin chain after few minutes.`);
     console.log(`Check beneficiary account on etherscan https://goerli.etherscan.io/address/${withdrawRequestParams.beneficiary}`);
   }
 }
