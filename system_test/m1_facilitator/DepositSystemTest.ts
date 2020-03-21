@@ -17,12 +17,13 @@ import Web3 from 'web3';
 import { Account } from 'web3-eth-accounts';
 
 import BigNumber from 'bignumber.js';
+import { resolve } from 'bluebird';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Logger from '../../src/common/Logger';
 import Utils from '../common/Utils';
 
-import utils from '../../test_integration/m1_facilitator/utils';
+// import utils from '../../test_integration/m1_facilitator/utils';
 
 // eslint-disable no-await-in-loop
 /**
@@ -71,7 +72,6 @@ export default class DepositSystemTest {
         originWeb3,
         valueToken,
       );
-
       const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
       const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(
         auxiliaryWeb3,
@@ -109,11 +109,11 @@ export default class DepositSystemTest {
       // Assert for final origin balance should be equal to expected origin balance.
       const accounts = Array.from(finalOriginAccountBalance.keys());
       for (let j = 0; j < accounts.length; j += 1) {
-        // assert.equal(
-        //   finalOriginAccountBalance.get(accounts[j]),
-        //   expectedOriginAccountBalance.get(accounts[j]),
-        //   '',
-        // );
+        assert.equal(
+          finalOriginAccountBalance.get(accounts[j]),
+          expectedOriginAccountBalance.get(accounts[j]),
+          '',
+        );
       }
 
       // wait for facilitator to finish the job
@@ -155,7 +155,11 @@ export default class DepositSystemTest {
     console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
     console.log('finalOriginAccountBalance  ', finalAuxiliaryAccountBalance);
 
-    Logger.info('Success..!');
+    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
+    console.log('initialAuxiliaryAccountBalance  ', initialAuxiliaryAccountBalance);
+    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
+    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
+    resolve();
   }
 
   /**
@@ -220,7 +224,7 @@ export default class DepositSystemTest {
    * @param tokenAddress
    */
   private static async getAccountBalances(accounts: Account[], web3: Web3, tokenAddress: string) {
-
+    console.log('in getAccountBalances method');
     const accountBalances: Map<string, BigNumber> = new Map<string, BigNumber>();
     const balancePromises = accounts.map(
       async (account: Account): Promise<void> => {

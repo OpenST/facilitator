@@ -17,6 +17,7 @@ import Mosaic from 'Mosaic';
 import fs from 'fs';
 import path from 'path';
 import { Account } from 'web3-eth-accounts';
+import Web3 from 'web3';
 import Utils from './Utils';
 
 export default class AddressHandler {
@@ -61,7 +62,7 @@ export default class AddressHandler {
 
   public static async getTokenBalance(
     account: string,
-    web3: any,
+    web3: Web3,
     tokenAddress: string,
   ): Promise<number> {
     const tokenInstance = Mosaic.interacts.getERC20I(web3, tokenAddress);
@@ -73,7 +74,8 @@ export default class AddressHandler {
   public static async getAddresses(count: number, web3: any): Promise<Account[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.accounts;
-    const accountsSelected: Account[] = [];
+    console.log('configAddresses : ', configAddresses);
+    const accountsSelected: any[] = [];
 
     for (let i = 0; i < count; i += 1) {
       const accountAddress = configAddresses[i];

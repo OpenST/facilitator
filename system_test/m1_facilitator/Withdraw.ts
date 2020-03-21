@@ -36,6 +36,7 @@ export default class Withdraw {
     const auxiliaryChainId = config.chains.auxiliary.chainId;
 
     const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
+    const originWeb3 = new Web3(originWsEndpoint);
 
     const messageHashes: string[] = [];
 
@@ -54,22 +55,25 @@ export default class Withdraw {
 
       // eslint-disable-next-line no-await-in-loop
       await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId, auxiliaryWeb3);
-
+      console.log('done with funding accounts : ');
       const initialBalancePromises = testWithdrawerAccounts.map(
         async (account: Account): Promise<void> => {
+          console.log('account.address : ', account.address);
           const { valueToken } = config.chains.origin;
+          console.log('Withdraw -> valueToken', valueToken);
           const { utilityToken } = config.chains.auxiliary;
+          console.log('Withdraw -> utilityToken', utilityToken);
 
           const auxiliaryBalance = await AddressHandler.getTokenBalance(
             account.address,
-            auxiliaryWsEndpoint,
+            auxiliaryWeb3,
             utilityToken,
           );
           initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
 
           const originBalance = await AddressHandler.getTokenBalance(
             account.address,
-            originWsEndpoint,
+            originWeb3,
             valueToken,
           );
           initialOriginAccountBalance[account.address] = originBalance;
@@ -90,10 +94,9 @@ export default class Withdraw {
             from: account.address,
           });
 
+          console.log('txReceipt : ', txReceipt);
           // @ts-ignore
-          const {
-            messageHash,
-          } = txReceipt.events.WithdrawIntentDeclared.returnValues;
+          const { messageHash } = txReceipt.events.WithdrawIntentDeclared.returnValues;
 
           messageHashes.push(messageHash);
         },
@@ -115,7 +118,7 @@ export default class Withdraw {
       minGasPrice,
       maxGasPrice,
       minGasLimit,
-      maxGasLimit
+      maxGasLimit,
     } = config.testConfig.withdraw;
 
     const testAmount = await Utils.getRandomNumber(minAmount, maxAmount);
@@ -125,7 +128,9 @@ export default class Withdraw {
 
     const { utilityToken } = config.chains.auxiliary;
 
-    await utilityToken.methods.approve(
+    const utilityTokenInstance = Mosaic.interacts.getUtilityToken(auxiliaryWeb3, utilityToken);
+
+    await utilityTokenInstance.methods.approve(
       erc20CogatewayAddress,
       testAmount,
     );
