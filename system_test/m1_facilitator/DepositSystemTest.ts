@@ -138,20 +138,28 @@ export default class DepositSystemTest {
         6,
       );
 
-      // Assert auxiliary balances
       const finalAuxiliaryAccountBalance: Map<string, BigNumber> = await this.getAccountBalances(
         depositorAccounts,
         auxiliaryWeb3,
         utilityTokenAddress,
       );
 
-      console.log('Final auxiliary account balance :-', finalAuxiliaryAccountBalance);
+
       // assert balance on utitliy token
+      // Note: the check must be changed to "greater than" only while
+      //       running the complete system test.
+
       for (let j = 0; j < accounts.length; j += 1) {
+        // @ts-ignore
+        // const initialBalance = initialAuxiliaryAccountBalance.get(accounts[i]);
+        // @ts-ignore
+        // const finalBalance = finalAuxiliaryAccountBalance.get(accounts[j]);
         // assert.ok(
         //   // @ts-ignore
-        //   finalAuxiliaryAccountBalance.get(accounts[j]).gt(initialAuxiliaryAccountBalance.get(accounts[i])),
-        //   '',
+        //   finalBalance.gte(initialBalance),
+        //   `Final auxiliary balances must be grater than the initial auxiliary balances.
+        //     initial auxiliary balance ${initialBalance}
+        //     final auxiliary balance ${finalBalance}`,
         // );
       }
       // TO DO: send report
