@@ -104,7 +104,7 @@ export default class TransactionExecutor {
       this.gasPrice,
     );
     await this.transactionRepository.save(transaction);
-    Logger.debug(`TransactionExecutor::${this.type}::Transaction: ${JSON.stringify(transaction.id)} queued successfully.`);
+    Logger.debug(`TransactionExecutor::${this.type}::Transaction: queued successfully.`);
   }
 
   /**
