@@ -51,7 +51,7 @@ export default class AvatarAccount {
   ): AvatarAccount {
     const web3Account = web3.eth.accounts.decrypt(encryptedKeystore, password);
     web3.eth.accounts.wallet.add(web3Account);
-    Logger.debug(`Added account: ${web3Account.address} to web3 wallet.`);
+    Logger.debug(`AvatarAccount::Added account: ${web3Account.address} to web3 wallet.`);
     return new AvatarAccount(web3Account.address);
   }
 

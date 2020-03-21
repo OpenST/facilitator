@@ -18,7 +18,7 @@ import Mosaic from 'Mosaic';
 
 import { ERC20Cogateway } from 'Mosaic/dist/interacts/ERC20Cogateway';
 import assert from '../../../test_utils/assert';
-import TransactionExecutor from '../../../../src/m1_facilitator/lib/TransactionExecutor';
+import TransactionExecutor, { TransactionExecutorType } from '../../../../src/m1_facilitator/lib/TransactionExecutor';
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 import AvatarAccount from '../../../../src/m1_facilitator/manifest/AvatarAccount';
 
@@ -110,6 +110,7 @@ describe('TransactionExecutor::add()', (): void => {
       web3,
       gasPrice,
       avatarAccount,
+      TransactionExecutorType.ORIGIN,
     );
     confirmDepositParams = {
       valueToken: '0x0000000000000000000000000000000000000001',

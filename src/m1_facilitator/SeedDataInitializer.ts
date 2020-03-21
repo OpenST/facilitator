@@ -15,6 +15,7 @@
 import Web3 from 'web3';
 import Mosaic from 'Mosaic';
 import BigNumber from 'bignumber.js';
+import { interacts as m0interacts } from '@openst/mosaic-contracts';
 
 import Anchor from './models/Anchor';
 import Gateway, { GatewayType } from './models/Gateway';
@@ -22,6 +23,7 @@ import Repositories from './repositories/Repositories';
 import ContractEntity, { EntityType } from '../common/models/ContractEntity';
 import Utils from '../common/Utils';
 import Logger from '../common/Logger';
+import { ArchitectureLayout } from './manifest/Manifest';
 
 /**
  * Initializes the seed data in repositories and validate the seeded data.
@@ -55,40 +57,60 @@ export default class SeedDataInitializer {
    * @param originWeb3 Instance of origin web3.
    * @param auxiliaryWeb3 Instance of auxiliary web3.
    * @param erc20GatewayAddress ERC20 Gateway address.
+   * @param architectureLayout Architecture layout.
    */
   public async initialize(
     originWeb3: Web3,
     auxiliaryWeb3: Web3,
     erc20GatewayAddress: string,
+    architectureLayout: ArchitectureLayout,
   ): Promise<void> {
     const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, erc20GatewayAddress);
     const cogatewayAddress = await erc20Gateway.methods.messageOutbox().call();
-    Logger.debug(`cogatewayAddress: ${cogatewayAddress}`);
+    Logger.debug(`SeedDataInitializer::cogatewayAddress: ${cogatewayAddress}`);
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(
       auxiliaryWeb3,
       cogatewayAddress,
     );
 
     const originAnchorAddress = await erc20Gateway.methods.stateRootProvider().call();
-    Logger.debug(`originAnchorAddress: ${originAnchorAddress}`);
-    const originAnchorInstance = Mosaic.interacts.getAnchor(
-      originWeb3,
-      originAnchorAddress,
-    );
-
     const auxiliaryAnchorAddress = await erc20Cogateway.methods.stateRootProvider().call();
-    Logger.debug(`auxiliaryAnchorAddress: ${auxiliaryAnchorAddress}`);
-    const auxiliaryAnchorInstance = Mosaic.interacts.getAnchor(
-      auxiliaryWeb3,
-      auxiliaryAnchorAddress,
-    );
+    let auxiliaryLatestAnchoredStateRootBlockHeight: string;
+    let originLatestAnchoredStateRootBlockHeight: string;
+    if (ArchitectureLayout.MOSAIC_0_14_GEN_1 === architectureLayout) {
+      Logger.debug('SeedDataInitializer::Getting anchor instance for Gen1');
+      const originAnchorInstance = Mosaic.interacts.getAnchor(
+        originWeb3,
+        originAnchorAddress,
+      );
+      const auxiliaryAnchorInstance = Mosaic.interacts.getAnchor(
+        auxiliaryWeb3,
+        auxiliaryAnchorAddress,
+      );
 
-    const auxiliaryLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
-      .getLatestStateRootBlockNumber().call();
-    const originLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
-      .getLatestStateRootBlockNumber().call();
+      originLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
+        .getLatestStateRootBlockNumber().call();
+      auxiliaryLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
+        .getLatestStateRootBlockNumber().call();
+    } else {
+      Logger.debug('SeedDataInitializer::Getting anchor instance for Gen0');
+      const originAnchorInstance = m0interacts.getAnchor(
+        originWeb3,
+        originAnchorAddress,
+      );
+      const auxiliaryAnchorInstance = m0interacts.getAnchor(
+        auxiliaryWeb3,
+        auxiliaryAnchorAddress,
+      );
+
+      originLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
+        .getLatestStateRootBlockHeight().call();
+      auxiliaryLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
+        .getLatestStateRootBlockHeight().call();
+    }
+
     Logger.debug(
-      `auxiliaryLatestAnchoredStateRootBlockHeight: ${auxiliaryLatestAnchoredStateRootBlockHeight},
+      `SeedDataInitializer::auxiliaryLatestAnchoredStateRootBlockHeight: ${auxiliaryLatestAnchoredStateRootBlockHeight},
     originLatestAnchoredStateRootBlockHeight: ${originLatestAnchoredStateRootBlockHeight}`,
     );
 
@@ -99,7 +121,7 @@ export default class SeedDataInitializer {
       Anchor.getGlobalAddress(originAnchorAddress),
       new BigNumber(0),
     );
-    Logger.debug(`originGateway: ${JSON.stringify(originGateway)}`);
+    Logger.debug(`SeedDataInitializer::originGateway: ${JSON.stringify(originGateway)}`);
 
     const auxiliaryGateway = new Gateway(
       Gateway.getGlobalAddress(cogatewayAddress),
@@ -108,24 +130,24 @@ export default class SeedDataInitializer {
       Anchor.getGlobalAddress(auxiliaryAnchorAddress),
       new BigNumber(0),
     );
-    Logger.debug(`auxiliaryGateway: ${JSON.stringify(auxiliaryGateway)}`);
+    Logger.debug(`SeedDataInitializer::auxiliaryGateway: ${JSON.stringify(auxiliaryGateway)}`);
 
     const originAnchor = new Anchor(
       Anchor.getGlobalAddress(originAnchorAddress),
-      new BigNumber(0),
+      new BigNumber(originLatestAnchoredStateRootBlockHeight),
     );
-    Logger.debug(`originAnchor: ${JSON.stringify(originAnchor)}`);
+    Logger.debug(`SeedDataInitializer::originAnchor: ${JSON.stringify(originAnchor)}`);
 
     const auxiliaryAnchor = new Anchor(
       Anchor.getGlobalAddress(auxiliaryAnchorAddress),
-      new BigNumber(0),
+      new BigNumber(auxiliaryLatestAnchoredStateRootBlockHeight),
     );
-    Logger.debug(`auxiliaryAnchor: ${JSON.stringify(auxiliaryAnchor)}`);
+    Logger.debug(`SeedDataInitializer::auxiliaryAnchor: ${JSON.stringify(auxiliaryAnchor)}`);
 
     const originLastBlockTimestamp = await Utils.latestBlockTimestamp(originWeb3);
     const auxiliaryLastBlockTimestamp = await Utils.latestBlockTimestamp(auxiliaryWeb3);
     Logger.debug(
-      `originLastBlockTimestamp: ${originLastBlockTimestamp},
+      `SeedDataInitializer::originLastBlockTimestamp: ${originLastBlockTimestamp},
       auxiliaryLastBlockTimestamp: ${auxiliaryLastBlockTimestamp}`,
     );
 
@@ -137,7 +159,7 @@ export default class SeedDataInitializer {
       originAnchorAddress,
       auxiliaryAnchorAddress,
     );
-    Logger.debug(`contractEntities: ${JSON.stringify(contractEntities)}`);
+    Logger.debug(`SeedDataInitializer::contractEntities: ${JSON.stringify(contractEntities)}`);
 
     const saveContractEntityPromises = contractEntities.map(
       async (contractEntity): Promise<void> => {
@@ -146,17 +168,17 @@ export default class SeedDataInitializer {
     );
 
     await Promise.all(saveContractEntityPromises);
-    Logger.debug('Contract entity repository initialized');
+    Logger.debug('SeedDataInitializer::Contract entity repository initialized');
 
     await this.repositories.anchorRepository.save(originAnchor);
-    Logger.debug('Origin anchor repository initialized');
+    Logger.debug('SeedDataInitializer::Origin anchor repository initialized');
     await this.repositories.anchorRepository.save(auxiliaryAnchor);
-    Logger.debug('Auxiliary anchor repository initialized');
+    Logger.debug('SeedDataInitializer::Auxiliary anchor repository initialized');
 
     await this.repositories.gatewayRepository.save(auxiliaryGateway);
-    Logger.debug('Auxiliary Gateway repository initialized');
+    Logger.debug('SeedDataInitializer::Auxiliary Gateway repository initialized');
     await this.repositories.gatewayRepository.save(originGateway);
-    Logger.debug('Origin Gateway repository initialized');
+    Logger.debug('SeedDataInitializer::Origin Gateway repository initialized');
   }
 
   /**
@@ -170,7 +192,7 @@ export default class SeedDataInitializer {
    */
   public async isValidSeedData(gatewayAddress: string): Promise<boolean> {
     const gatewayGA = Gateway.getGlobalAddress(gatewayAddress);
-    Logger.debug(`Verifying seed data for gateway ${gatewayGA}`);
+    Logger.debug(`SeedDataInitializer::Verifying seed data for gateway ${gatewayGA}`);
     const gatewayRecord = await this.repositories.gatewayRepository.get(gatewayGA);
 
     return (gatewayRecord !== null);

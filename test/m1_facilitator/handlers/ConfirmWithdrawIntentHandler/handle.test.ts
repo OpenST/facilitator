@@ -67,6 +67,8 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
       '0x0000000000000000000000000000000000000001',
     );
 
+    existingMessage.nonce = new BigNumber(1);
+
     await messageRepository.save(existingMessage);
 
     const confirmWithdrawIntentRecord = {
@@ -141,6 +143,9 @@ describe('ConfirmWithdrawIntentsHandler::handle', (): void => {
       MessageStatus.Undeclared,
       '0x0000000000000000000000000000000000000002',
     );
+
+    existingMessage1.nonce = new BigNumber(1);
+    existingMessage2.nonce = new BigNumber(1);
 
     await messageRepository.save(existingMessage1);
     await messageRepository.save(existingMessage2);

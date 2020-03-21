@@ -41,6 +41,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     feeGasPrice: '20',
     blockNumber: '100',
     depositor: '0x0000000000000000000000000000000000000070',
+    nonce: '1',
   };
   beforeEach(async (): Promise<void> => {
     repositories = await Repositories.create();
@@ -71,6 +72,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
     feeGasPrice: string;
     blockNumber: string;
     depositor: string;
+    nonce: string;
   }): Promise<void> {
     const message = await messageRepository.get(record.messageHash);
 
@@ -119,6 +121,15 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
         && message.sourceDeclarationBlockNumber && message.sourceDeclarationBlockNumber.toString(10)
       }`,
     );
+
+    assert.isOk(
+      message && message.nonce
+      && message.nonce.isEqualTo(
+        new BigNumber(record.nonce),
+      ),
+      `Expected nonce is ${record.nonce} but`
+      + ` found ${message && message.nonce && message.nonce.toString(10)}`,
+    );
   }
 
   async function assertDepositIntentRepository(record: {
@@ -160,18 +171,18 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
 
   it('should change status of message from undeclared to declared for'
     + ' existing message', async (): Promise<void> => {
-    await messageRepository.save(
-      new Message(
-        record1.messageHash,
-        MessageType.Deposit,
-        MessageStatus.Undeclared,
-        MessageStatus.Undeclared,
-        '0x0000000000000000000000000000000000000050',
-        new BigNumber(20),
-        new BigNumber(20),
-        new BigNumber(100),
-      ),
+    const message = new Message(
+      record1.messageHash,
+      MessageType.Deposit,
+      MessageStatus.Undeclared,
+      MessageStatus.Undeclared,
+      '0x0000000000000000000000000000000000000050',
+      new BigNumber(20),
+      new BigNumber(20),
+      new BigNumber(100),
     );
+    message.nonce = new BigNumber(record1.nonce);
+    await messageRepository.save(message);
 
     await declaredDepositIntentsHandler.handle([record1]);
 
@@ -189,6 +200,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       beneficiary: '0x0000000000000000000000000000000000000070',
       amount: '20',
       depositor: '0x0000000000000000000000000000000000000070',
+      nonce: '1',
     };
 
     const gateway1 = new Gateway(
@@ -222,6 +234,7 @@ describe('DeclaredDepositIntentsHandler::handle', (): void => {
       beneficiary: '0x0000000000000000000000000000000000000070',
       amount: '20',
       depositor: '0x0000000000000000000000000000000000000070',
+      nonce: '1',
     };
 
     declaredDepositIntentsHandler = new DeclaredDepositIntentsHandler(
