@@ -437,6 +437,23 @@ export class ERC20Gateway extends SmartContract {
     return CallResult.fromValue(value[0].toBytes());
   }
 
+  inboxNonces(param0: Address): BigInt {
+    let result = super.call("inboxNonces", [EthereumValue.fromAddress(param0)]);
+
+    return result[0].toBigInt();
+  }
+
+  try_inboxNonces(param0: Address): CallResult<BigInt> {
+    let result = super.tryCall("inboxNonces", [
+      EthereumValue.fromAddress(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
+  }
+
   messageInbox(): Address {
     let result = super.call("messageInbox", []);
 
@@ -465,21 +482,6 @@ export class ERC20Gateway extends SmartContract {
     }
     let value = result.value;
     return CallResult.fromValue(value[0].toAddress());
-  }
-
-  nonces(param0: Address): BigInt {
-    let result = super.call("nonces", [EthereumValue.fromAddress(param0)]);
-
-    return result[0].toBigInt();
-  }
-
-  try_nonces(param0: Address): CallResult<BigInt> {
-    let result = super.tryCall("nonces", [EthereumValue.fromAddress(param0)]);
-    if (result.reverted) {
-      return new CallResult();
-    }
-    let value = result.value;
-    return CallResult.fromValue(value[0].toBigInt());
   }
 
   outboundChannelIdentifier(): Bytes {
@@ -551,6 +553,25 @@ export class ERC20Gateway extends SmartContract {
     }
     let value = result.value;
     return CallResult.fromValue(value[0].toBytes());
+  }
+
+  outboxNonces(param0: Address): BigInt {
+    let result = super.call("outboxNonces", [
+      EthereumValue.fromAddress(param0)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_outboxNonces(param0: Address): CallResult<BigInt> {
+    let result = super.tryCall("outboxNonces", [
+      EthereumValue.fromAddress(param0)
+    ]);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
   }
 
   outboxStorageIndex(): i32 {
