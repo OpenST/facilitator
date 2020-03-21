@@ -54,7 +54,7 @@ export default class FacilitatorInit implements Command {
    *
    */
   public async execute(): Promise<void> {
-    Logger.info('FacilitatorInit::Initialing facilitator');
+    Logger.info('FacilitatorInit::Initializing facilitator');
     const manifest = Manifest.fromFile(this.manifestPath);
     Logger.info('FacilitatorInit::Manifest loaded');
     const gatewayAddresses = manifest.originContractAddresses.erc20_gateway;

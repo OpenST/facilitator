@@ -88,9 +88,9 @@ export default class SeedDataInitializer {
         auxiliaryAnchorAddress,
       );
 
-      auxiliaryLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
+      originLatestAnchoredStateRootBlockHeight = await originAnchorInstance.methods
         .getLatestStateRootBlockNumber().call();
-      originLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
+      auxiliaryLatestAnchoredStateRootBlockHeight = await auxiliaryAnchorInstance.methods
         .getLatestStateRootBlockNumber().call();
     } else {
       Logger.debug('SeedDataInitializer::Getting anchor instance for Gen0');
@@ -134,13 +134,13 @@ export default class SeedDataInitializer {
 
     const originAnchor = new Anchor(
       Anchor.getGlobalAddress(originAnchorAddress),
-      new BigNumber(auxiliaryLatestAnchoredStateRootBlockHeight),
+      new BigNumber(originLatestAnchoredStateRootBlockHeight),
     );
     Logger.debug(`SeedDataInitializer::originAnchor: ${JSON.stringify(originAnchor)}`);
 
     const auxiliaryAnchor = new Anchor(
       Anchor.getGlobalAddress(auxiliaryAnchorAddress),
-      new BigNumber(originLatestAnchoredStateRootBlockHeight),
+      new BigNumber(auxiliaryLatestAnchoredStateRootBlockHeight),
     );
     Logger.debug(`SeedDataInitializer::auxiliaryAnchor: ${JSON.stringify(auxiliaryAnchor)}`);
 
