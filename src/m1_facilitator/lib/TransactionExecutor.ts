@@ -22,6 +22,14 @@ import Logger from '../../common/Logger';
 import AvatarAccount from '../manifest/AvatarAccount';
 
 /**
+ * Type of transaction executors.
+ */
+export enum TransactionExecutorType {
+  ORIGIN = 'origin',
+  AUXILIARY = 'auxiliary',
+}
+
+/**
  * Transaction executor class makes sure transactions are executed in a sequential order.
  * Transaction repository act as queue and stores transactions data.
  * It's responsibilities:
@@ -51,6 +59,9 @@ export default class TransactionExecutor {
   /** Mutex instance variable  */
   private readonly mutex: Mutex;
 
+  /** TransactionExecutor type */
+  private readonly type: TransactionExecutorType;
+
   /**
    * Constructor.
    *
@@ -58,20 +69,23 @@ export default class TransactionExecutor {
    * @param web3 The web3 provider instance to be used for fetching nonce.
    * @param gasPrice Gas price at which transaction needs to be sent.
    * @param avatarAccount Avatar account object.
+   * @param type Transaction executor type.
    */
   public constructor(
     transactionRepository: TransactionRepository,
     web3: Web3,
     gasPrice: BigNumber,
     avatarAccount: AvatarAccount,
+    type: TransactionExecutorType,
   ) {
     this.transactionRepository = transactionRepository;
     this.web3 = web3;
     this.gasPrice = gasPrice;
     this.avatarAccount = avatarAccount;
-    this.pollInterval = 1 * 1 * 1000; // in ms
+    this.pollInterval = 1 * 5 * 1000; // in ms
     this.setIntervalHandle = null;
     this.mutex = new Mutex();
+    this.type = type;
   }
 
   /**
@@ -82,7 +96,7 @@ export default class TransactionExecutor {
    * @param rawTx Raw transaction object.
    */
   public async add(toAddress: string, rawTx: TransactionObject<string>): Promise<void> {
-    Logger.info('TransactionExecutor::Adding the transaction in queue');
+    Logger.info(`TransactionExecutor::${this.type}::Adding the transaction in queue`);
     const transaction = new Transaction(
       this.avatarAccount.address,
       toAddress,
@@ -90,7 +104,7 @@ export default class TransactionExecutor {
       this.gasPrice,
     );
     await this.transactionRepository.save(transaction);
-    Logger.debug(`TransactionExecutor::Transaction: ${JSON.stringify(transaction)} queued successfully.`);
+    Logger.debug(`TransactionExecutor::${this.type}::Transaction: ${JSON.stringify(transaction.id)} queued successfully.`);
   }
 
   /**
@@ -126,35 +140,36 @@ export default class TransactionExecutor {
    *
    */
   private async execute(): Promise<void> {
-    Logger.debug('TransactionExecutor::Invoking execute');
+    Logger.debug(`TransactionExecutor::${this.type}::Invoking execute`);
     if (!this.mutex.isLocked()) {
-      Logger.debug('TransactionExecutor::mutex acquired');
+      Logger.debug(`TransactionExecutor::${this.type}::mutex acquired`);
       const release = await this.mutex.acquire();
       const transaction = await this.transactionRepository.dequeue();
       try {
         if (transaction) {
-          Logger.debug('TransactionExecutor::Executing transaction');
+          Logger.debug(`TransactionExecutor::${this.type}::Executing transaction`);
           const nonce = await this.avatarAccount.getNonce(this.web3);
-          Logger.debug(`TransactionExecutor::Executing transaction ${transaction.id && transaction.id.toString(10)}`);
+          Logger.debug(`TransactionExecutor::${this.type}::Executing transaction ${transaction.id && transaction.id.toString(10)}`);
           const response = await this.sendTransaction(transaction, nonce);
           transaction.transactionHash = response.transactionHash;
           transaction.gas = new BigNumber(response.gas);
           transaction.nonce = nonce;
           await this.transactionRepository.save(transaction);
           Logger.info(
-            `TransactionExecutor::Saving transaction ${transaction.id && transaction.id.toString(10)},
+            `TransactionExecutor::${this.type}::Saving transaction ${transaction.id && transaction.id.toString(10)},
             transaction hash: ${transaction.transactionHash}`,
           );
         }
       } catch (error) {
-        Logger.debug('TransactionExecutor::Decreasing nonce in case of error');
+        Logger.debug(`TransactionExecutor::${this.type}::Decreasing nonce in case of error`);
         this.avatarAccount.decreaseNonce();
-        Logger.error('TransactionExecutor::Error in executing transaction:'
+        Logger.error(`TransactionExecutor::${this.type}::Error in executing transaction:`
           + `${transaction && transaction.id && transaction.id.toString(10)}.
         Error message: ${error.message}`);
       } finally {
+        Logger.debug(`TransactionExecutor::${this.type}::mutex releasing`);
         release();
-        Logger.debug('TransactionExecutor::mutex released');
+        Logger.debug(`TransactionExecutor::${this.type}::mutex released`);
       }
     }
   }
@@ -171,31 +186,39 @@ export default class TransactionExecutor {
     transactionHash: string;
     gas: number;
   }> {
-    Logger.info(`Sending transaction ${transaction.id}`);
-    Logger.debug(`TransactionExecutor::Transaction to be processed: ${JSON.stringify(transaction)}`);
-    Logger.debug(`TransactionExecutor::Nonce: ${nonce.toString(10)}.`);
+    Logger.info(`TransactionExecutor::${this.type}::Sending transaction ${transaction.id}`);
+    Logger.debug(`TransactionExecutor::${this.type}::Transaction to be processed: ${JSON.stringify(transaction)}`);
+    Logger.debug(`TransactionExecutor::${this.type}::Nonce: ${nonce.toString(10)}.`);
     return new Promise(async (onResolve, onReject): Promise<void> => {
-      const txOptions = {
-        from: transaction.fromAddress,
-        to: transaction.toAddress,
-        data: transaction.encodedData,
-        nonce: nonce.toNumber(),
-        gasPrice: transaction.gasPrice.toString(10),
-        gas: transaction.gas && transaction.gas.toString(10),
-      };
-      let estimatedGas: number;
-      if (!txOptions.gas) {
-        Logger.info('TransactionExecutor::Estimating gas for the transaction');
-        estimatedGas = await this.web3.eth.estimateGas(txOptions);
-        Logger.info(`TransactionExecutor::estimated gas  ${estimatedGas}`);
-        txOptions.gas = estimatedGas.toString(10);
+      try {
+        const txOptions = {
+          from: transaction.fromAddress,
+          to: transaction.toAddress,
+          data: transaction.encodedData,
+          nonce: nonce.toNumber(),
+          gasPrice: transaction.gasPrice.toString(10),
+          gas: transaction.gas && transaction.gas.toString(10),
+        };
+        let estimatedGas: number;
+        if (!txOptions.gas) {
+          Logger.info(`TransactionExecutor::${this.type}::Estimating gas for the transaction`);
+          estimatedGas = await this.web3.eth.estimateGas(txOptions).catch((e: Error): number => {
+            Logger.error('Error on estimating gas, using default value  ', e);
+            return 6000000;
+          });
+          Logger.info(`TransactionExecutor::${this.type}::estimated gas  ${estimatedGas}`);
+          txOptions.gas = estimatedGas.toString(10);
+        }
+        this.web3.eth.sendTransaction(txOptions)
+          .on('transactionHash', (txHash: string): void => onResolve({ transactionHash: txHash, gas: estimatedGas }))
+          .on('error', (e: Error): void => {
+            Logger.error(`TransactionExecutor::${this.type}::Transaction failed with error: ${e.message}`);
+            onReject(e);
+          });
+      } catch (e) {
+        Logger.error(`TransactionExecutor::${this.type}::Transaction failed with error: ${e.message}`);
+        onReject(e);
       }
-      this.web3.eth.sendTransaction(txOptions)
-        .on('transactionHash', (txHash: string): void => onResolve({ transactionHash: txHash, gas: estimatedGas }))
-        .on('error', (e: Error): void => {
-          Logger.error(`TransactionExecutor::Transaction failed with error: ${e.message}`);
-          onReject(e);
-        });
     });
   }
 }
