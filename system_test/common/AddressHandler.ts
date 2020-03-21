@@ -17,6 +17,7 @@ import Mosaic from 'Mosaic';
 import fs from 'fs';
 import path from 'path';
 import { Account } from 'web3-eth-accounts';
+import BigNumber from 'bignumber.js';
 import Utils from './Utils';
 
 export default class AddressHandler {
@@ -54,7 +55,7 @@ export default class AddressHandler {
     return randomAddresses;
   }
 
-  public static async getBalance(account: string, web3: any): Promise<number> {
+  public static async getBalance(account: string, web3: any): Promise<BigNumber> {
     const balance = await web3.eth.getBalance(account);
     return balance;
   }
@@ -63,11 +64,11 @@ export default class AddressHandler {
     account: string,
     web3: any,
     tokenAddress: string,
-  ): Promise<number> {
+  ): Promise<BigNumber> {
     const tokenInstance = Mosaic.interacts.getERC20I(web3, tokenAddress);
     const balance = await tokenInstance.methods.balanceOf(account).call();
 
-    return +balance;
+    return new BigNumber(balance);
   }
 
   public static async getAddresses(count: number, web3: any): Promise<Account[]> {

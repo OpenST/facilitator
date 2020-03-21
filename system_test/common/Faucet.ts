@@ -4,6 +4,7 @@ import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types
 import Web3 from 'web3';
 import { Account } from 'web3-eth-accounts';
 
+import BigNumber from 'bignumber.js';
 import AddressHandler from './AddressHandler';
 import Utils from './Utils';
 
@@ -19,7 +20,7 @@ export default class Faucet {
 
       const txObject: TransactionObject<boolean> = valueTokenInstance.methods.transfer(
         faucet,
-        balance,
+        balance.toString(10),
       );
       await Utils.sendTransaction(txObject, {
         from: account.address,
@@ -35,14 +36,14 @@ export default class Faucet {
       const balance = await AddressHandler.getBalance(account.address, wsEndpoint);
       const web3 = new Web3(wsEndpoint);
 
-      const gasPrice = 0x3B9ACA00;
-      const transactionFee = 2300 * gasPrice;
+      const gasPrice = new BigNumber('0x3B9ACA00');
+      const transactionFee = new BigNumber(new BigNumber(2300).multipliedBy(gasPrice));
 
       const rawTransaction = {
         from: account.address,
         to: faucet,
-        value: balance - transactionFee,
-        gasPrice,
+        value: (balance.minus(transactionFee)).toString(10),
+        gasPrice: gasPrice.toString(10),
         gas: web3.utils.toHex(23000),
         chainId,
       };
@@ -59,7 +60,7 @@ export default class Faucet {
         originWeb3,
         valueToken,
       );
-      if (balance < 250) {
+      if (balance.lt(new BigNumber(250))) {
         await this.fundFromFaucet(account.address, chain);
       }
     });

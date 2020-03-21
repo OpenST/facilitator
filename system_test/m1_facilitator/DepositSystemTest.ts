@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import assert from 'assert';
 import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 import { Account } from 'web3-eth-accounts';
@@ -109,11 +110,22 @@ export default class DepositSystemTest {
       // Assert for final origin balance should be equal to expected origin balance.
       const accounts = Array.from(finalOriginAccountBalance.keys());
       for (let j = 0; j < accounts.length; j += 1) {
-        // assert.equal(
-        //   finalOriginAccountBalance.get(accounts[j]),
-        //   expectedOriginAccountBalance.get(accounts[j]),
-        //   '',
-        // );
+        // @ts-ignore
+        const initialBalance = initialOriginAccountBalance.get(accounts[j]).toString(10);
+        // @ts-ignore
+        const finalBalance = finalOriginAccountBalance.get(accounts[j]).toString(10);
+        // @ts-ignore
+        const expectedBalance = expectedOriginAccountBalance.get(accounts[j]).toString(10);
+        assert.equal(
+          // @ts-ignore
+          finalOriginAccountBalance.get(accounts[j]).eq(expectedOriginAccountBalance!.get(accounts[j])),
+          true,
+          // @ts-ignore
+          `Final and expected balance must match.
+            initial balance: ${initialBalance}
+            final balance: ${finalBalance}
+            expected balance: ${expectedBalance}`,
+        );
       }
 
       // wait for facilitator to finish the job
@@ -220,7 +232,6 @@ export default class DepositSystemTest {
    * @param tokenAddress
    */
   private static async getAccountBalances(accounts: Account[], web3: Web3, tokenAddress: string) {
-
     const accountBalances: Map<string, BigNumber> = new Map<string, BigNumber>();
     const balancePromises = accounts.map(
       async (account: Account): Promise<void> => {
@@ -244,7 +255,7 @@ export default class DepositSystemTest {
    * @param account
    * @param web3
    */
-  private static async createDepositTransactionObject(account: any, web3: any): Promise<any> {
+  private static async createDepositTransactionObject(account: Account, web3: any): Promise<any> {
     Logger.info(`Generating deposit transaction object for ${account.address}`);
     const config = await Utils.getConfig();
 
