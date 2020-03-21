@@ -33,7 +33,7 @@ async function readInput(): Promise<WithdrawInputInfo> {
     {
       type: 'string',
       name: 'utilityTokenAddress',
-      default: '0x6b9011bde760e3c0db26fc1708f5942a6616ff4e',
+      default: '0x98266c031529eed13955909050257950e3b0e2e0',
       message: 'Enter utility token address:',
     },
     {
