@@ -24,7 +24,7 @@ import Faucet from '../common/Faucet';
 import Logger from '../../src/common/Logger';
 import Utils from '../common/Utils';
 
-// import utils from '../../test_integration/m1_facilitator/utils';
+import utils from '../../test_integration/m1_facilitator/utils';
 
 // eslint-disable no-await-in-loop
 /**
@@ -48,11 +48,7 @@ export default class DepositSystemTest {
     const auxiliaryWeb3 = new Web3(config.chains.auxiliary.wsEndpoint);
     auxiliaryWeb3.transactionConfirmationBlocks = 1;
 
-    const finalOriginAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
     const expectedOriginAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
-    const initialAuxiliaryAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
-    const finalAuxiliaryAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
-
     const messageHashes: string[] = [];
 
     let depositorAccounts: Account[] = [];
@@ -85,8 +81,6 @@ export default class DepositSystemTest {
         auxiliaryWeb3,
         utilityTokenAddress,
       );
-
-      console.log('Initial auxiliary balances :-', initialAuxiliaryAccountBalance);
 
       const depositMessageHashes = await this.deposit(
         depositorAccounts,
@@ -161,16 +155,11 @@ export default class DepositSystemTest {
         // );
       }
       // TO DO: send report
+      console.log('initial origin account balances:   ', initialOriginAccountBalance);
+      console.log('initialAuxiliaryAccountBalance  ', initialAuxiliaryAccountBalance);
+      console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
+      console.log('finalOriginAccountBalance  ', finalAuxiliaryAccountBalance);
     }
-    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
-    console.log('initialAuxiliaryAccountBalance  ', initialAuxiliaryAccountBalance);
-    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
-    console.log('finalOriginAccountBalance  ', finalAuxiliaryAccountBalance);
-
-    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
-    console.log('initialAuxiliaryAccountBalance  ', initialAuxiliaryAccountBalance);
-    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
-    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
     resolve();
   }
 

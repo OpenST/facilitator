@@ -75,7 +75,6 @@ export default class AddressHandler {
   public static async getAddresses(count: number, web3: any): Promise<Account[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.accounts;
-    console.log('configAddresses : ', configAddresses);
     const accountsSelected: any[] = [];
 
     for (let i = 0; i < count; i += 1) {
