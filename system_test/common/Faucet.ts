@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import Mosaic from 'Mosaic';
 import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
 import Web3 from 'web3';
@@ -51,13 +51,14 @@ export default class Faucet {
     });
   }
 
-  public static async fundAccounts(accounts: Account[], chain: number, originWeb3: any): Promise<void> {
-    const fundingPromises = accounts.map(async (account: Account): Promise<void> => {
+  public static async fundAccounts(accounts: any[], chain: number, web3: any): Promise<void> {
+    const fundingPromises = accounts.map(async (account: any): Promise<void> => {
+      console.log('Account address for funding :-', account.address);
       const config = await Utils.getConfig();
       const { valueToken } = config.chains.origin;
       const balance = await AddressHandler.getTokenBalance(
         account.address,
-        originWeb3,
+        web3,
         valueToken,
       );
       if (balance.lt(new BigNumber(250))) {
@@ -68,19 +69,21 @@ export default class Faucet {
   }
 
   private static async fundFromFaucet(beneficiary: string, chain: number): Promise<void> {
-    try {
-      console.log(`✅Funding ${beneficiary} for chain ${chain}`);
-      const FAUCET_URL = 'https://faucet.mosaicdao.org';
+    console.log(`✅Funding ${beneficiary} for chain ${chain}`);
+    const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
-      const response = await axios.post(
-        FAUCET_URL,
-        {
-          beneficiary: `${beneficiary}@${chain}`,
-        },
-      );
+    await axios.post(
+      FAUCET_URL,
+      {
+        beneficiary: `${beneficiary}@${chain}`,
+      },
+      // {
+      //   method: 'post',
+      // },
+    ).then((response: AxiosResponse): void => {
       console.log(`Transaction hash is ${response.data.txHash}`);
-    } catch (error) {
-      console.log(error.message);
-    }
+    }).catch((error: AxiosError): void => {
+      console.log('error from axios catch : ', error.stack);
+    });
   }
 }

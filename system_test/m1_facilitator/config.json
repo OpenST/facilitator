@@ -11,8 +11,8 @@
     "auxiliary": {
       "wsEndpoint": "wss://chain.mosaicdao.org/hadapsar/wss/",
       "graphEndpoint": "",
-      "utilityToken": "",
-      "cogateway": "0x25a1CE197371735D6EDccC178F90841a7CEc23bb",
+      "utilityToken": "0xC4ae54F99CDca5D68DA4c55cd4f40EF5651bfBfc",
+      "cogateway": "0xa074CeBCde016EAF43240D71DbEDEDCd56e87a5C",
       "chainId": 1405,
       "faucet": "0x73e4876c03412139751895879c203d1fe0a0e004"
     }

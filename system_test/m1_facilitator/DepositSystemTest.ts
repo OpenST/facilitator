@@ -18,12 +18,13 @@ import Web3 from 'web3';
 import { Account } from 'web3-eth-accounts';
 
 import BigNumber from 'bignumber.js';
+import { resolve } from 'bluebird';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Logger from '../../src/common/Logger';
 import Utils from '../common/Utils';
 
-import utils from '../../test_integration/m1_facilitator/utils';
+// import utils from '../../test_integration/m1_facilitator/utils';
 
 // eslint-disable no-await-in-loop
 /**
@@ -72,7 +73,6 @@ export default class DepositSystemTest {
         originWeb3,
         valueToken,
       );
-
       const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
       const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(
         auxiliaryWeb3,
@@ -167,7 +167,11 @@ export default class DepositSystemTest {
     console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
     console.log('finalOriginAccountBalance  ', finalAuxiliaryAccountBalance);
 
-    Logger.info('Success..!');
+    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
+    console.log('initialAuxiliaryAccountBalance  ', initialAuxiliaryAccountBalance);
+    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
+    console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
+    resolve();
   }
 
   /**
