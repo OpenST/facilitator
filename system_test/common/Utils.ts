@@ -16,7 +16,6 @@ export default class Utils {
 
   public static async sendTransaction(tx: any, txOption: any): Promise<TransactionReceipt> {
     const txOptions = Object.assign({}, txOption);
-    console.log('txOption : ', txOption);
     if (txOptions.gas === undefined) {
       txOptions.gas = await tx.estimateGas(txOptions);
     }

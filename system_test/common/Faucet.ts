@@ -7,17 +7,24 @@ import { Account } from 'web3-eth-accounts';
 import BigNumber from 'bignumber.js';
 import AddressHandler from './AddressHandler';
 import Utils from './Utils';
+import Logger from '../../src/common/Logger';
 
 export default class Faucet {
-  public static async refundOSTToFaucet(accounts: Account[]): Promise<void> {
+  public static async refundOSTToFaucet(accounts: Account[], web3: Web3): Promise<void> {
     const config = await Utils.getConfig();
     accounts.map(async (account: Account): Promise<void> => {
-      const { valueToken, wsEndpoint, faucet } = config.chains.origin;
-
-      const balance = await AddressHandler.getTokenBalance(account.address, wsEndpoint, valueToken);
-      const web3 = new Web3(wsEndpoint);
+      const { valueToken, faucet } = config.chains.origin;
+      const balance = await AddressHandler.getTokenBalance(account.address, web3, valueToken);
       const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
 
+      Logger.info(`Approving ${faucet} by address ${account.address}`);
+      const approveRawTx = valueTokenInstance.methods.approve(
+        faucet,
+        balance.toString(10),
+      );
+      await Utils.sendTransaction(approveRawTx, {
+        from: account.address,
+      });
       const txObject: TransactionObject<boolean> = valueTokenInstance.methods.transfer(
         faucet,
         balance.toString(10),
@@ -26,6 +33,7 @@ export default class Faucet {
         from: account.address,
         gasPrice: '0x3B9ACA00',
       });
+      Logger.info(`Refund successful to ${faucet} from ${account.address}`);
     });
   }
 
@@ -68,7 +76,7 @@ export default class Faucet {
   }
 
   private static async fundFromFaucet(beneficiary: string, chain: number): Promise<void> {
-    console.log(`✅Funding ${beneficiary} for chain ${chain}`);
+    console.log(`✅ Funding ${beneficiary} for chain ${chain}`);
     const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
     await axios.post(
@@ -76,9 +84,9 @@ export default class Faucet {
       {
         beneficiary: `${beneficiary}@${chain}`,
       },
-      // {
-      //   method: 'post',
-      // },
+      {
+        method: 'post',
+      },
     ).then((response: AxiosResponse): void => {
       console.log(`Transaction hash is ${response.data.txHash}`);
     }).catch((error: AxiosError): void => {

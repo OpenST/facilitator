@@ -62,6 +62,7 @@ export default class DepositSystemTest {
       await Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
       Logger.info('Funding deposit accounts with OST on value chain');
       await Faucet.fundAccounts(depositorAccounts, originChainId, originWeb3);
+      await new Promise(done => setTimeout(done, 100000));
 
       Logger.info('Getting initial origin account balances');
       const initialOriginAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
@@ -81,7 +82,6 @@ export default class DepositSystemTest {
         auxiliaryWeb3,
         utilityTokenAddress,
       );
-
       const depositMessageHashes = await this.deposit(
         depositorAccounts,
         originWeb3,
@@ -148,19 +148,18 @@ export default class DepositSystemTest {
       // assert balance on utility token
       // Note: the check must be changed to "greater than" only while
       //       running the complete system test. As the utilityToken is not available
-
       for (let j = 0; j < accounts.length; j += 1) {
         // @ts-ignore
-        // const initialBalance = initialAuxiliaryAccountBalance.get(accounts[j]);
-        // @ts-ignore
-        // const finalBalance = finalAuxiliaryAccountBalance.get(accounts[j]);
-        // assert.ok(
-        //   // @ts-ignore
-        //   finalBalance.gte(initialBalance),
-        //   `Final auxiliary balances must be grater than the initial auxiliary balances.
-        //     initial auxiliary balance ${initialBalance}
-        //     final auxiliary balance ${finalBalance}`,
-        // );
+        const initialBalance = initialAuxiliaryAccountBalance.get(accounts[j]);
+        // // @ts-ignore
+        const finalBalance = finalAuxiliaryAccountBalance.get(accounts[j]);
+        assert.ok(
+          // @ts-ignore
+          finalBalance.gte(initialBalance),
+          `Final auxiliary balances must be grater than the initial auxiliary balances.
+            initial auxiliary balance ${initialBalance}
+            final auxiliary balance ${finalBalance}`,
+        );
       }
       // TO DO: send report
       console.log('initial origin account balances:   ', initialOriginAccountBalance);
@@ -177,6 +176,7 @@ export default class DepositSystemTest {
         auxiliaryWeb3,
       );
     }
+    await Faucet.refundOSTToFaucet(depositorAccounts, originWeb3);
     resolve();
   }
 
@@ -240,7 +240,7 @@ export default class DepositSystemTest {
    * @param account
    * @param web3
    */
-  private static async createDepositTransactionObject(account: Account, web3: any): Promise<any> {
+  private static async createDepositTransactionObject(account: Account, web3: Web3): Promise<any> {
     Logger.info(`Generating deposit transaction object for ${account.address}`);
     const config = await Utils.getConfig();
 
