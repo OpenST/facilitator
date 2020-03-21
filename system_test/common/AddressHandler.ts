@@ -42,7 +42,7 @@ export default class AddressHandler {
       for (let i = 0; i < concurrencyCount; i += 1) {
         // eslint-disable-next-line no-await-in-loop
         const index = await Utils.getRandomNumber(0, totalAccountCount - 1);
-        const accountAddress = configAddresses[index];
+        const accountAddress = configAddresses[index.toString(10)];
         const keyStore = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.json`);
         const password = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.password`);
 

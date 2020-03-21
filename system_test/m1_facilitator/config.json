@@ -32,10 +32,10 @@
       "maxGasLimit": 5
     },
     "withdraw": {
-      "iterations": 10,
-      "withdrawerCount": 6,
-      "concurrencyCount": 5,
-      "pollingInterval": 2,
+      "iterations": 1,
+      "withdrawerCount": 1,
+      "concurrencyCount": 1,
+      "pollingInterval": 1,
       "timeoutInterval": 20,
       "minAmount": 150,
       "maxAmount": 250,

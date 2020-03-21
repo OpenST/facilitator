@@ -64,7 +64,7 @@ export default class DepositSystemTest {
       await Faucet.fundAccounts(depositorAccounts, originChainId, originWeb3);
 
       Logger.info('Getting initial origin account balances');
-      const initialOriginAccountBalance: Map<string, BigNumber> = await this.getAccountBalances(
+      const initialOriginAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
         depositorAccounts,
         originWeb3,
         valueToken,
@@ -76,7 +76,7 @@ export default class DepositSystemTest {
       );
       const utilityTokenAddress = await erc20Cogateway.methods.utilityTokens(valueToken).call();
 
-      const initialAuxiliaryAccountBalance: Map<string, BigNumber> = await this.getAccountBalances(
+      const initialAuxiliaryAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
         depositorAccounts,
         auxiliaryWeb3,
         utilityTokenAddress,
@@ -94,7 +94,7 @@ export default class DepositSystemTest {
       // final origin balances
       Logger.info('Getting final account balances on origin');
 
-      const finalOriginAccountBalance: Map<string, BigNumber> = await this.getAccountBalances(
+      const finalOriginAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
         depositorAccounts,
         originWeb3,
         valueToken,
@@ -138,14 +138,14 @@ export default class DepositSystemTest {
         6,
       );
 
-      const finalAuxiliaryAccountBalance: Map<string, BigNumber> = await this.getAccountBalances(
+      const finalAuxiliaryAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
         depositorAccounts,
         auxiliaryWeb3,
         utilityTokenAddress,
       );
 
 
-      // assert balance on utitliy token
+      // assert balance on utility token
       // Note: the check must be changed to "greater than" only while
       //       running the complete system test. As the utilityToken is not available
 
@@ -168,7 +168,7 @@ export default class DepositSystemTest {
       console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
       console.log('finalOriginAccountBalance  ', finalAuxiliaryAccountBalance);
 
-      this.generateReport(
+      await this.generateReport(
         initialOriginAccountBalance,
         finalOriginAccountBalance,
         expectedOriginAccountBalance,
@@ -236,31 +236,6 @@ export default class DepositSystemTest {
   }
 
   /**
-   * Returns the erc20 balances of an account
-   * @param accounts
-   * @param web3
-   * @param tokenAddress
-   */
-  private static async getAccountBalances(accounts: Account[], web3: Web3, tokenAddress: string) {
-    const accountBalances: Map<string, BigNumber> = new Map<string, BigNumber>();
-    const balancePromises = accounts.map(
-      async (account: Account): Promise<void> => {
-        const originBalance = await AddressHandler.getTokenBalance(
-          account.address,
-          web3,
-          tokenAddress,
-        );
-
-        const balance = new BigNumber(originBalance);
-        Logger.debug(`Token: ${tokenAddress}  Account: ${account.address} Balance: ${balance.toString(10)}`);
-        accountBalances.set(account.address, balance);
-      },
-    );
-    await Promise.all(balancePromises);
-    return accountBalances;
-  }
-
-  /**
    * Creates transaction object.
    * @param account
    * @param web3
@@ -290,7 +265,7 @@ export default class DepositSystemTest {
 
     const approveRawTx = valueTokenInstance.methods.approve(
       erc20GatewayAddress,
-      testAmount,
+      testAmount.toString(10),
     );
 
     await Utils.sendTransaction(approveRawTx, {
@@ -301,10 +276,10 @@ export default class DepositSystemTest {
 
     return {
       txObject: erc20Gateway.methods.deposit(
-        testAmount,
+        testAmount.toString(10),
         account.address,
-        testGasPrice,
-        testGasLimit,
+        testGasPrice.toString(10),
+        testGasLimit.toString(10),
         valueToken,
       ),
       depositAmount: testAmount,
@@ -318,7 +293,7 @@ export default class DepositSystemTest {
     accounts: string[],
     depositMessageHashes: string[],
     auxiliaryWeb3: Web3,
-  ) {
+  ): Promise<void> {
     Logger.info('\t\t Balance Report (Deposit flow) \t\t')
     Logger.info('\t\t Origin \t\t');
     Logger.info('Address \t Balance Before Deposit \t Expected Balance After Deposit \t Actual Balance After Deposit \t Success(T/F)');

@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import DepositSystemTest from './DepositSystemTest';
-// import Withdraw from './Withdraw';
+import Withdraw from './Withdraw';
 
 DepositSystemTest.run();
+console.log('calling withdraw');
+Withdraw.withdrawSystemTest();
