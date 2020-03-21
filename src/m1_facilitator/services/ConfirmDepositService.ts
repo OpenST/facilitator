@@ -88,20 +88,20 @@ export default class ConfirmDepositService extends Observer<Gateway> {
    * @param gateways List of gateway object.
    */
   public async update(gateways: Gateway[]): Promise<void> {
-    Logger.debug('Confirm deposit service triggered');
-    Logger.info(`ConfirmDepositService::updated gateway records ${gateways.length}`);
+    Logger.debug('ConfirmDepositService::Confirm deposit service triggered');
+    Logger.info(`ConfirmDepositService::Updated gateway records ${gateways.length}`);
     const confirmMessagePromises = gateways.map(async (gateway): Promise<void> => {
-      Logger.debug(`Searching pending messages for gateway: ${gateway.remoteGA} type:${MessageType.Deposit} and last prove block number ${gateway.remoteGatewayLastProvenBlockNumber.toString(10)}`);
+      Logger.debug(`ConfirmDepositService::Searching pending messages for gateway: ${gateway.remoteGA} type:${MessageType.Deposit} and last prove block number ${gateway.remoteGatewayLastProvenBlockNumber.toString(10)}`);
       const messages = await this.messageRepository.getPendingMessagesByGateway(
         gateway.remoteGA,
         MessageType.Deposit,
         gateway.remoteGatewayLastProvenBlockNumber,
       );
 
-      Logger.debug(`Total pending messages ${messages.length}`);
+      Logger.debug(`ConfirmDepositService::Total pending messages ${messages.length}`);
 
       if (messages.length > 0) {
-        Logger.info(`ConfirmDepositService::messages to confirm: ${messages.length}`);
+        Logger.info(`ConfirmDepositService::ConfirmDepositService::messages to confirm: ${messages.length}`);
         await this.confirmMessages(messages, gateway);
       }
     });
@@ -159,7 +159,7 @@ export default class ConfirmDepositService extends Observer<Gateway> {
       [message.messageHash],
     );
 
-    Logger.debug(`Received Proof ${JSON.stringify(proof)}`);
+    Logger.debug(`ConfirmDepositService::Received Proof ${JSON.stringify(proof)}`);
     assert(proof.storageProof.length > 0);
 
     if (proof.storageProof[0].value === '0') {
