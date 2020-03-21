@@ -39,7 +39,7 @@ async function readInput(): Promise<WithdrawInputInfo> {
     {
       type: 'string',
       name: 'erc20CogatewayAddress',
-      default: '0x25a1CE197371735D6EDccC178F90841a7CEc23bb',
+      default: '0x2d986Be491664A5ad13DD5A06820f539d353bb12',
       message: 'Enter ERC20 Cogateway address:',
     },
     {

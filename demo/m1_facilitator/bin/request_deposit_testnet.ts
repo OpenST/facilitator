@@ -39,7 +39,7 @@ async function readInput(): Promise<DepositInputInfo> {
     {
       type: 'string',
       name: 'erc20GatewayAddress',
-      default: '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56',
+      default: '0x9B0fd9FB015d9311738ed5aECfF3A626e7A149C1',
       message: 'Enter ERC20 gateway address:',
     },
     {
