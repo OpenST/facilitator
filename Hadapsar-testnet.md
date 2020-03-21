@@ -40,9 +40,9 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
 
 ### Contract addresses
 - **Göerli**
-  - ERC20Gateway: `0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56`
+  - ERC20Gateway: `0x9B0fd9FB015d9311738ed5aECfF3A626e7A149C1`
 - **Hadapsar-1405**
-  - ERC20Cogateway: `0x25a1CE197371735D6EDccC178F90841a7CEc23bb`
+  - ERC20Cogateway: `0x2d986Be491664A5ad13DD5A06820f539d353bb12`
 
 ## Deposit any ERC20 token on the Göerli testnet to get equivalent ERC20 utility tokens on hadapsar testnet 1405
 
@@ -78,7 +78,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const fs = require('fs');
   const Web3 = require('web3');
 
-  const ERC20_GATEWAY_CONTRACT_ADDRESS = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
+  const ERC20_GATEWAY_CONTRACT_ADDRESS = '0x9B0fd9FB015d9311738ed5aECfF3A626e7A149C1';
   const GOERLI_ENDPOINT = 'https://rpc.slock.it/goerli';
 
   // Please update the following constant values
@@ -178,7 +178,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const Web3 = require('web3');
   const fs = require('fs');
 
-  const ERC20_GATEWAY_CONTRACT_ADDRESS = '0x26DdFbC848Ba67bB4329592021635a5bd8dcAe56';
+  const ERC20_GATEWAY_CONTRACT_ADDRESS = '0x9B0fd9FB015d9311738ed5aECfF3A626e7A149C1';
   const GOERLI_ENDPOINT = 'https://rpc.slock.it/goerli';
 
   // Please update the following constant values
@@ -301,7 +301,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const Web3 = require('web3');
   const fs = require('fs');
 
-  const ERC20_COGATEWAY_CONTRACT_ADDRESS = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
+  const ERC20_COGATEWAY_CONTRACT_ADDRESS = '0x2d986Be491664A5ad13DD5A06820f539d353bb12';
   const HADAPSAR_ENDPOINT = 'https://chain.mosaicdao.org/hadapsar';
 
   // Please update the following constant values
@@ -401,7 +401,7 @@ A small fee is deducted from the ERC20 token by the facilitator that moves the t
   const Web3 = require('web3');
   const fs = require('fs');
 
-  const ERC20_COGATEWAY_CONTRACT_ADDRESS = '0x25a1CE197371735D6EDccC178F90841a7CEc23bb';
+  const ERC20_COGATEWAY_CONTRACT_ADDRESS = '0x2d986Be491664A5ad13DD5A06820f539d353bb12';
   const HADAPSAR_ENDPOINT = 'https://chain.mosaicdao.org/hadapsar';
 
   // Please update the following constant values
