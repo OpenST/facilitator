@@ -82,7 +82,7 @@ export default class Utils {
         to: beneficiary,
         value: web3Utils.toWei(amountInETH.toString()),
       },
-    );
+    ) as any;
   }
 
   /**
@@ -101,7 +101,7 @@ export default class Utils {
         to: beneficiary,
         value: amountInWei.toString(),
       },
-    );
+    ) as any;
   }
 
   /**
@@ -170,6 +170,7 @@ export default class Utils {
    * @param expirationHeight Block number at which address becomes invalid.
    * @returns Receipt object.
    */
+  // eslint-disable-next-line class-methods-use-this
   private async whitelistWorker(
     web3: Web3,
     organizationContractInstance: Organization,
