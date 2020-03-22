@@ -193,7 +193,7 @@ export default class TransactionRepository extends Subject<Transaction> {
     const transactionModel = await this.transactionModel.findOne({
       where: {
         [Op.and]: {
-          messageStatus: Status.Pending,
+          status: Status.Pending,
           transactionHash: null,
         },
       },

@@ -67,6 +67,12 @@ const Util = {
       actualTransaction.updatedAt,
       'Updated value should not be null',
     );
+
+    assert.strictEqual(
+      actualTransaction.status,
+      expectedTransaction.status,
+      'Transaction status mismatch',
+    );
   },
 };
 
