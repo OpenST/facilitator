@@ -16,7 +16,7 @@ import Web3 from 'web3';
 import { TransactionObject } from 'web3/eth/types';
 import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
-import Transaction, { Status } from '../models/Transaction';
+import Transaction, { TransactionStatus } from '../models/Transaction';
 import TransactionRepository from '../repositories/TransactionRepository';
 import Logger from '../../common/Logger';
 import AvatarAccount from '../manifest/AvatarAccount';
@@ -102,7 +102,7 @@ export default class TransactionExecutor {
       toAddress,
       rawTx.encodeABI(),
       this.gasPrice,
-      Status.Pending,
+      TransactionStatus.Pending,
     );
     await this.transactionRepository.save(transaction);
     Logger.debug(`TransactionExecutor::${this.type}::Transaction: queued successfully.`);
@@ -155,7 +155,7 @@ export default class TransactionExecutor {
           transaction.transactionHash = response.transactionHash;
           transaction.gas = new BigNumber(response.gas);
           transaction.nonce = nonce;
-          transaction.status = Status.Success;
+          transaction.transactionStatus = TransactionStatus.Sent;
           await this.transactionRepository.save(transaction);
           Logger.info(
             `TransactionExecutor::${this.type}::Saving transaction ${transaction.id && transaction.id.toString(10)},
@@ -169,7 +169,7 @@ export default class TransactionExecutor {
           + `${transaction && transaction.id && transaction.id.toString(10)}.
         Error message: ${error.message}`);
         if (transaction) {
-          transaction.status = Status.Failure;
+          transaction.transactionStatus = TransactionStatus.Failed;
           await this.transactionRepository.save(transaction);
         }
       } finally {

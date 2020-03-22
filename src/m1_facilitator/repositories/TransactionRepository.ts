@@ -19,7 +19,7 @@ import assert from 'assert';
 import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
 import Subject from '../../common/observer/Subject';
-import Transaction, { Status } from '../models/Transaction';
+import Transaction, { TransactionStatus } from '../models/Transaction';
 import Utils from '../../common/Utils';
 
 /**
@@ -34,7 +34,7 @@ class TransactionModel {
 
   public readonly gasPrice!: BigNumber;
 
-  public readonly status!: Status;
+  public readonly transactionStatus!: TransactionStatus;
 
   public readonly gas!: BigNumber;
 
@@ -90,12 +90,12 @@ export default class TransactionRepository extends Subject<Transaction> {
           type: DataTypes.DECIMAL(78),
           allowNull: false,
         },
-        status: {
+        transactionStatus: {
           type: DataTypes.ENUM({
             values: [
-              Status.Pending,
-              Status.Success,
-              Status.Failure,
+              TransactionStatus.Pending,
+              TransactionStatus.Sent,
+              TransactionStatus.Failed,
             ],
           }),
           allowNull: false,
@@ -193,7 +193,7 @@ export default class TransactionRepository extends Subject<Transaction> {
     const transactionModel = await this.transactionModel.findOne({
       where: {
         [Op.and]: {
-          status: Status.Pending,
+          transactionStatus: TransactionStatus.Pending,
           transactionHash: null,
         },
       },
@@ -221,7 +221,7 @@ export default class TransactionRepository extends Subject<Transaction> {
       transactionModel.gasPrice
         ? new BigNumber(transactionModel.gasPrice)
         : transactionModel.gasPrice,
-      transactionModel.status,
+      transactionModel.transactionStatus,
       transactionModel.gas ? new BigNumber(transactionModel.gas) : transactionModel.gas,
       transactionModel.id ? new BigNumber(transactionModel.id) : transactionModel.id,
       transactionModel.transactionHash,

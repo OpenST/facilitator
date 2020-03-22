@@ -69,8 +69,8 @@ const Util = {
     );
 
     assert.strictEqual(
-      actualTransaction.status,
-      expectedTransaction.status,
+      actualTransaction.transactionStatus,
+      expectedTransaction.transactionStatus,
       'Transaction status mismatch',
     );
   },

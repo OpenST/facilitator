@@ -21,7 +21,7 @@ import assert from '../../../test_utils/assert';
 import TransactionExecutor, { TransactionExecutorType } from '../../../../src/m1_facilitator/lib/TransactionExecutor';
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 import AvatarAccount from '../../../../src/m1_facilitator/manifest/AvatarAccount';
-import { Status } from '../../../../src/m1_facilitator/models/Transaction';
+import { TransactionStatus } from '../../../../src/m1_facilitator/models/Transaction';
 
 interface ConfirmDepositParams {
   valueToken: string;
@@ -195,9 +195,9 @@ describe('TransactionExecutor::add()', (): void => {
       );
 
       assert.strictEqual(
-        transaction.status,
-        Status.Pending,
-        `Transaction should be in ${Status.Pending} state.`,
+        transaction.transactionStatus,
+        TransactionStatus.Pending,
+        `Transaction should be in ${TransactionStatus.Pending} state.`,
       );
     }
   });
