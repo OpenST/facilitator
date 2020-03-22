@@ -28,7 +28,7 @@ import utils from '../../test_integration/m1_facilitator/utils';
 /**
  * Logic for Withdrawal integration tests.
  */
-export default class Withdraw {
+export default class WithdrawSystemTest {
   /**
    * Start of Withdrawal integration tests.
    */
@@ -106,9 +106,15 @@ export default class Withdraw {
             auxiliaryWeb3,
           );
           if (expectedAuxiliaryAccountBalance.get(account.address)) {
-            expectedAuxiliaryAccountBalance.set(account.address, expectedAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount));
+            expectedAuxiliaryAccountBalance.set(
+              account.address, 
+              expectedAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount),
+            );
           } else {
-            expectedAuxiliaryAccountBalance.set(account.address, initialAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount));
+            expectedAuxiliaryAccountBalance.set(
+              account.address, 
+              initialAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount),
+            );
           }
           Logger.info(`before sending withdrawal transaction from ${account.address} address`);
           const txReceipt = await Utils.sendTransaction(txObject, {
