@@ -25,11 +25,13 @@ import Utils from '../common/Utils';
 
 import utils from '../../test_integration/m1_facilitator/utils';
 
-interface Balance {
-  [key: string]: BigNumber;
-}
-
+/**
+ * Logic for Withdrawal integration tests.
+ */
 export default class Withdraw {
+  /**
+   * Start of Withdrawal integration tests.
+   */
   public static async withdrawSystemTest(): Promise<void> {
     // check that valuetoken => utilitytoken
     // wait
@@ -52,9 +54,9 @@ export default class Withdraw {
 
     const messageHashes: string[] = [];
 
-    const initialAuxiliaryAccountBalance: Balance = {};
-    const expectedAuxiliaryAccountBalance: Balance = {};
-    const initialOriginAccountBalance: Balance = {};
+    const initialAuxiliaryAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
+    const expectedAuxiliaryAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
+    const initialOriginAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
 
     let testWithdrawerAccounts = [];
 
@@ -64,7 +66,7 @@ export default class Withdraw {
         auxiliaryWeb3,
       );
 
-      await Utils.addAccountsToWeb3Wallet(testWithdrawerAccounts, auxiliaryWeb3);
+      Utils.addAccountsToWeb3Wallet(testWithdrawerAccounts, auxiliaryWeb3);
       await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId, auxiliaryWeb3);
 
       const initialBalancePromises = testWithdrawerAccounts.map(
@@ -82,14 +84,14 @@ export default class Withdraw {
           );
           Logger.info('Withdraw -> auxiliaryBalance', auxiliaryBalance);
 
-          initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
+          initialAuxiliaryAccountBalance.set(account.address, auxiliaryBalance);
 
           const originBalance = await AddressHandler.getTokenBalance(
             account.address,
             originWeb3,
             valueToken,
           );
-          initialOriginAccountBalance[account.address] = originBalance;
+          initialOriginAccountBalance.set(account.address, originBalance);
         },
       );
       await Promise.all(initialBalancePromises);
@@ -100,12 +102,10 @@ export default class Withdraw {
       const withdrawTransactionPromises = testWithdrawerAccounts.map(
         async (account: Account): Promise<void> => {
           const { txObject, withdrawAmount } = await this.createWithdrawTransactionObject(account, auxiliaryWeb3);
-          if (expectedAuxiliaryAccountBalance[account.address]) {
-            console.log('in expectedAuxiliaryAccountBalance[account.address] ', expectedAuxiliaryAccountBalance[account.address]);
-            expectedAuxiliaryAccountBalance[account.address] = expectedAuxiliaryAccountBalance[account.address].minus(withdrawAmount);
+          if (expectedAuxiliaryAccountBalance.get(account.address)) {
+            expectedAuxiliaryAccountBalance.set(account.address, expectedAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount));
           } else {
-            console.log('in expectedAuxiliaryAccountBalance[account.address] ', initialAuxiliaryAccountBalance[account.address]);
-            expectedAuxiliaryAccountBalance[account.address] = initialAuxiliaryAccountBalance[account.address].minus(withdrawAmount);
+            expectedAuxiliaryAccountBalance.set(account.address, initialAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount));
           }
           Logger.info(`before sending withdrawal transaction from ${account.address} address`);
           const txReceipt = await Utils.sendTransaction(txObject, {
@@ -122,14 +122,17 @@ export default class Withdraw {
 
       await Promise.all(withdrawTransactionPromises);
 
-      const finalMetachainAccountBalances = await Utils.getAccountBalances(testWithdrawerAccounts, auxiliaryWeb3, utilityToken);
+      const finalMetachainAccountBalances = await Utils.getAccountBalances(
+        testWithdrawerAccounts,
+        auxiliaryWeb3,
+        utilityToken,
+      );
       const accounts = Array.from(finalMetachainAccountBalances.keys());
 
       // todo: fix me
       for (let j = 0; j < accounts.length; j += 1) {
-        // const initialBalance = initialAuxiliaryAccountBalance[accounts[j]].toString(10);
         const finalBalance = finalMetachainAccountBalances.get(accounts[j]);
-        const expectedBalance = expectedAuxiliaryAccountBalance[accounts[j]];
+        const expectedBalance = expectedAuxiliaryAccountBalance.get(accounts[j]);
 
         assert.strictEqual(
           // @ts-ignore
@@ -154,7 +157,7 @@ export default class Withdraw {
           }
           return true;
         },
-        1000, //todo: fix me
+        1000, // todo: fix me
         // 5 * 60 * 1000,
         6,
       );
@@ -166,7 +169,7 @@ export default class Withdraw {
       );
 
       for (let m = 0; m < accounts.length; m += 1) {
-        const initialBalance = new BigNumber(initialOriginAccountBalance[accounts[m]]);
+        const initialBalance = new BigNumber(initialOriginAccountBalance.get(accounts[m])!);
         // @ts-ignore
         const finalBalance = new BigNumber(finalOriginAccountBalances.get(accounts[m]));
         console.log('in origin account balance verification');
@@ -179,8 +182,14 @@ export default class Withdraw {
     }
   }
 
+  /**
+   * It creates withdrawal transaction object.
+   *
+   * @param account Withdrawer address
+   * @param auxiliaryWeb3 Auxiliary web3 object.
+   */
   private static async createWithdrawTransactionObject(
-    account: Account,
+    account: string,
     auxiliaryWeb3: Web3,
   ): Promise<any> {
     const config = await Utils.getConfig();
@@ -208,9 +217,9 @@ export default class Withdraw {
     Logger.info('Withdraw -> valueToken', valueToken);
     const utilityToken = await erc20Cogateway.methods.utilityTokens(valueToken).call();
     Logger.info('Withdraw -> utilityToken', utilityToken);
-    
+
     const utilityTokenInstance = Mosaic.interacts.getUtilityToken(auxiliaryWeb3, utilityToken);
-    Logger.info(`balance of withdrawer ${account.address}`, await utilityTokenInstance.methods.balanceOf(account.address).call());
+    Logger.info(`balance of withdrawer ${account}`, await utilityTokenInstance.methods.balanceOf(account).call());
     const rawTx = utilityTokenInstance.methods.approve(
       erc20CogatewayAddress,
       testAmount.toString(10),
@@ -219,14 +228,14 @@ export default class Withdraw {
     await Utils.sendTransaction(
       rawTx,
       {
-        from: account.address,
+        from: account,
       },
     );
 
     return {
       txObject: erc20Cogateway.methods.withdraw(
         testAmount.toString(10),
-        account.address,
+        account,
         testGasprice.toString(10),
         testGasLimit.toString(10),
         utilityToken,
