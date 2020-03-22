@@ -21,9 +21,11 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import Utils from './Utils';
 
+const KEYSTORE_FOLDER_PATH = 'system_test/m1_facilitator/accounts';
+
 export default class AddressHandler {
   public static async validateAddresses(addresses: string[]): Promise<boolean> {
-    const filePath = 'system_test/m1_facilitator/accounts';
+    const filePath = KEYSTORE_FOLDER_PATH;
     return addresses.filter(
       (address): boolean => fs.existsSync(path.join(filePath, '/', `${address}.json`)),
     ).length > 0;
@@ -53,8 +55,8 @@ export default class AddressHandler {
     if (AddressHandler.validateAddresses(configAddresses)) {
       for (let i = 0; i < count; i += 1) {
         const accountAddress = configAddresses[i];
-        const keyStore = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.json`);
-        const password = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.password`);
+        const keyStore = fs.readFileSync(this.keyStorePath(accountAddress));
+        const password = fs.readFileSync(this.accountPasswordPath(accountAddress));
 
         const accountKeyStore = JSON.parse(keyStore.toString());
         const accountPassword = password.toString().trim();
@@ -64,5 +66,21 @@ export default class AddressHandler {
       }
     }
     return accountsSelected;
+  }
+
+  /**
+   * Path of account password file.
+   * @param accountAddress Account address.
+   */
+  private static accountPasswordPath(accountAddress: string) {
+    return `${KEYSTORE_FOLDER_PATH}/${accountAddress}.password`;
+  }
+
+  /**
+   * Path of account keystore file.
+   * @param accountAddress Account address.
+   */
+  private static keyStorePath(accountAddress: string) {
+    return `${KEYSTORE_FOLDER_PATH}/${accountAddress}.json`;
   }
 }
