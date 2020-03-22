@@ -43,7 +43,12 @@ Make sure that the prerequisites are met
   - Next, enter the password to the keystore file
   - Next, enter `y` if you want to fund OST to depositor on the origin chain or `n` if not
 
-  ![create depositor](images/createDepositor.png)
+  Example request flow,
+  ```text
+  Select actor type i.e. depositor or withdrawer: depositor
+  Select password for keystore file: [hidden]
+  Should fund OST to depositor on origin chain with faucet (y/n)?: y
+  ```
 
 2. Initiate deposit request
   - The depositor account must have sufficient GöEth and Value token balance to perform the approve and deposit transaction<br>
@@ -52,9 +57,19 @@ Make sure that the prerequisites are met
   ```sh
   npm run request_deposit:testnet
   ```
-  Example request,
-
-  ![request deposit](images/requestDeposit.png)
+  Example request flow,
+  ```text
+  Enter origin chain(goerli) end point: https://rpc.slock.it/goerli
+  Enter ERC20 token address: 0xd426b22f3960d01189a3d548b45a7202489ff4de
+  Enter ERC20 gateway address: 0x9B0fd9FB015d9311738ed5aECfF3A626e7A149C1
+  Enter transaction gas price: 0x3B9ACA00
+  Enter depositor keystore filepath: /Users/facilitator/demo/m1_facilitator/bin/depositor.json
+  Enter depositor keystore password: [hidden]
+  Enter amount to deposit in atto: 10000000000000000000
+  Enter gas price at which fee will be calculated: 10
+  Enter gas limit at which fee will be calculated: 10
+  Enter beneficiary address on the metachain(Hadapsar-1405): 0xf85a8ab13694b9bb4a3c69804619dc5a976f39df
+  ```
 
 ## Steps to create withdrawer and initiate withdraw request
 Make sure that the prerequisites are met
@@ -67,7 +82,13 @@ Make sure that the prerequisites are met
   - Next, enter the password to the keystore file
   - Next, enter `y` if you want to fund base token to the withdrawer on the metachain or `n` if not
 
-  ![create withdrawer](images/createWithdrawer.png)
+  Example request flow,
+  ```text
+  Select actor type i.e. depositor or withdrawer: withdrawer
+  Select password for keystore file: [hidden]
+  Should fund base token to withdrawer on metachain with faucet (y/n)?: y
+  ```
+
 2. Initiate withdraw request
   - The withdrawer account must have sufficient base token and utility token balance to perform the approve and deposit transaction<br>
   - Run the below script to initiate withdraw request
@@ -75,5 +96,15 @@ Make sure that the prerequisites are met
   npm run request_withdraw:testnet
   ```
   Example request,
-
-  ![request withdraw](images/requestWithdraw.png)
+  ```text
+  Enter metachain(Hadapsar-1405) end point: https://chain.mosaicdao.org/hadapsar
+  Enter ERC20 utility token address: 0x98266c031529eed13955909050257950e3b0e2e0
+  Enter ERC20 Cogateway address: 0x2d986Be491664A5ad13DD5A06820f539d353bb12
+  Enter transaction gas price: 0x3B9ACA00
+  Enter withdrawer keystore filepath: /Users/facilitator/demo/m1_facilitator/bin/withdrawer.json
+  Enter withdrawer keystore password: [hidden]
+  Enter amount to deposit in atto: 5000000000000000000
+  Enter gas price at which fee will be calculated: 10
+  Enter gas limit at which fee will be calculated: 10
+  Enter beneficiary address on the origin chain(Göerli): 0xf85a8ab13694b9bb4a3c69804619dc5a976f39df
+  ```

@@ -21,6 +21,15 @@ interface WithdrawInputInfo {
   gasLimit: string;
 }
 
+async function getBeneficiaryAddress(filePath: string): Promise<string> {
+  try {
+    const address = `0x${JSON.parse(fs.readFileSync(filePath).toString()).address}`;
+    return address;
+  } catch (error) {
+    return '';
+  }
+}
+
 async function readInput(): Promise<WithdrawInputInfo> {
   const filePath = path.join(__dirname, '/', 'withdrawer.json');
   const answer = await inquirer.prompt([
@@ -34,7 +43,7 @@ async function readInput(): Promise<WithdrawInputInfo> {
       type: 'string',
       name: 'utilityTokenAddress',
       default: '0x98266c031529eed13955909050257950e3b0e2e0',
-      message: 'Enter utility token address:',
+      message: 'Enter ERC20 utility token address:',
     },
     {
       type: 'string',
@@ -65,17 +74,9 @@ async function readInput(): Promise<WithdrawInputInfo> {
     {
       type: 'string',
       name: 'amountToWithdraw',
-      message: 'Enter amount to deposit in (wei):',
+      message: 'Enter amount to withdraw in atto:',
       validate(input: string): number {
         return new BN(input).gtn(0);
-      },
-    },
-    {
-      type: 'string',
-      name: 'beneficiary',
-      message: 'Enter beneficiary address on the origin chain(Göerli):',
-      validate(input: string): string {
-        return new Web3().utils.isAddress(input);
       },
     },
     {
@@ -90,28 +91,51 @@ async function readInput(): Promise<WithdrawInputInfo> {
       default: '0',
       message: 'Enter gas limit at which fee will be calculated:',
     },
-
   ]);
   return answer;
 }
 
-readInput().then(async (answer): Promise<void> => {
-  Withdraw.requestWithdraw(
-    answer.web3EndPoint.trim(),
-    answer.utilityTokenAddress.trim(),
-    answer.erc20CogatewayAddress.trim(),
-    answer.transactionGasPrice.trim(),
-    answer.withdrawerKeystore.trim(),
-    answer.password.trim(),
+async function readBeneficiaryAddress(filePath: string): Promise<{ beneficiary: string }> {
+  const answer = await inquirer.prompt([
     {
-      amountToWithdraw: answer.amountToWithdraw.trim(),
-      beneficiary: answer.beneficiary.trim(),
-      gasPrice: answer.gasPrice.trim(),
-      gasLimit: answer.gasLimit.trim(),
-
+      type: 'string',
+      name: 'beneficiary',
+      message: 'Enter beneficiary address on the origin chain(Göerli):',
+      default: await getBeneficiaryAddress(filePath),
+      validate(input: string): string {
+        return new Web3().utils.isAddress(input);
+      },
     },
-  ).then((): void => {
-    console.log('Request withdraw done');
+  ]);
+  return answer;
+}
+
+readInput()
+  .then(async (result): Promise<WithdrawInputInfo> => {
+    const answer = await readBeneficiaryAddress(result.withdrawerKeystore.trim());
+    return { ...result, beneficiary: answer.beneficiary };
+  })
+  .then(async (answer): Promise<void> => {
+    return Withdraw.requestWithdraw(
+      answer.web3EndPoint.trim(),
+      answer.utilityTokenAddress.trim(),
+      answer.erc20CogatewayAddress.trim(),
+      answer.transactionGasPrice.trim(),
+      answer.withdrawerKeystore.trim(),
+      answer.password.trim(),
+      {
+        amountToWithdraw: answer.amountToWithdraw.trim(),
+        beneficiary: answer.beneficiary.trim(),
+        gasPrice: answer.gasPrice.trim(),
+        gasLimit: answer.gasLimit.trim(),
+
+      },
+    );
+  })
+  .then((): void => {
+    console.log('Withdraw request competed');
     process.exit(0);
+  })
+  .catch((error): void => {
+    console.log(error.message);
   });
-});

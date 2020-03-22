@@ -61,12 +61,12 @@ async function createActor(): Promise<void> {
 
   if (answer.shouldFundDepositor === 'y') {
     await fundFromFaucet(ethereumAccount.address, '5');
-    console.log(`✅ Funded ${100} OST to address ${ethereumAccount.address}`);
+    console.log(`✅ Funded OST to address ${ethereumAccount.address}`);
   }
 
   if (answer.shouldFundWithdrawer === 'y') {
     await fundFromFaucet(ethereumAccount.address, '1405');
-    console.log(`✅ Funded ${20} Base token to address ${ethereumAccount.address}`);
+    console.log(`✅ Funded Base token to address ${ethereumAccount.address}`);
   }
 
   const encryptedAccount = ethereumAccount.encrypt(answer.password);
@@ -78,6 +78,10 @@ async function createActor(): Promise<void> {
   console.log(`\n👉 ${answer.actor} must have fund perform transactions.`);
 }
 
-createActor().then((): void => {
-  process.exit(0);
-});
+createActor()
+  .then((): void => {
+    process.exit(0);
+  })
+  .catch((error): void => {
+    console.log(error.message);
+  });

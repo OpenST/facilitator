@@ -10,7 +10,7 @@ const { BN } = new Web3().utils;
 
 interface DepositInputInfo {
   web3EndPoint: string;
-  valueTokenAddress: string;
+  erc20TokenAddress: string;
   erc20GatewayAddress: string;
   transactionGasPrice: string;
   depositorKeystore: string;
@@ -19,6 +19,15 @@ interface DepositInputInfo {
   beneficiary: string;
   gasPrice: string;
   gasLimit: string;
+}
+
+async function getBeneficiaryAddress(filePath: string): Promise<string> {
+  try {
+    const address = `0x${JSON.parse(fs.readFileSync(filePath).toString()).address}`;
+    return address;
+  } catch (error) {
+    return '';
+  }
 }
 
 async function readInput(): Promise<DepositInputInfo> {
@@ -32,9 +41,9 @@ async function readInput(): Promise<DepositInputInfo> {
     },
     {
       type: 'string',
-      name: 'valueTokenAddress',
+      name: 'erc20TokenAddress',
       default: '0xd426b22f3960d01189a3d548b45a7202489ff4de',
-      message: 'Enter value token address:',
+      message: 'Enter ERC20 token address:',
     },
     {
       type: 'string',
@@ -65,17 +74,9 @@ async function readInput(): Promise<DepositInputInfo> {
     {
       type: 'string',
       name: 'amountToDeposit',
-      message: 'Enter amount to deposit in (wei):',
+      message: 'Enter amount to deposit in atto:',
       validate(input: string): number {
         return new BN(input).gtn(0);
-      },
-    },
-    {
-      type: 'string',
-      name: 'beneficiary',
-      message: 'Enter beneficiary address on the metachain(Hadapsar-1405):',
-      validate(input: string): string {
-        return new Web3().utils.isAddress(input);
       },
     },
     {
@@ -90,28 +91,51 @@ async function readInput(): Promise<DepositInputInfo> {
       default: '0',
       message: 'Enter gas limit at which fee will be calculated:',
     },
-
   ]);
   return answer;
 }
 
-readInput().then(async (answer): Promise<void> => {
-  Deposit.requestDeposit(
-    answer.web3EndPoint.trim(),
-    answer.valueTokenAddress.trim(),
-    answer.erc20GatewayAddress.trim(),
-    answer.transactionGasPrice.trim(),
-    answer.depositorKeystore.trim(),
-    answer.password.trim(),
+async function readBeneficiaryAddress(filePath: string): Promise<{ beneficiary: string }> {
+  const answer = await inquirer.prompt([
     {
-      amountToDeposit: answer.amountToDeposit.trim(),
-      beneficiary: answer.beneficiary.trim(),
-      gasPrice: answer.gasPrice.trim(),
-      gasLimit: answer.gasLimit.trim(),
-
+      type: 'string',
+      name: 'beneficiary',
+      message: 'Enter beneficiary address on the metachain(Hadapsar-1405):',
+      default: await getBeneficiaryAddress(filePath),
+      validate(input: string): string {
+        return new Web3().utils.isAddress(input);
+      },
     },
-  ).then((): void => {
-    console.log('Request deposit done');
+  ]);
+  return answer;
+}
+
+readInput()
+  .then(async (result): Promise<DepositInputInfo> => {
+    const answer = await readBeneficiaryAddress(result.depositorKeystore.trim());
+    return { ...result, beneficiary: answer.beneficiary };
+  })
+  .then(async (answer): Promise<void> => {
+    return Deposit.requestDeposit(
+      answer.web3EndPoint.trim(),
+      answer.erc20TokenAddress.trim(),
+      answer.erc20GatewayAddress.trim(),
+      answer.transactionGasPrice.trim(),
+      answer.depositorKeystore.trim(),
+      answer.password.trim(),
+      {
+        amountToDeposit: answer.amountToDeposit.trim(),
+        beneficiary: answer.beneficiary.trim(),
+        gasPrice: answer.gasPrice.trim(),
+        gasLimit: answer.gasLimit.trim(),
+
+      },
+    );
+  })
+  .then((): void => {
+    console.log('Deposit request completed');
     process.exit(0);
+  })
+  .catch((error): void => {
+    console.log(error.message);
   });
-});
