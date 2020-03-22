@@ -37,28 +37,6 @@ export default class Faucet {
     });
   }
 
-  public static async refundGasToFaucet(accounts: Account[]): Promise<void> {
-    const config = await Utils.getConfig();
-    accounts.map(async (account: Account): Promise<void> => {
-      const { wsEndpoint, faucet, chainId } = config.chains.auxiliary;
-      const balance = await AddressHandler.getBalance(account.address, wsEndpoint);
-      const web3 = new Web3(wsEndpoint);
-
-      const gasPrice = new BigNumber('0x3B9ACA00');
-      const transactionFee = new BigNumber(new BigNumber(2300).multipliedBy(gasPrice));
-
-      const rawTransaction = {
-        from: account.address,
-        to: faucet,
-        value: (balance.minus(transactionFee)).toString(10),
-        gasPrice: gasPrice.toString(10),
-        gas: web3.utils.toHex(23000),
-        chainId,
-      };
-      await web3.eth.sendTransaction(rawTransaction);
-    });
-  }
-
   public static async fundAccounts(accounts: Account[], chain: number, web3: Web3): Promise<void> {
     const fundingPromises = accounts.map(async (account: Account): Promise<void> => {
       const config = await Utils.getConfig();

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import DepositSystemTest from './DepositSystemTest';
-// import Withdraw from './Withdraw';
+import Withdraw from './Withdraw';
 
 DepositSystemTest.run().then(() => {
   console.log('calling withdraw');
