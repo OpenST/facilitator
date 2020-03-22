@@ -56,7 +56,7 @@ export default class DepositSystemTest {
     const { valueToken } = config.chains.origin;
 
     for (let i = 0; i < iterations; i += 1) {
-      Logger.info(`Deposit iteration ${i}`);
+      Logger.info(`Deposit iteration ${i+1}`);
 
       depositorAccounts = await AddressHandler.getAddresses(concurrencyCount, originWeb3);
       Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
