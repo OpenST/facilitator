@@ -36,6 +36,7 @@ interface DeclaredDepositIntentsEntityInterface {
   feeGasLimit: string;
   blockNumber: string;
   depositor: string;
+  nonce: string;
 }
 
 /**
@@ -99,6 +100,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
           record.feeGasLimit,
           record.blockNumber,
           record.depositor,
+          record.nonce,
         );
         await this.handleDepositIntent(
           record.messageHash,
@@ -121,6 +123,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
    * @param feeGasLimit GasLimit which depositor will be paying.
    * @param blockNumber Block number at which deposit transaction is mined.
    * @param depositor Address of depositor.
+   * @param nonce Mesasge nonce.
    */
   private async handleMessage(
     contractAddress: string,
@@ -129,6 +132,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
     feeGasLimit: string,
     blockNumber: string,
     depositor: string,
+    nonce: string,
   ): Promise<void> {
     let messageObj = await this.messageRepository.get(messageHash);
     if (messageObj === null) {
@@ -148,6 +152,7 @@ export default class DeclaredDepositIntentsHandler extends ContractEntityHandler
           new BigNumber(blockNumber),
         );
         messageObj.sender = Utils.toChecksumAddress(depositor);
+        messageObj.nonce = new BigNumber(nonce);
         Logger.debug(`Creating message object ${JSON.stringify(messageObj)}`);
       } else {
         Logger.warn(`DeclaredDepositIntentsHandler::gateway record not found for gatewayGA ${contractAddress}`);

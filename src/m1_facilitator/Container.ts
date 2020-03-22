@@ -24,7 +24,7 @@ import Manifest from './manifest/Manifest';
 import Repositories from './repositories/Repositories';
 import Services from './services/Services';
 import subscriptionQueries from './GraphQueries/SubscriptionQueries';
-import TransactionExecutor from './lib/TransactionExecutor';
+import TransactionExecutor, { TransactionExecutorType } from './lib/TransactionExecutor';
 
 
 /**
@@ -60,6 +60,7 @@ export default class Container {
         await manifest.metachain.originChain.web3.eth.getGasPrice(),
       ),
       manifest.avatarAccounts[manifest.metachain.originChain.avatarAccount],
+      TransactionExecutorType.ORIGIN,
     );
 
     const auxiliaryTransactionExecutor = new TransactionExecutor(
@@ -69,6 +70,7 @@ export default class Container {
         await manifest.metachain.auxiliaryChain.web3.eth.getGasPrice(),
       ),
       manifest.avatarAccounts[manifest.metachain.auxiliaryChain.avatarAccount],
+      TransactionExecutorType.AUXILIARY,
     );
 
     Services.create(

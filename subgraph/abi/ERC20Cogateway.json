@@ -122,7 +122,13 @@
     "constant": true,
     "inputs": [],
     "name": "DEPOSIT_INTENT_TYPEHASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -131,7 +137,13 @@
     "constant": true,
     "inputs": [],
     "name": "DOMAIN_SEPARATOR_VERSION",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -140,7 +152,13 @@
     "constant": true,
     "inputs": [],
     "name": "INBOX_OFFSET",
-    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -149,7 +167,13 @@
     "constant": true,
     "inputs": [],
     "name": "MESSAGE_TYPEHASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -158,7 +182,13 @@
     "constant": true,
     "inputs": [],
     "name": "MMB_CHANNEL_TYPEHASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -167,7 +197,13 @@
     "constant": true,
     "inputs": [],
     "name": "MMB_DOMAIN_SEPARATOR_NAME",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -176,7 +212,13 @@
     "constant": true,
     "inputs": [],
     "name": "MMB_DOMAIN_SEPARATOR_TYPEHASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -185,7 +227,13 @@
     "constant": true,
     "inputs": [],
     "name": "MMB_DOMAIN_SEPARATOR_VERSION",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -194,7 +242,13 @@
     "constant": true,
     "inputs": [],
     "name": "OUTBOX_OFFSET",
-    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -203,7 +257,13 @@
     "constant": true,
     "inputs": [],
     "name": "UTILITY_TOKEN_SETUP_CALLPREFIX",
-    "outputs": [{ "internalType": "bytes4", "name": "", "type": "bytes4" }],
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -212,7 +272,13 @@
     "constant": true,
     "inputs": [],
     "name": "WITHDRAW_INTENT_TYPEHASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -221,7 +287,13 @@
     "constant": true,
     "inputs": [],
     "name": "encodedAccountPath",
-    "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -230,7 +302,13 @@
     "constant": true,
     "inputs": [],
     "name": "genesisERC20Gateway",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -239,7 +317,13 @@
     "constant": true,
     "inputs": [],
     "name": "genesisMaxStorageRootItems",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -248,7 +332,13 @@
     "constant": true,
     "inputs": [],
     "name": "genesisMetachainId",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -257,7 +347,13 @@
     "constant": true,
     "inputs": [],
     "name": "genesisOutboxStorageIndex",
-    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -266,7 +362,13 @@
     "constant": true,
     "inputs": [],
     "name": "genesisStateRootProvider",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -275,7 +377,13 @@
     "constant": true,
     "inputs": [],
     "name": "genesisUtilityTokenMastercopy",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -283,9 +391,21 @@
   {
     "constant": true,
     "inputs": [
-      { "internalType": "bytes32", "name": "_metachainId", "type": "bytes32" },
-      { "internalType": "address", "name": "_outbox", "type": "address" },
-      { "internalType": "address", "name": "_inbox", "type": "address" }
+      {
+        "internalType": "bytes32",
+        "name": "_metachainId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_outbox",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_inbox",
+        "type": "address"
+      }
     ],
     "name": "hashChannelIdentifier",
     "outputs": [
@@ -302,9 +422,21 @@
   {
     "constant": true,
     "inputs": [
-      { "internalType": "address", "name": "_valueToken", "type": "address" },
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_beneficiary", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_valueToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_beneficiary",
+        "type": "address"
+      }
     ],
     "name": "hashDepositIntent",
     "outputs": [
@@ -321,10 +453,26 @@
   {
     "constant": true,
     "inputs": [
-      { "internalType": "address", "name": "_valueToken", "type": "address" },
-      { "internalType": "address", "name": "_utilityToken", "type": "address" },
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_beneficiary", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_valueToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_utilityToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_beneficiary",
+        "type": "address"
+      }
     ],
     "name": "hashWithdrawIntent",
     "outputs": [
@@ -342,16 +490,13 @@
     "constant": true,
     "inputs": [],
     "name": "inboundChannelIdentifier",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "name": "inbox",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -359,15 +504,81 @@
   {
     "constant": true,
     "inputs": [
-      { "internalType": "bytes32", "name": "_intentHash", "type": "bytes32" },
-      { "internalType": "uint256", "name": "_nonce", "type": "uint256" },
-      { "internalType": "uint256", "name": "_feeGasPrice", "type": "uint256" },
-      { "internalType": "uint256", "name": "_feeGasLimit", "type": "uint256" },
-      { "internalType": "address", "name": "_sender", "type": "address" }
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "inbox",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_intentHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_nonce",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_feeGasPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_feeGasLimit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_sender",
+        "type": "address"
+      }
     ],
     "name": "inboxMessageHash",
     "outputs": [
-      { "internalType": "bytes32", "name": "messageHash_", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "messageHash_",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "inboxNonces",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "payable": false,
     "stateMutability": "view",
@@ -377,7 +588,13 @@
     "constant": true,
     "inputs": [],
     "name": "messageInbox",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -386,16 +603,13 @@
     "constant": true,
     "inputs": [],
     "name": "messageOutbox",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "nonces",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -404,16 +618,13 @@
     "constant": true,
     "inputs": [],
     "name": "outboundChannelIdentifier",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "name": "outbox",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -421,15 +632,81 @@
   {
     "constant": true,
     "inputs": [
-      { "internalType": "bytes32", "name": "_intentHash", "type": "bytes32" },
-      { "internalType": "uint256", "name": "_nonce", "type": "uint256" },
-      { "internalType": "uint256", "name": "_feeGasPrice", "type": "uint256" },
-      { "internalType": "uint256", "name": "_feeGasLimit", "type": "uint256" },
-      { "internalType": "address", "name": "_sender", "type": "address" }
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "outbox",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_intentHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_nonce",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_feeGasPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_feeGasLimit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_sender",
+        "type": "address"
+      }
     ],
     "name": "outboxMessageHash",
     "outputs": [
-      { "internalType": "bytes32", "name": "messageHash_", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "messageHash_",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "outboxNonces",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "payable": false,
     "stateMutability": "view",
@@ -439,7 +716,13 @@
     "constant": true,
     "inputs": [],
     "name": "outboxStorageIndex",
-    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -463,16 +746,34 @@
     "constant": true,
     "inputs": [],
     "name": "storageAccount",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "storageRoots",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -481,25 +782,34 @@
     "constant": true,
     "inputs": [],
     "name": "utilityTokenMasterCopy",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "name": "utilityTokens",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "valueToken",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -516,9 +826,21 @@
   {
     "constant": false,
     "inputs": [
-      { "internalType": "uint256", "name": "_blockNumber", "type": "uint256" },
-      { "internalType": "bytes", "name": "_rlpAccount", "type": "bytes" },
-      { "internalType": "bytes", "name": "_rlpParentNodes", "type": "bytes" }
+      {
+        "internalType": "uint256",
+        "name": "_blockNumber",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_rlpAccount",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_rlpParentNodes",
+        "type": "bytes"
+      }
     ],
     "name": "proveGateway",
     "outputs": [],
@@ -529,15 +851,39 @@
   {
     "constant": false,
     "inputs": [
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_beneficiary", "type": "address" },
-      { "internalType": "uint256", "name": "_feeGasPrice", "type": "uint256" },
-      { "internalType": "uint256", "name": "_feeGasLimit", "type": "uint256" },
-      { "internalType": "address", "name": "_utilityToken", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_beneficiary",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_feeGasPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_feeGasLimit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "contract UtilityTokenInterface",
+        "name": "_utilityToken",
+        "type": "address"
+      }
     ],
     "name": "withdraw",
     "outputs": [
-      { "internalType": "bytes32", "name": "messageHash_", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "messageHash_",
+        "type": "bytes32"
+      }
     ],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -546,22 +892,54 @@
   {
     "constant": false,
     "inputs": [
-      { "internalType": "address", "name": "_valueToken", "type": "address" },
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      {
+        "internalType": "address",
+        "name": "_valueToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
       {
         "internalType": "address payable",
         "name": "_beneficiary",
         "type": "address"
       },
-      { "internalType": "uint256", "name": "_feeGasPrice", "type": "uint256" },
-      { "internalType": "uint256", "name": "_feeGasLimit", "type": "uint256" },
-      { "internalType": "address", "name": "_depositor", "type": "address" },
-      { "internalType": "uint256", "name": "_blockNumber", "type": "uint256" },
-      { "internalType": "bytes", "name": "_rlpParentNodes", "type": "bytes" }
+      {
+        "internalType": "uint256",
+        "name": "_feeGasPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_feeGasLimit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_depositor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_blockNumber",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_rlpParentNodes",
+        "type": "bytes"
+      }
     ],
     "name": "confirmDeposit",
     "outputs": [
-      { "internalType": "bytes32", "name": "messageHash_", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "messageHash_",
+        "type": "bytes32"
+      }
     ],
     "payable": false,
     "stateMutability": "nonpayable",

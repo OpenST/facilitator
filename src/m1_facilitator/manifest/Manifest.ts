@@ -78,7 +78,10 @@ interface ManifestInfo {
 
 /** Enum of architecture layouts which facilitator supports. */
 export enum ArchitectureLayout {
-  MOSAIC1 = 'MOSAIC1',
+  // For supporting backward compatibility of anchor contract on older chains like 1405.
+  MOSAIC_0_14_GEN_0 = 'MOSAIC_0_14_GEN_0',
+  // For supporting anchor contract in mosaic-1.
+  MOSAIC_0_14_GEN_1 = 'MOSAIC_0_14_GEN_1',
 }
 
 /** Enum of different personas which facilitator supports. */

@@ -71,14 +71,14 @@ export default class ProofGenerator {
     storageOffset?: string,
     keys: string[] = [],
   ): Promise<ProofData> {
-    Logger.debug('Generating proof');
-    Logger.debug(`Generating proof: address ${address}`);
-    Logger.debug(`Generating proof: block number ${blockNumber}`);
-    Logger.debug(`Generating proof: storageOffset ${storageOffset}`);
-    Logger.debug(`Generating proof: keys ${keys}`);
+    Logger.debug('ProofGenerator::Generating proof');
+    Logger.debug(`ProofGenerator::Generating proof: address ${address}`);
+    Logger.debug(`ProofGenerator::Generating proof: block number ${blockNumber}`);
+    Logger.debug(`ProofGenerator::Generating proof: storageOffset ${storageOffset}`);
+    Logger.debug(`ProofGenerator::Generating proof: keys ${keys}`);
     const storageKeys = storageOffset
       ? [ProofGenerator.storagePath(storageOffset, keys)] : [];
-    Logger.debug(`Storage keys  ${storageKeys}`);
+    Logger.debug(`ProofGenerator::Storage keys  ${storageKeys}`);
     const blockNumberInHex = Web3Utils.toHex(blockNumber);
     return this.fetchProof(address, storageKeys, blockNumberInHex);
   }

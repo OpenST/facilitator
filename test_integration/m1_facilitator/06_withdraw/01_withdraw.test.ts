@@ -90,7 +90,7 @@ describe('withdraw', async (): Promise<void> => {
   it('Balance assertion of withdrawer', async (): Promise<void> => {
     const repositories = await Repositories.create(
       Directory.getFacilitatorDatabaseFile(
-        ArchitectureLayout.MOSAIC1,
+        ArchitectureLayout.MOSAIC_0_14_GEN_1,
         shared.contracts.erc20Gateway.address,
       ),
     );
@@ -122,7 +122,7 @@ describe('withdraw', async (): Promise<void> => {
     const gatewayAddresses = shared.contracts.erc20Gateway.address;
     const repositories = await Repositories.create(
       Directory.getFacilitatorDatabaseFile(
-        ArchitectureLayout.MOSAIC1,
+        ArchitectureLayout.MOSAIC_0_14_GEN_1,
         gatewayAddresses,
       ),
     );

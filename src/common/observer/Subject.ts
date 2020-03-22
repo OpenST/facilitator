@@ -35,7 +35,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
 
   /** Notifies all observers about change in the subject. */
   public async notify(): Promise<void[]> {
-    Logger.debug(`Notifying observers for total ${this._updates.length} updates.`);
+    Logger.debug(`Subject::Notifying observers for total ${this._updates.length} updates.`);
     if (this._updates.length === 0) {
       return [];
     }
@@ -45,9 +45,9 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
 
     for (let i = 0; i < this._observers.length; i += 1) {
       // Provide one update to service at a time.
-      Logger.debug(`calling service observer ${i + 1}`);
+      Logger.debug(`Subject::calling service observer ${i + 1}`);
       for (let j = 0; j < updates.length; j++) {
-        Logger.debug(`calling update on service ${j + 1}`);
+        Logger.debug(`Subject::calling update on service ${j + 1}`);
         await this._observers[i].update([updates[j]]);
       }
     }
@@ -74,7 +74,7 @@ export default class Subject<UpdateType extends Comparable<UpdateType>> {
   public attach(observer: Observer<UpdateType>): void {
     const observerIndex = this._observers.indexOf(observer);
     if (observerIndex !== -1) {
-      throw new Error('The specified observer is already attached.');
+      throw new Error('Subject::The specified observer is already attached.');
     }
     this._observers.push(observer);
   }

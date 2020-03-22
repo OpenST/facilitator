@@ -18,7 +18,7 @@ import BigNumber from 'bignumber.js';
 
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 import AvatarAccount from '../../../../src/m1_facilitator/manifest/AvatarAccount';
-import TransactionExecutor from '../../../../src/m1_facilitator/lib/TransactionExecutor';
+import TransactionExecutor, { TransactionExecutorType } from '../../../../src/m1_facilitator/lib/TransactionExecutor';
 import SpyAssert from '../../../test_utils/SpyAssert';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -70,6 +70,7 @@ describe('TransactionExecutor.start()', (): void => {
       web3,
       gasPrice,
       avatarAccount,
+      TransactionExecutorType.AUXILIARY,
     );
   });
 

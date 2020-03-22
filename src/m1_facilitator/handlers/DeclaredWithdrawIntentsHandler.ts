@@ -37,6 +37,7 @@ interface DeclaredWithdrawIntentsEntityInterface {
   feeGasLimit: string;
   withdrawer: string;
   blockNumber: string;
+  nonce: string;
 }
 
 /**
@@ -112,6 +113,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
           new BigNumber(record.feeGasLimit),
           Utils.toChecksumAddress(record.withdrawer),
           new BigNumber(record.blockNumber),
+          new BigNumber(record.nonce),
         );
         await this.handleWithdrawIntent(
           messageHash,
@@ -163,6 +165,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
    * @param feeGasLimit Message transfer fee gas limit.
    * @param sender Address of message sender.
    * @param sourceDeclarationBlockNumber Block number at which this transaction is mined.
+   * @param nonce Message nonce.
    */
   private async handleMessage(
     messageHash: string,
@@ -171,6 +174,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
     feeGasLimit: BigNumber,
     sender: string,
     sourceDeclarationBlockNumber: BigNumber,
+    nonce: BigNumber,
   ): Promise<void> {
     Logger.debug(`DeclaredWithdrawIntentsHandler::Getting message record for messageHash ${messageHash}`);
     let message = await this.messageRepository.get(messageHash);
@@ -188,6 +192,7 @@ export default class DeclaredWithdrawIntentsHandler extends ContractEntityHandle
       message.feeGasLimit = feeGasLimit;
       message.sender = Utils.toChecksumAddress(sender);
       message.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
+      message.nonce = nonce;
     }
     message.sourceStatus = MessageStatus.Declared;
     await this.messageRepository.save(message);
