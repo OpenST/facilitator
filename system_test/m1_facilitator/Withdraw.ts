@@ -30,6 +30,10 @@ interface Balance {
 
 export default class Withdraw {
   public static async withdrawSystemTest(): Promise<void> {
+
+    // check that valuetoken => utilitytoken
+    // wait
+    
     const config = await Utils.getConfig();
     const {
       concurrencyCount,
@@ -57,6 +61,8 @@ export default class Withdraw {
         auxiliaryWeb3,
       );
 
+      // eslint-disable-next-line no-await-in-loop
+      await Utils.addAccountsToWeb3Wallet(testWithdrawerAccounts, auxiliaryWeb3);
       // eslint-disable-next-line no-await-in-loop
       await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId, auxiliaryWeb3);
       console.log('done with funding accounts : ');
@@ -106,6 +112,7 @@ export default class Withdraw {
           } else {
             expectedAuxiliaryAccountBalance[account.address] = initialAuxiliaryAccountBalance[account.address];
           }
+          console.log('before sending withdrawal transaction');
           const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
           });
@@ -122,29 +129,22 @@ export default class Withdraw {
 
       // eslint-disable-next-line no-await-in-loop
       const finalMetachainAccountBalances = await Utils.getAccountBalances(testWithdrawerAccounts, auxiliaryWeb3, utilityToken);
-
-      Logger.info('Final balances captured');
-
-      // Assert for final origin balance should be equal to expected origin balance.
       const accounts = Array.from(finalMetachainAccountBalances.keys());
+
       for (let j = 0; j < accounts.length; j += 1) {
-        // @ts-ignore
-        const initialBalance = initialOriginAccountBalance.get(accounts[j]).toString(10);
-        // @ts-ignore
-        const finalBalance = finalMetachainAccountBalances.get(accounts[j]).toString(10);
-        // @ts-ignore
-        const expectedBalance = finalMetachainAccountBalances.get(accounts[j]).toString(10);
-        assert.equal(
+        // const initialBalance = initialAuxiliaryAccountBalance[accounts[j]].toString(10);
+        const finalBalance = finalMetachainAccountBalances.get(accounts[j]);
+        const expectedBalance = expectedAuxiliaryAccountBalance[accounts[j]];
+
+        assert.strictEqual(
           // @ts-ignore
-          finalMetachainAccountBalances.get(accounts[j]).eq(finalMetachainAccountBalances.get(accounts[j])),
+          expectedBalance.eq(finalBalance),
           true,
-          // @ts-ignore
-          `Final and expected balance must match.
-            initial balance: ${initialBalance}
-            final balance: ${finalBalance}
-            expected balance: ${expectedBalance}`,
+          `Expected balance for address ${accounts[j]} is ${expectedBalance} but got ${finalBalance}`,
         );
       }
+
+      Logger.info('Final balances captured');
 
       const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, config.chains.origin.gateway);
       // wait for facilitator to finish the job
@@ -164,23 +164,18 @@ export default class Withdraw {
         6,
       );
 
+      const finalOriginAccountBalances = await Utils.getAccountBalances(testWithdrawerAccounts, originWeb3, valueToken);
 
-      // todo: origin assertions
+      for (let m = 0; m < accounts.length; m += 1) {
+        const initialBalance = new BigNumber(initialOriginAccountBalance[accounts[m]]);
+        // @ts-ignore
+        const finalBalance = new BigNumber(finalOriginAccountBalances.get(accounts[m]));
 
-      const finalAuxiliaryAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
-        testWithdrawerAccounts,
-        originWeb3,
-        valueToken,
-      );
-
-      console.log('Final origin account balance :-', finalAuxiliaryAccountBalance);
-      // assert balance on utility token
-      for (let j = 0; j < accounts.length; j += 1) {
-        // assert.ok(
-        //   // @ts-ignore
-        //   finalAuxiliaryAccountBalance.get(accounts[j]).gt(initialAuxiliaryAccountBalance.get(accounts[i])),
-        //   '',
-        // );
+        assert.strictEqual(
+          finalBalance.gte(initialBalance),
+          true,
+          `Expected balance for address ${accounts[m]} must be greater than ${finalBalance}`,
+        );
       }
     }
   }
@@ -213,13 +208,43 @@ export default class Withdraw {
     const utilityToken = await erc20Cogateway.methods.utilityTokens(valueToken).call();
     console.log('Withdraw -> utilityToken', utilityToken);
 
+    const intentHash = await erc20Cogateway.methods.hashWithdrawIntent(
+      valueToken,
+      utilityToken,
+      testAmount.toString(10),
+      account.address,
+    ).call();
+    const nonce = await erc20Cogateway.methods.nonces(account.address).call();
+    console.log('Withdraw -> nonce', nonce);
+    const messageHash = await erc20Cogateway.methods.outboxMessageHash(
+      intentHash,
+      '0',
+      testGasprice.toString(10),
+      testGasLimit.toString(10),
+      account.address,
+    ).call();
+
+    console.log('message hash : ', messageHash);
+
+    console.log('outbox status ', await erc20Cogateway.methods.outbox(messageHash).call());
 
     const utilityTokenInstance = Mosaic.interacts.getUtilityToken(auxiliaryWeb3, utilityToken);
-
-    await utilityTokenInstance.methods.approve(
+    console.log(`balance of withdrawer ${account.address}`, await utilityTokenInstance.methods.balanceOf(account.address).call());
+    const rawTx = utilityTokenInstance.methods.approve(
       erc20CogatewayAddress,
       testAmount.toString(10),
     );
+
+    await Utils.sendTransaction(
+      rawTx,
+      {
+        from: account.address,
+      },
+    );
+
+    console.log('approval ', await utilityTokenInstance.methods.allowance(account.address, erc20CogatewayAddress).call());
+    console.log('valuetoken in utility token : ', await utilityTokenInstance.methods.valueToken().call());
+    // console.log('list of unloced wallteds ', );
     return {
       txObject: erc20Cogateway.methods.withdraw(
         testAmount.toString(10),
