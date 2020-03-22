@@ -85,10 +85,12 @@ export default class Faucet {
         method: 'post',
       },
     ).then(async (response: AxiosResponse): Promise<void> => {
-      console.log(`Transaction hash is ${response.data.txHash}`);
+      Logger.info(`Transaction hash is ${response.data.txHash}`);
+      Logger.info('Waiting for funding to finish');
       await new Promise(done => setTimeout(done, 20000));
+      Logger.info('Funding finished');
     }).catch((error: AxiosError): void => {
-      console.log('error from axios catch : ', error.stack);
+      Logger.info('error from axios catch : ', error.stack);
     });
   }
 }

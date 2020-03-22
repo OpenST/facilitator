@@ -109,9 +109,10 @@ export default class DepositSystemTest {
         const finalBalance = finalOriginAccountBalance.get(accounts[j]).toString(10);
         // @ts-ignore
         const expectedBalance = expectedOriginAccountBalance.get(accounts[j]).toString(10);
-        assert.equal(
+        assert.strictEqual(
           // @ts-ignore
-          finalOriginAccountBalance.get(accounts[j]).eq(expectedOriginAccountBalance!.get(accounts[j])),
+          finalOriginAccountBalance.get(accounts[j]).eq(expectedOriginAccountBalance
+            .get(accounts[j])),
           true,
           // @ts-ignore
           `Final and expected balance must match.
@@ -126,15 +127,15 @@ export default class DepositSystemTest {
         async (): Promise<boolean> => {
           for (let j = 0; j < messageHashes.length; j += 1) {
             const isDeclared = await erc20Cogateway.methods.inbox(messageHashes[j]).call();
+            Logger.debug(`Message status on target chain is ${isDeclared} for message hash ${messageHashes[j]}`);
             if (!isDeclared) {
               return false;
             }
           }
           return true;
         },
-        1000,
-        // 5 * 60 * 1000,
-        6,
+        1000 * 60, // poll in 60 sec
+        5 * 1000, //  max retry 5000
       );
 
       const finalAuxiliaryAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
@@ -150,21 +151,16 @@ export default class DepositSystemTest {
       for (let j = 0; j < accounts.length; j += 1) {
         // @ts-ignore
         const initialBalance = initialAuxiliaryAccountBalance.get(accounts[j]);
-        // // @ts-ignore
+        // @ts-ignore
         const finalBalance = finalAuxiliaryAccountBalance.get(accounts[j]);
         assert.ok(
           // @ts-ignore
-          finalBalance.gte(initialBalance),
+          finalBalance.isGreaterThan(initialBalance),
           `Final auxiliary balances must be grater than the initial auxiliary balances.
             initial auxiliary balance ${initialBalance}
             final auxiliary balance ${finalBalance}`,
         );
       }
-      // TO DO: send report
-      console.log('initial origin account balances:   ', initialOriginAccountBalance);
-      console.log('initialAuxiliaryAccountBalance  ', initialAuxiliaryAccountBalance);
-      console.log('finalOriginAccountBalance  ', finalOriginAccountBalance);
-      console.log('finalOriginAccountBalance  ', finalAuxiliaryAccountBalance);
 
       await this.generateReport(
         initialOriginAccountBalance,
