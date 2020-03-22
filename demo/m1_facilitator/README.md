@@ -1,5 +1,5 @@
-# Basic scripts for moving ERC20 tokens(like OST) from Göerli testnet into Hadapsar testnet 1405 (and out)
-The following scripts will help you in moving the ERC20 tokens(like OST) from the origin chain(Göerli) to the mosaic metachain(Hadapsar-1405) where you can get the equivalent amount of ERC20 tokens (utility tokens).
+# Basic scripts for moving ERC20 tokens from Göerli testnet into Hadapsar testnet 1405 (and out)
+The following scripts will help you in moving the ERC20 tokens from the origin chain(Göerli) to the mosaic metachain(Hadapsar-1405) where you can get the equivalent amount of ERC20 tokens (utility tokens).
 
 ## Prerequisites
 1. Web3 RPC for the origin chain (Göerli) and metachain(Hadapsar-1405)
