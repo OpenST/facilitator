@@ -9,11 +9,19 @@ import AddressHandler from './AddressHandler';
 import Utils from './Utils';
 import Logger from '../../src/common/Logger';
 
+/**
+ * Class contain methods for faucet operation.
+ */
 export default class Faucet {
+  /**
+   * Returns remaining OST fund to faucet.
+   * @param accounts List of accounts.
+   * @param web3 Web3 instance.
+   */
   public static async refundOSTToFaucet(accounts: Account[], web3: Web3): Promise<void> {
     const config = await Utils.getConfig();
+    const { valueToken, faucet } = config.chains.origin;
     accounts.map(async (account: Account): Promise<void> => {
-      const { valueToken, faucet } = config.chains.origin;
       const balance = await AddressHandler.getTokenBalance(account.address, web3, valueToken);
       const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
 
@@ -37,6 +45,12 @@ export default class Faucet {
     });
   }
 
+  /**
+   * This method funds OST on origin and auxiliary chain.
+   * @param accounts List of accounts.
+   * @param chain Chain identifier.
+   * @param web3 Web3 instance.
+   */
   public static async fundAccounts(accounts: Account[], chain: number, web3: Web3): Promise<void> {
     const fundingPromises = accounts.map(async (account: Account): Promise<void> => {
       const config = await Utils.getConfig();
@@ -53,6 +67,11 @@ export default class Faucet {
     await Promise.all(fundingPromises);
   }
 
+  /**
+   * This method makes the funding request to faucet.
+   * @param beneficiary Address of beneficiary.
+   * @param chain Chain identifier.
+   */
   private static async fundFromFaucet(beneficiary: string, chain: number): Promise<void> {
     Logger.info(`✅ Funding ${beneficiary} for chain ${chain}`);
     const FAUCET_URL = 'https://faucet.mosaicdao.org';

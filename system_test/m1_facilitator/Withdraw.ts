@@ -33,7 +33,7 @@ export default class Withdraw {
 
     // check that valuetoken => utilitytoken
     // wait
-    
+
     const config = await Utils.getConfig();
     const {
       concurrencyCount,
@@ -62,7 +62,7 @@ export default class Withdraw {
       );
 
       // eslint-disable-next-line no-await-in-loop
-      await Utils.addAccountsToWeb3Wallet(testWithdrawerAccounts, auxiliaryWeb3);
+      Utils.addAccountsToWeb3Wallet(testWithdrawerAccounts, auxiliaryWeb3);
       // eslint-disable-next-line no-await-in-loop
       await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId, auxiliaryWeb3);
       console.log('done with funding accounts : ');
