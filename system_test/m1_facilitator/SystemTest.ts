@@ -15,6 +15,7 @@
 import DepositSystemTest from './DepositSystemTest';
 import Withdraw from './Withdraw';
 
-DepositSystemTest.run();
-console.log('calling withdraw');
-Withdraw.withdrawSystemTest();
+DepositSystemTest.run().then(() => {
+  console.log('calling withdraw');
+  Withdraw.withdrawSystemTest();
+});

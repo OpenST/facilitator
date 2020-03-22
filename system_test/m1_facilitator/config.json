@@ -11,6 +11,7 @@
     "auxiliary": {
       "wsEndpoint": "http://chain.mosaicdao.org/hadapsar",
       "graphEndpoint": "",
+      "utilityToken": "0x98266c031529eed13955909050257950e3b0e2e0",
       "cogateway": "0x2d986Be491664A5ad13DD5A06820f539d353bb12",
       "chainId": 1405,
       "faucet": "0x73e4876c03412139751895879c203d1fe0a0e004"
@@ -18,7 +19,7 @@
   },
   "testConfig": {
     "deposit": {
-      "iterations": 1,
+      "iterations": 0,
       "depositorCount": 1,
       "concurrencyCount": 1,
       "pollingInterval": 1,
@@ -36,8 +37,8 @@
       "concurrencyCount": 1,
       "pollingInterval": 1,
       "timeoutInterval": 20,
-      "minAmount": 150,
-      "maxAmount": 250,
+      "minAmount": 500,
+      "maxAmount": 700,
       "minGasPrice": 5,
       "maxGasPrice": 15,
       "minGasLimit": 2,
@@ -47,9 +48,9 @@
   "accounts":
   [
     "0xeBC9cb91c92B713C6b373DE9C4d42fF167D9cE70",
+    "0x43b957b219e63C7590324b5508b7cA7AE8133554",
     "0x9e895536741F3fb427ff6aD101F790d8A06ac770",
     "0xf795B8084C5E0394d77B6d024F0ec0B0D457cCFd",
-    "0xB18CEc01bCb6cf741Db8423627444721f498cC30",
-    "0x43b957b219e63C7590324b5508b7cA7AE8133554"
+    "0xB18CEc01bCb6cf741Db8423627444721f498cC30"
   ]
 }
