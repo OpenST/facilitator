@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import DepositSystemTest from './DepositSystemTest';
-import Withdraw from './Withdraw';
+// import Withdraw from './Withdraw';
 import Logger from '../../src/common/Logger';
 
 async function runSystemTest() {
@@ -22,7 +22,7 @@ async function runSystemTest() {
 
   await Promise.all([
     DepositSystemTest.run(),
-    Withdraw.withdrawSystemTest(),
+    // Withdraw.withdrawSystemTest(),
   ]);
   process.exit(0);
 }
