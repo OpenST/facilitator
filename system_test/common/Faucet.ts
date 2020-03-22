@@ -54,7 +54,7 @@ export default class Faucet {
   }
 
   private static async fundFromFaucet(beneficiary: string, chain: number): Promise<void> {
-    console.log(`✅ Funding ${beneficiary} for chain ${chain}`);
+    Logger.info(`✅ Funding ${beneficiary} for chain ${chain}`);
     const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
     await axios.post(
@@ -65,8 +65,9 @@ export default class Faucet {
       {
         method: 'post',
       },
-    ).then((response: AxiosResponse): void => {
+    ).then(async (response: AxiosResponse): Promise<void> => {
       console.log(`Transaction hash is ${response.data.txHash}`);
+      await new Promise(done => setTimeout(done, 20000));
     }).catch((error: AxiosError): void => {
       console.log('error from axios catch : ', error.stack);
     });

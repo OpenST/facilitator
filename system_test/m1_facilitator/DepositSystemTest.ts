@@ -62,7 +62,6 @@ export default class DepositSystemTest {
       await Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
       Logger.info('Funding deposit accounts with OST on value chain');
       await Faucet.fundAccounts(depositorAccounts, originChainId, originWeb3);
-      await new Promise(done => setTimeout(done, 10000));
 
       Logger.info('Getting initial origin account balances');
       const initialOriginAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(

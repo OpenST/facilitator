@@ -53,7 +53,7 @@ async function createAccount(): Promise<AccountInfo> {
   fs.writeFileSync(filePath, JSON.stringify(encryptedAccount, null, '    '));
 
   const passwordFilePath = path.join(answer.path, '/', `${ethereumAccount.address}.password`);
-  fs.writeFileSync(passwordFilePath, JSON.stringify(answer.password, null, '    '));
+  fs.writeFileSync(passwordFilePath, answer.password);
 
   return { accountAddress: ethereumAccount.address, keyStorePath: filePath };
 }
