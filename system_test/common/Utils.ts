@@ -9,11 +9,24 @@ import AddressHandler from './AddressHandler';
 
 const CONFIG_PATH = 'system_test/m1_facilitator/config.json';
 
+/**
+ * Utility functions for system tests.
+ */
 export default class Utils {
+  /**
+   * Returns a random number between min and max range.
+   * @param min Minimum value.
+   * @param max Maximum value.
+   */
   public static async getRandomNumber(min: number, max: number): Promise<BigNumber> {
     return new BigNumber(Math.floor(Math.random() * (max - min + 1)) + min);
   }
 
+  /**
+   * Method to submit transaction to the node.
+   * @param tx Raw transaction
+   * @param txOption Transaction options.
+   */
   public static async sendTransaction(tx: any, txOption: any): Promise<TransactionReceipt> {
     const txOptions = Object.assign({}, txOption);
     if (txOptions.gas === undefined) {
@@ -36,15 +49,28 @@ export default class Utils {
     return JSON.parse(configFile.toString());
   }
 
-  public static async addAccountsToWeb3Wallet(accounts: any[], web3: any): Promise<void> {
-    accounts.map(
-      async (account: any): Promise<void> => {
-        await web3.eth.accounts.wallet.add(account);
-      },
-    );
+  /**
+   * Method to accounts to web3 wallet.
+   * @param accounts List of accounts.
+   * @param web3 Instance of web3.
+   */
+  public static addAccountsToWeb3Wallet(accounts: Account[], web3: Web3): void {
+    for (let i = 0; i < accounts.length; i += 1) {
+      web3.eth.accounts.wallet.add(accounts[i]);
+    }
   }
 
-  public static async getAccountBalances(accounts: Account[], web3: Web3, tokenAddress: string): Promise<Map<string, BigNumber>> {
+  /**
+   * Fetch the ERC20 balances of accounts.
+   * @param accounts List of accounts.
+   * @param web3 Instance of web3.
+   * @param tokenAddress Address of token.
+   */
+  public static async getAccountBalances(
+    accounts: Account[],
+    web3: Web3,
+    tokenAddress: string,
+  ): Promise<Map<string, BigNumber>> {
     const accountBalances: Map<string, BigNumber> = new Map<string, BigNumber>();
     const balancePromises = accounts.map(
       async (account: Account): Promise<void> => {

@@ -59,7 +59,7 @@ export default class DepositSystemTest {
       Logger.info(`Deposit iteration ${i}`);
 
       depositorAccounts = await AddressHandler.getAddresses(concurrencyCount, originWeb3);
-      await Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
+      Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
       Logger.info('Funding deposit accounts with OST on value chain');
       await Faucet.fundAccounts(depositorAccounts, originChainId, originWeb3);
       await new Promise(done => setTimeout(done, 10000));
