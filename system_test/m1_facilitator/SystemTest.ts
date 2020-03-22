@@ -15,4 +15,11 @@
 import DepositSystemTest from './DepositSystemTest';
 // import Withdraw from './Withdraw';
 
-DepositSystemTest.run();
+async function runSystemTest() {
+  await DepositSystemTest.run();
+
+  // Run Withdraw test
+  process.exit(0);
+}
+
+runSystemTest();
