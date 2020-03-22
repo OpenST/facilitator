@@ -101,7 +101,10 @@ export default class Withdraw {
 
       const withdrawTransactionPromises = testWithdrawerAccounts.map(
         async (account: Account): Promise<void> => {
-          const { txObject, withdrawAmount } = await this.createWithdrawTransactionObject(account, auxiliaryWeb3);
+          const { txObject, withdrawAmount } = await this.createWithdrawTransactionObject(
+            account.address,
+            auxiliaryWeb3,
+          );
           if (expectedAuxiliaryAccountBalance.get(account.address)) {
             expectedAuxiliaryAccountBalance.set(account.address, expectedAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount));
           } else {
