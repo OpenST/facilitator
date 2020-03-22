@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-
 import Deposit from '../lib/Deposit';
+import Utils from '../lib/Utils';
 
 const inquirer = require('inquirer');
 const Web3 = require('web3');
 
-const { BN } = new Web3().utils;
+const web3 = new Web3();
+const { BN, isAddress } = web3.utils;
 
 interface DepositInputInfo {
   web3EndPoint: string;
@@ -38,24 +39,37 @@ async function readInput(): Promise<DepositInputInfo> {
       name: 'web3EndPoint',
       default: 'https://rpc.slock.it/goerli',
       message: 'Enter origin chain(goerli) end point:',
+      validate(input: string): boolean {
+        const regex = new RegExp(Utils.ENDPOINT_REGEX);
+        return regex.test(input);
+      },
     },
     {
       type: 'string',
       name: 'erc20TokenAddress',
       default: '0xd426b22f3960d01189a3d548b45a7202489ff4de',
       message: 'Enter ERC20 token address:',
+      validate(input: string): string {
+        return isAddress(input);
+      },
     },
     {
       type: 'string',
       name: 'erc20GatewayAddress',
       default: '0x9B0fd9FB015d9311738ed5aECfF3A626e7A149C1',
       message: 'Enter ERC20 gateway address:',
+      validate(input: string): string {
+        return isAddress(input);
+      },
     },
     {
       type: 'string',
       name: 'transactionGasPrice',
-      default: '0x3B9ACA00',
+      default: '1000000000',
       message: 'Enter transaction gas price:',
+      validate(input: string): number {
+        return new BN(input).gtn(0);
+      },
     },
     {
       type: 'string',
@@ -84,12 +98,18 @@ async function readInput(): Promise<DepositInputInfo> {
       name: 'gasPrice',
       default: '0',
       message: 'Enter gas price at which fee will be calculated:',
+      validate(input: string): number {
+        return new BN(input).gte(0);
+      },
     },
     {
       type: 'string',
       name: 'gasLimit',
       default: '0',
       message: 'Enter gas limit at which fee will be calculated:',
+      validate(input: string): number {
+        return new BN(input).gte(0);
+      },
     },
   ]);
   return answer;
@@ -103,7 +123,7 @@ async function readBeneficiaryAddress(filePath: string): Promise<{ beneficiary: 
       message: 'Enter beneficiary address on the metachain(Hadapsar-1405):',
       default: await getBeneficiaryAddress(filePath),
       validate(input: string): string {
-        return new Web3().utils.isAddress(input);
+        return isAddress(input);
       },
     },
   ]);

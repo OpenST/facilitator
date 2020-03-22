@@ -1,4 +1,6 @@
 export default class Utils {
+  public static ENDPOINT_REGEX = '^(http|https)://(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])(:[0-9]+)?/?(.*)$';
+
   public static async sendTransaction(
     rawTx: any,
     txOptions: {
