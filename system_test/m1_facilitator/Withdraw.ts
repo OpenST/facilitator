@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 // Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,20 +31,23 @@ interface Balance {
 
 export default class Withdraw {
   public static async withdrawSystemTest(): Promise<void> {
-
     // check that valuetoken => utilitytoken
     // wait
 
     const config = await Utils.getConfig();
+    const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
+    const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
+    const auxiliaryChainId = config.chains.auxiliary.chainId;
+
+    const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
+
+    const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
+
     const {
       concurrencyCount,
       iterations,
     } = config.testConfig.withdraw;
     const originWsEndpoint = config.chains.origin.wsEndpoint;
-    const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
-    const auxiliaryChainId = config.chains.auxiliary.chainId;
-
-    const auxiliaryWeb3 = new Web3(auxiliaryWsEndpoint);
     const originWeb3 = new Web3(originWsEndpoint);
 
     const messageHashes: string[] = [];
@@ -55,32 +59,28 @@ export default class Withdraw {
     let testWithdrawerAccounts = [];
 
     for (let i = 0; i < iterations; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
       testWithdrawerAccounts = await AddressHandler.getAddresses(
         concurrencyCount,
         auxiliaryWeb3,
       );
 
-      // eslint-disable-next-line no-await-in-loop
-      Utils.addAccountsToWeb3Wallet(testWithdrawerAccounts, auxiliaryWeb3);
-      // eslint-disable-next-line no-await-in-loop
+      await Utils.addAccountsToWeb3Wallet(testWithdrawerAccounts, auxiliaryWeb3);
       await Faucet.fundAccounts(testWithdrawerAccounts, auxiliaryChainId, auxiliaryWeb3);
-      console.log('done with funding accounts : ');
+
       const initialBalancePromises = testWithdrawerAccounts.map(
         async (account: Account): Promise<void> => {
-          // console.log('account : ',account);
-          console.log('account.address : ', account.address);
+          Logger.info('account.address : ', account.address);
           const { valueToken } = config.chains.origin;
-          console.log('Withdraw -> valueToken', valueToken);
+          Logger.info('Withdraw -> valueToken', valueToken);
           const { utilityToken } = config.chains.auxiliary;
-          console.log('Withdraw -> utilityToken', utilityToken);
+          Logger.info('Withdraw -> utilityToken', utilityToken);
 
           const auxiliaryBalance = await AddressHandler.getTokenBalance(
             account.address,
             auxiliaryWeb3,
             utilityToken,
           );
-          console.log('Withdraw -> auxiliaryBalance', auxiliaryBalance);
+          Logger.info('Withdraw -> auxiliaryBalance', auxiliaryBalance);
 
           initialAuxiliaryAccountBalance[account.address] = auxiliaryBalance;
 
@@ -92,45 +92,40 @@ export default class Withdraw {
           initialOriginAccountBalance[account.address] = originBalance;
         },
       );
-      // eslint-disable-next-line no-await-in-loop
       await Promise.all(initialBalancePromises);
 
-
-      // const config = await Utils.getConfig();
-      const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
-      // const auxiliaryWeb3 = new Web3(config.chains.auxiliary.wsEndpoint);
-      const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
       const { valueToken } = config.chains.origin;
-      // eslint-disable-next-line no-await-in-loop
       const utilityToken = await erc20Cogateway.methods.utilityTokens(valueToken).call();
 
       const withdrawTransactionPromises = testWithdrawerAccounts.map(
         async (account: Account): Promise<void> => {
           const { txObject, withdrawAmount } = await this.createWithdrawTransactionObject(account, auxiliaryWeb3);
           if (expectedAuxiliaryAccountBalance[account.address]) {
+            console.log('in expectedAuxiliaryAccountBalance[account.address] ', expectedAuxiliaryAccountBalance[account.address]);
             expectedAuxiliaryAccountBalance[account.address] = expectedAuxiliaryAccountBalance[account.address].minus(withdrawAmount);
           } else {
-            expectedAuxiliaryAccountBalance[account.address] = initialAuxiliaryAccountBalance[account.address];
+            console.log('in expectedAuxiliaryAccountBalance[account.address] ', initialAuxiliaryAccountBalance[account.address]);
+            expectedAuxiliaryAccountBalance[account.address] = initialAuxiliaryAccountBalance[account.address].minus(withdrawAmount);
           }
-          console.log('before sending withdrawal transaction');
+          Logger.info(`before sending withdrawal transaction from ${account.address} address`);
           const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
           });
 
-          console.log('txReceipt : ', txReceipt);
+          Logger.info('txReceipt : ', txReceipt);
           // @ts-ignore
           const { messageHash } = txReceipt.events.WithdrawIntentDeclared.returnValues;
 
           messageHashes.push(messageHash);
         },
       );
-      // eslint-disable-next-line no-await-in-loop
+
       await Promise.all(withdrawTransactionPromises);
 
-      // eslint-disable-next-line no-await-in-loop
       const finalMetachainAccountBalances = await Utils.getAccountBalances(testWithdrawerAccounts, auxiliaryWeb3, utilityToken);
       const accounts = Array.from(finalMetachainAccountBalances.keys());
 
+      // todo: fix me
       for (let j = 0; j < accounts.length; j += 1) {
         // const initialBalance = initialAuxiliaryAccountBalance[accounts[j]].toString(10);
         const finalBalance = finalMetachainAccountBalances.get(accounts[j]);
@@ -148,10 +143,10 @@ export default class Withdraw {
 
       const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, config.chains.origin.gateway);
       // wait for facilitator to finish the job
-      // eslint-disable-next-line no-await-in-loop
+
       await utils.waitForCondition(
         async (): Promise<boolean> => {
-          for (let j = 0; j < messageHashes.length; j++) {
+          for (let j = 0; j < messageHashes.length; j += 1) {
             const isDeclared = await erc20Gateway.methods.inbox(messageHashes[j]).call();
             if (!isDeclared) {
               return false;
@@ -159,18 +154,22 @@ export default class Withdraw {
           }
           return true;
         },
-        1000,
+        1000, //todo: fix me
         // 5 * 60 * 1000,
         6,
       );
 
-      const finalOriginAccountBalances = await Utils.getAccountBalances(testWithdrawerAccounts, originWeb3, valueToken);
+      const finalOriginAccountBalances = await Utils.getAccountBalances(
+        testWithdrawerAccounts,
+        originWeb3,
+        valueToken,
+      );
 
       for (let m = 0; m < accounts.length; m += 1) {
         const initialBalance = new BigNumber(initialOriginAccountBalance[accounts[m]]);
         // @ts-ignore
         const finalBalance = new BigNumber(finalOriginAccountBalances.get(accounts[m]));
-
+        console.log('in origin account balance verification');
         assert.strictEqual(
           finalBalance.gte(initialBalance),
           true,
@@ -180,7 +179,10 @@ export default class Withdraw {
     }
   }
 
-  private static async createWithdrawTransactionObject(account: Account, auxiliaryWeb3: Web3): Promise<any> {
+  private static async createWithdrawTransactionObject(
+    account: Account,
+    auxiliaryWeb3: Web3,
+  ): Promise<any> {
     const config = await Utils.getConfig();
     const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
@@ -195,41 +197,20 @@ export default class Withdraw {
     } = config.testConfig.withdraw;
 
     const testAmount = await Utils.getRandomNumber(minAmount, maxAmount);
-    console.log('Withdraw -> testAmount', testAmount);
+    Logger.info('Withdraw -> testAmount', testAmount);
 
     const testGasprice = await Utils.getRandomNumber(minGasPrice, maxGasPrice);
-    console.log('Withdraw -> testGasprice', testGasprice);
+    Logger.info('Withdraw -> testGasprice', testGasprice);
     const testGasLimit = await Utils.getRandomNumber(minGasLimit, maxGasLimit);
-    console.log('Withdraw -> testGasLimit', testGasLimit);
+    Logger.info('Withdraw -> testGasLimit', testGasLimit);
 
-    // const { utilityToken } = config.chains.auxiliary;
     const { valueToken } = config.chains.origin;
-    console.log('Withdraw -> valueToken', valueToken);
+    Logger.info('Withdraw -> valueToken', valueToken);
     const utilityToken = await erc20Cogateway.methods.utilityTokens(valueToken).call();
-    console.log('Withdraw -> utilityToken', utilityToken);
-
-    const intentHash = await erc20Cogateway.methods.hashWithdrawIntent(
-      valueToken,
-      utilityToken,
-      testAmount.toString(10),
-      account.address,
-    ).call();
-    const nonce = await erc20Cogateway.methods.nonces(account.address).call();
-    console.log('Withdraw -> nonce', nonce);
-    const messageHash = await erc20Cogateway.methods.outboxMessageHash(
-      intentHash,
-      '0',
-      testGasprice.toString(10),
-      testGasLimit.toString(10),
-      account.address,
-    ).call();
-
-    console.log('message hash : ', messageHash);
-
-    console.log('outbox status ', await erc20Cogateway.methods.outbox(messageHash).call());
-
+    Logger.info('Withdraw -> utilityToken', utilityToken);
+    
     const utilityTokenInstance = Mosaic.interacts.getUtilityToken(auxiliaryWeb3, utilityToken);
-    console.log(`balance of withdrawer ${account.address}`, await utilityTokenInstance.methods.balanceOf(account.address).call());
+    Logger.info(`balance of withdrawer ${account.address}`, await utilityTokenInstance.methods.balanceOf(account.address).call());
     const rawTx = utilityTokenInstance.methods.approve(
       erc20CogatewayAddress,
       testAmount.toString(10),
@@ -242,9 +223,6 @@ export default class Withdraw {
       },
     );
 
-    console.log('approval ', await utilityTokenInstance.methods.allowance(account.address, erc20CogatewayAddress).call());
-    console.log('valuetoken in utility token : ', await utilityTokenInstance.methods.valueToken().call());
-    // console.log('list of unloced wallteds ', );
     return {
       txObject: erc20Cogateway.methods.withdraw(
         testAmount.toString(10),

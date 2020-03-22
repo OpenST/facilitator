@@ -21,7 +21,7 @@
     "deposit": {
       "iterations": 1,
       "depositorCount": 1,
-      "concurrencyCount": 1,
+      "concurrencyCount": 3,
       "pollingInterval": 1,
       "timeoutInterval": 20,
       "minAmount": 1500,
