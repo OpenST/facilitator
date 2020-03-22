@@ -17,7 +17,7 @@ export default class Faucet {
       const balance = await AddressHandler.getTokenBalance(account.address, web3, valueToken);
       const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
 
-      Logger.info(`Approving ${faucet} by address ${account.address}`);
+      Logger.info(`Approving faucet ${faucet} by ${account.address} for amount ${balance.toString(10)}`);
       const approveRawTx = valueTokenInstance.methods.approve(
         faucet,
         balance.toString(10),
@@ -59,8 +59,8 @@ export default class Faucet {
     });
   }
 
-  public static async fundAccounts(accounts: any[], chain: number, web3: any): Promise<void> {
-    const fundingPromises = accounts.map(async (account: any): Promise<void> => {
+  public static async fundAccounts(accounts: Account[], chain: number, web3: Web3): Promise<void> {
+    const fundingPromises = accounts.map(async (account: Account): Promise<void> => {
       const config = await Utils.getConfig();
       const { valueToken } = config.chains.origin;
       const balance = await AddressHandler.getTokenBalance(

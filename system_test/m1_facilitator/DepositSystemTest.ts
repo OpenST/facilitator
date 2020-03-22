@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 // Copyright 2020 OpenST Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +27,6 @@ import Utils from '../common/Utils';
 
 import utils from '../../test_integration/m1_facilitator/utils';
 
-// eslint-disable no-await-in-loop
 /**
  * Logic for deposit system tests.
  */
@@ -62,7 +62,7 @@ export default class DepositSystemTest {
       await Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
       Logger.info('Funding deposit accounts with OST on value chain');
       await Faucet.fundAccounts(depositorAccounts, originChainId, originWeb3);
-      await new Promise(done => setTimeout(done, 100000));
+      await new Promise(done => setTimeout(done, 10000));
 
       Logger.info('Getting initial origin account balances');
       const initialOriginAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
@@ -271,7 +271,6 @@ export default class DepositSystemTest {
     await Utils.sendTransaction(approveRawTx, {
       from: account.address,
     });
-
     Logger.info(`Approved successfully by ${account.address} for amount ${testAmount}`);
 
     return {
@@ -294,7 +293,7 @@ export default class DepositSystemTest {
     depositMessageHashes: string[],
     auxiliaryWeb3: Web3,
   ): Promise<void> {
-    Logger.info('\t\t Balance Report (Deposit flow) \t\t')
+    Logger.info('\t\t Balance Report (Deposit flow) \t\t');
     Logger.info('\t\t Origin \t\t');
     Logger.info('Address \t Balance Before Deposit \t Expected Balance After Deposit \t Actual Balance After Deposit \t Success(T/F)');
 
@@ -305,7 +304,7 @@ export default class DepositSystemTest {
       const expectedBalance = expectedOriginAccountBalance.get(accounts[i]).toString(10);
       // @ts-ignore
       const finalBalance = finalOriginAccountBalance.get(accounts[i]).toString(10);
-      const success = finalBalance === expectedBalance ? true : false;
+      const success = finalBalance === expectedBalance;
 
       Logger.info(`${accounts[i]} \t ${initialBalance} \t ${expectedBalance} \t ${finalBalance} \t ${success}`);
     }

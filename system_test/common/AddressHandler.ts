@@ -29,36 +29,9 @@ export default class AddressHandler {
     ).length > 0;
   }
 
-  public static async getRandomAddresses(
-    totalAccountCount: number,
-    concurrencyCount: number,
-    web3: any,
-  ): Promise<Account[]> {
-    const config = await Utils.getConfig();
-    const configAddresses = config.accounts;
-    const randomAddresses = [];
-
-    if (AddressHandler.validateAddresses(configAddresses)) {
-      for (let i = 0; i < concurrencyCount; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        const index = await Utils.getRandomNumber(0, totalAccountCount - 1);
-        const accountAddress = configAddresses[index.toString(10)];
-        const keyStore = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.json`);
-        const password = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.password`);
-
-        const accountKeyStore = JSON.parse(keyStore.toString());
-        const accountPassword = JSON.parse(password.toString());
-
-        const decryptedAccount = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
-        randomAddresses.push(decryptedAccount);
-      }
-    }
-    return randomAddresses;
-  }
-
-  public static async getBalance(account: string, web3: any): Promise<BigNumber> {
+  public static async getBalance(account: string, web3: Web3): Promise<BigNumber> {
     const balance = await web3.eth.getBalance(account);
-    return balance;
+    return new BigNumber(balance);
   }
 
   public static async getTokenBalance(
@@ -72,21 +45,23 @@ export default class AddressHandler {
     return new BigNumber(balance);
   }
 
-  public static async getAddresses(count: number, web3: any): Promise<Account[]> {
+  public static async getAddresses(count: number, web3: Web3): Promise<Account[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.accounts;
-    const accountsSelected: any[] = [];
+    const accountsSelected: Account[] = [];
 
-    for (let i = 0; i < count; i += 1) {
-      const accountAddress = configAddresses[i];
-      const keyStore = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.json`);
-      const password = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.password`);
+    if (AddressHandler.validateAddresses(configAddresses)) {
+      for (let i = 0; i < count; i += 1) {
+        const accountAddress = configAddresses[i];
+        const keyStore = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.json`);
+        const password = fs.readFileSync(`system_test/m1_facilitator/accounts/${accountAddress}.password`);
 
-      const accountKeyStore = JSON.parse(keyStore.toString());
-      const accountPassword = JSON.parse(password.toString());
+        const accountKeyStore = JSON.parse(keyStore.toString());
+        const accountPassword = password.toString().trim();
 
-      const decryptedAccount = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
-      accountsSelected.push(decryptedAccount);
+        const decryptedAccount = web3.eth.accounts.decrypt(accountKeyStore, accountPassword);
+        accountsSelected.push(decryptedAccount);
+      }
     }
     return accountsSelected;
   }
