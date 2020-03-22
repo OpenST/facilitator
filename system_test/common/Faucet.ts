@@ -76,7 +76,7 @@ export default class Faucet {
     Logger.info(`✅ Funding ${beneficiary} for chain ${chain}`);
     const FAUCET_URL = 'https://faucet.mosaicdao.org';
 
-    await axios.post(
+    return axios.post(
       FAUCET_URL,
       {
         beneficiary: `${beneficiary}@${chain}`,

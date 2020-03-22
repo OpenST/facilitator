@@ -16,7 +16,15 @@ import DepositSystemTest from './DepositSystemTest';
 import Withdraw from './Withdraw';
 import Logger from '../../src/common/Logger';
 
-DepositSystemTest.run().then((): void => {
-  Logger.info('calling withdraw');
-  Withdraw.withdrawSystemTest();
-});
+async function runSystemTest() {
+  Logger.info('Running deposit and withdraw system test');
+
+
+  await Promise.all([
+    DepositSystemTest.run(),
+    Withdraw.withdrawSystemTest(),
+  ]);
+  process.exit(0);
+}
+
+runSystemTest();

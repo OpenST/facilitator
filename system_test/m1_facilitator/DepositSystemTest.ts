@@ -115,7 +115,7 @@ export default class DepositSystemTest {
             .get(accounts[j])),
           true,
           // @ts-ignore
-          `Final and expected balance must match.
+          `Final and expected origin balance must match.
             initial balance: ${initialBalance}
             final balance: ${finalBalance}
             expected balance: ${expectedBalance}`,
@@ -156,7 +156,7 @@ export default class DepositSystemTest {
         assert.ok(
           // @ts-ignore
           finalBalance.isGreaterThan(initialBalance),
-          `Final auxiliary balances must be grater than the initial auxiliary balances.
+          `Final auxiliary balances must be greater than the initial auxiliary balances.
             initial auxiliary balance ${initialBalance}
             final auxiliary balance ${finalBalance}`,
         );
