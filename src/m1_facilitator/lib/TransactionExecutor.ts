@@ -16,7 +16,7 @@ import Web3 from 'web3';
 import { TransactionObject } from 'web3/eth/types';
 import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
-import Transaction from '../models/Transaction';
+import Transaction, { Status } from '../models/Transaction';
 import TransactionRepository from '../repositories/TransactionRepository';
 import Logger from '../../common/Logger';
 import AvatarAccount from '../manifest/AvatarAccount';
@@ -102,6 +102,7 @@ export default class TransactionExecutor {
       toAddress,
       rawTx.encodeABI(),
       this.gasPrice,
+      Status.Pending,
     );
     await this.transactionRepository.save(transaction);
     Logger.debug(`TransactionExecutor::${this.type}::Transaction: queued successfully.`);
@@ -154,6 +155,7 @@ export default class TransactionExecutor {
           transaction.transactionHash = response.transactionHash;
           transaction.gas = new BigNumber(response.gas);
           transaction.nonce = nonce;
+          transaction.status = Status.Success;
           await this.transactionRepository.save(transaction);
           Logger.info(
             `TransactionExecutor::${this.type}::Saving transaction ${transaction.id && transaction.id.toString(10)},
@@ -166,6 +168,10 @@ export default class TransactionExecutor {
         Logger.error(`TransactionExecutor::${this.type}::Error in executing transaction:`
           + `${transaction && transaction.id && transaction.id.toString(10)}.
         Error message: ${error.message}`);
+        if (transaction) {
+          transaction.status = Status.Failure;
+          await this.transactionRepository.save(transaction);
+        }
       } finally {
         Logger.debug(`TransactionExecutor::${this.type}::mutex releasing`);
         release();
@@ -202,10 +208,7 @@ export default class TransactionExecutor {
         let estimatedGas: number;
         if (!txOptions.gas) {
           Logger.info(`TransactionExecutor::${this.type}::Estimating gas for the transaction`);
-          estimatedGas = await this.web3.eth.estimateGas(txOptions).catch((e: Error): number => {
-            Logger.error('Error on estimating gas, using default value  ', e);
-            return 6000000;
-          });
+          estimatedGas = await this.web3.eth.estimateGas(txOptions);
           Logger.info(`TransactionExecutor::${this.type}::estimated gas  ${estimatedGas}`);
           txOptions.gas = estimatedGas.toString(10);
         }
