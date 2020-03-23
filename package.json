@@ -37,7 +37,8 @@
     "request_withdraw:testnet": "TS_NODE_FILES=true; TS_NODE_TRANSPILE_ONLY=true; node -r ts-node/register ./demo/m1_facilitator/bin/request_withdraw_testnet.ts",
     "test:subgraph": "cd subgraph/test && sh ./test.sh",
     "deploy:subgraph:origin": "ts-node subgraph/src/DeployOriginSubgraph.ts",
-    "deploy:subgraph:auxiliary": "ts-node subgraph/src/DeployAuxiliarySubgraph.ts"
+    "deploy:subgraph:auxiliary": "ts-node subgraph/src/DeployAuxiliarySubgraph.ts",
+    "test:system_test": "ts-node system_test/m1_facilitator/SystemTest.ts"
   },
   "repository": {
     "type": "git",
