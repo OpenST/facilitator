@@ -19,7 +19,6 @@ import Web3 from 'web3';
 import { Account } from 'web3-eth-accounts';
 
 import BigNumber from 'bignumber.js';
-import { resolve } from 'bluebird';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Logger from '../../src/common/Logger';
@@ -60,7 +59,7 @@ export default class DepositSystemTest {
     for (let i = 0; i < iterations; i += 1) {
       Logger.info(`Deposit iteration ${i + 1}`);
 
-      depositorAccounts = await AddressHandler.getAddresses(concurrencyCount, originWeb3);
+      depositorAccounts = await AddressHandler.getDepositAddress(concurrencyCount, originWeb3);
       Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
       Logger.info('Funding deposit accounts with OST on value chain');
       await Faucet.fundAccounts(depositorAccounts, originChainId, originWeb3);
@@ -101,7 +100,7 @@ export default class DepositSystemTest {
         originWeb3,
         valueToken,
       );
-      Logger.info('Final balances captured');
+      Logger.info('Final balances captured for deposits');
 
       // Assert for final origin balance should be equal to expected origin balance.
       const accounts = Array.from(finalOriginAccountBalance.keys());
@@ -175,7 +174,8 @@ export default class DepositSystemTest {
       );
     }
     await Faucet.refundOSTToFaucet(depositorAccounts, originWeb3);
-    resolve();
+    Logger.info('Completed all the iterations for deposit');
+    return Promise.resolve();
   }
 
   /**

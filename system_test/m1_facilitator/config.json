@@ -32,9 +32,9 @@
       "maxGasLimit": 5
     },
     "withdraw": {
-      "iterations": 1,
+      "iterations": 2,
       "withdrawerCount": 1,
-      "concurrencyCount": 1,
+      "concurrencyCount": 2,
       "pollingInterval": 1,
       "timeoutInterval": 20,
       "minAmount": 500,
@@ -45,5 +45,6 @@
       "maxGasLimit": 5
     }
   },
-  "accounts":[]
+  "depositAccounts":[],
+  "withdrawAccounts":[]
 }

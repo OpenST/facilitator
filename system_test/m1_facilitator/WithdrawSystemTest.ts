@@ -27,6 +27,9 @@ import Utils from '../common/Utils';
 
 import utils from '../../test_integration/m1_facilitator/utils';
 
+const POLLING_INTERVAL_TIME = 1000 * 60;
+const MAX_RETRY_NUMBER = 5 * 1000;
+
 /**
  * Logic for Withdrawal integration tests.
  */
@@ -34,7 +37,7 @@ export default class WithdrawSystemTest {
   /**
    * Start of Withdrawal integration tests.
    */
-  public static async withdrawSystemTest(): Promise<void> {
+  public static async run(): Promise<void> {
     Logger.info('Starting withdrawal system test');
     const config = await Utils.getConfig();
     const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
@@ -62,7 +65,7 @@ export default class WithdrawSystemTest {
 
     for (let i = 0; i < iterations; i += 1) {
       Logger.info(`Starting of withdrawal iteration ${i + 1}`);
-      testWithdrawerAccounts = await AddressHandler.getAddresses(
+      testWithdrawerAccounts = await AddressHandler.getWithdrawAddress(
         concurrencyCount,
         auxiliaryWeb3,
       );
@@ -113,6 +116,7 @@ export default class WithdrawSystemTest {
               initialAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount),
             );
           }
+          Logger.info(`sending withdrawal transaction for ${account.address}`);
           const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
           });
@@ -145,23 +149,27 @@ export default class WithdrawSystemTest {
         );
       }
 
-      Logger.info('Final balances captured');
+      Logger.info('Final balances captured for withdrawal');
 
-      const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, config.chains.origin.gateway);
+      const erc20Gateway = Mosaic.interacts.getERC20Gateway(
+        originWeb3,
+        config.chains.origin.gateway,
+      );
 
       await utils.waitForCondition(
         async (): Promise<boolean> => {
           for (let j = 0; j < messageHashes.length; j += 1) {
             const isDeclared = await erc20Gateway.methods.inbox(messageHashes[j]).call();
-            Logger.debug(`Message status on origin chain is ${isDeclared} for message hash ${messageHashes[j]}`);
+            Logger.debug(`Message status on origin chain is ${isDeclared} `
+             + `for message hash ${messageHashes[j]}`);
             if (!isDeclared) {
               return false;
             }
           }
           return true;
         },
-        1000 * 60, // poll in 60 sec
-        5, //  max retry 5000
+        POLLING_INTERVAL_TIME, // poll in 60 sec
+        MAX_RETRY_NUMBER, //  max retry 5000
       );
 
       const finalOriginAccountBalances = await Utils.getAccountBalances(
@@ -187,10 +195,11 @@ export default class WithdrawSystemTest {
         expectedAuxiliaryAccountBalance,
         accounts,
         messageHashes,
-        // originWeb3,
         erc20Gateway,
       );
+      Logger.info('Completed all the iterations for withdraw');
     }
+    return Promise.resolve();
   }
 
   /**
@@ -294,13 +303,6 @@ export default class WithdrawSystemTest {
     }
 
     Logger.info('\t\t MessageHash Report \t\t');
-
-    // const config = await Utils.getConfig();
-    // const erc20GatewayAddress = config.chains.origin.gateway;
-    // const erc20Gateway = Mosaic.interacts.getERC20Gateway(
-    //   originWeb3,
-    //   erc20GatewayAddress,
-    // );
 
     Logger.info('\n\n\nMessageHash \t\t Success(T/F)');
     for (let i = 0; i < withdrawalMessageHashes.length; i += 1) {
