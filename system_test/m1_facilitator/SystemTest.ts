@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import DepositSystemTest from './DepositSystemTest';
-// import WithdrawSystemTest from './WithdrawSystemTest';
+// import DepositSystemTest from './DepositSystemTest';
+import WithdrawSystemTest from './WithdrawSystemTest';
 import Logger from '../../src/common/Logger';
 
 async function runSystemTest(): Promise<void> {
@@ -21,8 +21,8 @@ async function runSystemTest(): Promise<void> {
 
 
   await Promise.all([
-    DepositSystemTest.run(),
-    // WithdrawSystemTest.withdrawSystemTest(),
+    // DepositSystemTest.run(),
+    WithdrawSystemTest.withdrawSystemTest(),
   ]);
   process.exit(0);
 }
