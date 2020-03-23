@@ -305,7 +305,6 @@ export default class WithdrawSystemTest {
 
     Logger.info('\n\n\nMessageHash \t\t Success(T/F)');
     for (let i = 0; i < withdrawalMessageHashes.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
       const success = await erc20GatewayObject.methods.inbox(withdrawalMessageHashes[i]).call();
       Logger.info(`${withdrawalMessageHashes[i]} \t\t ${success}`);
     }
