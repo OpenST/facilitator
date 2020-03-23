@@ -45,12 +45,5 @@
       "maxGasLimit": 5
     }
   },
-  "accounts":
-  [
-    "0xf795B8084C5E0394d77B6d024F0ec0B0D457cCFd",
-    "0xeBC9cb91c92B713C6b373DE9C4d42fF167D9cE70",
-    "0x43b957b219e63C7590324b5508b7cA7AE8133554",
-    "0x9e895536741F3fb427ff6aD101F790d8A06ac770",
-    "0xB18CEc01bCb6cf741Db8423627444721f498cC30"
-  ]
+  "accounts":[]
 }
