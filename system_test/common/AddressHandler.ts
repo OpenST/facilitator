@@ -50,23 +50,23 @@ export default class AddressHandler {
   /**
    * It is used to decrypt accounts for deposit.
    * @param count Concurrency count.
-   * @param web3 Auxiliary web3.
+   * @param originWeb3 Auxiliary web3.
    */
-  public static async getDepositAddress(count: number, web3: Web3): Promise<Account[]> {
+  public static async getDepositAddress(count: number, originWeb3: Web3): Promise<Account[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.depositAccounts;
-    return AddressHandler.getAddresses(count, web3, configAddresses);
+    return AddressHandler.getAddresses(count, originWeb3, configAddresses);
   }
 
   /**
    * It is used to decrypt accounts for withdraw.
    * @param count Concurrency count.
-   * @param web3 Auxiliary web3.
+   * @param auxiliaryWeb3 Auxiliary web3.
    */
-  public static async getWithdrawAddress(count: number, web3: Web3): Promise<Account[]> {
+  public static async getWithdrawAddress(count: number, auxiliaryWeb3: Web3): Promise<Account[]> {
     const config = await Utils.getConfig();
     const configAddresses = config.withdrawAccounts;
-    return AddressHandler.getAddresses(count, web3, configAddresses);
+    return AddressHandler.getAddresses(count, auxiliaryWeb3, configAddresses);
   }
 
   /**

@@ -240,7 +240,7 @@ export default class WithdrawSystemTest {
     const utilityToken = await erc20Cogateway.methods.utilityTokens(valueToken).call();
 
     const utilityTokenInstance = Mosaic.interacts.getUtilityToken(auxiliaryWeb3, utilityToken);
-    Logger.info(`balance of withdrawer ${account} is `
+    Logger.info(`utility token balance of withdrawer ${account} is `
       + `${await utilityTokenInstance.methods.balanceOf(account).call()}`);
     const rawTx = utilityTokenInstance.methods.approve(
       erc20CogatewayAddress,
@@ -275,7 +275,7 @@ export default class WithdrawSystemTest {
    * @param expectedMetachainAccountBalance Map of expected account balance at metachain.
    * @param accounts Array of accounts.
    * @param withdrawalMessageHashes Withdrawal message hashes.
-   * @param originWeb3 Origin web3 object.
+   * @param erc20GatewayObject Instance of ERC20Gateway contract.
    */
   private static async generateReport(
     initialMetachainAccountBalance: Map<string, BigNumber>,
@@ -283,7 +283,6 @@ export default class WithdrawSystemTest {
     expectedMetachainAccountBalance: Map<string, BigNumber>,
     accounts: string[],
     withdrawalMessageHashes: string[],
-    // originWeb3: Web3,
     erc20GatewayObject: ERC20Gateway,
   ): Promise<void> {
     Logger.info('\t\t Balance Report (Withdraw flow) \t\t');
