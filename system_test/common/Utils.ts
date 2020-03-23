@@ -27,7 +27,14 @@ export default class Utils {
    * @param tx Raw transaction
    * @param txOption Transaction options.
    */
-  public static async sendTransaction(tx: any, txOption: any): Promise<TransactionReceipt> {
+  public static async sendTransaction(
+    tx: any,
+    txOption: {
+      gas?: string;
+      gasPrice?: string;
+      from: string;
+    },
+  ): Promise<TransactionReceipt> {
     const txOptions = Object.assign({}, txOption);
     if (txOptions.gas === undefined) {
       txOptions.gas = await tx.estimateGas(txOptions);

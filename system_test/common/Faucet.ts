@@ -1,14 +1,12 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import Mosaic from 'Mosaic';
-import { TransactionObject } from '@openst/mosaic-contracts/dist/interacts/types';
+import { TransactionObject } from 'Mosaic/dist/interacts/types';
 import Web3 from 'web3';
 import { Account } from 'web3-eth-accounts';
-
 import BigNumber from 'bignumber.js';
 import AddressHandler from './AddressHandler';
 import Utils from './Utils';
 import Logger from '../../src/common/Logger';
-
 /**
  * Class contain methods for faucet operation.
  */
@@ -24,7 +22,6 @@ export default class Faucet {
     accounts.map(async (account: Account): Promise<void> => {
       const balance = await AddressHandler.getTokenBalance(account.address, web3, valueToken);
       const valueTokenInstance = Mosaic.interacts.getERC20I(web3, valueToken);
-
       Logger.info(`Approving faucet ${faucet} by ${account.address} for amount ${balance.toString(10)}`);
       const approveRawTx = valueTokenInstance.methods.approve(
         faucet,
@@ -62,6 +59,9 @@ export default class Faucet {
       );
       if (balance.lt(new BigNumber(250))) {
         await this.fundFromFaucet(account.address, chain);
+        Logger.info('Waiting for funding to finish');
+        await new Promise(done => setTimeout(done, 40000));
+        Logger.info('Funding finished');
       }
     });
     await Promise.all(fundingPromises);
@@ -75,7 +75,6 @@ export default class Faucet {
   private static async fundFromFaucet(beneficiary: string, chain: number): Promise<void> {
     Logger.info(`✅ Funding ${beneficiary} for chain ${chain}`);
     const FAUCET_URL = 'https://faucet.mosaicdao.org';
-
     return axios.post(
       FAUCET_URL,
       {
@@ -86,9 +85,6 @@ export default class Faucet {
       },
     ).then(async (response: AxiosResponse): Promise<void> => {
       Logger.info(`Transaction hash is ${response.data.txHash}`);
-      Logger.info('Waiting for funding to finish');
-      await new Promise(done => setTimeout(done, 20000));
-      Logger.info('Funding finished');
     }).catch((error: AxiosError): void => {
       Logger.info('error from axios catch : ', error.stack);
     });

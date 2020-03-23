@@ -72,7 +72,7 @@ export default class AddressHandler {
    * Path of account password file.
    * @param accountAddress Account address.
    */
-  private static accountPasswordPath(accountAddress: string) {
+  private static accountPasswordPath(accountAddress: string): string {
     return `${KEYSTORE_FOLDER_PATH}/${accountAddress}.password`;
   }
 
@@ -80,7 +80,7 @@ export default class AddressHandler {
    * Path of account keystore file.
    * @param accountAddress Account address.
    */
-  private static keyStorePath(accountAddress: string) {
+  private static keyStorePath(accountAddress: string): string {
     return `${KEYSTORE_FOLDER_PATH}/${accountAddress}.json`;
   }
 }

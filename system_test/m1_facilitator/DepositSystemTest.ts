@@ -27,6 +27,9 @@ import Utils from '../common/Utils';
 
 import utils from '../../test_integration/m1_facilitator/utils';
 
+
+const POLLING_INTERVAL_TIME = 1000 * 60;
+const MAX_RETRY_NUMBER = 5 * 1000;
 /**
  * Logic for deposit system tests.
  */
@@ -134,8 +137,8 @@ export default class DepositSystemTest {
           }
           return true;
         },
-        1000 * 60, // poll in 60 sec
-        5 * 1000, //  max retry 5000
+        POLLING_INTERVAL_TIME, // poll in 60 sec
+        MAX_RETRY_NUMBER, //  max retry 5000
       );
 
       const finalAuxiliaryAccountBalance: Map<string, BigNumber> = await Utils.getAccountBalances(
