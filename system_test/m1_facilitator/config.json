@@ -19,9 +19,9 @@
   },
   "testConfig": {
     "deposit": {
-      "iterations": 1,
+      "iterations": 2,
       "depositorCount": 1,
-      "concurrencyCount": 3,
+      "concurrencyCount": 2,
       "pollingInterval": 1,
       "timeoutInterval": 20,
       "minAmount": 1500,

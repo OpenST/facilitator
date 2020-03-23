@@ -48,7 +48,6 @@ export default class DepositSystemTest {
     const auxiliaryWeb3 = new Web3(config.chains.auxiliary.wsEndpoint);
     auxiliaryWeb3.transactionConfirmationBlocks = 1;
 
-    const expectedOriginAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
     const messageHashes: string[] = [];
 
     let depositorAccounts: Account[] = [];
@@ -56,7 +55,7 @@ export default class DepositSystemTest {
     const { valueToken } = config.chains.origin;
 
     for (let i = 0; i < iterations; i += 1) {
-      Logger.info(`Deposit iteration ${i}`);
+      Logger.info(`Deposit iteration ${i + 1}`);
 
       depositorAccounts = await AddressHandler.getAddresses(concurrencyCount, originWeb3);
       Utils.addAccountsToWeb3Wallet(depositorAccounts, originWeb3);
@@ -81,6 +80,7 @@ export default class DepositSystemTest {
         auxiliaryWeb3,
         utilityTokenAddress,
       );
+      const expectedOriginAccountBalance: Map<string, BigNumber> = new Map<string, BigNumber>();
       const depositMessageHashes = await this.deposit(
         depositorAccounts,
         originWeb3,

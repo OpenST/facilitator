@@ -14,9 +14,9 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-
-import inquirer from 'inquirer';
 import Web3 from 'web3';
+
+const inquirer = require('inquirer');
 
 interface AccountInfo {
   accountAddress: string;
