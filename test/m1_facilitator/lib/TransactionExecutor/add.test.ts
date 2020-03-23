@@ -21,6 +21,7 @@ import assert from '../../../test_utils/assert';
 import TransactionExecutor, { TransactionExecutorType } from '../../../../src/m1_facilitator/lib/TransactionExecutor';
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 import AvatarAccount from '../../../../src/m1_facilitator/manifest/AvatarAccount';
+import { TransactionStatus } from '../../../../src/m1_facilitator/models/Transaction';
 
 interface ConfirmDepositParams {
   valueToken: string;
@@ -191,6 +192,12 @@ describe('TransactionExecutor::add()', (): void => {
       assert.isNotNull(
         transaction.updatedAt,
         'Updated value should not be null.',
+      );
+
+      assert.strictEqual(
+        transaction.transactionStatus,
+        TransactionStatus.Pending,
+        `Transaction should be in ${TransactionStatus.Pending} state.`,
       );
     }
   });

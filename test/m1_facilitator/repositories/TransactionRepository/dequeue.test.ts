@@ -15,7 +15,7 @@
 import BigNumber from 'bignumber.js';
 
 import Util from './util';
-import Transaction from '../../../../src/m1_facilitator/models/Transaction';
+import Transaction, { TransactionStatus } from '../../../../src/m1_facilitator/models/Transaction';
 import Repositories from '../../../../src/m1_facilitator/repositories/Repositories';
 import assert from '../../../test_utils/assert';
 
@@ -49,6 +49,7 @@ describe('TransactionRepository::dequeue', (): void => {
       toAddress,
       encodedData,
       gasPrice,
+      TransactionStatus.Pending,
       gas,
       undefined,
       txHash,

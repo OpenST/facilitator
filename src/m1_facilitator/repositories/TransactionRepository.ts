@@ -13,13 +13,13 @@
 // limitations under the License.
 
 import {
-  DataTypes, InitOptions,
+  DataTypes, InitOptions, Op,
 } from 'sequelize';
 import assert from 'assert';
 import { Mutex } from 'async-mutex';
 import BigNumber from 'bignumber.js';
 import Subject from '../../common/observer/Subject';
-import Transaction from '../models/Transaction';
+import Transaction, { TransactionStatus } from '../models/Transaction';
 import Utils from '../../common/Utils';
 
 /**
@@ -33,6 +33,8 @@ class TransactionModel {
   public readonly encodedData!: string;
 
   public readonly gasPrice!: BigNumber;
+
+  public readonly transactionStatus!: TransactionStatus;
 
   public readonly gas!: BigNumber;
 
@@ -87,6 +89,17 @@ export default class TransactionRepository extends Subject<Transaction> {
         gasPrice: {
           type: DataTypes.DECIMAL(78),
           allowNull: false,
+        },
+        transactionStatus: {
+          type: DataTypes.ENUM({
+            values: [
+              TransactionStatus.Pending,
+              TransactionStatus.Sent,
+              TransactionStatus.Failed,
+            ],
+          }),
+          allowNull: false,
+          defaultValue: null,
         },
         gas: {
           type: DataTypes.DECIMAL(78),
@@ -179,7 +192,10 @@ export default class TransactionRepository extends Subject<Transaction> {
   public async dequeue(): Promise<Transaction | null> {
     const transactionModel = await this.transactionModel.findOne({
       where: {
-        transactionHash: null,
+        [Op.and]: {
+          transactionStatus: TransactionStatus.Pending,
+          transactionHash: null,
+        },
       },
       order: [
         ['id', 'ASC'],
@@ -202,7 +218,10 @@ export default class TransactionRepository extends Subject<Transaction> {
       transactionModel.fromAddress,
       transactionModel.toAddress,
       transactionModel.encodedData,
-      transactionModel.gasPrice ? new BigNumber(transactionModel.gasPrice) : transactionModel.gasPrice,
+      transactionModel.gasPrice
+        ? new BigNumber(transactionModel.gasPrice)
+        : transactionModel.gasPrice,
+      transactionModel.transactionStatus,
       transactionModel.gas ? new BigNumber(transactionModel.gas) : transactionModel.gas,
       transactionModel.id ? new BigNumber(transactionModel.id) : transactionModel.id,
       transactionModel.transactionHash,
