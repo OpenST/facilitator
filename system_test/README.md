@@ -9,7 +9,7 @@ To generate ethereum accounts run the account_creation script
 
 - You should fund these account mannually with GOETH on Goerli chain
 
-- Add all these account addresses in `accounts[]` in `config.json` file.
+- Add newly created accounts `depositAccounts[]` and `withdrawAccounts[]` in `config.json` file.
 
 - Now you can run system test with the following command
   ```

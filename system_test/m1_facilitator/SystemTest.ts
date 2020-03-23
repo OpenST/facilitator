@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import DepositSystemTest from './DepositSystemTest';
-// import WithdrawSystemTest from './WithdrawSystemTest';
+import WithdrawSystemTest from './WithdrawSystemTest';
 import Logger from '../../src/common/Logger';
 
 async function runSystemTest(): Promise<void> {
@@ -21,9 +21,14 @@ async function runSystemTest(): Promise<void> {
 
 
   await Promise.all([
-    DepositSystemTest.run(),
-    // WithdrawSystemTest.withdrawSystemTest(),
+    DepositSystemTest.run().catch((error): void => {
+      Logger.info(`error in deposits ${error}`);
+    }),
+    WithdrawSystemTest.run().catch((error): void => {
+      Logger.info(`error in withdraw ${error}`);
+    }),
   ]);
+  Logger.info('System test completed');
   process.exit(0);
 }
 

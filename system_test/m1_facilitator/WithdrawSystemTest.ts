@@ -18,12 +18,17 @@ import { Account } from 'web3-eth-accounts';
 import Mosaic from 'Mosaic';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
+import { TransactionObject } from 'Mosaic/dist/interacts/types';
+import { ERC20Gateway } from 'Mosaic/dist/interacts/ERC20Gateway';
 import Logger from '../../src/common/Logger';
 import AddressHandler from '../common/AddressHandler';
 import Faucet from '../common/Faucet';
 import Utils from '../common/Utils';
 
 import utils from '../../test_integration/m1_facilitator/utils';
+
+const POLLING_INTERVAL_TIME = 1000 * 60;
+const MAX_RETRY_NUMBER = 5 * 1000;
 
 /**
  * Logic for Withdrawal integration tests.
@@ -32,10 +37,8 @@ export default class WithdrawSystemTest {
   /**
    * Start of Withdrawal integration tests.
    */
-  public static async withdrawSystemTest(): Promise<void> {
-    // check that valuetoken => utilitytoken
-    // wait
-
+  public static async run(): Promise<void> {
+    Logger.info('Starting withdrawal system test');
     const config = await Utils.getConfig();
     const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
     const auxiliaryWsEndpoint = config.chains.auxiliary.wsEndpoint;
@@ -61,7 +64,8 @@ export default class WithdrawSystemTest {
     let testWithdrawerAccounts = [];
 
     for (let i = 0; i < iterations; i += 1) {
-      testWithdrawerAccounts = await AddressHandler.getAddresses(
+      Logger.info(`Starting of withdrawal iteration ${i + 1}`);
+      testWithdrawerAccounts = await AddressHandler.getWithdrawAddress(
         concurrencyCount,
         auxiliaryWeb3,
       );
@@ -71,18 +75,14 @@ export default class WithdrawSystemTest {
 
       const initialBalancePromises = testWithdrawerAccounts.map(
         async (account: Account): Promise<void> => {
-          Logger.info('account.address : ', account.address);
           const { valueToken } = config.chains.origin;
-          Logger.info('Withdraw -> valueToken', valueToken);
           const { utilityToken } = config.chains.auxiliary;
-          Logger.info('Withdraw -> utilityToken', utilityToken);
 
           const auxiliaryBalance = await AddressHandler.getTokenBalance(
             account.address,
             auxiliaryWeb3,
             utilityToken,
           );
-          Logger.info('Withdraw -> auxiliaryBalance', auxiliaryBalance);
 
           initialAuxiliaryAccountBalance.set(account.address, auxiliaryBalance);
 
@@ -107,21 +107,20 @@ export default class WithdrawSystemTest {
           );
           if (expectedAuxiliaryAccountBalance.get(account.address)) {
             expectedAuxiliaryAccountBalance.set(
-              account.address, 
+              account.address,
               expectedAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount),
             );
           } else {
             expectedAuxiliaryAccountBalance.set(
-              account.address, 
+              account.address,
               initialAuxiliaryAccountBalance.get(account.address)!.minus(withdrawAmount),
             );
           }
-          Logger.info(`before sending withdrawal transaction from ${account.address} address`);
+          Logger.info(`sending withdrawal transaction for ${account.address}`);
           const txReceipt = await Utils.sendTransaction(txObject, {
             from: account.address,
           });
 
-          Logger.info('txReceipt : ', txReceipt);
           // @ts-ignore
           const { messageHash } = txReceipt.events.WithdrawIntentDeclared.returnValues;
 
@@ -138,7 +137,6 @@ export default class WithdrawSystemTest {
       );
       const accounts = Array.from(finalMetachainAccountBalances.keys());
 
-      // todo: fix me
       for (let j = 0; j < accounts.length; j += 1) {
         const finalBalance = finalMetachainAccountBalances.get(accounts[j]);
         const expectedBalance = expectedAuxiliaryAccountBalance.get(accounts[j]);
@@ -151,24 +149,27 @@ export default class WithdrawSystemTest {
         );
       }
 
-      Logger.info('Final balances captured');
+      Logger.info('Final balances captured for withdrawal');
 
-      const erc20Gateway = Mosaic.interacts.getERC20Gateway(originWeb3, config.chains.origin.gateway);
-      // wait for facilitator to finish the job
+      const erc20Gateway = Mosaic.interacts.getERC20Gateway(
+        originWeb3,
+        config.chains.origin.gateway,
+      );
 
       await utils.waitForCondition(
         async (): Promise<boolean> => {
           for (let j = 0; j < messageHashes.length; j += 1) {
             const isDeclared = await erc20Gateway.methods.inbox(messageHashes[j]).call();
+            Logger.debug(`Message status on origin chain is ${isDeclared} `
+             + `for message hash ${messageHashes[j]}`);
             if (!isDeclared) {
               return false;
             }
           }
           return true;
         },
-        1000, // todo: fix me
-        // 5 * 60 * 1000,
-        6,
+        POLLING_INTERVAL_TIME, // poll in 60 sec
+        MAX_RETRY_NUMBER, //  max retry 5000
       );
 
       const finalOriginAccountBalances = await Utils.getAccountBalances(
@@ -181,26 +182,41 @@ export default class WithdrawSystemTest {
         const initialBalance = new BigNumber(initialOriginAccountBalance.get(accounts[m])!);
         // @ts-ignore
         const finalBalance = new BigNumber(finalOriginAccountBalances.get(accounts[m]));
-        console.log('in origin account balance verification');
         assert.strictEqual(
           finalBalance.gte(initialBalance),
           true,
           `Expected balance for address ${accounts[m]} must be greater than ${finalBalance}`,
         );
       }
+
+      await this.generateReport(
+        initialAuxiliaryAccountBalance,
+        finalMetachainAccountBalances,
+        expectedAuxiliaryAccountBalance,
+        accounts,
+        messageHashes,
+        erc20Gateway,
+      );
+      Logger.info('Completed all the iterations for withdraw');
     }
+    return Promise.resolve();
   }
 
   /**
    * It creates withdrawal transaction object.
    *
-   * @param account Withdrawer address
+   * @param account Withdrawer address.
    * @param auxiliaryWeb3 Auxiliary web3 object.
    */
   private static async createWithdrawTransactionObject(
     account: string,
     auxiliaryWeb3: Web3,
-  ): Promise<any> {
+  ): Promise<{
+      txObject: TransactionObject<string>;
+      withdrawAmount: BigNumber;
+      utilityToken: string;
+    }> {
+    Logger.info(`Withdrawal request from account ${account}`);
     const config = await Utils.getConfig();
     const erc20CogatewayAddress = config.chains.auxiliary.cogateway;
     const erc20Cogateway = Mosaic.interacts.getERC20Cogateway(auxiliaryWeb3, erc20CogatewayAddress);
@@ -215,20 +231,17 @@ export default class WithdrawSystemTest {
     } = config.testConfig.withdraw;
 
     const testAmount = await Utils.getRandomNumber(minAmount, maxAmount);
-    Logger.info('Withdraw -> testAmount', testAmount);
+    Logger.info(`withdrawal amount is ${testAmount}`);
 
     const testGasprice = await Utils.getRandomNumber(minGasPrice, maxGasPrice);
-    Logger.info('Withdraw -> testGasprice', testGasprice);
     const testGasLimit = await Utils.getRandomNumber(minGasLimit, maxGasLimit);
-    Logger.info('Withdraw -> testGasLimit', testGasLimit);
 
     const { valueToken } = config.chains.origin;
-    Logger.info('Withdraw -> valueToken', valueToken);
     const utilityToken = await erc20Cogateway.methods.utilityTokens(valueToken).call();
-    Logger.info('Withdraw -> utilityToken', utilityToken);
 
     const utilityTokenInstance = Mosaic.interacts.getUtilityToken(auxiliaryWeb3, utilityToken);
-    Logger.info(`balance of withdrawer ${account}`, await utilityTokenInstance.methods.balanceOf(account).call());
+    Logger.info(`utility token balance of withdrawer ${account} is `
+      + `${await utilityTokenInstance.methods.balanceOf(account).call()}`);
     const rawTx = utilityTokenInstance.methods.approve(
       erc20CogatewayAddress,
       testAmount.toString(10),
@@ -252,5 +265,48 @@ export default class WithdrawSystemTest {
       withdrawAmount: testAmount,
       utilityToken,
     };
+  }
+
+  /**
+   * Generation of reports after each iteration of withdrawal.
+   *
+   * @param initialMetachainAccountBalance Map of initial account balance at metachain.
+   * @param finalMetachainAccountBalance Map of final account balance at metachain.
+   * @param expectedMetachainAccountBalance Map of expected account balance at metachain.
+   * @param accounts Array of accounts.
+   * @param withdrawalMessageHashes Withdrawal message hashes.
+   * @param erc20GatewayObject Instance of ERC20Gateway contract.
+   */
+  private static async generateReport(
+    initialMetachainAccountBalance: Map<string, BigNumber>,
+    finalMetachainAccountBalance: Map<string, BigNumber>,
+    expectedMetachainAccountBalance: Map<string, BigNumber>,
+    accounts: string[],
+    withdrawalMessageHashes: string[],
+    erc20GatewayObject: ERC20Gateway,
+  ): Promise<void> {
+    Logger.info('\t\t Balance Report (Withdraw flow) \t\t');
+    Logger.info('\t\t Auxiliary \t\t\n');
+    Logger.info('Address \t Balance Before Withdrawal \t Expected Balance After Withdrawal \t Actual Balance After Withdrawal \t Success(T/F)');
+
+    for (let i = 0; i < accounts.length; i += 1) {
+      // @ts-ignore
+      const initialBalance = initialMetachainAccountBalance.get(accounts[i]).toString(10);
+      // @ts-ignore
+      const expectedBalance = expectedMetachainAccountBalance.get(accounts[i]).toString(10);
+      // @ts-ignore
+      const finalBalance = finalMetachainAccountBalance.get(accounts[i]).toString(10);
+      const success = finalBalance === expectedBalance;
+
+      Logger.info(`${accounts[i]} \t ${initialBalance} \t ${expectedBalance} \t ${finalBalance} \t ${success}`);
+    }
+
+    Logger.info('\t\t MessageHash Report \t\t');
+
+    Logger.info('\n\n\nMessageHash \t\t Success(T/F)');
+    for (let i = 0; i < withdrawalMessageHashes.length; i += 1) {
+      const success = await erc20GatewayObject.methods.inbox(withdrawalMessageHashes[i]).call();
+      Logger.info(`${withdrawalMessageHashes[i]} \t\t ${success}`);
+    }
   }
 }

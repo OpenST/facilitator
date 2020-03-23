@@ -47,9 +47,39 @@ export default class AddressHandler {
     return new BigNumber(balance);
   }
 
-  public static async getAddresses(count: number, web3: Web3): Promise<Account[]> {
+  /**
+   * It is used to decrypt accounts for deposit.
+   * @param count Concurrency count.
+   * @param originWeb3 Auxiliary web3.
+   */
+  public static async getDepositAddress(count: number, originWeb3: Web3): Promise<Account[]> {
     const config = await Utils.getConfig();
-    const configAddresses = config.accounts;
+    const configAddresses = config.depositAccounts;
+    return AddressHandler.getAddresses(count, originWeb3, configAddresses);
+  }
+
+  /**
+   * It is used to decrypt accounts for withdraw.
+   * @param count Concurrency count.
+   * @param auxiliaryWeb3 Auxiliary web3.
+   */
+  public static async getWithdrawAddress(count: number, auxiliaryWeb3: Web3): Promise<Account[]> {
+    const config = await Utils.getConfig();
+    const configAddresses = config.withdrawAccounts;
+    return AddressHandler.getAddresses(count, auxiliaryWeb3, configAddresses);
+  }
+
+  /**
+   * It is used to decrypt the accounts using keystore and password.
+   * @param count Concurrency count.
+   * @param web3 Web3 object.
+   * @param configAddresses Array of addresses.
+   */
+  private static async getAddresses(
+    count: number,
+    web3: Web3,
+    configAddresses: [],
+  ): Promise<Account[]> {
     const accountsSelected: Account[] = [];
 
     if (AddressHandler.validateAddresses(configAddresses)) {

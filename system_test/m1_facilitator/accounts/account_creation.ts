@@ -15,6 +15,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import Web3 from 'web3';
+import Logger from '../../../src/common/Logger';
 
 const inquirer = require('inquirer');
 
@@ -75,6 +76,7 @@ async function generateAccounts(): Promise<void> {
   for (let i = 0; i < totalAccountCount.totalAccounts; i += 1) {
     // eslint-disable-next-line no-await-in-loop
     const accountInfo = await createAccount();
+    Logger.info(`account address ${accountInfo.accountAddress} is created`);
     accountAddresses.push(accountInfo.accountAddress);
   }
 }
