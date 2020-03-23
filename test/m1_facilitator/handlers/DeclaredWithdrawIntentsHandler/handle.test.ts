@@ -55,6 +55,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       feeGasLimit: '2',
       withdrawer: '0x0000000000000000000000000000000000000005',
       blockNumber: '100',
+      nonce: '1',
     },
     {
       messageHash: web3Utils.sha3('2'),
@@ -66,13 +67,17 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       feeGasLimit: '2',
       withdrawer: '0x0000000000000000000000000000000000000005',
       blockNumber: '101',
+      nonce: '1',
     },
   ];
 
   beforeEach(async (): Promise<void> => {
     repositories = await Repositories.create();
     ({
-      messageRepository, withdrawIntentRepository, gatewayRepository, erc20GatewayTokenPairRepository,
+      messageRepository,
+      withdrawIntentRepository,
+      gatewayRepository,
+      erc20GatewayTokenPairRepository,
     } = repositories);
     handler = new DeclaredWithdrawIntentsHandler(
       repositories.withdrawIntentRepository,
@@ -223,6 +228,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       '0x0000000000000000000000000000000000000001',
     );
 
+    existingMessage.nonce = new BigNumber(1);
     await messageRepository.save(existingMessage);
 
     await handler.handle(withdrawIntentEntityRecords);
@@ -235,6 +241,12 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
       messageRecord && messageRecord.sourceStatus,
       MessageStatus.Declared,
       'Message source status must be declared',
+    );
+
+    assert.isOk(
+      messageRecord && messageRecord.nonce
+      && messageRecord.nonce.isEqualTo(new BigNumber(withdrawIntentEntityRecords[0].nonce)),
+      `Nonce must match, expected nonce ${withdrawIntentEntityRecords[0].nonce} but found ${messageRecord && messageRecord.nonce} `,
     );
   });
 
@@ -250,6 +262,7 @@ describe('DeclaredWithdrawIntentsHandler::handle', (): void => {
         feeGasLimit: '2',
         withdrawer: '0x0000000000000000000000000000000000000005',
         blockNumber: '100',
+        nonce: '1',
       },
     ];
     const supportedTokens = new Set(['0x0000000000000000000000000000000000000022']);

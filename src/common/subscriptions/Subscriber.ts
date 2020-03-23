@@ -87,10 +87,12 @@ export default class Subscriber {
     Object.keys(this.subscriptionQueries).forEach(async (entity): Promise<void> => {
       Logger.debug(`Subscriber::Unsubscribing to graph node entity ${entity}`);
       const querySubscription = this.querySubscriptions[entity];
-      querySubscription.unsubscribe();
+      if (querySubscription) {
+        querySubscription.unsubscribe();
+      }
       Logger.debug(`Subscriber::Unsubscribed to graph node entity ${entity}.`);
     });
-    // Deletes all query susbcribers as they are non useful.
+    // Deletes all query subscribers as they are non useful.
     this.querySubscriptions = {};
   }
 }

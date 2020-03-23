@@ -55,6 +55,8 @@ describe('ConfirmDepositIntentsHandler::handle', (): void => {
       '0x0000000000000000000000000000000000000001',
     );
 
+    existingMessage.nonce = new BigNumber(1);
+
     await messageRepository.save(existingMessage);
 
     const confirmDepositIntentRecord = {
@@ -120,6 +122,8 @@ describe('ConfirmDepositIntentsHandler::handle', (): void => {
       ),
     ];
 
+    existingMessages[0].nonce = new BigNumber(1);
+    existingMessages[1].nonce = new BigNumber(1);
     await messageRepository.save(existingMessages[0]);
     await messageRepository.save(existingMessages[1]);
 

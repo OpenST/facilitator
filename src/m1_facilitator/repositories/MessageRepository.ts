@@ -15,7 +15,7 @@
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
 import {
-  DataTypes, InitOptions, Model, Op,
+  DataTypes, InitOptions, Model, Op, literal,
 } from 'sequelize';
 import { MAX_VALUE } from '../../m0_facilitator/Constants';
 import Message, { MessageStatus, MessageType } from '../models/Message';
@@ -45,6 +45,8 @@ class MessageModel extends Model {
   public readonly sourceDeclarationBlockNumber!: BigNumber;
 
   public readonly sender!: string;
+
+  public readonly nonce!: BigNumber;
 
   public readonly createdAt!: Date;
 
@@ -134,9 +136,12 @@ export default class MessageRepository extends Subject<Message> {
             min: 0,
           },
         },
-
         sender: {
           type: DataTypes.STRING,
+          allowNull: true,
+        },
+        nonce: {
+          type: DataTypes.BIGINT,
           allowNull: true,
         },
       },
@@ -247,6 +252,9 @@ export default class MessageRepository extends Subject<Message> {
           type: messageType,
         },
       },
+      order: [
+        [literal('sender, nonce'), 'asc'],
+      ],
     });
 
     return messageModels.map(
@@ -311,6 +319,7 @@ export default class MessageRepository extends Subject<Message> {
         : messageModel.sourceDeclarationBlockNumber,
       messageModel.intentHash,
       messageModel.sender,
+      new BigNumber(messageModel.nonce),
       messageModel.createdAt,
       messageModel.updatedAt,
     );

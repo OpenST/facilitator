@@ -34,6 +34,7 @@ describe('MessageRepository::save', (): void => {
   let gatewayAddress: string;
   let sourceDeclarationBlockNumber: BigNumber;
   let sender: string;
+  let nonce: BigNumber;
   let createdAt: Date;
   let updatedAt: Date;
 
@@ -51,6 +52,7 @@ describe('MessageRepository::save', (): void => {
     gatewayAddress = '0x0000000000000000000000000000000000000001';
     sourceDeclarationBlockNumber = new BigNumber(300);
     sender = '0x0000000000000000000000000000000000000005';
+    nonce = new BigNumber(1);
     createdAt = new Date();
     updatedAt = new Date();
   });
@@ -67,6 +69,7 @@ describe('MessageRepository::save', (): void => {
       sourceDeclarationBlockNumber,
       intentHash,
       sender,
+      nonce,
       createdAt,
       updatedAt,
     );
@@ -89,6 +92,7 @@ describe('MessageRepository::save', (): void => {
       sourceDeclarationBlockNumber,
       intentHash,
       sender,
+      nonce,
       createdAt,
       updatedAt,
     );
@@ -121,6 +125,7 @@ describe('MessageRepository::save', (): void => {
       sourceDeclarationBlockNumber,
       intentHash,
       sender,
+      nonce,
       createdAt,
       updatedAt,
     );
@@ -143,6 +148,7 @@ describe('MessageRepository::save', (): void => {
       sourceDeclarationBlockNumber,
       intentHash,
       sender,
+      nonce,
       createdAt,
       updatedAt,
     );
@@ -168,6 +174,7 @@ describe('MessageRepository::save', (): void => {
       sourceDeclarationBlockNumber,
       intentHash,
       sender,
+      nonce,
       createdAt,
       updatedAt,
     );

@@ -53,6 +53,8 @@ export default class Message extends Comparable<Message> {
 
   public sender?: string;
 
+  public nonce?: BigNumber;
+
   public createdAt?: Date;
 
   public updatedAt?: Date;
@@ -72,6 +74,7 @@ export default class Message extends Comparable<Message> {
    * @param sourceDeclarationBlockNumber Block number at which message was declared.
    * @param intentHash Intent hash.
    * @param sender Address of message sender.
+   * @param nonce Message nonce.
    * @param createdAt Time at which record is created.
    * @param updatedAt Time at which record is updated.
    */
@@ -86,6 +89,7 @@ export default class Message extends Comparable<Message> {
     sourceDeclarationBlockNumber?: BigNumber,
     intentHash?: string,
     sender?: string,
+    nonce?: BigNumber,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
@@ -100,6 +104,7 @@ export default class Message extends Comparable<Message> {
     this.feeGasLimit = feeGasLimit;
     this.sourceDeclarationBlockNumber = sourceDeclarationBlockNumber;
     this.sender = sender;
+    this.nonce = nonce;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }

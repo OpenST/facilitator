@@ -22,7 +22,7 @@ import { Shared } from '../shared';
 
 const generateFacilitatorManifest = (shared: Shared) => ({
   version: 'v0.14',
-  architecture_layout: ArchitectureLayout.MOSAIC1,
+  architecture_layout: ArchitectureLayout.MOSAIC_0_14_GEN_1,
   personas: [Personas.FACILITATOR],
   metachain:
     {

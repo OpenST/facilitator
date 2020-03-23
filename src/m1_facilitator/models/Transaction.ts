@@ -16,20 +16,36 @@ import BigNumber from 'bignumber.js';
 import Comparable from '../../common/observer/Comparable';
 
 /**
+ * Type of Transaction statuses:
+ *
+ * Pending: Transaction record is created in Pending state.
+ * Sent: Transaction status is marked sent, when it's success and transaction hash is received.
+ * Failure: Transaction is marked failure on exception while sending transaction.
+ */
+export enum TransactionStatus {
+  Pending = 'pending',
+  Sent = 'sent',
+  Failed = 'failed',
+}
+
+/**
  * Transaction model acts as an instance for each record of TransactionRepository.
  */
 export default class Transaction extends Comparable<Transaction> {
-  /** Avatar account address */
+  /** Avatar account address. */
   public readonly fromAddress: string;
 
-  /** To contract address */
+  /** To contract address. */
   public readonly toAddress: string;
 
-  /** Raw transaction object */
+  /** Raw transaction object. */
   public readonly encodedData: string;
 
-  /** Gas price value at which transaction was sent */
+  /** Gas price value at which transaction was sent. */
   public readonly gasPrice: BigNumber;
+
+  /** Transaction status. */
+  public transactionStatus: TransactionStatus;
 
   /** Gas limit value at which transaction was sent */
   public gas?: BigNumber;
@@ -54,9 +70,10 @@ export default class Transaction extends Comparable<Transaction> {
    *
    * @param fromAddress From account address.
    * @param toAddress To account address.
-   * @param encodedData Encoded function call with function arguments. For more details please check:
-   *                    https://web3js.readthedocs.io/en/v1.2.0/web3-eth-abi.html#encodefunctioncall
+   * @param encodedData Encoded function call with function arguments. For more details please
+   *                  check: https://web3js.readthedocs.io/en/v1.2.0/web3-eth-abi.html#encodefunctioncall
    * @params gasPrice Gas price at which transaction was sent.
+   * @params transactionStatus Transaction status.
    * @params gas Gas limit at which transaction was sent.
    * @param id Unique auto increment id.
    * @param transactionHash Transaction hash.
@@ -69,6 +86,7 @@ export default class Transaction extends Comparable<Transaction> {
     toAddress: string,
     encodedData: string,
     gasPrice: BigNumber,
+    transactionStatus: TransactionStatus,
     gas?: BigNumber,
     id?: BigNumber,
     transactionHash?: string,
@@ -82,6 +100,7 @@ export default class Transaction extends Comparable<Transaction> {
     this.encodedData = encodedData;
     this.gas = gas;
     this.gasPrice = gasPrice;
+    this.transactionStatus = transactionStatus;
     this.id = id;
     this.transactionHash = transactionHash;
     this.nonce = nonce;

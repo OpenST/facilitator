@@ -146,7 +146,7 @@ export default class ConfirmWithdrawService extends Observer<Gateway> {
     );
 
     const valueToken = await utilityTokenInteract.methods.valueToken().call();
-    Logger.debug(`ConfirmWithdrawService:: Storage Proof s${proof.storageProof[0]}`);
+    Logger.debug(`ConfirmWithdrawService::Storage Proof ${JSON.stringify(proof.storageProof[0])}`);
     assert(proof.storageProof.length > 0);
 
     if (proof.storageProof[0].value === '0') {

@@ -103,7 +103,7 @@ describe('ContractEntityRepository::get', (): void => {
 
   it('should return null when querying for non-existing'
     + ' entity type', async (): Promise<void> => {
-      conEntity.entityType = EntityType.MintProgresseds;
+    conEntity.entityType = EntityType.MintProgresseds;
 
     const getResponse = await config.repos.contractEntityRepository.get(
       conEntity.contractAddress,

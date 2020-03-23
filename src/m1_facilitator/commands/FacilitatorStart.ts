@@ -51,7 +51,7 @@ export default class FacilitatorStart implements Command {
       manifest.originContractAddresses.erc20_gateway,
     );
     if (!isSeedDataValid) {
-      throw new Error('Seed data validation has failed. Rerun facilitator init with force option.');
+      throw new Error('FacilitatorStart::Seed data validation has failed. Rerun facilitator init with force option.');
     }
 
     await facilitator.start();
