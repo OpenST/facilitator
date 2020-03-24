@@ -312,3 +312,159 @@ where:
 `coGatwayAddress` is the address of auxiliary cogateway contract.
 `graphAdminRpcEndpoint` is admin RPC endpoint of graph node.
 `ipfsEndPoint` is IPFS endpoint.
+
+
+# Facilitator
+
+Facilitator is an executable which facilitates `deposit & withdrawal` of any EIP20 tokens using ERC20Gateways.
+
+1. Prerequisites:
+
+    i. Tested with node version `v11.12.0`.
+
+    ii. Docker version `18.09.7`.
+
+    iii. Docker compose version `1.23.2`.
+
+    iv. Install mosaic chains.
+   ```
+   npm i @openst/mosaic-chains -g
+   ```
+   v. Install facilitator 
+   ```
+   npm i @openst/facilitator -g
+   ``` 
+2. Starting chains: 
+
+    You can skip this step, if there is an existing chain pair and graph node is already running. 
+   
+    *Start origin chain*: 
+
+      mosaic start <origin-chain-identifier>
+            
+   *Start meta chain*:
+ 
+      mosaic start <metachain> --origin <origin-chain-identifier>
+      
+   *Example*:
+
+      mosaic start ropsten
+      mosaic start 1405 --origin ropsten
+
+      
+    Once chains have been successfully started, it will display web3 endpoint, graph admin rpc endpoint, graph ws endpoint and ipfs url. `Please keep a copy of these urls`. These URLs will be needed in 
+    further steps.
+
+3. Deploy subgraphs:
+
+    i. Deploy origin subgraph: Subgraphs for origin chain must be deployed for facilitator to run. Below is the command to deploy subgraph at origin chain :
+
+        npm run deploy:subgraph:origin <originAchorAddress> <gatewayAddress> <graphAdminRpcEndpoint> <ipfsEndpoint>
+    * Replace `<originAchorAddress>` with anchor address at origin chain.
+    * Replace `<gatewayAddress>` with the address of gateway contract at origin chain.
+    * Replace `<graphAdminRpcEndpoint>` with the admin rpc endpoint of graph node for origin chain.
+    * Replace `<ipfsEndpoint>` with the ipfs endpoint of graph node for origin chain.
+
+    ii. Deploy auxiliary subgraph: Subgraphs for auxiliary chain must be deployed for facilitator to run. Below is the command to deploy subgraph at auxiliary chain :
+
+        npm run deploy:subgraph:auxiliary <auxiliaryAnchorAddress> <coGatwayAddress> <graphAdminRpcEndpoint> <ipfsEndpoint>
+    * Replace `<auxiliaryAnchorAddress>` with anchor address at auxiliary chain.
+    * Replace `<coGatwayAddress>` with the address of coGateway contract at auxiliary chain.
+    * Replace `<graphAdminRpcEndpoint>` with the admin rpc endpoint of graph node for auxiliary chain.
+    * Replace `<ipfsEndpoint>` with the ipfs endpoint of graph node for auxiliary chain.
+
+    Note: If subgraph deployment fails, then check node version to be 11.12.0.
+
+4. Manifest file is required to initialize and start facilitator. It must be an valid yaml file. Format for manifest file :
+```
+version: v0.14
+architecture_layout: MOSAIC1
+personas:
+  - facilitator
+metachain:
+  origin:
+    avatar_account: "<account_at_origin_chain>"
+    node_endpoint: "<origin_chain_url>"
+    graph_ws_endpoint: "<graph-node-ws-endpoint>"
+    graph_rpc_endpoint: "<graph-node-rpc-endpoint>"
+  auxiliary:
+    avatar_account: "<account_at_auxiliary_chain>"
+    node_endpoint: "<auxiliary_chain_url>"
+    graph_ws_endpoint: "<graph-node-ws-endpoint>"
+    graph_rpc_endpoint: "<graph-node-rpc-endpoint>"
+accounts:
+  <account_at_origin_chain>:
+    keystore_path: "<origin_account_keystore_file>"
+    keystore_password_path: "<origin_account_password_file>"
+  <account_at_auxiliary_chain>:
+    keystore_path: "<auxiliary_account_keystore_file>"
+    keystore_password_path: "<auxiliary_account_password_file>"
+origin_contract_addresses:
+    erc20_gateway: <erc20Gateway_contract_address>
+facilitate_tokens:
+    - "<supported_tokens>"
+```
+* Create account on origin and auxiliary nodes. At origin, fund avatar account with ETH. At auxiliary, fund avatar account with base coin. Save the keystore files. For each account, create a password file.
+* Replace `<account_at_origin_chain>` with the address generated at origin node.
+* Replace `<account_at_auxiliary_chain>` with the address generated at auxiliary node.
+* Replace `<origin_chain_url>` with endpoint of origin chain.
+* Replace `<auxiliary_chain_url>` with endpoint of auxiliary chain.
+* Replace `<graph-node-ws-endpoint>` with ws endpoint of graph node.
+* Replace `<graph-node-rpc-endpoint>` with rpc endpoint of graph node.
+* Replace `<origin_account_keystore_file>` with path of keystore file of origin account.
+* Replace `<origin_account_password_file>` with path to password file for auxiliary account.
+* Replace `<auxiliary_account_keystore_file>` with path to keystore file of auxiliary account.
+* Replace `<auxiliary_account_password_file>` with path to password file for auxiliary account.
+* Replace `<erc20Gateway_contract_address>` with address of erc20gateway contract address at origin chain.
+* Replace `<supported_tokens>` with the token address for which facilitation needs to be done. It can be specified in list format supported by yaml.
+
+Example:
+```
+version: v0.14
+architecture_layout: MOSAIC1
+personas:
+  - facilitator
+metachain:
+  origin:
+    avatar_account: "0xcd8b7d0211e51b78d3fd1209ca8a6955fc7dfbca"
+    node_endpoint: https://rpc.slock.it/goerli
+    graph_ws_endpoint: ws://localhost:8000/subgraphs/name/m1_facilitator
+    graph_rpc_endpoint: http://localhost:8000/subgraphs/name/m1_facilitator
+  auxiliary:
+    avatar_account: "0xd14087a083fdd4049dcf1e7eb01ee2f5c89eb1c9"
+    node_endpoint: https://chain.mosaicdao.org/hadapsar
+    graph_ws_endpoint: ws://localhost:8000/subgraphs/name/m1_facilitator
+    graph_rpc_endpoint: http://localhost:8000/subgraphs/name/m1_facilitator
+accounts:
+  "0xcd8b7d0211e51b78d3fd1209ca8a6955fc7dfbca":
+    keystore_path: "0xcD8b7D0211E51B78d3fd1209CA8A6955FC7dFBca.json"
+    keystore_password_path: "0xcD8b7D0211E51B78d3fd1209CA8A6955FC7dFBca.password"
+  "0xd14087a083fdd4049dcf1e7eb01ee2f5c89eb1c9":
+    keystore_path: "0xD14087A083fDd4049dcF1E7Eb01ee2f5C89eb1C9.json"
+    keystore_password_path: "0xD14087A083fDd4049dcF1E7Eb01ee2f5C89eb1C9.password"
+origin_contract_addresses:
+    erc20_gateway: "0x65E1A3d1e95E271325B882aa139997AFAE6F0351"
+facilitate_tokens:
+    - "0x0000000000000000000000000000000000000012"
+```
+
+5. **Facilitator init**: It loads manifest file, creates database and initializes seed data.
+
+```
+./facilitator_m1 init --manifest <manifest>
+```
+
+* Replace `<manifest>` with the path to manifest file.
+
+Example:
+```
+./facilitator_m1 init --manifest facilitator_manifest.yml
+```
+
+6. **Facilitator start**: Facilitator start command loads manifest file and starts facilitation process.
+
+```
+./facilitator_m1 start --manifest  facilitator_manifest.yml
+```
+
+* Replace `<manifest>` with the path to manifest file.
