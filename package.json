@@ -83,7 +83,7 @@
     "js-yaml": "3.13.1",
     "jsonschema": "1.2.4",
     "mustache": "3.0.1",
-    "node-fetch": "2.6.0",
+    "node-fetch": "2.6.1",
     "rlp": "2.2.4",
     "sequelize": "6.0.0-beta.1",
     "sqlite3": "4.0.8",
