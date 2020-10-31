@@ -23,6 +23,9 @@ src/**/**/*.js.map
 lib/**
 openst-facilitator-*.tgz
 
+#keystore
+staker.json
+redeemer.json
 # Subgraph build files
 subgraph/auxiliary/build/**
 subgraph/origin/build/**
